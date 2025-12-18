@@ -1702,6 +1702,25 @@
 		show_tongue_noise_warning()
 		return
 
+/datum/emote/living/mrrp
+	key = "mrrp"
+	key_third_person = "mrrps!"
+	message = "mrrps!"
+	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
+	message_muffled = "makes a muffled sound!"
+	vary = TRUE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_mrrp()
+	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		set name = "Mrrp"
+		set category = "Noises"
+		emote("meow", intentional = TRUE, animal = TRUE)
+	else
+		to_chat(usr, span_warning("Your tongue doesn't do that"))
+		return
+
 /datum/emote/living/caw
 	key = "caw"
 	key_third_person = "caws!"
