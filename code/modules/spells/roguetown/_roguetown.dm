@@ -129,3 +129,23 @@
 	if(proj_range)
 		stats.Insert(1, span_info("Projectile range: [proj_range] tiles"))
 	return stats
+
+/obj/effect/proc_holder/spell/invoked/projectile/generate_wiki_html(mob/user)
+	var/proj_range = initial(projectile_type:range)
+	var/s_range = "[proj_range] tiles (Projectile)"
+	var/s_invocation = invocation_type || "none"
+	s_invocation = uppertext(copytext(s_invocation, 1, 2)) + copytext(s_invocation, 2)
+
+	var/html = {"
+		<h2>[name]</h2>
+		[desc ? "<p><em>[desc]</em></p>" : ""]
+		<table>
+			<tr><th>Tier</th><td>[spell_tier]</td></tr>
+			<tr><th>Spell Points</th><td>[cost]</td></tr>
+			<tr><th>Stamina Cost</th><td>[releasedrain]</td></tr>
+			<tr><th>Range</th><td>[s_range]</td></tr>
+			<tr><th>Cooldown</th><td>[recharge_time / 10]s</td></tr>
+			<tr><th>Invocation</th><td>[s_invocation]</td></tr>
+		</table>
+	"}
+	return html
