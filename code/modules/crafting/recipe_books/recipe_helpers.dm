@@ -130,48 +130,57 @@
 /proc/recipe_book_css()
 	return {"
 		<style>
-			@import url('https://fonts.googleapis.com/css2?family=Charm:wght@700&display=swap');
+			@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+			html, body {
+				height: 100%;
+				margin: 0;
+				overflow: hidden;
+			}
 			body {
-				font-family: "Charm", cursive;
+				font-family: "Lora", serif;
 				font-size: 1em;
 				text-align: center;
-				margin: 20px;
+				padding: 20px;
 				color: #3e2723;
 				background-color: rgb(31, 20, 24);
 				background: url('book.png');
 				background-repeat: no-repeat;
 				background-attachment: fixed;
 				background-size: 100% 100%;
+				display: flex;
+				flex-direction: column;
+				box-sizing: border-box;
 			}
 			h1 {
 				text-align: center;
 				font-size: 1.5em;
 				border-bottom: 2px solid #3e2723;
 				padding-bottom: 10px;
-				margin-bottom: 20px;
+				margin-bottom: 10px;
+				flex-shrink: 0;
 			}
-			.book-content { display: flex; height: 85%; }
+			.book-content { display: flex; flex: 1; min-height: 0; }
 			.sidebar {
 				width: 30%; padding: 10px;
 				border-right: 2px solid #3e2723;
-				overflow-y: auto; max-height: 600px;
+				overflow-y: auto;
 			}
 			.main-content {
 				width: 70%; padding: 10px;
-				overflow-y: auto; max-height: 600px; text-align: left;
+				overflow-y: auto; text-align: left;
 			}
 			.categories { margin-bottom: 15px; }
 			.category-btn {
 				margin: 2px; padding: 5px;
 				background-color: #d2b48c;
 				border: 1px solid #3e2723; border-radius: 5px;
-				cursor: pointer; font-family: "Charm", cursive;
+				cursor: pointer; font-family: "Lora", serif;
 			}
 			.category-btn.active { background-color: #8b4513; color: white; }
 			.search-box {
 				width: 90%; padding: 5px; margin-bottom: 15px;
 				border: 1px solid #3e2723; border-radius: 5px;
-				font-family: "Charm", cursive;
+				font-family: "Lora", serif;
 			}
 			.recipe-list { text-align: left; }
 			.recipe-link {

@@ -152,6 +152,7 @@
 /obj/item/recipe_book/cooking_guide
 	name = "Guide to Cooking"
 	wiki_name = "Cooking Guide"
+	wiki_section = "Guides"
 	desc = "A handwritten guide to ordinary kitchen work and recipes."
 	icon_state = "book7_0"
 	base_icon_state = "book7"
@@ -161,6 +162,7 @@
 /obj/item/recipe_book/magic
 	name = "The Magister's Grimoire"
 	wiki_name = "Magic"
+	wiki_section = "Guides"
 	icon_state = "book4_0"
 	base_icon_state = "book4"
 

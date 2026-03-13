@@ -23,7 +23,8 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 			"name" = book.name,
 			"wiki_name" = book.wiki_name || book.name,
 			"types" = book.types.Copy(),
-			"path" = book_type
+			"path" = book_type,
+			"wiki_section" = book.wiki_section
 		))
 		qdel(book)
 	// Sort entries alphabetically by wiki_name
@@ -72,6 +73,15 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	if(cached_library_html)
 		return cached_library_html
 
+	// Split entries by section
+	var/list/guides = list()
+	var/list/recipes = list()
+	for(var/list/entry in book_entries)
+		if(entry["wiki_section"] == "Guides")
+			guides += list(entry)
+		else
+			recipes += list(entry)
+
 	var/html = {"
 		<!DOCTYPE html>
 		<html lang="en">
@@ -80,6 +90,8 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 		[recipe_book_css()]
 		<style>
+			html, body { overflow: auto; display: block; height: auto; }
+			body { margin: 20px; padding: 0; }
 			.book-list {
 				max-width: 600px; margin: 0 auto;
 				display: grid; grid-template-columns: 1fr 1fr;
@@ -90,17 +102,32 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 				color: #3e2723; text-decoration: none;
 			}
 			.book-entry:hover { background-color: rgba(210, 180, 140, 0.3); }
+			.section-header {
+				max-width: 600px; margin: 20px auto 5px auto;
+				font-size: 1.2em;
+				border-bottom: 1px solid #3e2723;
+				padding-bottom: 5px;
+			}
 		</style>
 		<body>
 			<h1>Guidebook</h1>
-			<div class="book-list">
 	"}
 
-	for(var/list/entry in book_entries)
-		html += "<a class='book-entry' href='byond://?src=\ref[src];action=open_book&book=[entry["path"]]'>[entry["wiki_name"]]</a>"
+	if(length(guides))
+		html += "<h2 class='section-header'>Guides</h2>"
+		html += "<div class='book-list'>"
+		for(var/list/entry in guides)
+			html += "<a class='book-entry' href='byond://?src=\ref[src];action=open_book&book=[entry["path"]]'>[entry["wiki_name"]]</a>"
+		html += "</div>"
+
+	if(length(recipes))
+		html += "<h2 class='section-header'>Crafting Recipes</h2>"
+		html += "<div class='book-list'>"
+		for(var/list/entry in recipes)
+			html += "<a class='book-entry' href='byond://?src=\ref[src];action=open_book&book=[entry["path"]]'>[entry["wiki_name"]]</a>"
+		html += "</div>"
 
 	html += {"
-			</div>
 		</body>
 		</html>
 	"}
