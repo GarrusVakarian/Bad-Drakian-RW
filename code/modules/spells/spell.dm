@@ -1029,19 +1029,25 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			s_range = "Self"
 		else
 			s_range = "[range] tiles"
-	var/s_invocation = invocation_type || "none"
-	s_invocation = uppertext(copytext(s_invocation, 1, 2)) + copytext(s_invocation, 2)
+
+	var/s_invocation_type = invocation_type || "none"
+	s_invocation_type = uppertext(copytext(s_invocation_type, 1, 2)) + copytext(s_invocation_type, 2)
+
+	var/s_invocations = "None"
+	if(length(invocations))
+		s_invocations = invocations.Join(", ")
 
 	var/html = {"
-		<h2>[name]</h2>
-		[desc ? "<p><em>[desc]</em></p>" : ""]
+		<h2 style='border-bottom: 1px solid currentColor; padding-bottom: 4px;'>[name]</h2>
+		[desc ? "<p><em>[desc]</em></p><hr>" : ""]
 		<table>
 			<tr><th>Tier</th><td>[spell_tier]</td></tr>
 			<tr><th>Spell Points</th><td>[cost]</td></tr>
 			<tr><th>Stamina Cost</th><td>[releasedrain]</td></tr>
 			<tr><th>Range</th><td>[s_range]</td></tr>
 			<tr><th>Cooldown</th><td>[recharge_time / 10]s</td></tr>
-			<tr><th>Invocation</th><td>[s_invocation]</td></tr>
+			<tr><th>Invocations</th><td>[s_invocations]</td></tr>
+			<tr><th>Invocation Type</th><td>[s_invocation_type]</td></tr>
 		</table>
 	"}
 	return html

@@ -32,7 +32,7 @@ export const RecipeBook = () => {
   const { data } = useBackend<RecipeBookData>();
 
   return (
-    <Window width={1000} height={810} title="Guidebook">
+    <Window width={1000} height={810} title="Encyclopedia">
       <Window.Content>
         {data.page === 'book' && data.current_book ? (
           <BookPage />
@@ -58,7 +58,20 @@ const LibraryPage = () => {
   );
 
   return (
-    <Section title="Guidebook" fill scrollable>
+    <Section fill scrollable>
+      <Box
+        textAlign="center"
+        fontSize={2.2}
+        bold
+        mb={2}
+        pb={1}
+        style={{
+          borderBottom: '2px solid var(--section-title-color)',
+          color: 'var(--section-title-color)',
+        }}
+      >
+        Encyclop&aelig;dia Azurea
+      </Box>
       {guides.length > 0 && (
         <>
           <Box bold fontSize={1.2} mb={1} mt={1}>

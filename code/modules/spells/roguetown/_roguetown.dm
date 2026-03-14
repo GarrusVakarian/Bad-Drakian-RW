@@ -131,21 +131,51 @@
 	return stats
 
 /obj/effect/proc_holder/spell/invoked/projectile/generate_wiki_html(mob/user)
-	var/proj_range = initial(projectile_type:range)
-	var/s_range = "[proj_range] tiles (Projectile)"
-	var/s_invocation = invocation_type || "none"
-	s_invocation = uppertext(copytext(s_invocation, 1, 2)) + copytext(s_invocation, 2)
+	var/html = ..()
 
-	var/html = {"
-		<h2>[name]</h2>
-		[desc ? "<p><em>[desc]</em></p>" : ""]
+	var/proj_damage = initial(projectile_type:damage)
+	var/proj_damage_type = initial(projectile_type:damage_type)
+	var/proj_range = initial(projectile_type:range)
+	var/proj_speed = initial(projectile_type:speed)
+	var/proj_ap = initial(projectile_type:armor_penetration)
+	var/proj_npc_mult = initial(projectile_type:npc_simple_damage_mult)
+	var/proj_nodamage = initial(projectile_type:nodamage)
+	var/proj_guard = initial(projectile_type:guard_deflectable)
+
+	var/tiles_per_second = proj_speed > 0 ? round(10 / proj_speed, 0.1) : "Instant"
+
+	html += {"
+		<hr>
+		<h3 style='border-bottom: 1px solid currentColor; padding-bottom: 4px;'>Projectile</h3>
 		<table>
-			<tr><th>Tier</th><td>[spell_tier]</td></tr>
-			<tr><th>Spell Points</th><td>[cost]</td></tr>
-			<tr><th>Stamina Cost</th><td>[releasedrain]</td></tr>
-			<tr><th>Range</th><td>[s_range]</td></tr>
-			<tr><th>Cooldown</th><td>[recharge_time / 10]s</td></tr>
-			<tr><th>Invocation</th><td>[s_invocation]</td></tr>
+			<tr><th>Projectile Range</th><td>[proj_range] tiles</td></tr>
+			<tr><th>Speed</th><td>[tiles_per_second] tiles/sec</td></tr>
+	"}
+
+	if(!proj_nodamage)
+		html += {"
+			<tr><th>Damage</th><td>[proj_damage] [proj_damage_type]</td></tr>
+		"}
+		if(proj_npc_mult != 1)
+			html += {"
+				<tr><th>NPC Damage Mult</th><td>[proj_npc_mult]x</td></tr>
+			"}
+
+	if(proj_ap)
+		html += {"
+			<tr><th>Armor Penetration</th><td>[proj_ap]</td></tr>
+		"}
+
+	html += {"
+			<tr><th>Deflectable</th><td>[proj_guard ? "Yes" : "No"]</td></tr>
+	"}
+
+	if(projectile_amount > 1)
+		html += {"
+			<tr><th>Projectiles per Cast</th><td>[projectile_amount]</td></tr>
+		"}
+
+	html += {"
 		</table>
 	"}
 	return html

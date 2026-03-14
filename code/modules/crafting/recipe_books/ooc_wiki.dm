@@ -70,7 +70,7 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 /datum/recipe_wiki/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "RecipeBook", "Guidebook")
+		ui = new(user, src, "RecipeBook", "Encyclopedia")
 		ui.open()
 		ui.set_autoupdate(FALSE)
 
@@ -82,16 +82,18 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 
 	var/list/books = list()
 	for(var/list/entry in book_entries)
+		var/entry_path = "[entry["path"]]"
 		books += list(list(
 			"wiki_name" = entry["wiki_name"],
-			"path" = "[entry["path"]]",
+			"path" = entry_path,
 			"section" = entry["wiki_section"]
 		))
 	data["books"] = books
 
 	var/list/book_recipes = list()
 	for(var/list/entry in book_entries)
-		var/book_key = "[entry["path"]]"
+		var/epath = entry["path"]
+		var/book_key = "[epath]"
 		if(!cached_book_recipes[book_key])
 			cached_book_recipes[book_key] = build_recipe_list(entry["types"])
 		book_recipes[book_key] = cached_book_recipes[book_key]
@@ -114,7 +116,8 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	data["page"] = state["page"] || "library"
 	data["current_book"] = state["book_path"]
 	data["current_book_title"] = state["title"] || "Guidebook"
-	data["current_recipe"] = state["recipe"] ? "[state["recipe"]]" : null
+	var/cur_recipe = state["recipe"]
+	data["current_recipe"] = cur_recipe ? "[cur_recipe]" : null
 
 	if(state["recipe"])
 		data["recipe_detail_html"] = get_cached_detail(state["recipe"], user)
@@ -209,9 +212,9 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	return html
 
 /client/verb/ooc_wiki()
-	set name = "Guidebook"
+	set name = "Encyclopedia"
 	set category = "OOC"
-	set desc = "Browse all recipe books and guidebook entries."
+	set desc = "Browse the Encyclopaedia Azurea - all recipe books and guidebook entries."
 
 	var/datum/recipe_wiki/wiki = get_recipe_wiki()
 	wiki.show_library(mob)
