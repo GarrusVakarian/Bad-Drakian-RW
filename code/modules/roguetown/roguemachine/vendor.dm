@@ -467,9 +467,10 @@
 	icon_state = "svendorcart1"
 	anchored = FALSE
 	max_items = 20
-	max_integrity = 500
+	max_integrity = 400
 	keycontrol = "pdefault"
 	var/keycontrol_initialized = FALSE
+	climbable = TRUE
 
 /obj/structure/roguemachine/vendor/mobile/Move() //Stops cart from being pushed around by explosions and such while locked.
 	if(anchored)
