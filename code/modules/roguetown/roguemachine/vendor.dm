@@ -462,26 +462,53 @@
 // PEDDLER CARTS
 
 /obj/structure/roguemachine/vendor/mobile
-	name = "portable peddler"
+	name = "peddler cart"
 	desc = "A smaller, wheeled PEDDLER that can be moved around."
 	icon_state = "svendorcart1"
 	anchored = FALSE
 	max_items = 20
 	max_integrity = 500
-
-/obj/structure/roguemachine/vendor/mobile/Initialize()
-	. = ..()
-	keycontrol = "vendor_[rand(1000, 9999)]"
-	var/obj/item/roguekey/peddlerkey/K = new /obj/item/roguekey/peddlerkey(loc)
-	K.lockid = keycontrol
+	keycontrol = "pdefault"
+	var/keycontrol_initialized = FALSE
 
 /obj/structure/roguemachine/vendor/mobile/Move() //Stops cart from being pushed around by explosions and such while locked.
-	if(locked)
+	if(anchored)
 		return FALSE
 	return ..()
 
 /obj/structure/roguemachine/vendor/mobile/can_be_pulled(mob/user) //Stops players from grabbing and pulling cart while locked.
-	return !locked
+	return !anchored
+
+/obj/structure/roguemachine/vendor/mobile/attackby(obj/item/P, mob/user, params)
+	if(!istype(P, /obj/item/roguekey))
+		return ..()
+	var/obj/item/roguekey/K = P
+	if(!keycontrol_initialized) // First key used sets ownership.
+		keycontrol = K.lockid
+		keycontrol_initialized = TRUE
+		to_chat(user, span_notice("The peddler accepts the key and binds itself to its pattern."))
+	else
+		if(K.lockid != keycontrol) // Normal behaviour if the peddler already has an owner.
+			to_chat(user, span_warning("Wrong key."))
+			return
+	locked = !locked
+	to_chat(user, span_notice("You [locked ? "lock" : "unlock"] the peddler."))
+	playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
+	update_icon()
+	return
+
+/obj/structure/roguemachine/vendor/mobile/attack_right(mob/user)
+	var/obj/item/I = user.get_active_held_item()
+	if(istype(I, /obj/item/roguekey))
+		var/obj/item/roguekey/K = I
+		if(K.lockid != keycontrol)
+			to_chat(user, span_warning("Wrong key."))
+			return
+		anchored = !anchored
+		to_chat(user, span_notice("You [anchored ? "secure" : "unsecure"] the wheels."))
+		playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
+		update_icon()
+		return
 
 /obj/structure/roguemachine/vendor/mobile/update_icon()
 	cut_overlays()
@@ -497,3 +524,9 @@
 	if(held_items.len)
 		set_light(1, 1, 1, l_color = "#1b7bf1")
 		add_overlay(mutable_appearance(icon, "vendor-gen"))
+
+/obj/structure/roguemachine/vendor/mobile/get_mechanics_examine(mob/user)
+	. = list()
+	. += span_info("Left-clicking a PEDDLER CART with an open land allows you to browse and purchase its wares. Click on the 'Stored Mammons' option to retrieve any coinage or change left behind.")
+	. += span_info("Owners of the PEDDLER CART can UNLOCK it by left-clicking with the relevant key, allowing them both restock wares and vend whatever coinage might've been earned from completed sales.")
+	. += span_info("Owners of the PEDDLER CART can ANCHOR it by right-clicking with the relevant key, preventing the wheels from moving.")

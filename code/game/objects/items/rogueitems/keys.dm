@@ -988,8 +988,3 @@
 				KE.name = src.holdname
 			to_chat(user, span_notice("You add [src] to [K]."))
 			qdel(src)
-
-/obj/item/roguekey/peddlerkey
-	name = "peddler key"
-	icon_state = "brownkey"
-	lockid = "peddler"
