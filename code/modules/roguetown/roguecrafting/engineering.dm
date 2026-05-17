@@ -35,9 +35,9 @@
 		/obj/item/grown/log/tree/small = 1,
 		/obj/item/ingot/iron = 1,
 		/obj/item/natural/glass = 1,
-		/obj/item/roguegear = 1,
+		/obj/item/roguegear = 2,
 	)
-	craftdiff = 3
+	craftdiff = 4
 	skillcraft = /datum/skill/craft/engineering
 
 /datum/crafting_recipe/roguetown/engineering/lever
