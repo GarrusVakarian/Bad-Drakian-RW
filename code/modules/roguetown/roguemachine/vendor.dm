@@ -458,3 +458,42 @@
 		held_items[P]["NAME"] = P.name
 		held_items[P]["PRICE"] = 30
 	update_icon()
+
+// PEDDLER CARTS
+
+/obj/structure/roguemachine/vendor/mobile
+	name = "portable peddler"
+	desc = "A smaller, wheeled PEDDLER that can be moved around."
+	icon_state = "svendorcart1"
+	anchored = FALSE
+	max_items = 20
+	max_integrity = 300
+
+/obj/structure/roguemachine/vendor/mobile/Initialize()
+	. = ..()
+	keycontrol = "vendor_[rand(1000, 9999)]"
+	var/obj/item/roguekey/peddlerkey/K = new /obj/item/roguekey/peddlerkey(loc)
+	K.lockid = keycontrol
+
+/obj/structure/roguemachine/vendor/mobile/Move() //Stops cart from being pushed around by explosions and such while locked.
+	if(locked)
+		return FALSE
+	return ..()
+
+/obj/structure/roguemachine/vendor/mobile/can_be_pulled(mob/user) //Stops players from grabbing and pulling cart while locked.
+	return !locked
+
+/obj/structure/roguemachine/vendor/mobile/update_icon()
+	cut_overlays()
+	if(obj_broken)
+		icon_state = "svendorcart0"
+		set_light(0)
+		return
+	if(!locked)
+		icon_state = "svendorcart0"
+		return
+	else
+		icon_state = "svendorcart1"
+	if(held_items.len)
+		set_light(1, 1, 1, l_color = "#1b7bf1")
+		add_overlay(mutable_appearance(icon, "vendor-gen"))
