@@ -467,7 +467,7 @@
 	icon_state = "svendorcart1"
 	anchored = FALSE
 	max_items = 20
-	max_integrity = 300
+	max_integrity = 500
 
 /obj/structure/roguemachine/vendor/mobile/Initialize()
 	. = ..()
