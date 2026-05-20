@@ -1,3 +1,7 @@
+#define MODE_HOLE 1
+#define MODE_SOLIDS 2
+#define MODE_BAIT 3
+
 /obj/item/rogueweapon/shovel
 	twirly = SKILL_LEVEL_EXPERT
 	force = 21
@@ -23,6 +27,42 @@
 	grid_width = 32
 	grid_height = 96
 	is_tool = TRUE
+	var/curr_mode_index = MODE_HOLE
+
+/obj/item/rogueweapon/shovel/examine(mob/user)
+	. = ..()
+	var/str = "The shovel is set to dig: "
+	switch(curr_mode_index)
+		if(MODE_HOLE)
+			str += "a hole."
+		if(MODE_SOLIDS)
+			str += "solids (clay & stone)."
+		if(MODE_BAIT)
+			str += "bait."
+	. += span_notice(str)
+
+/obj/item/rogueweapon/shovel/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click the shovel in your inactive hand to cycle between digging holes, sifting for clay and stone, and digging for bait. Switch back to the shovel and use SCOOP on a patch of dirt.")
+	. += span_info("Muddy dirt tends to yield clay and more bait. Dry dirt tends to yield stone.")
+
+/obj/item/rogueweapon/shovel/attack_right(mob/user, params)
+	if(!(src in user.held_items))
+		return ..()
+	if(curr_mode_index < MODE_BAIT)
+		curr_mode_index++
+	else
+		curr_mode_index = MODE_HOLE
+	var/str = "The shovel will now "
+	switch(curr_mode_index)
+		if(MODE_HOLE)
+			str += "dig a hole."
+		if(MODE_SOLIDS)
+			str += "sift for rocks and clay."
+		if(MODE_BAIT)
+			str += "sift for bait."
+	user.playsound_local(get_turf(user), 'sound/misc/click.ogg', 100, TRUE)
+	to_chat(user, span_notice(str))
 
 /obj/item/rogueweapon/shovel/Destroy()
 	if(heldclod)
@@ -65,6 +105,10 @@
 	user.changeNext_move(user.used_intent.clickcd)
 
 	if(user.used_intent.type == /datum/intent/shovelscoop)
+		if(curr_mode_index != MODE_HOLE)
+			sift_dirt(T, user)
+			return
+
 		if(istype(T, /turf/open/floor/rogue/dirt) || istype(T, /turf/open/floor/rogue/grass) || istype(T, /turf/open/floor/rogue/grassred) || istype(T, /turf/open/floor/rogue/grassyel) || istype(T, /turf/open/floor/rogue/grasscold) || istype(T, /turf/open/floor/rogue/grasspurple) || istype(T, /turf/open/floor/rogue/grassgrey))
 			var/turf/open/floor/rogue/dirt/D = T
 
@@ -303,6 +347,59 @@
 			break
 
 	return TRUE
+
+/obj/item/rogueweapon/shovel/proc/sift_dirt(turf/open/floor/rogue/dirt/TD, mob/living/user)
+	if(!istype(TD))
+		to_chat(user, span_warning("I need a patch of dirt to sift."))
+		return
+
+	var/mode = curr_mode_index
+	switch(mode)
+		if(MODE_SOLIDS)
+			var/min_loot = 1
+			var/skill_influence = min(user.get_skill_level(/datum/skill/craft/ceramics) + user.get_skill_level(/datum/skill/labor/mining), 6)
+			playsound(TD,'sound/items/dig_shovel.ogg', 100, TRUE)
+			to_chat(user, span_notice("I start digging up solids..."))
+			if(do_after(user, max((4 - (skill_influence / 2)), 1) SECONDS, target = TD) && !QDELETED(TD) && user.get_active_held_item() == src && curr_mode_index == mode)	// 4 seconds, down to 1 if our skills are high enough.
+				min_loot += skill_influence
+				min_loot += (user.STALUC - 10)
+				min_loot += rand(0, 2)
+				for(var/i in 1 to min_loot)
+					if(TD.muddy)
+						if(prob(80))
+							new /obj/item/natural/clay(TD)
+						else if(prob(20))
+							new /obj/item/natural/stone(TD)
+					else
+						if(prob(80))
+							new /obj/item/natural/stone(TD)
+						else if(prob(20))
+							new /obj/item/natural/clay(TD)
+				playsound(TD,'sound/items/empty_shovel.ogg', 100, TRUE)
+
+		if(MODE_BAIT)
+			var/min_loot = 1
+			var/skill_influence = min(user.get_skill_level(/datum/skill/labor/fishing) + user.get_skill_level(/datum/skill/misc/medicine), 6)
+			playsound(TD,'sound/items/dig_shovel.ogg', 100, TRUE)
+			to_chat(user, span_notice("I start digging up bait..."))
+			if(do_after(user, max((4 - (skill_influence / 2)), 1) SECONDS, target = TD) && !QDELETED(TD) && user.get_active_held_item() == src && curr_mode_index == mode)	// 4 seconds, down to 1 if our skills are high enough.
+				min_loot += skill_influence
+				min_loot += (user.STALUC - 10)
+				min_loot += rand(0, 2)
+				for(var/i in 1 to min_loot)
+					if(TD.muddy)
+						if(prob(5))
+							new /obj/item/natural/worms/grubs(TD)
+						else if(prob(20))
+							new /obj/item/natural/worms/leech(TD)
+						else if(prob(80))
+							new /obj/item/natural/worms(TD)
+					else
+						if(prob(50))
+							new /obj/item/natural/worms(TD)
+				playsound(TD,'sound/items/empty_shovel.ogg', 100, TRUE)
+
+
 
 /obj/item/rogueweapon/shovel/getonmobprop(tag)
 	. = ..()
