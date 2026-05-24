@@ -56,12 +56,18 @@
 		point -= 24
 	return point
 
-/proc/chess_side_name(color)
+/proc/chess_localized_text(language, english_text, russian_text)
+	return sanitize_preferred_ui_language(language) == "ru" ? russian_text : english_text
+
+/proc/chess_side_name(color, language = "ru")
 	if(color == CHESS_WHITE)
-		return "Белые"
+		return chess_localized_text(language, "White", "Белые")
 	if(color == CHESS_BLACK)
-		return "Чёрные"
-	return "Никто"
+		return chess_localized_text(language, "Black", "Чёрные")
+	return chess_localized_text(language, "Nobody", "Никто")
+
+/proc/chess_side_name_en(color)
+	return chess_side_name(color, "en")
 
 /proc/chess_piece_color(piece)
 	if(!istext(piece) || length(piece) < 2)
@@ -89,12 +95,15 @@
 			return ""
 	return "?"
 
-/proc/chess_display_name(mob/user)
+/proc/chess_display_name(mob/user, language = "ru")
 	if(!user)
-		return "Неизвестно"
+		return chess_localized_text(language, "Unknown", "Неизвестно")
 	if(user.real_name)
 		return user.real_name
 	return user.name
+
+/proc/chess_display_name_en(mob/user)
+	return chess_display_name(user, "en")
 
 /proc/chess_assoc_get(list/source, key, default_value)
 	if(!islist(source))
@@ -145,6 +154,7 @@
 	var/rotation_degrees = 0
 	var/list/selected_squares = list()
 	var/last_ui_message = null
+	var/last_ui_message_en = null
 	var/list/active_ui_ckeys = list()
 
 /obj/structure/chessboard/Initialize(mapload)
@@ -152,6 +162,7 @@
 	match = new(src)
 	selected_squares = list()
 	last_ui_message = null
+	last_ui_message_en = null
 	active_ui_ckeys = list()
 	rotation_degrees = 0
 	update_board_art()
@@ -184,47 +195,53 @@
 	mark_viewer_active(user)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "ChessBoard", name)
+		var/ui_language = get_preferred_ui_language(user)
+		var/interface_name = ui_language == "ru" ? "ChessBoardRu" : "ChessBoard"
+		var/window_title = chess_localized_text(ui_language, "Game board", "Игровая доска")
+		ui = new(user, src, interface_name, window_title)
 		ui.open()
 
 /obj/structure/chessboard/ui_data(mob/user)
 	mark_viewer_active(user)
+	var/ui_language = get_preferred_ui_language(user)
 	var/list/data = list()
 	var/my_side = match.side_for_user(user)
 	var/selected = get_selection(user)
 	if(!selected && my_side && my_side == match.turn && match.game_mode == BOARD_MODE_CHECKERS && match.forced_capture_from)
 		selected = match.forced_capture_from
 
-	data["board_title"] = "Шахматная доска"
-	data["white_player_name"] = match.white_player_name ? match.white_player_name : "Свободно"
-	data["black_player_name"] = match.black_player_name ? match.black_player_name : "Свободно"
-	data["my_side"] = my_side ? chess_side_name(my_side) : "Наблюдатель"
+	data["board_title"] = chess_localized_text(ui_language, "Game board", "Игровая доска")
+	data["white_player_name"] = match.white_player_name ? match.white_player_name : chess_localized_text(ui_language, "Open", "Свободно")
+	data["white_player_seated"] = !!match.white_player_name
+	data["black_player_name"] = match.black_player_name ? match.black_player_name : chess_localized_text(ui_language, "Open", "Свободно")
+	data["black_player_seated"] = !!match.black_player_name
+	data["my_side"] = my_side ? chess_side_name(my_side, ui_language) : chess_localized_text(ui_language, "Observer", "Наблюдатель")
 	data["my_side_key"] = my_side
-	data["turn"] = chess_side_name(match.turn)
+	data["turn"] = chess_side_name(match.turn, ui_language)
 	data["turn_key"] = match.turn
 	data["paused"] = match.paused
-	data["result_text"] = match.result_text
+	data["result_text"] = match.get_result_text(ui_language)
 	data["selected_square"] = selected
-	data["status_text"] = match.get_status_text()
-	data["last_message"] = last_ui_message
+	data["status_text"] = match.get_status_text(ui_language)
+	data["last_message"] = ui_language == "ru" ? last_ui_message : (last_ui_message_en ? last_ui_message_en : last_ui_message)
 	data["can_resume"] = match.can_resume()
 	data["can_pack"] = match.can_pack_up()
 	data["board"] = build_board_data(user, selected)
 	data["history"] = build_history_rows()
 	data["promotion_choices"] = list("queen", "rook", "bishop", "knight")
 	data["game_mode"] = match.game_mode
-	data["game_mode_label"] = match.get_game_mode_label()
-	data["current_rules_text"] = match.get_current_rules_text()
+	data["game_mode_label"] = match.get_game_mode_label(ui_language)
+	data["current_rules_text"] = match.get_current_rules_text(ui_language)
 	data["checkers_flying_kings"] = match.checkers_flying_kings
 	data["nards_long_rules"] = match.nards_long_rules
-	data["mode_options"] = match.get_mode_options()
+	data["mode_options"] = match.get_mode_options(ui_language)
 	data["switch_mode_target_key"] = match.other_mode()
-	data["switch_mode_target_label"] = match.get_mode_label(match.other_mode())
+	data["switch_mode_target_label"] = match.get_mode_label(match.other_mode(), ui_language)
 	data["mode_switch_pending"] = !!match.pending_mode
-	data["mode_switch_pending_text"] = match.get_mode_switch_text()
+	data["mode_switch_pending_text"] = match.get_mode_switch_text(ui_language)
 	data["can_confirm_mode_switch"] = match.can_confirm_mode_switch(user)
 	data["can_cancel_mode_switch"] = match.can_cancel_mode_switch(user)
-	data["reset_pending_text"] = match.get_reset_request_text()
+	data["reset_pending_text"] = match.get_reset_request_text(ui_language)
 	data["can_confirm_reset_request"] = match.can_confirm_reset_request(user)
 	data["can_cancel_reset_request"] = match.can_cancel_reset_request(user)
 	data["can_flip_board"] = match.can_flip_board()
@@ -248,7 +265,7 @@
 			var/color = params["color"]
 			if(match.claim_side(color, user))
 				clear_all_selections()
-				last_ui_message = "[chess_display_name(user)] занимает место [chess_side_name(color)]."
+				set_last_ui_message("[chess_display_name_en(user)] takes the [chess_side_name_en(color)] seat.", "[chess_display_name(user)] занимает место [chess_side_name(color)].")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -258,7 +275,7 @@
 			var/release_color = params["color"]
 			if(match.release_side(release_color, user))
 				clear_all_selections()
-				last_ui_message = "[chess_display_name(user)] освобождает место [chess_side_name(release_color)]."
+				set_last_ui_message("[chess_display_name_en(user)] releases the [chess_side_name_en(release_color)] seat.", "[chess_display_name(user)] освобождает место [chess_side_name(release_color)].")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -267,7 +284,7 @@
 			play_notify_sound()
 			if(match.pause_game(user))
 				clear_all_selections()
-				last_ui_message = "Партия поставлена на паузу."
+				set_last_ui_message("The game is paused.", "Партия поставлена на паузу.")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -275,7 +292,7 @@
 		if("resume_game")
 			play_notify_sound()
 			if(match.resume_game(user))
-				last_ui_message = "Партия продолжена."
+				set_last_ui_message("The game has resumed.", "Партия продолжена.")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -309,9 +326,10 @@
 			if(match.request_mode_switch(target_mode, user, checkers_flying_kings, nards_long_rules))
 				clear_all_selections()
 				if(match.pending_mode)
-					last_ui_message = match.get_mode_switch_text()
+					set_last_ui_message(match.get_mode_switch_text("en"), match.get_mode_switch_text("ru"))
 				else
-					last_ui_message = "Режим переключён на [match.get_game_mode_label()]."
+					var/switch_mode_label_en = match.get_game_mode_label("en")
+					set_last_ui_message("Mode switched to [switch_mode_label_en].", "Режим переключён на [match.get_game_mode_label()].")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -320,7 +338,8 @@
 			play_notify_sound()
 			if(match.confirm_mode_switch(user))
 				clear_all_selections()
-				last_ui_message = "Режим переключён на [match.get_game_mode_label()]."
+				var/confirmed_mode_label_en = match.get_game_mode_label("en")
+				set_last_ui_message("Mode switched to [confirmed_mode_label_en].", "Режим переключён на [match.get_game_mode_label()].")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -328,7 +347,7 @@
 		if("cancel_mode_switch")
 			play_notify_sound()
 			if(match.cancel_mode_switch(user))
-				last_ui_message = "Запрос на смену режима отменён."
+				set_last_ui_message("Mode change request canceled.", "Запрос на смену режима отменён.")
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -376,7 +395,7 @@
 
 		if("roll_nards_dice")
 			if(match.roll_nards_dice(user))
-				last_ui_message = match.last_action_message
+				set_last_ui_message_from_match()
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -385,14 +404,14 @@
 		if("select_nards_point")
 			var/point = text2num(params["point"])
 			if(match.select_nards_point(user, point))
-				last_ui_message = match.last_action_message
+				set_last_ui_message_from_match()
 				queue_ui_update()
 				return TRUE
 			return FALSE
 
 		if("select_nards_bar")
 			if(match.select_nards_bar(user))
-				last_ui_message = match.last_action_message
+				set_last_ui_message_from_match()
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -401,7 +420,7 @@
 			var/to_point = text2num(params["to_point"])
 			var/to_off = text2num(params["to_off"])
 			if(match.move_nards_checker(user, to_point, !!to_off))
-				last_ui_message = match.last_action_message
+				set_last_ui_message_from_match()
 				queue_ui_update()
 				return TRUE
 			return FALSE
@@ -414,6 +433,14 @@
 
 /obj/structure/chessboard/proc/play_notify_sound()
 	playsound(src, CHESS_SOUND_NOTIFY, 50, FALSE)
+
+/obj/structure/chessboard/proc/set_last_ui_message(english_text, russian_text)
+	last_ui_message_en = english_text
+	last_ui_message = russian_text
+
+/obj/structure/chessboard/proc/set_last_ui_message_from_match()
+	last_ui_message_en = match?.last_action_message_en
+	last_ui_message = match?.last_action_message
 
 /obj/structure/chessboard/proc/rotate_board_clockwise(mob/user)
 	rotation_degrees = (rotation_degrees + 90) % 360
@@ -490,33 +517,33 @@
 		if(match.should_require_player_reset_confirmation(src, user))
 			if(match.request_reset_confirmation(user))
 				notify_seated_players("[chess_display_name(user)] просит сбросить доску. Нужна вторая подтверждающая сторона.", user.ckey)
-				last_ui_message = match.get_reset_request_text()
+				set_last_ui_message(match.get_reset_request_text("en"), match.get_reset_request_text("ru"))
 				return TRUE
 			return FALSE
 		if(match.reset_game(user))
 			clear_all_selections()
-			last_ui_message = "Доска сброшена к начальному состоянию, а места игроков освобождены."
+			set_last_ui_message("The board has been reset to its starting position, and both seats are open.", "Доска сброшена к начальному состоянию, а места игроков освобождены.")
 			playsound(src, CHESS_SOUND_RESET, 70, FALSE)
 			return TRUE
 		return FALSE
 
 	if(match.begin_observer_reset(user))
 		notify_seated_players("[chess_display_name(user)] запрашивает сброс доски. Через 20 секунд партия и места игроков будут сброшены, если запрос не отменят.", user.ckey)
-		last_ui_message = match.get_reset_request_text()
+		set_last_ui_message(match.get_reset_request_text("en"), match.get_reset_request_text("ru"))
 		return TRUE
 	return FALSE
 
 /obj/structure/chessboard/proc/handle_confirm_reset_request(mob/user)
 	if(match.confirm_reset_request(user))
 		clear_all_selections()
-		last_ui_message = "Доска сброшена к начальному состоянию, а места игроков освобождены."
+		set_last_ui_message("The board has been reset to its starting position, and both seats are open.", "Доска сброшена к начальному состоянию, а места игроков освобождены.")
 		playsound(src, CHESS_SOUND_RESET, 70, FALSE)
 		return TRUE
 	return FALSE
 
 /obj/structure/chessboard/proc/handle_cancel_reset_request(mob/user)
 	if(match.cancel_reset_request(user))
-		last_ui_message = "Запрос на сброс доски отменён."
+		set_last_ui_message("Board reset request canceled.", "Запрос на сброс доски отменён.")
 		return TRUE
 	return FALSE
 
@@ -534,7 +561,7 @@
 	if(match.overturn_board(user))
 		playsound(src, CHESS_SOUND_RAGE, 70, FALSE)
 		clear_all_selections()
-		last_ui_message = match.last_action_message
+		set_last_ui_message_from_match()
 		return TRUE
 	return FALSE
 
@@ -691,7 +718,7 @@
 		clear_all_selections()
 		if(match.game_mode == BOARD_MODE_CHECKERS && match.forced_capture_from && match.turn == match.side_for_user(user))
 			set_selection(user, match.forced_capture_from)
-		last_ui_message = match.last_action_message
+		set_last_ui_message_from_match()
 		return TRUE
 	return FALSE
 
@@ -738,6 +765,7 @@
 	var/turn = CHESS_WHITE
 	var/paused = TRUE
 	var/result_text = null
+	var/result_text_en = null
 
 	var/white_player_ckey = null
 	var/black_player_ckey = null
@@ -750,6 +778,7 @@
 	var/last_to = 0
 	var/fullmove_number = 1
 	var/last_action_message = null
+	var/last_action_message_en = null
 
 	// Chess state
 	var/white_castle_king = TRUE
@@ -803,32 +832,53 @@
 	reset_position()
 	return ..()
 
-/datum/chess_match/proc/get_mode_label(mode)
+/datum/chess_match/proc/set_result_text(english_text, russian_text)
+	result_text_en = english_text
+	result_text = russian_text
+
+/datum/chess_match/proc/get_result_text(language = "ru")
+	if(language == "ru")
+		return result_text
+	return result_text_en ? result_text_en : result_text
+
+/datum/chess_match/proc/set_last_action_message(english_text, russian_text)
+	last_action_message_en = english_text
+	last_action_message = russian_text
+
+/datum/chess_match/proc/get_mode_label(mode, language = "ru")
 	if(mode == BOARD_MODE_NONE)
-		return "Не выбран"
+		return chess_localized_text(language, "Not selected", "Не выбран")
 	if(mode == BOARD_MODE_CHESS)
-		return "Шахматы"
+		return chess_localized_text(language, "Chess", "Шахматы")
 	if(mode == BOARD_MODE_CHECKERS)
-		return "Шашки"
+		return chess_localized_text(language, "Checkers", "Шашки")
 	if(mode == BOARD_MODE_NARDS)
-		return "Нарды"
-	return "Неизвестно"
+		return chess_localized_text(language, "Backgammon", "Нарды")
+	return chess_localized_text(language, "Unknown", "Неизвестно")
 
-/datum/chess_match/proc/get_mode_label_with_rules(mode, use_checkers_flying_kings = checkers_flying_kings, use_nards_long_rules = nards_long_rules)
+/datum/chess_match/proc/get_mode_label_with_rules(mode, use_checkers_flying_kings = checkers_flying_kings, use_nards_long_rules = nards_long_rules, language = "ru")
 	if(mode == BOARD_MODE_CHECKERS)
-		return use_checkers_flying_kings ? "Шашки (дальняя дамка)" : "Шашки (обычная дамка)"
+		if(language == "ru")
+			return use_checkers_flying_kings ? "Шашки (дальняя дамка)" : "Шашки (обычная дамка)"
+		return use_checkers_flying_kings ? "Checkers (flying king)" : "Checkers (regular king)"
 	if(mode == BOARD_MODE_NARDS)
-		return use_nards_long_rules ? "Нарды (длинные)" : "Нарды (короткие)"
-	return get_mode_label(mode)
+		if(language == "ru")
+			return use_nards_long_rules ? "Нарды (длинные)" : "Нарды (короткие)"
+		return use_nards_long_rules ? "Backgammon (long)" : "Backgammon (short)"
+	return get_mode_label(mode, language)
 
-/datum/chess_match/proc/get_game_mode_label()
-	return get_mode_label_with_rules(game_mode)
+/datum/chess_match/proc/get_game_mode_label(language = "ru")
+	return get_mode_label_with_rules(game_mode, checkers_flying_kings, nards_long_rules, language)
 
-/datum/chess_match/proc/get_current_rules_text()
+/datum/chess_match/proc/get_current_rules_text(language = "ru")
 	if(game_mode == BOARD_MODE_CHECKERS)
-		return checkers_flying_kings ? "Дамка ходит по всей диагонали." : "Дамка ходит только на одну клетку."
+		if(language == "ru")
+			return checkers_flying_kings ? "Дамка ходит по всей диагонали." : "Дамка ходит только на одну клетку."
+		return checkers_flying_kings ? "Kings can move across the whole diagonal." : "Kings can move only one square."
 	if(game_mode == BOARD_MODE_NARDS)
-		return nards_long_rules ? "Используются правила длинных нард." : "Используются правила коротких нард."
+		if(language == "ru")
+			return nards_long_rules ? "Используются правила длинных нард." : "Используются правила коротких нард."
+		return nards_long_rules ? "Long backgammon rules are used." : "Short backgammon rules are used."
 	return null
 
 /datum/chess_match/proc/other_mode()
@@ -840,11 +890,11 @@
 		return BOARD_MODE_NARDS
 	return BOARD_MODE_CHESS
 
-/datum/chess_match/proc/get_mode_options()
+/datum/chess_match/proc/get_mode_options(language = "ru")
 	return list(
-		list("key" = BOARD_MODE_CHESS, "label" = get_mode_label(BOARD_MODE_CHESS)),
-		list("key" = BOARD_MODE_CHECKERS, "label" = get_mode_label(BOARD_MODE_CHECKERS)),
-		list("key" = BOARD_MODE_NARDS, "label" = get_mode_label(BOARD_MODE_NARDS))
+		list("key" = BOARD_MODE_CHESS, "label" = get_mode_label(BOARD_MODE_CHESS, language)),
+		list("key" = BOARD_MODE_CHECKERS, "label" = get_mode_label(BOARD_MODE_CHECKERS, language)),
+		list("key" = BOARD_MODE_NARDS, "label" = get_mode_label(BOARD_MODE_NARDS, language))
 	)
 
 /datum/chess_match/proc/clear_mode_switch_request()
@@ -861,14 +911,18 @@
 	pending_observer_reset_name = null
 	pending_observer_reset_at = 0
 
-/datum/chess_match/proc/get_reset_request_text()
+/datum/chess_match/proc/get_reset_request_text(language = "ru")
 	if(pending_reset_requester_ckey)
-		var/requester = pending_reset_requester_name ? pending_reset_requester_name : "Один из игроков"
-		return "[requester] просит сбросить доску. Второй игрок должен подтвердить сброс."
+		var/requester = pending_reset_requester_name ? pending_reset_requester_name : chess_localized_text(language, "One of the players", "Один из игроков")
+		if(language == "ru")
+			return "[requester] просит сбросить доску. Второй игрок должен подтвердить сброс."
+		return "[requester] requests a board reset. The other player must confirm it."
 	if(pending_observer_reset_ckey && pending_observer_reset_at > world.time)
-		var/requester2 = pending_observer_reset_name ? pending_observer_reset_name : "Наблюдатель"
+		var/requester2 = pending_observer_reset_name ? pending_observer_reset_name : chess_localized_text(language, "Observer", "Наблюдатель")
 		var/seconds_left = max(1, round((pending_observer_reset_at - world.time) / 10))
-		return "[requester2] запустил сброс доски. До сброса осталось [seconds_left] сек. Запрос можно отменить."
+		if(language == "ru")
+			return "[requester2] запустил сброс доски. До сброса осталось [seconds_left] сек. Запрос можно отменить."
+		return "[requester2] started a board reset. Reset happens in [seconds_left] sec. The request can be canceled."
 	return null
 
 /datum/chess_match/proc/can_confirm_reset_request(mob/user)
@@ -908,7 +962,7 @@
 	clear_reset_requests()
 	pending_reset_requester_ckey = user.ckey
 	pending_reset_requester_name = chess_display_name(user)
-	last_action_message = get_reset_request_text()
+	set_last_action_message(get_reset_request_text("en"), get_reset_request_text("ru"))
 	return TRUE
 
 /datum/chess_match/proc/confirm_reset_request(mob/user)
@@ -921,7 +975,7 @@
 	if(!can_cancel_reset_request(user))
 		return FALSE
 	clear_reset_requests()
-	last_action_message = "Запрос на сброс доски отменён."
+	set_last_action_message("Board reset request canceled.", "Запрос на сброс доски отменён.")
 	return TRUE
 
 /datum/chess_match/proc/begin_observer_reset(mob/user)
@@ -935,7 +989,7 @@
 	pending_observer_reset_ckey = user.ckey
 	pending_observer_reset_name = chess_display_name(user)
 	pending_observer_reset_at = world.time + CHESS_OBSERVER_RESET_TIME
-	last_action_message = get_reset_request_text()
+	set_last_action_message(get_reset_request_text("en"), get_reset_request_text("ru"))
 	spawn(CHESS_OBSERVER_RESET_TIME)
 		if(QDELETED(src) || !owner)
 			return
@@ -946,7 +1000,7 @@
 		var/requester_name = pending_observer_reset_name
 		reset_game(null)
 		owner.clear_all_selections()
-		owner.last_ui_message = "Наблюдатель [requester_name] сбрасывает доску. Партия и места игроков очищены."
+		owner.set_last_ui_message("Observer [requester_name] resets the board. The game and both seats are cleared.", "Наблюдатель [requester_name] сбрасывает доску. Партия и места игроков очищены.")
 		playsound(owner, CHESS_SOUND_RESET, 70, FALSE)
 		clear_reset_requests()
 		owner.queue_ui_update()
@@ -1042,14 +1096,14 @@
 
 	overturned = TRUE
 	paused = TRUE
-	result_text = "Доска опрокинута. Сбросьте её, чтобы вернуть фигуры на места."
+	set_result_text("The board has been flipped. Reset it to return the pieces.", "Доска опрокинута. Сбросьте её, чтобы вернуть фигуры на места.")
 	forced_capture_from = 0
 	pending_turn_notation = null
 	clear_mode_switch_request()
 	clear_reset_requests()
 	last_from = 0
 	last_to = 0
-	last_action_message = "[chess_display_name(user)] опрокидывает доску. Фигуры разлетаются по всей доске."
+	set_last_action_message("[chess_display_name_en(user)] flips the board. Pieces scatter across it.", "[chess_display_name(user)] опрокидывает доску. Фигуры разлетаются по всей доске.")
 	if(owner)
 		owner.visible_message(span_warning("[user] опрокидывает доску! Фигуры разлетаются по всей доске."), span_warning("Вы опрокидываете доску! Фигуры разлетаются по всей доске."))
 	return TRUE
@@ -1109,11 +1163,14 @@
 		return list()
 	return nards_scatter_dice.Copy()
 
-/datum/chess_match/proc/get_mode_switch_text()
+/datum/chess_match/proc/get_mode_switch_text(language = "ru")
 	if(!pending_mode)
 		return null
-	var/requester = pending_mode_requester_name ? pending_mode_requester_name : "Один из игроков"
-	return "[requester] предлагает переключить режим на «[get_mode_label_with_rules(pending_mode, pending_checkers_flying_kings, pending_nards_long_rules)]». Второй игрок должен подтвердить смену режима."
+	var/requester = pending_mode_requester_name ? pending_mode_requester_name : chess_localized_text(language, "One of the players", "Один из игроков")
+	var/target_label = get_mode_label_with_rules(pending_mode, pending_checkers_flying_kings, pending_nards_long_rules, language)
+	if(language == "ru")
+		return "[requester] предлагает переключить режим на «[target_label]». Второй игрок должен подтвердить смену режима."
+	return "[requester] proposes switching the mode to [target_label]. The other player must confirm the mode change."
 
 /datum/chess_match/proc/active_game_in_progress()
 	if(game_mode == BOARD_MODE_NONE)
@@ -1173,25 +1230,27 @@
 		pending_nards_long_rules = requested_nards_long_rules
 		pending_mode_requester_ckey = user.ckey
 		pending_mode_requester_name = chess_display_name(user)
-		last_action_message = get_mode_switch_text()
+		set_last_action_message(get_mode_switch_text("en"), get_mode_switch_text("ru"))
 		return TRUE
 
 	switch_game_mode(target_mode, requested_checkers_flying_kings, requested_nards_long_rules)
-	last_action_message = "Режим переключён на [get_game_mode_label()]."
+	var/mode_label_en = get_game_mode_label("en")
+	set_last_action_message("Mode switched to [mode_label_en].", "Режим переключён на [get_game_mode_label()].")
 	return TRUE
 
 /datum/chess_match/proc/confirm_mode_switch(mob/user)
 	if(!can_confirm_mode_switch(user))
 		return FALSE
 	switch_game_mode(pending_mode, pending_checkers_flying_kings, pending_nards_long_rules)
-	last_action_message = "Режим переключён на [get_game_mode_label()]."
+	var/confirmed_label_en = get_game_mode_label("en")
+	set_last_action_message("Mode switched to [confirmed_label_en].", "Режим переключён на [get_game_mode_label()].")
 	return TRUE
 
 /datum/chess_match/proc/cancel_mode_switch(mob/user)
 	if(!can_cancel_mode_switch(user))
 		return FALSE
 	clear_mode_switch_request()
-	last_action_message = "Запрос на смену режима отменён."
+	set_last_action_message("Mode change request canceled.", "Запрос на смену режима отменён.")
 	return TRUE
 
 /datum/chess_match/proc/switch_game_mode(new_mode, new_checkers_flying_kings = checkers_flying_kings, new_nards_long_rules = nards_long_rules)
@@ -1208,12 +1267,14 @@
 	turn = CHESS_WHITE
 	paused = TRUE
 	result_text = null
+	result_text_en = null
 	move_history = list()
 	repetition_counts = list()
 	last_from = 0
 	last_to = 0
 	fullmove_number = 1
 	last_action_message = null
+	last_action_message_en = null
 	overturned = FALSE
 	overturn_poses = list()
 	overturn_poses.len = 64
@@ -1456,43 +1517,44 @@
 		return FALSE
 	return TRUE
 
-/datum/chess_match/proc/get_status_text()
+/datum/chess_match/proc/get_status_text(language = "ru")
 	var/list/parts = list()
-	parts += "Режим: [get_game_mode_label()]."
-	var/current_rules_text = get_current_rules_text()
+	parts += chess_localized_text(language, "Mode: [get_game_mode_label(language)].", "Режим: [get_game_mode_label()].")
+	var/current_rules_text = get_current_rules_text(language)
 	if(current_rules_text)
 		parts += "[current_rules_text]"
 
 	if(game_mode == BOARD_MODE_NONE)
-		parts += "Выберите игру через кнопку смены режима."
+		parts += chess_localized_text(language, "Choose a game with the change mode button.", "Выберите игру через кнопку смены режима.")
 		return jointext(parts, " ")
 
 	if(overturned)
-		parts += "Доска опрокинута. Сбросьте её, чтобы вернуть фигуры на места."
+		parts += chess_localized_text(language, "The board has been flipped. Reset it to return the pieces.", "Доска опрокинута. Сбросьте её, чтобы вернуть фигуры на места.")
 		return jointext(parts, " ")
 
 	if(result_text)
-		parts += result_text
+		parts += get_result_text(language)
 		return jointext(parts, " ")
 
 	if(paused)
-		parts += "Партия на паузе."
+		parts += chess_localized_text(language, "The game is paused.", "Партия на паузе.")
 	else
-		parts += "Ходят [chess_side_name(turn)]."
+		parts += chess_localized_text(language, "[chess_side_name_en(turn)] to move.", "Ходят [chess_side_name(turn)].")
 
 	if(game_mode == BOARD_MODE_CHESS)
 		if(!result_text && !paused && is_in_check(turn))
-			parts += "Шах."
+			parts += chess_localized_text(language, "Check.", "Шах.")
 	else if(game_mode == BOARD_MODE_CHECKERS)
 		if(!result_text && !paused && forced_capture_from)
-			parts += "[chess_side_name(turn)] продолжают рубку с [chess_square_name(forced_capture_from)]."
+			parts += chess_localized_text(language, "[chess_side_name_en(turn)] must continue capturing from [chess_square_name(forced_capture_from)].", "[chess_side_name(turn)] продолжают рубку с [chess_square_name(forced_capture_from)].")
 	else if(game_mode == BOARD_MODE_NARDS)
 		if(nards_available_rolls && nards_available_rolls.len)
-			parts += "Доступные кости: [jointext(nards_available_rolls, ", ")]."
+			var/available_rolls_text = jointext(nards_available_rolls, ", ")
+			parts += chess_localized_text(language, "Available dice: [available_rolls_text].", "Доступные кости: [available_rolls_text].")
 		else if(nards_die_one && nards_die_two)
-			parts += "Последний бросок: [nards_die_one] и [nards_die_two]."
+			parts += chess_localized_text(language, "Last roll: [nards_die_one] and [nards_die_two].", "Последний бросок: [nards_die_one] и [nards_die_two].")
 		else
-			parts += "Бросьте кости, чтобы начать ход."
+			parts += chess_localized_text(language, "Roll dice to start the turn.", "Бросьте кости, чтобы начать ход.")
 
 	return jointext(parts, " ")
 
@@ -1557,7 +1619,7 @@
 		playsound(owner, CHESS_SOUND_CAPTURE, 60, FALSE)
 	else
 		playsound(owner, CHESS_SOUND_MOVE, 55, FALSE)
-	last_action_message = "Сделан ход [move_info["notation"]]."
+	set_last_action_message("Move [move_info["notation"]] played.", "Сделан ход [move_info["notation"]].")
 	return TRUE
 
 /datum/chess_match/proc/resolve_chess_end_state(list/move_info)
@@ -1567,9 +1629,9 @@
 
 	if(no_moves)
 		if(gives_check)
-			result_text = "Мат. Побеждают [chess_side_name(opposite(enemy))]."
+			set_result_text("Checkmate. [chess_side_name_en(opposite(enemy))] win.", "Мат. Побеждают [chess_side_name(opposite(enemy))].")
 		else
-			result_text = "Ничья патом."
+			set_result_text("Draw by stalemate.", "Ничья патом.")
 			paused = TRUE
 
 
@@ -1577,7 +1639,7 @@
 		var/key = position_key()
 		var/current_count = chess_assoc_get(repetition_counts, key, 0)
 		if(current_count >= 3)
-			result_text = "Ничья по троекратному повторению."
+			set_result_text("Draw by threefold repetition.", "Ничья по троекратному повторению.")
 			paused = TRUE
 
 	var/notation = move_info["notation"]
@@ -2214,7 +2276,7 @@
 
 	if(continue_capture)
 		forced_capture_from = to_idx
-		last_action_message = "Рубка продолжается той же шашкой с [chess_square_name(to_idx)]."
+		set_last_action_message("Capture continues with the same checker from [chess_square_name(to_idx)].", "Рубка продолжается той же шашкой с [chess_square_name(to_idx)].")
 		return TRUE
 
 	forced_capture_from = 0
@@ -2228,9 +2290,9 @@
 
 	resolve_checkers_end_state()
 	if(result_text)
-		last_action_message = result_text
+		set_last_action_message(get_result_text("en"), get_result_text("ru"))
 	else
-		last_action_message = "Ход завершён."
+		set_last_action_message("Move completed.", "Ход завершён.")
 	return TRUE
 
 /datum/chess_match/proc/apply_checkers_move(from_idx, to_idx)
@@ -2277,9 +2339,9 @@
 /datum/chess_match/proc/resolve_checkers_end_state()
 	var/enemy = turn
 	if(count_pieces(enemy) <= 0)
-		result_text = "Партия окончена. Побеждают [chess_side_name(opposite(enemy))]."
+		set_result_text("Game over. [chess_side_name_en(opposite(enemy))] win.", "Партия окончена. Побеждают [chess_side_name(opposite(enemy))].")
 	else if(!has_any_checkers_legal_move(enemy))
-		result_text = "У [chess_side_name(enemy)] не осталось ходов. Побеждают [chess_side_name(opposite(enemy))]."
+		set_result_text("[chess_side_name_en(enemy)] have no legal moves. [chess_side_name_en(opposite(enemy))] win.", "У [chess_side_name(enemy)] не осталось ходов. Побеждают [chess_side_name(opposite(enemy))].")
 
 	if(result_text)
 		paused = TRUE
@@ -2315,8 +2377,9 @@
 		nards_available_rolls += nards_die_two
 	nards_selected_point = 0
 	nards_selected_from_bar = FALSE
-	last_action_message = "[chess_display_name(user)] бросает кости: [nards_die_one] и [nards_die_two]."
+	set_last_action_message("[chess_display_name_en(user)] rolls [nards_die_one] and [nards_die_two].", "[chess_display_name(user)] бросает кости: [nards_die_one] и [nards_die_two].")
 	if(!nards_has_any_legal_move(turn))
+		last_action_message_en += " No moves are available; the turn passes to the opponent."
 		last_action_message += " Ходов нет, ход переходит сопернику."
 		nards_end_turn()
 	return TRUE
@@ -2553,7 +2616,7 @@
 		return FALSE
 	nards_selected_point = point
 	nards_selected_from_bar = FALSE
-	last_action_message = "Выбрана точка [point]."
+	set_last_action_message("Point [point] selected.", "Выбрана точка [point].")
 	return TRUE
 
 /datum/chess_match/proc/select_nards_bar(mob/user)
@@ -2568,7 +2631,7 @@
 		return FALSE
 	nards_selected_from_bar = TRUE
 	nards_selected_point = 0
-	last_action_message = "Выбрана таверна."
+	set_last_action_message("Bar selected.", "Выбрана таверна.")
 	return TRUE
 
 /datum/chess_match/proc/move_nards_checker(mob/user, to_point, to_off = FALSE)
@@ -2613,17 +2676,19 @@
 	else
 		nards_set_off_count(color, (color == CHESS_WHITE ? nards_off_white : nards_off_black) + 1)
 	var/source_name = from_bar ? "таверны" : "пункта [from_point]"
+	var/source_name_en = from_bar ? "the bar" : "point [from_point]"
 	var/dest_name = to_off ? "дом" : "пункт [to_point]"
-	last_action_message = "[chess_display_name(user)] перемещает шашку с [source_name] на [dest_name]."
+	var/dest_name_en = to_off ? "home" : "point [to_point]"
+	set_last_action_message("[chess_display_name_en(user)] moves a checker from [source_name_en] to [dest_name_en].", "[chess_display_name(user)] перемещает шашку с [source_name] на [dest_name].")
 	nards_consume_die(die)
 	if(nards_off_white >= 15)
-		result_text = "Партия окончена. Побеждают Белые."
+		set_result_text("Game over. White win.", "Партия окончена. Побеждают Белые.")
 		paused = TRUE
 		nards_clear_selection()
 		owner.play_win_loss_sounds(CHESS_WHITE)
 		return TRUE
 	if(nards_off_black >= 15)
-		result_text = "Партия окончена. Побеждают Чёрные."
+		set_result_text("Game over. Black win.", "Партия окончена. Побеждают Чёрные.")
 		paused = TRUE
 		nards_clear_selection()
 		owner.play_win_loss_sounds(CHESS_BLACK)
