@@ -9,7 +9,7 @@
 
 | Website                   | Link                                           |
 |---------------------------|------------------------------------------------|
-| Discord          | [https://discord.gg/nkzrKT3tPS](https://discord.gg/nkzrKT3tPS) |
+| Discord          | [https://discord.gg/xWFc2MwJdG](https://discord.gg/xWFc2MwJdG) |
 
 </div>
 
