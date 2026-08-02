@@ -1,6 +1,7 @@
 
 <p align="center">
- <img width="450px" src="https://koboldadventure.com/charsheet/sheets/onyx-sfw-full.png" align="center" alt="Bad Drakian Stats" />
+ <img width="450px" src="https://drakian.net/drakian.png" align="center" alt="Bad Drakian" />
+ <img width="450px" src="https://drakian.net/logo.png" align="center" alt="logo" />
  <h1 align="center">BAD DRAKIAN</h1>
  <h2 align="center">Anthros Encouraged Medieval Roleplay</h2>
 </p>
