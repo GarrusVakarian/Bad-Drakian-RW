@@ -131,7 +131,7 @@
 
 	log_game("The round has ended.")
 
-	to_chat(world, "<BR><BR><BR><span class='reallybig'>So ends this tale on Ratwood Keep.</span>")
+	to_chat(world, "<BR><BR><BR><span class='reallybig'>So ends this tale on Bad Drakian.</span>")
 	get_end_reason()
 
 	var roundend_music = pick('sound/music/roundend.ogg','sound/music/roundend2.ogg','sound/music/roundend3.ogg')
