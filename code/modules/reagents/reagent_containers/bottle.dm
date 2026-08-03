@@ -158,3 +158,8 @@ GLOBAL_LIST_INIT(wisdoms, world.file2list("strings/rt/wisdoms.txt"))
 	if(icon_state == "clear_bottle1")
 		icon_state = "clear_bottle[rand(1,4)]"
 	update_icon()
+
+/obj/item/reagent_containers/glass/bottle/wood
+	name = "wooden bottle"
+	desc = "A bottle carved out of wood."
+	icon_state = "bottle_wood"
