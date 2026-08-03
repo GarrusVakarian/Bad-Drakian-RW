@@ -20,6 +20,14 @@
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_NOVICE
 
+/datum/crafting_recipe/roguetown/woodcarving/spire
+	display_category = ITEM_CAT_DECORATION
+	name = "wooden spire"
+	result = /obj/item/carvedwood/cameo
+	reqs = list(/obj/item/grown/log/tree/stick = 1)
+	tools = list(/obj/item/rogueweapon/huntingknife)
+	craftdiff = SKILL_LEVEL_NOVICE
+
 /datum/crafting_recipe/roguetown/woodcarving/displaystand
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden display stand"
