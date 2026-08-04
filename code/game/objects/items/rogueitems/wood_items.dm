@@ -9,6 +9,7 @@
 	has_item_quality = TRUE
 	is_carved = TRUE
 	was_crafted = TRUE
+	obj_flags = UNIQUE_RENAME
 
 /obj/item/carvedwood/marble
 	name = "wooden marble"
