@@ -280,6 +280,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Straw Hat"
 	path = /obj/item/clothing/head/roguetown/strawhat
 
+/datum/loadout_item/baskethat
+	name = "Basket Hat"
+	path = /obj/item/clothing/head/roguetown/baskethat
+
 /datum/loadout_item/witchhat
 	name = "Witch Hat"
 	path = /obj/item/clothing/head/roguetown/witchhat
