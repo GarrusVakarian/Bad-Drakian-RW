@@ -204,6 +204,14 @@
 	reqs = list(/obj/item/natural/fibers = 3)
 	craftdiff = 1
 
+// Basket Hat recipe
+/datum/crafting_recipe/roguetown/sewing/baskethat
+	name = "basket hat"
+	result = list(/obj/item/clothing/head/roguetown/baskethat)
+	reqs = list(/obj/item/natural/fibers = 3)
+	sellprice = 5
+	craftdiff = 1
+
 /datum/crafting_recipe/roguetown/sewing/sack
 	name = "sack hood"
 	result = list(/obj/item/clothing/head/roguetown/menacing)
