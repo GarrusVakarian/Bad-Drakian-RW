@@ -7,9 +7,9 @@
 		status_data["playerCount"] = GLOB.clients.len
 		status_data["lobby"] = SSticker.current_state <= GAME_STATE_PREGAME
 		if (SSticker.HasRoundStarted())
-			status_data["roundTime"] = time2text(STATION_TIME_PASSED(), "hh:mm", 0)
+			status_data["roundTime"] = time2text(STATION_TIME_PASSED(), "hh:mm:ss", 0)
 		else
-			status_data["roundTime"] = "00:00"
+			status_data["roundTime"] = "00:00:00"
 
 		var/json_output = json_encode(status_data)
 
