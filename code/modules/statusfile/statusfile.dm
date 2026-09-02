@@ -17,4 +17,4 @@
 			fdel(STATUS_FILE_PATH)
 
 		text2file(json_output, STATUS_FILE_PATH)
-		sleep(1200)
+		sleep(9000)
