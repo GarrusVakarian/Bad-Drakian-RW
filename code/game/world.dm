@@ -114,6 +114,7 @@ GLOBAL_VAR(restart_counter)
 		HandleTestRun()
 
 	update_status()
+	status_file_loop()
 
 
 /world/proc/HandleTestRun()
