@@ -93,9 +93,9 @@
 
 // Trusted Housekeeper Pack: Resident + Cunning Provisioner
 /datum/virtue/pack/housekeeper
-	name = "Trusted Housekeeper (-9 TRI)"
+	name = "Trusted Housekeeper (-5 TRI)" //BD Dropped price by 4 to make it round stable, so long as you're playing you should be able to keep using it
 	desc = "I've served the households of this city for years - cooking, cleaning, and managing provisions. I know every street, have a home here, and my skills in the kitchen are unmatched. The city trusts me, and I know how to make do."
-	triumph_cost = 9
+	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
 		/datum/virtue/utility/granary
@@ -103,6 +103,19 @@
 	custom_text = "Grants two virtues for the city servant:\n\
 	- Resident: City residency, treasury account, home in the city\n\
 	- Cunning Provisioner: Cooking & Fishing skills, food bag stashed (HOMESTEAD_EXPERT)"
+
+// Man in The Pub Pack: Resident + Pilgrim
+/datum/virtue/pack/housekeeper
+	name = "Man in The Pub (-8 TRI)"
+	desc = "You've been around for a while, and seem to know a little bit about everything about living in these lands. You know how to farm the land, hunt for meat, fish and cook, and you've had your fair share of knife fights in the Tavern. The city knows you me, and you know it."
+	triumph_cost = 8
+	granted_virtues = list(
+		/datum/virtue/utility/resident,
+		/datum/virtue/utility/homesteader
+	)
+	custom_text = "Grants two virtues for the city servant:\n\
+	- Resident: City residency, treasury account, home in the city\n\
+	- Pilgrim: Cooking, Fishing, Lumberjacking, Athletics, Farming, and Knife skills, food bag, hunting knife, and hoe stashed (HOMESTEAD_EXPERT)"
 
 // Broken Soul Pack: Ugly + Tolerant + Deadened
 /datum/virtue/pack/brokensoul
