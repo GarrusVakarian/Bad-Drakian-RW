@@ -105,7 +105,7 @@
 	- Cunning Provisioner: Cooking & Fishing skills, food bag stashed (HOMESTEAD_EXPERT)"
 
 // Man in The Pub Pack: Resident + Pilgrim
-/datum/virtue/pack/Pubman
+/datum/virtue/pack/pubman
 	name = "Man in The Pub (-8 TRI)"
 	desc = "You've been around for a while, and seem to know a little bit about everything about living in these lands. You know how to farm the land, hunt for meat, fish and cook, and you've had your fair share of knife fights in the Tavern. The city knows you me, and you know it."
 	triumph_cost = 8
