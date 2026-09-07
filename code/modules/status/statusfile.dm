@@ -4,8 +4,10 @@
 /proc/status_file_loop()
 	while(world)
 		var/list/status_data = list()
+		status_data["round"] = GLOB.rogue_round_id
 		status_data["playerCount"] = GLOB.clients.len
 		status_data["lobby"] = SSticker.current_state <= GAME_STATE_PREGAME
+
 		if (SSticker.HasRoundStarted())
 			status_data["roundTime"] = time2text(STATION_TIME_PASSED(), "hh:mm:ss", 0)
 		else
