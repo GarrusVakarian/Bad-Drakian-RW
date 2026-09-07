@@ -114,6 +114,8 @@ GLOBAL_VAR(restart_counter)
 		HandleTestRun()
 
 	update_status()
+	status_file_loop()
+	round_start_status_file()
 
 
 /world/proc/HandleTestRun()
@@ -296,6 +298,7 @@ GLOBAL_VAR(restart_counter)
 
 	to_chat(world, "Please be patient as the server restarts. You will be automatically reconnected in about 60 seconds.")
 	Master.Shutdown()	//run SS shutdowns? rtchange
+	round_end_status_file()
 
 	TgsReboot()
 
