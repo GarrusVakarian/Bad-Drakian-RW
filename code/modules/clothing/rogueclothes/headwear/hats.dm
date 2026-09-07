@@ -631,6 +631,7 @@
 	body_parts_covered = HEAD|HAIR|EARS|NECK|MOUTH|NOSE|EYES
 	icon_state = "baskethat"
 	nudist_approved = TRUE
+	flags_inv = HIDEEARS|HIDEFACE|HIDESNOUT // Hides the face.
 	salvage_result = /obj/item/natural/fibers
 	salvage_amount = 2 // Minor materials loss
 	heat_protection = HEAD
