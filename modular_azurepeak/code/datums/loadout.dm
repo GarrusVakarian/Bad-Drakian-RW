@@ -565,6 +565,15 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Fur Anklets"
 	path = /obj/item/clothing/shoes/roguetown/boots/furlinedanklets
 
+/datum/loadout_item/footwraps
+	name = "Footwraps"
+	path = /obj/item/clothing/shoes/roguetown/boots/footwraps
+
+/datum/loadout_item/hleatherfootwraps
+	name = "Hardenned Leather Footwraps"
+	path = /obj/item/clothing/shoes/roguetown/boots/footwraps/hleather
+	triumph_cost = 2
+
 /datum/loadout_item/exoticanklets
 	name = "Exotic Anklets"
 	path = /obj/item/clothing/shoes/roguetown/anklets
