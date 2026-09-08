@@ -246,3 +246,7 @@ tools/MapAtmosFixer/MapAtmosFixer/bin/*
 # Status files.
 /status/*
 !/status/README.txt
+
+# DM versions file.
+/tools/build/dm_versions.json
+
