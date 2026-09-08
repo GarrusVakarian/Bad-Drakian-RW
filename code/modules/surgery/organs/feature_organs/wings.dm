@@ -112,7 +112,6 @@
 			// This check does not work when the mob is first created, because it gets wings before it is marked as flightless via special traits.
 			// HOWEVER, this prevents flightless harpies from getting wings removed and then attached to regain flight.
 			if(!harpydna.flightless)
-				world.log << "flight added"
 				M.mind.AddSpell(new /obj/effect/proc_holder/spell/self/harpy_flight)
 			src.nullspace_items += new /obj/item/rogueweapon/huntingknife/idagger/harpy_talons
 			M.skin_armor = new /obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin

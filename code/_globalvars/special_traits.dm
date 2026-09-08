@@ -133,8 +133,10 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		if(bonus == HARPY_FLIGHTLESS_KEY)
 			var/datum/species/harpy/harpydna = character.dna.species
 			harpydna.flightless = TRUE
+			// These stats are applied on top of the Harpy racials, for a total of STR 1, CON 0, PER 0, SPD 1, INT -1, WIL -2.
 			character.change_stat(STATKEY_STR, 2)
 			character.change_stat(STATKEY_CON, 2)
+			character.change_stat(STATKEY_PER, -1)
 			character.change_stat(STATKEY_SPD, -1)
 			character.change_stat(STATKEY_INT, -2)
 			character.change_stat(STATKEY_WIL, -2)
