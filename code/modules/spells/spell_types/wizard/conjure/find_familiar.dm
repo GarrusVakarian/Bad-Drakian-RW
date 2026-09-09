@@ -99,8 +99,8 @@
 
 	// Ask how the user wants to summon
 	var/path_choice = input(user, "How do you want to summon your familiar?") as null|anything in list(
-		"Summon from registered familiars"*,
-		"Summon a non-sentient familiar"*
+		"Summon from registered familiars",
+		"Summon a non-sentient familiar"
 	)
 
 	if (path_choice == "Summon from registered familiars")
