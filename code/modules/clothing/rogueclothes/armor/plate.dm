@@ -756,3 +756,13 @@
 	desc = "Heavy, well worn armour featuring simple greys. Justice is impartial. Are you?"
 	icon_state = "sheriffarmor"
 	item_state = "sheriffarmor"
+
+/obj/item/clothing/suit/roguetown/armor/plate/psydoniciron
+	name = "psydonic iron plate"
+	desc = "A layered combination of plate armor and cloth, accented with gold trim. Made stury so you may ENDURE as HE does."
+	body_parts_covered = CHEST | VITALS | ARMS
+	icon_state = "taskarmor"
+	item_state = "taskarmor"
+	boobed = FALSE
+	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
+	smeltresult = /obj/item/ingot/iron

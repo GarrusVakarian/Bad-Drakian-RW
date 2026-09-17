@@ -1767,6 +1767,12 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	triumph_cost = 2
 
 // CLOTHING - ARMOR (Alphabetically Ordered)
+
+/datum/loadout_item/psydonic_iron_chestplate
+	name = "Psydonic Iron Plate"
+	path = /obj/item/clothing/suit/roguetown/armor/plate/psydoniciron
+	triumph_cost = 3
+
 /datum/loadout_item/tri_desert_coat
 	name = "Desert Coat"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/zyb
@@ -2021,6 +2027,12 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 
 
 // PANTS (Alphabetically Ordered)
+
+/datum/loadout_item/psydonic_iron_pants
+	name = "Psydonic Iron Plate Greaves"
+	path = /obj/item/clothing/under/roguetown/platelegs/psydoniciron
+	triumph_cost = 3
+
 /datum/loadout_item/tri_atgervi_pants
 	name = "Atgervi Fur Pants"
 	path = /obj/item/clothing/under/roguetown/trou/leather/atgervi
@@ -2068,6 +2080,10 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 
 
 // CLOAKS & CAPES (Alphabetically Ordered)
+/datum/loadout_item/psydonic_iron_cape
+	name = "Psydonic Iron Inquisitor's Cape"
+	path = /obj/item/clothing/cloak/psydonicironcape
+
 /datum/loadout_item/tri_eastern_cloak_1
 	name = "Eastern Cloak"
 	path = /obj/item/clothing/cloak/eastcloak1
@@ -2534,6 +2550,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Vocal Talisman"
 	path = /obj/item/rogue/instrument/vocals
 	triumph_cost = 1
+
+
 
 
 // Unique stuff that doesn't quite fit anywhere else.

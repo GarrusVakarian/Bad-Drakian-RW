@@ -111,3 +111,11 @@
 	body_parts_covered = GROIN
 	armor_class = ARMOR_CLASS_LIGHT
 	dropshrink = null
+
+/obj/item/clothing/under/roguetown/platelegs/psydoniciron
+	name = "psydonic iron plate greaves"
+	desc = "A set of iron greaves decroated with waxen psydonic seals. Through HIS regalia we must ENDURE."
+	icon_state = "taskpants"
+	item_state = "taskpants"
+	max_integrity = ARMOR_INT_LEG_IRON_PLATE
+	smeltresult = /obj/item/ingot/iron
