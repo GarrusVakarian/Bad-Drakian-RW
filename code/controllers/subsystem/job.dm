@@ -20,6 +20,7 @@ SUBSYSTEM_DEF(job)
 	if(!occupations.len)
 		SetupOccupations()
 	set_overflow_role(CONFIG_GET(string/overflow_job))
+	build_townie_contract_gate_exempt_cache() // AP Quest 2: cache townie-gate-exempt role names
 	return ..()
 
 /datum/controller/subsystem/job/proc/set_overflow_role(new_overflow_role)
@@ -756,7 +757,7 @@ SUBSYSTEM_DEF(job)
 						S = sloc
 						sloc.used = TRUE
 						break
-				if(!S &&length(GLOB.jobspawn_overrides[spawn_rank]))
+				if(length(GLOB.jobspawn_overrides[spawn_rank]))
 					S = pick(GLOB.jobspawn_overrides[spawn_rank])
 				if(S)
 					S.JoinPlayerHere(H, FALSE)
@@ -994,7 +995,7 @@ SUBSYSTEM_DEF(job)
 	if(!length(job.vice_restrictions))
 		return FALSE
 
-	// Check new vice system (vice1-vice5)
+	// Check new vice system (vice1-vice6)
 	if(prefs.vice1?.type in job.vice_restrictions)
 		return TRUE
 	if(prefs.vice2?.type in job.vice_restrictions)
@@ -1004,6 +1005,8 @@ SUBSYSTEM_DEF(job)
 	if(prefs.vice4?.type in job.vice_restrictions)
 		return TRUE
 	if(prefs.vice5?.type in job.vice_restrictions)
+		return TRUE
+	if(prefs.vice6?.type in job.vice_restrictions)
 		return TRUE
 
 	// Legacy charflaw check

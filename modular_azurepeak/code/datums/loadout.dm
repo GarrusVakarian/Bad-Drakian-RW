@@ -948,8 +948,20 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/chastity/cursed
 	triumph_cost = 4
 
+/datum/loadout_item/wooddildo
+	name = "Wooden Dildo"
+	path = /obj/item/dildo/wood
+
+/datum/loadout_item/irondildo
+	name = "Iron Dildo"
+	path = /obj/item/dildo/iron
+	
+/datum/loadout_item/copperdildo
+	name = "Copper Dildo"
+	path = /obj/item/dildo/copper
+
 /datum/loadout_item/cloth_blindfold
-	name = "Cloth Blindfold"
+	name = "Blindfold"
 	path = /obj/item/clothing/mask/rogue/blindfold
 
 /datum/loadout_item/fake_blindfold
@@ -981,10 +993,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1247,6 +1257,10 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/kazengun_cloak
 	name = "Jinbaori"
 	path = /obj/item/clothing/cloak/kazengun
+
+/datum/loadout_item/paper_duster
+	name = "Paper Duster"
+	path = /obj/item/clothing/suit/roguetown/shirt/paper_duster
 
 // SHOES
 /datum/loadout_item/sandals
@@ -1562,10 +1576,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1588,10 +1600,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1614,10 +1624,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1640,10 +1648,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1666,10 +1672,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1696,10 +1700,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1723,10 +1725,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -1790,7 +1790,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 
 /datum/loadout_item/tri_fencing_shirt
 	name = "Fencing Shirt (Padded)"
-	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/freifechter
+	path = /obj/item/clothing/suit/roguetown/shirt/freifechter
 	triumph_cost = 3
 
 /datum/loadout_item/tri_gambeson
@@ -2152,10 +2152,8 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/datum/preferences/P = C.prefs
 	if(!P)
 		return FALSE
-	// Check if user selected Nobility virtue
-	if(P.virtue && istype(P.virtue, /datum/virtue/utility/noble))
-		return TRUE
-	if(P.virtuetwo && istype(P.virtuetwo, /datum/virtue/utility/noble))
+	// Check if user has the Nobility quirk
+	if(P.has_quirk(/datum/quirk/noble))
 		return TRUE
 	// Check if user has high priority for any noble, courtier, or yeoman job
 	for(var/job_title in GLOB.noble_positions)
@@ -2463,7 +2461,6 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/rogueweapon/scabbard/sheath/royal
 	triumph_cost = 1
 
-
 /datum/loadout_item/greatweaponstrap
 	name = "Great Weapon Strap"
 	path = /obj/item/rogueweapon/scabbard/gwstrap
@@ -2551,9 +2548,12 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/rogue/instrument/vocals
 	triumph_cost = 1
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> b7a55d828eb88133ac7e5ce402e58189c352ff47
 // Unique stuff that doesn't quite fit anywhere else.
 
 /datum/loadout_item/kazengunite_smithing_manual
@@ -2561,3 +2561,33 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	desc = "A Kazengunite smithing manual. Unlocks kazengunite armor and weapon recipes at the anvil when read — requires knowledge of Kazengunese. "
 	path = /obj/item/book/granter/trait/kazengunite_smith
 	triumph_cost = 3
+
+//CAPARISONS
+
+/datum/loadout_item/caparison
+	name = "Caparison"
+	path = /obj/item/caparison
+
+/datum/loadout_item/caparison/psy
+	name = "Psydonite Caparison"
+	path = /obj/item/caparison/psy
+
+/datum/loadout_item/caparison/astrata
+	name = "Astratan Caparison"
+	path = /obj/item/caparison/astrata
+
+/datum/loadout_item/caparison/eora
+	name = "Eoran Caparison"
+	path = /obj/item/caparison/eora
+
+/datum/loadout_item/caparison/azure
+	name = "Ducal Caparison"
+	path = /obj/item/caparison/azure
+
+/datum/loadout_item/caparison/fogbeast
+	name = "Fogbeast Caparison"
+	path = /obj/item/caparison/fogbeast
+
+/datum/loadout_item/caparison/fogbeast/azure
+	name = "Ducal Caparison (Fogbeast)"
+	path = /obj/item/caparison/fogbeast/azure
