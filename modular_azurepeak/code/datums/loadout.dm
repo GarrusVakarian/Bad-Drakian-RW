@@ -2548,12 +2548,6 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/rogue/instrument/vocals
 	triumph_cost = 1
 
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> b7a55d828eb88133ac7e5ce402e58189c352ff47
 // Unique stuff that doesn't quite fit anywhere else.
 
 /datum/loadout_item/kazengunite_smithing_manual
