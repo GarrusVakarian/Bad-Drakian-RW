@@ -289,4 +289,4 @@
 	)
 	custom_text = "Grants two virtues for the Coal Runner:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Miner's Apprentice: Skilled in spears and maces"
+	- Miner's Apprentice: Skilled in mining and start with mining gear"
