@@ -69,12 +69,8 @@
 	switch (classchoice)
 		if("Old Magick")
 			// the original witch: arcyne t2 (buffed from t1) with 6 spellpoints
-			if(H.age == AGE_OLD)
-				ADD_TRAIT(H, TRAIT_ARCYNE_T3, TRAIT_GENERIC)
-				H.adjust_skillrank(/datum/skill/magic/arcane, 2, TRUE)
-			else
-				ADD_TRAIT(H, TRAIT_ARCYNE_T2, TRAIT_GENERIC)
-				H.adjust_skillrank(/datum/skill/magic/arcane, 1, TRUE)
+			ADD_TRAIT(H, TRAIT_ARCYNE_T2, TRAIT_GENERIC)
+			H.adjust_skillrank(/datum/skill/magic/arcane, 1, TRUE)
 			H.mind?.adjust_spellpoints(9) // twelve if you pick arcyne potential
 			if(H.age == AGE_OLD)
 				H.mind?.adjust_spellpoints(6) // old spellcasters get more
@@ -178,14 +174,11 @@
 		switch (classchoice)
 			if("Old Magick")
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/guidance)
-				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt)
-				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/fortitude)
 				if(H.age == AGE_OLD)
-					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball)
+					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt)
 			if("Mystagogue")
 				if(H.age == AGE_OLD)
 					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/guidance)
-					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt)
 
 	if(H.gender == FEMALE)
 		armor = /obj/item/clothing/suit/roguetown/armor/corset
