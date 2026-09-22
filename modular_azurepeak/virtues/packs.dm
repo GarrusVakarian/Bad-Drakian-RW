@@ -12,10 +12,10 @@
 		if(V)
 			V.apply_generic_effects(recipient)
 
-// Bronze Golem Pack: Both Bronze Arms
+// Bronze Biceps Pack: Both Bronze Arms
 // For those who have replaced both arms with mechanical prosthetics
-/datum/virtue/pack/bronzegolem
-	name = "Bronze Golem (-3 TRI)"
+/datum/virtue/pack/bronzebiceps
+	name = "Bronze Biceps (-3 TRI)"
 	desc = "Through wealth, misfortune, or perhaps experimentation, both of my arms have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
 	triumph_cost = 3
 	granted_virtues = list(
@@ -25,6 +25,100 @@
 	custom_text = "Grants both Bronze Arm virtues:\n\
 	- Bronze Arm (R): Right arm replaced with bronze prosthetic\n\
 	- Bronze Arm (L): Left arm replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Heels Pack: Both Bronze Legs
+// For those who have replaced both legs with mechanical prosthetics
+/datum/virtue/pack/bronzeheel
+	name = "Bronze Heels (-3 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, both of my legs have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 3
+	granted_virtues = list(
+		/datum/virtue/utility/bronzeleg_r,
+		/datum/virtue/utility/bronzeleg_l
+	)
+	custom_text = "Grants both Bronze Leg virtues:\n\
+	- Bronze Leg (R): Right leg replaced with bronze prosthetic\n\
+	- Bronze Leg (L): Left leg replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Southpaw Pack: Both Bronze Right Limbs
+// For those who have replaced both right limbs with mechanical prosthetics
+/datum/virtue/pack/bronzeright
+	name = "Bronze Southpaw (-3 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, both of my right arm and leg have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 3
+	granted_virtues = list(
+		/datum/virtue/utility/bronzearm_r,
+		/datum/virtue/utility/bronzeleg_r
+	)
+	custom_text = "Grants both right Bronze limb virtues:\n\
+	- Bronze Arm (R): Right arm replaced with bronze prosthetic\n\
+	- Bronze Leg (R): Right leg replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Orthodox Pack: Both Bronze Left Limbs
+// For those who have replaced both left limbs with mechanical prosthetics
+/datum/virtue/pack/bronzeleft
+	name = "Bronze Orthodox (-3 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, both of my arms have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 3
+	granted_virtues = list(
+		/datum/virtue/utility/bronzearm_l,
+		/datum/virtue/utility/bronzeleg_l
+	)
+	custom_text = "Grants both Left Bronze limb virtues:\n\
+	- Bronze Arm (L): Left arm replaced with bronze prosthetic\n\
+	- Bronze Leg (L): Left leg replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Crosspaw Right Pack: One Bronze Right arm, One Bronze Left Leg
+// For those who have replaced right arm and left leg with prosthetics
+/datum/virtue/pack/bronzemixedr
+	name = "Bronze Crosspaw Right (-3 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, my right arm and left leg have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 3
+	granted_virtues = list(
+		/datum/virtue/utility/bronzearm_r,
+		/datum/virtue/utility/bronzeleg_l
+	)
+	custom_text = "Grants Bronze Arm Right and Brozne Leg Left virtues:\n\
+	- Bronze Arm (R): Right arm replaced with bronze prosthetic\n\
+	- Bronze Leg (L): Left leg replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Crosspaw Left Pack: One Bronze Left arm, One Bronze Right Leg
+// For those who have replaced left arm and right leg with prosthetics
+/datum/virtue/pack/bronzemixedl
+	name = "Bronze Crosspaw Left (-3 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, my left arm and right leg been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 3
+	granted_virtues = list(
+		/datum/virtue/utility/bronzearm_l,
+		/datum/virtue/utility/bronzeleg_r
+	)
+	custom_text = "Grants Bronze Arm Left and Bronze Leg Right virtues:\n\
+	- Bronze Arm (L): Left arm replaced with bronze prosthetic\n\
+	- Bronze Leg (R): Right leg replaced with bronze prosthetic\n\
+	- +1 Engineering skill from studying the mechanisms"
+
+// Bronze Golem Pack: Both Bronze Arms and Legs
+// For those who have replaced both arms and legs with mechanical prosthetics
+/datum/virtue/pack/bronzegolem
+	name = "Bronze Golem (-12 TRI)"
+	desc = "Through wealth, misfortune, or perhaps experimentation, both of my arms and legs have been replaced with bronze prosthetics. I am part man, part machine - a walking testament to artifice."
+	triumph_cost = 12
+	granted_virtues = list(
+		/datum/virtue/utility/bronzearm_r,
+		/datum/virtue/utility/bronzearm_l,
+		/datum/virtue/utility/bronzeleg_r,
+		/datum/virtue/utility/bronzeleg_l
+	)
+	custom_text = "Grants both Bronze Arm and Leg virtues:\n\
+	- Bronze Arm (R): Right arm replaced with bronze prosthetic\n\
+	- Bronze Arm (L): Left arm replaced with bronze prosthetic\n\
+	- Bronze Leg (R): Right leg replaced with bronze prosthetic\n\
+	- Bronze Leg (L): Left leg replaced with bronze prosthetic\n\
 	- +1 Engineering skill from studying the mechanisms"
 
 // Enchanting Performer Pack: Socialite + Performer + Second Voice
@@ -289,4 +383,17 @@
 	)
 	custom_text = "Grants two virtues for the Coal Runner:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Miner's Apprentice: Skilled in spears and maces"
+	- Miner's Apprentice: Skilled in mining and start with mining gear"
+
+// Coal Runner Pack: Resident + Miner's Apprentice
+/datum/virtue/pack/coal_runner
+	name = "Coal Runner (-5 TRI)"
+	desc = "The forges don't feed themselves friend, oh no. That would be me and the lads. We head out with our picks on our shoulders and a song in our hearts, and by the end of the day we'll be back with more than enough fuel for the fires. "
+	triumph_cost = 5
+	granted_virtues = list(
+		/datum/virtue/utility/resident,
+		/datum/virtue/utility/mining
+	)
+	custom_text = "Grants two virtues for the Coal Runner:\n\
+	- Resident: City residency, treasury account, home in the city\n\
+	- Miner's Apprentice: Skilled in mining and start with mining gear"
