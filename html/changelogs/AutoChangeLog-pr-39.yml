@@ -1,0 +1,6 @@
+author: "R3N0mon"
+delete-after: True
+changes:
+  - rscadd: "Added Arcayne Bolt and Guidance to Old Witch Mystagauge, added Fireball to Old Witch (Old Magic)"
+  - rscadd: "Added more bronze limb virtues."
+  - bugfix: "Changed Coal Runner Virtue description to the correct thing"
