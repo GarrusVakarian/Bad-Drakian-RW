@@ -291,6 +291,38 @@
 			var/obj/item/bodypart/l_arm/prosthetic/bronzeleft/L = new()
 			L.attach_limb(recipient)
 
+/datum/virtue/utility/bronzeleg_r
+	name = "Bronze Leg (R)"
+	desc = "Through connections or wealth, my leg had been replaced by one of bronze and gears, that can move and hold your weight. I've learned just a bit of Engineering as a result."
+	custom_text = "Replaces your Right leg with a prosthetic Bronze one."
+	added_skills = list(list(/datum/skill/craft/engineering, 1, 6))
+	incompatible_virtues = list(/datum/virtue/utility/bronzearm_l, /datum/virtue/utility/bronzearm_r, /datum/virtue/utility/bronzeleg_l)
+
+/datum/virtue/utility/bronzeleg_r/apply_to_human(mob/living/carbon/human/recipient)
+	. = ..()
+	var/obj/item/bodypart/O = recipient.get_bodypart(BODY_ZONE_R_LEG)
+	if(O)
+		O.drop_limb()
+		qdel(O)
+	var/obj/item/bodypart/r_leg/prosthetic/bronzeright/L = new()
+	L.attach_limb(recipient)
+
+/datum/virtue/utility/bronzeleg_l
+	name = "Bronze Leg (L)"
+	desc = "Through connections or wealth, my leg had been replaced by one of bronze and gears, that can move and hold your weight. I've learned just a bit of Engineering as a result."
+	custom_text = "Replaces your Left leg with a prosthetic Bronze one."
+	added_skills = list(list(/datum/skill/craft/engineering, 1, 6))
+	incompatible_virtues = list(/datum/virtue/utility/bronzearm_l, /datum/virtue/utility/bronzearm_r, /datum/virtue/utility/bronzeleg_r)
+
+/datum/virtue/utility/bronzeleg_l/apply_to_human(mob/living/carbon/human/recipient)
+	. = ..()
+	var/obj/item/bodypart/O = recipient.get_bodypart(BODY_ZONE_L_LEG)
+	if(O)
+		O.drop_limb()
+		qdel(O)
+	var/obj/item/bodypart/l_leg/prosthetic/bronzeleft/L = new()
+	L.attach_limb(recipient)
+
 /datum/virtue/utility/woodwalker
 	name = "Woodwalker"
 	desc = "After years of training in the wilds, I've learned to traverse the woods confidently, without breaking any twigs. I can even step lightly on leaves without falling, and I can gather twice as many things from bushes. I can also sleep comfortably on a tree branch."

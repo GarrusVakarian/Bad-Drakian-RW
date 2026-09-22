@@ -180,6 +180,12 @@
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/guidance)
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt)
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/fortitude)
+				if(H.age == AGE_OLD)
+					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball)
+			if("Mystagogue")
+				if(H.age == AGE_OLD)
+					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/guidance)
+					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/arcynebolt)
 
 	if(H.gender == FEMALE)
 		armor = /obj/item/clothing/suit/roguetown/armor/corset
