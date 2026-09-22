@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - qol: "squirt cap from 3 -> 5"
