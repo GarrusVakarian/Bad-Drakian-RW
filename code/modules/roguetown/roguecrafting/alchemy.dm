@@ -317,6 +317,38 @@
 	craftdiff = 4
 	verbage_simple = "transmute"
 
+/datum/crafting_recipe/roguetown/alchemy/c2irn
+	name = "coal to iron"
+	category = "Transmutation"
+	result = list(/obj/item/rogueore/iron = 1)
+	reqs = list(/obj/item/rogueore/coal = 2)
+	craftdiff = 4
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/cs2cop
+	name = "coal and stone to copper"
+	category = "Transmutation"
+	result = list(/obj/item/rogueore/copper = 1)
+	reqs = list(/obj/item/rogueore/coal = 1, /obj/item/natural/stone = 3)
+	craftdiff = 4
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/cs2cop
+	name = "coal and stone to tin"
+	category = "Transmutation"
+	result = list(/obj/item/rogueore/tin = 1)
+	reqs = list(/obj/item/rogueore/coal = 1, /obj/item/natural/stone = 4)
+	craftdiff = 4
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/i2gol
+	name = "iron to gold"
+	category = "Transmutation"
+	result = list(/obj/item/rogueore/gold = 1)
+	reqs = list(/obj/item/rogueore/iron = 4)
+	craftdiff = 5
+	verbage_simple = "transmute"
+
 /datum/crafting_recipe/roguetown/alchemy/g2top
 	name = "gold to toper"
 	category = "Transmutation"
