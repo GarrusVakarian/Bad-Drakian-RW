@@ -333,7 +333,7 @@
 	craftdiff = 4
 	verbage_simple = "transmute"
 
-/datum/crafting_recipe/roguetown/alchemy/cs2cop
+/datum/crafting_recipe/roguetown/alchemy/cs2tin
 	name = "coal and stone to tin"
 	category = "Transmutation"
 	result = list(/obj/item/rogueore/tin = 1)
