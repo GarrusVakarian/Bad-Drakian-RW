@@ -74,7 +74,7 @@
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A sweet-tart sensation on the tongue."))
-	
+
 /datum/stressevent/applesmoke
 	timer = 1 MINUTES
 	stressadd = -1
@@ -84,32 +84,32 @@
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_purple("A pleasant feeling of rawness and bitterness on the tongue."))
-	
+
 /datum/stressevent/strawberrysmoke
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A pleasant feeling of sourness and sweetness on the tongue."))
-	
+
 /datum/stressevent/carrotsmoke
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A pleasant feeling of very carrot on the tongue."))
-	
+
 /datum/stressevent/limesmoke
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A pleasant feeling of sweet and refreshing on the tongue."))
-	
+
 /datum/stressevent/salviasmoke
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A pleasant feeling spicy, earthy and bitter on the tongue."))
-	
+
 /datum/stressevent/valerianasmoke
 	timer = 1 MINUTES
 	stressadd = -1
 	desc = list(span_blue("A pleasant feeling bitter-spicy and tart on the tongue."))
-	
+
 /datum/stressevent/zweed
 	timer = 5 MINUTES
 	stressadd = -2
@@ -244,8 +244,9 @@
 	timer = 2 MINUTES
 
 /datum/stressevent/pretty
+	stressadd = -1//One less than beautiful. This isn't a serious balance issue. Come on, guys. You're already paying four triumphs or using quirk points.
 	desc = span_green("Their face is certainly easy on the eyes.")
-	timer = 1 MINUTES
+	timer = 2 MINUTES//Same timer as beautiful, given above. The trait is exclusive to quirks anyways, and doesn't intersect with Xylix boons.
 
 /datum/stressevent/night_owl
 	stressadd = -3
