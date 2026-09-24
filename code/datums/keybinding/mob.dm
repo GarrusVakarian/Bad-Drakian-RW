@@ -23,8 +23,8 @@
 	user.movement_locked = FALSE
 
 /datum/keybinding/mob/block_movement
-	hotkey_keys = list("CtrlShift")
-	classic_keys = list("CtrlShift")
+	hotkey_keys = list("Unbound")
+	classic_keys = list("Unbound")
 	name = "prevent_movement"
 	full_name = "Prevent Movement"
 	description = "Prevents you from moving completely"
