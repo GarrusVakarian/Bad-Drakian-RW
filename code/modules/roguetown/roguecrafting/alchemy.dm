@@ -189,10 +189,90 @@
 	craftdiff = 3
 	verbage_simple = "transmute"
 
+/datum/crafting_recipe/roguetown/alchemy/f2oat
+	name = "fiber to oats"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/oat = 1)
+	reqs = list(/obj/item/natural/fibers = 4)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/f2ric
+	name = "fiber to rice"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/rice = 1)
+	reqs = list(/obj/item/natural/fibers = 4)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
 /datum/crafting_recipe/roguetown/alchemy/b2app
 	name = "berry to apple"
 	category = "Transmutation"
 	result = list(/obj/item/reagent_containers/food/snacks/grown/apple = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2pea
+	name = "berry to pear"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/pear = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2lem
+	name = "berry to lemon"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/lemon = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2lim
+	name = "berry to lime"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/lime = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2tan
+	name = "berry to tangerine"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/tangerine = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2plu
+	name = "berry to plum"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/plum = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2str
+	name = "berry to strawberry"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/strawberry = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2bla
+	name = "berry to blackberry"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/blackberry = 1)
+	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
+	craftdiff = 3
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/b2ras
+	name = "berry to raspberry"
+	category = "Transmutation"
+	result = list(/obj/item/reagent_containers/food/snacks/grown/fruit/raspberry = 1)
 	reqs = list(/obj/item/reagent_containers/food/snacks/grown/berries/rogue = 2)
 	craftdiff = 3
 	verbage_simple = "transmute"
@@ -213,6 +293,22 @@
 	craftdiff = 2
 	verbage_simple = "transmute"
 	
+/datum/crafting_recipe/roguetown/alchemy/c2dir
+	name = "clay to dirt"
+	category = "Transmutation"
+	result = list(/obj/item/natural/dirtclod = 1)
+	reqs = list(/obj/item/natural/clay = 1)
+	craftdiff = 2
+	verbage_simple = "transmute"
+
+/datum/crafting_recipe/roguetown/alchemy/d2cto
+	name = "dirt to clay"
+	category = "Transmutation"
+	result = list(/obj/item/natural/clay = 1)
+	reqs = list(/obj/item/natural/dirtclod = 1)
+	craftdiff = 2
+	verbage_simple = "transmute"
+
 /datum/crafting_recipe/roguetown/alchemy/s2coa
 	name = "stone to coal"
 	category = "Transmutation"
