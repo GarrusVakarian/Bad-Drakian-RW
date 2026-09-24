@@ -21,7 +21,7 @@
 	advclass_cat_rolls = list(CTAG_CLERK = 2)
 	social_rank = SOCIAL_RANK_YEOMAN
 	job_traits = list(TRAIT_SEEPRICES, TRAIT_ROYAL_SUBSIDY)
-	virtue_restrictions = list(/datum/virtue/utility/blacksmith, /datum/virtue/utility/artificer, /datum/virtue/utility/tailor)
+	virtue_restrictions = list(/datum/virtue/background/blacksmith, /datum/virtue/background/artificer, /datum/virtue/background/tailor, /datum/virtue/background/enchanter, /datum/virtue/background/physician, /datum/virtue/background/hunter, /datum/virtue/background/mining, /datum/virtue/background/forester) //Commerce role, not a craftsman.
 	job_subclasses = list(
 		/datum/advclass/clerk
 	)

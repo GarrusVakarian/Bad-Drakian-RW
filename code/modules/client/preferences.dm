@@ -89,6 +89,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/statpack/statpack	= new /datum/statpack/wildcard/fated // LETHALSTONE EDIT: the statpack we're giving our char instead of racial bonuses
 	var/datum/virtue/virtue = new /datum/virtue/none // LETHALSTONE EDIT: the virtue we get for not picking a statpack
 	var/datum/virtue/virtuetwo = new /datum/virtue/none
+	// Backgrounds: a virtue-like pick (skills + a starting equipment kit) in its own free slot
+	// alongside virtue/virtuetwo, so nobody has to burn a virtue on "some skills and a kit".
+	// See modular_azurepeak/virtues/background.dm.
+	var/datum/virtue/background/virtue_background = new /datum/virtue/background/none
 	var/list/quirks = list()
 	var/selected_title = "None"
 	var/age = AGE_ADULT						//age of character
@@ -681,6 +685,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a><BR>"
 			dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>[origin ? origin.name : "None"]</a><BR>"
 
+			// Backgrounds share GLOB.virtues with the normal picks, so they are stored and loaded as
+			// subtypes and drawn here as their own line rather than in the virtue picker.
+			if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
+				dat += "<b>Background:</b> <a href='?_src_=prefs;preference=background;task=input'>[virtue_background.name]</a><BR>"
+			else
+				dat += "<b>Background:</b> <a href='?_src_=prefs;preference=background;task=input'>None</a><BR>"
+
 //			dat += "<br><b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a>"
 //			if(randomise[RANDOM_BODY] || randomise[RANDOM_BODY_ANTAG]) //doesn't work unless random body
 //				dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_AGE]'>Always Random Age: [(randomise[RANDOM_AGE]) ? "Yes" : "No"]</A>"
@@ -692,6 +703,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 					virtue = GLOB.virtues[/datum/virtue/none]
 				if(virtuetwo.type in pref_species.restricted_virtues)
 					virtuetwo = GLOB.virtues[/datum/virtue/none]
+				if(virtue_background?.type in pref_species.restricted_virtues)
+					virtue_background = GLOB.virtues[/datum/virtue/background/none]
 			if(length(pref_species.restricted_quirks))
 				for(var/datum/quirk/Q in quirks)
 					if(Q.type in pref_species.restricted_quirks)
@@ -1236,6 +1249,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 						name += virtuetwo.name
 					else
 						name = virtuetwo.name
+				if(virtue_background?.type in job.virtue_restrictions)
+					if(name)
+						name += ", "
+						name += virtue_background.name
+					else
+						name = virtue_background.name
 				// Check all vices
 				for(var/datum/charflaw/vice in list(vice1, vice2, vice3, vice4, vice5, vice6, charflaw))
 					if(vice?.type in job.vice_restrictions)
@@ -1256,6 +1275,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 						name += virtuetwo.name
 					else
 						name = virtuetwo.name
+				if(virtue_background?.type in job.virtue_restrictions)
+					if(name)
+						name += ", "
+						name += virtue_background.name
+					else
+						name = virtue_background.name
 				if(!isnull(name))
 					HTML += "<font color='#a59461'>[used_name] (Disallowed by Virtue: [name])</font></td> <td> </td></tr>"
 					continue
@@ -1987,6 +2012,25 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 				if("origin")
 					open_origin_map(user)
+					return
+
+				// Backgrounds are their own free pick: same list as GLOB.virtues, filtered down to the
+				// background subtypes that are actually pickable for this character.
+				if("background")
+					var/list/background_choices = list()
+					for(var/path as anything in GLOB.virtues)
+						var/datum/virtue/B = GLOB.virtues[path]
+						if(!istype(B, /datum/virtue/background) || istype(B, /datum/virtue/background/none))
+							continue
+						if(!B.name || B.unlisted || B.retired)
+							continue
+						if(length(pref_species.restricted_virtues) && (B.type in pref_species.restricted_virtues))
+							continue
+						background_choices[B.name] = B
+					var/background_choice = tgui_input_list(user, "What was my lyfe before?", "BACKGROUND (LOADOUTS PLACED WITHIN THY STASH)", background_choices)
+					if(background_choice)
+						virtue_background = background_choices[background_choice]
+						to_chat(user, process_virtue_text(virtue_background))
 					return
 
 				if("faith")
@@ -3521,10 +3565,13 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 /datum/preferences/proc/process_virtue_text(datum/virtue/V)
 	var/dat
+	var/is_background = istype(V, /datum/virtue/background)
 	if(V.desc)
 		dat += "<font size = 3>[span_purple(V.desc)]</font><br>"
+	if(V.background_desc)
+		dat += "<font size = 3>[span_purple(V.background_desc)]</font><br>"
 	if(length(V.added_skills))
-		dat += "<font color = '#a3e2ff'><font size = 3>This Virtue adds the following skills: <br>"
+		dat += "<font color = '#a3e2ff'><font size = 3>This [is_background ? "Background" : "Virtue"] adds the following skills: <br>"
 		for(var/list/L in V.added_skills)
 			var/name
 			if(ispath(L[1],/datum/skill))
@@ -3533,17 +3580,17 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			dat += "["\Roman[L[2]]"] level[L[2] > 1 ? "s" : ""] of <b>[name]</b>[L[3] ? ", up to <b>[SSskills.level_names_plain[L[3]]]</b>" : ""] <br>"
 		dat += "</font>"
 	if(length(V.added_traits))
-		dat += "<font color = '#a3ffe0'><font size = 3>This Virtue grants the following traits: <br>"
+		dat += "<font color = '#a3ffe0'><font size = 3>This [is_background ? "Background" : "Virtue"] grants the following traits: <br>"
 		for(var/TR in V.added_traits)
 			dat += "[TR] — <font size = 2>[GLOB.roguetraits[TR]]</font><br>"
 		dat += "</font>"
 	if(length(V.added_stashed_items))
-		dat += "<font color = '#eeffa3'><font size = 3>This Virtue adds the following items to your stash: <br>"
+		dat += "<font color = '#eeffa3'><font size = 3>This [is_background ? "Background" : "Virtue"] adds the following items to your stash: <br>"
 		for(var/I in V.added_stashed_items)
 			dat += "<i>[I]</i> <br>"
 		dat += "</font>"
 	if(V.custom_text)
-		dat += "<font color = '#ffffff'><font size = 3>This Virtue has this special behaviour: <br>"
+		dat += "<font color = '#ffffff'><font size = 3>This [is_background ? "Background" : "Virtue"] has this special behaviour: <br>"
 		dat += "[V.custom_text]"
 		dat += "</font>"
 	return dat

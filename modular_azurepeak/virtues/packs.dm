@@ -35,7 +35,7 @@
 	triumph_cost = 6
 	granted_virtues = list(
 		/datum/virtue/utility/socialite,
-		/datum/virtue/utility/performer
+		/datum/virtue/background/performer
 	)
 	custom_text = "Grants two virtues for the perfect entertainer:\n\
 	- Socialite: Beautiful, empathic, good lover traits + hand mirror stashed\n\
@@ -48,7 +48,7 @@
 	desc = "My travels across distant lands have made me wealthy in both coin and wisdom. I speak many tongues, understand the value of all things, and ride with practiced ease. The world is my library, and every road teaches me something new."
 	triumph_cost = 15
 	granted_virtues = list(
-		/datum/virtue/utility/linguist,
+		/datum/virtue/background/linguist,
 		/datum/virtue/items/rich,
 		/datum/virtue/utility/riding
 	)
@@ -63,11 +63,11 @@
 	desc = "I've lived through hard times - poverty, famine, or exile taught me to make do with what I have. I can fish, farm, forage, and most importantly, I can stomach anything. Spoiled rations? Raw meat? Doesn't matter - I'll eat it and keep going."
 	triumph_cost = 10
 	granted_virtues = list(
-		/datum/virtue/utility/forester,
+		/datum/virtue/background/forester,
 		/datum/virtue/utility/feral_appetite
 	)
 	custom_text = "Grants two virtues for the hardened survivor:\n\
-	- Forester: Cooking, Athletics, Farming, Fishing, Lumberjacking skills, Trusty Hoe (HOMESTEAD_EXPERT trait)\n\
+	- Forester: Cooking, Athletics, Farming, Fishing, Lumberjacking skills, lumberer's or farmer's equipment stashed\n\
 	- Feral Appetite: Can safely eat raw, toxic or spoiled food (NASTY_EATER trait)"
 
 // Trusted Housekeeper Pack: Resident + Cunning Provisioner
@@ -77,11 +77,11 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/granary
+		/datum/virtue/background/granary
 	)
 	custom_text = "Grants two virtues for the city servant:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Cunning Provisioner: Cooking & Fishing skills, food bag stashed (HOMESTEAD_EXPERT)"
+	- Cunning Provisioner: Cooking & Fishing skills, chef's or fisher's cooling backpack stashed (HOMESTEAD_EXPERT)"
 
 // Man in The Pub Pack: Resident + Pilgrim
 /datum/virtue/pack/pubman
@@ -129,7 +129,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/artificer
+		/datum/virtue/background/artificer
 	)
 	custom_text = "Grants two virtues for the Hobbyist Tinkerer:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -142,7 +142,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/blacksmith
+		/datum/virtue/background/blacksmith
 	)
 	custom_text = "Grants two virtues for the Patchjob:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -155,7 +155,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/combat/brawler
+		/datum/virtue/background/brawler
 	)
 	custom_text = "Grants two virtues for the Pit Fighter:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -181,7 +181,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/combat/duelist
+		/datum/virtue/background/duelist
 	)
 	custom_text = "Grants two virtues for the Street Fencer:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -194,7 +194,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/combat/executioner
+		/datum/virtue/background/executioner
 	)
 	custom_text = "Grants two virtues for the Collector:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -207,11 +207,11 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/combat/crossbowman
+		/datum/virtue/background/bowman
 	)
 	custom_text = "Grants two virtues for this combo virtue:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Crossbow Levy: Skilled in using crossbows"
+	- Toxophilite (Crossbowman): Guaranteed Journeyman for Crossbows, crossbow and bolts stashed"
 
 // Dreaming of a Knight's Tale Pack: Resident + Failed Squire
 /datum/virtue/pack/knightstale
@@ -233,7 +233,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/forester
+		/datum/virtue/background/forester
 	)
 	custom_text = "Grants two virtues for the Logger:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -246,7 +246,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/hunter
+		/datum/virtue/background/hunter
 	)
 	custom_text = "Grants two virtues for the Butcher:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -272,7 +272,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/combat/militia
+		/datum/virtue/background/militia
 	)
 	custom_text = "Grants two virtues for the Citizen's Militia:\n\
 	- Resident: City residency, treasury account, home in the city\n\
@@ -285,8 +285,8 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/utility/mining
+		/datum/virtue/background/mining
 	)
 	custom_text = "Grants two virtues for the Coal Runner:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Miner's Apprentice: Skilled in spears and maces"
+	- Miner's Apprentice: Skilled in mining, steel pickaxe and lamptern stashed"

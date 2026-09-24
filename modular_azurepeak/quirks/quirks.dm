@@ -49,7 +49,7 @@
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a fabled lover!"
 	point_cost = 2
 	added_traits = list(TRAIT_GOODLOVER)
-	incompatible_virtues = list(/datum/virtue/utility/socialite, /datum/virtue/utility/performer)
+	incompatible_virtues = list(/datum/virtue/utility/socialite, /datum/virtue/background/performer)
 	incompatible_traits = list(TRAIT_GOODLOVER)
 
 /datum/quirk/gossiper
@@ -59,7 +59,7 @@
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
 	point_cost = 2
 	added_traits = list(TRAIT_GOSSIPER)
-	incompatible_virtues = list(/datum/virtue/utility/tracker)
+	incompatible_virtues = list(/datum/virtue/background/tracker)
 	incompatible_traits = list(TRAIT_NOBLE)
 
 /datum/quirk/hobbyistmusician
