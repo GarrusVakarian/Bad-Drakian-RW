@@ -593,8 +593,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 /datum/preferences/proc/_load_virtue(S)
 	var/virtue_type
 	var/virtuetwo_type
+	var/background_type
 	S["virtue"] >> virtue_type
 	S["virtuetwo"] >> virtuetwo_type
+	S["virtue_background"] >> background_type
 
 	// Only instantiate if valid type path exists, otherwise use none
 	if (virtue_type && ispath(virtue_type))
@@ -606,6 +608,24 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		virtuetwo = new virtuetwo_type()
 	else
 		virtuetwo = new /datum/virtue/none
+
+	// Backgrounds live in their own slot (see modular_azurepeak/virtues/background.dm). Guarded with
+	// ispath() against the background subtype so an old save that still points at one of the retired
+	// virtue types can't land a non-background datum in this slot.
+	if(background_type && ispath(background_type, /datum/virtue/background))
+		virtue_background = new background_type
+	else
+		virtue_background = new /datum/virtue/background/none
+
+	//Retired stubs (retired.dm) resolve and display, but grant nothing - tell the player so the
+	//"(Retired)" label on their virtue button doesn't sit there silently forever.
+	if(parent)
+		if(virtue.retired)
+			to_chat(parent, span_boldwarning("This character's Virtue '[virtue.name]' has been retired and no longer grants anything - pick a replacement in character setup. Its old role may now be available as a Background."))
+		if(virtuetwo.retired)
+			to_chat(parent, span_boldwarning("This character's Second Virtue '[virtuetwo.name]' has been retired and no longer grants anything - pick a replacement in character setup."))
+		if(virtue_background.retired)
+			to_chat(parent, span_boldwarning("This character's Background '[virtue_background.name]' has been retired and no longer grants anything - pick a replacement in character setup."))
 
 /datum/preferences/proc/_load_quirks(S)
 	var/list/quirk_types
@@ -1214,6 +1234,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(!virtue2_typepath)
 		virtue2_typepath = /datum/virtue/none
 	WRITE_FILE(S["virtuetwo"], virtue2_typepath)
+	var/background_typepath = preferences_typepath_or_null(virtue_background)
+	if(!background_typepath)
+		background_typepath = /datum/virtue/background/none
+	WRITE_FILE(S["virtue_background"], background_typepath)
 	WRITE_FILE(S["quirks"], get_quirk_typepaths())
 	WRITE_FILE(S["race_bonus"], race_bonus)
 	WRITE_FILE(S["combat_music"], preferences_typepath_or_null(combat_music))

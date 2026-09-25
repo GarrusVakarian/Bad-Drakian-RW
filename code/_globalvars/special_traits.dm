@@ -106,6 +106,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 
 	var/datum/virtue/virtue_type = player.prefs.virtue
 	var/datum/virtue/virtuetwo_type = player.prefs.virtuetwo
+	var/datum/virtue/background_type = player.prefs.virtue_background
 	if(virtue_type)
 		if(virtue_check(virtue_type, heretic))
 			apply_virtue(character, virtue_type)
@@ -116,6 +117,22 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 			apply_virtue(character, virtuetwo_type)
 		else
 			to_chat(character, "Incorrect Second Virtue parameters! (Heretic virtue on a non-heretic) It will not be applied.")
+	// Backgrounds (modular_azurepeak/virtues/background.dm) get their own free slot - they ride along
+	// with the virtue picks rather than replacing them, so no statpack or triumph is needed for one.
+	if(background_type && !istype(background_type, /datum/virtue/background/none))
+		if(background_check(background_type))
+			apply_virtue(character, background_type)
+		else
+			to_chat(character, "Incorrect Background parameters! It will not be applied.")
+
+/// Background validation, the counterpart to virtue_check() - they are applied to the same character
+/// from their own preference slot, so they get their own gate rather than sharing the virtue one.
+/proc/background_check(var/datum/virtue/V)
+	if(!V)
+		return FALSE
+	if(!istype(V, /datum/virtue/background))
+		return FALSE
+	return TRUE
 
 // Quirks are paid for with quirk points first, then real TRIUMPH for any shortfall at two per point.
 // Skip a quirk if your untriumphant broke ass still can't afford it. Bank excess points for the roundend rebate.
