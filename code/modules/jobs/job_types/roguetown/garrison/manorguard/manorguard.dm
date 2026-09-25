@@ -31,7 +31,8 @@
 		/datum/advclass/manorguard/cavalry,
 		/datum/advclass/manorguard/gormless,
 		/datum/advclass/manorguard/retainer,
-		/datum/advclass/manorguard/standard_bearer
+		/datum/advclass/manorguard/standard_bearer,
+		/datum/advclass/manorguard/dragoon
 	)
 
 /datum/outfit/job/roguetown/manorguard
