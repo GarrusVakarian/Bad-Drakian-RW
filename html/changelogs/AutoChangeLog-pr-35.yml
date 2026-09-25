@@ -1,0 +1,4 @@
+author: "Protabs"
+delete-after: True
+changes:
+  - qol: "Player genitals are now retained when using wildshape."

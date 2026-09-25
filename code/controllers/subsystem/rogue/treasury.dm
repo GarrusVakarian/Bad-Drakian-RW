@@ -1,4 +1,4 @@
-#define RURAL_TAX 100 // Free money. A small safety pool for lowpop mostly
+#define RURAL_TAX 250 // Free money. A small safety pool for lowpop mostly
 #define TREASURY_TICK_AMOUNT 6 MINUTES
 #define EXPORT_ANNOUNCE_THRESHOLD 100
 #define AUTO_STOCKPILE_ASSUMED_POP 100
@@ -192,7 +192,7 @@ SUBSYSTEM_DEF(treasury)
 
 		auto_export()
 		run_auto_import_tick()
-		
+
 /datum/controller/subsystem/treasury/proc/tick_rural_tax()
 	if(!discretionary_fund)
 		return

@@ -552,6 +552,21 @@
 	req_table = TRUE
 	craftdiff = 2
 
+/datum/crafting_recipe/roguetown/survival/glass_clay
+	name = "glass batch"
+	result = /obj/item/natural/clay/glassbatch
+	reqs = list(
+		/obj/item/natural/clay = 2, 
+		/obj/item/ash = 2, 
+		/obj/item/alch/stonedust = 1
+		)
+	tools = list(
+		/obj/item/reagent_containers/glass/mortar, 
+		/obj/item/pestle)
+	skillcraft = /datum/skill/craft/ceramics
+	req_table = TRUE
+	craftdiff = 2
+
 ///Repair Kits///
 /datum/crafting_recipe/roguetown/survival/repairkitclothbad
 	name = "fabric patch" //9 fiber

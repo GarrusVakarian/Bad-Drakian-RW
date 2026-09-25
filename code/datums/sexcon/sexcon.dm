@@ -707,10 +707,14 @@
 
 /datum/sex_controller/proc/get_load_bursts()
 	switch(get_semen_volume())
-		if(4)
+		if(3, 4)
 			return 2
-		if(5 to INFINITY)
+		if(5, 6)
 			return 3
+		if(7, 8)
+			return 4
+		if(9 to INFINITY)
+			return 5
 		else
 			return 1
 
@@ -1682,7 +1686,7 @@
 				if(prob(10))
 					var/obj/item/bodypart/groin = target.get_bodypart(check_zone(BODY_ZONE_PRECISE_GROIN))
 					groin.add_wound(/datum/wound/fracture)
-		
+
 /datum/sex_controller/proc/try_jaw_crush(mob/living/carbon/human/target)
 	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
 		if(user?.client?.prefs?.extreme_erp && target?.client?.prefs?.extreme_erp)

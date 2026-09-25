@@ -85,6 +85,44 @@
 	W.base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB)
 	W.update_a_intents()
 
+	// Port sex organs from transformer to transformee. 
+	var/obj/item/organ/penis/old_penis = getorganslot(ORGAN_SLOT_PENIS)
+	if(old_penis)
+		var/obj/item/organ/penis/new_penis = new old_penis.type()
+		new_penis.penis_type = old_penis.penis_type
+		new_penis.sheath_type = old_penis.sheath_type
+		new_penis.penis_size = old_penis.penis_size
+		new_penis.functional = old_penis.functional
+		new_penis.branded_writing = old_penis.branded_writing
+		new_penis.Insert(W, TRUE, FALSE)
+
+	var/obj/item/organ/testicles/old_testicles = getorganslot(ORGAN_SLOT_TESTICLES)
+	if(old_testicles)
+		var/obj/item/organ/testicles/new_testicles = new old_testicles.type()
+		new_testicles.ball_size = old_testicles.ball_size
+		new_testicles.virility = old_testicles.virility
+		new_testicles.branded_writing = old_testicles.branded_writing
+		new_testicles.Insert(W, TRUE, FALSE)
+
+	var/obj/item/organ/vagina/old_vagina = getorganslot(ORGAN_SLOT_VAGINA)
+	if(old_vagina)
+		var/obj/item/organ/vagina/new_vagina = new old_vagina.type()
+		new_vagina.pregnant = old_vagina.pregnant
+		new_vagina.fertility = old_vagina.fertility
+		new_vagina.impregnation_probability = old_vagina.impregnation_probability
+		new_vagina.branded_writing = old_vagina.branded_writing
+		new_vagina.Insert(W, TRUE, FALSE)
+
+	var/obj/item/organ/breasts/old_breasts = getorganslot(ORGAN_SLOT_BREASTS)
+	if(old_breasts)
+		var/obj/item/organ/breasts/new_breasts = new old_breasts.type()
+		new_breasts.breast_size = old_breasts.breast_size
+		new_breasts.lactating = old_breasts.lactating
+		new_breasts.milk_stored = old_breasts.milk_stored
+		new_breasts.milk_max = old_breasts.milk_max
+		new_breasts.branded_writing = old_breasts.branded_writing
+		new_breasts.Insert(W, TRUE, FALSE)
+
 	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC) //If we don't do this, the original body will fall asleep and snore on us
 
 	invisibility = oldinv

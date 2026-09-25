@@ -2072,3 +2072,11 @@
 	inhand_mod = TRUE
 	detail_tag = "_detail"
 	detail_color = CLOTHING_BLACK
+
+/obj/item/clothing/cloak/psydonicironcape
+	name = "psydonic iron inquisitor's cape"
+	desc = "A long flowing cape of white cloth, decorated with golden accents. Shine like HIS love, ENDURE as HE LYVES."
+	slot_flags = ITEM_SLOT_BACK_R|ITEM_SLOT_CLOAK
+	icon_state = "taskcloak"
+	item_state = "taskcloak"
+	
