@@ -6395,7 +6395,6 @@
 /area/rogue/indoors/town)
 "bol" = (
 /obj/structure/roguemachine/steward_export,
-/obj/structure/feedinghole,
 /turf/open/floor/rogue/blocks/newstone/alt,
 /area/rogue/indoors/town/warehouse)
 "bos" = (
@@ -11573,6 +11572,10 @@
 "csT" = (
 /turf/closed/wall/mineral/rogue/stone/red_moss,
 /area/rogue/under/dungeon/sunkenchurch)
+"csV" = (
+/obj/structure/feedinghole,
+/turf/open/floor/rogue/blocks/newstone/alt,
+/area/rogue/indoors/town/warehouse)
 "csW" = (
 /obj/structure/stairs/stone{
 	dir = 4
@@ -13964,11 +13967,18 @@
 	pixel_x = 8;
 	pixel_y = 13
 	},
-/obj/item/natural/stone{
-	pixel_x = -8;
-	pixel_y = 2
-	},
 /obj/structure/rack/rogue/shelf,
+/obj/item/soap{
+	pixel_x = 8
+	},
+/obj/item/natural/whetstone{
+	pixel_y = 1;
+	pixel_x = -8
+	},
+/obj/item/natural/whetstone{
+	pixel_y = 10;
+	pixel_x = -8
+	},
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/town/manor/rockhill)
 "cQu" = (
@@ -22961,6 +22971,10 @@
 /obj/structure/table/wood{
 	icon_state = "map1"
 	},
+/obj/item/inqarticles/tallowpot,
+/obj/item/reagent_containers/food/snacks/tallow/soft{
+	pixel_y = 12
+	},
 /turf/open/floor/rogue/tile{
 	icon_state = "bfloorz"
 	},
@@ -23684,8 +23698,9 @@
 /obj/structure/closet/crate/roguecloset/lord{
 	lockid = "steward"
 	},
-/obj/structure/bars/pipe{
-	dir = 4
+/obj/machinery/light/rogue/candle/r{
+	pixel_x = 0;
+	pixel_y = -32
 	},
 /turf/open/floor/rogue/wood,
 /area/rogue/indoors/town/manor/rockhill)
@@ -35009,7 +35024,9 @@
 /turf/open/floor/rogue/grasscold,
 /area/rogue/outdoors/woodsrat/south)
 "hlb" = (
-/obj/structure/mineral_door/bars,
+/obj/structure/mineral_door/bars{
+	lockid = "tower"
+	},
 /obj/structure/fluff/walldeco/church/line{
 	dir = 4;
 	pixel_x = 2
@@ -38028,7 +38045,8 @@
 "hRt" = (
 /obj/structure/mineral_door/wood/fancywood{
 	lockid = "manor";
-	name = "Manor Entrance"
+	name = "Manor Entrance";
+	locked = 1
 	},
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/town/manor/rockhill)
@@ -47020,7 +47038,8 @@
 "jLG" = (
 /obj/structure/mineral_door/wood/window{
 	lockid = "manor";
-	name = "Feast Hall"
+	name = "Feast Hall";
+	locked = 1
 	},
 /turf/open/floor/rogue/blocks{
 	icon_state = "bluestone"
@@ -55716,6 +55735,14 @@
 /obj/structure/fluff/railing/corner/north_east,
 /turf/open/floor/rogue/grass,
 /area/rogue/outdoors/rtfield/rockhill)
+"lFu" = (
+/obj/machinery/light/roguestreet/orange/walllamp{
+	dir = 1
+	},
+/turf/open/floor/rogue/tile{
+	icon_state = "bfloorz"
+	},
+/area/rogue/indoors/town/manor/rockhill)
 "lFA" = (
 /obj/structure/flora/roguegrass,
 /obj/machinery/light/rogue/torchholder/r,
@@ -83785,6 +83812,10 @@
 /obj/item/candle/candlestick/gold/single/lit{
 	pixel_x = -16
 	},
+/obj/item/inqarticles/tallowpot,
+/obj/item/reagent_containers/food/snacks/tallow/soft{
+	pixel_x = 19
+	},
 /turf/open/floor/carpet/royalblack,
 /area/rogue/indoors/town/manor/rockhill)
 "rwI" = (
@@ -86706,6 +86737,9 @@
 	},
 /obj/item/reagent_containers/food/snacks/grown/rice,
 /obj/item/reagent_containers/food/snacks/grown/rice,
+/obj/machinery/light/roguestreet/orange/walllamp{
+	dir = 1
+	},
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/town/manor/rockhill)
 "sfb" = (
@@ -94701,6 +94735,15 @@
 	},
 /turf/open/floor/rogue/blocks,
 /area/rogue/outdoors/bograt/above)
+"tPe" = (
+/obj/structure/fluff/walldeco/church/line{
+	dir = 8
+	},
+/obj/structure/fluff/wallclock/r,
+/turf/open/floor/rogue/tile{
+	icon_state = "bfloorz"
+	},
+/area/rogue/indoors/town/manor/rockhill)
 "tPk" = (
 /obj/structure/roguewindow/openclose/reinforced{
 	dir = 8
@@ -101901,6 +101944,10 @@
 /obj/structure/stairs/ccw{
 	dir = 8
 	},
+/obj/machinery/light/rogue/candle/r{
+	pixel_x = 0;
+	pixel_y = -32
+	},
 /turf/open/transparent/openspace,
 /area/rogue/indoors/town/manor/rockhill)
 "vpZ" = (
@@ -104329,7 +104376,9 @@
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/town/basement)
 "vQn" = (
-/obj/structure/mineral_door/bars,
+/obj/structure/mineral_door/bars{
+	lockid = "tower"
+	},
 /turf/open/floor/rogue/churchrough,
 /area/rogue/indoors/town/magician/rockhill)
 "vQo" = (
@@ -106704,12 +106753,14 @@
 	dir = 4;
 	pixel_x = 2
 	},
-/obj/structure/fluff/wallclock/l,
 /obj/structure/closet/crate/chest{
 	lockid = "steward"
 	},
 /obj/item/reagent_containers/food/snacks/grown/wheat,
 /obj/item/reagent_containers/food/snacks/grown/wheat,
+/obj/machinery/light/roguestreet/orange/walllamp{
+	dir = 4
+	},
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/town/manor/rockhill)
 "wqX" = (
@@ -107294,9 +107345,6 @@
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/under/town/basement/keep)
 "wxw" = (
-/obj/machinery/light/roguestreet/orange/walllamp{
-	dir = 4
-	},
 /obj/structure/fluff/walldeco/church/line{
 	dir = 4;
 	pixel_x = 2
@@ -401310,7 +401358,7 @@ uYE
 uYE
 uYE
 uYE
-qcq
+tPe
 jQk
 nKx
 sfe
@@ -401741,7 +401789,7 @@ pfp
 vcZ
 uYE
 uYE
-uYE
+lFu
 eAu
 fPA
 qpE
@@ -403943,7 +403991,7 @@ fCu
 wbg
 yht
 evo
-rnE
+csV
 ogr
 rnE
 tEI
@@ -415990,8 +416038,8 @@ oAh
 oAh
 hsP
 hsP
-nbR
-nbR
+hsP
+gmG
 hsP
 vUt
 vUt
