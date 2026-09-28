@@ -219,7 +219,7 @@
 /datum/virtue/background/blacksmith
 	name = "Blacksmith's Apprentice"
 	desc = "In my youth, I worked under a skilled blacksmith, honing my skills with an anvil."
-	background_desc = "Smith loadout comes with ingots and equipment to start smithing. Scrapper is focused on finding refuse to recycle (& has smithing tools)."
+	background_desc = "Smith loadout comes with ingots and equipment to start smithing. Scrapper is focused on finding refuse to recycle - has smithing tools and knows the Scrapper's Smelt, which melts a metal item down into an ingot."
 	added_traits = list(TRAIT_SMITHING_EXPERT)
 	added_skills = list(list(/datum/skill/craft/crafting, 2, 2),
 						list(/datum/skill/craft/weaponsmithing, 2, 2),
@@ -236,7 +236,32 @@
 		if("Scrapper")
 			if(H.mind)
 				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/smithscrap)
+				if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/heatmetal/secular))
+					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/heatmetal/secular)
 	prompt_journeyman_skills(H)
+
+// Stand-in for Emerald Summit's Portable Smelter (not ported): a secular, smelt-only Heat Metal.
+// No psicross or devotion, touch range, and it never targets people.
+/obj/effect/proc_holder/spell/invoked/heatmetal/secular
+	name = "Scrapper's Smelt"
+	desc = "Melts a single metal item down into an ingot."
+	req_items = list()
+	invocations = list()
+	invocation_type = "none"
+	range = 1
+	associated_skill = /datum/skill/craft/smelting
+	miracle = FALSE
+	devotion_cost = 0 //Scrappers are not clerics
+
+/obj/effect/proc_holder/spell/invoked/heatmetal/secular/cast(list/targets, mob/user = usr)
+	for(var/obj/item/target in targets)
+		if(istype(target, /obj/item/rogueore/coal) || !target.smeltresult || target.smeltresult == /obj/item/ash)
+			to_chat(user, span_warning("[target] won't smelt down into anything useful."))
+			return FALSE
+		var/datum/effect_system/spark_spread/sparks = new()
+		handle_item_smelting(target, user, sparks, list(/obj/item/rogueore/coal))
+		return TRUE
+	return FALSE
 
 /datum/virtue/background/tailor
 	name = "Tailor's Apprentice"
@@ -419,7 +444,7 @@
 			if(H.mind)
 				H.mind.special_items = list(
 					"Equipment Bag" = /obj/item/storage/roguebag/dungeonexecute,
-					"Axe" = /obj/item/rogueweapon/stoneaxe/woodcut
+					"Greataxe" = /obj/item/rogueweapon/greataxe
 				)
 			H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
@@ -557,7 +582,6 @@
 	desc = "Years of skulking about have left my steps quiet, and my hunched gait quicker."
 	background_desc = "Skulker comes with lockpicks and smoke bombs. Larcenous comes with a lockpick ring and a dagger."
 	added_traits = list(TRAIT_LIGHT_STEP)
-	added_skills = list(list(/datum/skill/misc/sneaking, 3, 6))
 
 /datum/virtue/background/light_steps/apply_to_human(mob/living/carbon/human/H)
 	var/equip_choice = tgui_input_list(H, "My lyfe before, STASHed away ...", "TREES and STATUES hold my things.", list("Skulker", "Larcenous"))
@@ -565,15 +589,22 @@
 		if("Skulker")
 			if(H.mind)
 				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/lightstep)
-			H.adjust_skillrank_up_to(/datum/skill/misc/lockpicking, SKILL_LEVEL_NOVICE, silent = TRUE)
-			H.adjust_skillrank_up_to(/datum/skill/misc/stealing, SKILL_LEVEL_NOVICE, silent = TRUE)
-			H.adjust_skillrank_up_to(/datum/skill/misc/sneaking, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
+			add_skill_capped(H, /datum/skill/misc/sneaking, 3, SKILL_LEVEL_EXPERT)
+			add_skill_capped(H, /datum/skill/misc/lockpicking, 1, SKILL_LEVEL_EXPERT)
+			add_skill_capped(H, /datum/skill/misc/stealing, 1, SKILL_LEVEL_EXPERT)
 		if("Larcenous")
 			if(H.mind)
 				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/larcscoundrel)
-			H.adjust_skillrank_up_to(/datum/skill/misc/lockpicking, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
-			H.adjust_skillrank_up_to(/datum/skill/misc/stealing, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
-			H.adjust_skillrank_up_to(/datum/skill/misc/sneaking, SKILL_LEVEL_NOVICE, silent = TRUE)
+			add_skill_capped(H, /datum/skill/misc/sneaking, 1, SKILL_LEVEL_EXPERT)
+			add_skill_capped(H, /datum/skill/misc/lockpicking, 3, SKILL_LEVEL_EXPERT)
+			add_skill_capped(H, /datum/skill/misc/stealing, 3, SKILL_LEVEL_EXPERT)
+
+// Adds onto whatever the character already has, stopping at the cap (never lowers an existing skill).
+/datum/virtue/background/light_steps/proc/add_skill_capped(mob/living/carbon/human/H, skill, amount, cap)
+	var/current = H.get_skill_level(skill)
+	var/target = min(current + amount, cap)
+	if(target > current)
+		H.adjust_skillrank(skill, target - current, TRUE)
 
 // ========================
 // EQUIPMENT BAGS
@@ -645,13 +676,7 @@
 /obj/item/storage/roguebag/smithscrap
 	populate_contents = list(
 		/obj/item/rogueweapon/tongs,
-		/obj/item/rogueweapon/hammer/iron,
-		/obj/item/ingot/iron,
-		/obj/item/rogueore/coal,
-		/obj/item/rogueore/coal,
-		/obj/item/rogueore/coal,
-		/obj/item/rogueore/coal,
-		/obj/item/rogueore/coal
+		/obj/item/rogueweapon/hammer/iron
 	)
 
 //Tailor (new pack, paid addendum 2026-09-22 - the port shipped this background with only the tools
@@ -867,15 +892,7 @@
 	populate_contents = list(
 		/obj/item/clothing/suit/roguetown/armor/gambeson/lord,
 		/obj/item/rogueweapon/sword/iron,
-		/obj/item/natural/bundle/cloth,
-		/obj/item/natural/bundle/cloth,
-		/obj/item/rogueweapon/surgery/hammer,
-		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot,
-		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot,
-		/obj/item/alch/urtica,
-		/obj/item/alch/valeriana,
-		/obj/item/alch/urtica,
-		/obj/item/alch/valeriana
+		/obj/item/clothing/head/roguetown/helmet/skullcap
 	)
 
 /obj/item/storage/roguebag/duelistscoundrel
@@ -894,7 +911,6 @@
 		/obj/item/clothing/head/roguetown/helmet/leather,
 		/obj/item/rogueweapon/whip,
 		/obj/item/rope/chain,
-		/obj/item/clothing/head/roguetown/helmet/kettle,
 		/obj/item/clothing/suit/roguetown/armor/gambeson/light,
 		/obj/item/rope/chain,
 		/obj/item/needle/thorn
