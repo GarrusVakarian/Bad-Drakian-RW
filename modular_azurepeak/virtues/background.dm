@@ -78,7 +78,7 @@
 	handle_stashed_items(recipient)
 	handle_added_languages(recipient)
 	handle_stats(recipient)
-	INVOKE_ASYNC(src, PROC_REF(apply_to_human), recipient)
+	INVOKE_ASYNC(src, TYPE_PROC_REF(/datum/customization_trait, apply_to_human), recipient)
 	return TRUE
 
 /datum/virtue/background/none //for having no background
