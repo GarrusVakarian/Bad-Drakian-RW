@@ -685,13 +685,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a><BR>"
 			dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>[origin ? origin.name : "None"]</a><BR>"
 
-			// Backgrounds share GLOB.virtues with the normal picks, so they are stored and loaded as
-			// subtypes and drawn here as their own line rather than in the virtue picker.
-			if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
-				dat += "<b>Background:</b> <a href='?_src_=prefs;preference=background;task=input'>[virtue_background.name]</a><BR>"
-			else
-				dat += "<b>Background:</b> <a href='?_src_=prefs;preference=background;task=input'>None</a><BR>"
-
 //			dat += "<br><b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a>"
 //			if(randomise[RANDOM_BODY] || randomise[RANDOM_BODY_ANTAG]) //doesn't work unless random body
 //				dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_AGE]'>Always Random Age: [(randomise[RANDOM_AGE]) ? "Yes" : "No"]</A>"

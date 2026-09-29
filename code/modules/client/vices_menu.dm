@@ -1080,26 +1080,6 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "• [item_name]<br>"
 		html += "</div>"
 
-	// Background: its own free slot, so it is shown separately from the two virtue picks.
-	if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
-		html += "<div class='statpack-stats' style='margin-top: 12px;'><strong>Background:</strong> [virtue_background.name]</div>"
-		if(virtue_background.background_desc)
-			html += "<div class='statpack-desc'>[virtue_background.background_desc]</div>"
-		if(LAZYLEN(virtue_background.added_traits))
-			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Background traits:</strong><br>"
-			for(var/background_trait in virtue_background.added_traits)
-				html += "• [background_trait]<br>"
-			html += "</div>"
-		if(LAZYLEN(virtue_background.added_skills))
-			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Background skills:</strong><br>"
-			for(var/background_skill in virtue_background.added_skills)
-				var/list/background_skill_block = background_skill
-				var/datum/skill/background_skill_type = background_skill_block[1]
-				html += "• [initial(background_skill_type.name)]: +[background_skill_block[2]] (max [background_skill_block[3]])<br>"
-			html += "</div>"
-	else
-		html += "<div class='statpack-stats' style='margin-top: 12px;'><strong>Background:</strong> None</div>"
-
 	html += "</div>"
 
 	if(statpack && statpack.name == "Virtuous" && virtuetwo)
@@ -1153,7 +1133,38 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(!istype(virtuetwo, /datum/virtue/none))
 			html += "<a class='btn btn-clear' href='byond://?src=\ref[src];virtue_action=clear_secondary'>Clear Second Virtue</a>"
 
-	html += "<a class='btn btn-select' href='byond://?src=\ref[src];virtue_action=change_background'>Change Background</a>"
+	html += {"
+			</div>
+		</div>
+
+		<div class="statpack-section">
+			<h2>Background Selection</h2>
+			<div class="statpack-current">"}
+
+	// Background: its own free slot, separate from the two virtue picks.
+	if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
+		html += "<div class='statpack-name'>[virtue_background.name]</div>"
+		html += "<div class='statpack-desc'>[virtue_background.desc]</div>"
+		if(virtue_background.background_desc)
+			html += "<div class='statpack-stats' style='margin-top: 4px;'>[virtue_background.background_desc]</div>"
+		if(LAZYLEN(virtue_background.added_traits))
+			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Traits granted:</strong><br>"
+			for(var/background_trait in virtue_background.added_traits)
+				html += "• [background_trait]<br>"
+			html += "</div>"
+		if(LAZYLEN(virtue_background.added_skills))
+			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Skills granted:</strong><br>"
+			for(var/background_skill in virtue_background.added_skills)
+				var/list/background_skill_block = background_skill
+				var/datum/skill/background_skill_type = background_skill_block[1]
+				html += "• [initial(background_skill_type.name)]: +[background_skill_block[2]] (max [background_skill_block[3]])<br>"
+			html += "</div>"
+	else
+		html += "<div class='statpack-name'>None Selected</div>"
+
+	html += {"		</div>
+			<div class="actions">
+				<a class='btn btn-select' href='byond://?src=\ref[src];virtue_action=change_background'>Change Background</a>"}
 	if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];virtue_action=clear_background'>Clear Background</a>"
 

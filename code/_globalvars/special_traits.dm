@@ -127,7 +127,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 
 /// Background validation, the counterpart to virtue_check() - they are applied to the same character
 /// from their own preference slot, so they get their own gate rather than sharing the virtue one.
-/proc/background_check(var/datum/virtue/V)
+/proc/background_check(datum/virtue/V)
 	if(!V)
 		return FALSE
 	if(!istype(V, /datum/virtue/background))

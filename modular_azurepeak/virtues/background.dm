@@ -54,6 +54,33 @@
 		choices -= picked
 		picks_left--
 
+/// Adds a pack to the stash without wiping what other virtues, traits or a second background put
+/// there. Clashing names get a numbered suffix.
+/datum/virtue/background/proc/stash_items(mob/living/carbon/human/recipient, list/items)
+	if(!recipient?.mind)
+		return
+	if(!recipient.mind.special_items)
+		recipient.mind.special_items = list()
+	for(var/item_name in items)
+		var/key = item_name
+		var/suffix = 2
+		while(recipient.mind.special_items[key])
+			key = "[item_name] ([suffix++])"
+		recipient.mind.special_items[key] = items[item_name]
+
+/// The pack prompts in apply_to_human() block on player input, so they run off the spawn chain.
+/// Otherwise spawning stalls until the player answers or the prompt times out.
+/datum/virtue/background/apply_generic_effects(mob/living/carbon/human/recipient)
+	if(blocked_by_incompatible_traits(recipient))
+		return FALSE
+	handle_traits(recipient)
+	handle_skills(recipient)
+	handle_stashed_items(recipient)
+	handle_added_languages(recipient)
+	handle_stats(recipient)
+	INVOKE_ASYNC(src, PROC_REF(apply_to_human), recipient)
+	return TRUE
+
 /datum/virtue/background/none //for having no background
 	name = "None"
 	desc = "You have aspired to (or been given) little in the way of trade or upbringing."
@@ -68,25 +95,25 @@
 	switch(equip_choice)
 		if("Guard (Cudgel, Buckler)")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/militiaguard,
 					"Cudgel" = /obj/item/rogueweapon/mace/cudgel,
 					"Buckler" = /obj/item/rogueweapon/shield/buckler
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Watchman (Quarterstaff)")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/militiawatch,
 					"Quarterstaff" = /obj/item/rogueweapon/woodstaff/quarterstaff/steel
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Conscript (Spear, Sling)")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/militiaconscript,
 					"Militia Spear" = /obj/item/rogueweapon/spear
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 			H.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
@@ -102,19 +129,19 @@
 	switch(equip_choice)
 		if("Archer")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/toxarcher,
 					"Recurve Bow" = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve,
 					"Quiver" = /obj/item/quiver/arrows
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Crossbowman")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/toxcross,
 					"Crossbow" = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow,
 					"Quiver" = /obj/item/quiver/bolts
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
 /datum/virtue/background/performer
@@ -210,10 +237,10 @@
 	switch(equip_choice)
 		if("Tinkerer")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/artificertinker)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/artificertinker))
 		if("Mason")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/artificermason)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/artificermason))
 	prompt_journeyman_skills(H)
 
 /datum/virtue/background/blacksmith
@@ -232,10 +259,10 @@
 	switch(equip_choice)
 		if("Smith")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/smithapp)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/smithapp))
 		if("Scrapper")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/smithscrap)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/smithscrap))
 				if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/heatmetal/secular))
 					H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/heatmetal/secular)
 	prompt_journeyman_skills(H)
@@ -281,10 +308,10 @@
 	switch(equip_choice)
 		if("Seamster")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/tailorseam)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/tailorseam))
 		if("Skinner")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/tailorskin)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/tailorskin))
 	prompt_journeyman_skills(H)
 
 // Adapted to this codebase's traits: TRAIT_RITUALIST (ritual chalk) + TRAIT_ARCYNE_T2 stand in for
@@ -312,10 +339,10 @@
 	switch(equip_choice)
 		if("Ritualist")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/enchritual)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/enchritual))
 		if("Brewster")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/enchbrew)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/enchbrew))
 	prompt_journeyman_skills(H)
 
 // Kept this codebase's extra grants from the old Physician's Apprentice virtue (expert traits +
@@ -336,10 +363,10 @@
 	switch(equip_choice)
 		if("Alchemist")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/physalc)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/physalc))
 		if("Surgeon")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/physurg)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/physurg))
 	prompt_journeyman_skills(H)
 
 // Adapted to this codebase: no TRAIT_MASTERFUL_HUNTER and no trapping/hunting skills exist here
@@ -362,11 +389,11 @@
 	switch(equip_choice)
 		if("Trapper")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/huntertrap)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/huntertrap))
 			H.adjust_skillrank_up_to(/datum/skill/craft/carpentry, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Tanner")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/huntertan)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/huntertan))
 	prompt_journeyman_skills(H)
 
 /datum/virtue/background/mining
@@ -378,7 +405,7 @@
 
 /datum/virtue/background/mining/apply_to_human(mob/living/carbon/human/H)
 	if(H.mind)
-		H.mind.special_items = list("Mining Backpack" = /obj/item/storage/backpack/rogue/backpack/minerbag)
+		stash_items(H, list("Mining Backpack" = /obj/item/storage/backpack/rogue/backpack/minerbag))
 
 // ========================
 // COMBAT BACKGROUNDS
@@ -397,10 +424,10 @@
 	switch(equip_choice)
 		if("Katar")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/brawlkatar)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/brawlkatar))
 		if("Knuckles")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/brawlknuck)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/brawlknuck))
 	H.adjust_skillrank_up_to(/datum/skill/combat/unarmed, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 	H.adjust_skillrank_up_to(/datum/skill/combat/wrestling, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
@@ -414,18 +441,18 @@
 	switch(equip_choice)
 		if("Dueler (Rapier)")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/duelistnoble,
 					"Rapier" = /obj/item/rogueweapon/sword/rapier
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Swordsman (Arming)")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/duelistsword)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/duelistsword))
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Scoundrel (Twin Daggers)")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/duelistscoundrel)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/duelistscoundrel))
 			H.adjust_skillrank_up_to(/datum/skill/combat/knives, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
 /datum/virtue/background/executioner
@@ -438,14 +465,14 @@
 	switch(equip_choice)
 		if("Dungeon Guard")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/dungeonguard)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/dungeonguard))
 			H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 		if("Executioner")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/dungeonexecute,
 					"Greataxe" = /obj/item/rogueweapon/greataxe
-				)
+				))
 			H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_JOURNEYMAN, silent = TRUE)
 
 // Kept this codebase's version of the old Sleuth virtue (tracking, TRAIT_SLEUTH), plus the port's
@@ -470,7 +497,7 @@
 
 /datum/virtue/background/roguealchemist/apply_to_human(mob/living/carbon/human/H)
 	if(H.mind)
-		H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/arsonbomb)
+		stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/arsonbomb))
 
 /datum/virtue/background/sailor
 	name = "Sailor"
@@ -484,10 +511,10 @@
 
 /datum/virtue/background/sailor/apply_to_human(mob/living/carbon/human/H)
 	if(H.mind)
-		H.mind.special_items = list(
+		stash_items(H, list(
 			"Equipment Bag" = /obj/item/storage/roguebag/sailfix,
 			"Axe" = /obj/item/rogueweapon/stoneaxe/woodcut
-		)
+		))
 	prompt_journeyman_skills(H)
 
 // ========================
@@ -544,10 +571,10 @@
 	switch(equip_choice)
 		if("Chef")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/backpack/rogue/artibackpack/cunningchef)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/backpack/rogue/artibackpack/cunningchef))
 		if("Fisher")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/backpack/rogue/artibackpack/cunningfish)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/backpack/rogue/artibackpack/cunningfish))
 
 /datum/virtue/background/forester
 	name = "Forester"
@@ -565,16 +592,16 @@
 	switch(equip_choice)
 		if("Lumberer")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/forestlumber,
 					"Axe" = /obj/item/rogueweapon/stoneaxe/woodcut
-				)
+				))
 		if("Farmer")
 			if(H.mind)
-				H.mind.special_items = list(
+				stash_items(H, list(
 					"Equipment Bag" = /obj/item/storage/roguebag/forestfarm,
 					"Hoe" = /obj/item/rogueweapon/hoe
-				)
+				))
 	prompt_journeyman_skills(H)
 
 /datum/virtue/background/light_steps
@@ -588,13 +615,13 @@
 	switch(equip_choice)
 		if("Skulker")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/lightstep)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/lightstep))
 			add_skill_capped(H, /datum/skill/misc/sneaking, 3, SKILL_LEVEL_EXPERT)
 			add_skill_capped(H, /datum/skill/misc/lockpicking, 1, SKILL_LEVEL_EXPERT)
 			add_skill_capped(H, /datum/skill/misc/stealing, 1, SKILL_LEVEL_EXPERT)
 		if("Larcenous")
 			if(H.mind)
-				H.mind.special_items = list("Equipment Bag" = /obj/item/storage/roguebag/larcscoundrel)
+				stash_items(H, list("Equipment Bag" = /obj/item/storage/roguebag/larcscoundrel))
 			add_skill_capped(H, /datum/skill/misc/sneaking, 1, SKILL_LEVEL_EXPERT)
 			add_skill_capped(H, /datum/skill/misc/lockpicking, 3, SKILL_LEVEL_EXPERT)
 			add_skill_capped(H, /datum/skill/misc/stealing, 3, SKILL_LEVEL_EXPERT)
