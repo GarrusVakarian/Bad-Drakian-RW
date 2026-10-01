@@ -75,6 +75,8 @@
 		held += virtue
 	if(virtuetwo)
 		held += virtuetwo
+	if(virtue_background)
+		held += virtue_background
 	held += quirks
 	for(var/datum/customization_trait/pick in held)
 		if(length(pick.incompatible_vices) && (vice_type in pick.incompatible_vices))
@@ -85,7 +87,7 @@
 	return FALSE
 
 /datum/preferences/proc/check_quirk_virtue_conflict(quirk_type, show_message = FALSE, mob/user = null)
-	for(var/datum/virtue/virt in list(virtue, virtuetwo))
+	for(var/datum/virtue/virt in list(virtue, virtuetwo, virtue_background))
 		if(virt && check_pick_virtue_conflict(quirk_type, virt.type, show_message, user))
 			return TRUE
 	return FALSE
@@ -240,6 +242,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"statpack" = statpack,
 		"virtue" = virtue,
 		"virtuetwo" = virtuetwo,
+		"virtue_background" = virtue_background,
 		"quirks" = quirks.Copy(),
 		"vice1" = vice1,
 		"vice2" = vice2,
@@ -312,6 +315,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	statpack = snapshot["statpack"]
 	virtue = snapshot["virtue"]
 	virtuetwo = snapshot["virtuetwo"]
+	virtue_background = snapshot["virtue_background"]
 	var/list/quirks_snapshot = snapshot["quirks"]
 	quirks = quirks_snapshot ? quirks_snapshot.Copy() : list()
 	vice1 = snapshot["vice1"]
@@ -379,6 +383,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"statpack" = statpack?.type,
 		"virtue" = virtue?.type,
 		"virtuetwo" = virtuetwo?.type,
+		"virtue_background" = virtue_background?.type,
 		"quirks" = get_quirk_typepaths(),
 		"vice1" = vice1?.type,
 		"vice2" = vice2?.type,
@@ -466,6 +471,14 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		virtuetwo = new virtuetwo_type()
 	else
 		virtuetwo = new /datum/virtue/none()
+
+	// Backgrounds are their own slot, so presets carry their own entry for them. Guarded against the
+	// background subtype so a preset saved before the slot existed can't land elsewhere.
+	var/background_type = string_to_typepath(preset["virtue_background"])
+	if(background_type && ispath(background_type, /datum/virtue/background))
+		virtue_background = new background_type()
+	else
+		virtue_background = new /datum/virtue/background/none()
 
 	quirks = list()
 	var/quirks_preset = preset["quirks"]
@@ -644,6 +657,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/datum/virtue/v_temp = new virtue_path()
 		if(v_temp.name != "None")
 			summary += " | [v_temp.name]"
+
+	// Background
+	var/background_path = string_to_typepath(preset["virtue_background"])
+	if(ispath(background_path, /datum/virtue/background))
+		var/datum/virtue/b_temp = new background_path()
+		if(b_temp.name != "None")
+			summary += " | [b_temp.name]"
 
 	// Quirks
 	var/quirk_count = 0
@@ -1123,6 +1143,41 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	html += {"
 			</div>
 		</div>
+		<div class="statpack-section">
+			<h2>Background Selection</h2>
+			<div class="statpack-current">"}
+
+	// Background: its own free slot, separate from the two virtue picks.
+	if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
+		html += "<div class='statpack-name'>[virtue_background.name]</div>"
+		html += "<div class='statpack-desc'>[virtue_background.desc]</div>"
+		if(virtue_background.background_desc)
+			html += "<div class='statpack-stats' style='margin-top: 4px;'>[virtue_background.background_desc]</div>"
+		if(LAZYLEN(virtue_background.added_traits))
+			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Traits granted:</strong><br>"
+			for(var/background_trait in virtue_background.added_traits)
+				html += "• [background_trait]<br>"
+			html += "</div>"
+		if(LAZYLEN(virtue_background.added_skills))
+			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Skills granted:</strong><br>"
+			for(var/background_skill in virtue_background.added_skills)
+				var/list/background_skill_block = background_skill
+				var/datum/skill/background_skill_type = background_skill_block[1]
+				html += "• [initial(background_skill_type.name)]: +[background_skill_block[2]] (max [background_skill_block[3]])<br>"
+			html += "</div>"
+	else
+		html += "<div class='statpack-name'>None Selected</div>"
+
+	html += {"		</div>
+			<div class="actions">
+				<a class='btn btn-select' href='byond://?src=\ref[src];virtue_action=change_background'>Change Background</a>"}
+	if(virtue_background && !istype(virtue_background, /datum/virtue/background/none))
+		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];virtue_action=clear_background'>Clear Background</a>"
+
+	html += {"
+			</div>
+		</div>
+
 		<div class="statpack-section">
 			<h2>Quirk Selection</h2>
 	"}
@@ -1623,6 +1678,10 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				var/datum/virtue/V = GLOB.virtues[path]
 				if(!V.name)
 					continue
+				// Retired stubs resolve for old saves but never show up as a pick, and backgrounds
+				// have their own list (see the change_background action below).
+				if(V.unlisted || V.retired || istype(V, /datum/virtue/background))
+					continue
 				// Skip if already selected as secondary virtue
 				if(virtuetwo && V.type == virtuetwo.type)
 					continue
@@ -1656,6 +1715,10 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			for(var/path as anything in GLOB.virtues)
 				var/datum/virtue/V = GLOB.virtues[path]
 				if(!V.name)
+					continue
+				// Retired stubs resolve for old saves but never show up as a pick, and backgrounds
+				// have their own list (see the change_background action below).
+				if(V.unlisted || V.retired || istype(V, /datum/virtue/background))
 					continue
 				// Check if restricted by species
 				if(length(pref_species.restricted_virtues))
@@ -1697,6 +1760,48 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			save_to_history()
 			virtuetwo = GLOB.virtues[/datum/virtue/none]
 			to_chat(usr, span_notice("Cleared your second virtue."))
+			open_vices_menu(usr)
+			return
+
+		if(action == "change_background")
+			save_to_history()
+			var/list/backgrounds_available = list()
+			for(var/path as anything in GLOB.virtues)
+				var/datum/virtue/B = GLOB.virtues[path]
+				if(!istype(B, /datum/virtue/background) || istype(B, /datum/virtue/background/none))
+					continue
+				// Retired stubs resolve for old saves but are never pickable again.
+				if(!B.name || B.unlisted || B.retired)
+					continue
+				if(length(pref_species.restricted_virtues) && (B.type in pref_species.restricted_virtues))
+					continue
+				if(virtue && check_pick_virtue_conflict(B.type, virtue.type, TRUE, usr))
+					continue
+				if(virtuetwo && check_pick_virtue_conflict(B.type, virtuetwo.type, TRUE, usr))
+					continue
+				if(check_quirk_virtue_conflict(B.type, TRUE, usr))
+					continue
+				backgrounds_available[B.name] = B
+
+			if(!length(backgrounds_available))
+				to_chat(usr, span_warning("No backgrounds available to you - everything on offer conflicts with what you already have."))
+				return
+
+			backgrounds_available = sort_list(backgrounds_available)
+			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available)
+
+			if(choice)
+				var/datum/virtue/background/selected = backgrounds_available[choice]
+				virtue_background = selected
+				to_chat(usr, span_notice("Selected [choice] as background."))
+				to_chat(usr, process_virtue_text(selected))
+				open_vices_menu(usr)
+			return
+
+		if(action == "clear_background")
+			save_to_history()
+			virtue_background = GLOB.virtues[/datum/virtue/background/none]
+			to_chat(usr, span_notice("Cleared your background."))
 			open_vices_menu(usr)
 			return
 
