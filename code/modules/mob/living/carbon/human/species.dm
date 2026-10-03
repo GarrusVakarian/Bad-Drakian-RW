@@ -1062,7 +1062,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				H.Jitter(5)
 			hunger_rate = 10 * HUNGER_FACTOR*/
 //		hunger_rate *= H.physiology.hunger_mod
-		H.adjust_nutrition(-hunger_rate)
+		if(!H.mind || world.time < H.time_of_last_move + 10 MINUTES)
+			H.adjust_nutrition(-hunger_rate)
 
 		var/obj/item/organ/breasts/breasts = H.has_breasts()
 		if(breasts)
@@ -1082,7 +1083,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		if (H.bodytemperature > BODYTEMP_NORMAL_MAX)	//thirst increased by 50% when hot
 			hunger_rate *= 1.5
 //		hunger_rate *= H.physiology.hunger_mod
-		H.adjust_hydration(-hunger_rate)
+		if(!H.mind || world.time < H.time_of_last_move + 10 MINUTES)
+			H.adjust_hydration(-hunger_rate)
 
 
 	if (H.nutrition > NUTRITION_LEVEL_FULL)
