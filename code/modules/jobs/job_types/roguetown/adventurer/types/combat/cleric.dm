@@ -194,7 +194,7 @@
 	Where others of the clergy may have spent their free time studying scriptures, you devoted yourself towards fighting Psydonia's evils \
 	- a longsword in one hand, and a clenched psycross in the other."
 	outfit = /datum/outfit/job/roguetown/adventurer/paladin
-	traits_applied = list(TRAIT_HEAVYARMOR, TRAIT_STEELHEARTED)
+	traits_applied = list(TRAIT_STEELHEARTED)
 	subclass_stats = list(
 		STATKEY_STR = 2,
 		STATKEY_CON = 2,
@@ -223,9 +223,6 @@
 	or a silver longsword that gives Journeyman skills in Swordsmanship. Psydonics choose between two denominations instead."
 
 /datum/outfit/job/roguetown/adventurer/paladin/pre_equip(mob/living/carbon/human/H)
-	to_chat(H, span_warning("You are a holy knight, clad in maille and armed with steel. \
-	Where others of the clergy may have spent their free time studying scriptures, you devoted yourself towards fighting Psydonia's evils \
-	- a longsword in one hand, and a clenched psycross in the other."))
 	belt = /obj/item/storage/belt/rogue/leather
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backr = /obj/item/rogueweapon/shield/iron
@@ -277,101 +274,105 @@
 						head = /obj/item/clothing/head/roguetown/helmet/heavy/astratahelm/visor
 					if("Buckethelm")
 						head = /obj/item/clothing/head/roguetown/helmet/heavy/astratan
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if(/datum/patron/divine/noc)
 			cloak = /obj/item/clothing/cloak/templar/noc
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/nochelm
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if(/datum/patron/divine/abyssor)
 			cloak = /obj/item/clothing/cloak/abyssortabard
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/abyssorgreathelm
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if(/datum/patron/divine/dendor)
 			cloak = /obj/item/clothing/cloak/templar/dendor
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/dendorhelm
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if(/datum/patron/divine/necra)
 			cloak = /obj/item/clothing/cloak/templar/necra
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/necrahelm
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if (/datum/patron/divine/malum)
 			cloak = /obj/item/clothing/cloak/templar/malum
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/malum
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if (/datum/patron/divine/eora)
 			cloak = /obj/item/clothing/cloak/templar/eora
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/eoran
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if (/datum/patron/divine/ravox)
 			cloak = /obj/item/clothing/cloak/cleric/ravox
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/bucket/gold
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if (/datum/patron/divine/xylix)
 			cloak = /obj/item/clothing/cloak/templar/xylix
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/bucket
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		if (/datum/patron/divine/pestra)
 			cloak = /obj/item/clothing/cloak/templar/pestra
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/pestran
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 		else
 			cloak = /obj/item/clothing/cloak/cape/crusader
 			head = /obj/item/clothing/head/roguetown/helmet/heavy/bucket
-			armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
 	H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_WEAK, devotion_limit = CLERIC_REQ_1)
 	if(H.mind)
-		if(!istype(H?.patron, /datum/patron/old_god)) //Psydonics are special.
-			C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_WEAK, devotion_limit = CLERIC_REQ_1) //Capped to T1 miracles.
-			var/oaths = list("Cleric - Medicine & Mirth","Crusader - Silver Weapon")
-			var/oath_choice = input(H, "Choose your OATH.", "PROFESS YOUR BLESSINGS.") as anything in oaths
-			switch(oath_choice)
-				if("Cleric - Medicine & Mirth")
-					H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_APPRENTICE, TRUE)
-					beltl = /obj/item/reagent_containers/glass/bottle/rogue/healthpot //No needles or cloth, but a basic potion of lifeblood - similar to the Sorcerer's manna potion. Take the 'Physician's Apprentice' virtue for that, uncapped skills, and more.
-				if("Crusader - Silver Weapon")
-					var/crusaderweapon = list("Silver Longsword", "Silver Mace", "Silver Flail", "Silver Greatflail, 13 STR MIN", "Silver Spear", "Silver Axe", "Silver Whip", "Silver Urumi")
-					var/crusaderweapon_choice = input(H, "Choose your silver weapon, Crusader!") as anything in crusaderweapon
-					switch(crusaderweapon_choice)
-						if("Silver Longsword")
-							H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/sword/long/silver //Turns the Paladin into a pre-Exorcist version of the Monster Hunter. Differences are +1 CON / -1 INT, access to minor miracles, and more limb coverage.
-							beltl = /obj/item/rogueweapon/scabbard/sword //Functionally, inflicts silverbane at the cost of -5 damage. Likely won't be a balancing issue, unless we start seeing +5-10 Clerics overnight.
-						if("Silver Mace")
-							H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							beltl = /obj/item/rogueweapon/mace/steel/silver
-						if("Silver Flail")
-							H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							beltl = /obj/item/rogueweapon/flail/sflail/silver
-						if("Silver Greatflail, 13 STR MIN")
-							H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/flail/peasantwarflail/silver
-						if("Silver Spear")
-							H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/spear/silver
-						if("Silver Axe")
-							H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/stoneaxe/woodcut/silver
-						if("Silver Whip")
-							H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/whip/silver // Die, monster! You don't belong in this world!
-						if("Silver Urumi")
-							H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
-							l_hand = /obj/item/rogueweapon/whip/urumi/silver // Die, monster! You don't belong in this world!
-		else
-			var/denominations = list("ENDURING, AS HE DOES - FAITH", "VEYLED, LIKE HIS MARTYRS - ARMOUR")
-			var/denomination_choice = input("Choose your DENOMINATION.", "YOUR FAITH IN HIM.") as anything in denominations
-			switch(denomination_choice)
-				if("ENDURING, AS HE DOES - FAITH")
-					C.grant_miracles(H, cleric_tier = CLERIC_T2, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_2)
-					H.adjust_skillrank_up_to(/datum/skill/magic/holy, SKILL_LEVEL_JOURNEYMAN, TRUE)
-					H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_NOVICE, TRUE)
-					armor = /obj/item/clothing/suit/roguetown/armor/plate/half/fluted/ornate
-				if("VEYLED, LIKE HIS MARTYRS - ARMOUR")
-					C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_WEAK, devotion_limit = CLERIC_REQ_1)
-					H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_APPRENTICE, TRUE)
-					ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC) //Basically a bit more flavourful Knight Errant, so may as very well give HEAVYARMOR
-					armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ornate
+		var/denominations = list("MAILLED DEVOTEE - T2 Miracles + Hauberk", "ACCUSTOMED IN HEAVY PLATES - Heavy Armor Training + Hauberk")
+		var/denomination_choice = input("Choose your GIFT, holy crusader.") as anything in denominations
+		switch(denomination_choice)
+			if("MAILLED DEVOTEE - T2 Miracles + Hauberk")
+				to_chat(H, span_warning("You are a holy knight, clad in maille and armed with steel. \
+	Where other holy warriors have chosen to fight Psydonia's evils in heavy plates, you devoted yourself to be a bit more in tune with your god. \
+	- yet you hold a longsword in one hand, and a clenched psycross in the other."))
+				C.grant_miracles(H, cleric_tier = CLERIC_T2, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_2)
+				ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC) 
+				if(H.mind)
+					if(istype(H?.patron, /datum/patron/old_god)) //Psydonics are special.
+						to_chat(H, span_warning("ENDURING, AS HE DOES."))
+						armor = /obj/item/clothing/suit/roguetown/armor/plate/half/fluted/ornate
+						H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_NOVICE, TRUE)
+					else
+						armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk
+				H.adjust_skillrank_up_to(/datum/skill/magic/holy, SKILL_LEVEL_JOURNEYMAN, TRUE)
+			if("ACCUSTOMED IN HEAVY PLATES - Heavy Armor Training + Hauberk")
+				to_chat(H, span_warning("You are a holy knight, clad in maille and armed with steel. \
+	Where others of the clergy may have spent their free time studying scriptures, you devoted yourself towards fighting Psydonia's evils \
+	- a longsword in one hand, and a clenched psycross in the other."))
+				ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC) 
+				if(H.mind)
+					if(istype(H?.patron, /datum/patron/old_god)) //Psydonics are special.
+						to_chat(H, span_warning("VEYLED, LIKE HIS MARTYRS."))
+						H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_APPRENTICE, TRUE)
+						armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ornate //Basically a bit more flavourful Knight Errant, so may as very well give HEAVYARMOR
+					else
+						armor = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk //You have the training, but you have to find an heavy armor.
+		var/oaths = list("Cleric - Medicine & Mirth","Crusader - Silver Weapon")
+		var/oath_choice = input(H, "Choose your OATH.", "PROFESS YOUR BLESSINGS.") as anything in oaths
+		switch(oath_choice)
+			if("Cleric - Medicine & Mirth")
+				H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_APPRENTICE, TRUE)
+				beltl = /obj/item/reagent_containers/glass/bottle/rogue/healthpot //No needles or cloth, but a basic potion of lifeblood - similar to the Sorcerer's manna potion. Take the 'Physician's Apprentice' virtue for that, uncapped skills, and more.
+			if("Crusader - Silver Weapon")
+				var/crusaderweapon = list("Silver Longsword", "Silver Mace", "Silver Flail", "Silver Greatflail, 13 STR MIN", "Silver Spear", "Silver Axe", "Silver Whip", "Silver Urumi")
+				var/crusaderweapon_choice = input(H, "Choose your silver weapon, Holy Crusader!") as anything in crusaderweapon
+				switch(crusaderweapon_choice)
+					if("Silver Longsword")
+						H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/sword/long/silver //Turns the Paladin into a pre-Exorcist version of the Monster Hunter. Differences are +1 CON / -1 INT, access to minor miracles, and more limb coverage.
+						beltl = /obj/item/rogueweapon/scabbard/sword //Functionally, inflicts silverbane at the cost of -5 damage. Likely won't be a balancing issue, unless we start seeing +5-10 Clerics overnight.
+					if("Silver Mace")
+						H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						beltl = /obj/item/rogueweapon/mace/steel/silver
+					if("Silver Flail")
+						H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						beltl = /obj/item/rogueweapon/flail/sflail/silver
+					if("Silver Greatflail, 13 STR MIN")
+						H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/flail/peasantwarflail/silver
+					if("Silver Spear")
+						H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/spear/silver
+					if("Silver Axe")
+						H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/stoneaxe/woodcut/silver
+					if("Silver Whip")
+						H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/whip/silver // Die, monster! You don't belong in this world!
+					if("Silver Urumi")
+						H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_JOURNEYMAN, TRUE)
+						l_hand = /obj/item/rogueweapon/whip/urumi/silver // Die, monster! You don't belong in this world!
+	
 	var/weapons = list("Longsword","Mace","Flail","Whip","Urumi","Spear","Axe")
 	var/weapon_choice = input(H, "Choose your WEAPON.", "TAKE UP YOUR GOD'S ARMS.") as anything in weapons
 	switch(weapon_choice)
