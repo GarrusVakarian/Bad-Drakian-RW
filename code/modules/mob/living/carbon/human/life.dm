@@ -110,6 +110,12 @@
 	if(stat != DEAD)
 		return 1
 
+/mob/living/carbon/human/Moved(atom/OldLoc, Dir)
+	. = ..()
+	if(mind)
+		time_of_last_move = world.time //This keeps track of the tick count since the human mob last moved, to be referenced later at any time! Only bothering to track it if the mob has a mind, IE a player (for stopping hunger and thirst loss currently!)
+	return
+	
 /mob/living/carbon/human/DeadLife()
 	set invisibility = 0
 
