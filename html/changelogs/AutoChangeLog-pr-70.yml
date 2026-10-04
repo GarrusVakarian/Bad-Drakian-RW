@@ -1,0 +1,4 @@
+author: "Hmeister-fake"
+delete-after: True
+changes:
+  - rscadd: "Standing still for 10+ minutes pauses hunger & thirst, during ERP for example."
