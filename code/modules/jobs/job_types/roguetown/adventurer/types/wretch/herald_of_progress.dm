@@ -10,9 +10,9 @@
 	traits_applied = list(TRAIT_DODGEEXPERT, TRAIT_DECEIVING_MEEKNESS, TRAIT_OVERTHERETIC)
 	maximum_possible_slots = 1 // only one frontman
 	subclass_skills = list(
-		/datum/skill/misc/swimming = SKILL_LEVEL_JOURNEYMAN, 
-		/datum/skill/misc/athletics = SKILL_LEVEL_EXPERT, 
-		/datum/skill/combat/wrestling = SKILL_LEVEL_JOURNEYMAN, 
+		/datum/skill/misc/swimming = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/misc/athletics = SKILL_LEVEL_EXPERT,
+		/datum/skill/combat/wrestling = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/unarmed = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/knives = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/axes = SKILL_LEVEL_EXPERT,
@@ -24,7 +24,7 @@
 		/datum/skill/magic/holy = SKILL_LEVEL_EXPERT,
 		/datum/skill/craft/crafting = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/craft/sewing = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/misc/medicine = SKILL_LEVEL_JOURNEYMAN, 
+		/datum/skill/misc/medicine = SKILL_LEVEL_JOURNEYMAN,
 	)
 	subclass_stats = list(
 		STATKEY_WIL = 4,
@@ -39,7 +39,7 @@
 	head = /obj/item/clothing/head/roguetown/roguehood/red
 	mask = /obj/item/clothing/mask/rogue/lordmask/zizite
 	cloak = /obj/item/clothing/cloak/raincloak/red
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/ 
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
 	backl = /obj/item/storage/backpack/rogue/satchel
@@ -56,14 +56,13 @@
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/lockpick = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/manapot	= 1,
-		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,	
+		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,
 		)
 	if(H.mind)
 		H.set_patron(/datum/patron/inhumen/zizo)
 		if(H.mind.current)
 			H.mind.current.faction += "[H.name]_faction"
 		var/datum/devotion/C = new /datum/devotion(H, H.patron)
-		C.suppress_grants = TRUE
 		C.grant_miracles(H, cleric_tier = CLERIC_T3, passive_gain = CLERIC_REGEN_MINOR, start_maxed = TRUE)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/orison)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/lesser_heal)
@@ -234,7 +233,7 @@
 	pulse += 1
 	if(pulse >= ticks_to_apply)
 		pulse = 0
-		O.energy_add(-12.5) 
+		O.energy_add(-12.5)
 		for(var/mob/living/L in hearers(10, owner))
 			if(istype(L, /mob/living/simple_animal/hostile/rogue/skeleton) || istype(L, /mob/living/carbon/human/species/skeleton)) //sing for the necrodancer
 				L.apply_status_effect(buff_to_apply)

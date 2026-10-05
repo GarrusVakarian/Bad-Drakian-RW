@@ -51,16 +51,6 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	)
 
 	supervisors = "Your Patron"
-	leave_admin_shout = TRUE
-	roleplay_exclusive_notify = TRUE
-
-	rp_enforce = "You are <FONT color='green'>expected</font> to: <br> \
-				- Maintain the Church's grounds. <br> \
-				- Tend to your congregation, or those who may otherwise wander into the Church. <br> \
-				- Obey the whim of your Patron."
-
-	rp_forbid = "You are <FONT color='red'>discouraged</font> from: <br> \
-				- Abandoning either Church or Patron."
 
 /datum/job/roguetown/priest/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
 	..()

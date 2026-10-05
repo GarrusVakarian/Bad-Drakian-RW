@@ -1570,12 +1570,6 @@ Necra's Censer (by ARefrigerator)
 
 	var/mob/living/carbon/human/C = user
 
-	var/cost = HAS_TRAIT(target, TRAIT_CLERGYRADICAL) ? 1000 : 0
-
-	if(cost > 0 && C.church_favor < cost)
-		to_chat(C, span_warning("Your faith lacks the strength. ([cost] Favor required, you have [C.church_favor].)"))
-		return
-
 	user.visible_message(
 		span_notice("[user] holds the Star of Astrata before [target.name]."),
 		span_notice("I hold the Star of Astrata before [target.name], letting its light flood their soul.")
@@ -1606,11 +1600,6 @@ Necra's Censer (by ARefrigerator)
 		to_chat(user, span_danger("[target.name] rejects the offered path."))
 		return
 
-	if(cost > 0 && C.church_favor < cost)
-		to_chat(C, span_warning("In that moment of revelation, your Favor has run dry. The rite fizzles."))
-		to_chat(target, span_warning("The light flickers and dies before the vow can take hold."))
-		return
-
 	var/patron_path = divine_options[choice]
 	if(patron_path)
 		if(hascall(target, "set_patron"))
@@ -1619,11 +1608,8 @@ Necra's Censer (by ARefrigerator)
 			to_chat(user, span_warning("This soul cannot be marked (set_patron not found).")) //dont blame me for this whole thing im a retard
 			return
 
-		if(cost > 0)
-			C.church_favor = max(0, C.church_favor - cost)
-
 		user.visible_message(
 			span_notice("[target.name] accepts the mark of [choice]."),
-			span_notice("[target.name] accepts the mark of [choice]. The ritual is sealed[cost > 0 ? ", costing you [cost] Favor" : ""].")
+			span_notice("[target.name] accepts the mark of [choice]. The ritual is sealed.")
 		)
 		to_chat(target, span_notice("You feel the mark of [choice] settle in your soul."))

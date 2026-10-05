@@ -48,7 +48,7 @@
 
 		icon_img.pixel_x = -(size_x / 2) + 16
 		icon_img.pixel_y = -(size_y / 2) + 16
-		
+
 		choices[shape.name] = icon_img
 
 	var/new_wildshape_type = show_radial_menu(user, user, choices)
@@ -80,8 +80,6 @@
 		if(!D)
 			D = new /datum/devotion(src, patron)
 
-		D.suppress_grants = TRUE
-
 		if(D.level < CLERIC_T2)
 			D.level = CLERIC_T2
 		D.last_level = D.level
@@ -94,7 +92,7 @@
 		if(!(/mob/living/carbon/human/proc/devotionreport in verbs))
 			verbs += /mob/living/carbon/human/proc/devotionreport
 		if(!(/mob/living/carbon/human/proc/clericpray in verbs))
-			verbs += /mob/living/carbon/human/proc/clericpray	
+			verbs += /mob/living/carbon/human/proc/clericpray
 
 /mob/living/carbon/human/species/wildshape/update_inv_gloves() //Prevents weird blood overlays
 	remove_overlay(GLOVES_LAYER)
