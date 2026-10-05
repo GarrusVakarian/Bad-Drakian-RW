@@ -92,44 +92,5 @@
 		H.adjust_skillrank_up_to(/datum/skill/magic/holy, 5, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/magic/druidic, 5, TRUE)
 	H.ambushable = FALSE
-
-/datum/job/roguetown/druid/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(!ishuman(L))
-		return
-
-	var/mob/living/carbon/human/H = L
-	H.advsetup = 1
-	H.invisibility = INVISIBILITY_MAXIMUM
-	H.become_blind("advsetup")
-
-	addtimer(CALLBACK(src, PROC_REF(_delayed_path_choice), H), 50)
-
-/datum/job/roguetown/druid/proc/grant_old_path(mob/living/carbon/human/H)
-	if(!H || !H.mind || !H.patron)
-		return
-
-	REMOVE_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	to_chat(H, span_notice("I remain on the old path of devotion."))
-
-/datum/job/roguetown/druid/proc/grant_radical_path(mob/living/carbon/human/H)
-	if(!H || !H.mind || !H.patron)
-		return
-
-	ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.miracle_points += 3
-	H.church_favor += 1600
-	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	to_chat(H, span_notice("I embrace the radical path."))
-
-/datum/job/roguetown/druid/proc/_delayed_path_choice(mob/living/carbon/human/H)
-	if(!H || !H.client || !H.mind)
-		return
-
-	var/choice = alert(H, "Choose your path.", "Druidic Doctrine", "Loyalist", "Radical")
-
-	if(choice == "Radical")
-		grant_radical_path(H)
-	else
-		grant_old_path(H)
+	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)	//Starts off maxed out.

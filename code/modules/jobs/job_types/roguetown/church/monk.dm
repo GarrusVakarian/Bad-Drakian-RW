@@ -25,39 +25,6 @@
 	job_subclasses = list(
 		/datum/advclass/acolyte
 	)
-	
-/datum/job/roguetown/monk/proc/grant_old_path(mob/living/carbon/human/H)
-	if(!H || !H.mind || !H.patron)
-		return
-
-	REMOVE_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/projectile/divineblast))
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast, H)
-	to_chat(H, span_notice("I remain on the old path of devotion."))
-
-/datum/job/roguetown/monk/proc/grant_radical_path(mob/living/carbon/human/H)
-	if(!H || !H.mind || !H.patron)
-		return
-
-	ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.miracle_points += 3
-	H.church_favor += 1600
-	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/projectile/divineblast))
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast, H)
-	to_chat(H, span_notice("I embrace the radical path."))
-
-/datum/job/roguetown/monk/proc/_delayed_path_choice(mob/living/carbon/human/H)
-	if(!H || !H.client || !H.mind)
-		return
-
-	var/choice = alert(H, "Choose your path.", "Acolyte Doctrine", "Loyalist", "Radical")
-
-	if(choice == "Radical")
-		grant_radical_path(H)
-	else
-		grant_old_path(H)
 
 /datum/job/roguetown/monk/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
 	..()
@@ -84,8 +51,6 @@
 		//Now apply the actual title.
 		H.real_name = "[title] [prev_real_name]"
 		H.name = "[title] [prev_name]"
-
-		addtimer(CALLBACK(src, PROC_REF(_delayed_path_choice), H), 50)
 
 /datum/advclass/acolyte
 	name = "Acolyte"
@@ -218,6 +183,12 @@
 			wrists = /obj/item/clothing/wrists/roguetown/wrappings
 			shoes = /obj/item/clothing/shoes/roguetown/sandals
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/astrata
+	if(H.mind)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast)
+	// -- End of section for god specific bonuses --
+	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)	//Starts off maxed out.
+
 
 /datum/outfit/job/roguetown/monk/basic/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
