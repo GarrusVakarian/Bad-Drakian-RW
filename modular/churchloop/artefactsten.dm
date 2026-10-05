@@ -1568,8 +1568,6 @@ Necra's Censer (by ARefrigerator)
 		to_chat(user, span_warning("[target.name] cannot accept the rite without a soul to answer (no client)."))
 		return
 
-	var/mob/living/carbon/human/C = user
-
 	user.visible_message(
 		span_notice("[user] holds the Star of Astrata before [target.name]."),
 		span_notice("I hold the Star of Astrata before [target.name], letting its light flood their soul.")

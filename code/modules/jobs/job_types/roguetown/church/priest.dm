@@ -630,3 +630,4 @@ code\modules\admin\verbs\divinewrath.dm has a variant with all the gods so keep 
 	to_chat(target, span_danger("You feel the weight of heresy lift from your soul as you embrace [user.patron.name]!"))
 
 	return TRUE
+
