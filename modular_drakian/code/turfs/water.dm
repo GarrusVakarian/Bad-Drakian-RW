@@ -1,10 +1,12 @@
 /*
 Hey.
 Don't touch this. Please?
-It's just for special mapping tiles.
-What do they do? They prevent movement if you do not have:
+As in, don't touch this if you don't actually understand what it does.
+
+What do they do? They prevent safe movement if you do not have:
 - Enough swimming skill.
 - A boat.
+- Like two other edge cases.
 Otherwise, you CAN move through them, but...
 
 Cheers! - Carl
