@@ -304,7 +304,7 @@
 		death_loot_given = TRUE
 
 /datum/component/gnoll_combat_tracker/proc/can_cast_stealth()
-	// Returns TRUE if 1 minute has passed
+	// Returns TRUE if 60 seconds have passed
 	return (world.time >= last_damage_time + GNOLL_STEALTH_TIMER)
 
 /datum/component/gnoll_combat_tracker/proc/get_recent_damage()
@@ -315,7 +315,7 @@
 /obj/effect/proc_holder/spell/invoked/invisibility/gnoll
 	name = "Stalk"
 	desc = "Fade from view. Lasts until you attack. Taking damage makes it impossible to go invisible for a minute."
-	recharge_time = 2 MINUTES
+	recharge_time = 40 SECONDS
 	overlay_icon = 'icons/mob/actions/gnollmiracles.dmi'
 	action_icon = 'icons/mob/actions/gnollmiracles.dmi'
 	overlay_state = "stalk"

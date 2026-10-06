@@ -7,7 +7,7 @@
 	xp_gain = TRUE
 	releasedrain = 30
 	chargedrain = 1
-	chargetime = 20
+	chargetime = 10
 	recharge_time = 15 SECONDS
 	human_req = TRUE
 	warnie = "spellwarning"
@@ -24,15 +24,15 @@
 	glow_intensity = GLOW_INTENSITY_HIGH
 	gesture_required = TRUE
 	ignore_los = FALSE
-	var/delay = 12
-	var/damage = 125 //if you get hit by this it's your fault
+	var/delay = 8
+	var/damage = 200 //if you get hit by this it's your fault
 	var/area_of_effect = 1
 
 /obj/effect/temp_visual/trap
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "trap"
 	light_outer_range = 2
-	duration = 12
+	duration = 35
 	layer = MASSIVE_OBJ_LAYER
 
 /obj/effect/temp_visual/blade_burst
