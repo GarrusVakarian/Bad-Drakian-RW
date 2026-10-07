@@ -117,9 +117,9 @@ GLOBAL_VAR(restart_counter)
 	#endif
 
 	update_status()
-	status_file_loop()
-	round_start_status_file()
-
+	spawn(50)
+		round_start_status_file()
+		status_file_loop()
 
 /world/proc/HandleTestRun()
 	//trigger things to run the whole process
