@@ -1,3 +1,4 @@
+/*
 /datum/round_modifier/low_bandits
 	name = "Low Bandits"
 	desc = "Some free men have come."
@@ -13,6 +14,16 @@
 	min_chaos = 2
 	incompatible = list(/datum/round_modifier/low_bandits)
 	job_slots = list("Bandit" = 7)
+
+/datum/round_modifier/high_bandits
+	name = "High Bandits"
+	desc = "The free men have come in force."
+	cost = 4
+	weight = 15
+	min_chaos = 3
+	incompatible = list(/datum/round_modifier/medium_bandits, /datum/round_modifier/low_bandits)
+	job_slots = list("Bandit" = 10)
+*/
 
 /datum/round_modifier/low_gnolls
 	name = "Low Gnolls"
@@ -43,15 +54,6 @@
 	cost = 4
 	min_chaos = 3
 	job_slots = list("Wretch" = 5)
-
-/datum/round_modifier/high_bandits
-	name = "High Bandits"
-	desc = "The free men have come in force."
-	cost = 4
-	weight = 15
-	min_chaos = 3
-	incompatible = list(/datum/round_modifier/medium_bandits, /datum/round_modifier/low_bandits)
-	job_slots = list("Bandit" = 10)
 
 /*
 /datum/round_modifier/werewolf
