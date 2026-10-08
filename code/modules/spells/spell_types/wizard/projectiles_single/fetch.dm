@@ -23,6 +23,16 @@
 	cost = 2 // Combat spell, but of slighlty less obvious use
 	xp_gain = TRUE
 
+/obj/effect/proc_holder/spell/invoked/projectile/fetch/cast(list/targets, mob/user = user)
+	if(length(targets))
+		var/radius
+		if(range < 1)	//accounts for touch / self spells that use negative range
+			radius = range
+		if(get_dist(targets[1], user) < radius)
+			to_chat(user, span_warning("It's too close!"))
+			revert_cast()
+			return FALSE
+
 /obj/projectile/magic/fetch/on_hit(target)
 	. = ..()
 	if(ismob(target))
