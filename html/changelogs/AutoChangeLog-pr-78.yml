@@ -1,0 +1,4 @@
+author: "Protabs"
+delete-after: True
+changes:
+  - bugfix: "Fixed a bug concerning silver weapon anvil recipes."
