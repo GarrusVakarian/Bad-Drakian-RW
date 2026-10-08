@@ -32,11 +32,8 @@
 	desc = "Some terrible incident colours my past, and now, I feel nothing."
 	added_traits = list(TRAIT_NOMOOD, TRAIT_DETACHED)
 
-/datum/virtue/utility/light_steps
-	name = "Light Steps"
-	desc = "Years of skulking about have left my steps quiet, and my hunched gait quicker."
-	added_traits = list(TRAIT_LIGHT_STEP)
-	added_skills = list(list(/datum/skill/misc/sneaking, 3, 6))
+//VALMORIAN: Light Steps retired and moved to background.dm (background/light_steps) - see
+//modular_azurepeak/virtues/retired.dm for the stub that keeps old saves resolving.
 
 /datum/virtue/utility/resident
 	name = "Resident"
@@ -90,61 +87,8 @@
 	to_chat(recipient, span_notice("Though you failed to become a knight, your training in equipment maintenance and repair remains useful."))
 	to_chat(recipient, span_notice("You can retrieve your hammer and polishing tools from a tree, statue, or clock."))
 
-/datum/virtue/utility/linguist
-	name = "Intellectual"
-	desc = "I've spent my life surrounded by various books or sophisticated foreigners, be it through travel or other fortunes beset on my life. I've picked up several tongues and wits, and keep a journal closeby. I can tell people's exact prowess."
-	custom_text = "Maximizes Assess benefits with a bonus of the target's Stats. Allows the choice of 3 languages to learn upon joining. +1 INT."
-	added_traits = list(TRAIT_INTELLECTUAL)
-	added_skills = list(list(/datum/skill/misc/reading, 3, 6))
-	added_stashed_items = list(
-		"Quill" = /obj/item/natural/feather,
-		"Scroll #1" = /obj/item/paper/scroll,
-		"Scroll #2" = /obj/item/paper/scroll,
-		"Book Crafting Kit" = /obj/item/book_crafting_kit
-	)
-
-/datum/virtue/utility/linguist/apply_to_human(mob/living/carbon/human/recipient)
-	recipient.change_stat(STATKEY_INT, 1)
-	addtimer(CALLBACK(src, PROC_REF(linguist_apply), recipient), 50)
-
-/datum/virtue/utility/linguist/proc/linguist_apply(mob/living/carbon/human/recipient)
-	var/static/list/selectable_languages = list(
-		/datum/language/elvish,
-		/datum/language/dwarvish,
-		/datum/language/orcish,
-		/datum/language/hellspeak,
-		/datum/language/draconic,
-		/datum/language/celestial,
-		/datum/language/grenzelhoftian,
-		/datum/language/canilunzt,
-		/datum/language/kazengunese,
-		/datum/language/otavan,
-		/datum/language/etruscan,
-		/datum/language/gronnic,
-		/datum/language/hammerholdian,
-		/datum/language/aavnic,
-		/datum/language/abyssal,
-		/datum/language/merar
-	)
-
-	var/list/choices = list()
-	for(var/language_type in selectable_languages)
-		if(recipient.has_language(language_type))
-			continue
-		var/datum/language/a_language = new language_type()
-		choices[a_language.name] = language_type
-
-	if(length(choices))	//If this isn't true then we have no new languages learn -- we probably picked archivist
-		var/lang_count = 3
-		var/count = lang_count
-		for(var/i in 1 to lang_count)
-			var/chosen_language = input(recipient, "Choose your extra spoken language.", "VIRTUE: [count] LEFT") as null|anything in choices
-			if(chosen_language)
-				var/language_type = choices[chosen_language]
-				recipient.grant_language(language_type)
-				choices -= chosen_language
-				to_chat(recipient, span_info("I recall my knowledge of [chosen_language]..."))
-				count--
+//VALMORIAN: Intellectual retired and moved to background.dm (background/linguist) - see
+//modular_azurepeak/virtues/retired.dm for the stub that keeps old saves resolving.
 
 /datum/virtue/utility/deathless
 	name = "Deathless"
@@ -182,15 +126,8 @@
 		else
 			recipient.verbs += /mob/living/carbon/human/proc/toggleblindness
 
-/datum/virtue/utility/performer
-	name = "Performer"
-	desc = "Music, artistry and the act of showmanship carried me through life. I've hidden a favorite instrument of mine, know how to please anyone I touch, and how to crack the eggs of hecklers."
-	custom_text = "Comes with a stashed instrument of your choice. You choose the instrument after spawning in."
-	added_traits = list(TRAIT_NUTCRACKER, TRAIT_GOODLOVER)
-	added_skills = list(list(/datum/skill/misc/music, 4, 6)) //Allows them uplaod custom music
-
-/datum/virtue/utility/performer/apply_to_human(mob/living/carbon/human/recipient)
-	addtimer(CALLBACK(src, TYPE_PROC_REF(/datum/customization_trait, pick_stashed_instrument), recipient), 50)
+//VALMORIAN: Performer retired and moved to background.dm (background/performer) - see
+//modular_azurepeak/virtues/retired.dm for the stub that keeps old saves resolving.
 
 /datum/virtue/utility/larcenous
 	name = "Larcenous"
@@ -198,25 +135,9 @@
 	added_stashed_items = list("Lockpick Ring" = /obj/item/lockpickring/mundane)
 	added_skills = list(list(/datum/skill/misc/lockpicking, 3, 6))
 
-/datum/virtue/utility/granary
-	name = "Cunning Provisioner"
-	added_traits = list(TRAIT_HOMESTEAD_EXPERT)
-	desc = "You've worked in or around the docks enough to steal away a sack of supplies that no one would surely miss, just in case. You've picked up on some cooking and fishing tips in your spare time, as well."
-	added_stashed_items = list("Bag of Food" = /obj/item/storage/roguebag/food)
-	added_skills = list(list(/datum/skill/craft/cooking, 3, 6),
-						list(/datum/skill/labor/fishing, 2, 6))
-
-/datum/virtue/utility/forester
-	name = "Forester"
-	added_traits = list(TRAIT_HOMESTEAD_EXPERT)
-	desc = "The forest is your home, or at least, it used to be. You always long to return and roam free once again, and you have not forgotten your knowledge on how to be self sufficient."
-	added_stashed_items = list("Trusty hoe" = /obj/item/rogueweapon/hoe)
-	added_skills = list(list(/datum/skill/craft/cooking, 2, 2),
-						list(/datum/skill/misc/athletics, 2, 2),
-						list(/datum/skill/labor/farming, 2, 2),
-						list(/datum/skill/labor/fishing, 2, 2),
-						list(/datum/skill/labor/lumberjacking, 2, 2)
-	)
+//VALMORIAN: Cunning Provisioner and Forester retired and moved to background.dm
+//(background/granary, background/forester) - see modular_azurepeak/virtues/retired.dm for the stubs
+//that keep old saves resolving.
 
 /datum/virtue/utility/homesteader
 	name = "Pilgrim (-3 TRI)"
@@ -242,12 +163,8 @@
 	added_traits = list(TRAIT_KEENEARS)
 	custom_text = "You can identify known people who speak even when they are out of sight. You can hear people speaking normally above and below you, regardless of obstacles in the way. You can hear whispers from one tile further."
 
-/datum/virtue/utility/tracker
-	name = "Sleuth"
-	desc = "You realised long ago that the ability to find a man is as helpful to aid the law as it is to evade it."
-	added_skills = list(list(/datum/skill/misc/tracking, 3, 6))
-	added_traits = list(TRAIT_SLEUTH)
-	custom_text = "- Upon right clicking a track, you will Mark the person who made them <i>(Expert skill required, not exclusive to this Virtue)</i>.\n- Further tracks found will be automatically highlighted as theirs, along with the person themselves, if they are not sneaking or invisible at the time.\n- Reduces the cooldown for tracking, allows track examining right away, and movement no longer cancels tracking.\n- As a bonus, you'll be able to read people's noble gossip regardless of <i>your</i> noble status."
+//VALMORIAN: Sleuth retired and moved to background.dm (background/tracker) - see
+//modular_azurepeak/virtues/retired.dm for the stub that keeps old saves resolving.
 
 /datum/virtue/utility/bronzearm_r
 	name = "Bronze Arm (R)"
