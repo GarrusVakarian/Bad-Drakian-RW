@@ -244,7 +244,7 @@
 		/obj/item/natural/feather = 1,
 		/obj/item/paper/scroll = 1,
 		) //starts with a vial of poison, like all wizened evil advisors do!
-	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded
+	armor = /obj/item/clothing/suit/roguetown/armor/leather/heavy
 	pants = /obj/item/clothing/under/roguetown/tights/black
 	if(H.mind)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/convertrole/heartfelt)

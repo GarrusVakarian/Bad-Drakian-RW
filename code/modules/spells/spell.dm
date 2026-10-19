@@ -251,6 +251,17 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		return newtime
 	return 0.1
 
+/obj/effect/proc_holder/spell/proc/get_light_metal_armor_penalty(mob/living/user)
+	if(!releasedrain || miracle || associated_skill != /datum/skill/magic/arcane || !ishuman(user))
+		return 0
+	var/mob/living/carbon/human/H = user
+	var/penalty = 0
+	// Count worn clothing only; held, stored and back-slot items do not count.
+	for(var/obj/item/clothing/C in list(H.wear_armor, H.wear_pants, H.wear_wrists, H.wear_shirt, H.gloves, H.head, H.shoes, H.wear_neck, H.wear_mask, H.wear_ring))
+		if(C.impedes_arcane_casting())
+			penalty += releasedrain // Add 100% of base cost per piece, without compounding.
+	return penalty
+
 /obj/effect/proc_holder/spell/proc/calculate_fatigue_drain(mob/living/user)
 	if(!user || !releasedrain || miracle)
 		return releasedrain
@@ -275,6 +286,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			newdrain += releasedrain * HEAVY_ARMOR_STAM_PENALTY
 		else if(ac == ARMOR_CLASS_MEDIUM)
 			newdrain += releasedrain * MEDIUM_ARMOR_STAM_PENALTY
+	newdrain += get_light_metal_armor_penalty(user)
 	if(newdrain > 0)
 		return newdrain
 	return 0.1
@@ -337,6 +349,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		else if(ac == ARMOR_CLASS_MEDIUM)
 			var/armor_mod = releasedrain * MEDIUM_ARMOR_STAM_PENALTY
 			breakdown += span_smallred("  Armor weight: +[armor_mod]")
+	var/light_metal_penalty = get_light_metal_armor_penalty(user)
+	if(light_metal_penalty)
+		breakdown += span_smallred("  Light metal armor: +[light_metal_penalty]")
 	return breakdown
 
 /obj/effect/proc_holder/spell/proc/calculate_cooldown(mob/living/user)

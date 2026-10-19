@@ -377,6 +377,27 @@
 					LAZYSET(user_vars_remembered, variable, user.vars[variable])
 					user.vv_edit_var(variable, user_vars_to_edit[variable])
 		warn_armor_class(user)
+		warn_arcane_casting(user, slot)
+
+/obj/item/clothing/proc/impedes_arcane_casting()
+	if(armor_class == ARMOR_CLASS_LIGHT)
+		switch(smeltresult)
+			if(/obj/item/ingot/iron, /obj/item/ingot/steel, /obj/item/ingot/bronze, /obj/item/ingot/blacksteel)
+				return TRUE
+	return FALSE
+
+/obj/item/clothing/proc/warn_arcane_casting(mob/user, slot)
+	if(!ishuman(user) || !impedes_arcane_casting())
+		return
+	if(!(slot in list(SLOT_ARMOR, SLOT_PANTS, SLOT_WRISTS, SLOT_SHIRT, SLOT_GLOVES, SLOT_HEAD, SLOT_SHOES, SLOT_NECK, SLOT_WEAR_MASK, SLOT_RING)))
+		return
+	var/list/known_spells = user.mob_spell_list
+	if(user.mind)
+		known_spells = known_spells | user.mind.spell_list
+	for(var/obj/effect/proc_holder/spell/S in known_spells)
+		if(!S.miracle && S.associated_skill == /datum/skill/magic/arcane)
+			to_chat(user, span_smallnotice("Wearing [src] will make my arcane casting more tiresome."))
+			return
 
 /obj/item/clothing/proc/warn_armor_class(mob/living/carbon/human/user, removed = FALSE)
 	if(armor_class <= ARMOR_CLASS_NONE)
