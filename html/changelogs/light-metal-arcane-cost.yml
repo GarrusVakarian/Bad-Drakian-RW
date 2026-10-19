@@ -1,6 +1,6 @@
 author: "mypingishuge"
 delete-after: True
 changes:
-  - balance: "Each worn piece of AC Light equipment that smelts into iron, steel, bronze or blacksteel adds 100% of an arcane spell's base stamina cost."
+  - balance: "Each worn piece of AC Light equipment that smelts into iron, steel, bronze or blacksteel adds 60% of an arcane spell's base stamina cost."
   - qol: "Arcane spellcasters receive a small chat notice when equipping gear that increases their spell stamina costs."
   - balance: "Hedge Mage, Advisor of Heartfelt, Mastermind Wretched Toiler and Pyromaniac now start with hardened leather armor. Pyromaniac also starts with hardened leather pants."

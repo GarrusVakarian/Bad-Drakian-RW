@@ -259,7 +259,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	// Count worn clothing only; held, stored and back-slot items do not count.
 	for(var/obj/item/clothing/C in list(H.wear_armor, H.wear_pants, H.wear_wrists, H.wear_shirt, H.gloves, H.head, H.shoes, H.wear_neck, H.wear_mask, H.wear_ring))
 		if(C.impedes_arcane_casting())
-			penalty += releasedrain // Add 100% of base cost per piece, without compounding.
+			penalty += releasedrain * 0.6 // Add 60% of base cost per piece, without compounding.
 	return penalty
 
 /obj/effect/proc_holder/spell/proc/calculate_fatigue_drain(mob/living/user)
