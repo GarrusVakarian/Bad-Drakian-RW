@@ -37273,6 +37273,12 @@
 /obj/item/reagent_containers/food/snacks/deadmouse,
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/under/town/sewer)
+"hkQ" = (
+/obj/structure/bookcase/random{
+	density = 0
+	},
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/dwarfin/rockhill)
 "hkU" = (
 /turf/closed/mineral/rogue/cinnabar,
 /area/rogue/outdoors/town/grove)
@@ -42236,6 +42242,13 @@
 /obj/item/reagent_containers/glass/bucket,
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/shelter/bog)
+"iiy" = (
+/obj/structure/roguewindow{
+	max_integrity = 10000;
+	name = "reinforced window"
+	},
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/dwarfin/rockhill)
 "iiz" = (
 /turf/open/floor/rogue/tile/brick,
 /area/rogue/indoors/town/church)
@@ -63121,6 +63134,13 @@
 	},
 /turf/open/floor/rogue/church,
 /area/rogue/indoors/town/church/chapel)
+"moS" = (
+/obj/structure/flora/ausbushes/brflowers,
+/obj/structure/flora/maple/c{
+	pixel_x = -32
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/town/roofs)
 "moU" = (
 /turf/closed/wall/mineral/rogue/stone/red_moss,
 /area/rogue/indoors/town/church)
@@ -65871,6 +65891,23 @@
 /mob/living/carbon/human/species/skeleton/npc/bogguard,
 /turf/open/floor/rogue/twig,
 /area/rogue/outdoors/bograt/above)
+"mQz" = (
+/obj/structure/rack/rogue,
+/obj/effect/spawner/lootdrop/roguetown/dungeon/tools{
+	loot = list(/obj/item/rogueweapon/shovel = 3, /obj/item/rogueweapon/thresher = 3, /obj/item/flint = 4, /obj/item/rogueweapon/stoneaxe/woodcut = 3, /obj/item/rogueweapon/hammer/iron = 3, /obj/item/rogueweapon/tongs = 3, /obj/item/rogueweapon/pick = 3, /obj/item/rogueweapon/sickle = 3, /obj/item/rogueweapon/huntingknife = 3, /obj/item/rogueweapon/huntingknife/scissors = 3, /obj/item/rogueweapon/hoe = 3)
+	},
+/obj/effect/spawner/lootdrop/roguetown/dungeon/tools{
+	loot = list(/obj/item/rogueweapon/shovel = 3, /obj/item/rogueweapon/thresher = 3, /obj/item/flint = 4, /obj/item/rogueweapon/stoneaxe/woodcut = 3, /obj/item/rogueweapon/hammer/iron = 3, /obj/item/rogueweapon/tongs = 3, /obj/item/rogueweapon/pick = 3, /obj/item/rogueweapon/sickle = 3, /obj/item/rogueweapon/huntingknife = 3, /obj/item/rogueweapon/huntingknife/scissors = 3, /obj/item/rogueweapon/hoe = 3)
+	},
+/obj/item/storage/roguebag,
+/obj/item/storage/roguebag,
+/obj/item/rogueweapon/sickle,
+/obj/item/rogueweapon/hoe,
+/obj/machinery/light/roguestreet/orange/walllamp{
+	dir = 1
+	},
+/turf/open/floor/rogue/metal/barograte,
+/area/rogue/indoors/town/dwarfin/rockhill)
 "mQD" = (
 /obj/structure/stairs,
 /turf/open/floor/rogue/woodturned,
@@ -101733,6 +101770,14 @@
 	},
 /turf/open/floor/rogue/cobble,
 /area/rogue/indoors/town/warden)
+"tZP" = (
+/obj/structure/fluff/walldeco/vinez,
+/obj/structure/roguewindow{
+	max_integrity = 10000;
+	name = "reinforced window"
+	},
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/dwarfin/rockhill)
 "tZU" = (
 /obj/effect/landmark/quest_spawner/generic,
 /turf/open/floor/rogue/dirt,
@@ -304030,8 +304075,8 @@ iWT
 gLf
 rSC
 gLf
-gLf
-gLf
+cNy
+qDn
 udz
 gLf
 gLf
@@ -305312,8 +305357,8 @@ gLf
 rSC
 rSC
 dPm
-gLf
-gLf
+cNy
+qDn
 iCS
 gLf
 gLf
@@ -309196,7 +309241,7 @@ dYh
 fiD
 xdp
 rRb
-gLf
+cNy
 rSC
 rSC
 gLf
@@ -309628,7 +309673,7 @@ dYh
 eXg
 xdp
 rRb
-gLf
+qDn
 rSC
 rSC
 gLf
@@ -311383,7 +311428,7 @@ mof
 gLf
 gLf
 rSC
-gLf
+qDn
 rRb
 lrs
 lrs
@@ -313105,10 +313150,10 @@ uEX
 uEX
 uEX
 rSC
-rSC
-lrs
 rRb
-lrs
+rRb
+rRb
+rRb
 gLf
 rSC
 gLf
@@ -313537,7 +313582,7 @@ uEX
 uEX
 rSC
 rSC
-rSC
+rRb
 gLf
 gLf
 gLf
@@ -313969,7 +314014,7 @@ uEX
 lrs
 rSC
 rSC
-fIL
+rRb
 gLf
 rSC
 rSC
@@ -314401,7 +314446,7 @@ lrs
 lrs
 rSC
 rSC
-uEX
+rRb
 gLf
 rSC
 gLf
@@ -314818,7 +314863,7 @@ rSC
 udz
 gLf
 gLf
-iyQ
+sgL
 iyQ
 iyQ
 gLf
@@ -314833,7 +314878,7 @@ rSC
 fIL
 rSC
 uEX
-uEX
+rRb
 gLf
 rSC
 gLf
@@ -316142,7 +316187,7 @@ aWw
 qqj
 kMq
 rSM
-jAL
+iJU
 kdN
 kdN
 swG
@@ -317869,8 +317914,8 @@ ukO
 bte
 qqj
 qqj
-oib
-jAL
+jlY
+iJU
 kdN
 kdN
 swG
@@ -318302,7 +318347,7 @@ rWk
 qqj
 qqj
 jlY
-jAL
+iJU
 kdN
 kdN
 swG
@@ -318733,7 +318778,7 @@ uhh
 qqj
 qqj
 qqj
-rTV
+mQz
 sco
 kdN
 kdN
@@ -532147,7 +532192,7 @@ sco
 ydE
 qSY
 dMk
-dAF
+hkQ
 cUT
 dMk
 cPA
@@ -646178,9 +646223,9 @@ rZi
 rZi
 rZi
 cRi
-kdJ
-kdJ
-kdJ
+iiy
+iiy
+iiy
 cRi
 wXx
 jFA
@@ -646609,14 +646654,14 @@ gft
 gft
 krf
 rZi
-kdJ
+iiy
 hqU
 sXL
 sXL
-kdJ
+iiy
 wXx
 nxh
-koG
+tta
 lbI
 tBf
 sco
@@ -647041,11 +647086,11 @@ eNY
 eNY
 lHE
 rZi
-gms
+tZP
 hqU
 sXL
 sXL
-kdJ
+iiy
 wXx
 jFA
 rVR
@@ -647473,13 +647518,13 @@ eNY
 eNY
 lHE
 rZi
-kdJ
+iiy
 sXL
 sXL
 hqU
-kdJ
+iiy
 wXx
-jFA
+moS
 rVR
 pXU
 lux
@@ -647905,14 +647950,14 @@ eNY
 eNY
 lHE
 rZi
-kdJ
+iiy
 hqU
 sXL
 sXL
-kdJ
+iiy
 wXx
 jFA
-koG
+tta
 vdp
 vDT
 sco
@@ -648338,9 +648383,9 @@ eNY
 lHE
 rZi
 sco
-kdJ
-gms
-kdJ
+iiy
+tZP
+iiy
 cRi
 tjM
 vkJ
