@@ -1,0 +1,5 @@
+author: IronDragoon
+delete-after: true
+changes:
+- bugfix: Removed church vault back entry and fixed smithy silverface placement on
+    Neuhill.
