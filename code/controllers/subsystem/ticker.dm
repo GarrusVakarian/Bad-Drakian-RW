@@ -16,6 +16,7 @@ SUBSYSTEM_DEF(ticker)
 	// If true, there is no lobby phase, the game starts immediately.
 	var/start_immediately = FALSE
 	var/setup_done = FALSE //All game setup done including mode post setup and
+	var/datum/roundstart_watchdog/setup_watchdog
 
 	var/login_music							//music played in pregame lobby
 	var/round_end_sound						//music/jingle played when the world reboots
@@ -314,6 +315,10 @@ SUBSYSTEM_DEF(ticker)
 	var/isrogueworld = FALSE
 
 /datum/controller/subsystem/ticker/proc/setup()
+	QDEL_NULL(setup_watchdog)
+	if(CONFIG_GET(flag/log_roundstart_stalls))
+		setup_watchdog = new
+	setup_watchdog?.track("setup preparation")
 	message_admins(span_boldannounce("Starting game..."))
 	var/init_start = world.timeofday
 
@@ -325,48 +330,63 @@ SUBSYSTEM_DEF(ticker)
 
 	CHECK_TICK
 
+	setup_watchdog?.track("gamemode preparation")
 	can_continue =	SSgamemode.pre_setup()
 
+	setup_watchdog?.track("gamemode tick-budget wait")
 	CHECK_TICK
 
+	setup_watchdog?.track("job allocation")
 	can_continue = can_continue && SSjob.DivideOccupations(list()) 				//Distribute jobs
 
+	setup_watchdog?.track("allocation tick-budget wait")
 	CHECK_TICK
 
 	log_game("GAME SETUP: Divide Occupations success")
 
+	setup_watchdog?.track("post-allocation tick-budget wait")
 	CHECK_TICK
 
 	// Previously: if(!CONFIG_GET(flag/ooc_during_round)) toggle_ooc(FALSE)
 	// OOC has been repurposed to be lobby-only (non-lobby players can't see or use it),
 	// so there's no longer a gameplay reason to auto-disable it at round start.
 	// Keeping it enabled prevents admins from needing to hit the toggle every round.
+	setup_watchdog?.track("lobby preparation")
 	if(!GLOB.ooc_allowed)
 		toggle_ooc(TRUE) // Ensure lobby OOC is on for the new round
 
+	setup_watchdog?.track("pre-creation tick-budget wait")
 	CHECK_TICK
+	setup_watchdog?.track("spawn landmark shuffle")
 	GLOB.start_landmarks_list = shuffle(GLOB.start_landmarks_list) //Shuffle the order of spawn points so they dont always predictably spawn bottom-up and right-to-left
 	if(!isrogueworld && !isroguefight)
 		create_characters() //Create player characters
 		log_game("GAME SETUP: create characters success")
+		setup_watchdog?.track("mind collection")
 		collect_minds()
 		log_game("GAME SETUP: collect minds success")
+		setup_watchdog?.track("character equipment")
 		equip_characters()
 		log_game("GAME SETUP: equip characters success")
 
+		setup_watchdog?.track("manifest generation")
 		GLOB.data_core.manifest()
 		log_game("GAME SETUP: manifest success")
 
+		setup_watchdog?.track("client transfer")
 		transfer_characters()	//transfer keys to the new mobs
 		log_game("GAME SETUP: transfer characters success")
 
+	setup_watchdog?.track("round-start event dispatch")
 	for(var/I in round_start_events)
 		var/datum/callback/cb = I
 		cb.InvokeAsync()
 
 	log_game("GAME SETUP: round start events success")
 	LAZYCLEARLIST(round_start_events)
+	setup_watchdog?.track("after-event tick-budget wait")
 	CHECK_TICK
+	setup_watchdog?.track("world cleanup")
 	if(isrogueworld)
 		for(var/obj/structure/fluff/traveltile/TT in GLOB.traveltiles)
 			if(TT.aallmig)
@@ -391,8 +411,10 @@ SUBSYSTEM_DEF(ticker)
 //	SSshuttle.emergency.startTime = world.time
 //	SSshuttle.emergency.setTimer(ROUNDTIMERBOAT)
 
+	setup_watchdog?.track("database round-start recording")
 	SSdbcore.SetRoundStart()
 
+	setup_watchdog?.track("round-start sounds and state transition")
 	for(var/client/C in GLOB.clients)
 		if(C.mob)
 			C.mob.playsound_local(C.mob, 'sound/misc/roundstart.ogg', 100, FALSE)
@@ -409,8 +431,11 @@ SUBSYSTEM_DEF(ticker)
 			var/datum/holiday/holiday = SSevents.holidays[holidayname]
 			to_chat(world, "<h4>[holiday.greet()]</h4>")
 */
+	setup_watchdog?.track("postsetup dispatch")
 	PostSetup()
 	log_game("GAME SETUP: postsetup success")
+	setup_watchdog?.track("setup complete")
+	QDEL_NULL(setup_watchdog)
 
 	return TRUE
 
@@ -482,16 +507,65 @@ SUBSYSTEM_DEF(ticker)
 			continue
 		if(player.ready == PLAYER_READY_TO_PLAY)
 			GLOB.joined_player_list += player.ckey
+			setup_watchdog?.track("character creation", player)
 			player.create_character(FALSE)
 		else
+			setup_watchdog?.track("lobby-panel refresh", player)
 			player.new_player_panel()
+		setup_watchdog?.track("creation-loop tick-budget wait", player)
 		CHECK_TICK
+
+/// One timer per setup attempt; normal progress only updates these fields, without logging.
+/datum/roundstart_watchdog
+	var/operation
+	var/player_key
+	var/assigned_job
+	var/started_at
+	var/entry_tick_usage
+	var/entry_tick_limit
+	var/warned = FALSE
+	var/timer_id
+
+/datum/roundstart_watchdog/New()
+	timer_id = addtimer(CALLBACK(src, PROC_REF(check_progress)), 10 SECONDS, TIMER_LOOP|TIMER_STOPPABLE|TIMER_CLIENT_TIME)
+
+/datum/roundstart_watchdog/Destroy()
+	if(warned)
+		log_game("ROUNDSTART WATCHDOG STOPPED: [describe_operation()]; completion not observed")
+	deltimer(timer_id)
+	return ..()
+
+/datum/roundstart_watchdog/proc/describe_operation()
+	return "operation=[operation]; player=[player_key || "none"]; job=[assigned_job || "none"]; elapsed=[(REALTIMEOFDAY - started_at) / 10]s"
+
+/datum/roundstart_watchdog/proc/track(next_operation, mob/player, mob/character)
+	if(warned)
+		log_game("ROUNDSTART RECOVERED: [describe_operation()]")
+	else if(operation && REALTIMEOFDAY - started_at >= 15 SECONDS)
+		log_game("ROUNDSTART SLOW OPERATION: [describe_operation()]; entry_tick_usage=[entry_tick_usage]; entry_tick_limit=[entry_tick_limit]; completed before a stall warning was recorded")
+	var/next_key = player?.ckey
+	// Mind transfer clears the lobby mob's mind, so retain its job for the following tick check.
+	assigned_job = character?.mind?.assigned_role || player?.mind?.assigned_role || ((next_key && next_key == player_key) ? assigned_job : null)
+	player_key = next_key
+	operation = next_operation
+	started_at = REALTIMEOFDAY
+	entry_tick_usage = TICK_USAGE
+	entry_tick_limit = Master.current_ticklimit
+	warned = FALSE
+
+/datum/roundstart_watchdog/proc/check_progress()
+	if(!operation || warned || REALTIMEOFDAY - started_at < 15 SECONDS)
+		return
+	warned = TRUE
+	log_game("ROUNDSTART STALLED: [describe_operation()]; entry_tick_usage=[entry_tick_usage]; entry_tick_limit=[entry_tick_limit]; tick_usage=[TICK_USAGE]; cpu=[world.cpu]; tick_limit=[Master.current_ticklimit]")
 
 /datum/controller/subsystem/ticker/proc/collect_minds()
 	for(var/i in GLOB.new_player_list)
 		var/mob/dead/new_player/P = i
+		setup_watchdog?.track("mind collection", P)
 		if(P.new_character && P.new_character.mind)
 			SSticker.minds += P.new_character.mind
+		setup_watchdog?.track("mind-collection tick-budget wait", P)
 		CHECK_TICK
 
 /datum/controller/subsystem/ticker/proc/equip_characters()
@@ -504,13 +578,16 @@ SUBSYSTEM_DEF(ticker)
 	sortTim(valid_characters, GLOBAL_PROC_REF(cmp_assignedrole_dsc))
 	for(var/mob/character as anything in valid_characters)
 		var/mob/new_player = valid_characters[character]
+		setup_watchdog?.track("character equipment", new_player, character)
 		SSjob.EquipRank(new_player, character.mind.assigned_role, joined_late = FALSE)
+		setup_watchdog?.track("equipment-loop tick-budget wait", new_player, character)
 		CHECK_TICK
 
 /datum/controller/subsystem/ticker/proc/transfer_characters()
 	var/list/livings = list()
 	for(var/i in GLOB.new_player_list)
 		var/mob/dead/new_player/player = i
+		setup_watchdog?.track("client transfer and class setup", player)
 		var/mob/living = player?.transfer_character()
 		if(living)
 			qdel(player)
