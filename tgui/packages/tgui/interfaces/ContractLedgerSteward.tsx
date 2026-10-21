@@ -48,6 +48,7 @@ type FundingSource = 'pledge' | 'crown' | 'directive';
 type SubTab = 'compose' | 'history';
 const RECOVERY_TYPE = 'Recovery';
 const BLOCKADE_TYPE = 'Blockade Defense';
+const HOARD_RECOVERY_TYPE = 'Hoard Recovery';
 const DISPATCH_DEBOUNCE_MS = 500;
 
 const COMMISSION_LABELS: Record<string, string> = {
@@ -262,11 +263,10 @@ const ComposeView = () => {
   const cost = data.defense_costs?.[type] ?? 0;
   const needsDestination = type === RECOVERY_TYPE;
   const isBlockade = type === BLOCKADE_TYPE;
-  // The picked blockade's recall entry, if any. Present when a writ is already in
-  // circulation for that region - the entry tells us whether it is still recallable
-  // and drives the Recall button below.
+  const isHoardRecovery = type === HOARD_RECOVERY_TYPE;
+  const isWrit = isBlockade || isHoardRecovery;
   const recallEntry =
-    isBlockade && region
+    isWrit && region
       ? (data.blockade_recall_list || []).find((e) => e.region === region)
       : undefined;
   const regionHasActiveWrit = !!recallEntry;
@@ -279,7 +279,11 @@ const ComposeView = () => {
   const bonusPayEligible = funding !== 'directive';
   const effectiveLevel = bonusPayEligible ? bonusPayLevel : 0;
   const bonusMult =
-    effectiveLevel === 2 ? bonusFullMult : effectiveLevel === 1 ? bonusLightMult : 1;
+    effectiveLevel === 2
+      ? bonusFullMult
+      : effectiveLevel === 1
+        ? bonusLightMult
+        : 1;
   const scaledCost = effectiveLevel !== 0 ? Math.round(cost * bonusMult) : cost;
   const effectiveCost = funding === 'directive' ? 0 : scaledCost;
 
@@ -322,9 +326,11 @@ const ComposeView = () => {
       : !region
         ? isBlockade
           ? 'No blockade to clear.'
-          : 'Pick a region.'
-        : isBlockade && regionHasActiveWrit
-          ? 'A writ is already in circulation for this blockade.'
+          : isHoardRecovery
+            ? 'No hoard is large enough.'
+            : 'Pick a region.'
+        : isWrit && regionHasActiveWrit
+          ? 'A writ is already in circulation for this region.'
           : needsDestination && !destination
             ? 'Pick the shipment destination.'
             : fundingDisabledReason;
@@ -337,8 +343,8 @@ const ComposeView = () => {
       type,
       region,
       destination: needsDestination ? destination : null,
-      // Blockade + directive writs are always bearer-bond; ignore the mode control.
-      in_hands: isBlockade || isDirective ? 1 : mode === 'hands' ? 1 : 0,
+      // Blockade, hoard recovery, and directive writs are always bearer-bond; ignore the mode control.
+      in_hands: isWrit || isDirective ? 1 : mode === 'hands' ? 1 : 0,
       // Directives skip the levy-exempt stamp (no reward to exempt).
       levy_exempt: isDirective ? 0 : levyExempt ? 1 : 0,
       // Bonus Pay forced off for Requests (directive) server-side as well.
@@ -351,7 +357,7 @@ const ComposeView = () => {
   return (
     <>
       <div className="ContractLedger__InnkeeperFlavor">
-        Commission adventurers against the Realm's enemies.
+        Commission adventurers against the Realm&apos;s enemies.
       </div>
 
       <FormRow label="Commission Type">
@@ -368,7 +374,15 @@ const ComposeView = () => {
         </select>
       </FormRow>
 
-      <FormRow label={isBlockade ? 'Blockaded Region' : 'Region'}>
+      <FormRow
+        label={
+          isBlockade
+            ? 'Blockaded Region'
+            : isHoardRecovery
+              ? 'Hoard Region'
+              : 'Region'
+        }
+      >
         <select
           className="ContractLedger__InnkeeperSelect"
           value={region}
@@ -379,17 +393,19 @@ const ComposeView = () => {
             {regionsForType.length === 0
               ? isBlockade
                 ? 'No blockades are active.'
-                : 'No region will host this type'
+                : isHoardRecovery
+                  ? 'No hoard is large enough.'
+                  : 'No region will host this type'
               : isBlockade
                 ? '- pick a blockade -'
                 : '- pick a region -'}
           </option>
           {regionsForType.map((r) => {
             const mult = data.region_tp_multipliers?.[r];
-            // Only annotate non-blockade regions - blockade rows route through economic
-            // regions, which don't carry a TP multiplier.
+            // Only annotate non-writ regions - blockade rows route through economic
+            // regions, which don't carry a TP multiplier, and writ rewards are flat.
             const suffix =
-              !isBlockade && typeof mult === 'number' && mult !== 1
+              !isWrit && typeof mult === 'number' && mult !== 1
                 ? ` (×${mult} reward)`
                 : '';
             const label = isBlockade
@@ -405,7 +421,7 @@ const ComposeView = () => {
         </select>
       </FormRow>
 
-      {!isBlockade &&
+      {!isWrit &&
         region &&
         (() => {
           const flavor = regionRewardFlavor(
@@ -469,7 +485,7 @@ const ComposeView = () => {
               disabled={aldermanActing}
               onChange={() => setFunding('crown')}
             />
-            &nbsp;Crown's Purse ({coin(data.crown_purse_balance)})
+            &nbsp;Crown&apos;s Purse ({coin(data.crown_purse_balance)})
           </label>
           <label
             style={
@@ -490,16 +506,17 @@ const ComposeView = () => {
               disabled={aldermanActing || directivesRemaining <= 0}
               onChange={() => setFunding('directive')}
             />
-            &nbsp;Request ({directivesRemaining}/{data.directives_per_day ?? 0} left)
+            &nbsp;Request ({directivesRemaining}/{data.directives_per_day ?? 0}{' '}
+            left)
           </label>
         </div>
       </FormRow>
 
       {funding === 'directive' && (
         <div className="ContractLedger__InnkeeperFlavor">
-          A Request calls upon someone to
-          answer out of duty. No coin changes hands; the scroll is drawn to
-          your hand and must be given directly to whoever will honour it.
+          A Request calls upon someone to answer out of duty. No coin changes
+          hands; the scroll is drawn to your hand and must be given directly to
+          whoever will honour it.
         </div>
       )}
 
@@ -528,7 +545,7 @@ const ComposeView = () => {
         </FormRow>
       )}
 
-      {!isBlockade && funding !== 'directive' && (
+      {!isWrit && funding !== 'directive' && (
         <FormRow label="Deliver As">
           <div className="ContractLedger__InnkeeperModeRow">
             <ModeRadio
@@ -564,7 +581,19 @@ const ComposeView = () => {
         </div>
       )}
 
-      {isBlockade && recallEntry && (
+      {isHoardRecovery && funding !== 'directive' && (
+        // TODO: flavor - plain placeholder, rewrite
+        <div className="ContractLedger__InnkeeperFlavor">
+          Hoard recovery writs are always drawn to your hand and work like
+          blockade writs: pin to the Grand Contract Ledger to require a
+          Fellowship of three, or hand to a trusted party directly. On top of
+          the standard blockade reward, the bearer seizes the region&apos;s
+          banditry hoard, taxed as Recovered Spoils. No trade route is blocked
+          by the writ.
+        </div>
+      )}
+
+      {isWrit && recallEntry && (
         <div className="ContractLedger__InnkeeperFlavor">
           {recallEntry.recall_eligible
             ? `A writ is in circulation for ${recallEntry.region} and has gone unanswered. It can be recalled now${
@@ -586,18 +615,20 @@ const ComposeView = () => {
         >
           {funding === 'directive'
             ? 'Submit Request'
-            : isBlockade
+            : isWrit
               ? `Print Writ (${coin(effectiveCost)})`
               : `Commission (${coin(effectiveCost)})`}
         </button>
-        {isBlockade && !!recallEntry?.recall_eligible && (
+        {isWrit && !!recallEntry?.recall_eligible && (
           <button
             type="button"
             className="ContractLedger__SignButton"
             onClick={() => act('recall_blockade_writ', { region })}
           >
             Recall Writ
-            {recallEntry.refund > 0 ? ` (refund ${coin(recallEntry.refund)})` : ''}
+            {recallEntry.refund > 0
+              ? ` (refund ${coin(recallEntry.refund)})`
+              : ''}
           </button>
         )}
       </div>
