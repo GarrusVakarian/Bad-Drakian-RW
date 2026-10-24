@@ -32,6 +32,18 @@
 	integer = FALSE
 	min_val = 0
 
+/datum/config_entry/flag/autostart	// Skip the lobby countdown; disabled by default.
+
+/datum/config_entry/number/minimum_flavor_text
+	config_entry_value = 0
+	integer = TRUE
+	min_val = 0
+
+/datum/config_entry/number/minimum_ooc_notes
+	config_entry_value = 0
+	integer = TRUE
+	min_val = 0
+
 /datum/config_entry/number/round_end_countdown	// Post round murder death kill countdown
 	config_entry_value = 25
 	integer = FALSE

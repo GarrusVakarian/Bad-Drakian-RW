@@ -11,6 +11,7 @@ import { Tooltip } from 'tgui-core/components';
 import { EventEmitter } from 'tgui-core/events';
 import { classes } from 'tgui-core/react';
 
+import { RollTooltip } from '../chat_components/RollTooltip';
 import {
   COMBINE_MAX_MESSAGES,
   COMBINE_MAX_TIME_WINDOW,
@@ -37,6 +38,7 @@ const SCROLL_TRACKING_TOLERANCE = 24;
 export const TGUI_CHAT_COMPONENTS = {
   Tooltip,
   TooltipHTML,
+  RollTooltip,
 };
 
 // List of injectable attibute names mapped to their proper prop
@@ -45,6 +47,13 @@ export const TGUI_CHAT_ATTRIBUTES_TO_PROPS = {
   position: 'position',
   content: 'content',
   html: 'html',
+  dice: 'dice',
+  labels: 'labels',
+  sides: 'sides',
+  outcome: 'outcome',
+  outcomes: 'outcomes',
+  stats: 'stats',
+  footers: 'footers',
 };
 
 const findNearestScrollableParent = (startingNode) => {
@@ -612,7 +621,7 @@ export class ChatRenderer {
               working_value = true;
             } else if (working_value === '$false') {
               working_value = false;
-            } else if (!isNaN(working_value)) {
+            } else if (targetName !== 'RollTooltip' && !isNaN(working_value)) {
               const parsed_float = parseFloat(working_value);
               if (!isNaN(parsed_float)) {
                 working_value = parsed_float;
