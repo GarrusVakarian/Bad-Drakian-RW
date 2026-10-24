@@ -1,0 +1,5 @@
+author: mypingishuge
+delete-after: true
+changes:
+- code_imp: Ported Ratwood guild, tailor and keep remaps and church vault/smithy changes
+    to Neuhill.
