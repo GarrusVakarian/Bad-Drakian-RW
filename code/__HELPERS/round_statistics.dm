@@ -514,6 +514,8 @@ GLOBAL_LIST_EMPTY(patron_follower_counts)
 #define FEATURED_STATS_STATPACKS "statpacks"
 #define FEATURED_STATS_VICES	"vices"
 #define FEATURED_STATS_QUIRKS	"quirks"
+#define FEATURED_STATS_BACKGROUNDS "backgrounds"
+#define FEATURED_STATS_BACKGROUNDS_LEAST "backgrounds_least"
 
 // Featured objects stats
 #define FEATURED_STATS_CRAFTED_ITEMS "crafted_items"
@@ -644,6 +646,19 @@ GLOBAL_LIST_INIT(featured_stats, list(
 		"color" = "#5cb896",
 		"entries" = list(),
 		"object_stat" = TRUE,
+	),
+	FEATURED_STATS_BACKGROUNDS = list(
+		"name" = "TOP 10 Backgrounds",
+		"color" = "#d4b483",
+		"entries" = list(),
+		"object_stat" = TRUE
+	),
+	FEATURED_STATS_BACKGROUNDS_LEAST = list(
+		"name" = "BOTTOM 10 Backgrounds",
+		"color" = "#a6b8cf",
+		"entries" = list(),
+		"object_stat" = TRUE,
+		"ascending" = TRUE
 	),))
 
 // Chronicle statistics
@@ -704,7 +719,10 @@ GLOBAL_LIST_EMPTY(chronicle_stats)
 	for(var/key in stat_data["entries"])
 		entries += list(list("name" = key, "count" = stat_data["entries"][key]))
 
-	sortTim(entries, GLOBAL_PROC_REF(cmp_stat_count_desc))
+	if(stat_data["ascending"])
+		sortTim(entries, GLOBAL_PROC_REF(cmp_stat_count_asc))
+	else
+		sortTim(entries, GLOBAL_PROC_REF(cmp_stat_count_desc))
 
 	var/list/result = list()
 	for(var/i in 1 to min(14, entries.len))
@@ -719,6 +737,9 @@ GLOBAL_LIST_EMPTY(chronicle_stats)
 
 /proc/cmp_stat_count_desc(list/a, list/b)
 	return b["count"] - a["count"]
+
+/proc/cmp_stat_count_asc(list/a, list/b)
+	return a["count"] - b["count"]
 
 /proc/record_featured_stat(stat_category, mob/living/user, increment = 1)
 	if(SSticker.current_state == GAME_STATE_FINISHED)
