@@ -1,0 +1,5 @@
+author: PPooch
+delete-after: true
+changes:
+- rscadd: Councillors may now establish ministries with important town roles, improving
+    their skills.
