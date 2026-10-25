@@ -167,6 +167,7 @@ describe('ported quest interfaces', () => {
   it('displays the live notorious reward and hunt countdown', () => {
     data = {
       title: 'Test outlaw',
+      is_notorious: 1,
       issued_to: 'Test hunter',
       reward: 225,
       levy_rate: 0.1,
@@ -180,4 +181,16 @@ describe('ported quest interfaces', () => {
     expect(container.textContent).toContain('Hunt ends in');
     expect(container.textContent).toContain('1:05');
   });
+
+  for (const title of [
+    'Blockade Defense',
+    'Hoard Recovery',
+    'Ordinary bounty',
+  ]) {
+    it(`omits the live bounty summary for ${title}`, () => {
+      data = { title, issued_to: 'Test hunter', reward: 715 };
+      render(<QuestScroll />);
+      expect(container.textContent).not.toContain('Bounty as it now stands:');
+    });
+  }
 });

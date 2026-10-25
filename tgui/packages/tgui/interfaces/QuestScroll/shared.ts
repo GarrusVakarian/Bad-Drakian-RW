@@ -42,6 +42,7 @@ export type QuestScrollData = {
   is_rumor?: BooleanLike;
   is_defense?: BooleanLike;
   is_towner?: BooleanLike;
+  is_notorious?: BooleanLike;
   towner_intro?: string;
   towner_seal_note?: string;
   guild_cut_exempt?: BooleanLike;

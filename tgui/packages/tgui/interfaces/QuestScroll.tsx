@@ -347,7 +347,7 @@ export const QuestScroll = () => {
         <div style={parchment}>
           {data.title && <div style={titleHint}>{data.title}</div>}
 
-          {!!bearer && (
+          {!!bearer && !!data.is_notorious && (
             <BountyHeader
               reward={reward}
               levyRate={levyRate}
