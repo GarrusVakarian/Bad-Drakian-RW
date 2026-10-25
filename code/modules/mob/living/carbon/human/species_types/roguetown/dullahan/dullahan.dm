@@ -78,7 +78,6 @@
 		/datum/customizer/organ/tusks/humanoid,
 		/datum/customizer/organ/soul/fire,
 		/datum/customizer/organ/tail/dullahan,
-		/datum/customizer/organ/tail/manticore,
 		/datum/customizer/organ/tail_feature/lizard_spines,
 		/datum/customizer/organ/ears/dullahan,
 		/datum/customizer/organ/frills/lizard,
