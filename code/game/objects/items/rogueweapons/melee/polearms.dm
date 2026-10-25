@@ -712,7 +712,6 @@
 	minstr = 8
 	wdefense = 6
 	throwforce = 15
-	special = null
 
 /obj/item/rogueweapon/spear/billhook/zizo
 	name = "avantyne billhook"

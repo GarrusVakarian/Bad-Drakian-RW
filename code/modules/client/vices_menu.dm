@@ -1219,7 +1219,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(LAZYLEN(current_quirk.added_traits))
 			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Traits granted:</strong><br>"
 			for(var/trait in current_quirk.added_traits)
-				html += "• [trait == TRAIT_RESILIENT_LOVER ? "Resilient Lover" : trait]<br>"
+				html += "• [trait == TRAIT_ORGASM_DENIER ? "Orgasm Denier" : trait == TRAIT_RESILIENT_LOVER ? "Resilient Lover" : trait]<br>"
 			html += "</div>"
 
 		if(LAZYLEN(current_quirk.added_skills))

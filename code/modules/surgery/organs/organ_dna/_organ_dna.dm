@@ -40,6 +40,8 @@
 	var/penis_size = DEFAULT_PENIS_SIZE
 	var/functional = TRUE
 	var/sheath_type = SHEATH_TYPE_NONE
+	/// Ovipositor egg settings, null when the penis is not an ovipositor.
+	var/list/egg_settings
 
 /datum/organ_dna/penis/imprint_organ(obj/item/organ/organ)
 	..()
@@ -47,6 +49,7 @@
 	penis_organ.penis_size = penis_size
 	penis_organ.functional = functional
 	penis_organ.sheath_type = sheath_type
+	penis_organ.set_egg_settings(egg_settings)
 
 /datum/organ_dna/testicles
 	var/ball_size = DEFAULT_TESTICLES_SIZE
@@ -71,11 +74,14 @@
 
 /datum/organ_dna/vagina
 	var/fertility = TRUE
+	/// Egg layer settings, null when the womb does not form eggs.
+	var/list/egg_settings
 
 /datum/organ_dna/vagina/imprint_organ(obj/item/organ/organ)
 	..()
 	var/obj/item/organ/vagina/vagina_organ = organ
 	vagina_organ.fertility = fertility
+	vagina_organ.set_egg_settings(egg_settings)
 
 /datum/organ_dna/wings
 	var/wings_color

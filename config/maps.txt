@@ -35,3 +35,7 @@ map neuhill
 	default
 	votable
 endmap
+
+map smollhill
+endmap
+

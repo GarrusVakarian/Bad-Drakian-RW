@@ -198,7 +198,8 @@
 		return
 	var/obj/item/organ/vagina/vag = wife.getorganslot(ORGAN_SLOT_VAGINA)
 	if(!vag && !HAS_TRAIT(wife, TRAIT_BAOTHA_FERTILITY_BOON))
-		return
+		if(!HAS_TRAIT(wife, TRAIT_OVERLY_FERTILE))
+			return
 	if(vag)
 		vag.impregnation_probability = roll_organ_impregnation(vag, wife.is_fertile(SEX_PART_CUNT), vag.impregnation_probability)
 	else
@@ -224,6 +225,8 @@
 	if(receiver.sexcon.knotted_status)
 		chance = min(chance * 2, IMPREG_PROB_MAX)
 	if(HAS_TRAIT(receiver, TRAIT_BAOTHA_FERTILITY_BOON))
+		chance = min(chance * 2, IMPREG_PROB_MAX)
+	else if(HAS_TRAIT(receiver, TRAIT_OVERLY_FERTILE))
 		chance = min(chance * 2, IMPREG_PROB_MAX)
 	if(prob(chance))
 		if(reproductive_organ.be_impregnated(src))

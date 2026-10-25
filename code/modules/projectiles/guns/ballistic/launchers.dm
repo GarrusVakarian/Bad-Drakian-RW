@@ -14,6 +14,9 @@
 	var/accfactor = 1 // Multiplier for projectile accuracy. Used by bows and crossbows.
 	var/penfactor = 1 // Multiplier for projectile penetration. Used by crossbows, meant for any compressed-bow types.
 	var/damage_from_perception = FALSE // Line of code meant for calculating perception damage scaling.
+	/// Allows the worn-quiver hotkey to load a held crossbow after its hand checks.
+	var/quiver_loading = FALSE
+
 /obj/item/gun/ballistic/revolver/grenadelauncher/attackby(obj/item/A, mob/user, params)
 	. = ..()
 	if(istype(A, /obj/item/ammo_box) || istype(A, /obj/item/ammo_casing))

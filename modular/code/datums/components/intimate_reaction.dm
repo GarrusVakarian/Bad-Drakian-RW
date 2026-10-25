@@ -420,6 +420,8 @@
 /// Handles the receive flavor message.
 /// action and acting_mob are threaded through to get_receive_flavor_key so the correct context bank (masturbation, outercourse, penetrative) can be selected.
 /datum/component/intimate_reaction/chastity_receive_flavor/proc/try_handle_receive_flavor(mob/living/carbon/human/source, receiver_part, datum/sex_action/action, mob/living/carbon/human/acting_mob, applied_force, applied_speed)
+	if(modular_chastity_quiet_active(source))
+		return FALSE
 	var/datum/sex_controller/wearer_sexcon = source?.sexcon
 	if(!wearer_sexcon || !wearer_sexcon.chastity_content_enabled_for(source))
 		return FALSE
@@ -444,6 +446,8 @@
 
 /// Handles the arousal message.
 /datum/component/intimate_reaction/chastity_receive_flavor/proc/try_handle_arousal_message(mob/living/carbon/human/source, arousal_amt, applied_force, applied_speed)
+	if(modular_chastity_quiet_active(source))
+		return FALSE
 	var/datum/sex_controller/wearer_sexcon = source?.sexcon
 	if(!wearer_sexcon || !wearer_sexcon.chastity_content_enabled_for(source))
 		return FALSE
@@ -480,13 +484,16 @@
 	if(wearer_sexcon.last_pain != world.time)
 		return FALSE
 
-	var/string_key = get_pain_key(source, pain_amt)
-	var/message = pick_string_bank("chastity_pain_messages.json", string_key)
-	if(!message)
-		return FALSE
+	var/quiet_mode = modular_chastity_quiet_active(source)
+	var/message
+	if(!quiet_mode)
+		var/string_key = get_pain_key(source, pain_amt)
+		message = pick_string_bank("chastity_pain_messages.json", string_key)
+		if(!message)
+			return FALSE
 
-	// Keep the original eligibility and visual feedback; suppress only the quirk holder's text.
-	if(HAS_TRAIT(source, TRAIT_RESILIENT_LOVER))
+	// Preserve visual pain feedback when the quirk or quiet mode suppresses text.
+	if(quiet_mode || HAS_TRAIT(source, TRAIT_RESILIENT_LOVER))
 		if(pain_amt >= PAIN_HIGH_EFFECT)
 			source.fullscreen_redflash("redflash3")
 		else if(pain_amt >= PAIN_MED_EFFECT)
@@ -513,37 +520,39 @@
 		source.fullscreen_redflash("redflash3")
 		if(prob(70))
 			if(devout_spiked)
-				source.visible_message(span_notice("[source] goes very still, jaw set, as the chastity spikes bite deep — enduring it with deliberate composure."))
+				source.chastity_visible_message(span_notice("[source] goes very still, jaw set, as the chastity spikes bite deep — enduring it with deliberate composure."))
 			else if(masochist_spiked)
-				source.visible_message(span_warning("[source] shudders and whimpers as the chastity spikes bite in, seeming to savor the punishment."))
+				source.chastity_visible_message(span_warning("[source] shudders and whimpers as the chastity spikes bite in, seeming to savor the punishment."))
 			else
-				source.visible_message(span_warning("[source] writhes in pain as the chastity spikes dig bloody into their tortured flesh!"))
+				source.chastity_visible_message(span_warning("[source] writhes in pain as the chastity spikes dig bloody into their tortured flesh!"))
 		return TRUE
 
 	if(pain_amt >= PAIN_MED_EFFECT)
 		source.fullscreen_redflash("redflash2")
 		if(prob(50))
 			if(devout_spiked)
-				source.visible_message(span_notice("[source] breathes carefully through the bite of the chastity spikes, expression drawn but steady."))
+				source.chastity_visible_message(span_notice("[source] breathes carefully through the bite of the chastity spikes, expression drawn but steady."))
 			else if(masochist_spiked)
-				source.visible_message(span_warning("[source] trembles as the chastity spikes grind in, breathing out an eager, pained moan."))
+				source.chastity_visible_message(span_warning("[source] trembles as the chastity spikes grind in, breathing out an eager, pained moan."))
 			else
-				source.visible_message(span_warning("[source] shudders in pain as the chastity spikes dig into their flesh!"))
+				source.chastity_visible_message(span_warning("[source] shudders in pain as the chastity spikes dig into their flesh!"))
 		return TRUE
 
 	source.fullscreen_redflash("redflash1")
 	if(prob(30))
 		if(devout_spiked)
-			source.visible_message(span_notice("[source] shifts slightly as the chastity spikes catch, then stills themselves with quiet deliberateness."))
+			source.chastity_visible_message(span_notice("[source] shifts slightly as the chastity spikes catch, then stills themselves with quiet deliberateness."))
 		else if(masochist_spiked)
-			source.visible_message(span_warning("[source] shivers as the chastity spikes tease their flesh, eyes half-lidded."))
+			source.chastity_visible_message(span_warning("[source] shivers as the chastity spikes tease their flesh, eyes half-lidded."))
 		else
-			source.visible_message(span_warning("[source] groans as the chastity spikes prod their flesh..."))
+			source.chastity_visible_message(span_warning("[source] groans as the chastity spikes prod their flesh..."))
 	return TRUE
 
 /// Movement reaction for chastity devices — dispatched by the base on_wearer_moved handler.
 /// Handles the step counter, high-pop chance scaling, optional chastity sound, and message dispatch.
 /datum/component/intimate_reaction/chastity_receive_flavor/try_handle_wearer_moved(mob/living/carbon/human/source)
+	if(modular_chastity_quiet_active(source))
+		return FALSE
 	var/obj/item/chastity/device = parent
 	if(!device || !is_valid_wearer_source(source))
 		return FALSE
@@ -560,7 +569,7 @@
 		return FALSE
 
 	if(device.chastity_move_sound)
-		playsound(source, device.chastity_move_sound, device.chastity_move_volume, TRUE)
+		playsound_chastity(source, device.chastity_move_sound, device.chastity_move_volume, TRUE)
 
 	var/datum/sex_controller/wearer_sexcon = source.sexcon
 	if(!wearer_sexcon || !wearer_sexcon.chastity_content_enabled_for(source))
@@ -579,12 +588,15 @@
 	// All jingle banks (visible and all covered variants) produce messages beginning with "'s",
 	// so they are concatenated directly onto the name without a separating space.
 	// Pain and struggle messages begin with a verb and need the leading space.
+	var/final_message
 	if(string_key == "chastity_movement_pain")
-		source.visible_message(span_warning("[source] [message]"), vision_distance = 2)
+		final_message = span_warning("[source] [message]")
 	else if(copytext(string_key, 1, 17) == "chastity_jingle_")
-		source.visible_message(span_smallnotice("[source][message]"), vision_distance = 2)
+		final_message = span_smallnotice("[source][message]")
 	else
-		source.visible_message(span_smallnotice("[source] [message]"), vision_distance = 2)
+		final_message = span_smallnotice("[source] [message]")
+
+	source.chastity_visible_message(final_message, vision_distance = 2)
 	return TRUE
 
 /datum/component/intimate_reaction/chastity_receive_flavor/try_handle_wearer_sex_action_received(mob/living/carbon/human/source, mob/living/carbon/human/acting_mob, datum/sex_controller/acting_sexcon, datum/sex_action/action, receiver_part, giving, arousal_amt, pain_amt, applied_force, applied_speed)

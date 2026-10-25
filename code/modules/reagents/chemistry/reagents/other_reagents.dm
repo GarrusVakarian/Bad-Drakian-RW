@@ -57,12 +57,16 @@
 		..()
 
 /datum/reagent/blood/on_mob_life(mob/living/carbon/H)//I hate you
+	var/absorbed_blood = min(volume, metabolization_rate)
 	..()
 	if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
 		H.adjust_nutrition(12)
 		H.adjust_hydration(12)
 		if(H.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 			H.set_blood_volume(min(H.get_blood_volume()+5, BLOOD_VOLUME_NORMAL)) //water should be toxic to hemophages, increasing it so it becomes a water replacement
+		return
+	if(HAS_TRAIT(H, TRAIT_BLOOD_DRINKER))
+		H.adjust_hydration(absorbed_blood * 4) // One third of water's hydration per unit; small amounts hydrate proportionally.
 		return
 	if(HAS_TRAIT(H, TRAIT_NASTY_EATER))
 		return
@@ -80,6 +84,9 @@
 			H.set_blood_volume(min(H.get_blood_volume()+2, BLOOD_VOLUME_NORMAL))//Much less effective than just water.
 		if(prob(5))
 			to_chat(H, span_red("This will hardly do... I must procure a better source of lyfeblood..."))
+		return
+	// The parent blood metabolism already supplies the quirk's hydration.
+	if(HAS_TRAIT(H, TRAIT_BLOOD_DRINKER))
 		return
 	if(HAS_TRAIT(H, TRAIT_NASTY_EATER) && HAS_TRAIT(H, TRAIT_WILD_EATER))
 		return

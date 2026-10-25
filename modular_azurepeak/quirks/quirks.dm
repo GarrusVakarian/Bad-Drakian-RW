@@ -2,6 +2,20 @@
 // At best they should be very minor conveniences as a reward for leaning into vices.
 // The baseline point_cost is one.
 
+/datum/quirk/blooddrinker
+	name = "Blood Drinker"
+	point_cost = 1
+	desc = "Blood quenches my thirst without turning my stomach."
+	custom_text = "Drinking blood, including dirty blood, restores one third as much thirst as the same amount of water, without blood-induced nausea. Normal food and water remain usable."
+	warning_text = "This quirk costs nothing and does not apply to Hemophages, Vampires, Lickers, or others who already do not need food or water when their quirks are applied."
+	added_traits = list(TRAIT_BLOOD_DRINKER)
+	incompatible_traits = list(TRAIT_HEMOPHAGE, TRAIT_NOHUNGER)
+
+/datum/quirk/blooddrinker/blocked_by_incompatible_traits(mob/living/carbon/human/recipient)
+	if(recipient.spawned_as_licker)
+		return "Licker"
+	return ..()
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."
@@ -14,6 +28,28 @@
 	custom_text = "Adds a Bag of Cursed Fetish Gear containing a cursed collar and chastity cage, a blindfold, a rope leash, emberwine, a wooden dildo, cloth, a chain, a whip, and a branding iron to your stash."
 	added_stashed_items = list("Bag of Cursed Fetish Gear" = /obj/item/storage/roguebag/cursed_keepsakes)
 	incompatible_quirks = list(/datum/quirk/acquiredtastes)
+
+/datum/quirk/overly_fertile
+	name = "Overly Fertile"
+	point_cost = 0
+	desc = "Life finds fertile ground in me. My body has an unusual gift for nurturing new life, even where nature would ordinarily draw the line."
+	custom_text = "Restores fertility to existing reproductive organs and manticore tails, enables pregnancy without the usual reproductive anatomy, and grants the same increased pregnancy chance as Marked by Baotha. Does not add a brand or an addiction, and does not stack with Baotha's fertility boon."
+	added_traits = list(TRAIT_OVERLY_FERTILE)
+
+/datum/quirk/overly_fertile/apply_to_human(mob/living/carbon/human/recipient)
+	var/obj/item/organ/vagina/reproductive_organ = recipient.getorganslot(ORGAN_SLOT_VAGINA)
+	if(reproductive_organ)
+		reproductive_organ.fertility = TRUE
+	var/obj/item/organ/tail/manticore/tail = get_manticore_tail(recipient)
+	if(tail)
+		tail.fertility = TRUE
+
+/datum/quirk/orgasmdenier
+	name = "Orgasm Denier"
+	point_cost = 0
+	desc = "I know just when to hold back, leaving my partner wanting more."
+	custom_text = "Adds an Orgasm Denial toggle to your ERP panel, off by default. During paired panel actions, it can prevent your partner's climax and reset their arousal to 30, if they have Enable Edging Content turned on. Denial adds 6 stress for 5 minutes without stacking; a successful climax clears it."
+	added_traits = list(TRAIT_ORGASM_DENIER)
 
 /datum/quirk/annoyingface
 	name = "Annoying Face"

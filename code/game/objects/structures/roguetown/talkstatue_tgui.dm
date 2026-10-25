@@ -45,20 +45,32 @@
 	playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
 	log_admin_private("[key_name(user)] set statue custom message: \"[new_msg]\"")
 
+/obj/structure/roguemachine/talkstatue/mercenary/proc/wretch_descriptor(mob/living/carbon/human/H)
+	var/list/descriptors = H.get_mob_descriptors()
+	var/trait_desc = capitalize(build_coalesce_description_nofluff(descriptors, H, list(MOB_DESCRIPTOR_SLOT_TRAIT), "%DESC1%"))
+	var/stature_desc = capitalize(build_coalesce_description_nofluff(descriptors, H, list(MOB_DESCRIPTOR_SLOT_STATURE), "%DESC1%"))
+	return trim("[trait_desc] [stature_desc]") || "Unknown Wretch"
+
+/obj/structure/roguemachine/talkstatue/mercenary/proc/wretch_display_name(mob/living/carbon/human/H)
+	var/list/data = wretch_status[H.real_name]
+	if(data && data["mob"] == H && data["nom_de_guerre"])
+		return data["nom_de_guerre"]
+	return wretch_descriptor(H)
+
 /obj/structure/roguemachine/talkstatue/mercenary/proc/edit_wretch_nom_de_guerre(mob/living/carbon/human/user)
 	var/list/data = wretch_status[user.real_name]
 	if(!data)
 		data = list("status" = "Available", "mob" = user, "message" = "", "nom_de_guerre" = "")
 		wretch_status[user.real_name] = data
 	var/current = data["nom_de_guerre"] || ""
-	var/new_nom = stripped_input(user, "Choose my nom de guerre (max 60 characters). Empty to clear.", "Nom de Guerre", current, 60)
+	var/new_nom = stripped_input(user, "Choose my nom de guerre (max 60 characters). Empty to use my physical descriptor.", "Nom de Guerre", current, 60)
 	if(new_nom == null)
 		return
 	if(!Adjacent(user))
 		to_chat(user, span_warning("I moved too far from the statue."))
 		return
 	data["nom_de_guerre"] = new_nom
-	to_chat(user, span_notice("My nom de guerre is set to: <b>[new_nom ? new_nom : "(real name)"]</b>"))
+	to_chat(user, span_notice("My nom de guerre is set to: <b>[wretch_display_name(user)]</b>"))
 	playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
 	log_admin_private("[key_name(user)] set wretch nom de guerre: \"[new_nom]\"")
 
@@ -135,6 +147,14 @@
 	if(role != "Bathmaster" && role != "Bathhouse Attendant")
 		to_chat(sender, span_warning("Only the bathhouse may reach a wretch through this statue."))
 		return
+	if(target_key)
+		var/mob/living/carbon/human/requested = locate(target_key)
+		if(!istype(requested))
+			return
+		var/list/requested_data = wretch_status[requested.real_name]
+		if(!requested_data || requested_data["mob"] != requested)
+			return
+		target_key = requested.real_name
 	if(!target_key)
 		var/list/picker = list()
 		for(var/name_key in wretch_status)
@@ -144,9 +164,9 @@
 				continue
 			if(d["status"] == "Do not Disturb")
 				continue
-			var/display = d["nom_de_guerre"] || w.real_name
+			var/display = wretch_display_name(w)
 			var/status_text = d["status"] || "Available"
-			picker["[display] ([status_text])"] = w.real_name
+			picker["[display] ([status_text]) #[length(picker) + 1]"] = w.real_name
 		if(!picker.len)
 			to_chat(sender, span_warning("There are no wretches currently available."))
 			return
@@ -166,7 +186,7 @@
 	if(data["status"] == "Do not Disturb")
 		to_chat(sender, span_warning("My message cannot be delivered for some reason."))
 		return
-	var/display = data["nom_de_guerre"] || target.real_name
+	var/display = wretch_display_name(target)
 	var/cooldown_key = "wretch_[sender.real_name]_[target.real_name]"
 	if(sender_cooldowns[cooldown_key])
 		var/time_left = sender_cooldowns[cooldown_key] + single_cooldown - world.time
@@ -185,7 +205,7 @@
 		return
 	sender_cooldowns[cooldown_key] = world.time
 	response_id_counter++
-	var/response_id = "wretch_[target.real_name]_[world.time]_[response_id_counter]"
+	var/response_id = "wretch_[world.time]_[response_id_counter]"
 	if(!QDELETED(target) && !QDELETED(sender))
 		pending_direct_responses[response_id] = list("responder" = target, "sender" = sender)
 		addtimer(CALLBACK(src, PROC_REF(expire_direct_response), response_id), response_timeout)
@@ -227,7 +247,7 @@
 	data["is_wretch"] = is_wretch ? TRUE : FALSE
 	data["is_bathhouse"] = is_bathhouse ? TRUE : FALSE
 	var/mob/living/carbon/human/HU = user
-	data["my_key"] = ishuman(user) ? HU.real_name : ""
+	data["my_key"] = is_wretch ? REF(HU) : (ishuman(user) ? HU.real_name : "")
 	data["message_char_limit"] = message_char_limit
 
 	data["merc_status_options"] = list("Available", "Contracted", "Do not Disturb")
@@ -249,10 +269,10 @@
 		if(!M)
 			continue
 		var/display_name = M.real_name
-		if(use_nom && d["nom_de_guerre"])
-			display_name = d["nom_de_guerre"]
+		if(use_nom)
+			display_name = wretch_display_name(M)
 		out += list(list(
-			"key" = key,
+			"key" = use_nom ? REF(M) : key,
 			"name" = display_name,
 			"status" = d["status"] || "Available",
 			"message" = d["message"] || "",

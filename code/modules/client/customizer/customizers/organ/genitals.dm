@@ -29,6 +29,8 @@
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
 	penis_entry.penis_size = sanitize_integer(penis_entry.penis_size, MIN_PENIS_SIZE, MAX_PENIS_SIZE, DEFAULT_PENIS_SIZE)
 	penis_entry.sheath_type = sanitize_integer(penis_entry.sheath_type, SHEATH_TYPE_NONE, SHEATH_TYPE_SLIT, SHEATH_TYPE_NONE)
+	penis_entry.ovipositor = !!penis_entry.ovipositor
+	penis_entry.egg_settings = sanitize_oviposition_settings(penis_entry.egg_settings)
 
 /datum/customizer_choice/organ/penis/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
@@ -37,6 +39,7 @@
 	penis_dna.penis_size = penis_entry.penis_size
 	penis_dna.functional = penis_entry.functional
 	penis_dna.sheath_type = penis_entry.sheath_type
+	penis_dna.egg_settings = penis_entry.ovipositor ? sanitize_oviposition_settings(penis_entry.egg_settings) : null
 
 /datum/customizer_choice/organ/penis/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
@@ -44,10 +47,15 @@
 	dat += "<br>Penis size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=penis_size''>[find_key_by_value(GLOB.named_penis_sizes, penis_entry.penis_size)]</a>"
 	dat += "<br>Functional: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=functional''>[penis_entry.functional ? "YES" : "NO"]</a>"
 	dat += "<br>Sheath: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=sheath_type''>[sheath_type_preference_label(penis_entry.sheath_type)]</a>"
+	if(!islist(penis_entry.egg_settings))
+		penis_entry.egg_settings = default_oviposition_settings()
+	oviposition_pref_choices(dat, penis_entry.egg_settings, customizer_type, penis_entry.ovipositor, "Ovipositor")
 
 /datum/customizer_choice/organ/penis/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
+	if(!islist(penis_entry.egg_settings))
+		penis_entry.egg_settings = default_oviposition_settings()
 	switch(href_list["customizer_task"])
 		if("penis_size")
 			var/named_size = input(user, "Choose your penis size:", "Character Preference", find_key_by_value(GLOB.named_penis_sizes, penis_entry.penis_size)) as anything in GLOB.named_penis_sizes
@@ -65,11 +73,17 @@
 					penis_entry.sheath_type = SHEATH_TYPE_SLIT
 				else
 					penis_entry.sheath_type = SHEATH_TYPE_NONE
+		if("ovi_toggle")
+			penis_entry.ovipositor = !penis_entry.ovipositor
+		else
+			oviposition_pref_topic(user, href_list["customizer_task"], penis_entry.egg_settings)
 
 /datum/customizer_entry/organ/penis
 	var/penis_size = DEFAULT_PENIS_SIZE
 	var/functional = TRUE
 	var/sheath_type = SHEATH_TYPE_NONE
+	var/ovipositor = FALSE
+	var/list/egg_settings
 
 /datum/customizer/organ/penis/human
 	customizer_choices = list(/datum/customizer_choice/organ/penis/human)
@@ -438,24 +452,42 @@
 
 /datum/customizer_entry/organ/vagina
 	var/fertility = TRUE
+	var/egg_layer = FALSE
+	var/list/egg_settings
+
+/datum/customizer_choice/organ/vagina/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
+	..()
+	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
+	vagina_entry.egg_layer = !!vagina_entry.egg_layer
+	vagina_entry.egg_settings = sanitize_oviposition_settings(vagina_entry.egg_settings)
 
 /datum/customizer_choice/organ/vagina/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
 	var/datum/organ_dna/vagina/vagina_dna = organ_dna
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
 	vagina_dna.fertility = vagina_entry.fertility
+	vagina_dna.egg_settings = vagina_entry.egg_layer ? sanitize_oviposition_settings(vagina_entry.egg_settings) : null
 
 /datum/customizer_choice/organ/vagina/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
 	dat += "<br>Fertile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=fertile''>[vagina_entry.fertility ? "Fertile" : "Sterile"]</a>"
+	if(!islist(vagina_entry.egg_settings))
+		vagina_entry.egg_settings = default_oviposition_settings()
+	oviposition_pref_choices(dat, vagina_entry.egg_settings, customizer_type, vagina_entry.egg_layer, "Egg layer")
 
 /datum/customizer_choice/organ/vagina/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
+	if(!islist(vagina_entry.egg_settings))
+		vagina_entry.egg_settings = default_oviposition_settings()
 	switch(href_list["customizer_task"])
 		if("fertile")
 			vagina_entry.fertility = !vagina_entry.fertility
+		if("ovi_toggle")
+			vagina_entry.egg_layer = !vagina_entry.egg_layer
+		else
+			oviposition_pref_topic(user, href_list["customizer_task"], vagina_entry.egg_settings)
 
 
 /datum/customizer/organ/vagina/human

@@ -1206,8 +1206,8 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_near]"
 
 /client/proc/clear_character_previews()
-	for(var/atom/movable/screen/S in char_render_holders)
-//		var/atom/movable/screen/S = char_render_holders[index]
+	for(var/key in char_render_holders)
+		var/atom/movable/screen/S = char_render_holders[key]
 		screen -= S
 		qdel(S)
 	char_render_holders = list()

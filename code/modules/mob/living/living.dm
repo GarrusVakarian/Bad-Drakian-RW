@@ -10,6 +10,20 @@
 	var/pain_hud_dirty = FALSE
 	var/injury_hud_update_queued = FALSE
 
+/mob/living/verb/toggle_scening()
+	set name = "Toggle Scene Privacy"
+	set category = "IC"
+	set desc = "Prevent orb scrying until you move or toggle scene privacy off."
+	if(do_not_disturb)
+		do_not_disturb = FALSE
+		to_chat(src, span_notice("You are no longer marked as private and can be scried."))
+		log_game("[key_name(src)] has disabled scene privacy at [loc_name(src)].")
+	else
+		do_not_disturb = TRUE
+		to_chat(src, span_notice("You are now marked as private and cannot be scried by an orb until you move or toggle scene privacy off."))
+		log_game("[key_name(src)] has enabled scene privacy at [loc_name(src)].")
+		message_admins("[key_name_admin(src)] has enabled scene privacy at [ADMIN_VERBOSEJMP(src)].")
+
 /mob/living/Initialize(mapload)
 	. = ..()
 	update_a_intents()
@@ -817,7 +831,7 @@
 	if(!(src.mobility_flags & MOBILITY_STAND))
 		return TRUE
 	var/list/acceptable = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH)
-	if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN))
+	if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) || HAS_TRAIT(L, TRAIT_TALONKICKS))
 		acceptable.Add(BODY_ZONE_HEAD)
 	if( !(check_zone(L.zone_selected) in acceptable) )
 		to_chat(L, span_warning("I can't reach that."))

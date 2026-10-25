@@ -138,6 +138,15 @@
 		else
 			apply_character_post_equipment(H)
 
+	if(!dummy)
+		var/obj/structure/roguemachine/talkstatue/mercenary/statue = SSroguemachine.mercenary_statue
+		if(!statue && length(SSroguemachine.mercenary_statues))
+			statue = SSroguemachine.mercenary_statues[1]
+		statue?.auto_register(H)
+		if((H.job in list("Bathmaster", "Bathhouse Attendant")) && length(SSroguemachine.rosewalls))
+			var/obj/structure/roguemachine/rosewall/board = SSroguemachine.rosewalls[1]
+			board?.auto_register(H)
+
 /datum/advclass/proc/post_equip(mob/living/carbon/human/H)
 	addtimer(CALLBACK(H,TYPE_PROC_REF(/mob/living/carbon/human, add_credit), TRUE), 20)
 	if(cmode_music)

@@ -1987,7 +1987,7 @@ generate/load female uniform sprites matching all previously decided variables
 	. += obscured_flags
 
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
-		. += BP.generate_limb_cache_key()
+		. += BP.generate_limb_cache_key(hideaux = should_hide_bodypart_aux(BP))
 
 	. += "[obscured_flags]"	//features are drawn through is_visible(), which reads this
 
@@ -2010,6 +2010,15 @@ generate/load female uniform sprites matching all previously decided variables
 					observers = null
 					break
 
+/mob/living/carbon/human/proc/should_hide_bodypart_aux(obj/item/bodypart/bodypart)
+	switch(bodypart.body_zone)
+		if(BODY_ZONE_CHEST)
+			return (wear_armor?.flags_inv & HIDEBOOB) || (wear_shirt?.flags_inv & HIDEBOOB) || (cloak?.flags_inv & HIDEBOOB)
+		if(BODY_ZONE_L_ARM, BODY_ZONE_R_ARM)
+			return (wear_armor && (wear_armor.body_parts_covered & ARMS) && !wear_armor.sleeved) || \
+				(wear_shirt && (wear_shirt.body_parts_covered & ARMS) && !wear_shirt.sleeved)
+	return FALSE
+
 /mob/living/carbon/human/update_body_parts(redraw = FALSE)
 	var/oldkey = icon_render_key
 	icon_render_key = generate_icon_render_key()
@@ -2025,18 +2034,10 @@ generate/load female uniform sprites matching all previously decided variables
 		return
 
 	var/list/new_limbs = list()
-	var/hiden = (wear_armor?.flags_inv & HIDEBOOB) || (wear_shirt?.flags_inv & HIDEBOOB) || (cloak?.flags_inv & HIDEBOOB)
-	var/hidearms = (wear_armor && (wear_armor.body_parts_covered & ARMS) && !wear_armor.sleeved) || \
-					(wear_shirt && (wear_shirt.body_parts_covered & ARMS) && !wear_shirt.sleeved)
 
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		BP.update_limb()
-		if(BP.body_zone == BODY_ZONE_CHEST)
-			new_limbs += BP.get_limb_icon(hideaux = hiden)
-		else if(BP.body_part == ARM_LEFT || BP.body_part == ARM_RIGHT)
-			new_limbs += BP.get_limb_icon(hideaux = hidearms)
-		else
-			new_limbs += BP.get_limb_icon()
+		new_limbs += BP.get_limb_icon(hideaux = should_hide_bodypart_aux(BP))
 
 	if(isooze(src))
 		for(var/image/limb_alpha in new_limbs)

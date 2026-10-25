@@ -376,6 +376,12 @@
 		return
 
 	var/list/L = params2list(params)
+	// Opening or moving storage must not also click the drag's release target.
+	if(tcompare && L["left"] && !L["middle"] && !L["right"] && src_object != over_object)
+		var/atom/dragged = src_object
+		if(istype(dragged) && SEND_SIGNAL(dragged, COMSIG_CONTAINS_STORAGE))
+			selected_target[1] = null
+			mob.stop_attack()
 	if (L["middle"])
 		if (src_object && src_location != over_location)
 			middragtime = world.time

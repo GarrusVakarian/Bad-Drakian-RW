@@ -116,6 +116,9 @@
 	. = ..()
 	if(mind)
 		time_of_last_move = world.time //This keeps track of the tick count since the human mob last moved, to be referenced later at any time! Only bothering to track it if the mob has a mind, IE a player (for stopping hunger and thirst loss currently!)
+	if(do_not_disturb)
+		do_not_disturb = FALSE
+		to_chat(src, span_notice("You are no longer marked as private and can be scried."))
 	return
 	
 /mob/living/carbon/human/DeadLife()

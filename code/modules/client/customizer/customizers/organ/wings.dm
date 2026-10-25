@@ -40,6 +40,7 @@
 	// Check if there's > 1 color key first since that is handled separately
 	var/datum/sprite_accessory/wings/wing_accessory = SPRITE_ACCESSORY(entry.accessory_type)
 	if(wing_accessory.color_keys > 1)
+		wings_dna.accessory_colors = wings_entry.accessory_colors
 		wings_dna.wings_color = wings_entry.accessory_colors
 		return
 
@@ -53,7 +54,8 @@
 	var/datum/customizer_entry/organ/wings/wings_entry = entry
 	var/obj/item/organ/wings/wing_organ = human.getorganslot(ORGAN_SLOT_WINGS)
 	wing_organ.Remove(human)
-	wing_organ.accessory_colors = wings_entry.wings_color
+	var/datum/sprite_accessory/wings/wing_accessory = SPRITE_ACCESSORY(entry.accessory_type)
+	wing_organ.accessory_colors = wing_accessory.color_keys > 1 ? wings_entry.accessory_colors : wings_entry.wings_color
 	wing_organ.Insert(human, TRUE, FALSE)
 	human.update_body()
 

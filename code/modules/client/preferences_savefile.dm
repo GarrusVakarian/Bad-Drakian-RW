@@ -267,7 +267,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["erp_visuals"]		>> erp_visuals
 	S["chastenable"]		>> chastenable
 	S["chastity_hardmode"]	>> chastity_hardmode
+	if("quiet_chastity" in S.dir)
+		S["quiet_chastity"] >> quiet_chastity
+	else // Preserve the saved setting from the earlier test branch.
+		S["private_chastity"] >> quiet_chastity
 	S["extreme_erp"]		>> extreme_erp
+	S["accept_oviposition"]	>> accept_oviposition
 	S["edging"]				>> edging
 	S["free_use_default"]	>> free_use_default
 	S["sensitive_brands"] 	>> sensitive_brands
@@ -335,6 +340,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	chatheadshot	= sanitize_integer(chatheadshot, 0, 1, initial(chatheadshot))
 	show_mouseover_role = sanitize_integer(show_mouseover_role, 0, 1, initial(show_mouseover_role))
 	chastity_hardmode = sanitize_integer(chastity_hardmode, CHASTITY_HARDMODE_DISABLED, CHASTITY_HARDMODE_ENABLED, initial(chastity_hardmode))
+	quiet_chastity = sanitize_integer(quiet_chastity, 0, 1, initial(quiet_chastity)) && chastenable
 	max_chat_length = sanitize_integer(max_chat_length, 1, CHAT_MESSAGE_MAX_LENGTH, initial(max_chat_length))
 	see_chat_non_mob	= sanitize_integer(see_chat_non_mob, 0, 1, initial(see_chat_non_mob))
 	tgui_fancy		= sanitize_integer(tgui_fancy, 0, 1, initial(tgui_fancy))
@@ -451,7 +457,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["erp_visuals"], erp_visuals)
 	WRITE_FILE(S["chastenable"], chastenable)
 	WRITE_FILE(S["chastity_hardmode"], chastity_hardmode)
+	WRITE_FILE(S["quiet_chastity"], quiet_chastity)
 	WRITE_FILE(S["extreme_erp"], extreme_erp)
+	WRITE_FILE(S["accept_oviposition"], accept_oviposition)
 	WRITE_FILE(S["edging"], edging)
 	WRITE_FILE(S["free_use_default"], free_use_default)
 	WRITE_FILE(S["sensitive_brands"], sensitive_brands)
@@ -1220,7 +1228,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["selected_patron"]		, preferences_typepath_or_null(selected_patron))
 
 	// Organs
+	var/list/packed_hair = list()
+	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+		if(!istype(entry, /datum/customizer_entry/hair))
+			continue
+		var/datum/customizer_entry/hair/hair_entry = entry
+		packed_hair += hair_entry
+		hair_pack(hair_entry)
 	WRITE_FILE(S["customizer_entries"] , customizer_entries)
+	for(var/datum/customizer_entry/hair/hair_entry as anything in packed_hair)
+		hair_unpack(hair_entry)
 	WRITE_FILE(S["body_markings"] , body_markings)
 	WRITE_FILE(S["descriptor_entries"] , descriptor_entries)
 	WRITE_FILE(S["custom_descriptors"] , custom_descriptors)

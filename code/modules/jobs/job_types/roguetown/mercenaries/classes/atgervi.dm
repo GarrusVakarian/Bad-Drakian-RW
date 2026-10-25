@@ -257,6 +257,13 @@
 	max_integrity = 300
 	experimental_inhand = FALSE
 
+/obj/item/rogueweapon/shield/atgervi/generateonmob(tag, prop, behind = FALSE, mirrored = FALSE, used_index = null)
+	. = ..()
+	if(tag == "onback" && mirrored && .)
+		var/icon/back_icon = .
+		// Mirroring uses a 64px canvas, but this shield's offsets target a 32px sprite.
+		back_icon.Shift(WEST, back_icon.Width() - inhand_x_dimension)
+
 /obj/item/rogueweapon/shield/atgervi/getonmobprop(tag)
 	. = ..()
 	if(tag)

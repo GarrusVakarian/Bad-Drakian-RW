@@ -194,6 +194,8 @@
 		GLOB.dismembered_clothing_icons[index] = dismembered*/
 
 /mob/living/carbon/update_inv_hands(hide_experimental = FALSE)
+	var/atom/movable/screen/inventory/hovered_slot = hud_used?.overlay_curloc
+	hovered_slot?.clear_hover_overlay()
 	defer_overlay_vision_updates()
 	remove_overlay(HANDS_LAYER)
 	remove_overlay(HANDS_BEHIND_LAYER)

@@ -13,3 +13,4 @@
 #include "..\..\_maps\map_files\dun_world\map_adjustment_dunworld.dm"
 #include "..\..\_maps\map_files\rockhill\map_adjustment_rockhill.dm"
 #include "..\..\_maps\map_files\neuhill\map_adjustment_neuhill.dm"
+#include "..\..\_maps\map_files\smollhill\map_adjustment_smollhill.dm"

@@ -1637,7 +1637,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			var/selzone = user.zone_selected
 			var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 			var/damage = user.get_punch_dmg() * 1.4
-			var/armor_block = target.run_armor_check(selzone, "blunt", blade_dulling = BCLASS_BLUNT, damage = damage)
+			var/talons = HAS_TRAIT(user, TRAIT_TALONKICKS)
+			var/kick_bclass = talons ? BCLASS_CUT : BCLASS_BLUNT
+			var/armor_block = target.run_armor_check(selzone, talons ? "slash" : "blunt", blade_dulling = kick_bclass, damage = damage)
 			target.next_attack_msg.Cut()
 			var/nodmg = FALSE
 			if(!target.apply_damage(damage, user.dna.species.attack_type, affecting, armor_block))
@@ -1645,8 +1647,11 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				target.next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
 			else
 				if(affecting)
-					affecting.bodypart_attacked_by(BCLASS_BLUNT, damage, user, selzone, crit_message = TRUE)
-					if(!HAS_TRAIT(user, TRAIT_LAMIAN_TAIL))
+					affecting.bodypart_attacked_by(kick_bclass, damage, user, selzone, crit_message = TRUE)
+					if(talons)
+						target.visible_message(span_danger("[user] rakes [target] with [user.p_their()] talons![target.next_attack_msg.Join()]"), 						span_danger("I'm raked by [user]'s talons![target.next_attack_msg.Join()]"), span_hear("I hear flesh tearing!"), COMBAT_MESSAGE_RANGE, user)
+						to_chat(user, span_danger("I rake [target] with my talons![target.next_attack_msg.Join()]"))
+					else if(!HAS_TRAIT(user, TRAIT_LAMIAN_TAIL))
 						target.visible_message(span_danger("[user] stomps [target]![target.next_attack_msg.Join()]"), \
 						span_danger("I'm stomped by [user]![target.next_attack_msg.Join()]"), span_hear("I hear a sickening kick!"), COMBAT_MESSAGE_RANGE, user)
 						to_chat(user, span_danger("I stomp on [target]![target.next_attack_msg.Join()]"))
@@ -1795,12 +1800,14 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 		if(!affecting)
 			affecting = target.get_bodypart(BODY_ZONE_CHEST)
-		var/armor_block = target.run_armor_check(selzone, "blunt", blade_dulling = BCLASS_BLUNT)
+		var/talons = HAS_TRAIT(user, TRAIT_TALONKICKS)
+		var/kick_bclass = talons ? BCLASS_CUT : BCLASS_BLUNT
+		var/armor_block = target.run_armor_check(selzone, talons ? "slash" : "blunt", blade_dulling = kick_bclass)
 		var/damage = user.get_punch_dmg()
 		if(!target.apply_damage(damage, user.dna.species.attack_type, affecting, armor_block))
 			target.next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
 		else
-			affecting.bodypart_attacked_by(BCLASS_BLUNT, damage, user, selzone)
+			affecting.bodypart_attacked_by(kick_bclass, damage, user, selzone)
 		playsound(target, 'sound/combat/hits/kick/kick.ogg', 100, TRUE, -1)
 		target.lastattacker = user.real_name
 		target.lastattackerckey = user.ckey

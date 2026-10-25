@@ -122,7 +122,7 @@
 	if(try_pull_secondary_rider(M))
 		return TRUE
 	// Permit mounting tame saddled mounts even in combat mode.
-	if(M.cmode && tame && ssaddle && can_buckle && !M.buckled)
+	if(M.cmode && M.used_intent.type != INTENT_GRAB && tame && ssaddle && can_buckle && !M.buckled)
 		if(user_buckle_mob(M, M))
 			return TRUE
 	..()

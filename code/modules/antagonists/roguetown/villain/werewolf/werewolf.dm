@@ -5,7 +5,7 @@
 	job_rank = ROLE_WEREWOLF
 	confess_lines = list(
 		"THE BEAST INSIDE ME!",
-		"BEWARE THE BEAST!",
+		"BEWARE THE BEAST!", // beware my /obj/item/organ/penis/knotted/big
 		"MY LUPINE MARK!",
 	)
 	rogue_enabled = TRUE
@@ -13,7 +13,10 @@
 	var/transformed
 	var/transforming
 	var/untransforming
+	var/tf_stage = null
 	var/wolfname = "Verevolf"
+	var/automatically_untransforms_in_daytime = FALSE
+	var/ready_to_untransform = FALSE
 
 /datum/antagonist/werewolf/lesser
 	name = "Lesser Verevolf"

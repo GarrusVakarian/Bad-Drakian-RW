@@ -23,7 +23,8 @@ GLOBAL_LIST_INIT(virtues, init_subtypes_assoc(/datum/virtue))
 		REMOVE_TRAIT(recipient, TRAIT_OUTLANDER, ADVENTURER_TRAIT)
 		REMOVE_TRAIT(recipient, TRAIT_OUTLANDER, JOB_TRAIT)
 		REMOVE_TRAIT(recipient, TRAIT_OUTLANDER, TRAIT_GENERIC)
-	record_featured_object_stat(FEATURED_STATS_VIRTUES, virtue_type.name)
+	if(!istype(virtue_type, /datum/virtue/background))
+		record_featured_object_stat(FEATURED_STATS_VIRTUES, virtue_type.name)
 
 /datum/virtue/none
 	name = "None"

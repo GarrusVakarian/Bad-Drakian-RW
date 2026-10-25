@@ -52,6 +52,8 @@
 	var/charge = SEX_MAX_CHARGE
 	/// Whether we want to screw until finished, or non stop
 	var/do_until_finished = TRUE
+	/// Quirk-only panel option; consent is checked on the affected partner at each attempt.
+	var/deny_partner_climax = FALSE
 	/// The bed (if) we're occupying, update on starting an action
 	var/obj/structure/bed/rogue/bed = null
 	var/target_on_bed = FALSE
@@ -441,6 +443,8 @@
 
 // Try to resist orgasm, returns TRUE if we resisted, FALSE if we didn't. ENDVRE. EDGE. WEEP.
 /datum/sex_controller/proc/try_resist_orgasm()
+	if(try_deny_panel_climax())
+		return TRUE
 	if(!HAS_TRAIT(user, TRAIT_PSYDONIAN_GRIT) || !prob(40))
 		return FALSE
 	if(user.client.prefs.edging == FALSE)
@@ -494,6 +498,9 @@
 	after_ejaculation()
 
 /datum/sex_controller/proc/cum_into(oral = FALSE, mob/living/carbon/human/splashed_user = null, datum/sex_action/knot_action = null, knot_swap_roles = FALSE, mob/living/carbon/human/knot_btm = null, orifice = SEX_PART_NULL, skip_knot_try = FALSE, consume_charge = TRUE, source_part = SEX_PART_NULL)
+	// Later bursts belong to an already completed climax.
+	if(consume_charge && try_deny_panel_climax())
+		return
 	// splashed_user is the bottom receiving; for top-initiated actions it matches target, for riding/blowjob it is the rider/sucker while target may be null
 	var/mob/living/carbon/human/effective_target = splashed_user || target
 	if((orifice & SEX_PART_TAIL_MAW) && !get_manticore_tail(effective_target))
@@ -543,6 +550,8 @@
 			var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 			if((orifice & SEX_PART_TAIL_MAW) || !is_receiver_actively_knotted_to_user)
 				apply_creampie_drip(splashed_user, orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+	if(consume_charge)
+		modular_try_oviposit(splashed_user, oral, orifice)
 	if(effective_target?.has_flaw(/datum/charflaw/addiction/lovefiend))
 		effective_target.sate_addiction(/datum/charflaw/addiction/lovefiend)
 	if(effective_target?.has_flaw(/datum/charflaw/addiction/baothamarked))
@@ -705,11 +714,6 @@
 	log_combat(user, user, "Ejaculated")
 	if(!from_tailmaw && modular_try_handle_chastity_ejaculation())
 		return
-	if(!from_tailmaw && (has_chastity_cage() || has_chastity_anal()) && prob(50))
-		var/self_mess_msg = "[user] spills over [user.p_their()] own chastity!"
-		user.visible_message(span_love(self_mess_msg), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
-		cum_onto(user)
-		return
 	if(!from_tailmaw && user.getorganslot(ORGAN_SLOT_PENIS) && knotted_status == KNOTTED_AS_TOP && knotted_owner == user && ishuman(knotted_recipient) && !QDELETED(knotted_recipient) && knotted_recipient?.sexcon)
 		var/orifice = knotted_part_partner
 		var/is_oral_knot = (orifice & SEX_PART_JAWS) != SEX_PART_NULL
@@ -721,20 +725,21 @@
 				user.try_impregnate(knotted_recipient)
 			else if((orifice & SEX_PART_ANUS) && HAS_TRAIT(knotted_recipient, TRAIT_BAOTHA_FERTILITY_BOON) && !knotted_recipient.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(knotted_recipient)
+			else if((orifice & SEX_PART_ANUS) && HAS_TRAIT(knotted_recipient, TRAIT_OVERLY_FERTILE) && !knotted_recipient.getorganslot(ORGAN_SLOT_VAGINA))
+				user.try_impregnate(knotted_recipient)
 		cum_into(oral = is_oral_knot, splashed_user = knotted_recipient, orifice = orifice, skip_knot_try = TRUE)
 		return
 	var/climax_msg = "[user] makes a mess!"
 	var/modular_climax_msg = from_tailmaw ? null : modular_get_chastity_climax_message(climax_msg)
-	if(istext(modular_climax_msg))
-		climax_msg = modular_climax_msg
+	if(istext(modular_climax_msg) && modular_climax_msg != climax_msg)
+		user.chastity_visible_message(span_love(modular_climax_msg), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
 	else
-		if(!from_tailmaw && (has_chastity_cage() || has_chastity_anal()))
-			climax_msg = "[user] climaxes and makes a mess in their chastity device!"
-	user.visible_message(span_love(climax_msg), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
+		user.visible_message(span_love(climax_msg), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
 	playsound(user, 'sound/misc/mat/endout.ogg', suppress_moan ? 12 : 50, TRUE, ignore_walls = FALSE)
 	var/semen_vol = get_semen_volume()
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	add_cum_floor(get_turf(user), do_big_puddle = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+	modular_lay_eggs_on_climax()
 	after_ejaculation()
 
 	var/cur_loc = get_turf(user)
@@ -872,6 +877,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		reward_panel_climax(user == actor ? recipient : actor)
 
 /datum/sex_controller/proc/after_ejaculation(consume_charge = TRUE)
+	user.remove_stress(/datum/stressevent/denied_release)
 	set_arousal(40)
 	if(consume_charge)
 		adjust_charge(-CHARGE_FOR_CLIMAX)
@@ -1251,7 +1257,39 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return FALSE
 	if(!can_ejaculate())
 		return FALSE
+	if(try_deny_panel_climax())
+		return FALSE
 	return TRUE
+
+/// Reuse paired-action tracking; only examine participants when a climax is attempted.
+/datum/sex_controller/proc/try_deny_panel_climax()
+	if(!user?.client?.prefs?.edging || !user.client.prefs.sexable || user.stat == DEAD)
+		return FALSE
+	if(!panel_triumph_target && !length(panel_triumph_actions))
+		return FALSE
+	var/list/active_actions = panel_triumph_actions ? panel_triumph_actions.Copy() : list()
+	if(panel_triumph_target)
+		active_actions |= src
+	for(var/datum/sex_controller/action_controller in active_actions)
+		if(QDELETED(action_controller) || !action_controller.current_action || action_controller.desire_stop)
+			continue
+		var/mob/living/carbon/human/actor = action_controller.user
+		var/mob/living/carbon/human/recipient = action_controller.panel_triumph_target
+		if(QDELETED(actor) || QDELETED(recipient) || actor == recipient || action_controller.target != recipient)
+			continue
+		if(user != actor && user != recipient)
+			continue
+		var/mob/living/carbon/human/partner = user == actor ? recipient : actor
+		if(!partner.client?.prefs?.sexable || partner.stat == DEAD || !partner.sexcon?.deny_partner_climax || !HAS_TRAIT(partner, TRAIT_ORGASM_DENIER))
+			continue
+		if(!action_controller.can_perform_action(action_controller.current_action, actor.incapacitated()))
+			continue
+		set_arousal(30)
+		user.add_stress(/datum/stressevent/denied_release)
+		to_chat(user, span_info(span_italics("Just as release draws near, [partner] holds me back. The feeling fades, leaving me frustrated.")))
+		to_chat(partner, span_info(span_italics("I hold [user] back from release, leaving them frustrated.")))
+		return TRUE
+	return FALSE
 
 /datum/sex_controller/proc/can_ejaculate()
 	if(!user.getorganslot(ORGAN_SLOT_TESTICLES) && !user.getorganslot(ORGAN_SLOT_VAGINA) && !get_manticore_tail(user))
@@ -1285,6 +1323,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				adjust_arousal(0.25)
 			else
 				if(prob(3))
+					if(try_deny_panel_climax())
+						return
 					ejaculate(climax_part)
 					if(splashed_user)
 						var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1299,6 +1339,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return
 	if(!can_ejaculate())
 		return FALSE
+	if(try_deny_panel_climax())
+		return
 	ejaculate(climax_part)
 	if(splashed_user)
 		var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1408,44 +1450,68 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			rate = AROUSAL_HIGH_UNHORNY_RATE
 	adjust_arousal(-dt * rate)
 
-/datum/sex_controller/proc/show_ui()
+/// Fixed cells keep changing labels and conditional controls from moving adjacent links.
+/datum/sex_controller/proc/get_controls_html()
 	var/list/dat = list()
 	var/force_name = get_force_string()
 	var/speed_name = get_speed_string()
 	var/manual_arousal_name = get_manual_arousal_string()
 	var/obj/item/organ/penis/got_cock = user.getorganslot(ORGAN_SLOT_PENIS)
 	var/obj/item/organ/vagina/got_pussy = user.getorganslot(ORGAN_SLOT_VAGINA)
-	dat += "<center><a href='?src=[REF(src)];task=speed_down'>\<</a> [speed_name] <a href='?src=[REF(src)];task=speed_up'>\></a> ~|~ <a href='?src=[REF(src)];task=force_down'>\<</a> [force_name] <a href='?src=[REF(src)];task=force_up'>\></a>"
+	dat += {"<style>
+		.sexcon-settings { width: 100%; table-layout: fixed; border-spacing: 4px; margin: 0; }
+		.sexcon-settings td { padding: 0; text-align: center; vertical-align: middle; }
+		.sexcon-settings .sexcon-control { height: 26px; }
+		.sexcon-settings .sexcon-label { display: block; background: none; border: none; margin: 0; padding: 0; font-size: 11px; line-height: 16px; }
+		.sexcon-settings .sexcon-toggle { display: block; box-sizing: border-box; height: 26px; margin: 0; padding: 2px 3px; font-size: 13px; line-height: 20px; white-space: nowrap; }
+		.sexcon-settings .sexcon-placeholder { background: #00000066; border: 1px solid #000000; }
+		.sexcon-stepper { display: table; width: 100%; height: 30px; table-layout: fixed; }
+		.sexcon-stepper a { display: table-cell; width: 20px; margin: 0; padding: 0; font-size: 16px; line-height: 28px; }
+		.sexcon-stepper .sexcon-value { display: table-cell; width: auto; font-size: 12px; line-height: 13px; vertical-align: middle; word-wrap: normal; }
+	</style>"}
+	dat += "<table class='sexcon-settings'><colgroup><col style='width: 37%'><col style='width: 26%'><col style='width: 37%'></colgroup><tr>"
+	dat += "<td><a class='sexcon-label' href='?src=[REF(src)];task=speed_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=speed_down\";return false;' title='Left-click to increase; right-click to decrease'>SPEED</a><div class='sexcon-stepper'><a href='?src=[REF(src)];task=speed_down'>&lt;</a><a class='sexcon-value' href='?src=[REF(src)];task=speed_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=speed_down\";return false;' title='Left-click to increase; right-click to decrease'>[speed_name]</a><a href='?src=[REF(src)];task=speed_up'>&gt;</a></div></td>"
+	dat += "<td><a class='sexcon-label' href='?src=[REF(src)];task=force_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=force_down\";return false;' title='Left-click to increase; right-click to decrease'>FORCE</a><div class='sexcon-stepper'><a href='?src=[REF(src)];task=force_down'>&lt;</a><a class='sexcon-value' href='?src=[REF(src)];task=force_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=force_down\";return false;' title='Left-click to increase; right-click to decrease'>[force_name]</a><a href='?src=[REF(src)];task=force_up'>&gt;</a></div></td>"
+	dat += "<td>"
 	if(got_cock)
-		dat += " ~|~ <a href='?src=[REF(src)];task=manual_arousal_down'>\<</a> [manual_arousal_name] <a href='?src=[REF(src)];task=manual_arousal_up'>\></a>"
-	dat += "</center><center><a href='?src=[REF(src)];task=toggle_finished'>[do_until_finished ? "UNTIL IM FINISHED" : "UNTIL I STOP"]</a>"
-	if(got_cock && !got_pussy)
-		dat += "</center><center><a href='?src=[REF(src)];task=toggle_bottom_exposed'>[bottom_exposed ? "PINTLE EXPOSED" : "PINTLE CONCEALED"]</a>"
-	else if(!got_cock && got_pussy)
-		dat += "</center><center><a href='?src=[REF(src)];task=toggle_bottom_exposed'>[bottom_exposed ? "PUSSY EXPOSED" : "PUSSY CONCEALED"]</a>"
-	else
-		dat += "</center><center><a href='?src=[REF(src)];task=toggle_bottom_exposed'>[bottom_exposed ? "CROTCH EXPOSED" : "CROTCH CONCEALED"]</a>"
+		dat += "<a class='sexcon-label' href='?src=[REF(src)];task=manual_arousal_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=manual_arousal_down\";return false;' title='Left-click to increase; right-click to decrease'>AROUSAL</a><div class='sexcon-stepper'><a href='?src=[REF(src)];task=manual_arousal_down'>&lt;</a><a class='sexcon-value' href='?src=[REF(src)];task=manual_arousal_up' oncontextmenu='window.location.href=\"?src=[REF(src)];task=manual_arousal_down\";return false;' title='Left-click to increase; right-click to decrease'>[manual_arousal_name]</a><a href='?src=[REF(src)];task=manual_arousal_up'>&gt;</a></div>"
+	dat += "</td></tr></table>"
+	dat += "<table class='sexcon-settings'><tr>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_freeuse'>[freeuse ? "FREEUSE ON" : "FREEUSE OFF"]</a></td>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_subtle'>[do_subtle_action ? "DOING SUBTLY" : "DOING VISIBLY"]</a></td>"
+	dat += "<td class='sexcon-control'>"
 	if(got_cock || got_pussy || user.getorganslot(ORGAN_SLOT_TESTICLES))
-		dat += " | <a href='?src=[REF(src)];task=toggle_hide_pintle_visuals'>[hide_pintle_visuals ? "GENITALS HIDDEN" : "GENITALS VISIBLE"]</a>"
-	dat += " ~|~ <a href='?src=[REF(src)];task=toggle_freeuse'>[freeuse ? "FREEUSE ON" : "FREEUSE OFF"]</a>"
+		dat += "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_hide_pintle_visuals'>[hide_pintle_visuals ? "GENITALS HIDDEN" : "GENITALS VISIBLE"]</a>"
+	dat += "</td></tr></table>"
+	dat += "<table class='sexcon-settings'><tr>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_finished'>[do_until_finished ? "UNTIL IM FINISHED" : "UNTIL I STOP"]</a></td>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=set_arousal'>SET AROUSAL</a></td></tr><tr>"
+	var/exposure_name = "CROTCH"
+	if(got_cock && !got_pussy)
+		exposure_name = "PINTLE"
+	else if(!got_cock && got_pussy)
+		exposure_name = "PUSSY"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_bottom_exposed'>[exposure_name] [bottom_exposed ? "EXPOSED" : "CONCEALED"]</a></td>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=freeze_arousal'>[arousal_frozen ? "UNFREEZE AROUSAL" : "FREEZE AROUSAL"]</a></td></tr></table>"
+	var/knot_control = "<span class='sexcon-toggle sexcon-placeholder'></span>"
 	if(current_action && !desire_stop)
 		var/datum/sex_action/action = SEX_ACTION(current_action)
 		if(action.knot_on_finish)
 			if((action.user_sex_part & SEX_PART_COCK) && knot_penis_type())
-				if(do_knot_action)
-					dat += " | <a href='?src=[REF(src)];task=toggle_knot'><font color='#d146f5'>USING KNOT</font></a>"
-				else
-					dat += " | <a href='?src=[REF(src)];task=toggle_knot'><font color='#eac8de'>NOT USING KNOT</font></a>"
+				knot_control = "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_knot'><font color='[do_knot_action ? "#d146f5" : "#eac8de"]'>[do_knot_action ? "USING KNOT" : "NOT USING KNOT"]</font></a>"
 			else if((action.target_sex_part & SEX_PART_COCK) && target?.sexcon?.knot_penis_type())
-				if(do_knot_action_as_bottom)
-					dat += " | <a href='?src=[REF(src)];task=toggle_knot_bottom'><font color='#d146f5'>FORCING KNOT</font></a>"
-				else
-					dat += " | <a href='?src=[REF(src)];task=toggle_knot_bottom'><font color='#eac8de'>NOT FORCING KNOT</font></a>"
-	if(do_subtle_action)
-		dat += " | <a href='?src=[REF(src)];task=toggle_subtle'>DOING SUBTLY</a>"
+				knot_control = "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_knot_bottom'><font color='[do_knot_action_as_bottom ? "#d146f5" : "#eac8de"]'>[do_knot_action_as_bottom ? "FORCING KNOT" : "NOT FORCING KNOT"]</font></a>"
+	dat += "<table class='sexcon-settings'><tr><td class='sexcon-control'>"
+	if(HAS_TRAIT(user, TRAIT_ORGASM_DENIER))
+		dat += "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_partner_denial'>ORGASM DENIAL: [deny_partner_climax ? "ON" : "OFF"]</a>"
 	else
-		dat += " | <a href='?src=[REF(src)];task=toggle_subtle'>DOING VISIBLY</a>"
-	dat += "</center><center><a href='?src=[REF(src)];task=set_arousal'>SET AROUSAL</a> | <a href='?src=[REF(src)];task=freeze_arousal'>[arousal_frozen ? "UNFREEZE AROUSAL" : "FREEZE AROUSAL"]</a></center>"
+		dat += "<span class='sexcon-toggle sexcon-placeholder'></span>"
+	dat += "</td><td class='sexcon-control'>[knot_control]</td></tr></table>"
+	return dat.Join()
+
+/datum/sex_controller/proc/show_ui()
+	var/list/dat = list()
+	dat += get_controls_html()
 	if(target == user)
 		dat += "<center>Doing unto yourself</center>"
 	else
@@ -1485,7 +1551,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			dat += "</tr><tr>"
 
 	dat += "</tr></table>"
-	var/datum/browser/popup = new(user, "sexcon", "<center>Sate Desire</center>", 500, 550)
+	var/datum/browser/popup = new(user, "sexcon", "<center>Sate Desire</center>", 560, 550)
 	popup.set_content(dat.Join())
 	popup.open()
 	return
@@ -1517,6 +1583,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		if("toggle_finished")
 			do_until_finished = !do_until_finished
 			update_exposure()
+		if("toggle_partner_denial")
+			if(HAS_TRAIT(user, TRAIT_ORGASM_DENIER))
+				deny_partner_climax = !deny_partner_climax
 		if("toggle_bottom_exposed")
 			if(user.incapacitated(ignore_restraints = TRUE))
 				to_chat(user, span_warning("I can't do that right now!"))

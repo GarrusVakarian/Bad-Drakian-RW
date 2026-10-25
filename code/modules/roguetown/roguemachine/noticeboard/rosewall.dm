@@ -3,7 +3,7 @@ The Rosewall. A bathhouse service board, spiritually kin to the mercenary statue
 (talkstatue_mercenary.dm): bathhouse workers pin an advert for their services, and any
 passerby may peruse the board, examine a worker's headshot, or send them an offer.
 
-- Only Bathmasters and Bathhouse Attendants may pin/edit/remove an advert or set a status.
+- Only Bathmasters, Bathhouse Attendants and Bathhouse agents may pin/edit/remove an advert or set a status.
 - Statuses: Available / Hired / Do not Disturb. A worker set to Do not Disturb cannot be sent offers (the button is hidden client-side and enforced server-side).
 - Offers are delivered as a whisper to the worker with YAE/NAE response hrefs, handled in Topic() below (same pattern as the mercenary statue's direct responses).
 - "Examine Headshot" opens the poster's /datum/examine_panel (the examine closer window), the same datum used by the examine chat link.
@@ -28,6 +28,8 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 
 	/// All adverts currently pinned to the Rosewall, keyed by the worker's real_name. Shared by every Rosewall board.
 	var/static/list/rosewall_adverts = list()
+	/// One-use spawn editing links, shared by every Rosewall board.
+	var/static/list/pending_spawn_links = list()
 	/// Pending YAE/NAE offer responses, keyed by response id.
 	var/static/list/pending_offer_responses = list()
 	/// Per sender/target cooldowns for sending offers.
@@ -64,7 +66,33 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 		board.update_icon()
 
 /obj/structure/roguemachine/rosewall/proc/is_bathhouse_worker(mob/living/carbon/human/H)
-	return istype(H) && (H.job in list("Bathmaster", "Bathhouse Attendant"))
+	return istype(H) && ((H.job in GLOB.bathhouse_positions) || HAS_TRAIT(H, TRAIT_AGENT_BATHHOUSE))
+
+/obj/structure/roguemachine/rosewall/proc/auto_register(mob/living/carbon/human/H)
+	if(QDELETED(H) || !H.mind || !H.advjob || H.stat == DEAD || !is_bathhouse_worker(H))
+		return FALSE
+	var/list/data = rosewall_adverts[H.real_name]
+	if(data && data["mob"] == H)
+		return FALSE // Preserve existing adverts and statuses when class equipment is reapplied.
+	rosewall_adverts[H.real_name] = list("status" = ROSEWALL_STATUS_AVAILABLE, "mob" = H, "message" = "")
+	update_all_boards()
+	if(H.key)
+		addtimer(CALLBACK(src, PROC_REF(send_spawn_ad_link), H, H.key), 5 SECONDS)
+	return TRUE
+
+/obj/structure/roguemachine/rosewall/proc/send_spawn_ad_link(mob/living/carbon/human/H, expected_key)
+	if(QDELETED(H) || H.stat == DEAD || H.key != expected_key || !is_bathhouse_worker(H))
+		return
+	var/list/data = rosewall_adverts[H.real_name]
+	if(!data || data["mob"] != H)
+		return
+	pending_spawn_links[H.key] = H
+	addtimer(CALLBACK(src, PROC_REF(expire_spawn_link), H.key, H), 5 MINUTES)
+	to_chat(H, span_notice("I am listed on the Rosewall. <a href='?src=[REF(src)];edit_spawn_ad=[REF(H)]'>Set my status and advertisement for this round</a> (one use, expires in 5 minutes). I can visit the Rosewall later to make further changes."))
+
+/obj/structure/roguemachine/rosewall/proc/expire_spawn_link(key, mob/expected_user)
+	if(pending_spawn_links[key] == expected_user)
+		pending_spawn_links -= key
 
 /obj/structure/roguemachine/rosewall/attack_hand(mob/living/carbon/human/user)
 	. = ..()
@@ -86,7 +114,7 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 		ui.open()
 
 /// Prunes stale entries from the static lists: adverts whose worker is gone or
-/// disconnected, offer responses past their timeout (whose expiry timer may have
+/// disconnected or no longer eligible, offer responses past their timeout (whose expiry timer may have
 /// died with a destroyed board), and offer cooldowns that have already elapsed.
 /// Returns TRUE if any adverts were pruned.
 /obj/structure/roguemachine/rosewall/proc/prune_stale_adverts()
@@ -101,7 +129,7 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 	for(var/advert_key in rosewall_adverts)
 		var/list/advert_data = rosewall_adverts[advert_key]
 		var/mob/living/carbon/human/worker = advert_data["mob"]
-		if(!worker || QDELETED(worker) || !worker.ckey)
+		if(!worker || QDELETED(worker) || !worker.ckey || !is_bathhouse_worker(worker))
 			stale_keys += advert_key
 	if(!length(stale_keys))
 		return FALSE
@@ -171,6 +199,11 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 			var/new_msg = stripped_input(H, "Compose my advert for the Rosewall (max [message_char_limit] characters):", "Rosewall Advert", current_msg, message_char_limit)
 			if(new_msg == null)
 				return
+			if(!is_bathhouse_worker(H))
+				if(prune_stale_adverts())
+					update_all_boards()
+				to_chat(H, span_warning("I no longer have permission to advertise here."))
+				return
 			if(!Adjacent(H))
 				to_chat(H, span_warning("I moved too far from the board."))
 				return
@@ -230,7 +263,7 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 		to_chat(sender, span_warning("That advert is no longer pinned here."))
 		return
 	var/mob/living/carbon/human/worker = advert_data["mob"]
-	if(!worker || QDELETED(worker) || worker.stat == DEAD || !worker.ckey)
+	if(!worker || QDELETED(worker) || worker.stat == DEAD || !worker.ckey || !is_bathhouse_worker(worker))
 		rosewall_adverts -= target_key
 		update_all_boards()
 		to_chat(sender, span_warning("My offer cannot be delivered for some reason."))
@@ -254,6 +287,11 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 	if(!Adjacent(sender))
 		to_chat(sender, span_warning("I moved too far from the board."))
 		return
+	if(!is_bathhouse_worker(worker))
+		if(prune_stale_adverts())
+			update_all_boards()
+		to_chat(sender, span_warning("That advert is no longer pinned here."))
+		return
 	sender_cooldowns[cooldown_key] = world.time
 	response_id_counter++
 	var/response_id = "rosewall_[worker.real_name]_[world.time]_[response_id_counter]"
@@ -269,6 +307,37 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 
 /obj/structure/roguemachine/rosewall/Topic(href, href_list)
 	. = ..()
+	if(href_list["edit_spawn_ad"])
+		var/mob/living/carbon/human/H = locate(href_list["edit_spawn_ad"])
+		if(!H || usr != H)
+			return
+		if(pending_spawn_links[H.key] != H)
+			to_chat(H, span_warning("That Rosewall link has expired."))
+			return
+		var/list/data = rosewall_adverts[H.real_name]
+		if(!data || data["mob"] != H || H.stat == DEAD || !is_bathhouse_worker(H))
+			return
+		pending_spawn_links -= H.key
+		var/list/status_options = list(ROSEWALL_STATUS_AVAILABLE, ROSEWALL_STATUS_HIRED, ROSEWALL_STATUS_DND)
+		var/new_status = input(H, "Choose my status for this round. Afterwards, I can edit my advertisement.", "Rosewall Status", data["status"]) as null|anything in status_options
+		if(!(new_status in status_options) || QDELETED(H) || usr != H || H.stat == DEAD)
+			return
+		if(!is_bathhouse_worker(H) || rosewall_adverts[H.real_name] != data || data["mob"] != H)
+			return
+		data["status"] = new_status
+		update_all_boards()
+		to_chat(H, span_notice("I set my Rosewall status to: <b>[new_status]</b>"))
+		log_admin_private("[key_name(H)] set Rosewall status to [new_status]")
+		var/new_msg = stripped_input(H, "Compose my advert for this round (max [message_char_limit] characters):", "Rosewall Advert", data["message"] || "", message_char_limit)
+		if(new_msg == null || QDELETED(H) || usr != H || H.stat == DEAD)
+			return
+		if(!is_bathhouse_worker(H) || rosewall_adverts[H.real_name] != data || data["mob"] != H)
+			return
+		data["message"] = new_msg
+		update_all_boards()
+		to_chat(H, span_notice("My Rosewall advertisement has been updated. I can visit the Rosewall to make further changes."))
+		log_admin_private("[key_name(H)] set Rosewall advert: \"[new_msg]\"")
+		return
 	if(href_list["offer_response"])
 		if(!ishuman(usr))
 			return

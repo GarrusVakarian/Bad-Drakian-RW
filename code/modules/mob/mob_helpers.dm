@@ -509,10 +509,10 @@
 	var/list/intents
 	var/obj/item/Masteritem = active ? get_active_held_item() : get_inactive_held_item()
 	if(Masteritem)
-		if(Masteritem.wielded)
-			intents = Masteritem.gripped_intents
-		else if(Masteritem.altgripped)
+		if(Masteritem.altgripped)
 			intents = Masteritem.alt_intents
+		else if(Masteritem.wielded)
+			intents = Masteritem.gripped_intents
 		else
 			intents = Masteritem.possible_item_intents
 	else
@@ -669,6 +669,7 @@
 			animate(client, pixel_y)
 	else
 		cmode = TRUE
+		SEND_SIGNAL(L, COMSIG_MOB_COMBAT_MODE_ENABLED)
 		playsound_local(src, 'sound/misc/combon.ogg', 100)
 		if(length(L.cmode_music_override))
 			SSdroning.play_combat_music(L.cmode_music_override, client)

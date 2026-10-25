@@ -128,11 +128,11 @@
 /obj/item/bodypart/proc/adjust_marking_overlays(list/appearance_list)
 	return
 
-/obj/item/bodypart/proc/get_specific_markings_overlays(list/specific_markings, aux = FALSE, mob/living/carbon/human/human_owner, override_color)
+/obj/item/bodypart/proc/get_specific_markings_overlays(list/specific_markings, aux = FALSE, mob/living/carbon/human/human_owner, override_color, image/raised_skin)
 	var/list/appearance_list = list()
-//	var/specific_layer = aux ? aux_layer : BODYPARTS_LAYER
-	var/specific_layer = aux_layer ? aux_layer : BODYPARTS_LAYER
+	var/specific_layer = aux ? aux_layer : BODYPARTS_LAYER
 	var/specific_render_zone = aux ? aux_zone : body_zone
+	var/static/list/raised_marking_icons = list()
 	for(var/key in specific_markings)
 		var/color = specific_markings[key]
 		var/datum/body_marking/BM = GLOB.body_markings[key]
@@ -142,7 +142,22 @@
 			var/gendaar = (human_owner.gender == FEMALE) ? "f" : "m"
 			render_limb_string = "[render_limb_string]_[gendaar]"
 
-		var/mutable_appearance/accessory_overlay = mutable_appearance(BM.icon, "[BM.icon_state]_[render_limb_string]", -specific_layer)
+		var/marking_state = "[BM.icon_state]_[render_limb_string]"
+		var/mutable_appearance/accessory_overlay
+		if(raised_skin)
+			// Side-facing limbs also have skin above the normal body layer.
+			// Only raise marking pixels that overlap that skin, not the whole marking.
+			var/cache_key = "[BM.icon]-[marking_state]-[raised_skin.icon]-[raised_skin.icon_state]"
+			var/icon/raised_marking = raised_marking_icons[cache_key]
+			if(!raised_marking)
+				raised_marking = icon(BM.icon, marking_state)
+				var/icon/skin_mask = icon(raised_skin.icon, raised_skin.icon_state)
+				skin_mask.Blend("#FFFFFF", ICON_ADD)
+				raised_marking.Blend(skin_mask, ICON_MULTIPLY)
+				raised_marking_icons[cache_key] = raised_marking
+			accessory_overlay = mutable_appearance(raised_marking, layer = -aux_layer)
+		else
+			accessory_overlay = mutable_appearance(BM.icon, marking_state, -specific_layer)
 		if(override_color)
 			accessory_overlay.color = "#[override_color]"
 		else
@@ -150,14 +165,16 @@
 		appearance_list += accessory_overlay
 	return appearance_list
 
-/obj/item/bodypart/proc/get_markings_overlays(override_color)
+/obj/item/bodypart/proc/get_markings_overlays(override_color, hideaux = FALSE, image/raised_skin)
 	if((!markings && !aux_markings) || !owner || !ishuman(owner))
 		return
 	var/mob/living/carbon/human/human_owner = owner
 	var/list/appearance_list = list()
 	if(markings)
 		appearance_list += get_specific_markings_overlays(markings, FALSE, human_owner, override_color)
-	if(aux_markings)
+		if(raised_skin && !hideaux)
+			appearance_list += get_specific_markings_overlays(markings, FALSE, human_owner, override_color, raised_skin)
+	if(aux_markings && !hideaux)
 		appearance_list += get_specific_markings_overlays(aux_markings, TRUE, human_owner, override_color)
 	adjust_marking_overlays(appearance_list)
 	return appearance_list
@@ -677,6 +694,7 @@
 	. = list()
 	var/icon_gender = (body_gender == FEMALE) ? "f" : "m"
 	var/image_dir = dropped && !skeletonized ? SOUTH : 0
+	var/override_color = rotted ? SKIN_COLOR_ROT : null
 
 	if(dropped && !skeletonized && static_icon)
 		icon = initial(icon)
@@ -723,7 +741,6 @@
 				aux = image(limb.icon, "[prosthetic_prefix]_[aux_zone]", -aux_layer, image_dir)
 				. += aux
 
-		var/override_color = rotted ? SKIN_COLOR_ROT : null
 		if(is_organic && should_draw_greyscale && !skeletonized)
 			var/draw_color = mutation_color || species_color || skin_tone
 			if(rotted || (owner && HAS_TRAIT(owner, TRAIT_ROTMAN)))
@@ -737,11 +754,17 @@
 		cached_base_appearances = _list_copy(.)
 		limb_appearance_cache_key = new_cache_key
 
-		// Markings overlays (not cached - can vary)
-		if(!skeletonized)
-			var/list/marking_overlays = get_markings_overlays(override_color)
-			if(marking_overlays)
-				. += marking_overlays
+	// Markings must also be added when the base appearances come from the cache.
+	if(!skeletonized)
+		var/image/raised_skin
+		if(aux_zone && !hideaux)
+			for(var/image/base_appearance as anything in .)
+				if(base_appearance.layer == -aux_layer)
+					raised_skin = base_appearance
+					break
+		var/list/marking_overlays = get_markings_overlays(override_color, hideaux, raised_skin)
+		if(marking_overlays)
+			. += marking_overlays
 
 	var/draw_organ_features = TRUE
 	var/draw_bodypart_features = TRUE

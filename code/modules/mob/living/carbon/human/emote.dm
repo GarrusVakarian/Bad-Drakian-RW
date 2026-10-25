@@ -173,6 +173,10 @@
 	var/datum/species/S = H.dna?.species
 	if(!S)
 		return ..()
+	if(H.wings_held_open)
+		H.set_wings_held_open(FALSE)
+		message = "folds their wings closed."
+		return ..()
 	if(S.can_toggle_wings(H))
 		var/now_open = S.toggle_wings(H)
 		if(now_open)
@@ -192,6 +196,52 @@
 
 /mob/living/carbon/human/var/tmp/wings_force_open
 
+/datum/emote/living/carbon/human/fwing
+	key = "fwing"
+	message = "spreads their wings wide."
+	use_params_for_runechat = TRUE
+
+/datum/emote/living/carbon/human/fwing/can_run_emote(mob/user, status_check = TRUE, intentional)
+	if(!..() || !ishuman(user))
+		return FALSE
+	var/mob/living/carbon/human/H = user
+	return H.can_hold_wings_open()
+
+/datum/emote/living/carbon/human/fwing/run_emote(mob/user, params, type_override, intentional)
+	if(!can_run_emote(user, intentional = intentional))
+		return FALSE
+	var/mob/living/carbon/human/H = user
+	H.set_wings_held_open(!H.wings_held_open)
+	message = H.wings_held_open ? "spreads their wings wide." : "folds their wings closed."
+	return ..()
+
+/mob/living/carbon/human
+	/// Cosmetic wing pose that persists through movement until toggled or damaged.
+	var/tmp/wings_held_open = FALSE
+	var/tmp/held_wing_damage = 0
+
+/mob/living/carbon/human/proc/can_hold_wings_open()
+	var/obj/item/organ/wings/W = getorganslot(ORGAN_SLOT_WINGS)
+	if(!W)
+		return FALSE
+	var/datum/sprite_accessory/wings/accessory = SPRITE_ACCESSORY(W.accessory_type)
+	return istype(accessory) && accessory.can_open
+
+/mob/living/carbon/human/proc/get_wing_pose_damage()
+	return getBruteLoss() + getFireLoss() + getToxLoss() + getOxyLoss() + getCloneLoss()
+
+/mob/living/carbon/human/proc/set_wings_held_open(open)
+	if(open && !can_hold_wings_open())
+		return FALSE
+	wings_held_open = open
+	wings_force_open = open
+	held_wing_damage = open ? get_wing_pose_damage() : 0
+	var/obj/item/organ/wings/W = getorganslot(ORGAN_SLOT_WINGS)
+	if(W)
+		W.is_open = open
+	update_body_parts(TRUE)
+	return TRUE
+
 /mob/living/carbon/human/proc/OpenWings()
 	var/obj/item/organ/wings/W = getorganslot(ORGAN_SLOT_WINGS)
 	if(W && W.can_open && !W.is_open)
@@ -199,6 +249,9 @@
 		update_body_parts(TRUE)
 
 /mob/living/carbon/human/proc/CloseWings()
+	if(wings_held_open)
+		set_wings_held_open(FALSE)
+		return
 	var/obj/item/organ/wings/W = getorganslot(ORGAN_SLOT_WINGS)
 	if(W && W.can_open && W.is_open)
 		W.is_open = FALSE

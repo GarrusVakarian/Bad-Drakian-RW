@@ -520,3 +520,187 @@
       Acquired Tastes.
   - rscadd: Added a flat chastity cage and leather collar to Acquired Tastes, and
       a rope leash to both equipment bags.
+2026-10-21:
+  _Rarity:
+  - qol: Nudists can now use Dragonhide ward, and Nude Sleepers can sleep with it
+      active.
+  - bugfix: Character previews now display without an outfit when no valid preview
+      job is selected.
+  - bugfix: Failed character and descriptor previews no longer leave the shared mannequin
+      locked, blocking other players' previews.
+  - bugfix: Corrected outfit preview job selection and cleanup of old preview sprites.
+  - bugfix: Crafting paralytic venom now consumes all its ingredients as intended.
+  - qol: Added a Toggles shortcut beneath Keybinds on the character sheet.
+  - rscadd: Added Toggle Scene Privacy under IC to block new orb scries until you
+      move or toggle it off.
+  - bugfix: Fixed chat auto-scroll falling behind after delayed images, repeated messages,
+      and layout changes.
+  - bugfix: Gnoll headshots now appear in chat examines when headshots are enabled.
+  mypingishuge:
+  - rscadd: Added Orgasm Denier, a 0-point quirk with a toggle that can deny a partner's
+      climax during paired ERP actions if they have Enable Edging Content enabled.
+  - rscadd: Denial resets arousal to 30 and gives a non-stacking, five-minute frustration
+      mood. A successful climax clears it.
+  - rscadd: Gnolls now have Orgasm Denier innately, with its panel toggle off by default.
+  mypingishuge (port), Ryumi and Azure Peak contributors:
+  - qol: Heretical and unusual equipment now has colored examine highlights and hover
+      explanations.
+  - qol: Sacred crown and Inquisition relics receive distinct examine highlights.
+2026-10-22:
+  Guidesu:
+  - rscadd: Flightless harpies now have talon kicks. Their kicks slash, and they can
+      kick standing targets in the head.
+  - rscadd: Ovipositor and egg layer options in the genital customizer, with custom
+      egg names, descriptions, colors and clutch sizes.
+  - rscadd: Lay Eggs and Check Eggs verbs.
+  - rscadd: '"Accept Egg Implantation" preference toggle (off by default).'
+  _Rarity:
+  - bugfix: Chat should no longer fight small upward scrolls while new messages arrive.
+  - bugfix: Alternate-grip weapons no longer switch to normal two-handed attack options
+      when equipment changes refresh their intents.
+  mypingishuge:
+  - rscadd: Added Blood Drinker, a 1-point quirk that lets blood quench thirst less
+      effectively than water, without blood-induced nausea.
+  - bugfix: Blood for Graggar no longer requires the caster to carry a psycross or
+      amulet, and accepts extracted eyes from any race.
+  - qol: Blood for Graggar now explains its offerings and cross placement, with clearer
+      messages when a body cannot be revived.
+  - bugfix: The Yeen Cackle emote now plays its sound when using the gnoll voice.
+  - bugfix: Saigas and fogbeasts now register their damage-triggered dismount handler
+      properly when ridden, allowing hits to the mount to throw off eligible riders
+      using Run intent. Fogbeast riders with Master Riding or higher remain protected.
+  - bugfix: Using Grab intent on an occupied animal mount now targets its driver;
+      empty mounts can be grabbed with combat mode on or off without automatically
+      mounting them.
+  - bugfix: Grabbed riders can no longer steer their animal mount away until they
+      break free or are released.
+  - bugfix: Tame mounts no longer add characters sharing their tile as enemies when
+      hurt, avoiding hostility toward a rider knocked off by the hit.
+  - balance: Expert trackers can now automatically highlight their marked target's
+      tracks, previously requiring Master Tracking.
+2026-10-23:
+  CentralSmith:
+  - bugfix: Jacksberries show their hue names when examined.
+  - bugfix: Cancelling Path of Order or selecting an already-known option no longer
+      spends devotion.
+  - bugfix: Inquisition targets receive their own Absolve and Amend notifications.
+  - bugfix: Bards no longer debuff themselves with their own dirges.
+  - bugfix: Ruma Clan Gun-in and Sasu tattoos clear their broken state when they regenerate
+      and explain their passive repair when examined.
+  - bugfix: Necra's Vow recognizes damage and blood-loss crit and resumes healing
+      after rescue.
+  - balance: Necra's Vow pauses healing in crit instead of adding oxygen damage.
+  - balance: Absolvers now have Squire Knowledge for equipment repair and polishing.
+  - balance: Absolvers now have Expert Homesteader.
+  _Rarity:
+  - qol: Aligned ERP panel controls into consistent rows and columns to reduce wrapping
+      and movement when toggling settings.
+  - qol: ERP speed/force/arousal selectors can now be changed by right/left clicking
+      them
+  - bugfix: Fixed the Atgervi kite shield appearing beside its wearer when equipped
+      in one back slot.
+  - bugfix: Several spells no longer consume their cooldown when their target or casting
+      prerequisites are invalid.
+  - bugfix: Numbing Pleasure now reduces pain for its intended one-minute duration
+      and correctly restores the pain modifier as overlapping casts expire.
+  - bugfix: Arm and leg markings no longer render over clothing/underwear that should
+      cover them.
+  - bugfix: Inventory slot previews no longer remain visible after moving the mouse
+      away!
+  - rscadd: Added the Pleased emote, available through *pleased and the Noises tab
+      (female warrior voice pack only).
+  - qol: Characters with a halt verb can now also use *halt or *haltyell in Say.
+  - bugfix: Chat reliably resumes auto-scrolling when scrolling down to the bottom
+      with the mouse wheel.
+  - bugfix: Rolled-up and torn-off sleeves now remove their armor coverage and immediately
+      update clothing appearance.
+  - bugfix: Torn and nonmodifiable sleeves can no longer be restored through sleeve
+      rolling.
+  - bugfix: Werewolf and gnoll howls now support normal speech formatting for bold,
+      italics, and underlining.
+  mypingishuge:
+  - rscadd: Restores automatic chastity messages and sounds (limited to five tiles
+      around), that are only shown to bystanders when the device's area is exposed,
+      the wearer has quiet mode off, and the viewer has chastity content enabled.
+  - rscadd: Added the Enable Quiet Chastity toggle that mutes automatic device sounds
+      and notifications, including the wearer's own, while leaving examine details,
+      sprites and panel interactions available.
+  - rscadd: Exposed devices are described alongside the relevant body descriptions.
+  - bugfix: Cage equip attempts no longer mark a target as equipped before completion
+      or redirect to the applicator; completed equips correctly transfer the held
+      device to its wearer.
+2026-10-24:
+  CentralSmith:
+  - bugfix: Tug of War no longer accumulates bonuses between casts or falsely reports
+      successful pulls.
+  - balance: Tug of War no longer has a hidden random failure roll and can target
+      other living creatures.
+  R3N0mon:
+  - rscadd: Added spell "Give In To Daylight" To Werewolves
+  _Rarity:
+  - admin: Players in alternate forms no longer trigger deep-slumber admin warnings
+      for their stored original bodies.
+  - admin: Slumber Fartravel links now reject stored transformation bodies and recheck
+      eligibility after confirmation.
+  kilozombie:
+  - rscadd: Bathhouse agents can now advertise their services on the Rosewall.
+  mypingishuge:
+  - rscadd: Forester Wardens can choose between a Billhook, Steel Messer and Iron
+      Shield, Kriegsmesser, Bronze War Axe and Iron Shield or Iron Greataxe, as their
+      starting equipment.
+  - balance: The Forester's former Axe kits now start with a Wardens' seax instead
+      of a hunting knife.
+  - qol: Item Properties now show innate armour penetration when present.
+  - balance: Regular billhooks now have the spear's backstep special.
+  - bugfix: Two-handed weapons no longer hide their wielded force in the properties
+      panel when held with both hands.
+  - qol: Use the back and belt-side bag hotkeys to load bows, crossbows and slings
+      directly from worn quivers and ammunition pouches.
+  - map: Added Rosewalls to Neuhill's bathhouse, tavern and town street so bathhouse
+      workers can advertise their services.
+  - map: Added a Treasure Seeker at Neuhill's bathhouse service counter for deposits
+      into the bathhouse vault.
+  - qol: Mercenaries, adventurers and wretches are automatically listed as Available
+      at the mercenary statue after class selection, including late joins.
+  - rscadd: Newly registered mercenaries, adventurers and wretches receive a one-use
+      chat link, sent five seconds after class setup and valid for five minutes after
+      delivery, to choose their status and add an optional advertisement for the current
+      round.
+  - qol: Bathmasters and Bathhouse Attendants are automatically listed on the Rosewall,
+      with the same delayed, one-use five-minute link to set their status and advertisement.
+  - qol: Wretches can edit their alias through the spawn link. Wretch listings, contact
+      menus and hiring replies use a physical descriptor or chosen alias instead of
+      revealing their real name.
+  - rscadd: End-of-round Featured Statistics now includes most and least picked background
+      rankings.
+  - bugfix: Background picks no longer appear in the Virtues ranking.
+2026-10-25:
+  NickBelmont, port by mypingishuge:
+  - rscadd: Use the Offer Quest emote or *quest to toggle an animated quest marker
+      above your character. Turning combat mode on, receiving an attack, or taking
+      damage removes the marker.
+  ProbablyCarl:
+  - bugfix: Ordinator's War Axe begins preblessed.
+  Ryan180602, zeroisthebiggay, port by mypingishuge:
+  - rscadd: Customize your hairstyle with a pixel editor in character customization,
+      with separate edits for each direction and colors based on your hair and gradients.
+  _Rarity:
+  - bugfix: Dragon wings now retain their Primary and Membrane colors after loading
+      a character slot.
+  - rscadd: Added `*fwing` to keep wings spread while moving or lying down. Use it
+      again to fold them; taking damage also folds them.
+  - rscadd: Guillotines can now be crafted from 3 small logs, 2 iron ingots, and 1
+      rope.
+  - qol: Wooden stakes can mine.
+  - bugfix: Prevent revenant's from popping their head off when they click-drag a
+      bag onto their.
+  - qol: Gnoll Claw can be used to make cured leather from hide.
+  - rscadd: Added Overly Fertile, a free quirk that increases fertility and allows
+      pregnancy without the usual anatomy.
+  changelingonberry, port by mypingishuge:
+  - rscadd: Added freeform dice rolls and contested stat rolls. Use the rolling commands
+      under Emotes.Rolling or the *dice, *stat and *contested shortcuts.
+  - qol: Stat rolls now show their dice, stats and trait modifiers in graphical chat
+      tooltips.
+  - config: Added optional autostart and minimum flavor-text/OOC-note settings, preserving
+      BD's current defaults.

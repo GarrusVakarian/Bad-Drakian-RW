@@ -24,6 +24,10 @@
 /datum/bodypart_feature/proc/bodypart_overlays(mutable_appearance/standing)
 	return
 
+/// Extra sibling overlays that need to sort independently of the base accessory.
+/datum/bodypart_feature/proc/extra_bodypart_overlays(obj/item/bodypart/bodypart)
+	return
+
 /datum/bodypart_feature/proc/get_bodypart_overlay(obj/item/bodypart/bodypart)
 	if(!accessory_type)
 		return
@@ -35,6 +39,9 @@
 	for(var/standing in appearances)
 		bodypart_icon(standing)
 		bodypart_overlays(standing)
+	var/list/extra_appearances = extra_bodypart_overlays(bodypart)
+	if(extra_appearances)
+		appearances += extra_appearances
 	return appearances
 
 /// Sets an accessory type and optionally colors too.

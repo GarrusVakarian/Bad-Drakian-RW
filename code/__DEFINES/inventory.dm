@@ -258,3 +258,6 @@
 #define CAN_CADJUST 1
 #define CADJUSTED 2
 #define CADJUSTED_MORE 3
+
+/// Clothing flags that occlude custom hair pixels.
+#define HAIR_OCCLUDING_FLAGS (HIDEHAIR|HIDEEARS|HIDEFACE|HIDESNOUT)

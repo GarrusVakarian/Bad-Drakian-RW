@@ -100,10 +100,10 @@
 			mudprint.update_icon()
 
 		// Auto-close opened wings after moving to avoid making your sprite bigger or other janky stuff
-		if(wings_force_open)
+		if(!wings_held_open && wings_force_open)
 			wings_force_open = FALSE
 			update_body_parts(TRUE)
-		else
+		else if(!wings_held_open)
 			var/obj/item/organ/wings/W = getorganslot(ORGAN_SLOT_WINGS)
 			if(W && W.is_open)
 				CloseWings()

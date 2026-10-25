@@ -1,3 +1,7 @@
+/mob/living/carbon/human
+	/// Allows quirk incompatibility checks before the Licker's vampire transformation.
+	var/spawned_as_licker = FALSE
+
 /datum/advclass/wretch/licker
 	name = "Licker"
 	tutorial = "You have recently been embraced as a vampire. You do not know whom your sire is, strange urges, unnatural strength, a thirst you can barely control. You were outed as a monster and are now on the run."
@@ -16,6 +20,7 @@
 /datum/outfit/job/roguetown/wretch/licker/pre_equip(mob/living/carbon/human/H)
 	..()
 	if(H.mind)
+		H.spawned_as_licker = TRUE
 		H.adjust_blindness(-3)
 		wretch_select_bounty(H)
 		var/list/possible_classes = list()

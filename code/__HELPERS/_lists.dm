@@ -1235,3 +1235,11 @@ GLOBAL_LIST_EMPTY(string_lists)
 	return english_list(out, nothing_text, and_text, comma_text, final_comma_text)
 
 
+
+/// Trims an insertion-ordered cache back down to `limit` entries, evicting the oldest first.
+/// Lists keep insertion order, so cutting from the front drops the least recently added keys.
+/// Use on caches whose keys are open-ended (colours, user input) so they cannot grow without bound.
+/proc/trim_cache(list/cache, limit)
+	if(!islist(cache) || cache.len <= limit)
+		return
+	cache.Cut(1, (cache.len - limit) + 1)

@@ -27,7 +27,7 @@
 			used = pick('sound/vo/mobs/gnoll/yeen_howl.ogg')
 		if("idle")
 			used = pick('sound/vo/mobs/wwolf/idle (1).ogg','sound/vo/mobs/wwolf/idle (2).ogg','sound/vo/mobs/wwolf/sniff.ogg')
-		if("cackle")
+		if("cackle", "ycackle")
 			used = list('sound/vo/mobs/hyena/cackle.ogg')
 		if("chuckle")
 			used = list('sound/vo/mobs/hyena/cackle.ogg')

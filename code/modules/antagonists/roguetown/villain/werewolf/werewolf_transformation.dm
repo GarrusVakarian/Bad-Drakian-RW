@@ -1,56 +1,155 @@
 /datum/antagonist/werewolf/on_life(mob/user)
-	if(!user) return
+	try_werewolf_auto_tf(user)
+
+/datum/antagonist/werewolf/proc/can_transform(mob/living/carbon/human/user)
+	if(!ishuman(user)) 
+		return FALSE
 	var/mob/living/carbon/human/H = user
-	if(H.stat == DEAD) return
-	if(H.advsetup) return
-	if(HAS_TRAIT(H, TRAIT_SILVER_BLESSED)) return
+	if(H.stat == DEAD) 
+		return FALSE
+	if(H.advsetup) 
+		return FALSE
+	if(HAS_TRAIT(H, TRAIT_SILVER_BLESSED)) 
+		return FALSE
+	return TRUE
 
-	// Werewolf transforms at night AND under the sky
-	if(!transformed && !transforming)
-		if(GLOB.tod == "night")
-			if(isturf(H.loc))
-				var/turf/loc = H.loc
-				if(loc.can_see_sky())
-					to_chat(H, span_userdanger("The moonlight scorns me... It is too late."))
-					owner.current.playsound_local(get_turf(owner.current), 'sound/music/wolfintro.ogg', 80, FALSE, pressure_affected = FALSE)
-					H.fullscreen_redflash("redflash3")
-					transforming = world.time // timer
+// automatic fire-and-do-whatever-should-do-thing thing
+/datum/antagonist/werewolf/proc/try_werewolf_auto_tf(mob/living/carbon/human/user)
+	if(!can_transform(user))
+		return
 
-	// Begin transformation
-	else if(transforming)
-		if (world.time >= transforming + 35 SECONDS) // Stage 3
-			H.werewolf_transform()
-			transforming = FALSE
+	if(transformed)
+		if(time_is_day_under_daylight_day(user))
+			if(!is_unmagical_ungirl_untransforming(user))
+				start_the_untransformation(user)
+				return // the furry -> bigfurry pipeline is started
+			tick_unmagical_ungirl_untransformation(user)
+		else if(untransforming)
+			abort_untransformation(user)
+	else
+		if(time_is_right_under_moonlit_night(user))
+			if(!is_magical_girl_transforming(user))
+				start_the_transformation(user)
+				return // the bigfurry -> furry pipeline is started
+			tick_magical_girl_transformation(user)
+		else if(transforming)
+			abort_transformation(user)
+
+/datum/antagonist/werewolf/proc/time_is_day_under_daylight_day(mob/living/carbon/human/user)
+	if(!transformed)
+		return FALSE
+	if(GLOB.tod == "night")
+		return FALSE // define? very fine~
+	if(ready_to_untransform)
+		return TRUE // good!
+	if(!automatically_untransforms_in_daytime)
+		return FALSE
+	return TRUE
+
+// Werewolf transforms at night AND under the sky
+/datum/antagonist/werewolf/proc/time_is_right_under_moonlit_night(mob/living/carbon/human/user)
+	if(transformed)
+		return FALSE
+	if(GLOB.tod != "night")
+		return FALSE
+	var/turf/here = user.loc
+	if(!isturf(here))
+		return FALSE // inside something, or user is a turf and their loc is an area. actually impossible, but something I have to keep reminding myself, about the whole turf.loc = area thing
+	if(!here.can_see_sky())
+		return FALSE
+	return TRUE
+
+/datum/antagonist/werewolf/proc/start_the_transformation(mob/living/carbon/human/user)
+	to_chat(user, span_userdanger("The moonlight scorns me... It is too late."))
+	owner.current.playsound_local(get_turf(owner.current), 'sound/music/wolfintro.ogg', 80, FALSE, pressure_affected = FALSE)
+	user.fullscreen_redflash("redflash3")
+	transforming = world.time // timer
+	tf_stage = 0
+
+/datum/antagonist/werewolf/proc/start_the_untransformation(mob/living/carbon/human/user)
+	untransforming = world.time // Start untransformation phase
+	tf_stage = 0
+
+/datum/antagonist/werewolf/proc/is_magical_girl_transforming(mob/living/carbon/human/user)
+	return transforming > 0
+
+/datum/antagonist/werewolf/proc/is_unmagical_ungirl_untransforming(mob/living/carbon/human/user)
+	return untransforming > 0
+
+/datum/antagonist/werewolf/proc/tick_magical_girl_transformation(mob/living/carbon/human/user)
+	if(transformed)
+		return
+	var/delta_t = world.time - transforming
+	switch(tf_stage)
+		if(0)
+			to_chat(user, span_warning("I feel sick..."))
+			tf_stage = 1
+		if(1) // stage 1
+			if(delta_t < 10 SECONDS)
+				return
+			user.emote("") // ??
+			to_chat(user, span_warning("I can feel my muscles aching, it feels HORRIBLE..."))
+			tf_stage = 2
+		if(2) // stage 2
+			if(delta_t < 25 SECONDS)
+				return
+			user.fullscreen_redflash("redflash3")
+			user.emote("agony", forced = TRUE)
+			to_chat(user, span_userdanger("UNIMAGINABLE PAIN!"))
+			user.Stun(30)
+			user.Knockdown(30)
+			tf_stage = 3
+		if(3) // stage 3, sailor star power make up
+			if(delta_t < 35 SECONDS)
+				return
+			user.werewolf_transform()
+			ready_to_untransform = FALSE // just in case
+			transforming = FALSE // its both a boolean AND a timer!
 			transformed = TRUE // Mark as transformed
+			tf_stage = 0 // all done!
 
-		else if (world.time >= transforming + 25 SECONDS) // Stage 2
-			H.fullscreen_redflash("redflash3")
-			H.emote("agony", forced = TRUE)
-			to_chat(H, span_userdanger("UNIMAGINABLE PAIN!"))
-			H.Stun(30)
-			H.Knockdown(30)
+/datum/antagonist/werewolf/proc/tick_unmagical_ungirl_untransformation(mob/living/carbon/human/user)
+	if(!transformed)
+		return // already there
+	var/delta_t = world.time - untransforming
+	switch(tf_stage)
+		if(0)
+			to_chat(user, span_warning("My fur itches..."))
+			tf_stage = 1
+		if(1)
+			if(delta_t < 10 SECONDS)
+				return
+			user.fullscreen_redflash("redflash1")
+			to_chat(user, span_warning("Daylight shines around me... the curse begins to fade."))
+			tf_stage = 2
+		if(2)
+			if(delta_t < 30 SECONDS)
+				return
+			user.emote("rage", forced = TRUE)
+			user.werewolf_untransform()
+			ready_to_untransform = FALSE
+			transformed = FALSE
+			untransforming = FALSE // Reset untransforming phase
+			tf_stage = 0
 
-		else if (world.time >= transforming + 10 SECONDS) // Stage 1
-			H.emote("")
-			to_chat(H, span_warning("I can feel my muscles aching, it feels HORRIBLE..."))
+/datum/antagonist/werewolf/proc/abort_transformation(mob/living/carbon/human/user)
+	if(!transforming || transformed)
+		return // not wolfing, or already a wolf
+	transforming = 0
+	tf_stage = 0
+	to_chat(user, span_userdanger("I resist the moonlight's influence! My transformation has ceased!"))
+	user.Stun(10)
+	user.Knockdown(10)
 
-
-	// Werewolf reverts to human form during the day
-	else if(transformed)
-		if(GLOB.tod != "night")
-			if(!untransforming)
-				untransforming = world.time // Start untransformation phase
-
-			if (world.time >= untransforming + 30 SECONDS) // Untransform
-				H.emote("rage", forced = TRUE)
-				H.werewolf_untransform()
-				transformed = FALSE
-				untransforming = FALSE // Reset untransforming phase
-
-			else if (world.time >= untransforming) // Alert player
-				H.fullscreen_redflash("redflash1")
-				to_chat(H, span_warning("Daylight shines around me... the curse begins to fade."))
-
+/datum/antagonist/werewolf/proc/abort_untransformation(mob/living/carbon/human/user)
+	if(!untransforming || !transformed)
+		return // not unwolfine, or already not a wolf
+	ready_to_untransform = FALSE
+	untransforming = 0
+	tf_stage = 0
+	to_chat(user, span_userdanger("I reject the daylight's power!"))
+	user.Stun(10)
+	user.Knockdown(10)
 
 /mob/living/carbon/human/species/werewolf/death(gibbed, nocutscene = FALSE)
 	werewolf_untransform(TRUE, gibbed)
@@ -68,7 +167,7 @@
 	cmode = FALSE
 	if(client)
 		SSdroning.play_area_sound(get_area(src), client)
-//	stop_cmusic()
+//	stop_cmusic() // cboy cmusic
 
 	fully_heal(FALSE)
 
@@ -91,6 +190,8 @@
 	if(Were)
 		W.real_name = Were.wolfname
 		W.name = Were.wolfname
+		Were.transformed = TRUE
+		Were.transforming = FALSE
 	W.limb_destroyer = TRUE
 	W.ambushable = FALSE
 	W.cmode_music = 'sound/music/cmode/antag/combat_darkstar.ogg'
@@ -139,6 +240,7 @@
 	W.AddSpell(new /obj/effect/proc_holder/spell/self/howl)
 	W.AddSpell(new /obj/effect/proc_holder/spell/self/claws)
 	W.AddSpell(new /obj/effect/proc_holder/spell/targeted/woundlick)
+	W.AddSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
 
 	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC)
 	ADD_TRAIT(W, TRAIT_GRABIMMUNE, TRAIT_GENERIC) // THIS IS THE CORRECT PLACE FOR WEREWOLF TRAITS. GOD.
@@ -202,6 +304,7 @@
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/howl)
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/claws)
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick)
+	W.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
 	W.regenerate_icons()
 
 	to_chat(W, span_userdanger("I return to my facade."))

@@ -128,7 +128,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/erp_visuals = TRUE
 	var/chastenable = FALSE
 	var/chastity_hardmode = CHASTITY_HARDMODE_DISABLED
+	/// Mute automatic device sounds and notifications without hiding exposed devices.
+	var/quiet_chastity = FALSE
 	var/extreme_erp = FALSE
+	var/accept_oviposition = FALSE
 	var/edging = FALSE
 	var/free_use_default = FALSE
 	var/sensitive_brands = FALSE
@@ -575,6 +578,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 			dat += "<td style='width:33%;text-align:right'>"
 			dat += "<a href='?_src_=prefs;preference=keybinds;task=menu'>Keybinds</a>"
+			dat += "<br><a href='?_src_=prefs;preference=toggles'>Toggles</a>"
 			dat += "</td>"
 			dat += "</tr>"
 
@@ -1752,6 +1756,10 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	else if(href_list["preference"] == "triumph_buy_menu")
 		SStriumphs.startup_triumphs_menu(user.client)
 
+	else if(href_list["preference"] == "toggles")
+		user.client?.toggle_options_menu()
+		return
+
 	else if(href_list["preference"] == "keybinds")
 		switch(href_list["task"])
 			if("close")
@@ -1928,17 +1936,15 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 				if("subclassoutfit")
 					var/list/choices = list("None")
-					var/datum/job/highest_pref
-					for(var/job in job_preferences)
-						if(job_preferences[job] > highest_pref)
-							highest_pref = SSjob.GetJob(job)
+					var/datum/job/highest_pref = get_preview_job()
 					if(isnull(highest_pref))
 						to_chat(user, "<b>I don't have a Class set to High!</b>")
-					if(length(highest_pref.job_subclasses))
+					if(length(highest_pref?.job_subclasses))
 						for(var/adv in highest_pref.job_subclasses)
 							var/datum/advclass/advpath = adv
 							var/datum/advclass/advref = SSrole_class_handler.get_advclass_by_name(initial(advpath.name))
-							choices[advref.name] = advref
+							if(advref)
+								choices[advref.name] = advref
 					if(length(choices))
 						var/new_choice = input(user, "Choose an outfit preview:", "Outfit Preview")  as anything in choices|null
 						if(new_choice && new_choice != "None")

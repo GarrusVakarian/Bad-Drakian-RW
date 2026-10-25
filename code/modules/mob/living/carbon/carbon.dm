@@ -102,6 +102,8 @@
 	var/oindex = active_hand_index
 	active_hand_index = held_index
 	if(hud_used)
+		var/atom/movable/screen/inventory/hovered_slot = hud_used.overlay_curloc
+		hovered_slot?.clear_hover_overlay()
 		hud_used.throw_icon?.update_icon()
 		hud_used.give_intent?.update_icon()
 		var/atom/movable/screen/inventory/hand/H

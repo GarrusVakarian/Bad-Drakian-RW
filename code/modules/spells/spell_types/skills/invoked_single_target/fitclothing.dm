@@ -25,7 +25,8 @@
 		var/obj/item/clothing/suit/roguetown/armor/clothingenchant = target
 		if((!(clothingenchant.sewrepair)||isnull(clothingenchant.sewrepair) || !(clothingenchant.armor_class == ARMOR_CLASS_LIGHT)))
 			to_chat(user, span_warning("You can only fit light armor pieces"))
-			return
+			revert_cast(user)
+			return FALSE
 		var/enchant_type = DURABILITY_ENCHANT
 		var/enchant_duration = sacrifice ? ENCHANT_DURATION_WILDERNESS : ENCHANT_DURATION
 		if(sacrifice)
@@ -39,7 +40,7 @@
 		return TRUE
 	else
 		to_chat(user, span_warning("You can only fit light armor pieces"))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 		
 #undef ENCHANT_DURATION

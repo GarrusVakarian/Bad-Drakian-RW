@@ -85,6 +85,11 @@
 			qdel(underworld_spirit)
 			ghost.mind.transfer_to(target, TRUE)
 		target.grab_ghost(force = TRUE)
+		var/precheck_error = get_revival_precheck_error(target, user)
+		if(precheck_error)
+			to_chat(user, span_warning(precheck_error))
+			revert_cast()
+			return FALSE
 		if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
 			revert_cast()
 			return FALSE
@@ -97,7 +102,7 @@
 			return TRUE
 		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
 		if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
-			to_chat(user, span_warning("Nothing happens."))
+			to_chat(user, span_warning(get_revival_failure_message(target)))
 			revert_cast()
 			return FALSE
 		target.emote("breathgasp")
@@ -124,6 +129,16 @@
 		return FALSE
 	return TRUE
 
+// Defaults retain the requirements and feedback of other resurrection miracles.
+/obj/effect/proc_holder/spell/invoked/resurrect/proc/matches_required_item(obj/item/I, item_type)
+	return I.type == item_type
+
+/obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_precheck_error(mob/living/target, mob/living/user)
+	return null
+
+/obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_failure_message(mob/living/target)
+	return "Nothing happens."
+
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/validate_items(atom/center)
 	var/list/current_required_items = get_current_required_items()
 	var/list/available_items = list()
@@ -131,8 +146,10 @@
 
 	// Scan for items in radius
 	for(var/obj/item/I in range(item_radius, center))
-		if(I.type in current_required_items)
-			available_items[I.type] += 1
+		for(var/item_type in current_required_items)
+			if(matches_required_item(I, item_type))
+				available_items[item_type] += 1
+				break
 
 	// Check quantities and compile missing list
 	for(var/item_type in current_required_items)
@@ -160,7 +177,7 @@
 		for(var/obj/item/I in range(item_radius, center))
 			if(needed <= 0)
 				break
-			if(I.type == item_type)
+			if(matches_required_item(I, item_type))
 				needed--
 				qdel(I)
 

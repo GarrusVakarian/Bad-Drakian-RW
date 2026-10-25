@@ -2,6 +2,7 @@
 	abstract_type = /datum/sprite_accessory/snout
 	icon = 'icons/mob/sprite_accessory/snouts/snouts.dmi'
 	color_key_name = "Snout"
+	var/draws_over_hair = FALSE
 	relevant_layers = list(BODY_ADJ_LAYER)
 
 /datum/sprite_accessory/snout/is_visible(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
@@ -318,6 +319,7 @@
 
 /datum/sprite_accessory/snout/front
 	abstract_type = /datum/sprite_accessory/snout/front
+	draws_over_hair = TRUE
 	relevant_layers = list(BODY_FRONT_LAYER)
 
 /datum/sprite_accessory/snout/front/sharp

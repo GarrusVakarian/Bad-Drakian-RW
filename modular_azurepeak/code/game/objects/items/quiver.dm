@@ -20,6 +20,41 @@
 	sewrepair = TRUE
 	dropshrink = 0.9
 
+/obj/item/quiver/quickdraw_interact(mob/living/user, obj/item/held_item)
+	if(!istype(held_item, /obj/item/gun/ballistic/revolver/grenadelauncher/bow) && !istype(held_item, /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow) && !istype(held_item, /obj/item/gun/ballistic/revolver/grenadelauncher/sling))
+		return FALSE
+	var/obj/item/gun/ballistic/revolver/grenadelauncher/launcher = held_item
+	if(launcher.chambered)
+		to_chat(user, span_notice("[launcher] is already loaded."))
+		return TRUE
+	if(!istype(launcher, /obj/item/gun/ballistic/revolver/grenadelauncher/sling))
+		if(user.get_num_arms(FALSE) < 2 || user.get_inactive_held_item())
+			to_chat(user, span_warning("I need a free hand to load [launcher]!"))
+			return TRUE
+	if(istype(launcher, /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow))
+		var/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/crossbow = launcher
+		if(!crossbow.cocked)
+			to_chat(user, span_warning("I need to cock [launcher] first."))
+			return TRUE
+	if(!length(arrows))
+		to_chat(user, span_warning("[src] is empty!"))
+		return TRUE
+	for(var/obj/item/ammo_casing/caseless/rogue/ammo in arrows)
+		if(!launcher.magazine || ammo.caliber != launcher.magazine.caliber)
+			continue
+		launcher.quiver_loading = TRUE
+		launcher.attackby(ammo, user)
+		launcher.quiver_loading = FALSE
+		// Only remove ammunition that the weapon actually accepted.
+		if(ammo.loc != src)
+			arrows -= ammo
+			update_icon()
+			if(HAS_TRAIT(user, TRAIT_COMBAT_AWARE))
+				user.balloon_alert(user, "[length(arrows)] left...")
+		return TRUE
+	to_chat(user, span_warning("Nothing in [src] fits [launcher]."))
+	return TRUE
+
 /obj/item/quiver/attack_turf(turf/T, mob/living/user)
 	if(arrows.len >= max_storage)
 		to_chat(user, span_warning("My [src.name] is full!"))

@@ -39,11 +39,15 @@
 			to_chat(user, "<font color='yellow'>I cannot tell...</font>")
 			if(prob(50 + ((target.STAPER - 10) * 10)))
 				to_chat(target, span_warning("A pair of prying eyes were laid on me..."))
-			return
+			return TRUE
 		var/mammonsonperson = get_mammons_in_atom(target)
 		var/mammonsinbank = SStreasury.get_balance(target)
 		var/totalvalue = mammonsinbank + mammonsonperson
 		to_chat(user, ("<font color='yellow'>[target] has [mammonsonperson] mammons on them, [mammonsinbank] in their nervelock, for a total of [totalvalue] mammons.</font>"))
+		return TRUE
+	revert_cast(user)
+	return FALSE
+
 // T1 - Take value of item in hand, apply that as healing. Destroys item.
 
 /obj/effect/proc_holder/spell/invoked/transact
@@ -71,20 +75,24 @@
 	var/obj/item/held_item = user.get_active_held_item()
 	if(!held_item)
 		to_chat(user, span_info("I need something of value to make a transaction..."))
-		return
+		revert_cast(user)
+		return FALSE
 	var/helditemvalue = held_item.get_real_price()
 	if(!helditemvalue)
 		to_chat(user, span_info("This has no value, It will be of no use In such a transaction."))
-		return
+		revert_cast(user)
+		return FALSE
 	if(helditemvalue<10)
 		to_chat(user, span_info("This has little value, It will be of no use In such a transaction."))
-		return
+		revert_cast(user)
+		return FALSE
 	if(isliving(targets[1]))
 		var/mob/living/target = targets[1]
 		if(HAS_TRAIT(target, TRAIT_PSYDONITE))
 			user.playsound_local(user, 'sound/magic/PSY.ogg', 100, FALSE, -1)
 			target.visible_message(span_info("[target] stirs for a moment, the miracle dissipates."), span_notice("A dull warmth swells in your heart, only to fade as quickly as it arrived."))
 			playsound(target, 'sound/magic/PSY.ogg', 100, FALSE, -1)
+			revert_cast(user)
 			return FALSE
 		user.visible_message(span_notice("The transaction Is made, [target] Is bathed In empowerment!"))
 		to_chat(user, "<font color='yellow'>[held_item] burns into the air suddenly, my Transaction is accepted.</font>")
@@ -100,7 +108,7 @@
 			playsound(user, 'sound/combat/hits/burn (2).ogg', 100, TRUE)
 			qdel(held_item)
 		return TRUE
-	revert_cast()
+	revert_cast(user)
 	return FALSE
 
 // T2 We're going to debuff a targets stats = to the difference between us and them in total stats.

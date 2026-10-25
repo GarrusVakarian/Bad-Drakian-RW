@@ -1222,6 +1222,13 @@
 	craftsound = 'sound/foley/Building-01.ogg'
 	ontile = TRUE
 
+/datum/crafting_recipe/roguetown/structure/guillotine
+	name = "guillotine"
+	result = /obj/structure/guillotine
+	reqs = list(/obj/item/grown/log/tree/small = 3, /obj/item/ingot/iron = 2, /obj/item/rope = 1)
+	craftdiff = 3
+	ontile = TRUE
+
 /datum/crafting_recipe/roguetown/structure/pillory
 	name = "pillory"
 	result = /obj/structure/pillory

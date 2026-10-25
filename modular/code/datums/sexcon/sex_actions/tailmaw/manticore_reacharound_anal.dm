@@ -33,6 +33,8 @@
 			user.sexcon.cum_into(splashed_user = target, orifice = SEX_PART_ANUS, skip_knot_try = TRUE, consume_charge = i == 1)
 			if(HAS_TRAIT(target, TRAIT_BAOTHA_FERTILITY_BOON) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
+			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
+				user.try_impregnate(target)
 		user.virginity = FALSE
 
 		var/datum/status_effect/facial/external/coating = target.has_status_effect(/datum/status_effect/facial/external)
