@@ -410,11 +410,25 @@
 			//puller and pullee more than one tile away or in diagonal position
 			if(get_dist(src, pulling) > 1 || (moving_diagonally != SECOND_DIAG_STEP && ((pull_dir - 1) & pull_dir)))
 				pullee.moving_from_pull = src
-				if(pull_dir in GLOB.cardinals)
-					pullee.Move(T, get_dir(pullee, T), glide_size)
-				else
-					// Follow diagonally without resolving the move as a single cardinal step.
-					pullee.forceMove(T)
+				var/follow_dir = get_dir(pullee, T)
+				if(follow_dir in GLOB.cardinals)
+					pullee.Move(T, follow_dir, glide_size)
+				else if(follow_dir)
+					// Resolve both steps through Move() so collisions and buckles are respected.
+					var/first_dir = follow_dir & (NORTH|SOUTH)
+					var/second_dir = follow_dir & (EAST|WEST)
+					if(get_dist(get_step(pullee, second_dir), src) < get_dist(get_step(pullee, first_dir), src))
+						var/swap_dir = first_dir
+						first_dir = second_dir
+						second_dir = swap_dir
+					var/atom/follow_start = pullee.loc
+					var/turf/next_step = get_step(pullee, first_dir)
+					pullee.Move(next_step, first_dir, glide_size)
+					if(!QDELETED(pullee) && pulling == pullee && pullee.loc == follow_start)
+						next_step = get_step(pullee, second_dir)
+						pullee.Move(next_step, second_dir, glide_size)
+					if(!QDELETED(pullee) && pulling == pullee && pullee.loc == next_step)
+						pullee.Move(T, get_dir(pullee, T), glide_size)
 				if(!QDELETED(pullee))
 					pullee.moving_from_pull = null
 			check_pulling()
@@ -544,8 +558,7 @@
 	SET_ACTIVE_MOVEMENT(oldloc, NONE, TRUE, null)
 
 	if(destination)
-		// Only preserve a grab for an adjacent follow move initiated by its puller.
-		if(pulledby && (moving_from_pull != pulledby || destination.z != pulledby.z || get_dist(destination, pulledby) > 1))
+		if(pulledby)
 			pulledby.stop_pulling()
 		var/same_loc = oldloc == destination
 		var/area/old_area = get_area(oldloc)
