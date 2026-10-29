@@ -35,3 +35,6 @@
 			var/mob/living/carbon/human/human_target = target
 			human_target.apply_weather_temperature(-35)
 		playsound(get_turf(target), 'sound/misc/bamf.ogg', 100, TRUE)
+		return TRUE
+	revert_cast(user)
+	return FALSE

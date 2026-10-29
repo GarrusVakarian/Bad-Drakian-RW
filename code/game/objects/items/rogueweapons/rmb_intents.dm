@@ -36,6 +36,10 @@
 	if(user == target)
 		return
 
+	if(HAS_TRAIT(user, TRAIT_DEADITE))
+		to_chat(user, span_warning(pick("I stare uselessly at their weapon...", "I drool as I stare at their weapon...", "I stare at their weapon... and forget what I was doing.")))
+		return
+
 	var/mob/living/carbon/human/HT = target
 	var/mob/living/carbon/human/HU = user
 	var/target_zone = HT.zone_selected
@@ -124,6 +128,9 @@
 		return
 	if(user.has_status_effect(/datum/status_effect/debuff/specialcd))
 		return
+	if(HAS_TRAIT(user, TRAIT_DEADITE))
+		to_chat(user, span_warning(pick("I attempt an ancient technique... and nearly fall over.", "I muster all my strength... and forget what I was doing.", "I trip and stumble as I flail wildly.", "I try to focus... but I am too hungry.", "I try to think... What was I doing?", "I try to focus... but the thought slips away.")))
+		return
 
 	var/obj/item/rogueweapon/W = user.get_active_held_item()
 	if(istype(W, /obj/item/rogueweapon) && W.special)
@@ -160,6 +167,9 @@
 	if(user.incapacitated())
 		return
 	if(user.has_status_effect(/datum/status_effect/debuff/feintcd))
+		return
+	if(HAS_TRAIT(user, TRAIT_DEADITE))
+		to_chat(user, span_warning(pick("I prepare to lunge at nothing in particular, then stumble.", "I claw uselessly at the air.", "I trip and flail wildly. Nothing happens.", "I claw at the air and stumble. I achieve nothing.", "I begin to swing... then stop. What is a feint?")))
 		return
 	var/mob/living/L = target
 	if (L.client && !L.cmode && !L.has_status_effect(/datum/status_effect/buff/clash))
@@ -230,7 +240,10 @@
 	adjacency = FALSE
 	bypasses_click_cd = TRUE
 
-/datum/rmb_intent/riposte/special_attack(mob/living/user, atom/target)	//Wish we could breakline these somehow.
+/datum/rmb_intent/riposte/special_attack(mob/living/user, atom/target)
+	if(HAS_TRAIT(user, TRAIT_DEADITE))
+		to_chat(user, span_warning("...What?"))
+		return
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/H = user

@@ -113,6 +113,14 @@
 /datum/quest/proc/add_tracked_atom(atom/movable/to_track)
 	tracked_atoms += WEAKREF(to_track)
 
+/// Filter candidates against the mapped area types cached when the quest pool initializes.
+/proc/get_available_quest_delivery_locations(list/locations)
+	var/list/available = list()
+	for(var/location in locations)
+		if(SSquestpool.mapped_delivery_area_types[location])
+			available |= location
+	return available
+
 /// Lightweight pre-generation: pick templates and set display fields, but DO NOT mutate the
 /// world. Called by SSquestpool.generate_one so pool contracts don't spawn mobs/items until
 /// someone claims them. Subtypes override to set target_mob_type, target_item_type, etc.

@@ -142,4 +142,4 @@
 	expert_name = "Gunner"
 	randomable_dream_xp = FALSE
 	max_untraited_level = SKILL_LEVEL_JOURNEYMAN//Minimum to use these properly.
-	trait_uncap = list(TRAIT_FUSILIER = SKILL_LEVEL_LEGENDARY)
+	trait_uncap = list(TRAIT_FUSILIER = SKILL_LEVEL_MASTER)

@@ -3,7 +3,7 @@
 	var/ssd_text = get_ssd_examine_text(m3)
 	if(ssd_text)
 		lines += ssd_text
-	if(sexcon?.has_chastity_cage() && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
+	if(sexcon?.has_chastity_cage() && (user == src || (modular_chastity_exposed(src) && modular_chastity_observer_on(user))))
 		lines += "[t_He] is wearing a chastity device!\n"
 	return lines
 
@@ -35,6 +35,8 @@
 
 /mob/living/carbon/human/proc/human_chastity_toy_examine_line(mob/user, m2, m3)
 	if(!chastity_device?.attached_toy)
+		return null
+	if(user != src && (!modular_chastity_exposed(src) || !modular_chastity_observer_on(user)))
 		return null
 	var/perception_level = 15
 	if(isliving(user))

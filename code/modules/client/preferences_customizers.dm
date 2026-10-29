@@ -1,3 +1,12 @@
+/// A regular Bee tail enables its matching genital accessory outside taur mode.
+/datum/preferences/proc/has_selected_bee_tail()
+	if(taur_type)
+		return FALSE
+	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !entry.disabled && entry.accessory_type == /datum/sprite_accessory/tail/bee)
+			return TRUE
+	return FALSE
+
 /datum/preferences/proc/validate_customizer_entries()
 	customizer_entries = SANITIZE_LIST(customizer_entries)
 	listclearnulls(customizer_entries)
@@ -20,7 +29,8 @@
 			if(customizer_type != entry.customizer_type)
 				continue
 			var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
-			if(!(entry.customizer_choice_type in customizer.customizer_choices))
+			customizer.sanitize_choice(src, entry)
+			if(!(entry.customizer_choice_type in customizer.get_available_choices(src, entry)))
 				continue
 			var/datum/customizer_choice/customizer_choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 			if(entry.type != customizer_choice.customizer_entry_type)
@@ -71,6 +81,7 @@
 			stack_trace("Missing customizer entry in preferences for customizer [customizer_type]")
 			continue
 		var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+		var/list/available_choices = customizer.get_available_choices(src, entry)
 
 		var/customizer_link
 
@@ -86,11 +97,11 @@
 		dat += "<a [customizer_link]>[customizer.name]</a>"
 		if(!entry.disabled)
 			var/choice_link
-			if(length(customizer.customizer_choices) > 1)
+			if(length(available_choices) > 1)
 				choice_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=change_choice'"
 			else
 				choice_link = "class='linkOff'"
-			if(length(customizer.customizer_choices) > 1)
+			if(length(available_choices) > 1)
 				dat += "<br><a [choice_link]>[choice.name]</a>"
 
 			var/list/choice_list = choice.show_pref_choices(src, entry, customizer_type)
@@ -164,19 +175,32 @@
 				entry.disabled = !entry.disabled
 		if("change_choice")
 			var/list/choice_list = list()
-			for(var/choice_type in customizer.customizer_choices)
+			for(var/choice_type in customizer.get_available_choices(src, entry))
 				var/datum/customizer_choice/iter_choice = CUSTOMIZER_CHOICE(choice_type)
 				choice_list[iter_choice.name] = choice_type
 			var/chosen_input = tgui_input_list(user, "Choose your [LOWER_TEXT(customizer.name)]:", "Character Preference", choice_list)
 			if(!chosen_input)
 				return
 			var/choice_type = choice_list[chosen_input]
+			if(!(choice_type in customizer.get_available_choices(src, entry)))
+				return
 			if(choice_type == choice.type)
 				return
+			var/datum/customizer_entry/new_entry = customizer.create_customizer_entry(src, choice_type)
+			if(istype(entry, /datum/customizer_entry/organ/penis) && istype(new_entry, /datum/customizer_entry/organ/penis))
+				var/datum/customizer_entry/organ/penis/old_penis_entry = entry
+				var/datum/customizer_entry/organ/penis/new_penis_entry = new_entry
+				new_penis_entry.penis_taur_mode = old_penis_entry.penis_taur_mode
+			if(istype(entry, /datum/customizer_entry/organ/vagina) && istype(new_entry, /datum/customizer_entry/organ/vagina))
+				var/datum/customizer_entry/organ/vagina/old_vagina_entry = entry
+				var/datum/customizer_entry/organ/vagina/new_vagina_entry = new_entry
+				new_vagina_entry.vagina_taur_enabled = old_vagina_entry.vagina_taur_enabled
 			customizer_entries -= entry
-			customizer_entries += customizer.create_customizer_entry(src, choice_type)
+			customizer_entries += new_entry
 		else
 			choice.handle_topic(user, href_list, src, entry, customizer_type)
+	// Tail appearance changes can make the Bee-tail genital choice available or invalid.
+	validate_customizer_entries()
 	if(ishuman(user))
 		var/mob/living/carbon/human/humanized = user
 		humanized.update_body_parts(TRUE)
@@ -239,6 +263,7 @@
 	return null
 
 /datum/preferences/proc/genderize_customizer_entries()
+	clear_hair_preview_cache()
 	customizer_entries = SANITIZE_LIST(customizer_entries)
 	var/datum/species/species = pref_species
 	var/list/customizers = species.customizers

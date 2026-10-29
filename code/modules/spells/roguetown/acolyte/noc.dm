@@ -266,7 +266,8 @@
 		var/ttime = 6
 		var/dist = get_dist(H, T)
 		if(dist > 7 || dist  <= 2)
-			return
+			revert_cast(user)
+			return FALSE
 		H.hide_cone()
 		var/offset = 5
 		if(_x > 0)
@@ -280,7 +281,7 @@
 		animate(H.client, pixel_x = world.icon_size*_x, pixel_y = world.icon_size*_y, ttime)
 		H.update_cone_show()
 		return TRUE
-	revert_cast()
+	revert_cast(user)
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/silence/miracle

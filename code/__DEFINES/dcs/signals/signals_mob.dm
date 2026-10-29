@@ -1,3 +1,6 @@
+/// From /mob/verb/toggle_cmode() when combat mode is enabled: ()
+#define COMSIG_MOB_COMBAT_MODE_ENABLED "mob_combat_mode_enabled"
+
 #define COMSIG_MOB_MOVESPEED_UPDATED "mob_updated_movespeed"
 ///from base of /mob/Login(): ()
 #define COMSIG_MOB_LOGIN "mob_login"

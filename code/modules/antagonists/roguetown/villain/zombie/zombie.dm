@@ -3,8 +3,8 @@
 
 /datum/antagonist/zombie
 	name = "Deadite"
-	antag_hud_type = ANTAG_HUD_TRAITOR
-	antag_hud_name = "zombie"
+	antag_hud_type = ANTAG_HUD_ZOMBIE
+	antag_hud_name = "huddead"
 	show_in_roundend = FALSE
 	rogue_enabled = TRUE
 	/// SET TO FALSE IF WE DON'T TURN INTO ROTMEN WHEN REMOVED
@@ -24,12 +24,9 @@
 	var/soundpack_m
 	var/soundpack_f
 
-	var/STASTR
-	var/STASPD
-	var/STAINT
-	var/STACON
-	var/STAWIL
 	var/cmode_music
+	var/base_species_blood_color
+	var/obj/effect/proc_holder/spell/self/zombie_seek/seek_spell
 	var/list/base_intents
 	/// Default language from before we turned, restored on cure.
 	var/prior_default_language
@@ -38,13 +35,13 @@
 	var/has_turned = FALSE
 	/// Traits applied to the owner mob when we turn into a zombie
 	var/static/list/traits_zombie = list(
-		TRAIT_INFINITE_STAMINA,
+		TRAIT_LIMBATTACHMENT,
+		TRAIT_BREADY,
 		TRAIT_NOMOOD,
 		TRAIT_NOHUNGER,
 		TRAIT_EASYDISMEMBER,
 		TRAIT_NOPAIN,
 		TRAIT_NOPAINSTUN,
-		TRAIT_NOBREATH,
 		TRAIT_NOBREATH,
 		TRAIT_TOXIMMUNE,
 		TRAIT_CHUNKYFINGERS,
@@ -55,9 +52,9 @@
 		TRAIT_ZOMBIE_SPEECH,
 		TRAIT_ZOMBIE_IMMUNE,
 		TRAIT_ROTMAN,
-		TRAIT_NORUN,
 		TRAIT_SILVER_WEAK,
 		TRAIT_STRONGBITE,
+		TRAIT_DEADITE,
 	)
 	/// Traits applied to the owner when we are cured and turn into just "rotmen"
 	var/static/list/traits_rotman = list(
@@ -70,6 +67,27 @@
 		TRAIT_ROTMAN,
 		TRAIT_SILVER_WEAK,
 	)
+
+/datum/antagonist/zombie/Destroy()
+	if(has_turned)
+		var/datum/atom_hud/antag/deadite_hud = GLOB.huds[antag_hud_type]
+		if(owner?.antag_hud == deadite_hud)
+			if(!QDELETED(owner.current))
+				remove_antag_hud(antag_hud_type, owner.current)
+			owner.antag_hud = null
+		if(owner?.antag_hud_icon_state == antag_hud_name)
+			owner.antag_hud_icon_state = null
+		var/mob/living/carbon/human/body = deadite_body_ref?.resolve()
+		if(body && body != owner?.current)
+			deadite_hud.remove_from_hud(body)
+			deadite_hud.remove_hud_from(body)
+			var/image/marker = body.hud_list[ANTAG_HUD]
+			if(marker?.icon_state == antag_hud_name)
+				marker.icon_state = null
+	if(seek_spell)
+		owner?.spell_list -= seek_spell
+		QDEL_NULL(seek_spell)
+	return ..()
 
 /datum/antagonist/zombie/examine_friendorfoe(datum/antagonist/examined_datum,mob/examiner,mob/examined)
 	if(istype(examined_datum, /datum/antagonist/vampire))
@@ -127,17 +145,9 @@
 	if(zombie.dna?.species)
 		soundpack_m = zombie.dna.species.soundpack_m
 		soundpack_f = zombie.dna.species.soundpack_f
+		base_species_blood_color = zombie.dna.species.blood_color
 	base_intents = zombie.base_intents
 
-	//Just need to clear it to snapshot. May get things we don't want to get.
-	for(var/status_effect in zombie.status_effects)
-		zombie.remove_status_effect(status_effect)
-
-	src.STASTR = zombie.STASTR
-	src.STASPD = zombie.STASPD
-	src.STAINT = zombie.STAINT
-	src.STACON = zombie.STACON
-	src.STAWIL = zombie.STAWIL
 	cmode_music = zombie.cmode_music
 
 	//Special because deadite status is latent as opposed to the others.
@@ -158,13 +168,14 @@
 	if(zombie)
 
 		zombie.infected = FALSE // Makes sure admins removing deadification removes the infected var if they do it before they turn
-		zombie.verbs -= /mob/living/carbon/human/proc/zombie_seek
+		zombie.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 		zombie.mind?.special_role = special_role
 		zombie.ambushable = ambushable
 
 		if(zombie.dna?.species)
 			zombie.dna.species.soundpack_m = soundpack_m
 			zombie.dna.species.soundpack_f = soundpack_f
+			zombie.dna.species.blood_color = base_species_blood_color
 		zombie.base_intents = base_intents
 		zombie.update_a_intents()
 		zombie.aggressive = FALSE
@@ -190,14 +201,6 @@
 		
 		zombie.update_body()
 
-		zombie.STASTR = src.STASTR
-		zombie.STASPD = src.STASPD
-		zombie.STAINT = src.STAINT
-		zombie.STACON = src.STACON
-		zombie.STAWIL = src.STAWIL
-
-
-
 		// Rising swaps the lists in become_alive, this only covers admins curing someone already alive.
 		// A still-dead corpse stays in the dead list or it counts toward pop caps and hides from locate_dead
 		if(zombie.stat != DEAD)
@@ -215,12 +218,9 @@
 			language_holder.selected_default_language = prior_default_language
 
 		if(has_turned && become_rotman)
-			zombie.STACON = max(zombie.STACON - 2, 1) //ur rotting bro
-			zombie.STASPD = max(zombie.STASPD - 3, 1)
-			zombie.STAINT = max(zombie.STAINT - 3, 1)
 			for(var/trait in traits_rotman)
 				ADD_TRAIT(zombie, trait, "[type]")
-			to_chat(zombie, span_green("I no longer crave for flesh... <i>But I still feel ill.</i>"))
+			to_chat(zombie, span_green("I no longer crave flesh... <i>But I still feel ill.</i>"))
 		else
 			if(!was_i_undead)
 				zombie.mob_biotypes &= ~MOB_UNDEAD
@@ -229,7 +229,7 @@
 			zombie.faction += "neutral"
 			zombie.regenerate_organs()
 			if(has_turned)
-				to_chat(zombie, span_green("I no longer crave for flesh..."))
+				to_chat(zombie, span_green("I no longer crave flesh..."))
 
 		for(var/obj/item/bodypart/zombie_part as anything in zombie.bodyparts) //Cure all limbs
 			zombie_part.rotted = FALSE
@@ -245,6 +245,8 @@
 
 //Housekeeping's done. Transform into zombie.
 /datum/antagonist/zombie/proc/transform_zombie()
+	if(has_turned)
+		return
 	var/mob/living/carbon/human/zombie = owner?.current
 	if(!ishuman(zombie)) // A severed head puts the mind in a brainmob, everything below dereferences the body
 		qdel(src)
@@ -255,6 +257,7 @@
 		return
 
 	revived = TRUE //so we can die for real later
+	add_antag_hud(antag_hud_type, antag_hud_name, zombie)
 
 	for(var/trait_applied in traits_zombie)
 		ADD_TRAIT(zombie, trait_applied, "[type]")
@@ -264,9 +267,12 @@
 	if(zombie.dna?.species)
 		soundpack_m = zombie.dna.species.soundpack_m
 		soundpack_f = zombie.dna.species.soundpack_f
+		base_species_blood_color = zombie.dna.species.blood_color
 		zombie.dna.species.soundpack_m = new /datum/voicepack/zombie/m()
 		zombie.dna.species.soundpack_f = new /datum/voicepack/zombie/f()
 	base_intents = zombie.base_intents
+	if(zombie.dna?.species && !isooze(zombie))
+		zombie.dna.species.blood_color = "#161616"
 	zombie.base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB, /datum/intent/unarmed/claw)
 	zombie.update_a_intents()
 	zombie.aggressive = TRUE
@@ -285,7 +291,8 @@
 	var/datum/language_holder/language_holder = zombie.get_language_holder()
 	prior_default_language = language_holder.selected_default_language
 	language_holder.selected_default_language = /datum/language/undead
-	zombie.verbs |= /mob/living/carbon/human/proc/zombie_seek
+	seek_spell = new
+	zombie.mind?.AddSpell(seek_spell)
 	for(var/obj/item/bodypart/zombie_part as anything in zombie.bodyparts)
 		if(!zombie_part.rotted && !zombie_part.skeletonized)
 			zombie_part.rotted = TRUE
@@ -304,27 +311,45 @@
 	zombie.dropItemToGround(zombie.get_active_held_item(), TRUE)
 	zombie.dropItemToGround(zombie.get_inactive_held_item(), TRUE)
 
-//Add claws here if wanted.
-
 	zombie.update_body()
-	to_chat(zombie, span_narsiesmall("Hungry... so hungry... I CRAVE FLESH!"))
+	zombie.playsound_local(get_turf(zombie), 'sound/music/wolfintro.ogg', 80, FALSE, pressure_affected = FALSE)
+	to_chat(zombie, span_cult(pick("SO... HUNGRY... CRAVE FLESH!", "FLESH... MUST HAVE FLESH!", "HUNGER... KILL... FLESH!")))
 	zombie.cmode_music = 'sound/music/combat_weird.ogg'
-
-
-	// This is the original first commit values for it, aka 5-7
-	zombie.STASPD = rand(5,7)
-
-	zombie.STAINT = 1
+	zombie.apply_status_effect(/datum/status_effect/debuff/deadite_grace)
 	has_turned = TRUE
-	// Drop your helm and gorgies boy you won't need it anymore!!!
-	var/static/list/removed_slots = list(
-		SLOT_HEAD,
-		SLOT_WEAR_MASK,
-		SLOT_MOUTH,
-		//SLOT_NECK,
-	)
-	for(var/slot in removed_slots)
-		zombie.dropItemToGround(zombie.get_item_by_slot(slot), TRUE)
+	zombie.dropItemToGround(zombie.get_item_by_slot(SLOT_MOUTH), TRUE)
+	record_round_statistic(STATS_DEADITES_WOKEN_UP)
+	INVOKE_ASYNC(src, PROC_REF(reanimation_sequence), zombie)
+
+/datum/antagonist/zombie/proc/reanimation_sequence(mob/living/carbon/human/zombie)
+	zombie.Knockdown(3.3 SECONDS)
+	zombie.Immobilize(3.3 SECONDS)
+	zombie.Stun(3.3 SECONDS)
+	zombie.Jitter(15)
+	zombie.emote("idle")
+	zombie.drop_all_held_items()
+	zombie.Unconscious(1.5 SECONDS)
+	zombie.fullscreen_redflash("redflash3")
+	zombie.visible_message(span_warning("[zombie] convulses on the floor as [zombie.p_their()] skin rots unnaturally fast..."))
+	sleep(2 SECONDS)
+	if(QDELETED(src) || QDELETED(zombie) || zombie.stat == DEAD || !HAS_TRAIT(zombie, TRAIT_DEADITE))
+		return
+	zombie.visible_message(span_warning("[zombie]'s lyfeless eyes shine anew with an eerie glow."))
+	zombie.vomit(1, blood = TRUE, stun = FALSE)
+	playsound(get_turf(zombie), 'sound/magic/woundheal_crunch.ogg', 80, FALSE, -1)
+	sleep(2 SECONDS)
+	if(QDELETED(src) || QDELETED(zombie) || zombie.stat == DEAD || !HAS_TRAIT(zombie, TRAIT_DEADITE))
+		return
+	if(zombie.resting)
+		zombie.set_resting(FALSE, FALSE)
+	zombie.visible_message(span_danger("[zombie] [pick("stands back up!", "shambles upright!", "lumbers to [zombie.p_their()] feet!", "snaps to [zombie.p_their()] feet!", "rises again!")]"))
+	zombie.emote("rage")
+	playsound(get_turf(zombie), 'sound/magic/woundheal_crunch.ogg', 80, FALSE, -1)
+	zombie.set_blurriness(0)
+	if(!zombie.cmode)
+		zombie.toggle_cmode()
+	to_chat(zombie, span_boldwarning("I have risen as a feral, mindless deadite. I can no longer use weapons, climb most walls, cast spells or use the advanced fighting techniques I knew in lyfe. I cannot recognize those I once knew. Only endless hunger remains: bite and claw, hunt the lyving, and feast upon their flesh!"))
+	to_chat(zombie, span_notice("I can examine the lyving to identify those I can infect. Seek the Lyving helps me track them down."))
 
 // Infected wake param is just a transition from living to zombie, via zombie_infect()
 // Prevoously you just died without warning in ~3 min, now you just become an antag instead of having to die first if infected.
@@ -346,8 +371,6 @@
 		qdel(src)
 		return
 
-	
-
 	zombie.set_blood_volume(BLOOD_VOLUME_NORMAL)
 	zombie.setOxyLoss(0, updating_health = FALSE, forced = TRUE)
 	zombie.setToxLoss(0, updating_health = FALSE, forced = TRUE)
@@ -368,14 +391,11 @@
 		zombie.update_mobility()
 		zombie.update_sight()
 		zombie.reload_fullscreen()
+	zombie.clear_blood_loss_effects()
 	transform_zombie()
 	if(zombie.stat >= DEAD)
 		//could not revive
 		qdel(src)
-
-/datum/antagonist/zombie/greet()
-	to_chat(owner.current, span_userdanger("Death is not the end..."))
-	return ..()
 
 /**
  * Cancels a pending rise for a corpse that can never turn.
@@ -421,7 +441,6 @@
 		cancel_deadite_rise(zombie)
 		return
 
-	record_round_statistic(STATS_DEADITES_WOKEN_UP)
 	// Heal the zombie
 	zombie.set_blood_volume(BLOOD_VOLUME_NORMAL)
 	zombie.setOxyLoss(0, updating_health = FALSE, forced = TRUE) // Zombies don't breathe
@@ -431,6 +450,7 @@
 		zombie.adjustBruteLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
 		zombie.adjustFireLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
 		zombie.heal_wounds(INFINITY) // Heal all non-permanent wounds
+		playsound(get_turf(zombie), 'sound/magic/woundheal_crunch.ogg', 80, FALSE, -1)
 		to_chat(zombie, span_userdanger("Your bones snap back into place and your flesh knits itself back together as you rise again in undeath."))
 
 	if(zombie.stat == DEAD)
@@ -450,19 +470,13 @@
 
 	var/datum/antagonist/zombie/zombie_antag = zombie.mind?.has_antag_datum(/datum/antagonist/zombie)
 	if(zombie_antag)
+		zombie.clear_blood_loss_effects()
 		zombie_antag.transform_zombie()
 	else
 		CRASH("[zombie] tried to wake up as a zombie but did not have the antag set.")
 
 	if (zombie.stat >= DEAD) // Turned and died anyway. The corpse keeps its datum so it can still be cured
 		return
-
-
-	if (converted || infected_wake)
-		zombie.fullscreen_redflash("redflash3")
-		zombie.emote("scream") // Warning for nearby players
-		zombie.Knockdown(1)
-		zombie.drop_all_held_items()
 
 ///Making sure they're not any other antag as well as adding the zombie datum to their mind
 /mob/living/carbon/human/proc/zombie_check_can_convert()
@@ -481,4 +495,56 @@
 	if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE))
 		return
 	return mind.add_antag_datum(/datum/antagonist/zombie)
+
+/atom/movable/screen/alert/status_effect/debuff/deadite_grace
+	name = "Necrotic Overdrive"
+	desc = "My corrupted Lux courses through my decaying corpse. I cannot be stopped while it lasts."
+	icon_state = "rotted_body"
+
+/datum/status_effect/debuff/deadite_grace
+	id = "deadite_grace_period"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/deadite_grace
+	duration = 2 MINUTES
+	examine_text = "<font color='#ff0000'>SUBJECTPRONOUN is driven by the stiff, unstoppable fury of undeath!</font>"
+	var/had_godmode = FALSE
+
+/datum/status_effect/debuff/deadite_grace/on_apply()
+	if(!ishuman(owner))
+		return FALSE
+	. = ..()
+	RegisterSignal(owner, COMSIG_ATOM_BULLET_ACT, PROC_REF(on_projectile))
+	RegisterSignal(owner, COMSIG_LIVING_IMPACT_ZONE, PROC_REF(on_thrown_item))
+	had_godmode = owner.status_flags & GODMODE
+	owner.status_flags |= GODMODE
+	ADD_TRAIT(owner, TRAIT_IGNORESLOWDOWN, id)
+	ADD_TRAIT(owner, TRAIT_LONGSTRIDER, id)
+	ADD_TRAIT(owner, TRAIT_STRONG_GRABBER, id)
+
+/datum/status_effect/debuff/deadite_grace/proc/on_projectile(mob/living/source, obj/projectile/projectile)
+	SIGNAL_HANDLER
+	if(!projectile.nodamage && projectile.damage > 0)
+		end_on_player_attack(projectile.firer)
+
+/datum/status_effect/debuff/deadite_grace/proc/on_thrown_item(mob/living/source, obj/item/item)
+	SIGNAL_HANDLER
+	if(item.throwforce > 0)
+		end_on_player_attack(item.thrownby)
+
+/datum/status_effect/debuff/deadite_grace/proc/end_on_player_attack(mob/attacker)
+	if(ismob(attacker) && attacker != owner && attacker.client)
+		owner.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
+
+/datum/status_effect/debuff/deadite_grace/on_remove()
+	. = ..()
+	if(!ishuman(owner))
+		return
+	UnregisterSignal(owner, list(COMSIG_ATOM_BULLET_ACT, COMSIG_LIVING_IMPACT_ZONE))
+	if(!had_godmode)
+		owner.status_flags &= ~GODMODE
+	REMOVE_TRAIT(owner, TRAIT_IGNORESLOWDOWN, id)
+	REMOVE_TRAIT(owner, TRAIT_LONGSTRIDER, id)
+	REMOVE_TRAIT(owner, TRAIT_STRONG_GRABBER, id)
+	to_chat(owner, span_userdanger("My body relaxes for a moment before an unnatural rage wells up inside me. My Lux wanes... I am fading."))
+	if(!HAS_TRAIT(owner, TRAIT_NORUN))
+		to_chat(owner, span_notice("I CAN SPRINT! HUNT THE LYVING! FEAST ON THEIR FLESH!"))
 

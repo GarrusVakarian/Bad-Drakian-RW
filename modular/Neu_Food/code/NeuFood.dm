@@ -29,31 +29,61 @@
 	cooktime = 30 SECONDS
 	var/process_step // used for pie making and other similar modular foods
 	var/datum/food_recipe/active_recipe
+	/// Information about an assembled recipe awaiting cooking. Does not change cooking behavior.
+	var/datum/food_recipe/prepped_recipe
 	var/current_step = 1
+
+// Examine presentation adapted from WeNeedMorePhoron, Azure-Peak/Azure-Peak PRs #7567 and #8695 (AGPL-3.0).
+// https://github.com/Azure-Peak/Azure-Peak/pull/7567
+// Recipe data and cooking behavior remain Bad Drakian's own.
+/obj/item/reagent_containers/food/snacks/rogue/proc/get_cook_hints()
+	. = list()
+	// Natural spoilage disables cooktime; deadite meat is intentionally rotten but still cookable.
+	if(active_recipe || !cooktime || eat_effect == /datum/status_effect/debuff/burnedfood)
+		return
+	var/obj/item/baked_target = (cooked_type != type) ? cooked_type : null
+	var/obj/item/fried_target = (fried_type != type) ? fried_type : null
+	var/obj/item/deepfried_target = (deep_fried_type != type) ? deep_fried_type : null
+	if(baked_target && baked_target == fried_target)
+		. += "<b>Cook</b> it in an oven or in a pan over a hearth to make [initial(baked_target.name)]."
+	else
+		if(baked_target)
+			. += "<b>Bake</b> it in an oven to make [initial(baked_target.name)]."
+		if(fried_target)
+			. += "<b>Fry</b> it in a pan over a hearth to make [initial(fried_target.name)]."
+	if(deepfried_target)
+		. += "<b>Deep fry</b> it in a pot of tallow over a hearth to make [initial(deepfried_target.name)]."
 
 /obj/item/reagent_containers/food/snacks/rogue/examine(mob/user)
 	. = ..()
-	if(active_recipe && current_step <= active_recipe.ingredients.len)
-		var/next_path = active_recipe.ingredients[current_step]
-		. += span_smallnotice("Recipe: <b>[active_recipe.name]</b>. Next step: Add [initial(next_path:name)].")
+	if(active_recipe && current_step >= 1 && current_step <= length(active_recipe.ingredients))
+		var/entry = active_recipe.ingredients[current_step]
+		. += span_smallnotice("Recipe: [active_recipe.get_examine_link()]. Next step: Add [active_recipe.step_label(entry)].")
 
-	var/list/possible = SScooking.recipe_index[src.type]
-	if(possible && possible.len)
-		var/list/recipe_names = list()
-		for(var/datum/food_recipe/R in possible)
-			var/ingredient = R.ingredients[1]
-			recipe_names += "[R.name] (starts with [initial(ingredient:name)])"
-		. += span_smallnotice("This could be used to prepare: [recipe_names.Join(", ")].")
+	var/list/cook_hints = get_cook_hints()
+	if(length(cook_hints))
+		. += span_smallnotice(cook_hints.Join(" "))
+	if(slice_path && slices_num > 0)
+		var/obj/item/slice_target = slice_path
+		. += span_smallnotice("Ready to be <b>sliced</b> into [slices_num] portions of [initial(slice_target.name)].")
 
-	if(cooked_type)
-		var/obj/item/CT = cooked_type
-		. += span_smallnotice("It is prepared and ready to be <b>cooked</b> into [initial(CT.name)].")
-	if(fried_type)
-		var/obj/item/FT = fried_type
-		. += span_smallnotice("It is prepared and ready to be <b>fried</b> into [initial(FT.name)].")
-	if(slice_path)
-		var/obj/item/ST = slice_path
-		. += span_smallnotice("It is prepared and ready to be <b>sliced</b> into [initial(ST.name)].")
+	if(!SScooking)
+		return
+	var/datum/food_recipe/producing = prepped_recipe || SScooking.result_index[type]
+	if(producing && !active_recipe)
+		. += span_smallnotice("[producing.get_examine_link("View recipe")].")
+
+	// As in Azure, suggestions start with this exact food type, not every recipe containing it.
+	var/list/recipe_links = list()
+	if(!active_recipe && !prepped_recipe)
+		for(var/datum/food_recipe/recipe in SScooking.recipe_index[type])
+			if(!length(recipe.ingredients))
+				continue
+			recipe_links += "[recipe.get_examine_link()] (starts with [recipe.step_label(recipe.ingredients[1])])"
+	if(length(recipe_links) == 1)
+		. += span_smallnotice("This could be used to prepare [recipe_links[1]].")
+	else if(length(recipe_links))
+		. += "<details><summary><span class='smallnotice'>Recipes</span></summary><span class='smallnotice'>[recipe_links.Join("<br>")]</span></details>"
 
 /obj/item/reagent_containers/food/snacks/rogue/MiddleClick(mob/user)
 	. = ..()
@@ -144,6 +174,7 @@
 			to_chat(user, span_nicegreen("[name] is ready to be cooked."))
 			cooked_type = active_recipe.result_type
 			fried_type = active_recipe.result_type
+			prepped_recipe = active_recipe
 			active_recipe = null
 			current_step = 1
 

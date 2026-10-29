@@ -305,6 +305,8 @@
 /atom/movable/screen/inventory/proc/clear_hover_overlay()
 	if(hover_preview_layer)
 		reset_hud_component_layer(hover_preview_layer)
+	if(hud?.overlay_curloc == src)
+		hud.overlay_curloc = null
 
 /atom/movable/screen/inventory/proc/update_hover_overlay(obj/item/holding, can_equip)
 	if(!hover_preview_layer || !holding)
@@ -342,9 +344,7 @@
 
 /atom/movable/screen/inventory/MouseExited()
 	..()
-	if(hud)
-		cut_overlay(hud.object_overlay)
-		hud.object_overlay = null
+	clear_hover_overlay()
 
 /atom/movable/screen/inventory/update_icon_state()
 	if(!icon_empty)

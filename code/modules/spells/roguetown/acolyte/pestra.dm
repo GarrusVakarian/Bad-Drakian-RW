@@ -23,6 +23,10 @@
 	if(ishuman(targets[1]))
 		var/mob/living/carbon/human/human_target = targets[1]
 		human_target.check_for_injuries(user)
+		if(HAS_TRAIT(human_target, TRAIT_DEADITE))
+			to_chat(user, span_necrosis("They are infected and have already turned into a DEADITE!"))
+			to_chat(user, span_infection("Their rot must be cured to prevent them from spreading the infection!"))
+			to_chat(user, span_infection("==="))
 
 		if (human_target.reagents.has_reagent(/datum/reagent/infection/major))
 			to_chat(user, span_boldwarning("Streaks of black and yellow doubtlessly indicate an excess of melancholic humour."))
@@ -148,6 +152,7 @@
 		ORGAN_SLOT_LIVER,
 		ORGAN_SLOT_STOMACH,
 		ORGAN_SLOT_APPENDIX,
+		ORGAN_SLOT_GUTS,
 	)
 
 	// Remove organs that are already present
@@ -181,7 +186,8 @@
 				continue
 
 			// Try to insert the organ
-			if(organ.Insert(human_target))
+			organ.Insert(human_target)
+			if(human_target.getorganslot(organ.slot) == organ)
 				human_target.visible_message(
 					span_info("\The [organ] attaches itself to [human_target]!"),
 					span_notice("\The [organ] attaches itself to me!")

@@ -92,6 +92,10 @@
 	..()
 	var/atom/movable/screen/using
 
+	using = new /atom/movable/screen/ghost/orbit(null, src)
+	using.screen_loc = ui_ghost_orbit
+	static_inventory += using
+
 	using =  new /atom/movable/screen/backhudl/ghost()
 	using.hud = src
 	static_inventory += using

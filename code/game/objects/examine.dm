@@ -44,6 +44,12 @@
 
 	. += integrity_check()
 
+	var/list/highlight_status = get_examine_highlight_status()
+	if(highlight_status)
+		var/highlight_description = get_examine_highlight_description(highlight_status, itis = TRUE, allcaps = FALSE)
+		var/highlight_explanation = get_examine_highlight_explanation(highlight_status[1])
+		. += span_info(SPAN_TOOLTIP_DANGEROUS_HTML(highlight_explanation, highlight_description))
+
 	var/derived_cat = get_derived_category(type)
 	var/display_cat = derived_cat
 	if(derived_cat)

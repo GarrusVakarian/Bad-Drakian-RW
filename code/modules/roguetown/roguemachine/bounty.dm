@@ -333,7 +333,7 @@
 		say("No bounties are currently active.")
 		return
 
-	var/cost = 50
+	var/cost = (user.job in GLOB.garrison_positions) ? 10 : 50
 	var/choice = alert(user, "Print a continously updated list of active bounties for [cost] mammons?", "Print Bounty Scroll", "Yes", "No")
 	if(choice != "Yes")
 		return

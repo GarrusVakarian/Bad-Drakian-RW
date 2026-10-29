@@ -55,9 +55,9 @@
 			if(length(contained_items) >= max_contained_items)
 				to_chat(user, span_warn("\The [src] is already full!"))
 				return
-			add_item(tongs.hingot, user)
-			tongs.hingot = null
-			tongs.update_icon()
+			if(add_item(tongs.hingot, user))
+				tongs.hingot = null
+				tongs.update_icon()
 		else
 			if(actively_smelting) // Prevents an exp gain exploit. - Foxtrot
 				to_chat(user, span_warning("\The [src] is currently smelting. Wait for it to finish, or douse it with water to retrieve items from it."))
@@ -94,6 +94,10 @@
 		add_item(attacking_item, user) // Adds the item to the smelter's contained_items list, if it can be smelted.
 		return
 
+	if(is_scrap_ingredient(attacking_item))
+		add_item(attacking_item, user)
+		return
+
 	to_chat(user, span_warning("\The [attacking_item] cannot be smelted."))
 
 /obj/machinery/light/rogue/smelter/attack_right(mob/user)
@@ -102,7 +106,7 @@
 		attackby(held_item, user)
 		return
 
-	if(held_item?.smeltresult)
+	if(held_item?.smeltresult || is_scrap_ingredient(held_item))
 		add_item(held_item, user)
 
 	return ..()
@@ -123,46 +127,96 @@
 
 	return ..()
 
+/// Puts [smelting_item] inside to be smelted. Returns TRUE if it went in.
 /obj/machinery/light/rogue/smelter/proc/add_item(obj/item/smelting_item, mob/user)
 	if(!smelting_item)
-		return
+		return FALSE
 
 	if(length(contained_items) >= max_contained_items)
 		to_chat(user, span_warning("\The [smelting_item.name] can be smelted, but \the [src] is full."))
-		return
+		return FALSE
 
 	user.dropItemToGround(smelting_item)
 	smelting_item.forceMove(src)
 	contained_items += smelting_item
-	if(!isliving(user) || !user.mind)
-		contained_items[smelting_item] = SMELTERY_LEVEL_SPOIL
-	else
-		var/smelter_exp = user.get_skill_level(/datum/skill/craft/smelting) // 0 to 6
-		if(smelter_exp < 6)
-			contained_items[smelting_item] = min(6, floor(rand(smelter_exp*15 + 10, max(30, smelter_exp*25))/25)+1) // Math explained below
-		else
-			contained_items[smelting_item] = 6 // Guarantees a return of 6 no matter how extra experience past 3000 you have.
-		/*
-		RANDOMLY PICKED NUMBER ACCORDING TO SMELTER SKILL:
-			NO SKILL: 		between 10 and 30
-			NOVICE:	 		between 25 and 30
-			APPRENTICE:	 	between 40 and 50
-			JOURNEYMAN: 	between 55 and 75
-			EXPERT: 		between 70 and 100
-			MASTER: 		between 85 and 125
-			LEGENDARY: 		between 100 and 150
-
-		PICKED NUMBER GETS DIVIDED BY 25 AND ROUNDED DOWN TO CLOSEST INTEGER, +1.
-		RESULT DETERMINES QUALITY OF BAR. SEE code/__DEFINES/skills.dm
-			1 = SPOILED
-			2 = POOR
-			3 = NORMAL
-			4 = GOOD
-			5 = GREAT
-			6 = EXCELLENT
-		*/
+	contained_items[smelting_item] = roll_smelt_quality(user)
 	user.visible_message(span_warning("[user] puts something in \the [src]."))
 	smelting_progress = 0
+	return TRUE
+
+/// Rolls the quality of whatever [user] puts in to be smelted, based on their smelting skill.
+/obj/machinery/light/rogue/smelter/proc/roll_smelt_quality(mob/user)
+	if(!isliving(user) || !user.mind)
+		return SMELTERY_LEVEL_SPOIL
+	var/smelter_exp = user.get_skill_level(/datum/skill/craft/smelting) // 0 to 6
+	if(smelter_exp < 6)
+		return min(6, floor(rand(smelter_exp*15 + 10, max(30, smelter_exp*25))/25)+1) // Math explained below
+	return 6 // Guarantees a return of 6 no matter how extra experience past 3000 you have.
+	/*
+	RANDOMLY PICKED NUMBER ACCORDING TO SMELTER SKILL:
+		NO SKILL: 		between 10 and 30
+		NOVICE:	 		between 25 and 30
+		APPRENTICE:	 	between 40 and 50
+		JOURNEYMAN: 	between 55 and 75
+		EXPERT: 		between 70 and 100
+		MASTER: 		between 85 and 125
+		LEGENDARY: 		between 100 and 150
+
+	PICKED NUMBER GETS DIVIDED BY 25 AND ROUNDED DOWN TO CLOSEST INTEGER, +1.
+	RESULT DETERMINES QUALITY OF BAR. SEE code/__DEFINES/skills.dm
+		1 = SPOILED
+		2 = POOR
+		3 = NORMAL
+		4 = GOOD
+		5 = GREAT
+		6 = EXCELLENT
+	*/
+
+/// Plain rocks can be cooked down into scrap slag.
+/obj/machinery/light/rogue/smelter/proc/is_scrap_rock(obj/item/I)
+	return istype(I, /obj/item/natural/stone) && !istype(I, /obj/item/natural/stone/sending)
+
+/// Any ore, coal or salt will flux a batch of rocks into scrap slag.
+/obj/machinery/light/rogue/smelter/proc/is_scrap_flux(obj/item/I)
+	return istype(I, /obj/item/rogueore) || istype(I, /obj/item/reagent_containers/powder/salt)
+
+/// Whether we'll take [I] to cook into scrap slag. Only furnaces big enough for a whole batch bother.
+/obj/machinery/light/rogue/smelter/proc/is_scrap_ingredient(obj/item/I)
+	if(!I || max_contained_items < SCRAP_BATCH_SIZE)
+		return FALSE
+	return is_scrap_rock(I) || is_scrap_flux(I)
+
+/// If we're holding nothing but rocks and fluxes in a 3:1 ratio, cooks them all into scrap slag. Returns TRUE if it did.
+/obj/machinery/light/rogue/smelter/proc/try_make_scrap_slag()
+	if(max_contained_items < SCRAP_BATCH_SIZE)
+		return FALSE
+	var/rocks = 0
+	var/fluxes = 0
+	for(var/obj/item/item as anything in contained_items)
+		if(is_scrap_rock(item))
+			rocks++
+		else if(is_scrap_flux(item))
+			fluxes++
+		else
+			return FALSE
+	if(!fluxes || rocks != fluxes * SCRAP_ROCKS_PER_FLUX)
+		return FALSE
+
+	var/floor_mean_quality = 0
+	var/slag_count = length(contained_items)
+	for(var/obj/item/item as anything in contained_items)
+		floor_mean_quality += contained_items[item]
+		qdel(item)
+	contained_items.Cut()
+	floor_mean_quality = max(SMELTERY_LEVEL_SPOIL, floor(floor_mean_quality / slag_count))
+	for(var/i in 1 to slag_count)
+		contained_items += new /obj/item/ingot/scrap(src, floor_mean_quality)
+
+	playsound(src,'sound/misc/smelter_fin.ogg', 100, FALSE)
+	visible_message(span_notice("\The [src] finished smelting, leaving a heap of scrap slag."))
+	smelting_progress = smelting_ticks + 1
+	actively_smelting = FALSE
+	return TRUE
 
 /obj/machinery/light/rogue/smelter/process()
 	..()
@@ -182,6 +236,8 @@
 	handle_smelting()
 
 /obj/machinery/light/rogue/smelter/proc/handle_smelting()
+	if(try_make_scrap_slag())
+		return
 	for(var/obj/item/item as anything in contained_items)
 		if(item.smeltresult)
 			// disabled for now, balance reasons
@@ -217,6 +273,8 @@
 	climbable = FALSE
 
 /obj/machinery/light/rogue/smelter/great/handle_smelting()
+	if(try_make_scrap_slag())
+		return
 	var/alloy //moving each alloy to it's own var allows for possible additions later
 	// Steel Alloy requires a 1 coal to 1 iron ratio. Yes. Doesn't make sense but it is to make
 	// Steel more expensive to make
@@ -300,6 +358,8 @@
 	climbable = FALSE
 
 /obj/machinery/light/rogue/smelter/bronze/handle_smelting()
+	if(try_make_scrap_slag())
+		return
 	var/alloy //moving each alloy to it's own var allows for possible additions later
 	var/bronzealloy
 	for(var/obj/item/item in contained_items)

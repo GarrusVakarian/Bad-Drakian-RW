@@ -37,9 +37,12 @@
 	eyes_organ.second_color = second_color
 
 /datum/organ_dna/penis
+	var/penis_taur_mode = FALSE
 	var/penis_size = DEFAULT_PENIS_SIZE
 	var/functional = TRUE
 	var/sheath_type = SHEATH_TYPE_NONE
+	/// Ovipositor egg settings, null when the penis is not an ovipositor.
+	var/list/egg_settings
 
 /datum/organ_dna/penis/imprint_organ(obj/item/organ/organ)
 	..()
@@ -47,6 +50,8 @@
 	penis_organ.penis_size = penis_size
 	penis_organ.functional = functional
 	penis_organ.sheath_type = sheath_type
+	penis_organ.set_egg_settings(egg_settings)
+	penis_organ.penis_taur_mode = penis_taur_mode
 
 /datum/organ_dna/testicles
 	var/ball_size = DEFAULT_TESTICLES_SIZE
@@ -70,12 +75,17 @@
 	breasts_organ.milk_max = max(75, breasts_organ.breast_size * 100)
 
 /datum/organ_dna/vagina
+	var/vagina_taur_enabled = TRUE
 	var/fertility = TRUE
+	/// Egg layer settings, null when the womb does not form eggs.
+	var/list/egg_settings
 
 /datum/organ_dna/vagina/imprint_organ(obj/item/organ/organ)
 	..()
 	var/obj/item/organ/vagina/vagina_organ = organ
 	vagina_organ.fertility = fertility
+	vagina_organ.set_egg_settings(egg_settings)
+	vagina_organ.vagina_taur_enabled = vagina_taur_enabled
 
 /datum/organ_dna/wings
 	var/wings_color

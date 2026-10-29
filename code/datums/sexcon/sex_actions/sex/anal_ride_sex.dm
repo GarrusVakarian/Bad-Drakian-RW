@@ -30,6 +30,8 @@
 			target.sexcon.cum_into(splashed_user = user, knot_action = src, knot_swap_roles = TRUE, knot_btm = user, orifice = SEX_PART_ANUS, consume_charge = i == 1 ? TRUE : FALSE)
 			if(HAS_TRAIT(user, TRAIT_BAOTHA_FERTILITY_BOON) && !user.getorganslot(ORGAN_SLOT_VAGINA))
 				target.try_impregnate(user)
+			else if(HAS_TRAIT(user, TRAIT_OVERLY_FERTILE) && !user.getorganslot(ORGAN_SLOT_VAGINA))
+				target.try_impregnate(user)
 			sleep(10)
 		target.virginity = FALSE
 

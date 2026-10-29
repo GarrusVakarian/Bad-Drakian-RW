@@ -205,9 +205,8 @@ GLOBAL_LIST_INIT(chastity_standard_traits, list(
 		return TRUE
 	var/datum/bodypart_feature/chastity/chastity_new = new /datum/bodypart_feature/chastity()
 	chastity_new.chastity_item = src
-	// Use the base accessory setter so we don't spawn a second hidden chastity item.
-	// ^ DON'T DO THAT, IF YOU DO THAT YOU WROTE YOUR CODE WRONG
-	chastity_new.set_accessory_type(sprite_acc, null, H)
+	// Prepare visuals without claiming the wearer before the equip action completes.
+	chastity_new.set_accessory_type(sprite_acc, null, H, register_device = FALSE)
 	return TRUE
 
 // Attaches the prepared chastity bodypart feature to the chest bodypart.

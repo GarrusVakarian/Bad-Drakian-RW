@@ -3242,6 +3242,12 @@
 /obj/structure/fluff/walldeco/vinez/red,
 /turf/open/transparent/openspace,
 /area/rogue/indoors/town/church/basement)
+"aEY" = (
+/obj/structure/roguemachine/headeater/treasureseeker{
+	pixel_y = -32
+	},
+/turf/open/floor/rogue/tile,
+/area/rogue/indoors/town/bath)
 "aFe" = (
 /mob/living/carbon/human/species/human/northern/bum/ambush{
 	wander = 0
@@ -4421,6 +4427,28 @@
 /obj/item/natural/bone,
 /turf/open/floor/rogue/wood,
 /area/rogue/outdoors/mountains/decap/rockhill)
+"aQG" = (
+/obj/structure/table/wood/large_table/middle_west,
+/obj/item/rogueweapon/huntingknife/chefknife{
+	pixel_y = -2
+	},
+/obj/structure/rack/rogue/shelf{
+	pixel_x = 32;
+	pixel_y = 0
+	},
+/obj/item/cooking/pan{
+	pixel_x = 40
+	},
+/obj/item/kitchen/rollingpin{
+	pixel_x = 25
+	},
+/obj/structure/roguemachine/mail{
+	mailtag = "Lowtown Slaver House"
+	},
+/turf/open/floor/rogue/deserttile{
+	icon_state = "tiledrab2"
+	},
+/area/rogue/indoors)
 "aQI" = (
 /obj/structure/mineral_door/wood/deadbolt{
 	dir = 4
@@ -26184,6 +26212,12 @@
 /obj/item/reagent_containers/food/snacks/fish/plaice,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
+"fbk" = (
+/obj/structure/roguemachine/rosewall,
+/turf/open/floor/rogue/deserttile{
+	icon_state = "tiledrab2"
+	},
+/area/rogue/indoors)
 "fbr" = (
 /obj/structure/curtain/directional/crafted{
 	dir = 1
@@ -40189,6 +40223,12 @@
 	},
 /turf/open/floor/rogue/ruinedwood,
 /area/rogue/indoors)
+"hOW" = (
+/obj/structure/roguemachine/rosewall{
+	pixel_y = 0
+	},
+/turf/closed/wall/mineral/rogue/decostone,
+/area/rogue/indoors/town/bath)
 "hOX" = (
 /obj/structure/table/wood{
 	icon_state = "longtable";
@@ -53226,6 +53266,10 @@
 	},
 /turf/open/floor/rogue/twig,
 /area/rogue/indoors/shelter/bog)
+"kuD" = (
+/obj/structure/stairs,
+/turf/open/floor/rogue/ruinedwood/herringbone,
+/area/rogue/indoors)
 "kuM" = (
 /obj/effect/landmark/quest_spawner/generic,
 /turf/open/water/swamp,
@@ -79725,6 +79769,12 @@
 /obj/effect/decal/cleanable/blood/old,
 /turf/open/floor/rogue/cobblerock,
 /area/rogue/under/town/basement)
+"pEO" = (
+/obj/structure/roguemachine/rosewall{
+	pixel_y = 0
+	},
+/turf/closed/wall/mineral/rogue/decostone/mossy/blue/long,
+/area/rogue/indoors/town/bath)
 "pET" = (
 /turf/closed/wall/mineral/rogue/wooddark{
 	icon_state = "slittedwooddark"
@@ -80922,6 +80972,12 @@
 /obj/item/natural/rock/coal,
 /turf/open/water/cleanshallow,
 /area/rogue/under/cavewet)
+"pQL" = (
+/obj/structure/roguemachine/rosewall{
+	pixel_y = 0
+	},
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/town/tavern)
 "pQP" = (
 /obj/structure/roguemachine/atm{
 	location_tag = "Guild Engineer's Workshop";
@@ -100876,6 +100932,11 @@
 "tQZ" = (
 /turf/closed/wall/mineral/rogue/stonebrick,
 /area/rogue/under/cave)
+"tRb" = (
+/obj/structure/flora/roguegrass,
+/obj/structure/roguemachine/rosewall,
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/rtfield/rockhill)
 "tRe" = (
 /obj/structure/stairs{
 	dir = 4
@@ -190007,7 +190068,7 @@ cGQ
 wTZ
 sAY
 lmJ
-eFJ
+hOW
 iey
 hDM
 sey
@@ -293683,7 +293744,7 @@ wsf
 scK
 scK
 lax
-iLj
+aEY
 lfA
 jBS
 imx
@@ -293791,7 +293852,7 @@ xVt
 jzQ
 dmQ
 byT
-wwI
+kuD
 bQt
 bQt
 bQt
@@ -294224,7 +294285,7 @@ lrS
 iDw
 iOV
 ryI
-bQt
+fbk
 qzY
 rpb
 mEi
@@ -294656,7 +294717,7 @@ wOD
 wOD
 tFv
 ryI
-gyG
+aQG
 jvd
 cqN
 fTS
@@ -294981,7 +295042,7 @@ eFJ
 sGL
 pwW
 wyd
-eZt
+pEO
 eZt
 fzf
 iAU
@@ -299000,7 +299061,7 @@ ryI
 nqU
 lUo
 nqU
-xvN
+tRb
 fxx
 fxx
 mAI
@@ -411184,7 +411245,7 @@ thL
 wVI
 fnA
 lyG
-orb
+pQL
 qnD
 liB
 uoN

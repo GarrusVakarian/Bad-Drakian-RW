@@ -40,7 +40,7 @@
 	//They get those traits during sword activation, anyway.
 	//Dual wielder is there to stand-in for ambidextrous in case they activate their sword in their off-hand.
 	virtue_restrictions = list(/datum/virtue/combat/rotcured, /datum/virtue/utility/deadened,
-	/datum/virtue/utility/deathless, /datum/virtue/combat/dualwielder, /datum/virtue/heretic/zchurch_keyholder)
+	/datum/virtue/utility/deathless, /datum/virtue/combat/dualwielder, /datum/virtue/utility/zchurch_keyholder)
 	quirk_restrictions = list(/datum/quirk/noble, /datum/quirk/hunted)
 
 	advclass_cat_rolls = list(CTAG_MARTYR = 2)

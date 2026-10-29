@@ -1,4 +1,5 @@
 /obj/item/organ/penis
+	var/penis_taur_mode = FALSE
 	name = "penis"
 	icon_state = "penis"
 	visible_organ = TRUE
@@ -21,6 +22,22 @@
 		return 1
 	return receiver == owner ? 2 : 0.5
 
+/obj/item/organ/penis/get_icon_cache_key(obj/item/bodypart/bodypart)
+	var/datum/sprite_accessory/penis/accessory = SPRITE_ACCESSORY(accessory_type)
+	var/taur_state
+	if(istype(accessory))
+		taur_state = accessory.get_taur_icon_state(src)
+	return "[..()]-[penis_taur_mode]-[penis_size]-[sheath_type]-[erect_state]-[taur_state]"
+
+/obj/item/organ/penis/imprint_organ_dna(datum/organ_dna/organ_dna)
+	..()
+	var/datum/organ_dna/penis/penis_dna = organ_dna
+	penis_dna.penis_size = penis_size
+	penis_dna.functional = functional
+	penis_dna.sheath_type = sheath_type
+	penis_dna.penis_taur_mode = penis_taur_mode
+	penis_dna.egg_settings = islist(egg_settings) ? egg_settings.Copy() : null
+
 /obj/item/organ/penis/proc/update_erect_state()
 	var/oldstate = erect_state
 	var/new_state = ERECT_STATE_NONE
@@ -39,6 +56,21 @@
 	erect_state = new_state
 	if(oldstate != erect_state && owner)
 		owner.update_body_parts(TRUE)
+
+/obj/item/organ/penis/bee_tail
+	name = "bee-tail penis"
+	accessory_type = /datum/sprite_accessory/penis/bee_tail
+	penis_size = SMALL_PENIS_SIZE
+
+/obj/item/organ/penis/bee_tail/get_icon_cache_key(obj/item/bodypart/bodypart)
+	var/obj/item/organ/tail/tail = owner?.getorganslot(ORGAN_SLOT_TAIL)
+	return "[..()]-[tail?.accessory_type]-[!!owner?.get_taur_tail()]"
+
+/obj/item/organ/penis/ovipositor_ant
+	name = "ovipositor"
+	accessory_type = /datum/sprite_accessory/penis/ovipositor_ant
+	penis_size = SMALL_PENIS_SIZE
+	penis_taur_mode = TRUE
 
 /obj/item/organ/penis/knotted
 	name = "knotted penis"
@@ -140,6 +172,8 @@
 	sheath_type = SHEATH_TYPE_NONE
 
 /obj/item/organ/vagina
+	organ_dna_type = /datum/organ_dna/vagina
+	var/vagina_taur_enabled = TRUE
 	name = "vagina"
 	icon_state = "vagina"
 	visible_organ = TRUE
@@ -154,6 +188,36 @@
 /obj/item/organ/proc/be_impregnated(mob/living/carbon/human/father)
 	return FALSE
 
+/obj/item/organ/vagina/is_visible_on_owner()
+	if(owner?.get_taur_tail() && !vagina_taur_enabled)
+		return FALSE
+	return ..()
+
+/// Regular vagina styles can also display the opening on a visible Bee tail.
+/obj/item/organ/vagina/proc/has_bee_tail_oviduct()
+	if(accessory_type == /datum/sprite_accessory/vagina/bee_tail || !owner || owner.get_taur_tail())
+		return FALSE
+	var/obj/item/organ/tail/tail = owner.getorganslot(ORGAN_SLOT_TAIL)
+	if(tail?.accessory_type != /datum/sprite_accessory/tail/bee || !tail.is_visible())
+		return FALSE
+	var/datum/sprite_accessory/tail/tail_accessory = SPRITE_ACCESSORY(tail.accessory_type)
+	return tail_accessory.is_visible(tail, null, owner)
+
+/obj/item/organ/vagina/get_icon_cache_key(obj/item/bodypart/bodypart)
+	var/bee_tail_oviduct = has_bee_tail_oviduct()
+	var/oviduct_state
+	if(accessory_type == /datum/sprite_accessory/vagina/bee_tail || bee_tail_oviduct)
+		var/datum/sprite_accessory/vagina/bee_tail/oviduct = SPRITE_ACCESSORY(/datum/sprite_accessory/vagina/bee_tail)
+		oviduct_state = oviduct.get_icon_state(src, bodypart, owner)
+	return "[..()]-[vagina_taur_enabled]-[!!owner?.get_taur_tail()]-[bee_tail_oviduct]-[oviduct_state]"
+
+/obj/item/organ/vagina/imprint_organ_dna(datum/organ_dna/organ_dna)
+	..()
+	var/datum/organ_dna/vagina/vagina_dna = organ_dna
+	vagina_dna.fertility = fertility
+	vagina_dna.vagina_taur_enabled = vagina_taur_enabled
+	vagina_dna.egg_settings = islist(egg_settings) ? egg_settings.Copy() : null
+
 /obj/item/organ/vagina/be_impregnated(mob/living/carbon/human/father)
 	if(!owner)
 		return FALSE
@@ -166,6 +230,10 @@
 	pregnant = TRUE
 	//TODO add a way to trigger lactating when pregnancy happens
 	return TRUE
+
+/obj/item/organ/vagina/bee_tail
+	name = "oviduct"
+	accessory_type = /datum/sprite_accessory/vagina/bee_tail
 
 /obj/item/organ/breasts
 	name = "breasts"
@@ -335,6 +403,13 @@
 	var/ball_size = DEFAULT_TESTICLES_SIZE
 	var/virility = TRUE
 	var/branded_writing = ""
+
+/obj/item/organ/testicles/get_icon_cache_key(obj/item/bodypart/bodypart)
+	var/datum/sprite_accessory/testicles/accessory = SPRITE_ACCESSORY(accessory_type)
+	var/taur_state
+	if(istype(accessory))
+		taur_state = accessory.get_taur_icon_state(src)
+	return "[..()]-[ball_size]-[taur_state]"
 
 /obj/item/organ/testicles/internal
 	name = "internal testicles"

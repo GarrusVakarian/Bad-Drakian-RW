@@ -319,3 +319,20 @@
 		to_chat(user, span_info("Shifted pixel layer down: [M.pixelshift_layer]"))
 		M.update_transform()
 	return TRUE
+
+/datum/keybinding/living/alt_grip
+	hotkey_keys = list("AltG")
+	classic_keys = list("AltG")
+	name = "alt_grip"
+	full_name = "Alt-grip / Twirl"
+	description = "Perform the active held item's right-click action: alternate grip, twirl, or another item-specific action."
+
+/datum/keybinding/living/alt_grip/down(client/user)
+	var/mob/living/M = user.mob
+	if(!istype(M))
+		return FALSE
+	var/obj/item/I = M.get_active_held_item()
+	if(!I)
+		return FALSE
+	M.ClickOn(I, "right=1")
+	return TRUE

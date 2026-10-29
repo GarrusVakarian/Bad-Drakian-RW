@@ -32,6 +32,7 @@
 
 /obj/item/clothing/suit/roguetown/dragonhide
 	name = "dragonhide"
+	nudist_approved = TRUE
 	desc = "An arcyne art first mastered by the 'dragonsbreath magisters'. This barrier protects best against the heat."
 	max_integrity = 200
 	break_sound = 'sound/foley/breaksound.ogg'

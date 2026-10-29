@@ -22,6 +22,8 @@
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || (user.STASTR > 12))
 		if(istype(user.rmb_intent, /datum/rmb_intent/strong))
 			user.sexcon.try_pelvis_crush(target)
+			if(HAS_TRAIT(target, TRAIT_POPPABLE))
+				user.sexcon.try_belly_pop(target)
 
 	user.sexcon.perform_sex_action(user, 2, 0, TRUE)
 	if(user.sexcon.check_active_ejaculation())
@@ -29,6 +31,8 @@
 		for(var/i = 1; i <= user.sexcon.get_load_bursts(); i++)
 			user.sexcon.cum_into(splashed_user = target, orifice = SEX_PART_ANUS, consume_charge = i == 1 ? TRUE : FALSE)
 			if(HAS_TRAIT(target, TRAIT_BAOTHA_FERTILITY_BOON) && !target.getorganslot(ORGAN_SLOT_VAGINA))
+				user.try_impregnate(target)
+			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
 			sleep(10)
 		user.virginity = FALSE
@@ -74,6 +78,8 @@
 
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU))
 		user.sexcon.try_pelvis_crush(target)
+		if(HAS_TRAIT(target, TRAIT_POPPABLE))
+			user.sexcon.try_belly_pop(target)
 
 	user.sexcon.perform_sex_action(user, 2, 0, TRUE)
 	if(user.sexcon.check_active_ejaculation())
@@ -81,6 +87,8 @@
 		for(var/i = 1; i <= user.sexcon.get_load_bursts(); i++)
 			user.sexcon.cum_into(splashed_user = target, orifice = SEX_PART_ANUS, consume_charge = i == 1 ? TRUE : FALSE)
 			if(HAS_TRAIT(target, TRAIT_BAOTHA_FERTILITY_BOON) && !target.getorganslot(ORGAN_SLOT_VAGINA))
+				user.try_impregnate(target)
+			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
 			sleep(10)
 		user.virginity = FALSE

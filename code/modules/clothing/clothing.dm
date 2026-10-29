@@ -32,6 +32,8 @@
 	var/list/prevent_crits
 
 	var/clothing_flags = NONE
+	///Effective coverage saved while sleeves are rolled, excluding existing peel damage.
+	var/rolled_sleeve_coverage = NONE
 
 	salvage_result = /obj/item/natural/cloth
 	salvage_amount = 1
@@ -191,34 +193,30 @@
 	if(nodismemsleeves)
 		return
 	if(altheld)
-		if(user.zone_selected == l_sleeve_zone)
-			if(l_sleeve_status == SLEEVE_ROLLED)
-				l_sleeve_status = SLEEVE_NORMAL
-				if(l_sleeve_zone == BODY_ZONE_L_ARM)
-					body_parts_covered |= ARM_LEFT
-				if(l_sleeve_zone == BODY_ZONE_L_LEG)
-					body_parts_covered |= LEG_LEFT
-			else
-				if(l_sleeve_zone == BODY_ZONE_L_ARM)
-					body_parts_covered &= ~ARM_LEFT
-				if(l_sleeve_zone == BODY_ZONE_L_LEG)
-					body_parts_covered &= ~LEG_LEFT
-				l_sleeve_status = SLEEVE_ROLLED
+		var/left_sleeve = user.zone_selected == l_sleeve_zone
+		if(!left_sleeve && user.zone_selected != r_sleeve_zone)
 			return
-		else if(user.zone_selected == r_sleeve_zone)
-			if(r_sleeve_status == SLEEVE_ROLLED)
-				if(r_sleeve_zone == BODY_ZONE_R_ARM)
-					body_parts_covered |= ARM_RIGHT
-				if(r_sleeve_zone == BODY_ZONE_R_LEG)
-					body_parts_covered |= LEG_RIGHT
-				r_sleeve_status = SLEEVE_NORMAL
-			else
-				if(r_sleeve_zone == BODY_ZONE_R_ARM)
-					body_parts_covered &= ~ARM_RIGHT
-				if(r_sleeve_zone == BODY_ZONE_R_LEG)
-					body_parts_covered &= ~LEG_RIGHT
-				r_sleeve_status = SLEEVE_ROLLED
+		var/sleeve_status = left_sleeve ? l_sleeve_status : r_sleeve_status
+		if(sleeve_status != SLEEVE_NORMAL && sleeve_status != SLEEVE_ROLLED)
 			return
+		var/coverage = attackzone2coveragezone(user.zone_selected)
+		if(sleeve_status == SLEEVE_ROLLED)
+			body_parts_covered |= coverage
+			body_parts_covered_dynamic |= rolled_sleeve_coverage & coverage
+			rolled_sleeve_coverage &= ~coverage
+			sleeve_status = SLEEVE_NORMAL
+		else
+			rolled_sleeve_coverage |= body_parts_covered_dynamic & coverage
+			body_parts_covered &= ~coverage
+			body_parts_covered_dynamic &= ~coverage
+			sleeve_status = SLEEVE_ROLLED
+		if(left_sleeve)
+			l_sleeve_status = sleeve_status
+		else
+			r_sleeve_status = sleeve_status
+		if(loc == L)
+			L.regenerate_clothes()
+		return
 	else
 		if(user.zone_selected == r_sleeve_zone)
 			if(r_sleeve_status == SLEEVE_NOMOD)
@@ -233,13 +231,15 @@
 				r_sleeve_status = SLEEVE_TORN
 				user.visible_message(span_notice("[user] tears [src]."))
 				playsound(src, 'sound/foley/cloth_rip.ogg', 50, TRUE)
-				if(r_sleeve_zone == BODY_ZONE_R_ARM)
-					body_parts_covered &= ~ARM_RIGHT
-				if(r_sleeve_zone == BODY_ZONE_R_LEG)
-					body_parts_covered &= ~LEG_RIGHT
+				var/coverage = attackzone2coveragezone(r_sleeve_zone)
+				body_parts_covered &= ~coverage
+				body_parts_covered_dynamic &= ~coverage
+				rolled_sleeve_coverage &= ~coverage
 				var/obj/item/Sr = new salvage_result(get_turf(src))
 				Sr.color = color
 				user.put_in_hands(Sr)
+				if(loc == L)
+					L.regenerate_clothes()
 				return
 			else
 				user.visible_message(span_warning("[user] tries to tear [src]."))
@@ -257,13 +257,15 @@
 				l_sleeve_status = SLEEVE_TORN
 				user.visible_message(span_notice("[user] tears [src]."))
 				playsound(src, 'sound/foley/cloth_rip.ogg', 50, TRUE)
-				if(l_sleeve_zone == BODY_ZONE_L_ARM)
-					body_parts_covered &= ~ARM_LEFT
-				if(l_sleeve_zone == BODY_ZONE_L_LEG)
-					body_parts_covered &= ~LEG_LEFT
+				var/coverage = attackzone2coveragezone(l_sleeve_zone)
+				body_parts_covered &= ~coverage
+				body_parts_covered_dynamic &= ~coverage
+				rolled_sleeve_coverage &= ~coverage
 				var/obj/item/Sr = new salvage_result(get_turf(src))
 				Sr.color = color
 				user.put_in_hands(Sr)
+				if(loc == L)
+					L.regenerate_clothes()
 				return
 			else
 				user.visible_message(span_warning("[user] tries to tear [src]."))

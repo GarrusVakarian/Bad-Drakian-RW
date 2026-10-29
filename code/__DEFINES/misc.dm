@@ -16,6 +16,8 @@
 
 //Human Overlays Indexes/////////
 
+// Persistent quest marker, separate from temporary overhead effects.
+#define QUEST_OFFER_LAYER		56
 #define JOYBRINGER_LAYER		55
 #define BLACK_ROT_LAYER			54
 #define POTENCE_LAYER			53
@@ -71,7 +73,7 @@
 #define SUNDER_LAYER			3
 #define FIRE_LAYER				2		//If you're on fire
 #define TURF_LAYER				1		//If you're on fire
-#define TOTAL_LAYERS			54		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
+#define TOTAL_LAYERS			56		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
 
 #define BACK_CLOAK_SOUTH_LAYER		(BODY_BEHIND_LAYER+1)
 
@@ -493,3 +495,12 @@ GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
 #define FALL_INTERCEPTED		(1<<0) //Stops the movable from falling further and crashing on the ground
 #define FALL_NO_MESSAGE			(1<<1) //Used to suppress the "[A] falls through [old_turf]" messages where it'd make little sense at all, like going downstairs.
 #define FALL_STOP_INTERCEPTING	(1<<2) //Used in situations where halting the whole "intercept" loop would be better, like supermatter dusting (and thus deleting) the atom.
+
+#define CUSTOM_HAIR_LAYER 14.95
+#define CUSTOM_HAIR_COVERED_LAYER 14.9
+#define CUSTOM_HAIR_ABOVE_SNOUT_LAYER 5.9
+
+#define INHAND_FRONT 1
+#define INHAND_BEHIND 2
+#define ONMOB_TAG 1
+#define ONMOB_PROP 2

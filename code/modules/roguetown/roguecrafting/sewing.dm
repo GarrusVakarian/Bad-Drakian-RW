@@ -300,6 +300,13 @@
 	)
 	craftdiff = 2
 
+/datum/crafting_recipe/roguetown/sewing/beltshawl
+	name = "belt shawl"
+	display_category = ITEM_CAT_ARMOR_BELTS
+	result = list(/obj/item/storage/belt/rogue/leather/beltshawl)
+	reqs = list(/obj/item/natural/cloth = 3)
+	craftdiff = 2
+
 /datum/crafting_recipe/roguetown/sewing/breechclothbeltalt
 	name = "belt with breechcloth, black"
 	result = list(/obj/item/storage/belt/rogue/leather/battleskirt/breechcloth/blackbelt)

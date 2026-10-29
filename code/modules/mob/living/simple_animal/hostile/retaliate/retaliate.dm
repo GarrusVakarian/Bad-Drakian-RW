@@ -72,6 +72,9 @@
 	for(var/mob/living/bystander in hearers(vision_range, src))
 		if(bystander == src)
 			continue
+		// A thrown rider stays on the mount's tile; don't mistake them for its attacker.
+		if(tame && can_saddle && bystander.loc == loc)
+			continue
 		if(attack_same || !faction_check_mob(bystander))
 			add_enemy(bystander)
 

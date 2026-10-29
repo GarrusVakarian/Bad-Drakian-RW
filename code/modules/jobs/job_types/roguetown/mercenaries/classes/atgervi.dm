@@ -89,6 +89,7 @@
 	outfit = /datum/outfit/job/roguetown/mercenary/atgervishaman
 	subclass_languages = list(/datum/language/gronnic)
 	cmode_music = 'sound/music/combat_shaman2.ogg'
+	allowed_races = ALL_BUT_BLOODLESS
 	traits_applied = list(TRAIT_STRONGBITE, TRAIT_CIVILIZEDBARBARIAN, TRAIT_CRITICAL_RESISTANCE, TRAIT_NOPAINSTUN)
 	subclass_stats = list(
 		STATKEY_STR = 3,
@@ -255,6 +256,13 @@
 	parrysound = list('sound/combat/parry/shield/towershield (1).ogg','sound/combat/parry/shield/towershield (2).ogg','sound/combat/parry/shield/towershield (3).ogg')
 	max_integrity = 300
 	experimental_inhand = FALSE
+
+/obj/item/rogueweapon/shield/atgervi/generateonmob(tag, prop, behind = FALSE, mirrored = FALSE, used_index = null)
+	. = ..()
+	if(tag == "onback" && mirrored && .)
+		var/icon/back_icon = .
+		// Mirroring uses a 64px canvas, but this shield's offsets target a 32px sprite.
+		back_icon.Shift(WEST, back_icon.Width() - inhand_x_dimension)
 
 /obj/item/rogueweapon/shield/atgervi/getonmobprop(tag)
 	. = ..()

@@ -104,10 +104,13 @@
 			ZOMBIFICATION BY DEATH BEGINS HERE
 		*/
 		if(!has_world_trait(/datum/world_trait/necra_requiem))
-			if(!is_in_roguetown(src) || has_world_trait(/datum/world_trait/zizo_defilement))
-				if(!zombie_check_can_convert()) //Gives the dead unit the zombie antag flag
-					to_chat(src, span_userdanger("..is this to be my end..?"))
-					to_chat(src, span_danger("The cold consumes the final flicker of warmth in your chest and begins to seep into your limbs..."))
+			if(!zombie_check_can_convert()) //Gives the dead unit the zombie antag flag
+				to_chat(src, span_userdanger("..is this to be my end..?"))
+				to_chat(src, span_danger("The cold consumes the final flicker of warmth in your chest and begins to seep into your limbs..."))
+			else if(!HAS_TRAIT(src, TRAIT_DNR))
+				to_chat(src, span_notice("<b>You have died, but this need not be the end.</b> Stay in your body: you can normally rise as a deadite after about [DEAD_TO_ZOMBIE_TIME / (1 MINUTES)] minutes. Once you rise, head towards town and seek help to have the rot removed and be revived."))
+			else
+				to_chat(src, span_notice("<b>You have died, but this need not be the end.</b> Stay in your body: you can normally rise as a deadite after about [DEAD_TO_ZOMBIE_TIME / (1 MINUTES)] minutes, even with DNR. Once you rise, head towards town and seek a Cure Rot miracle to recover. Alternatively, if the rot is removed surgically first, a Necran ritualist may revive you through The Toll."))
 
 	stop_sound_channel(CHANNEL_HEARTBEAT)
 	var/obj/item/organ/heart/H = getorganslot(ORGAN_SLOT_HEART)

@@ -128,7 +128,8 @@
 
 
 /obj/machinery/anvil/proc/forging_loop(mob/living/user, obj/item/rogueweapon/hammer/hammer, datum/component/forging/forging_comp)
-	while(current_workpiece && forging_comp?.forging_stage == FORGING_STAGE_ACTIVE)
+	// The workpiece can be swapped out from under us (ruined into scrap), so stop once our component is gone.
+	while(current_workpiece && !QDELETED(forging_comp) && forging_comp.forging_stage == FORGING_STAGE_ACTIVE)
 		// Blades don't need to be hot, only check for ingots
 		if(!hott && istype(current_workpiece, /obj/item/ingot))
 			to_chat(user, span_warning("It's too cold."))
@@ -296,6 +297,21 @@
 			I.forceMove(user.loc)
 			user.put_in_active_hand(I)
 			update_icon()
+
+/// Whether the current workpiece is a bar that would be ruined into scrap slag (rather than just lost).
+/obj/machinery/anvil/proc/can_scrap_workpiece()
+	return istype(current_workpiece, /obj/item/ingot) && !istype(current_workpiece, /obj/item/ingot/scrap)
+
+/// Replaces the bar on the anvil with a lump of scrap slag, keeping its heat so it can be worked straight away.
+/obj/machinery/anvil/proc/scrap_workpiece()
+	var/obj/item/ingot/ruined = current_workpiece
+	if(!istype(ruined))
+		return
+	qdel(ruined) // Clears current_workpiece through the ingot's Destroy()
+	var/obj/item/ingot/scrap/slag = new(src, ITEM_QUALITY_CRUDE)
+	current_workpiece = slag
+	update_icon()
+	return slag
 
 /obj/machinery/anvil/MiddleClick(mob/user, params)
 	. = ..()

@@ -41,6 +41,8 @@
 /obj/item/rogueweapon/hammer/attack_obj(obj/attacked_object, mob/living/user)
 	if(!isliving(user) || !user.mind)
 		return
+	if(!user.cmode && user.doing)
+		return
 	var/mob/living/blacksmith = user
 	var/repair_percent = 0.025 // 2.5% Repairing per hammer smack
 	/// Repairing is MUCH better with an anvil!
@@ -76,12 +78,12 @@
 			else
 				user.visible_message(span_info("[user] repairs [attacked_prosthetic]!"))
 			blacksmith.mind.add_sleep_experience(attacked_prosthetic.anvilrepair, exp_gained/2) //We gain as much exp as we fix divided by 2
-			if(do_after(user, CLICK_CD_MELEE, target = attacked_object))
+			if(do_after(user, 0.6 SECONDS, target = attacked_object))
 				attack_obj(attacked_object, user)
 			return
 		else
 			user.visible_message(span_warning("[user] fumbles trying to repair [attacked_prosthetic]!"))
-			if(do_after(user, CLICK_CD_MELEE, target = attacked_object))
+			if(do_after(user, 0.6 SECONDS, target = attacked_object))
 				attack_obj(attacked_object, user)
 			return
 
@@ -151,12 +153,12 @@
 				attacked_item.shoddy_repair = FALSE
 				to_chat(user, span_notice("My skilled hand has fully repaired this item."))
 			blacksmith.mind.add_sleep_experience(attacked_item.anvilrepair, exp_gained/2) //We gain as much exp as we fix divided by 2
-			if(do_after(user, CLICK_CD_MELEE, target = attacked_object))
+			if(do_after(user, 0.6 SECONDS, target = attacked_object))
 				attack_obj(attacked_object, user)
 			return
 		else
 			user.visible_message(span_warning("[user] fumbles trying to repair [attacked_item]!"))
-			if(do_after(user, CLICK_CD_MELEE, target = attacked_object))
+			if(do_after(user, 0.6 SECONDS, target = attacked_object))
 				attack_obj(attacked_object, user)
 			return
 
@@ -173,7 +175,7 @@
 		blacksmith.mind.add_sleep_experience(attacked_structure.hammer_repair, exp_gained) //We gain as much exp as we fix
 		playsound(src,'sound/items/bsmithfail.ogg', 100, FALSE)
 		user.visible_message(span_info("[user] repairs [attacked_structure]!"))
-		if(attacked_object.obj_integrity <= attacked_object.max_integrity && do_after(user, CLICK_CD_MELEE, target = attacked_object))
+		if(attacked_object.obj_integrity <= attacked_object.max_integrity && do_after(user, 0.6 SECONDS, target = attacked_object))
 			attack_obj(attacked_object, user)
 		return
 

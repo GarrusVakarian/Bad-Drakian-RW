@@ -187,12 +187,11 @@
 
 	var/datum/wound/dynwound = manage_dynamic_wound(bclass, dam, armor)
 
+	var/crit_attempt
 	if(do_crit)
 		var/datum/component/silverbless/psyblessed = weapon?.GetComponent(/datum/component/silverbless)
 		var/sundering = HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && istype(weapon) && weapon?.is_silver && psyblessed?.is_blessed
-		var/crit_attempt = try_crit(sundering ? BCLASS_SUNDER : bclass, dam, user, zone_precise, silent, crit_message)
-		if(crit_attempt)
-			return crit_attempt
+		crit_attempt = try_crit(sundering ? BCLASS_SUNDER : bclass, dam, user, zone_precise, silent, crit_message)
 
 	if(owner?.has_status_effect(/datum/status_effect/debuff/exposed))
 		playsound(owner, 'sound/combat/exposed_pop.ogg', 100, TRUE)
@@ -207,7 +206,8 @@
 		if(!do_crit)	//We aren't already screaming from a crit.
 			owner.emote("pain", forced = TRUE)
 
-	return dynwound
+	// Critical wounds and resisted crits must also consume the opening before returning.
+	return crit_attempt ? crit_attempt : dynwound
 
 /obj/item/bodypart/proc/manage_dynamic_wound(bclass, dam, armor)
 	var/woundtype

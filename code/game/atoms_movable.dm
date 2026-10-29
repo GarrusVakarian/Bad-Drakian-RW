@@ -409,9 +409,28 @@
 			var/pull_dir = get_dir(src, pulling)
 			//puller and pullee more than one tile away or in diagonal position
 			if(get_dist(src, pulling) > 1 || (moving_diagonally != SECOND_DIAG_STEP && ((pull_dir - 1) & pull_dir)))
-				pulling.moving_from_pull = src
-				pulling.Move(T, get_dir(pulling, T), glide_size) //the pullee tries to reach our previous position
-				pulling.moving_from_pull = null
+				pullee.moving_from_pull = src
+				var/follow_dir = get_dir(pullee, T)
+				if(follow_dir in GLOB.cardinals)
+					pullee.Move(T, follow_dir, glide_size)
+				else if(follow_dir)
+					// Resolve both steps through Move() so collisions and buckles are respected.
+					var/first_dir = follow_dir & (NORTH|SOUTH)
+					var/second_dir = follow_dir & (EAST|WEST)
+					if(get_dist(get_step(pullee, second_dir), src) < get_dist(get_step(pullee, first_dir), src))
+						var/swap_dir = first_dir
+						first_dir = second_dir
+						second_dir = swap_dir
+					var/atom/follow_start = pullee.loc
+					var/turf/next_step = get_step(pullee, first_dir)
+					pullee.Move(next_step, first_dir, glide_size)
+					if(!QDELETED(pullee) && pulling == pullee && pullee.loc == follow_start)
+						next_step = get_step(pullee, second_dir)
+						pullee.Move(next_step, second_dir, glide_size)
+					if(!QDELETED(pullee) && pulling == pullee && pullee.loc == next_step)
+						pullee.Move(T, get_dir(pullee, T), glide_size)
+				if(!QDELETED(pullee))
+					pullee.moving_from_pull = null
 			check_pulling()
 
 	//glide_size strangely enough can change mid movement animation and update correctly while the animation is playing

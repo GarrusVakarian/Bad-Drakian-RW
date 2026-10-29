@@ -1158,6 +1158,18 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 
 /client/proc/show_character_previews(mutable_appearance/MA)
 	var/pos = 0
+	var/enlarged = prefs?.preview_enlarged
+	var/preview_width = enlarged ? 512 : 172
+	var/preview_height = enlarged ? 512 : 192
+	var/list/window_size = getviewsize(winget(src, "preferencess_window", "size"))
+	var/preview_x = round((window_size[1] - preview_width) / 2)
+	var/preview_near = enlarged ? "2" : "1"
+	var/preview_far = enlarged ? "5:16" : "2"
+	// Enlarge the appearance itself: increasing the map control's size does
+	// not enlarge its screen objects. Preserve the character's body scaling.
+	var/matrix/preview_transform = matrix(MA.transform)
+	preview_transform.Scale(enlarged ? 3 : 1)
+	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;icon-size=64;zoom-mode=distort")
 
 	var/atom/movable/screen/char_preview/background = LAZYACCESS(char_render_holders, "bg")
 	if(background)
@@ -1167,9 +1179,9 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	background = new()
 	LAZYSET(char_render_holders, "bg", background)
 	screen += background
-	background.screen_loc = "character_preview_map:0,0 to 3,3"
+	background.screen_loc = enlarged ? "character_preview_map:0,0 to 7,7" : "character_preview_map:0,0 to 3,3"
 
-	// not cardinal anymore, makes taurs more clear
+	// Match the spacing to the current sprite scale and map bounds.
 	for(var/D in GLOB.cardinals)
 		pos++
 		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
@@ -1181,20 +1193,21 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		LAZYSET(char_render_holders, "[D]", O)
 		screen += O
 		O.appearance = MA
+		O.transform = preview_transform
 		O.dir = D
 		switch(pos)
 			if(1)
-				O.screen_loc = "character_preview_map:2,2"
+				O.screen_loc = "character_preview_map:[preview_far],[preview_far]"
 			if(2)
-				O.screen_loc = "character_preview_map:1,2"
+				O.screen_loc = "character_preview_map:[preview_near],[preview_far]"
 			if(3)
-				O.screen_loc = "character_preview_map:1,1"
+				O.screen_loc = "character_preview_map:[preview_near],[preview_near]"
 			if(4)
-				O.screen_loc = "character_preview_map:2,1"
+				O.screen_loc = "character_preview_map:[preview_far],[preview_near]"
 
 /client/proc/clear_character_previews()
-	for(var/atom/movable/screen/S in char_render_holders)
-//		var/atom/movable/screen/S = char_render_holders[index]
+	for(var/key in char_render_holders)
+		var/atom/movable/screen/S = char_render_holders[key]
 		screen -= S
 		qdel(S)
 	char_render_holders = list()
@@ -1271,6 +1284,8 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	return
 
 /client/proc/preload_music()
-	if(SSsounds.initialized == TRUE)
-		for(var/sound_path as anything in SSsounds.all_music_sounds)
-			src << load_resource(sound_path, -1)
+	if(cached_sounds || !SSsounds.initialized)
+		return
+	cached_sounds = TRUE
+	for(var/sound_path as anything in SSsounds.all_music_sounds)
+		src << load_resource(sound_path, 0)

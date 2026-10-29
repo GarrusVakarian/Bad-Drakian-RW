@@ -149,6 +149,10 @@
 		to_chat(target, span_warning("My arcyne shroud shrieks in alarm! I can clearly see [user.real_name] staring into the fog!"))
 		return
 
+	if(target.do_not_disturb)
+		to_chat(user, span_warning("They are not within the gaze of the Orb. (This player is under privacy rule protections! Please be respectful.)"))
+		return
+
 	if(!prob(success_chance))
 		on_failure(user, target, failure_severity)
 		if(break_on_fail)
@@ -182,6 +186,10 @@
 	scry(user, HL)
 
 /obj/item/scrying/proc/scry(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	// Recheck here too: failed casts can choose a different target.
+	if(target?.do_not_disturb)
+		to_chat(user, span_warning("They are not within the gaze of the Orb. (This player is under privacy rule protections! Please be respectful.)"))
+		return
 	var/turf/T = get_turf(target)
 	if(!T)
 		return

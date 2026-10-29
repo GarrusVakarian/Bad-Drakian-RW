@@ -620,6 +620,8 @@ GLOBAL_LIST_EMPTY(reach_dummy_pool)
 		return
 	if(QDELETED(atomy[AB]))
 		return
+	if(!user.TurfAdjacent(src))
+		return
 	if(atomy[AB].loc != src)
 		return
 	var/AE = atomy[AB]

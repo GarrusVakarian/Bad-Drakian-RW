@@ -26,7 +26,9 @@
 	job_traits = list(TRAIT_SURVIVAL_EXPERT)
 	job_subclasses = list(
 		/datum/advclass/vanguard/footman,
-		/datum/advclass/vanguard/archer
+		/datum/advclass/vanguard/archer,
+		/datum/advclass/vanguard/goon,
+		/datum/advclass/vanguard/fusilier
 	)
 
 /datum/job/roguetown/vanguard/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
@@ -58,7 +60,7 @@
 /datum/advclass/vanguard/archer
 	name = "Vanguard Archer"
 	tutorial = "You are well versed in the ways of handling a bow. \
-	You will stand in the back, and protect the front with arrows."	
+	You will stand in the back, and protect the front with arrows."
 	outfit = /datum/outfit/job/roguetown/vanguard/archer
 	category_tags = list(CTAG_VANGUARD)
 	traits_applied = list(TRAIT_DODGEEXPERT)
@@ -157,6 +159,111 @@
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/signal_horn = 1
+		)
+	H.verbs |= /mob/proc/haltyell
+	H.set_blindness(0)
+
+/datum/advclass/vanguard/goon
+	name = "Vanguard Catchpole"
+	tutorial = "You didn't quite understand your training, but you were strong enough to get by anyways.. \
+	You'll get in the way of any problems, and whack them if you have to."
+	outfit = /datum/outfit/job/roguetown/vanguard/goon
+	maximum_possible_slots = 1
+	category_tags = list(CTAG_VANGUARD)
+	traits_applied = list(TRAIT_MEDIUMARMOR)
+	subclass_stats = list(
+		STATKEY_STR = 2,
+		STATKEY_CON = 2,
+		STATKEY_WIL = 1,
+		STATKEY_INT = -2,
+		STATKEY_SPD = -1
+	)
+	subclass_skills = list(
+		/datum/skill/combat/axes = 2,
+		/datum/skill/combat/polearms = 2,
+		/datum/skill/combat/maces = 3,
+		/datum/skill/combat/knives = 1,
+		/datum/skill/combat/wrestling = 4,
+		/datum/skill/combat/unarmed = 3,
+		/datum/skill/combat/slings = 1,
+		/datum/skill/combat/crossbows = 1,
+		/datum/skill/misc/athletics = 4,
+		/datum/skill/misc/climbing = 3,
+		/datum/skill/misc/sneaking = 1,
+		/datum/skill/misc/swimming = 2,
+		/datum/skill/misc/medicine = 1,
+		/datum/skill/misc/reading = 1,
+		/datum/skill/misc/tracking = 1,
+		/datum/skill/craft/crafting = 1,
+		/datum/skill/misc/riding = 1,
+		/datum/skill/craft/cooking = 1, // This should let them fry meat on fires.
+	)
+
+/datum/outfit/job/roguetown/vanguard/goon/pre_equip(mob/living/carbon/human/H)
+	..()
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/iron
+	beltr = /obj/item/rogueweapon/mace/cudgel
+	beltl = /obj/item/rogueweapon/huntingknife/idagger
+	id = /obj/item/scomstone/bad/garrison
+	backpack_contents = list(
+		/obj/item/storage/keyring/guard = 1,
+		/obj/item/flashlight/flare/torch/lantern = 1,
+		/obj/item/rogueweapon/scabbard/sheath = 1,
+		/obj/item/signal_horn = 1
+		)
+	H.verbs |= /mob/proc/haltyell
+	H.set_blindness(0)
+
+/datum/advclass/vanguard/fusilier
+	name = "Vanguard Fusilier"
+	tutorial = "You were lucky enough to be equipped with a firearm, but you haven't had much practice. \
+	You'll probably want to stick with your sword, unless something goes wrong."
+	outfit = /datum/outfit/job/roguetown/vanguard/fusilier
+	maximum_possible_slots = 1
+	category_tags = list(CTAG_VANGUARD)
+	traits_applied = list(TRAIT_FUSILIER)
+	subclass_stats = list(
+		STATKEY_PER = 1, //Worse stats because they have a GUN
+		STATKEY_SPD = 1,
+		STATKEY_INT = 1,
+		STATKEY_WIL = 1
+	)
+	subclass_skills = list(
+		/datum/skill/combat/firearms = 2, //poor chargetime
+		/datum/skill/combat/crossbows = 2,
+		/datum/skill/combat/wrestling = 2,
+		/datum/skill/combat/unarmed = 2,
+		/datum/skill/combat/knives = 2,
+		/datum/skill/combat/axes = 3,
+		/datum/skill/combat/swords = 3,
+		/datum/skill/combat/maces = 3,
+		/datum/skill/misc/athletics = 3,
+		/datum/skill/misc/climbing = 3,
+		/datum/skill/misc/sneaking = 1, // Probably don't want them being good at sneak attacks
+		/datum/skill/misc/swimming = 2,
+		/datum/skill/misc/medicine = 1,
+		/datum/skill/misc/reading = 1,
+		/datum/skill/misc/tracking = 3,
+		/datum/skill/craft/crafting = 1,
+		/datum/skill/misc/riding = 2,
+		/datum/skill/craft/cooking = 1, // This should let them fry meat on fires.
+	)
+
+/datum/outfit/job/roguetown/vanguard/fusilier/pre_equip(mob/living/carbon/human/H)
+	..()
+	armor = /obj/item/clothing/suit/roguetown/armor/leather
+	backl = /obj/item/gun/ballistic/firearm/flintgonne/fusil
+	beltr = /obj/item/rogueweapon/scabbard/sword
+	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
+	r_hand = /obj/item/rogueweapon/sword/iron
+	id = /obj/item/scomstone/bad/garrison
+	backpack_contents = list(
+		/obj/item/roguekey/walls = 1,
+		/obj/item/flashlight/flare/torch/lantern = 1,
+		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,
+		/obj/item/signal_horn = 1,
+		/obj/item/quiver/bullet/lead= 1,
+		/obj/item/powderflask = 1
 		)
 	H.verbs |= /mob/proc/haltyell
 	H.set_blindness(0)

@@ -2,7 +2,7 @@ import * as changelogConfig from "./changelogConfig.js";
 
 const REGEX_CHANGELOG_LINE = /^(\w+): (.+)$/;
 
-const CHANGELOG_KEYS_TO_ENTRY = {};
+const CHANGELOG_KEYS_TO_ENTRY = Object.create(null);
 for (const [types, entry] of changelogConfig.CHANGELOG_ENTRIES) {
 	const entryWithChangelogKey = {
 		...entry,
@@ -40,9 +40,9 @@ function parseChangelogBody(lines, openTag) {
 		if (match) {
 			const [_, type, description] = match;
 
-			const entry = CHANGELOG_KEYS_TO_ENTRY[type];
+			const entry = CHANGELOG_KEYS_TO_ENTRY[type.toLowerCase()];
 
-			if (entry.placeholders.includes(description)) {
+			if (!entry || entry.placeholders.includes(description)) {
 				continue;
 			}
 

@@ -10,6 +10,20 @@
 	var/pain_hud_dirty = FALSE
 	var/injury_hud_update_queued = FALSE
 
+/mob/living/verb/toggle_scening()
+	set name = "Toggle Scene Privacy"
+	set category = "IC"
+	set desc = "Prevent orb scrying until you move or toggle scene privacy off."
+	if(do_not_disturb)
+		do_not_disturb = FALSE
+		to_chat(src, span_notice("You are no longer marked as private and can be scried."))
+		log_game("[key_name(src)] has disabled scene privacy at [loc_name(src)].")
+	else
+		do_not_disturb = TRUE
+		to_chat(src, span_notice("You are now marked as private and cannot be scried by an orb until you move or toggle scene privacy off."))
+		log_game("[key_name(src)] has enabled scene privacy at [loc_name(src)].")
+		message_admins("[key_name_admin(src)] has enabled scene privacy at [ADMIN_VERBOSEJMP(src)].")
+
 /mob/living/Initialize(mapload)
 	. = ..()
 	update_a_intents()
@@ -83,9 +97,9 @@
 	enemies = list()
 
 /mob/living/onZImpact(turf/T, levels)
-	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE2))
+	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE2) && !HAS_TRAIT(src, TRAIT_DEADITE))
 		return
-	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE1))
+	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE1) && !HAS_TRAIT(src, TRAIT_DEADITE))
 		if(levels <= 2)
 			Immobilize(10)
 			if(m_intent == MOVE_INTENT_RUN)
@@ -817,7 +831,7 @@
 	if(!(src.mobility_flags & MOBILITY_STAND))
 		return TRUE
 	var/list/acceptable = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH)
-	if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN))
+	if((HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) || HAS_TRAIT(L, TRAIT_TALONKICKS)) && !HAS_TRAIT(L, TRAIT_DEADITE))
 		acceptable.Add(BODY_ZONE_HEAD)
 	if( !(check_zone(L.zone_selected) in acceptable) )
 		to_chat(L, span_warning("I can't reach that."))
@@ -838,7 +852,7 @@
 		else
 			if(!CZ)
 				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
-				if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN))
+				if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) && !HAS_TRAIT(L, TRAIT_DEADITE)) //Non-deadite monks can hit more like feet.
 					acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH, BODY_ZONE_PRECISE_R_FOOT, BODY_ZONE_PRECISE_L_FOOT)
 	else if(!(L.mobility_flags & MOBILITY_STAND) && (mobility_flags & MOBILITY_STAND)) //we are prone, victim is standing
 		if(I)

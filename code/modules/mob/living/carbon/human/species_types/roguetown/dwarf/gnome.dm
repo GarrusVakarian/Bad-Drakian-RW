@@ -59,6 +59,7 @@ Even though they are of mixed blood and smaller than typical dwarves, most gnome
 		ORGAN_SLOT_LIVER = /obj/item/organ/liver,
 		ORGAN_SLOT_STOMACH = /obj/item/organ/stomach,
 		ORGAN_SLOT_APPENDIX = /obj/item/organ/appendix,
+		ORGAN_SLOT_GUTS = /obj/item/organ/guts,
 		)
 	customizers = list(
 		/datum/customizer/organ/eyes/humanoid,

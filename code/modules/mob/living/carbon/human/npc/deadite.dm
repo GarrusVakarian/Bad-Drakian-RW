@@ -140,12 +140,16 @@
 	return TRUE // use up our turn regardless of if the bite succeeded or not
 
 /mob/living/carbon/human/proc/try_do_deadite_idle()
-
+	if(!HAS_TRAIT(src, TRAIT_DEADITE))
+		return
 	if(mob_timers["deadite_idle"])
 		if(world.time < mob_timers["deadite_idle"] + rand(5 SECONDS, 10 SECONDS))
 			return
 	mob_timers["deadite_idle"] = world.time
-	emote("idle")
+	if(target && prob(50))
+		say(pick("I feel quite hungry!", ",w Kill...", ",w Consume...", ",w Cold...", ",w Join...", ",w Hunger...", ",w Flesh...", ",w Brains...", ",w Die..."))
+	else
+		emote(pick("idle", "idle", "rage", "scream", "sigh"))
 /// Whether this mob is a risen deadite, either a turned antag datum or the NPC deadite type, whose datum turns ~6 s after spawn
 /mob/living/carbon/proc/is_risen_deadite()
 	if(istype(src, /mob/living/carbon/human/species/npc/deadite))

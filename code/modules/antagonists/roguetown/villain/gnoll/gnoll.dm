@@ -30,6 +30,23 @@
 	job_rank = ROLE_GNOLL
 	var/datum/weakref/tracked_target_ref = null
 
+/mob/living/carbon/human
+	/// Per character body: reapplying the shared Hunted quirk must not repeat the announcement.
+	var/hunted_latejoin_announced = FALSE
+
+/mob/living/carbon/human/proc/announce_hunted_latejoin()
+	if(QDELETED(src) || hunted_latejoin_announced || !islatejoin || !client || !mind || stat == DEAD)
+		return
+	if(istype(src, /mob/living/carbon/human/dummy) || advsetup || !class_equip_finished || !HAS_TRAIT(src, TRAIT_GNOLL_HUNTED))
+		return
+
+	hunted_latejoin_announced = TRUE
+	for(var/datum/antagonist/gnoll/gnoll in GLOB.antagonists)
+		var/mob/living/hunter = gnoll.owner?.current
+		if(!isliving(hunter) || QDELETED(hunter) || hunter == src || hunter.stat == DEAD || !hunter.client)
+			continue
+		to_chat(hunter, span_boldnotice("A fresh scent rides the wind. Another marked quarry walks these lands. Use Track to seek them out."))
+
 /proc/get_gnoll_tracking_combat_roles()
 	var/static/list/combat_roles = list(
 		"Orthodoxist" = TRUE,

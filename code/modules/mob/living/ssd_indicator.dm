@@ -33,11 +33,21 @@ GLOBAL_LIST_INIT(disconnected_admin_alert_role_times, list(
 	disconnected_admin_alert_timer = null
 	if(client || !last_logout_time || stat == DEAD || disconnected_admin_alert_sent || HAS_TRAIT(src, TRAIT_NOSSDINDICATOR))
 		return
+	if(is_stored_in_alternate_form())
+		return
 	if(!ishuman(src))
 		return
 	disconnected_admin_alert_sent = TRUE
 	var/fartravel_link = "(<a href='?_src_=holder;[HrefToken(TRUE)];ssd_sendbacktolobby=[REF(src)]'>Fartravel</a>)"
 	message_admins(span_adminnotice("[ADMIN_LOOKUPFLW(src)] ([get_disconnected_admin_alert_job_name()]) has been in a deep slumber for [DisplayTimeText(world.time - last_logout_time, 1)]. [fartravel_link]"))
+
+/// Transformations retain the original body inside the mob the player controls.
+/mob/living/proc/is_stored_in_alternate_form()
+	var/mob/living/carbon/human/form = loc
+	if(istype(form) && form.stored_mob == src)
+		return TRUE
+	var/obj/shapeshift_holder/holder = loc
+	return istype(holder) && holder.stored == src
 
 /mob/living/proc/get_disconnected_admin_alert_time()
 	var/role_name = get_disconnected_admin_alert_role_name()

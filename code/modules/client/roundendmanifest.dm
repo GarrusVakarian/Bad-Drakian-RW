@@ -24,7 +24,7 @@
 /client/proc/view_roleplay_ads()
 	var/dat
 	for(var/X in GLOB.roleplay_ads)
-		dat += "[GLOB.roleplay_ads[X]]"
+		dat += "[GLOB.roleplay_ads[X]]<br>"
 
 	var/datum/browser/popup = new(src, "actors", "<center>Roleplay Ads</center>", 500, 600)
 	popup.set_content(dat)
@@ -41,23 +41,4 @@
 		for(var/client/advertisee in GLOB.clients)
 			if(advertisee == client || !(advertisee.prefs.toggles & ROLEPLAY_ADS))
 				continue
-			to_chat(advertisee, span_info("[html_encode(real_name)] has set a roleplay ad."))
-
-/// Persist only this body's originating slot, even if another slot is open in preferences.
-/datum/preferences/proc/save_roleplay_ad_for_character(mob/living/carbon/human/H)
-	if(!path || H.roleplay_ad_owner != parent?.ckey || !H.roleplay_ad_slot)
-		return FALSE
-	if(H.roleplay_ad_slot < 1 || H.roleplay_ad_slot > max_save_slots)
-		return FALSE
-	var/savefile/S = new /savefile(path)
-	S.cd = "/character[H.roleplay_ad_slot]"
-	if(H.roleplay_ad_is_gnoll)
-		WRITE_FILE(S["gnoll_roleplay_ad"], H.roleplay_ad)
-	else
-		WRITE_FILE(S["roleplay_ad"], H.roleplay_ad)
-	if(default_slot == H.roleplay_ad_slot)
-		if(H.roleplay_ad_is_gnoll)
-			gnoll_prefs.roleplay_ad = H.roleplay_ad
-		else
-			roleplay_ad = H.roleplay_ad
-	return TRUE
+			to_chat(advertisee, "<span class='notice' style='font-size: 90%;'>[html_encode(real_name)] has set a roleplay ad.</span>")

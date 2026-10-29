@@ -330,6 +330,9 @@
 	if(HAS_TRAIT(M, TRAIT_PACIFISM))
 		to_chat(M, span_warning("I don't want to hurt anyone!"))
 		return FALSE
+	if(mind && M.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		to_chat(M, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
+		M.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 
 	M.do_attack_animation(src, visual_effect_icon = M.a_intent.animname)
 	playsound(get_turf(M), pick(M.attack_sound), 100, FALSE)
@@ -347,6 +350,9 @@
 	if(M.incapacitated())
 		return FALSE
 
+	if(checkguard(M))
+		return FALSE
+
 	if(checkmiss(M))
 		return FALSE
 
@@ -360,6 +366,15 @@
 
 	return TRUE
 
+
+/mob/living/proc/checkguard(mob/living/simple_animal/attacker)
+	if(!ishuman(src))
+		return FALSE
+	var/mob/living/carbon/human/target = src
+	if(!target.has_status_effect(/datum/status_effect/buff/clash))
+		return FALSE
+	target.simple_clash(attacker, target.get_active_held_item())
+	return TRUE
 
 /mob/living/ex_act(severity, target)
 	..()

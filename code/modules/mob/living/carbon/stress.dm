@@ -41,6 +41,8 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 		if(!event.can_apply(src))
 			return
 		stressors[event_type] = event
+		if(event_type == /datum/stressevent/stuffed || event_type == /datum/stressevent/hydrated)
+			to_chat(src, event.desc)
 	event.time_added = world.time
 	if(event.stacks >= event.max_stacks)
 		return event

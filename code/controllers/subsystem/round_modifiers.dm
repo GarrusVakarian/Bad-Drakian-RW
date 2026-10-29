@@ -75,6 +75,13 @@
 					if(weather_type in weather_list)
 						weather_list[weather_type] = round(weather_list[weather_type] * M.weather_weights[weather_type])
 
+	// Guarantee one Verevolf slot on Chaos rounds without spending the modifier budget.
+	if(level > 0)
+		var/datum/round_event_control/antagonist/solo/werewolf/werewolf_event = locate(/datum/round_event_control/antagonist/solo/werewolf) in control
+		if(werewolf_event)
+			werewolf_event.maximum_antags = 1
+			rolled_villain_events |= werewolf_event
+
 	for(var/job_title in slots)
 		var/datum/job/J = SSjob.GetJob(job_title)
 		if(!J)

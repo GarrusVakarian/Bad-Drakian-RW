@@ -129,15 +129,26 @@
 /obj/structure/fluff/traveltile/proc/try_living_travel(obj/structure/fluff/traveltile/T, mob/living/L)
 	if(!can_go(L))
 		return FALSE
+	if(has_retained_knot(L))
+		return FALSE
 	if(L.pulledby)
 		return FALSE
 	to_chat(L, "<b>[travel_message]</b>")
 	if(do_after(L, travel_time, needhand = FALSE, target = src))
+		if(has_retained_knot(L))
+			return FALSE
 		if(L.pulledby)
 			to_chat(L, span_warning("I can't go, something's holding onto me."))
 			return FALSE
 		perform_travel(T, L)
 		return TRUE
+	return FALSE
+
+/obj/structure/fluff/traveltile/proc/has_retained_knot(mob/living/L)
+	for(var/mob/living/carbon/human/H in list(L, L.pulling))
+		if(H.sexcon?.knot_requires_manual_release() && H.sexcon.knot_movement_consent_valid())
+			to_chat(L, span_warning("I need to release the knot before travelling."))
+			return TRUE
 	return FALSE
 
 /obj/structure/fluff/traveltile/proc/perform_travel(obj/structure/fluff/traveltile/T, mob/living/L)

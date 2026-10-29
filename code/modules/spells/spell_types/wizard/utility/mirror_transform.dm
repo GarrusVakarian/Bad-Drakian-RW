@@ -24,10 +24,12 @@
 
 /obj/effect/proc_holder/spell/invoked/mirror_transform/cast(list/targets, mob/user)  // Changed to match invoked spell pattern
 	if(!isliving(targets[1]))
-		return
+		revert_cast(user)
+		return FALSE
 	var/mob/living/carbon/human/H = targets[1]
 	if(!istype(H))
-		return
+		revert_cast(user)
+		return FALSE
 
 	ADD_TRAIT(H, TRAIT_MIRROR_MAGIC, TRAIT_GENERIC)
 	H.visible_message(span_notice("[H]'s reflection shimmers briefly."), span_notice("You feel a connection to mirrors forming..."))

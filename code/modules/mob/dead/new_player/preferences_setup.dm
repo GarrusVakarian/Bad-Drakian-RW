@@ -43,48 +43,72 @@
 		real_name = pref_species.random_name(gender,1)
 	set_new_race(new random_species_type)
 
+/datum/preferences/proc/get_preview_job()
+	var/datum/job/preview_job
+	var/highest_priority = 0
+	for(var/job in job_preferences)
+		if(job_preferences[job] <= highest_priority)
+			continue
+		var/datum/job/candidate = SSjob.GetJob(job)
+		if(candidate)
+			preview_job = candidate
+			highest_priority = job_preferences[job]
+	return preview_job
+
 /datum/preferences/proc/update_preview_icon(jobOnly = FALSE)
 	set waitfor = 0
+	clear_hair_preview_cache()
 	if(!parent)
 		return
 	if(parent.is_new_player())
 		return
 //	last_preview_update = world.time
 	// Set up the dummy for its photoshoot
-	var/datum/job/previewJob
-	var/highest_pref = 0
-	for(var/job in job_preferences)
-		if(job_preferences[job] > highest_pref)
-			previewJob = SSjob.GetJob(job)
-			highest_pref = job_preferences[job]
+	var/datum/job/previewJob = get_preview_job()
 	var/mob/living/carbon/human/dummy/mannequin = generate_or_wait_for_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
-	copy_to(mannequin, 1, TRUE, TRUE)
+	var/mutable_appearance/preview_appearance
+	try
+		copy_to(mannequin, 1, TRUE, TRUE)
 
-	if(jobOnly)
-		mannequin.job = previewJob.title
-		previewJob.equip(mannequin, TRUE, preference_source = parent)
+		if(jobOnly && previewJob)
+			mannequin.job = previewJob.title
+			previewJob.equip(mannequin, TRUE, preference_source = parent)
 
-	if(preview_subclass && !jobOnly)
-		testing("previewjob")
-		mannequin.job = previewJob.title
-		mannequin.patron = selected_patron
-		preview_subclass.equipme(mannequin, dummy = TRUE)
+		if(preview_subclass && !jobOnly && previewJob)
+			testing("previewjob")
+			mannequin.job = previewJob.title
+			mannequin.patron = selected_patron
+			preview_subclass.equipme(mannequin, dummy = TRUE)
 
-	mannequin.regenerate_clothes()
-	apply_preview_erect_state_to_mannequin(mannequin)
-	mannequin.update_body()
-	mannequin.update_hair()
-	mannequin.rebuild_obscured_flags()
-	parent.show_character_previews(new /mutable_appearance(mannequin))
+		mannequin.regenerate_clothes()
+		apply_preview_erect_state_to_mannequin(mannequin)
+		mannequin.update_body()
+		mannequin.update_hair()
+		mannequin.rebuild_obscured_flags()
+		preview_appearance = new /mutable_appearance(mannequin)
+	catch(var/exception/error)
+		unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
+		throw error
 	unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
+	// Release the shared mannequin before touching a client that may have disconnected.
+	parent?.show_character_previews(preview_appearance)
 
 /datum/preferences/proc/apply_preview_erect_state_to_mannequin(mob/living/carbon/human/mannequin)
 	if(!mannequin)
 		return
+	// The oviduct reads the dummy's arousal controller, even when it has no penis.
+	if(mannequin.sexcon)
+		switch(preview_erect_state)
+			if(ERECT_STATE_HARD)
+				mannequin.sexcon.manual_arousal = SEX_MANUAL_AROUSAL_FULL
+			if(ERECT_STATE_PARTIAL)
+				mannequin.sexcon.manual_arousal = SEX_MANUAL_AROUSAL_PARTIAL
+			else
+				mannequin.sexcon.manual_arousal = SEX_MANUAL_AROUSAL_UNAROUSED
 	var/obj/item/organ/penis/preview_penis = mannequin.getorganslot(ORGAN_SLOT_PENIS)
 	if(preview_penis)
 		preview_penis.erect_state = preview_erect_state
-		mannequin.update_body_parts(TRUE)
+	mannequin.update_body_parts(TRUE)
 
 /datum/preferences/proc/spec_check(mob/user)
 	if(!istype(pref_species))

@@ -18,6 +18,8 @@ GLOBAL_LIST_INIT(towner_tier_flat_bonus, list(
 	levy_exempt = TRUE
 	guild_cut_exempt = TRUE
 	override_destination = /area/rogue/indoors/town/dwarfin
+	// These parcels return to their owner, not to the shipment table's area.
+	requires_mapped_destination = FALSE
 	var/posting_tier = TOWNER_POSTING_TIER_MEDIUM
 	var/loadout_variety
 	var/parcel_label = "sealed strongbox"

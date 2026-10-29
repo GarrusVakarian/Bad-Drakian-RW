@@ -187,6 +187,8 @@
 				sleep(1)
 		if(!HAS_TRAIT(src, TRAIT_ZJUMP) && (m_intent == MOVE_INTENT_RUN))	//Jesters and werewolves don't get immobilized at all
 			Immobilize((HAS_TRAIT(src, TRAIT_LEAPER) ? 5 : 10))	//Acrobatics get half the time
+			if(HAS_TRAIT(src, TRAIT_DEADITE))
+				Knockdown(10)
 		if(isopenturf(jump_movable.loc))
 			var/turf/open/T = jump_movable.loc
 			if(T.landsound)

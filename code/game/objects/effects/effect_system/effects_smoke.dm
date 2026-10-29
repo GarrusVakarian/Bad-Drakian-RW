@@ -269,7 +269,9 @@ Zizo Bane sleep powder
 /obj/effect/particle_effect/smoke/zizosleep/smoke_mob(mob/living/carbon/M)
 	if(..())
 		M.emote("cough")
-		M.apply_status_effect(/datum/status_effect/debuff/knockout)
+		// Use the same application-time choice as eaten or powdered Zizo's Bane.
+		// M.apply_status_effect(/datum/status_effect/debuff/knockout)
+		M.reagents?.add_reagent(/datum/reagent/sleep_powder, 1)
 		return 1
 
 /obj/effect/particle_effect/smoke/zizosleep

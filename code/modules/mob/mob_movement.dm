@@ -128,6 +128,8 @@
 	if(mob.buckled)
 		var/mob/buckled_mob = mob
 		if(buckled_mob.get_buckled_animal_mount())
+			if(mob.pulledby && mob.pulledby != mob && Process_Grab())
+				return FALSE
 			var/turf/open/water/water_turf = get_turf(mob)
 			if(istype(water_turf))
 				move_delay += add_delay

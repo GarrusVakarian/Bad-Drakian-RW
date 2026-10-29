@@ -262,7 +262,7 @@
 	triumph_cost = 5
 	granted_virtues = list(
 		/datum/virtue/utility/resident,
-		/datum/virtue/heretic/zchurch_keyholder
+		/datum/virtue/utility/zchurch_keyholder
 	)
 	custom_text = "Grants two virtues for the Volf In Sheep's Clothing:\n\
 	- Resident: City residency, treasury account, home in the city\n\

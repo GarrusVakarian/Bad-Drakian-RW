@@ -407,7 +407,7 @@
 
 /obj/item/grown/log/tree/stake/attack_obj(obj/O, mob/living/user)
 	if(!isitem(O))
-		return
+		return ..()
 	var/obj/item/I = O
 	if(I.anvilrepair)
 		if(I.smeltresult == /obj/item/ingot/iron)
@@ -416,6 +416,8 @@
 			to_chat(user, span_warning("The [user] breaks an [I] using stake into small parts!"))
 			new /obj/item/scrap(get_turf(I))
 			qdel(I)
+			return
+	return ..()
 
 //................	Lumber essence	............... //
 /obj/item/grown/log/tree/small/essence

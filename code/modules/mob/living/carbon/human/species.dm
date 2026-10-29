@@ -3,6 +3,8 @@
 GLOBAL_LIST_EMPTY(roundstart_races)
 
 /datum/species
+	/// Optional tint for blood spilled by this species; null preserves the normal blood sprites.
+	var/blood_color = null
 	/// if the game needs to manually check my race to do something not included in a proc here, it will use this
 	var/id
 	///this is used if you want to use a different species limb sprites. Mainly used for angels as they look like humans.
@@ -171,6 +173,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		ORGAN_SLOT_LIVER = /obj/item/organ/liver,
 		ORGAN_SLOT_STOMACH = /obj/item/organ/stomach,
 		ORGAN_SLOT_APPENDIX = /obj/item/organ/appendix,
+		ORGAN_SLOT_GUTS = /obj/item/organ/guts,
 		//ORGAN_SLOT_TESTICLES = /obj/item/organ/testicles,
 		//ORGAN_SLOT_PENIS = /obj/item/organ/penis,
 		//ORGAN_SLOT_BREASTS = /obj/item/organ/breasts,
@@ -1048,6 +1051,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if (H.nutrition > 0 && H.stat != DEAD && !HAS_TRAIT(H, TRAIT_NOHUNGER))
 		// THEY HUNGER
 		var/hunger_rate = HUNGER_FACTOR
+		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
+			hunger_rate *= 0.7 // QOL for hemophages, from number of complaints.
 		if (H.bodytemperature < BODYTEMP_NORMAL_MIN)	//Hunger increased by 50% when cold
 			hunger_rate *= 1.5
 /*		if(H.satiety > MAX_SATIETY)
@@ -1082,6 +1087,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		var/hunger_rate = HUNGER_FACTOR
 		if (H.bodytemperature > BODYTEMP_NORMAL_MAX)	//thirst increased by 50% when hot
 			hunger_rate *= 1.5
+		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
+			hunger_rate *= 0.8
 //		hunger_rate *= H.physiology.hunger_mod
 		if(!H.mind || world.time < H.time_of_last_move + 10 MINUTES)
 			H.adjust_hydration(-hunger_rate)
@@ -1265,6 +1272,11 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(HAS_TRAIT(user, TRAIT_PACIFISM))
 		to_chat(user, span_warning("I don't want to harm [target]!"))
 		return FALSE
+	if(target.mind && user.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		to_chat(user, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
+		user.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
+	if(user != target && user.client && target.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		target.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	if(target.check_block())
 		target.visible_message(span_warning("[target] blocks [user]'s attack!"), \
 						span_danger("I block [user]'s attack!"), span_hear("I hear a swoosh!"), COMBAT_MESSAGE_RANGE, user)
@@ -1609,10 +1621,15 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(HAS_TRAIT(user, TRAIT_PACIFISM))
 		to_chat(user, span_warning("I don't want to harm [target]!"))
 		return FALSE
+	if(target.mind && user.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		to_chat(user, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
+		user.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	if(user.IsKnockdown())
 		return FALSE
 	if(user == target)
 		return FALSE
+	if(user != target && user.client && target.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		target.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	SEND_SIGNAL(user, COMSIG_MOB_KICKED, target)
 	if(!HAS_TRAIT(user, TRAIT_GARROTED))
 		if(user.check_leg_grabbed(1) || user.check_leg_grabbed(2))
@@ -1633,7 +1650,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			var/selzone = user.zone_selected
 			var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 			var/damage = user.get_punch_dmg() * 1.4
-			var/armor_block = target.run_armor_check(selzone, "blunt", blade_dulling = BCLASS_BLUNT, damage = damage)
+			var/talons = HAS_TRAIT(user, TRAIT_TALONKICKS)
+			var/kick_bclass = talons ? BCLASS_CUT : BCLASS_BLUNT
+			var/armor_block = target.run_armor_check(selzone, talons ? "slash" : "blunt", blade_dulling = kick_bclass, damage = damage)
 			target.next_attack_msg.Cut()
 			var/nodmg = FALSE
 			if(!target.apply_damage(damage, user.dna.species.attack_type, affecting, armor_block))
@@ -1641,8 +1660,11 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				target.next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
 			else
 				if(affecting)
-					affecting.bodypart_attacked_by(BCLASS_BLUNT, damage, user, selzone, crit_message = TRUE)
-					if(!HAS_TRAIT(user, TRAIT_LAMIAN_TAIL))
+					affecting.bodypart_attacked_by(kick_bclass, damage, user, selzone, crit_message = TRUE)
+					if(talons)
+						target.visible_message(span_danger("[user] rakes [target] with [user.p_their()] talons![target.next_attack_msg.Join()]"), 						span_danger("I'm raked by [user]'s talons![target.next_attack_msg.Join()]"), span_hear("I hear flesh tearing!"), COMBAT_MESSAGE_RANGE, user)
+						to_chat(user, span_danger("I rake [target] with my talons![target.next_attack_msg.Join()]"))
+					else if(!HAS_TRAIT(user, TRAIT_LAMIAN_TAIL))
 						target.visible_message(span_danger("[user] stomps [target]![target.next_attack_msg.Join()]"), \
 						span_danger("I'm stomped by [user]![target.next_attack_msg.Join()]"), span_hear("I hear a sickening kick!"), COMBAT_MESSAGE_RANGE, user)
 						to_chat(user, span_danger("I stomp on [target]![target.next_attack_msg.Join()]"))
@@ -1791,12 +1813,14 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 		if(!affecting)
 			affecting = target.get_bodypart(BODY_ZONE_CHEST)
-		var/armor_block = target.run_armor_check(selzone, "blunt", blade_dulling = BCLASS_BLUNT)
+		var/talons = HAS_TRAIT(user, TRAIT_TALONKICKS)
+		var/kick_bclass = talons ? BCLASS_CUT : BCLASS_BLUNT
+		var/armor_block = target.run_armor_check(selzone, talons ? "slash" : "blunt", blade_dulling = kick_bclass)
 		var/damage = user.get_punch_dmg()
 		if(!target.apply_damage(damage, user.dna.species.attack_type, affecting, armor_block))
 			target.next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
 		else
-			affecting.bodypart_attacked_by(BCLASS_BLUNT, damage, user, selzone)
+			affecting.bodypart_attacked_by(kick_bclass, damage, user, selzone)
 		playsound(target, 'sound/combat/hits/kick/kick.ogg', 100, TRUE, -1)
 		target.lastattacker = user.real_name
 		target.lastattackerckey = user.ckey

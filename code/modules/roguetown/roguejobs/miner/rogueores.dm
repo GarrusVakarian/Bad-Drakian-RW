@@ -299,6 +299,13 @@
 	smeltresult = /obj/item/ingot/aaslag
 	sellprice = 1
 
+/obj/item/ingot/scrap
+	name = "scrap slag"
+	desc = "A pitted, rust-flecked lump of slag-iron, cooked out of common rock. Worthless for anything fine, but it takes a hammer well enough; a fine thing for an apprentice to ruin."
+	icon_state = "scrapslag"
+	smeltresult = /obj/item/ingot/scrap
+	sellprice = 1
+
 //Anomalous Smeltings
 /obj/item/ingot/weeping
 	name = "enduring ingot"

@@ -648,6 +648,9 @@
 
 	var/mob/living/carbon/human/H = user
 	var/is_holding = HAS_TRAIT(H, TRAIT_HOLDBREATH)
+	if(!is_holding && H.getOxyLoss() > 50)
+		to_chat(H, span_notice("I don't have enough breath to hold..."))
+		return FALSE
 
 	if(is_holding)
 		REMOVE_TRAIT(H, TRAIT_HOLDBREATH, "[type]")
@@ -657,7 +660,7 @@
 		)
 		H.log_message("stopped holding their breath.", LOG_ATTACK)
 	else
-		var/confirm = alert(H, "Are you sure you want to hold your breath? This will kill you if held long enough. You can undo it by pressing the emote again.", "Hold Breath", "Yes", "No")
+		var/confirm = alert(H, "Are you sure you want to hold your breath? This will make you pass out if held long enough. You can undo it by pressing the emote again.", "Hold Breath", "Yes", "No")
 		if(confirm != "Yes")
 			return FALSE
 		ADD_TRAIT(H, TRAIT_HOLDBREATH, "[type]")
@@ -1048,10 +1051,23 @@
 
 /datum/emote/living/haltyell
 	key = "haltyell"
+	key_third_person = "halt"
 	message = "shouts a halt!"
 	emote_type = EMOTE_AUDIBLE
-	only_forced_audio = TRUE
 	show_runechat = FALSE
+
+/datum/emote/living/haltyell/can_run_emote(mob/user, status_check = TRUE, intentional = FALSE)
+	if(!..())
+		return FALSE
+	if(intentional && !(/mob/proc/haltyell in user.verbs) && !(/mob/proc/haltyell_exhausting in user.verbs))
+		return FALSE
+	return TRUE
+
+/datum/emote/living/haltyell/run_emote(mob/user, params, type_override, intentional = FALSE, targetted = FALSE)
+	. = ..()
+	// Text commands must retain the cost of the exhausting job verb.
+	if(. && intentional && !(/mob/proc/haltyell in user.verbs) && (/mob/proc/haltyell_exhausting in user.verbs))
+		user.stamina_add(rand(5,15))
 
 /datum/emote/living/rage
 	key = "rage"
@@ -1157,6 +1173,19 @@
 	. = ..()
 	if(.)
 		user.spin(4, 1)
+
+/datum/emote/living/pleased
+	key = "pleased"
+	message = "makes a pleased sound."
+	message_muffled = "makes a muffled pleased sound."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+
+/mob/living/carbon/human/verb/emote_pleased()
+	set name = "Pleased"
+	set category = "Noises"
+
+	emote("pleased", intentional = TRUE)
 
 /datum/emote/living/sigh
 	key = "sigh"
@@ -2453,285 +2482,6 @@
 
 	emote("sniff", intentional = TRUE)
 
-/datum/emote/living/stat_roll
-	var/delay = 2.5 SECONDS
-	var/list/attempt_message_list
-	var/list/success_message_list
-	var/list/failure_message_list
-
-/datum/emote/living/stat_roll/run_emote(mob/user, params, type_override, intentional = FALSE)
-	. = ..()
-	if(.)
-		sleep(delay)
-
-		var/mob/living/living = user
-		var/chance_per_point = 5
-		var/success = FALSE
-		var/chance = 0
-
-		switch(key)
-			if("strength")
-				success = living.stat_roll(STAT_STRENGTH, chance_per_point)
-				chance = living.get_stat(STAT_STRENGTH)
-			if("perception")
-				success = living.stat_roll(STAT_PERCEPTION, chance_per_point)
-				chance = living.get_stat(STAT_PERCEPTION)
-			if("intelligence")
-				success = living.stat_roll(STAT_INTELLIGENCE, chance_per_point)
-				chance = living.get_stat(STAT_INTELLIGENCE)
-			if("constitution")
-				success = living.stat_roll(STAT_CONSTITUTION, chance_per_point)
-				chance = living.get_stat(STAT_CONSTITUTION)
-			if("willpower")
-				success = living.stat_roll(STAT_WILLPOWER, chance_per_point)
-				chance = living.get_stat(STAT_WILLPOWER)
-			if("speed")
-				success = living.stat_roll(STAT_SPEED, chance_per_point)
-				chance = living.get_stat(STAT_SPEED)
-			if("fortune")
-				success = living.stat_roll(STAT_FORTUNE, chance_per_point)
-				chance = living.get_stat(STAT_FORTUNE)
-
-		chance *= chance_per_point
-
-		var/msg = success ? span_green("SUCCEEDS and [pick(success_message_list)]") : span_danger("FAILS and [pick(failure_message_list)] [chance]%")
-
-		msg = replace_pronoun(user, msg)
-
-		if(!msg)
-			return
-
-		// A COMSIG here would be nice, in my attempts it sadly didn't work out well for the relay.
-		var/atom/movable/emotelocation = user
-		var/mob/living/carbon/human/human
-		if(ishuman(user))
-			human = user
-
-		var/obj/item/organ/dullahan_vision/vision
-		var/datum/species/dullahan/dullahan
-		if(isdullahan(user))
-			dullahan = human.dna.species
-			vision = human.getorganslot(ORGAN_SLOT_HUD)
-			if(dullahan.headless && vision.viewing_head)
-				emotelocation = dullahan.my_head
-
-		user.log_message(msg, LOG_EMOTE)
-		var/pre_color_msg = msg
-		if (use_params_for_runechat) // apply puncutation stripping here where appropriate
-			var/static/regex/regex = regex(@"[,.!?]", "g")
-			pre_color_msg = regex.Replace(pre_color_msg, "")
-			pre_color_msg = trim(pre_color_msg, MAX_MESSAGE_LEN)
-		// captured before the wrap below. Not pre_color_msg, that one is runechat text with its punctuation stripped
-		var/seen_log_msg = "[emotelocation] [msg]"
-		// Checks to see if we're emoting on the body while we have a head, or if we're emoting on the head.
-		if(human && human.voice_color)
-			msg = "<span style='color:#[human.voice_color];text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>[emotelocation]</b></span> " + msg
-		else
-			msg = "<b>[emotelocation]</b> " + msg
-		for(var/mob/M in GLOB.dead_mob_list)
-			if(!M.client || isnewplayer(M))
-				continue
-			var/T = get_turf(emotelocation)
-			if(M.stat == DEAD && M.client && (M.client.prefs?.chat_toggles & CHAT_GHOSTSIGHT) && !(M in viewers(T, null)))
-				M.show_message(msg)
-		var/runechat_msg_to_use = null
-		if(show_runechat)
-			runechat_msg_to_use = runechat_msg ? runechat_msg : pre_color_msg
-		emotelocation.visible_message(msg, runechat_message = runechat_msg_to_use, log_seen = SEEN_LOG_EMOTE, log_seen_msg = seen_log_msg)
-
-/datum/emote/living/stat_roll/select_message_type(mob/user, msg, intentional)
-	return pick(attempt_message_list)
-
-/datum/emote/living/stat_roll/strength
-	key = "strength"
-	key_third_person = "str"
-	attempt_message_list = list(
-		"tests their strength...",
-		"puts their back into it...",
-		"begins to flex...",
-	)
-
-	success_message_list = list(
-		"is brimming with power!",
-		"is truly beefy!",
-		"shows off their muscle!",
-	)
-
-	failure_message_list = list(
-		"is a little wet noodle...",
-		"would lose in an arm wrestling match against a rous...",
-		"should eat more sausage...",
-	)
-
-/mob/living/carbon/human/verb/emote_strength_roll()
-	set name = "Roll Strength"
-	set category = "Emotes"
-
-	emote("strength", intentional = TRUE)
-
-/datum/emote/living/stat_roll/perception
-	key = "perception"
-	key_third_person = "per"
-	attempt_message_list = list(
-		"takes a good, long look...",
-		"focuses in...",
-		"squints...",
-	)
-
-	success_message_list = list(
-		"has eyes like a hawk!",
-		"sees what others don't!",
-		"has perfect 20/20 vision!",
-	)
-
-	failure_message_list = list(
-		"is totally oblivious...",
-		"has cataracts in their eyes...",
-		"is blind...",
-	)
-
-/mob/living/carbon/human/verb/emote_perception_roll()
-	set name = "Roll Perception"
-	set category = "Emotes"
-
-	emote("perception", intentional = TRUE)
-
-
-/datum/emote/living/stat_roll/intelligence
-	key = "intelligence"
-	key_third_person = "int"
-	attempt_message_list = list(
-		"thinks hard...",
-		"furrows their brows...",
-		"rubs their chin...",
-	)
-
-	success_message_list = list(
-		"is a genius!",
-		"has a mind sharp as a whip!",
-		"knows what they're doing!",
-	)
-
-	failure_message_list = list(
-		"is as dumb as a rock...",
-		"has an empty head...",
-		"couldn't put 2 and 2 together...",
-	)
-
-/mob/living/carbon/human/verb/emote_intelligence_roll()
-	set name = "Roll Intelligence"
-	set category = "Emotes"
-
-	emote("intelligence", intentional = TRUE)
-
-/datum/emote/living/stat_roll/constitution
-	key = "constitution"
-	key_third_person = "con"
-	attempt_message_list = list(
-		"tests their toughness...",
-		"braces for impact...",
-		"prepares to endure...",
-	)
-
-	success_message_list = list(
-		"doesn't even flinch!",
-		"is solid as an oak!",
-		"is one tough nut to crack!",
-	)
-
-	failure_message_list = list(
-		"has paper skin...",
-		"would be torn to shreds by a light breeze...",
-		"has a glass jaw...",
-	)
-
-/mob/living/carbon/human/verb/emote_constitution_roll()
-	set name = "Roll Constitution"
-	set category = "Emotes"
-
-	emote("constitution", intentional = TRUE)
-
-/datum/emote/living/stat_roll/willpower
-	key = "willpower"
-	key_third_person = "wil"
-	attempt_message_list = list(
-		"tests their willpower...",
-		"gathers their courage...",
-		"prepares to use their determination...",
-	)
-
-	success_message_list = list(
-		"proves mighty!",
-		"never gives up!",
-		"persists through anything!",
-	)
-
-	failure_message_list = list(
-		"is a weak willed chicken...",
-		"gives up trying...",
-		"faints when they get a splinter...",
-	)
-
-/mob/living/carbon/human/verb/emote_willpower_roll()
-	set name = "Roll Willpower"
-	set category = "Emotes"
-
-	emote("willpower", intentional = TRUE)
-
-/datum/emote/living/stat_roll/speed
-	key = "speed"
-	key_third_person = "spd"
-	attempt_message_list = list(
-		"prepares their moves...",
-		"starts to get limber...",
-		"tries to get speedy...",
-	)
-
-	success_message_list = list(
-		"is in perfect control!",
-		"is as agile as a cat!",
-		"is very flexible!",
-	)
-
-	failure_message_list = list(
-		"has two left feet...",
-		"trips over themselves...",
-		"is slower than a snail...",
-	)
-
-/mob/living/carbon/human/verb/emote_speed_roll()
-	set name = "Roll Speed"
-	set category = "Emotes"
-
-	emote("speed", intentional = TRUE)
-
-/datum/emote/living/stat_roll/fortune
-	key = "fortune"
-	key_third_person = "for"
-	attempt_message_list = list(
-		"tries their fortune...",
-		"takes a chance...",
-		"prepares to gamble...",
-	)
-
-	success_message_list = list(
-		"could make an arrow turn around and climb back into the bow!",
-		"has a rabbit's paw in their pocket!",
-		"persists through pure luck!",
-	)
-
-	failure_message_list = list(
-		"realizes the game was rigged from the start...",
-		"gets dealt a bad hand...",
-		"has the odds stacked against them...",
-	)
-
-/mob/living/carbon/human/verb/emote_fortune_roll()
-	set name = "Roll Fortune"
-	set category = "Emotes"
-
-	emote("fortune", intentional = TRUE)
-
 /datum/emote/living/praysuicide
 	key = "praysuicide"
 	key_third_person = "utters their last words"
@@ -2878,3 +2628,72 @@
 	else
 		show_tongue_noise_warning()
 		return
+
+/datum/emote/living/ycackle
+	key = "ycackle"
+	key_third_person = "cackles!"
+	message = "cackles!"
+	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
+	message_muffled = "makes a muffled cackle!"
+	vary = TRUE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_ycackle()
+	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue) || istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/harpy))
+		set name = "Yeen Cackle"
+		set category = "Noises"
+		emote("ycackle", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+// Ported from Ochre Valley.
+/datum/emote/living/quest
+	key = "quest"
+	key_third_person = "has a quest to offer!"
+	message = "has a quest to offer!"
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = TRUE
+	var/static/list/cancel_signals = list(COMSIG_MOB_COMBAT_MODE_ENABLED, COMSIG_MOB_ITEM_BEING_ATTACKED, COMSIG_ATOM_ATTACK_ANIMAL, COMSIG_ATOM_BULLET_ACT)
+
+/datum/emote/living/quest/run_emote(mob/living/user, params, type_override, intentional, targetted, animal)
+	if(user.overlays_standing[QUEST_OFFER_LAYER])
+		stop_offering_quest(user)
+		return TRUE
+	. = ..()
+	if(!.)
+		return
+	user.play_overhead_indicator_simple('icons/mob/quest_offer.dmi', "quest", -1, QUEST_OFFER_LAYER, soundin = 'sound/misc/levelup1.ogg', y_offset = 32)
+	RegisterSignal(user, cancel_signals, PROC_REF(stop_offering_quest))
+	RegisterSignal(user, list(COMSIG_ATOM_ATTACK_HAND, COMSIG_HUMAN_MELEE_UNARMED_ATTACKBY), PROC_REF(on_hand_attack))
+	RegisterSignal(user, COMSIG_LIVING_IMPACT_ZONE, PROC_REF(on_thrown_hit))
+	RegisterSignal(user, COMSIG_MOB_APPLY_DAMGE, PROC_REF(on_damage))
+	to_chat(user, span_notice("You have signaled you are offering a quest. Use the 'Offer Quest' emote again to stop."))
+
+/datum/emote/living/quest/proc/stop_offering_quest(mob/living/user)
+	SIGNAL_HANDLER
+	UnregisterSignal(user, cancel_signals + list(COMSIG_ATOM_ATTACK_HAND, COMSIG_HUMAN_MELEE_UNARMED_ATTACKBY, COMSIG_LIVING_IMPACT_ZONE, COMSIG_MOB_APPLY_DAMGE))
+	user.clear_overhead_indicator(user.overlays_standing[QUEST_OFFER_LAYER], QUEST_OFFER_LAYER)
+	to_chat(user, span_notice("You have stopped signaling you're offering a quest."))
+
+/datum/emote/living/quest/proc/on_hand_attack(mob/living/user, mob/living/attacker)
+	SIGNAL_HANDLER
+	if(attacker.used_intent?.type != INTENT_HELP)
+		stop_offering_quest(user)
+
+/datum/emote/living/quest/proc/on_thrown_hit(mob/living/user, obj/item/item)
+	SIGNAL_HANDLER
+	if(item.throwforce > 0)
+		stop_offering_quest(user)
+
+/datum/emote/living/quest/proc/on_damage(mob/living/user, damage)
+	SIGNAL_HANDLER
+	if(damage > 0)
+		stop_offering_quest(user)
+
+/mob/living/carbon/human/verb/emote_quest()
+	set name = "Offer Quest"
+	set category = "Emotes"
+
+	emote("quest", intentional = TRUE)

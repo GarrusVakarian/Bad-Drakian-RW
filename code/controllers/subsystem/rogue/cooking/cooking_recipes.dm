@@ -18,14 +18,39 @@
 	/// Encyclopedia sidebar bucket. One of the FOOD_CAT_* defines.
 	var/book_category = FOOD_CAT_COMBINATION
 
+// Recipe links/step labels adapted from WeNeedMorePhoron, Azure-Peak/Azure-Peak PR #7567 (AGPL-3.0).
+// https://github.com/Azure-Peak/Azure-Peak/pull/7567
+/datum/food_recipe/proc/step_label(entry)
+	if(ispath(entry, /datum/reagent))
+		var/datum/reagent/reagent = entry
+		var/amount = ingredients[entry]
+		return "[amount] [UNIT_FORM_STRING(amount)] of [initial(reagent.name)]"
+	var/atom/ingredient = entry
+	return initial(ingredient.name)
+
+/datum/food_recipe/proc/get_examine_link(label)
+	return "<a href='byond://?src=[REF(src)];show_recipe=1'>[html_encode(label || name)]</a>"
+
+/datum/food_recipe/Topic(href, list/href_list)
+	. = ..()
+	if(!href_list["show_recipe"] || !usr?.client)
+		return
+	// Only the persistent recipes registered by the cooking subsystem can serve pages.
+	if(!(src in SScooking?.recipe_index[base_item]) && !(src in SScooking?.preparation_recipes))
+		return
+	var/datum/browser/popup = new(usr, "food_recipe", name, 650, 650)
+	popup.set_content(generate_html(usr))
+	popup.open()
+
 /datum/food_recipe/proc/generate_html(mob/user)
 	var/html = "<h2>[name]</h2>"
 
 	var/atom/base = base_item
 	if(base)
-		html += "<p><b>Start with:</b> [icon2html(new base, user)] [initial(base.name)]</p>"
+		html += "<p><b>Start with:</b> [food_recipe_icon(base, user)] [item_recipe_label(base)]</p>"
 
 	if(length(ingredients))
+		html += "<p>Prepare the ingredients on a table.</p>"
 		html += "<h3>Then add, in order:</h3><ul>"
 		for(var/i in 1 to length(ingredients))
 			var/entry = ingredients[i]
@@ -35,12 +60,12 @@
 				html += "<li>[amt] [UNIT_FORM_STRING(amt)] of [initial(R.name)]</li>"
 			else
 				var/atom/A = entry
-				html += "<li>[icon2html(new A, user)] [initial(A.name)]</li>"
+				html += "<li>[food_recipe_icon(A, user)] [item_recipe_label(A)]</li>"
 		html += "</ul>"
 
 	var/atom/result = result_type
 	if(result)
-		html += "<p><b>Produces:</b> [icon2html(new result, user)] [initial(result.name)]</p>"
+		html += "<p><b>Produces:</b> [food_recipe_icon(result, user)] [initial(result.name)]</p>"
 		var/result_details = describe_food_result(result)
 		if(result_details)
 			html += result_details
@@ -55,10 +80,36 @@
 		if(length(follow_ups))
 			html += "<h3>Can be further prepared into:</h3><ul>"
 			for(var/datum/food_recipe/F in follow_ups)
-				html += "<li>[F.name]</li>"
+				html += "<li>[F.get_examine_link()]</li>"
 			html += "</ul>"
 
 	return html
+
+/// A prerequisite may be an assembly recipe or an existing cooking/slicing transformation.
+/datum/food_recipe/proc/item_recipe_label(atom/item_type)
+	var/datum/food_recipe/producer = SScooking?.result_index[item_type]
+	if(producer && producer != src)
+		return producer.get_examine_link(initial(item_type.name))
+	return html_encode(initial(item_type.name))
+
+/// Read-only pages generated from item variables, never used by food assembly.
+/datum/food_recipe/preparation
+	var/instruction
+	var/result_amount = 1
+
+/datum/food_recipe/preparation/generate_html(mob/user)
+	var/atom/base = base_item
+	var/atom/result = result_type
+	var/html = "<h2>[html_encode(name)]</h2>"
+	html += "<p><b>Start with:</b> [food_recipe_icon(base, user)] [item_recipe_label(base)]</p>"
+	html += "<p>[instruction]</p>"
+	html += "<p><b>Produces:</b> [result_amount] x [food_recipe_icon(result, user)] [html_encode(initial(result.name))]</p>"
+	html += describe_food_result(result)
+	return html
+
+/// Recipe illustrations need no live items or their initialization side effects.
+/proc/food_recipe_icon(atom/item_type, mob/user)
+	return icon2html(icon(initial(item_type.icon), initial(item_type.icon_state)), user)
 
 /proc/describe_food_result(atom/result_path)
 	if(!ispath(result_path, /obj/item/reagent_containers/food/snacks))

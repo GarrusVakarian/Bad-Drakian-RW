@@ -1,5 +1,11 @@
 // TAURS
 /obj/item/bodypart/taur
+	/// Whether SPLURT-style taur genital artwork fits this body shape.
+	var/uses_taur_genital_sprites = TRUE
+	/// Whether this body can use insect ovipositor artwork.
+	var/supports_ovipositor = FALSE
+	/// Body-specific state prefix in taur_ovipositors.dmi; Ant remains the fallback.
+	var/ovipositor_sprite = "ant"
 	name = "taur"
 	desc = ""
 	icon = 'icons/mob/taurs.dmi'
@@ -165,6 +171,7 @@
 GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 
 /obj/item/bodypart/taur/lamia
+	uses_taur_genital_sprites = FALSE
 	name = "Lamia Tail"
 
 	offset_x = -16
@@ -174,6 +181,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/lamiastriped
+	uses_taur_genital_sprites = FALSE
 	name = "Striped Lamia Tail"
 
 	offset_x = -16
@@ -184,6 +192,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/fatlamia
+	uses_taur_genital_sprites = FALSE
 	name = "Fat Lamia Tail"
 
 	offset_x = -16
@@ -193,6 +202,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/mermaid
+	uses_taur_genital_sprites = FALSE
 	name = "Mermaid Tail"
 
 	offset_x = -16
@@ -203,6 +213,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/orca
+	uses_taur_genital_sprites = FALSE
 	name = "Orca Tail"
 
 	offset_x = -16
@@ -211,6 +222,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/tentacle
+	uses_taur_genital_sprites = FALSE
 	name = "Tentacles"
 
 	offset_x = -16
@@ -381,6 +393,8 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/spider
+	supports_ovipositor = TRUE
+	ovipositor_sprite = "spider"
 	name = "Spider Body"
 
 	offset_x = -16
@@ -391,6 +405,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/centipede
+	supports_ovipositor = TRUE
 	name = "Centipede Body"
 
 	offset_x = -16
@@ -411,6 +426,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/ant
+	supports_ovipositor = TRUE
 	name = "Ant Body"
 
 	offset_x = -16
@@ -420,6 +436,8 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/wasp
+	supports_ovipositor = TRUE
+	ovipositor_sprite = "wasp"
 	name = "Wasp Body"
 
 	offset_x = -16
@@ -429,6 +447,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	has_taur_color = TRUE
 
 /obj/item/bodypart/taur/insect
+	supports_ovipositor = TRUE
 	name = "Insect Body"
 
 	offset_x = -16

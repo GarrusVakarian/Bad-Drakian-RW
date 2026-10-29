@@ -58,6 +58,7 @@ GLOBAL_LIST_INIT(quest_recovery_shipments, list(
 	kills_count_progress = FALSE
 	/// Override destination — Rumor dispatcher can pre-set this. If null, chosen at preview.
 	var/area/override_destination
+	var/requires_mapped_destination = TRUE
 	/// Display name of the shipment, set at preview from the picked entry.
 	var/shipment_name
 	/// Count of items actually packed (4-6).
@@ -73,14 +74,16 @@ GLOBAL_LIST_INIT(quest_recovery_shipments, list(
 	return shipment_name
 
 /datum/quest/kill/recovery/preview(obj/effect/landmark/quest_spawner/landmark)
+	var/list/available_locations = override_destination ? list(override_destination) : GLOB.quest_recovery_shipments
+	if(requires_mapped_destination)
+		available_locations = get_available_quest_delivery_locations(available_locations)
+	if(!length(available_locations))
+		return FALSE
 	. = ..()
 	if(!.)
 		return FALSE
 	// Destination picks the item pool. If Rumor-dispatcher pre-set an override, use it; else random.
-	var/area/destination = override_destination
-	if(!destination)
-		var/list/keys = GLOB.quest_recovery_shipments
-		destination = pick(keys)
+	var/area/destination = pick(available_locations)
 	target_delivery_location = destination
 	var/list/pool = GLOB.quest_recovery_shipments[destination]
 	if(!length(pool))

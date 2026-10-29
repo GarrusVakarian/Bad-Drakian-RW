@@ -461,6 +461,11 @@
 	if(safe)
 		. = safe
 
+/mob/living/proc/get_blood_color()
+	if(iscarbon(src))
+		var/mob/living/carbon/C = src
+		return C.dna?.species?.blood_color
+
 //to add a splatter of blood or other mob liquid.
 /mob/living/proc/add_splatter_floor(turf/T)
 	if(!iscarbon(src))
@@ -479,7 +484,7 @@
 		W.water_volume = 10
 		W.update_icon()
 		return
-	new /obj/effect/decal/cleanable/blood/splatter(T)
+	new /obj/effect/decal/cleanable/blood/splatter(T, get_blood_color())
 	T?.pollute_turf(/datum/pollutant/metallic_scent, 30)
 
 
@@ -498,7 +503,7 @@
 		T = get_turf(src)
 	for(var/turf/closed/w in orange(abs(force_distance), T))
 		var/loc = get_step(T, M)
-		new /obj/effect/decal/cleanable/blood/splatter/walls(loc)
+		new /obj/effect/decal/cleanable/blood/splatter/walls(loc, get_blood_color())
 		if(spill_amount > 0)
 			spill_amount--
 			continue
@@ -526,15 +531,17 @@
 	var/obj/effect/decal/cleanable/blood/puddle/P = locate() in T
 	if(P)
 		P.blood_vol += amt
+		P.color = get_blood_color()
 		P.update_icon()
 	else
 		var/obj/effect/decal/cleanable/blood/drip/D = locate() in T
 		if(D)
 			D.blood_vol += amt
 			D.drips++
+			D.color = get_blood_color()
 			D.update_icon()
 		else
-			new /obj/effect/decal/cleanable/blood/drip(T)
+			new /obj/effect/decal/cleanable/blood/drip(T, get_blood_color())
 
 //OV edit
 /mob/living/carbon/human/add_drip_floor(turf/T, amt)
@@ -575,3 +582,13 @@
 		gaspnoise = pick('sound/vo/female/gen/femchoke1.ogg', 'sound/vo/female/gen/femchoke2.ogg', 'sound/vo/female/gen/femchoke3.ogg', 'sound/vo/female/gen/femchoke4.ogg')
 	if(gaspnoise)
 		playsound(get_turf(src), gaspnoise, 90, FALSE)
+
+/// Used after deadite revival restores the body's blood supply.
+/mob/living/carbon/proc/clear_blood_loss_effects()
+	bleeding_tier = 0
+	remove_status_effect(/datum/status_effect/debuff/bleeding)
+	remove_status_effect(/datum/status_effect/debuff/bleedingworse)
+	remove_status_effect(/datum/status_effect/debuff/bleedingworst)
+	remove_status_effect(/datum/status_effect/buff/journey_ending)
+	remove_status_effect(/datum/status_effect/buff/journey_end)
+	remove_status_effect(/datum/status_effect/buff/journey_end_final)

@@ -18,6 +18,16 @@
 		to_chat(src, span_warning("Someone is grabbing my arm!"))
 		return
 
+	// Resolve a grab against the driver before applying normal unarmed defenses.
+	if(proximity && used_intent.type == INTENT_GRAB && issimple(A))
+		var/mob/living/simple_animal/mount = A
+		var/datum/component/riding/riding = mount.GetComponent(/datum/component/riding)
+		var/mob/living/mounted_driver = riding?.driver
+		if(!QDELETED(mounted_driver) && mounted_driver != src && buckled != mount && mounted_driver.buckled == mount)
+			if(!CanReach(mounted_driver))
+				return
+			A = mounted_driver
+
 	// Special glove functions:
 	// If the gloves do anything, have them return 1 to stop
 	// normal attack_hand() here.
@@ -33,6 +43,7 @@
 		rmb_stam_penalty = 1.5	// Uses a modifer instead of a flat addition, less than weapons no matter what rn. 50% extra stam cost basically.
 	if(isliving(A))
 		var/mob/living/L = A
+		SEND_SIGNAL(L, COMSIG_HUMAN_MELEE_UNARMED_ATTACKBY, src)
 		if(!used_intent.noaa)
 			playsound(get_turf(src), pick(GLOB.unarmed_swingmiss), 100, FALSE)
 			// src.emote("attackgrunt")

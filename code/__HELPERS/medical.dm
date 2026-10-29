@@ -93,6 +93,8 @@
 			return "parasite egg"
 		if(ORGAN_SLOT_REGENERATIVE_CORE)
 			return "regenerative core"
+		if(ORGAN_SLOT_GUTS)
+			return "guts"
 	return slot
 
 /proc/parse_zone_fancy(zone, combat, combattarget, closeby, turnedaround, ontheground, grabbing, squinting, uncovered, dicked, pussied, strength, self = FALSE)

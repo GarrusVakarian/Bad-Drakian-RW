@@ -74,6 +74,10 @@
 		if(istype(src, /obj/structure/bondage/gloryhole) && user?.client && (dir == user.dir))
 			user.setDir(dir)
 
+	// Adjacent placement must still be within reach when the positioning delay ends.
+	if(!check_loc && (!isturf(M.loc) || !Adjacent(M) || !Adjacent(user)))
+		return FALSE
+
 	return ..(M, force, FALSE)
 
 /obj/structure/bondage/chains
@@ -136,6 +140,18 @@
 	var/buckle_offset_x = 0
 	var/buckle_offset_y = 1
 
+/obj/structure/bondage/gloryhole/iron
+	name = "iron gloryhole"
+	desc = "A sturdy iron partition with a suspicious hole."
+	icon = 'modular_azurepeak/icons/obj/structures/iron_gloryhole.dmi'
+	icon_state = "gloryhole_iron"
+	// Match regular iron cell bars (/obj/structure/bars).
+	max_integrity = 700
+	damage_deflection = 12
+	integrity_failure = 0.15
+	attacked_sound = list('sound/combat/hits/onmetal/metalimpact (1).ogg', 'sound/combat/hits/onmetal/metalimpact (2).ogg')
+	destroy_sound = 'sound/foley/breaksound.ogg'
+
 /obj/structure/bondage/gloryhole/examine(mob/user)
 	. = ..()
 	if(isobserver(user))
@@ -143,11 +159,12 @@
 	. += "Right-click to step up to \the [src]."
 
 /obj/structure/bondage/gloryhole/buckle_mob(mob/living/M, force = FALSE, check_loc = TRUE)
-	if(M && ishuman(M) && !has_buckled_mobs())
-		if(loc != M?.loc)
-			to_chat(M, span_warning("I have to be closer to service \the [src]."))
-			return FALSE
-	return ..()
+	if(force)
+		return ..()
+	if(!M || !isturf(M.loc) || !Adjacent(M))
+		to_chat(M, span_warning("I need to be next to \the [src]."))
+		return FALSE
+	return ..(M, force, FALSE)
 
 /obj/structure/bondage/gloryhole/post_buckle_mob(mob/living/M)
 	. = ..()

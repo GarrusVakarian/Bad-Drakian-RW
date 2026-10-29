@@ -22,7 +22,6 @@
 	if(!chastity_genital_check(H))
 		to_chat(user, span_warning("I don't have the required genitalia for the [src]."))
 		return
-	ensure_chastity_feature(H)
 	user.visible_message(span_notice("I attempt to chasten my genitals with the [src]..."))
 	if(do_after(user, 50, needhand = 1, target = H))
 		equip_standard_chastity(H, user)
@@ -47,7 +46,7 @@
 	if(!can_cage_target(H, user))
 		return
 	if(H.chastity_device == src)
-		attack_self(user)
+		to_chat(user, span_warning("[H] is already wearing [src]!"))
 		return
 	if(H.chastity_device)
 		to_chat(user, span_warning("[H] is already wearing a chastity device!"))
@@ -76,6 +75,8 @@
 			equip_time = 25
 		if(!do_after(user, equip_time, needhand = 1, target = H))
 			return
+		if(!can_complete_chastity_equip(H, user))
+			return
 		if(H.chastity_device)
 			to_chat(user, span_warning("[H] is already wearing a chastity device!"))
 			return
@@ -84,8 +85,11 @@
 			to_chat(user, span_warning("[H] is already bound by a cursed collar."))
 			return
 
-		ensure_chastity_feature(H)
-		attach_chastity_feature(H)
+		if(!user.transferItemToLoc(src, H))
+			return
+		if(!attach_chastity_feature(H))
+			user.put_in_hands(src)
+			return
 
 		playsound(loc, 'sound/foley/equip/equip_armor_plate.ogg', 30, TRUE, -2)
 		finalize_chastity_equip(H)
@@ -100,16 +104,32 @@
 			cursed_front_mode = 0
 		apply_cursed_state(H)
 	else
-		ensure_chastity_feature(H)
 		// Line 51 already announced the attempt to nearby players; no second message needed here.
 		if(do_after(user, 50, needhand = 1, target = H))
 			equip_standard_chastity(H, user)
 	..()
 
+// Recheck after the equip delay, including other attempts finishing first.
+/obj/item/chastity/proc/can_complete_chastity_equip(mob/living/carbon/human/H, mob/user)
+	if(QDELETED(H) || QDELETED(user) || H.chastity_device || chastity_victim)
+		return FALSE
+	if(loc != user || !user.is_holding(src) || !user.CanReach(H))
+		return FALSE
+	if(!H.get_bodypart(BODY_ZONE_CHEST) || !can_cage_target(H, user) || !chastity_genital_check(H) || !get_location_accessible(H, BODY_ZONE_PRECISE_GROIN))
+		return FALSE
+	if((H.client?.prefs && !H.client.prefs.chastenable) || (user.client?.prefs && !user.client.prefs.chastenable))
+		return FALSE
+	if((TRAIT_CHASTITY_SPIKED in GLOB.chastity_standard_traits[chastity_type + 1]) && H.client?.prefs && !H.client.prefs.extreme_erp)
+		return FALSE
+	return TRUE
+
 // Shared helper for standard equip path: visual attach, ownership setup, key spawn, and traits.
 /obj/item/chastity/proc/equip_standard_chastity(mob/living/carbon/human/H, mob/user)
+	if(!can_complete_chastity_equip(H, user) || !user.transferItemToLoc(src, H))
+		return FALSE
 	playsound(loc, 'sound/foley/equip/equip_armor_plate.ogg', 30, TRUE, -2)
 	if(!attach_chastity_feature(H))
+		user.put_in_hands(src)
 		return FALSE
 	finalize_chastity_equip(H)
 	generate_chastity_key(user, H)

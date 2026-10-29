@@ -33,22 +33,31 @@ GLOBAL_LIST_EMPTY(dummy_mob_list)
 /proc/generate_or_wait_for_human_dummy(slotkey)
 	if(!slotkey)
 		return new /mob/living/carbon/human/dummy
-	var/mob/living/carbon/human/dummy/D = GLOB.human_dummy_list[slotkey]
-	if(istype(D))
-		UNTIL(!D.in_use)
-	if(QDELETED(D))
-		D = new
-		GLOB.human_dummy_list[slotkey] = D
-		GLOB.dummy_mob_list += D
-	D.in_use = TRUE
-	return D
+	while(TRUE)
+		// A waiting caller must recheck the slot if cleanup discarded its dummy.
+		var/mob/living/carbon/human/dummy/D = GLOB.human_dummy_list[slotkey]
+		if(QDELETED(D))
+			D = new
+			GLOB.human_dummy_list[slotkey] = D
+			GLOB.dummy_mob_list += D
+		if(!D.in_use)
+			D.in_use = TRUE
+			return D
+		stoplag()
 
 /proc/unset_busy_human_dummy(slotnumber)
 	if(!slotnumber)
 		return
 	var/mob/living/carbon/human/dummy/D = GLOB.human_dummy_list[slotnumber]
 	if(istype(D))
-		D.wipe_state()
+		try
+			D.wipe_state()
+		catch(var/exception/error)
+			// Do not leave a broken dummy locked or hand its partial state to another caller.
+			GLOB.human_dummy_list -= slotnumber
+			GLOB.dummy_mob_list -= D
+			qdel(D)
+			throw error
 		D.in_use = FALSE
 
 // fuck if I know - fill in for unit tests later

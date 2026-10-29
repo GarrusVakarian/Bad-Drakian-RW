@@ -167,6 +167,30 @@
 	log_combat(btm, top, "Top had their cock ripped off (knot tugged too far)")
 	return TRUE
 
+/datum/sex_controller/proc/get_knot_size()
+	var/mob/living/carbon/human/top = knotted_owner
+	var/obj/item/organ/penis/organ = top?.getorganslot(ORGAN_SLOT_PENIS)
+	return organ ? organ.penis_size : DEFAULT_PENIS_SIZE
+
+/datum/sex_controller/proc/knot_requires_manual_release()
+	return knotted_status != KNOTTED_NULL && get_knot_size() > DEFAULT_PENIS_SIZE
+
+/datum/sex_controller/proc/can_release_knot_manually()
+	return knotted_status == KNOTTED_AS_TOP || (knotted_status == KNOTTED_AS_BTM && (knotted_forced_by_bottom || knot_requires_manual_release()))
+
+/datum/sex_controller/proc/knot_movement_consent_valid()
+	return knotted_owner?.client?.prefs?.sexable && knotted_recipient?.client?.prefs?.sexable
+
+/datum/sex_controller/proc/restore_knot_movement(mob/living/carbon/human/mover, atom/oldloc)
+	if(!oldloc || QDELETED(oldloc) || mover.loc == oldloc)
+		return
+	var/datum/sex_controller/owner_controller = knotted_owner?.sexcon
+	if(!owner_controller)
+		return
+	owner_controller.knot_movement_restoring = TRUE
+	mover.forceMove(oldloc)
+	owner_controller.knot_movement_restoring = FALSE
+
 /datum/sex_controller/proc/knot_movement(atom/movable/mover, atom/oldloc, direction)
 	SIGNAL_HANDLER
 	if(QDELETED(mover))
@@ -179,25 +203,31 @@
 	if(!mover_sexcon)
 		UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
 		return
+	if(mover_sexcon.knotted_owner?.sexcon?.knot_movement_restoring)
+		return
+	if(mover_sexcon.knotted_status && mover_sexcon.get_knot_size() < DEFAULT_PENIS_SIZE)
+		INVOKE_ASYNC(mover_sexcon, PROC_REF(knot_remove))
+		return
 	switch(mover_sexcon.knotted_status)
 		if(KNOTTED_AS_TOP)
-			addtimer(CALLBACK(mover_sexcon, PROC_REF(knot_movement_top)), 1)
+			addtimer(CALLBACK(mover_sexcon, PROC_REF(knot_movement_top), oldloc), 1)
 		if(KNOTTED_AS_BTM)
 			if(mover_sexcon.tugging_knot) // we're currently moving the bottom back to the top, don't run proc until we've finished
 				return
-			addtimer(CALLBACK(mover_sexcon, PROC_REF(knot_movement_btm)), 1)
+			addtimer(CALLBACK(mover_sexcon, PROC_REF(knot_movement_btm), oldloc), 1)
 		if(KNOTTED_NULL) // this should never hit, but if it does remove callback
 			UnregisterSignal(mover_sexcon.user, COMSIG_MOVABLE_MOVED)
 
-/datum/sex_controller/proc/knot_movement_top()
+/datum/sex_controller/proc/knot_movement_top(atom/oldloc)
 	var/mob/living/carbon/human/top = knotted_owner
 	var/mob/living/carbon/human/btm = knotted_recipient
 	if(!ishuman(btm) || QDELETED(btm) || !ishuman(top) || QDELETED(top) || !top?.sexcon || !btm?.sexcon)
 		knot_exit()
 		return
-	if(isnull(top.client) || !top.client?.prefs.sexable || isnull(btm.client) || !btm.client?.prefs.sexable) // we respect safewords here, let the players untie themselves
+	if(!knot_movement_consent_valid())
 		knot_remove()
 		return
+	var/large_knot = knot_requires_manual_release()
 	if(prob(10) && top.m_intent == MOVE_INTENT_WALK && (btm in top.buckled_mobs)) // if the two characters are being held in a fireman carry, let them muturally get pleasure from it
 		var/obj/item/organ/penis/penis = top.getorganslot(ORGAN_SLOT_PENIS)
 		top.sexcon.perform_sex_action(btm, penis?.penis_size > DEFAULT_PENIS_SIZE ? 6.0 : 3.0, 2, FALSE, involved_penis = penis)
@@ -206,9 +236,9 @@
 			to_chat(top, span_love("I feel [btm] tightening over my [top.sexcon.get_knot_synonym()]."))
 			to_chat(btm, span_love("I feel [top] rubbing inside."))
 		return
-	if(top.pulling == btm || btm.pulling == top)
+	if((top.pulling == btm || btm.pulling == top) && (!large_knot || (top.z == btm.z && get_dist(top, btm) <= 1)))
 		return
-	if(top.sexcon.considered_limp())
+	if(!large_knot && top.sexcon.considered_limp())
 		knot_remove()
 		return
 	if(top.sexcon.tugging_knot_check == 0) // check clothes layer connection every 5 steps and update tugging_knot_blocked
@@ -217,7 +247,7 @@
 	else
 		top.sexcon.tugging_knot_check--
 	var/lupineisop = top.STASTR > (btm.STACON + 3) // if the stat difference is too great, don't attempt to disconnect on run
-	if(!lupineisop && top.m_intent == MOVE_INTENT_RUN && (top.mobility_flags & MOBILITY_STAND)) // pop it
+	if(!large_knot && !lupineisop && top.m_intent == MOVE_INTENT_RUN && (top.mobility_flags & MOBILITY_STAND)) // pop it
 		knot_remove(forceful_removal = TRUE)
 		return
 	var/dist = get_dist(top, btm)
@@ -230,6 +260,9 @@
 				break
 		btm.sexcon.tugging_knot = FALSE
 	if(dist > 1) // if we couldn't move them closer, force the knot out
+		if(large_knot)
+			restore_knot_movement(top, oldloc)
+			return
 		if(dist > 10 && knot_movement_mods_remove_his_knot_ty(top, btm)) // teleported or something else
 			return
 		knot_remove(forceful_removal = TRUE)
@@ -247,6 +280,9 @@
 			else // sector difference is too great, force a disconnect
 				T = null
 		if(!T || !istype(T, /turf/open/transparent/openspace))
+			if(large_knot)
+				restore_knot_movement(top, oldloc)
+				return
 			knot_remove(forceful_removal = TRUE)
 			return
 	btm.face_atom(top)
@@ -272,21 +308,22 @@
 			// btm.adjustOxyLoss(1)
 			btm.adjust_panel_oxygen_loss(1)
 
-/datum/sex_controller/proc/knot_movement_btm()
+/datum/sex_controller/proc/knot_movement_btm(atom/oldloc)
 	var/mob/living/carbon/human/top = knotted_owner
 	var/mob/living/carbon/human/btm = knotted_recipient
 	if(!ishuman(btm) || QDELETED(btm) || !ishuman(top) || QDELETED(top) || !top?.sexcon || !btm?.sexcon)
 		knot_exit()
 		return
-	if(isnull(top.client) || !top.client?.prefs.sexable || isnull(btm.client) || !btm.client?.prefs.sexable) // we respect safewords here, let the players untie themselves
+	if(!knot_movement_consent_valid())
 		knot_remove()
 		return
-	if(top.stat >= SOFT_CRIT) // only removed if the knot owner is injured/asleep/dead
+	var/large_knot = knot_requires_manual_release()
+	if(!large_knot && top.stat >= SOFT_CRIT) // only removed if the knot owner is injured/asleep/dead
 		knot_remove()
 		return
-	if(btm.pulling == top || top.pulling == btm)
+	if((btm.pulling == top || top.pulling == btm) && (!large_knot || (top.z == btm.z && get_dist(top, btm) <= 1)))
 		return
-	if(top.sexcon.considered_limp())
+	if(!large_knot && top.sexcon.considered_limp())
 		knot_remove()
 		return
 	var/dist = get_dist(top, btm)
@@ -298,7 +335,10 @@
 			if(dist <= 1)
 				break
 		btm.sexcon.tugging_knot = FALSE
-	if(dist > 2)
+	if(dist > (large_knot ? 1 : 2))
+		if(large_knot)
+			restore_knot_movement(btm, oldloc)
+			return
 		if(dist > 10 && knot_movement_mods_remove_his_knot_ty(top, btm)) // teleported or something else
 			return
 		knot_remove(forceful_removal = TRUE)
@@ -316,6 +356,9 @@
 			else // sector difference is too great, force a disconnect
 				T = null
 		if(!T || !istype(T, /turf/open/transparent/openspace))
+			if(large_knot)
+				restore_knot_movement(btm, oldloc)
+				return
 			knot_remove(forceful_removal = TRUE)
 			return
 	top.set_pull_offsets(btm, GRAB_AGGRESSIVE)
@@ -558,7 +601,7 @@
 	var/mob/living/L = usr
 	if(!istype(L) || !L.sexcon)
 		return FALSE
-	if(L.sexcon.knotted_status == KNOTTED_AS_BTM && L.sexcon.knotted_forced_by_bottom)
+	if(L.sexcon.knotted_status == KNOTTED_AS_BTM && L.sexcon.can_release_knot_manually())
 		var/mob/living/carbon/human/top = L.sexcon.knotted_owner
 		if(istype(top) && top.sexcon)
 			var/do_forceful_removal = L.cmode || L.sexcon.arousal > MAX_AROUSAL / 4 || L.sexcon.manual_arousal > SEX_MANUAL_AROUSAL_PARTIAL // bottom forced the knot, so bottom can wrench free

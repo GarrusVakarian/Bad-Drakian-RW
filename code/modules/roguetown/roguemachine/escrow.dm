@@ -113,6 +113,7 @@ GLOBAL_LIST_EMPTY(escrow_machines)
 	)
 	var/list/excluded_materials = list(
 		/obj/item/ingot/aaslag,
+		/obj/item/ingot/scrap,
 	)
 	var/list/excluded_material_parents = list()
 	var/list/default_disabled_materials = list(

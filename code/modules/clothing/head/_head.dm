@@ -77,7 +77,7 @@
 		if(length(our_component.item_to_grid_coordinates))
 			var/list/examine_strings = list()
 			for(var/obj/item/thing as anything in our_component.item_to_grid_coordinates)
-				examine_strings += thing.get_examine_name(user)
+				examine_strings += thing.get_highlighted_attachment_name(user)
 			default_examine_name += " ([examine_strings.Join(", ")])"
 	return default_examine_name
 

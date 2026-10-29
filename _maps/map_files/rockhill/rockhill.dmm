@@ -649,6 +649,7 @@
 /obj/item/rope/chain,
 /obj/item/rope/chain,
 /obj/item/rope/chain,
+/obj/item/capture_sack,
 /turf/open/floor/rogue/cobble,
 /area/rogue/indoors/town/cell)
 "aha" = (
@@ -7835,6 +7836,7 @@
 /obj/structure/closet/crate/drawer{
 	pixel_y = 9
 	},
+/obj/item/capture_sack/chain/steel,
 /turf/open/floor/rogue/herringbone,
 /area/rogue/indoors/inq)
 "bEv" = (

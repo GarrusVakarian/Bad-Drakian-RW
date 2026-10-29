@@ -801,10 +801,13 @@
 		if(!istype(H))
 			to_chat(usr, span_warning("This can only be used on instances of type /mob/living/carbon/human."))
 			return
-		if(H.client || !H.last_logout_time)
+		if(H.client || !H.last_logout_time || H.is_stored_in_alternate_form())
 			to_chat(usr, span_warning("[H] is no longer in a deep slumber."))
 			return
 		if(alert(usr, "Fartravel slumbering [key_name(H)] and delete their character?", "Message", "Yes", "No") != "Yes")
+			return
+		if(QDELETED(H) || H.client || !H.last_logout_time || H.is_stored_in_alternate_form())
+			to_chat(usr, span_warning("That character is no longer eligible for slumber fartravel."))
 			return
 		log_admin("[key_name(usr)] has fartraveled slumbering [key_name(H)] after [DisplayTimeText(world.time - H.last_logout_time, 1)] in a deep slumber.")
 		message_admins(span_adminnotice("[key_name_admin(usr)] has fartraveled slumbering [key_name_admin(H)] after [DisplayTimeText(world.time - H.last_logout_time, 1)] in a deep slumber."))

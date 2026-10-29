@@ -90,6 +90,8 @@
 		return FALSE
 	if(!move_after(user, sheathe_time, target = user))
 		return FALSE
+	if(QDELETED(src) || QDELETED(A))
+		return FALSE
 
 	A.forceMove(src)
 	sheathed = A
@@ -105,8 +107,25 @@
 	return TRUE
 
 
+/obj/item/rogueweapon/scabbard/Exited(atom/movable/gone, atom/newLoc)
+	. = ..()
+	// Adapted from Azure Peak #8493 (KatTheFox), 2026-10-26.
+	if(gone != sheathed)
+		return
+	sheathed = null
+	var/mob/living/holder = loc
+	update_icon(istype(holder) ? holder : null)
+
+
 /obj/item/rogueweapon/scabbard/proc/puke_sword(mob/living/user)
 	if(!sheathed)
+		return FALSE
+	if(QDELETED(sheathed) || sheathed.loc != src)
+		sheathed = null
+		update_icon(user)
+		return FALSE
+	if(user.get_active_held_item())
+		to_chat(user, span_warning("My active hand needs to be empty."))
 		return FALSE
 
 	if(obj_broken)
@@ -119,9 +138,16 @@
 	if(!move_after(user, sheathe_time, target = user))
 		return FALSE
 
-	sheathed.forceMove(user.loc)
-	sheathed.pickup(user)
-	user.put_in_hands(sheathed)
+	if(!sheathed || user.get_active_held_item())
+		return FALSE
+	var/obj/item/rogueweapon/drawn = sheathed
+	drawn.forceMove(user.loc)
+	drawn.pickup(user)
+	if(!user.put_in_active_hand(drawn))
+		drawn.forceMove(src)
+		sheathed = drawn
+		update_icon(user)
+		return FALSE
 	sheathed = null
 	update_icon(user)
 
@@ -144,11 +170,16 @@
 			add_fingerprint(usr)
 
 
-/obj/item/rogueweapon/scabbard/attack_hand(mob/user)
+/obj/item/rogueweapon/scabbard/attack_right(mob/user)
+	if(user.incapacitated())
+		return
 	if(sheathed)
 		return puke_sword(user)
 
-	..()
+	return ..()
+
+/obj/item/rogueweapon/scabbard/rmb_self(mob/user)
+	return attack_right(user)
 
 
 /obj/item/rogueweapon/scabbard/attackby(obj/item/I, mob/user, params)
@@ -162,7 +193,7 @@
 			attackby(held_item, user)
 		return TRUE
 	if(sheathed)
-		attack_hand(user)
+		puke_sword(user)
 	return TRUE
 
 
@@ -170,7 +201,7 @@
 	. = ..()
 
 	if(sheathed)
-		. += span_notice("The sheath is occupied by [sheathed]. Left-click to pull it out.")
+		. += span_notice("The sheath is occupied by [sheathed]. Right-click to draw it; left-click with an empty hand to pick up the sheath.")
 
 
 /obj/item/rogueweapon/scabbard/update_icon(mob/living/user)

@@ -199,7 +199,7 @@
 
 /datum/reagent/consumable/golden_calendula_tea/on_mob_life(mob/living/carbon/M)
 	M.energy_add(5)
-	if(M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
+	if(!HAS_TRAIT(M, TRAIT_HEMOPHAGE) && M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 		M.adjust_blood_volume(5)
 	var/list/wCount = M.get_wounds()
 	if(wCount.len > 0)
@@ -222,7 +222,7 @@
 
 /datum/reagent/consumable/chocolate/on_mob_life(mob/living/carbon/M)
 	M.energy_add(1)
-	if(M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
+	if(!HAS_TRAIT(M, TRAIT_HEMOPHAGE) && M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 		M.adjust_blood_volume(1)
 	var/list/wCount = M.get_wounds()
 	if(wCount.len > 0)
@@ -245,7 +245,7 @@
 
 /datum/reagent/consumable/spiced_chocolate/on_mob_life(mob/living/carbon/M)
 	M.energy_add(2)
-	if(M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
+	if(!HAS_TRAIT(M, TRAIT_HEMOPHAGE) && M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 		M.adjust_blood_volume(2)
 	var/list/wCount = M.get_wounds()
 	if(wCount.len > 0)

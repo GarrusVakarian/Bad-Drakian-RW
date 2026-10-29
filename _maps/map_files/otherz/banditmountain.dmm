@@ -381,6 +381,7 @@
 /obj/item/clothing/head/roguetown/helmet/leather/volfhelm,
 /obj/item/clothing/head/roguetown/helmet/leather/volfhelm,
 /obj/item/clothing/head/roguetown/helmet/leather/volfhelm,
+/obj/item/capture_sack,
 /turf/open/floor/rogue/herringbone,
 /area/rogue/indoors/banditcamp)
 "ie" = (

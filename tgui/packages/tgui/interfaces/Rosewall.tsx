@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Dropdown } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
@@ -20,19 +21,25 @@ import {
   sectionHeaderStyle,
   SERIF,
   subtitleStyle,
+  tabBarStyle,
+  tabStyle,
   titleStyle,
 } from './common/parchment';
+
+type Roster = 'Bathhouse' | 'Slaves';
 
 type AdvertEntry = {
   key: string;
   name: string;
+  roster: Roster;
   status: string;
   message: string;
   advjob: string;
 };
 
 type Data = {
-  is_bathhouse: BooleanLike;
+  can_advertise: BooleanLike;
+  my_roster: Roster;
   my_key: string;
   message_char_limit: number;
   status_options: string[];
@@ -117,9 +124,10 @@ const AdvertRow = (props: {
 const OwnControls = (props: {
   myEntry: AdvertEntry | undefined;
   statusOptions: string[];
+  roster: Roster;
   act: ActFn;
 }) => {
-  const { myEntry, statusOptions, act } = props;
+  const { myEntry, statusOptions, roster, act } = props;
   return (
     <div
       style={{
@@ -133,7 +141,7 @@ const OwnControls = (props: {
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: FONT_BODY, color: SEAL_AMBER }}>
-          Bathhouse registry
+          {roster} registry
         </div>
         <div style={{ fontSize: FONT_BODY, color: INK }}>
           Status:{' '}
@@ -183,8 +191,10 @@ const OwnControls = (props: {
 
 export const Rosewall = () => {
   const { act, data } = useBackend<Data>();
-  const myEntry = data.adverts.find((e) => e.key === data.my_key);
-  const sortedAdverts = [...data.adverts].sort(
+  const [activeTab, setActiveTab] = useState<Roster>(data.my_roster);
+  const adverts = data.adverts.filter((entry) => entry.roster === activeTab);
+  const myEntry = adverts.find((e) => e.key === data.my_key);
+  const sortedAdverts = [...adverts].sort(
     (a, b) =>
       statusSortWeight(a.status) - statusSortWeight(b.status) ||
       a.name.localeCompare(b.name),
@@ -195,23 +205,38 @@ export const Rosewall = () => {
         <div style={pageStyle}>
           <div style={titleStyle}>The Rosewall</div>
           <div style={subtitleStyle}>
-            Perfumed slips pinned by the bathhouse&apos;s workers. Peruse, and
+            Perfumed slips pinned by bathhouse workers and slaves. Peruse, and
             send an offer.
           </div>
           <div style={rulerStyle} />
 
-          {!!data.is_bathhouse && (
+          <div style={tabBarStyle}>
+            {(['Bathhouse', 'Slaves'] as const).map((roster) => (
+              <div
+                key={roster}
+                style={tabStyle(activeTab === roster)}
+                onClick={() => setActiveTab(roster)}
+              >
+                {roster} (
+                {data.adverts.filter((entry) => entry.roster === roster).length}
+                )
+              </div>
+            ))}
+          </div>
+
+          {!!data.can_advertise && activeTab === data.my_roster && (
             <OwnControls
               myEntry={myEntry}
+              roster={data.my_roster}
               statusOptions={data.status_options}
               act={act}
             />
           )}
 
           <div style={sectionHeaderStyle}>
-            Pinned Adverts ({data.adverts.length})
+            Pinned Adverts ({adverts.length})
           </div>
-          {data.adverts.length === 0 ? (
+          {adverts.length === 0 ? (
             <div
               style={{
                 ...cardStyle,

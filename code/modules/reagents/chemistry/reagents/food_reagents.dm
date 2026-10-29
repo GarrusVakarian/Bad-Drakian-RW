@@ -19,8 +19,12 @@
 /datum/reagent/consumable/on_mob_life(mob/living/carbon/M)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
-		H.adjust_nutrition(nutriment_factor * metabolization_rate)
-		H.adjust_hydration(hydration_factor * metabolization_rate)
+		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
+			if(nutriment_factor > 0 || hydration_factor > 0)
+				H.add_nausea(12)
+		else
+			H.adjust_nutrition(nutriment_factor * metabolization_rate)
+			H.adjust_hydration(hydration_factor * metabolization_rate)
 	return ..()
 
 /datum/reagent/consumable/reaction_mob(mob/living/M, method=TOUCH, reac_volume)
@@ -109,7 +113,7 @@
 	burn_heal = 1
 
 /datum/reagent/consumable/nutriment/vitamin/on_mob_life(mob/living/carbon/M)
-	if(M.satiety < 600)
+	if(!HAS_TRAIT(M, TRAIT_HEMOPHAGE) && M.satiety < 600)
 		M.satiety += 30
 	. = ..()
 

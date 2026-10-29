@@ -41,14 +41,19 @@
 	if(!I)
 		return ""
 	var/display_name = I.get_examine_string(user)
-	if(!I.show_examine_hover_tooltip())
+	var/list/highlight_status = I.get_examine_highlight_status()
+	if(highlight_status)
+		display_name = I.get_examine_highlight_labeled_string(highlight_status[1], display_name)
+	if(!highlight_status && !I.show_examine_hover_tooltip())
 		return display_name
 	var/self_examine = (src == user)
 	var/tooltip_html = I.get_hover_examine_html(user, self_examine)
+	if(highlight_status)
+		tooltip_html = I.get_examine_highlight_tooltip_string(highlight_status) + (tooltip_html ? "<br>[tooltip_html]" : "")
 	if(!tooltip_html)
 		return display_name
 	var/label = display_name
-	if(!I.always_show_examine_link)
+	if(!highlight_status && !I.always_show_examine_link)
 		label = "<u><font color='#add8e6'>[display_name]</font></u>"
 	return "<span data-component=\"TooltipHTML\" data-position=\"bottom-start\" data-html=\"[html_encode(tooltip_html)]\">[label]</span>"
 
@@ -63,11 +68,17 @@
 	var/obscure_name = FALSE
 	var/race_name = "<a href='?src=[REF(src)];species_lore=1'><u>[dna.species.name]</u></A>"
 	var/datum/antagonist/maniac/maniac = user.mind?.has_antag_datum(/datum/antagonist/maniac)
-	var/datum/antagonist/skeleton/skeleton = user.mind?.has_antag_datum(/datum/antagonist/skeleton)
-	if(maniac && (user != src))
+	var/datum/antagonist/zombie/zombie = user.mind?.has_antag_datum(/datum/antagonist/zombie)
+	var/datum/antagonist/skeleton/skeleton = mind?.has_antag_datum(/datum/antagonist/skeleton)
+	var/datum/antagonist/lich/lich = mind?.has_antag_datum(/datum/antagonist/lich)
+	if(maniac && user != src && !observer_privilege)
 		race_name = "disgusting pig"
-	if(skeleton && (user != src))
-		race_name = "[pick("shambling", "taut", "decrepit")]"
+	if(zombie?.has_turned && user != src && !observer_privilege)
+		race_name = span_boldred("[pick("Shambling Thing", "Taut Thing", "Decrepit Thing", "Wyrd Thing", "UHHHHHHH...", "Something", "Walking Thing", "Decaying Thing")]")
+	if(skeleton && !lich)
+		race_name = span_boldred("[pick("Shambling Skeleton", "Ancient Skeleton", "Taut Skeleton", "Decrepit Skeleton")]")
+	if(lich)
+		race_name = span_boldred("[pick("Ancient Skeleton", "Unnatural Skeleton", "Decrepit Skeleton")]")
 
 	var/m1 = "[t_He] [t_is]"
 	var/m2 = "[t_his]"
@@ -94,7 +105,7 @@
 		obscure_name = FALSE
 
 	if(user.client?.prefs?.top_examine)
-		. += generate_main_examine_body(user, m1, m2, m3, obscure_name, race_name, observer_privilege, unknown_names)
+		. += generate_main_examine_body(user, m1, m2, m3, obscure_name, race_name, observer_privilege, unknown_names, zombie?.has_turned)
 
 	if(HAS_TRAIT(src, TRAIT_GNOLL_HUNTED) && ishuman(user) && istype(user, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = user
@@ -120,6 +131,12 @@
 					var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
 					if(contact_stink)
 						. += contact_stink.get_examine_text()
+
+	if(HAS_TRAIT(src, TRAIT_DEADITE))
+		. += span_userdanger("DEADITE!")
+		. += span_warning("Uneasy steps, the sound of profane flesh and bone knitting together, and the stench of rot. A walking corpse!")
+	if(!observer_privilege && HAS_TRAIT(user, TRAIT_DEADITE) && !HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE) && stat != DEAD)
+		. += span_cult(pick("KILL IT. KILL IT.", "FLESH. HUNGER.", "KILL. CONSUME.", "CONSUME.", "CLAW. BITE. KILL.", "EAT. FLESH. HUNGER.", "KILL THE RASPING THING.", "HUNGER.", "EAT IT.", "MUST HAVE FLESH."))
 
 	var/obscured = check_obscured_slots()
 	var/skipface = (wear_mask && (wear_mask.flags_inv & HIDEFACE)) || (head && (head.flags_inv & HIDEFACE))
@@ -335,17 +352,6 @@
 		str += beltl.integrity_check(is_smart)
 		. += str
 
-	// chastity cages go HERE, where they SHOULD'VE FUCKING GONE.
-	var/obj/item/chastity/worn_chastity = chastity_device
-	if(worn_chastity)
-		var/chastity_name = get_examine_item_name_with_hover(user, worn_chastity)
-		var/cage_exposed = get_location_accessible(src, BODY_ZONE_PRECISE_GROIN)
-		var/do_we_know_chat = (user == src)
-		if(cage_exposed)
-			. += "[m1] secured in [chastity_name]. "
-		else if(do_we_know_chat)
-			. += span_italics("[m1] covertly secured in [chastity_name]. ")
-	
 	var/chastity_toy_line = human_chastity_toy_examine_line(user, m2, m3)
 	if(chastity_toy_line)
 		. += chastity_toy_line
@@ -797,6 +803,18 @@
 	for(var/line in lines)
 		. += span_info(line)
 
+	// Keep covered self-examine feedback, and describe exposed devices without an inline genital note.
+	var/chastity_exposed = modular_chastity_exposed(src)
+	var/show_chastity_fallback = user == src && !chastity_exposed
+	if(chastity_exposed && (user == src || modular_chastity_observer_on(user)))
+		show_chastity_fallback = !modular_chastity_genital_note_visible(src, user, ORGAN_SLOT_PENIS) && !modular_chastity_genital_note_visible(src, user, ORGAN_SLOT_VAGINA)
+	if(chastity_device && show_chastity_fallback)
+		var/chastity_name = get_examine_item_name_with_hover(user, chastity_device)
+		var/chastity_line = "[t_He] [t_is] secured in [chastity_name]."
+		if(!user?.client?.prefs || user.client.prefs.descriptor_color)
+			chastity_line = "<span style='color:#ff66cc'>[chastity_line]</span>"
+		. += span_info(chastity_line)
+
 	// for underwears that don't cover from the rear, genital descriptions are still shown
 	if(get_location_accessible(src, BODY_ZONE_PRECISE_GROIN) && src.underwear)
 		//separate these conditions to not throw an error when no underwear is worn at all
@@ -877,7 +895,7 @@
 			. += " <span class='info' style='color: #eaeaea'> ø ------------ ø\n [temporary_flavortext]</span>"
 
 	if(!user.client?.prefs?.top_examine)
-		. += generate_main_examine_body(user, m1, m2, m3, obscure_name, race_name, observer_privilege, unknown_names)
+		. += generate_main_examine_body(user, m1, m2, m3, obscure_name, race_name, observer_privilege, unknown_names, zombie?.has_turned)
 
 	//Keep these at the bottom
 	if(Adjacent(user))
@@ -917,14 +935,14 @@
 
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
 
-/mob/living/carbon/human/proc/generate_main_examine_body(mob/user, m1, m2, m3, obscure_name, race_name, observer_privilege, list/unknown_names)
+/mob/living/carbon/human/proc/generate_main_examine_body(mob/user, m1, m2, m3, obscure_name, race_name, observer_privilege, list/unknown_names, deadite_viewer = FALSE)
 	. = list()
 	if(!user.client?.prefs?.top_examine)
 		. += "ø ------------ ø"
-		if ((dna?.species?.id != "gnoll") && (valid_headshot_link(src, headshot_link, TRUE)) && (user.client?.prefs.chatheadshot) && (!obscure_name || client?.prefs.masked_examine))
+		if ((valid_headshot_link(src, headshot_link, TRUE)) && (user.client?.prefs.chatheadshot) && (!obscure_name || client?.prefs.masked_examine))
 			. += "[chat_headshot(headshot_link)]"
 	else
-		if ((dna?.species?.id != "gnoll") && (valid_headshot_link(src, headshot_link, TRUE)) && (user.client?.prefs.chatheadshot) && (!obscure_name || client?.prefs.masked_examine))
+		if ((valid_headshot_link(src, headshot_link, TRUE)) && (user.client?.prefs.chatheadshot) && (!obscure_name || client?.prefs.masked_examine))
 			. += "[chat_headshot(headshot_link)]\nø ------------ ø"
 		else
 			. += "ø ------------ ø"
@@ -1108,7 +1126,10 @@
 
 
 		if(origin && origin != "Unknown")
-			. += span_info("[capitalize(m2)] ancestry is [origin].")
+			if(deadite_viewer && user != src && !observer_privilege)
+				. += span_info(pick("Where...", "Home...", "I remember...", "Where am I..."))
+			else
+				. += span_info("[capitalize(m2)] ancestry is [origin].")
 
 		if(ishuman(user))
 			var/mob/living/carbon/human/H = user
@@ -1387,8 +1408,6 @@
 				villain_text = span_notice("Free man!")
 			if(HAS_TRAIT(src,TRAIT_KNOWNCRIMINAL))
 				villain_text = span_userdanger("OUTLAW!")
-		if(mind.special_role == "Deadite")
-			villain_text = span_userdanger("DEADITE!")
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))

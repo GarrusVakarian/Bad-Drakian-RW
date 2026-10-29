@@ -5,7 +5,7 @@
 	job_rank = ROLE_WEREWOLF
 	confess_lines = list(
 		"THE BEAST INSIDE ME!",
-		"BEWARE THE BEAST!",
+		"BEWARE THE BEAST!", // beware my /obj/item/organ/penis/knotted/big
 		"MY LUPINE MARK!",
 	)
 	rogue_enabled = TRUE
@@ -13,7 +13,10 @@
 	var/transformed
 	var/transforming
 	var/untransforming
+	var/tf_stage = null
 	var/wolfname = "Verevolf"
+	var/automatically_untransforms_in_daytime = FALSE
+	var/ready_to_untransform = FALSE
 
 /datum/antagonist/werewolf/lesser
 	name = "Lesser Verevolf"
@@ -61,7 +64,7 @@
 		return
 
 /datum/antagonist/werewolf/greet()
-	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has welled within me. Before the Moonlight, I will sate my hallowed Hunger."))
+	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust."))
 	return ..()
 
 /datum/antagonist/werewolf/lesser/greet()
@@ -104,6 +107,55 @@
 	mob_timers["puke"] = world.time
 	vomit(1, blood = TRUE, stun = FALSE)
 	return wolfy
+
+/mob/living/carbon/human
+	var/tmp/werewolf_bite_pending = FALSE
+
+// Adapted from Rivermist Hollow's Voluntary Bite (AGPL-3.0), revision 8dba961e768e:
+// https://github.com/sheetofseaweed/Rivermist-Hollow-Vanderlin/blob/8dba961e768ecf8b9cbbc7b8199372f6a9fead96/modular_rmh/code/modules/antagonists/werewolf/werewolf_objectives.dm
+/mob/living/carbon/human/proc/can_receive_werewolf_bite(mob/living/carbon/human/source)
+	if(QDELETED(source) || source == src || source.stat != CONSCIOUS || stat != CONSCIOUS)
+		return FALSE
+	if(!source.Adjacent(src) || !client || !mind || mind.current != src || !can_werewolf())
+		return FALSE
+	if(is_banned_from(ckey, list(ROLE_SYNDICATE, ROLE_WEREWOLF)))
+		return FALSE
+	var/datum/antagonist/werewolf/source_werewolf = source.mind?.has_antag_datum(/datum/antagonist/werewolf)
+	return source_werewolf?.transformed && source.mind.current == source
+
+/mob/living/carbon/human/proc/offer_werewolf_bite(mob/living/carbon/human/source)
+	set waitfor = FALSE
+
+	if(werewolf_bite_pending || !can_receive_werewolf_bite(source))
+		return
+	werewolf_bite_pending = TRUE
+	var/datum/mind/recipient_mind = mind
+	var/client/recipient_client = client
+	var/datum/antagonist/werewolf/source_werewolf = source.mind.has_antag_datum(/datum/antagonist/werewolf)
+	// Use the timed TGUI modal even when native inputs are preferred; native alerts have no timeout.
+	var/datum/tgui_alert/offer = new(src, "[source] offers to turn me into a verevolf with a deliberate bite. Do I accept the curse?", "Voluntary Bite", list("Accept", "Reject"), 20 SECONDS, TRUE, GLOB.tgui_always_state)
+	offer.ui_interact(src)
+	offer.wait()
+	var/answer
+	if(!QDELETED(offer))
+		answer = offer.choice
+		qdel(offer)
+	if(QDELETED(src))
+		return
+	werewolf_bite_pending = FALSE
+	if(answer != "Accept")
+		to_chat(src, span_notice("I refuse the verevolf's curse."))
+		if(!QDELETED(source))
+			to_chat(source, span_notice("[src] refuses the verevolf's curse."))
+		return
+	if(!can_receive_werewolf_bite(source) || mind != recipient_mind || client != recipient_client || source.mind.has_antag_datum(/datum/antagonist/werewolf) != source_werewolf)
+		to_chat(src, span_warning("The moment to accept the curse has passed."))
+		return
+	if(!werewolf_check())
+		return
+	to_chat(src, span_userdanger("The verevolf's curse takes root within me!"))
+	to_chat(source, span_notice("[src] accepts the verevolf's curse."))
+	log_combat(source, src, "converted into a verevolf through a voluntary bite")
 
 /mob/living/carbon/human/proc/werewolf_feed(mob/living/carbon/human/target, healing_amount = 10)
 	if(!istype(target))

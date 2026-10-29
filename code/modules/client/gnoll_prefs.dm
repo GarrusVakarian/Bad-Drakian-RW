@@ -541,7 +541,7 @@
 			popup.set_content(dat.Join())
 			popup.open(FALSE)
 		if("roleplay_ad")
-			to_chat(user, span_notice("Your gnoll roleplay ad is saved separately from your normal character's ad and posted automatically when you spawn as a gnoll. Open OOC > Roleplay Ad (View) in-game to browse ads, or Roleplay Ad (Set) to edit or remove yours. Leave empty to disable automatic posting."))
+			to_chat(user, span_notice("Your gnoll roleplay ad is saved separately from your normal character's ad and posted automatically when you spawn as a gnoll. Open OOC > Roleplay Ad (View) in-game to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved gnoll ad for future rounds, use this Gnoll Customization menu. Leave empty to disable automatic posting."))
 			var/datum/preferences/P = user.client.prefs
 			var/ad_slot = P.default_slot
 			var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for as your gnoll. Leave empty to remove the saved ad.", "Gnoll Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)

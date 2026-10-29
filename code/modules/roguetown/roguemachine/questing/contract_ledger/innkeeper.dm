@@ -18,7 +18,7 @@
 
 /obj/structure/roguemachine/contractledger/proc/build_rumor_destinations()
 	var/list/out = list()
-	for(var/area/A as anything in GLOB.quest_recovery_shipments)
+	for(var/area/A as anything in get_available_quest_delivery_locations(GLOB.quest_recovery_shipments))
 		out += initial(A.name)
 	return out
 
@@ -59,7 +59,7 @@
 	var/dest_name
 	if(chosen_type == QUEST_RECOVERY)
 		dest_name = params["destination"]
-		for(var/area/A as anything in GLOB.quest_recovery_shipments)
+		for(var/area/A as anything in get_available_quest_delivery_locations(GLOB.quest_recovery_shipments))
 			if(initial(A.name) == dest_name)
 				chosen_destination = A
 				break

@@ -128,6 +128,8 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 			apply_virtue(character, background_type)
 		else
 			to_chat(character, "Incorrect Background parameters! It will not be applied.")
+	else
+		record_background_pick(character)
 
 /// Background validation, the counterpart to virtue_check() - they are applied to the same character
 /// from their own preference slot, so they get their own gate rather than sharing the virtue one.
@@ -197,6 +199,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		if(bonus == HARPY_FLIGHTLESS_KEY)
 			var/datum/species/harpy/harpydna = character.dna.species
 			harpydna.flightless = TRUE
+			ADD_TRAIT(character, TRAIT_TALONKICKS, TRAIT_GENERIC)
 			// These stats are applied on top of the Harpy racials, for a total of STR 1, CON 0, PER 0, SPD 1, INT -1, WIL -2.
 			character.change_stat(STATKEY_STR, 2)
 			character.change_stat(STATKEY_CON, 2)

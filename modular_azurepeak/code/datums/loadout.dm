@@ -8,6 +8,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	var/list/ckeywhitelist
 	var/triumph_cost
 	var/keep_loadout_stats = FALSE	// If TRUE, item keeps default values (not nerfed)
+	var/requires_nobility = FALSE	// If TRUE, it will check whether the player has the nobility quirk or noble job preference on high
 
 /datum/loadout_item/New()
 	if(isnull(donoritem))
@@ -21,9 +22,26 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 		return TRUE
 	return
 
-/datum/loadout_item/proc/nobility_check(client/C)
-	// Override this in subtypes that require nobility
-	return TRUE
+/datum/loadout_item/proc/nobility_check(client/character)
+	if(!requires_nobility)
+		return TRUE
+	var/datum/preferences/player = character.prefs
+	if(!player)
+		return FALSE
+	// Check if user has the Nobility quirk
+	if(player.has_quirk(/datum/quirk/noble))
+		return TRUE
+	// Check if user has high priority for any noble, courtier, or yeoman job
+	for(var/job_title in GLOB.noble_positions)
+		if(player.job_preferences[job_title] == JP_HIGH)
+			return TRUE
+	for(var/job_title in GLOB.courtier_positions)
+		if(player.job_preferences[job_title] == JP_HIGH)
+			return TRUE
+	for(var/job_title in GLOB.yeoman_positions)
+		if(player.job_preferences[job_title] == JP_HIGH)
+			return TRUE
+	return FALSE
 
 //Miscellaneous
 
@@ -84,7 +102,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/bauernwehr
 	name = "Bauernwehr"
 	path = /obj/item/rogueweapon/huntingknife/throwingknife/bauernwehr
-	triumph_cost = 3
+	triumph_cost = 2
 
 /datum/loadout_item/broom
 	name = "broom"
@@ -94,7 +112,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/soap
 	name = "soap"
 	path = /obj/item/soap
-	triumph_cost = 3
+	triumph_cost = 2
 
 /datum/loadout_item/candle
 	name = "candle"
@@ -104,7 +122,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/keyring
 	name = "keyring"
 	path = /obj/item/storage/keyring
-	triumph_cost = 3
+	triumph_cost = 2
 
 /datum/loadout_item/wooden_bowl
 	name = "bowl"
@@ -129,31 +147,51 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/zigbox
 	name = "Zig box"
 	path = /obj/item/storage/belt/rogue/pouch/zigarrete/nicotine
-	triumph_cost = 5
+	triumph_cost = 3
 
 /datum/loadout_item/flint
 	name = "Flint"
 	path = /obj/item/flint
-	triumph_cost = 2
+	triumph_cost = 1
+
+/datum/loadout_item/whetstone
+	name = "Whetstone"
+	path = /obj/item/natural/whetstone
+	triumph_cost = 1
+
+/datum/loadout_item/wooden_spade
+	name = "Wooden Spade"
+	path = /obj/item/rogueweapon/shovel/small
+	triumph_cost = 1
 
 /datum/loadout_item/aaneedle
 	name = "Thorn Needle"
 	path = /obj/item/needle/thorn
-	triumph_cost = 2
+	triumph_cost = 1
 
 /datum/loadout_item/bandage_roll
 	name = "Roll of Bandages"
 	path = /obj/item/natural/bundle/cloth/bandage/full
-	triumph_cost = 3
+	triumph_cost = 2
 
 /datum/loadout_item/sack
 	name = "Sack"
 	path = /obj/item/storage/roguebag
-	triumph_cost = 2
+	triumph_cost = 1
 
 /datum/loadout_item/mallet
 	name = "Wooden Mallet"
 	path = /obj/item/rogueweapon/hammer/wood
+	triumph_cost = 2
+
+/datum/loadout_item/folding_table
+	name = "Folding Table"
+	path = /obj/item/folding_table_stored
+	triumph_cost = 2
+
+/datum/loadout_item/mess_kit
+	name = "Mess Kit"
+	path = /obj/item/storage/gadget/messkit
 	triumph_cost = 3
 
 //ANCIENT TOOLS (Ancient Alloy)
@@ -244,17 +282,22 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/small_tent
     name = "Small Tent"
     path = /obj/item/tent_kit
-    triumph_cost = 4
+    triumph_cost = 2
 
 /datum/loadout_item/ger_kit
     name = "Ger Tent"
     path = /obj/item/tent_kit/ger
-    triumph_cost = 6
+    triumph_cost = 4
 
 /datum/loadout_item/yurt_tent
      name = "Yurt Tent"
      path = /obj/item/tent_kit/yurt
-     triumph_cost = 8
+     triumph_cost = 6
+
+/datum/loadout_item/bedroll
+     name = "Bedroll"
+     path = /obj/item/bedroll
+     triumph_cost = 2
 
 //HATS
 /datum/loadout_item/shalal
@@ -348,6 +391,14 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/necromhood
     name = "Necromancer Hood"
     path = /obj/item/clothing/head/roguetown/necromhood
+
+/datum/loadout_item/turban
+	name = "Turban"
+	path = /obj/item/clothing/head/roguetown/turban
+
+/datum/loadout_item/fancypurple
+	name = "Fancy Turban"
+	path = /obj/item/clothing/head/roguetown/turban/fancypurple
 
 /datum/loadout_item/hijab
 	name = "Hijab"
@@ -674,6 +725,23 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Red Exotic Silk Bra"
 	path = /obj/item/clothing/suit/roguetown/shirt/exoticsilkbra/red
 
+/datum/loadout_item/bisht
+	name = "Bisht"
+	path = /obj/item/clothing/suit/roguetown/shirt/robe/bisht
+
+/datum/loadout_item/bishtpurple
+	name = "Purple Bisht"
+	path = /obj/item/clothing/suit/roguetown/shirt/robe/bisht/purple
+
+/datum/loadout_item/thawb
+	name = "Thawb"
+	path = /obj/item/clothing/suit/roguetown/shirt/dress/thawb
+
+/datum/loadout_item/thawbgold
+	name = "Golden Thawb"
+	path = /obj/item/clothing/suit/roguetown/shirt/dress/thawb/gold
+	triumph_cost = 1
+
 /datum/loadout_item/bottomtunic
 	name = "Low-cut Tunic"
 	path = /obj/item/clothing/suit/roguetown/shirt/undershirt/lowcut
@@ -766,6 +834,10 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Fancy Coat"
 	path = /obj/item/clothing/suit/roguetown/shirt/tunic/noblecoat
 
+/datum/loadout_item/tailcoat
+	name = "Tailcoat"
+	path = /obj/item/clothing/armor/gambeson/tailcoat
+
 /datum/loadout_item/leathervest
 	name = "Leather Vest"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/vest
@@ -785,6 +857,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/loincloth
 	name = "Loincloth"
 	path = /obj/item/clothing/under/roguetown/loincloth
+	triumph_cost = 0
 
 /datum/loadout_item/tights
 	name = "Cloth Tights"
@@ -935,82 +1008,82 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/chastity_belt
 	name = "Chastity Belt"
 	path = /obj/item/chastity
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage
 	name = "Chastity Cage"
 	path = /obj/item/chastity/chastity_cage
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_anal
 	name = "Chastity Cage with Anal Shield"
 	path = /obj/item/chastity/chastity_cage/anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_spiked
 	name = "Spiked Chastity Cage"
 	path = /obj/item/chastity/chastity_cage/spiked
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_spiked_anal
 	name = "Spiked Chastity Cage with Anal Shield"
 	path = /obj/item/chastity/chastity_cage/spiked_anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_flat
 	name = "Flat Chastity Cage"
 	path = /obj/item/chastity/chastity_cage/flat
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_flat_anal
 	name = "Flat Chastity Cage with Anal Shield"
 	path = /obj/item/chastity/chastity_cage/flat/anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_flat_spiked
 	name = "Spiked Flat Chastity Cage"
 	path = /obj/item/chastity/chastity_cage/flat/spiked
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cage_flat_spiked_anal
 	name = "Spiked Flat Chastity Cage with Anal Shield"
 	path = /obj/item/chastity/chastity_cage/flat/spiked_anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_insertable
 	name = "Chastity Insertable"
 	path = /obj/item/chastity/chastity_belt
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_insertable_anal
 	name = "Chastity Insertable with Anal Shield"
 	path = /obj/item/chastity/chastity_belt/anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_insertable_spiked
 	name = "Spiked Chastity Insertable"
 	path = /obj/item/chastity/chastity_belt/spiked
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_insertable_spiked_anal
 	name = "Spiked Chastity Insertable with Anal Shield"
 	path = /obj/item/chastity/chastity_belt/spiked_anal
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_combination
 	name = "Combination Chastity Device"
 	path = /obj/item/chastity/intersex
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_combination_spiked
 	name = "Spiked Combination Chastity Device"
 	path = /obj/item/chastity/intersex/spiked
-	triumph_cost = 1
+	triumph_cost = 0
 
 /datum/loadout_item/chastity_cursed
 	name = "Cursed Chastity Device"
 	path = /obj/item/chastity/cursed
-	triumph_cost = 4
+	triumph_cost = 0
 
 /datum/loadout_item/wooddildo
 	name = "Wooden Dildo"
@@ -1044,6 +1117,11 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Belt with Breechcloth"
 	path = /obj/item/storage/belt/rogue/leather/battleskirt/breechcloth
 
+/datum/loadout_item/beltshawl
+	name = "Belt Shawl"
+	path = /obj/item/storage/belt/rogue/leather/beltshawl
+	triumph_cost = 0
+
 /datum/loadout_item/tri_cloth_belt
 	name = "Cloth Belt"
 	path = /obj/item/storage/belt/rogue/leather/cloth
@@ -1052,25 +1130,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Kazengun Cerimonial Scabbard"
 	path = /obj/item/rogueweapon/scabbard/sword/kazengun/noparry/loadout
 	triumph_cost = 3
-
-/datum/loadout_item/tri_kazengun_scabbard/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_shalal_belt
 	name = "Shalal Belt"
@@ -1092,6 +1152,10 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/belt_cloth
 	name = "Cloth Sash"
 	path = /obj/item/storage/belt/rogue/leather/sash
+
+/datum/loadout_item/jafar
+	name = "Large Sash"
+	path = /obj/item/storage/belt/rogue/leather/jafar
 
 /datum/loadout_item/belt_rope
 	name = "Rope Belt"
@@ -1635,174 +1699,48 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Ornate Dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/silkdress/steward
 	triumph_cost = 3
-
-/datum/loadout_item/tri_princess_dress/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_ornate_tunic
 	name = "Ornate Tunic"
 	path = /obj/item/clothing/suit/roguetown/shirt/tunic/silktunic
 	triumph_cost = 3
-
-/datum/loadout_item/tri_princess_dress/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_princess_dress
 	name = "Princess Dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/royal/princess
 	triumph_cost = 3
-
-/datum/loadout_item/tri_princess_dress/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_royal_dress
 	name = "Royal Dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/royal
 	triumph_cost = 3
-
-/datum/loadout_item/tri_royal_dress/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_royal_sleeves
 	name = "Royal Sleeves"
 	path = /obj/item/clothing/wrists/roguetown/royalsleeves
 	triumph_cost = 3
-
-/datum/loadout_item/tri_royal_sleeves/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_lady_cloak
 	name = "Lady's Cloak"
 	path = /obj/item/clothing/cloak/lordcloak/ladycloak
 	triumph_cost = 3
+	requires_nobility = TRUE
 
 /datum/loadout_item/wedding_dress
 	name = "Wedding Silk Dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/silkdress/weddingdress
-
-/datum/loadout_item/tri_lady_cloak/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
 
 // CLOTHING - HEADWEAR
 /datum/loadout_item/tri_circlet
 	name = "Circlet"
 	path = /obj/item/clothing/head/roguetown/circlet
 	triumph_cost = 3
-
-/datum/loadout_item/tri_circlet/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_volfhelm
 	name = "Volf Helm"
@@ -1965,6 +1903,12 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "New Moon Tunic"
 	path = /obj/item/clothing/suit/roguetown/shirt/tunic/newmoon
 	triumph_cost = 3
+
+/datum/loadout_item/tri_ornate_tailcoat
+	name = "Ornate Tailcoat"
+	path = /obj/item/clothing/suit/roguetown/shirt/coat/steward
+	triumph_cost = 3
+	requires_nobility = TRUE
 
 /datum/loadout_item/tri_otavan_gambeson
 	name = "Otavan Gambeson"
@@ -2221,25 +2165,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Lord's Cloak"
 	path = /obj/item/clothing/cloak/lordcloak
 	triumph_cost = 10
-
-/datum/loadout_item/tri_lord_cloak/nobility_check(client/C)
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return FALSE
-	// Check if user has the Nobility quirk
-	if(P.has_quirk(/datum/quirk/noble))
-		return TRUE
-	// Check if user has high priority for any noble, courtier, or yeoman job
-	for(var/job_title in GLOB.noble_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.courtier_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	for(var/job_title in GLOB.yeoman_positions)
-		if(P.job_preferences[job_title] == JP_HIGH)
-			return TRUE
-	return FALSE
+	requires_nobility = TRUE
 
 //==========================
 //Donator Section
@@ -2502,7 +2428,7 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/pouches
 	name = "Pouche"
 	path = /obj/item/storage/belt/rogue/pouch
-	triumph_cost = 3
+	triumph_cost = 2
 
 /datum/loadout_item/swatchbook
 	name = "Tailor's Swatchbook"
@@ -2523,21 +2449,25 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	name = "Noble Scabbard"
 	path = /obj/item/rogueweapon/scabbard/sword/noble
 	triumph_cost = 2
+	requires_nobility = TRUE
 
 /datum/loadout_item/scabbard/royal
 	name = "Royal Scabbard"
 	path = /obj/item/rogueweapon/scabbard/sword/royal
 	triumph_cost = 3
+	requires_nobility = TRUE
 
 /datum/loadout_item/scabbard/sheathe/noble
 	name = "Noble Sheathe"
 	path = /obj/item/rogueweapon/scabbard/sheath/noble
 	triumph_cost = 1
+	requires_nobility = TRUE
 
 /datum/loadout_item/scabbard/sheathe/royal
 	name = "Royal Sheathe"
 	path = /obj/item/rogueweapon/scabbard/sheath/royal
 	triumph_cost = 1
+	requires_nobility = TRUE
 
 /datum/loadout_item/greatweaponstrap
 	name = "Great Weapon Strap"

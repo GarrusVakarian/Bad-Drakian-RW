@@ -44,6 +44,14 @@
 /datum/customizer/proc/is_allowed(datum/preferences/prefs)
 	return TRUE
 
+/// Choices currently available to this entry, without changing the shared customizer datum.
+/datum/customizer/proc/get_available_choices(datum/preferences/prefs, datum/customizer_entry/entry)
+	return customizer_choices
+
+/// Adjust an existing selection when its available choices change.
+/datum/customizer/proc/sanitize_choice(datum/preferences/prefs, datum/customizer_entry/entry)
+	return
+
 /datum/customizer/organ
 	abstract_type = /datum/customizer/organ
 	name = "Organ"

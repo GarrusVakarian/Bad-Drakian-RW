@@ -1,4 +1,6 @@
 /obj/item/cooking/pan
+	twirly = SKILL_LEVEL_EXPERT
+	twirl_cmode = TRUE
 	name = "frypan"
 	desc = "Two in one: Cook and smash heads."
 	icon = 'modular/Neu_Food/icons/cookware/pan.dmi'
@@ -40,6 +42,7 @@
 	. += span_info("Frying pans can be placed atop a hearth by left-clicking it. Left-click the placed frying pan with an ingredient to begin frying - so long as the hearth is lit.")
 	. += span_info("Meats, cackleberries, and sliced vegetables are the ideal choices for frying. Other ingredients and recipes might require the gentle caress of an oven, instead.")
 	. += span_info("Leaving a fully baked item on the pan for too long will cause it to burn away.")
+	. += span_info("Right-click in combat mode, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Expert Cooking skill.")
 
 /datum/intent/mace/strike/pan
 	hitsound = list('sound/combat/hits/blunt/frying_pan(1).ogg', 'sound/combat/hits/blunt/frying_pan(2).ogg', 'sound/combat/hits/blunt/frying_pan(3).ogg', 'sound/combat/hits/blunt/frying_pan(4).ogg')
@@ -58,3 +61,6 @@
 	icon_state = "bronzepan"
 	throwforce = 30 //We both know why.
 	max_integrity = 200
+
+/obj/item/cooking/pan/twirl_fumble(mob/living/user)
+	return twirl_fumble_bonk(user, 'sound/combat/hits/blunt/frying_pan(1).ogg')

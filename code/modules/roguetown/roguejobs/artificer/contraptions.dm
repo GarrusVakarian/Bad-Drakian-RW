@@ -163,6 +163,7 @@
 
 //Shamelessly stolen multitool code
 /obj/item/contraption/linker
+	twirly = SKILL_LEVEL_EXPERT
 	name = "engineering wrench"
 	desc = "This strange contraption is able to connect machinery through an unknown calibration method, allowing them to communicate over long distances."
 	icon = 'icons/obj/wrenches.dmi'
@@ -580,3 +581,10 @@
 			mode = "Unlocker"
 		if("Unlocker")
 			mode = "Examiner"
+
+/obj/item/contraption/linker/twirl_user_skill(mob/living/user)
+	return user.get_skill_level(/datum/skill/craft/engineering)
+
+/obj/item/contraption/linker/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Safe wrench twirling requires Expert Engineering skill.")

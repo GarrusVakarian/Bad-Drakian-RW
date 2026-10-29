@@ -120,6 +120,8 @@
 	var/has_stubble = TRUE
 
 	var/original_name = null
+	/// Account and original character name, captured before job titles or later renames.
+	var/background_stat_identity
 
 	var/buried = FALSE // Whether the body is buried or not.
 	var/funeral = FALSE // Whether the body has received rites or not.

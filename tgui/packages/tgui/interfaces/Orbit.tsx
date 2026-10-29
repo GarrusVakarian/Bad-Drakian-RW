@@ -317,7 +317,7 @@ function getTextColorForBackground(hex: string) {
   const b = Number.parseInt(sanitized.slice(4, 6), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
-  return luminance > 0.55 ? '#1a1a1a' : '#f4f4f4';
+  return luminance > 0.45 ? '#1a1a1a' : '#f4f4f4';
 }
 
 function getHealthStateColor(healthPercent?: number) {
@@ -402,7 +402,7 @@ const OrbitTargetButton = memo((props: OrbitTargetButtonProps) => {
         color: textColor,
         border: `1px solid ${appliedColor}`,
       }
-    : undefined;
+    : { color: '#1a1a1a' };
 
   return (
     <Stack.Item>

@@ -128,7 +128,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/erp_visuals = TRUE
 	var/chastenable = FALSE
 	var/chastity_hardmode = CHASTITY_HARDMODE_DISABLED
+	/// Mute automatic device sounds and notifications without hiding exposed devices.
+	var/quiet_chastity = FALSE
 	var/extreme_erp = FALSE
+	var/accept_oviposition = FALSE
 	var/edging = FALSE
 	var/free_use_default = FALSE
 	var/sensitive_brands = FALSE
@@ -448,6 +451,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/advclass/preview_subclass
 
 	var/preview_erect_state = ERECT_STATE_NONE//toggle pintle floppy, half-chubbed, or full mast on preview dummy.
+	/// Session-only zoom for the character sheet; does not change body size.
+	var/tmp/preview_enlarged = FALSE
 
 	var/tgui_pref = TRUE
 
@@ -573,6 +578,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 			dat += "<td style='width:33%;text-align:right'>"
 			dat += "<a href='?_src_=prefs;preference=keybinds;task=menu'>Keybinds</a>"
+			dat += "<br><a href='?_src_=prefs;preference=toggles'>Toggles</a>"
 			dat += "</td>"
 			dat += "</tr>"
 
@@ -611,12 +617,28 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				dat += "<a href='?_src_=prefs;preference=trait;task=menu'>Configure Quirks</a><br></center>"
 				dat += "<center><b>Current Quirks:</b> [all_quirks.len ? all_quirks.Join(", ") : "None"]</center>"
 
-			// Encapsulating table
-			dat += "<table width = '100%'>"
+			// Reserve the native map's width plus room for browser padding and
+			// its scrollbar. Percentage columns can put text beneath the map.
+			var/preview_column_width = preview_enlarged ? 544 : 204
+			dat += "<table style='width:100%;table-layout:fixed'>"
+			dat += "<colgroup><col><col id='character-preview-column' style='width:[preview_column_width]px'><col></colgroup>"
+			if(preview_enlarged)
+				// Native map sizes use display pixels; HTML uses CSS pixels.
+				// Avoid widening the gap again when Windows/browser scaling is on.
+				dat += {"<script>
+					(function () {
+						function fitPreviewColumn() {
+							var column = document.getElementById('character-preview-column');
+							column.style.width = (544 / (window.devicePixelRatio || 1)) + 'px';
+						}
+						fitPreviewColumn();
+						window.addEventListener('resize', fitPreviewColumn);
+					})();
+				</script>"}
 			// Only one Row
 			dat += "<tr>"
-			// Leftmost Column, 40% width
-			dat += "<td width=40% valign='top'>"
+			// The identity and body columns share the remaining width.
+			dat += "<td valign='top'>"
 
 // 			-----------START OF IDENT TABLE-----------
 			dat += "<h2>Identity</h2>"
@@ -770,9 +792,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 // 			-----------END OF IDENT TABLE-----------
 
 
-			// Middle dummy Column, 20% width
+			// Middle preview column grows with the enlarged preview.
 			dat += "</td>"
-			dat += "<td width=20% valign='top'>"
+			dat += "<td valign='top'>"
+			// The native map overlays this browser; reserve space for it above
+			// the preview controls so those links remain visible and clickable.
+			var/preview_space = preview_enlarged ? 580 : 260
+			dat += "<div style='height:[preview_space]px'></div>"
 			var/datum/job/highest_pref
 			for(var/job in job_preferences)
 				if(job_preferences[job] > highest_pref)
@@ -789,9 +815,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 					arousal_preview_label = "Hard"
 				else
 					arousal_preview_label = "None"
-			dat += "<div style='text-align: center'><br>Arousal Preview:<br> <a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a></div>"
-			// Rightmost column, 40% width
-			dat += "<td width=40% valign='top'>"
+			dat += "<div style='text-align: center'><br>Arousal Preview:<br><a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a><br><br>Preview Size:<br><a href='?_src_=prefs;preference=preview_size'>[preview_enlarged ? "3x" : "Default"]</a></div>"
+			// Rightmost body column.
+			dat += "</td><td valign='top'>"
 			dat += "<h2>Body</h2>"
 
 //			-----------START OF BODY TABLE-----------
@@ -1129,7 +1155,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		dat = list("<center>REGISTER!</center>")
 
 	winshow(user, "preferencess_window", TRUE)
-	winset(user, "preferencess_window", "size=820x850")
+	// Lower the minimum before shrinking back to the original sheet size.
+	winset(user, "preferencess_window", preview_enlarged ? "min-size=1560x850" : "min-size=820x650")
+	winset(user, "preferencess_window", preview_enlarged ? "size=1560x1000" : "size=820x850")
 	winset(user, "preferencess_window", "pos=280,80")
 	var/datum/browser/noclose/popup = new(user, "preferences_browser", "<div align='center'>[used_title]</div>")
 	popup.set_window_options("can_close=0")
@@ -1728,6 +1756,10 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	else if(href_list["preference"] == "triumph_buy_menu")
 		SStriumphs.startup_triumphs_menu(user.client)
 
+	else if(href_list["preference"] == "toggles")
+		user.client?.toggle_options_menu()
+		return
+
 	else if(href_list["preference"] == "keybinds")
 		switch(href_list["task"])
 			if("close")
@@ -1904,17 +1936,15 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 				if("subclassoutfit")
 					var/list/choices = list("None")
-					var/datum/job/highest_pref
-					for(var/job in job_preferences)
-						if(job_preferences[job] > highest_pref)
-							highest_pref = SSjob.GetJob(job)
+					var/datum/job/highest_pref = get_preview_job()
 					if(isnull(highest_pref))
 						to_chat(user, "<b>I don't have a Class set to High!</b>")
-					if(length(highest_pref.job_subclasses))
+					if(length(highest_pref?.job_subclasses))
 						for(var/adv in highest_pref.job_subclasses)
 							var/datum/advclass/advpath = adv
 							var/datum/advclass/advref = SSrole_class_handler.get_advclass_by_name(initial(advpath.name))
-							choices[advref.name] = advref
+							if(advref)
+								choices[advref.name] = advref
 					if(length(choices))
 						var/new_choice = input(user, "Choose an outfit preview:", "Outfit Preview")  as anything in choices|null
 						if(new_choice && new_choice != "None")
@@ -2019,6 +2049,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						taur_type = null
 					else
 						taur_type = taur_selection[new_taur_type]
+					validate_customizer_entries()
 
 					var/obj/item/bodypart/taur/tt = taur_type
 					to_chat(user, span_red("Your character now has [tt ? tt::name : "no taurtype."]."))
@@ -2289,7 +2320,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					popup.set_content(dat.Join())
 					popup.open(FALSE)
 				if("roleplay_ad")
-					to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours. Leave this field empty to disable automatic posting."))
+					to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved ad for future rounds, use this character customization menu. Leave this field empty to disable automatic posting."))
 					var/ad_slot = default_slot
 					var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for. Leave empty to remove your saved ad.", "Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
 					if(isnull(new_ad))
@@ -3190,6 +3221,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					user << browse(null, "window=lobby_window")
 					return
 
+				if("preview_size")
+					preview_enlarged = !preview_enlarged
+
 				if("preview_erect_state")
 					switch(preview_erect_state)
 						if(ERECT_STATE_NONE)
@@ -3382,6 +3416,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	else
 		character.real_name = real_name
 	character.name = character.real_name
+	if(!character_setup)
+		character.set_background_stat_identity(parent?.ckey, real_name)
 
 	if((selected_title != "None" && pref_species.use_titles) && selected_title != null)
 		character.dna.species.name = selected_title

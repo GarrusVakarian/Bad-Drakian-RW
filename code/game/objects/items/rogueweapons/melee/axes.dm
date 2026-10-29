@@ -53,6 +53,7 @@
 //axe objs ฅ^•ﻌ•^ฅ
 
 /obj/item/rogueweapon/stoneaxe
+	twirly = SKILL_LEVEL_EXPERT
 	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BACK
 	force = 18
 	force_wielded = 20
@@ -283,7 +284,7 @@
 	throw_speed = 6
 	embedding = list("embedded_pain_multiplier" = 4, "embed_chance" = 33, "embedded_fall_chance" = 2)
 
-// on azure this is just a reskin, here it's a bit 
+// on azure this is just a reskin, here it's a bit
 /obj/item/rogueweapon/stoneaxe/woodcut/bronze/double
 	name = "double-headed bronze axe"
 	desc = "'Give them nothing.. but take from them, EVERYTHING!'"
@@ -462,6 +463,17 @@
 		added_def = 1,\
 	)
 
+/obj/item/rogueweapon/stoneaxe/battle/psyaxe/preblessed/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_PSYDONIAN,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 50,\
+		added_int = 50,\
+		added_def = 1,\
+	)
+
 /obj/item/rogueweapon/stoneaxe/battle/psyaxe/old
 	name = "enduring war axe"
 	desc = "An ornate battle axe, its silver tarnished by neglect. Even a dim light can pierce the dark."
@@ -553,6 +565,8 @@
 	desc = "A heavy sweep that cuts through targets to the sides and front."
 
 /obj/item/rogueweapon/greataxe
+	twirly = SKILL_LEVEL_EXPERT
+	twirl_speed = 6
 	force = 15
 	force_wielded = 30
 	possible_item_intents = list(/datum/intent/axe/cut, /datum/intent/axe/chop, SPEAR_BASH) //bash is for nonlethal takedowns, only targets limbs

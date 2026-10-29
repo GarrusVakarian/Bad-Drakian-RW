@@ -121,7 +121,6 @@
 	desc = "A tight-fitting leather bodice reinforced for protection."
 	icon_state = "hcorset"
 	item_state = "hcorset"
-	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_SHIRT
 	boobed = TRUE
 	flags_inv = 0
 

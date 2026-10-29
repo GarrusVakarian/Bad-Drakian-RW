@@ -21,6 +21,7 @@
 	custom_base_icon = "firepelt"
 	species_traits = list(NO_UNDERWEAR, NO_ORGAN_FEATURES, NO_BODYPART_FEATURES)
 	inherent_traits = list(
+		TRAIT_ORGASM_DENIER,
 		TRAIT_LONGSTRIDER,
 		TRAIT_IGNORESLOWDOWN,
 		TRAIT_IGNOREDAMAGESLOWDOWN,
@@ -66,6 +67,7 @@
 		ORGAN_SLOT_LIVER = /obj/item/organ/liver,
 		ORGAN_SLOT_STOMACH = /obj/item/organ/stomach,
 		ORGAN_SLOT_APPENDIX = /obj/item/organ/appendix,
+		ORGAN_SLOT_GUTS = /obj/item/organ/guts,
 	)
 	languages = list(
 		/datum/language/common,
@@ -83,7 +85,7 @@
 
 /datum/species/gnoll/send_voice(mob/living/carbon/human/H)
 	if(H.m_intent != MOVE_INTENT_SNEAK)
-		playsound(get_turf(H), pick('sound/vo/mobs/wwolf/wolftalk1.ogg','sound/vo/mobs/wwolf/wolftalk2.ogg'), 100, TRUE, -1)
+		playsound(get_turf(H), pick('sound/vo/mobs/wwolf/wolftalk1.ogg','sound/vo/mobs/wwolf/wolftalk2.ogg'), 50, TRUE, -1)
 	else
 		playsound(get_turf(H), 'sound/misc/talk.ogg', 100, TRUE, -1)
 

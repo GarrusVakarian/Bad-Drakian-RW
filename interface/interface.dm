@@ -224,14 +224,13 @@ Hotkey-Mode: (hotkey-mode must be on)
 	if(!ishuman(mob))
 		return
 	var/mob/living/carbon/human/C = mob
-	var/msg = tgui_input_text(C, "Set an advertisement for the roleplay you are looking for. Leave empty to remove your ad. This also updates this character's saved ad.", "Roleplay Ad", C.roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
+	var/msg = tgui_input_text(C, "Set an advertisement for the roleplay you are looking for this round only. Leave empty to remove your ad for this round. To save an ad for future rounds, use Set a Roleplay Ad in the character customization menu (Gnoll Customization for gnolls).", "Roleplay Ad", C.roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
 	if(isnull(msg) || mob != C || QDELETED(C))
 		return
 	msg = copytext(msg, 1, MAX_MESSAGE_LEN + 1)
 	C.roleplay_ad = length(trim(msg)) ? msg : null
-	var/saved = prefs?.save_roleplay_ad_for_character(C)
 	C.publish_roleplay_ad()
-	to_chat(C, span_info(C.roleplay_ad ? (saved ? "Roleplay ad set and saved." : "Roleplay ad set for this body.") : "Roleplay ad removed."))
+	to_chat(C, span_info(C.roleplay_ad ? "Roleplay ad set for this round only." : "Roleplay ad removed for this round only."))
 	log_game("[C] has set their Roleplay Ad to '[C.roleplay_ad]'.")
 
 	// Legacy setter retained for reference: publication now shares the saved-ad/examine-link path.

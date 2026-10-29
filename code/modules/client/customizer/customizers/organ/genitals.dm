@@ -8,6 +8,58 @@
 /datum/customizer/organ/penis/is_allowed(datum/preferences/prefs)
 	return TRUE
 
+/datum/customizer/organ/penis/get_available_choices(datum/preferences/prefs, datum/customizer_entry/entry)
+	var/datum/customizer_entry/organ/penis/penis_entry = entry
+	if(!istype(penis_entry) || !penis_entry.penis_taur_mode)
+		var/list/normal_choices = ..()
+		normal_choices = normal_choices.Copy()
+		if(prefs?.has_selected_bee_tail())
+			normal_choices += /datum/customizer_choice/organ/penis/bee_tail
+		return normal_choices
+	// Taur mode has its own artwork-backed list, including for species whose normal choice is plain.
+	var/datum/customizer/organ/penis/anthro/taur_customizer = CUSTOMIZER(/datum/customizer/organ/penis/anthro)
+	var/list/choices = list()
+	for(var/choice_type in taur_customizer.customizer_choices)
+		// Covering is chosen separately; don't offer duplicate slit-labelled shapes.
+		if(choice_type in list(/datum/customizer_choice/organ/penis/equine_slit, /datum/customizer_choice/organ/penis/equine_knotted_slit))
+			continue
+		var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(choice_type)
+		var/supported = length(choice.sprite_accessories) > 0
+		for(var/accessory_type in choice.sprite_accessories)
+			var/datum/sprite_accessory/penis/accessory = SPRITE_ACCESSORY(accessory_type)
+			if(!istype(accessory) || !accessory.has_taur_artwork())
+				supported = FALSE
+				break
+		if(supported)
+			choices += choice_type
+	var/obj/item/bodypart/taur/taur_type = prefs?.taur_type
+	if(ispath(taur_type, /obj/item/bodypart/taur) && initial(taur_type.supports_ovipositor))
+		choices += /datum/customizer_choice/organ/penis/ovipositor_ant
+	return choices
+
+/datum/customizer/organ/penis/sanitize_choice(datum/preferences/prefs, datum/customizer_entry/entry)
+	if(!istype(entry, /datum/customizer_entry/organ/penis))
+		return
+	var/datum/customizer_entry/organ/penis/penis_entry = entry
+	if(penis_entry.penis_taur_mode)
+		// Migrate the label without changing the saved covering, artwork, or knot mechanics.
+		switch(entry.customizer_choice_type)
+			if(/datum/customizer_choice/organ/penis/equine_slit)
+				entry.customizer_choice_type = /datum/customizer_choice/organ/penis/equine
+			if(/datum/customizer_choice/organ/penis/equine_knotted_slit)
+				entry.customizer_choice_type = /datum/customizer_choice/organ/penis/equine_knotted
+	var/list/choices = get_available_choices(prefs, entry)
+	if(!length(choices) || (entry.customizer_choice_type in choices))
+		return
+	entry.customizer_choice_type = choices[1]
+	var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+	var/old_colors = entry.accessory_colors
+	choice.set_accessory_type(prefs, choice.default_accessory, entry)
+	// Shapes share two color keys; validate old colors against the new accessory before keeping them.
+	var/datum/sprite_accessory/accessory = SPRITE_ACCESSORY(entry.accessory_type)
+	if(length(color_string_to_list(old_colors)) == accessory.color_keys)
+		entry.accessory_colors = old_colors
+
 /proc/sheath_type_preference_label(sheath_type)
 	switch(sheath_type)
 		if(SHEATH_TYPE_NORMAL)
@@ -17,6 +69,10 @@
 	return "None"
 
 /datum/customizer_choice/organ/penis
+	/// Restrict sizes to the selected accessory artwork.
+	var/min_penis_size = MIN_PENIS_SIZE
+	var/allows_sheath_customization = TRUE
+	var/allows_taur_mode = TRUE
 	abstract_type = /datum/customizer_choice/organ/penis
 	name = "Penis"
 	organ_type = /obj/item/organ/penis
@@ -24,40 +80,80 @@
 	organ_dna_type = /datum/organ_dna/penis
 	customizer_entry_type = /datum/customizer_entry/organ/penis
 
+/datum/customizer_choice/organ/penis/make_default_customizer_entry(datum/preferences/prefs, customizer_type, changed_entry = TRUE)
+	var/datum/customizer_entry/organ/penis/entry = ..()
+	var/obj/item/organ/penis/organ_path = organ_type
+	entry.sheath_type = initial(organ_path.sheath_type)
+	entry.penis_size = clamp(entry.penis_size, min_penis_size, MAX_PENIS_SIZE)
+	return entry
+
 /datum/customizer_choice/organ/penis/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
 	..()
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
-	penis_entry.penis_size = sanitize_integer(penis_entry.penis_size, MIN_PENIS_SIZE, MAX_PENIS_SIZE, DEFAULT_PENIS_SIZE)
+	penis_entry.penis_size = sanitize_integer(penis_entry.penis_size, min_penis_size, MAX_PENIS_SIZE, DEFAULT_PENIS_SIZE)
 	penis_entry.sheath_type = sanitize_integer(penis_entry.sheath_type, SHEATH_TYPE_NONE, SHEATH_TYPE_SLIT, SHEATH_TYPE_NONE)
+	penis_entry.ovipositor = !!penis_entry.ovipositor
+	penis_entry.egg_settings = sanitize_oviposition_settings(penis_entry.egg_settings)
+	penis_entry.penis_taur_mode = !!penis_entry.penis_taur_mode
+	if(!allows_taur_mode)
+		penis_entry.penis_taur_mode = FALSE
+	if(!allows_sheath_customization)
+		penis_entry.sheath_type = SHEATH_TYPE_NONE
 
 /datum/customizer_choice/organ/penis/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
 	var/datum/organ_dna/penis/penis_dna = organ_dna
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
-	penis_dna.penis_size = penis_entry.penis_size
+	penis_dna.penis_size = clamp(penis_entry.penis_size, min_penis_size, MAX_PENIS_SIZE)
 	penis_dna.functional = penis_entry.functional
-	penis_dna.sheath_type = penis_entry.sheath_type
+	penis_dna.sheath_type = allows_sheath_customization ? penis_entry.sheath_type : SHEATH_TYPE_NONE
+	penis_dna.egg_settings = penis_entry.ovipositor ? sanitize_oviposition_settings(penis_entry.egg_settings) : null
+	penis_dna.penis_taur_mode = allows_taur_mode && penis_entry.penis_taur_mode
 
 /datum/customizer_choice/organ/penis/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
 	dat += "<br>Penis size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=penis_size''>[find_key_by_value(GLOB.named_penis_sizes, penis_entry.penis_size)]</a>"
 	dat += "<br>Functional: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=functional''>[penis_entry.functional ? "YES" : "NO"]</a>"
-	dat += "<br>Sheath: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=sheath_type''>[sheath_type_preference_label(penis_entry.sheath_type)]</a>"
+	if(allows_sheath_customization)
+		dat += "<br>Sheath: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=sheath_type''>[sheath_type_preference_label(penis_entry.sheath_type)]</a>"
+	else
+		dat += "<br>Sheath: None"
+	if(allows_taur_mode)
+		dat += "<br><span title='Uses taur genital sprites when available'>Penis Taur Mode: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=penis_taur_mode'>[penis_entry.penis_taur_mode ? "Enabled" : "Disabled"]</a></span>"
+
+	if(!islist(penis_entry.egg_settings))
+		penis_entry.egg_settings = default_oviposition_settings()
+	oviposition_pref_choices(dat, penis_entry.egg_settings, customizer_type, penis_entry.ovipositor, "Ovipositor")
 
 /datum/customizer_choice/organ/penis/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/penis/penis_entry = entry
+	if(!islist(penis_entry.egg_settings))
+		penis_entry.egg_settings = default_oviposition_settings()
 	switch(href_list["customizer_task"])
+		if("penis_taur_mode")
+			if(!allows_taur_mode)
+				return
+			penis_entry.penis_taur_mode = !penis_entry.penis_taur_mode
+			var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+			customizer.sanitize_choice(prefs, entry)
 		if("penis_size")
-			var/named_size = input(user, "Choose your penis size:", "Character Preference", find_key_by_value(GLOB.named_penis_sizes, penis_entry.penis_size)) as anything in GLOB.named_penis_sizes
+			var/list/available_sizes = list()
+			for(var/size_name in GLOB.named_penis_sizes)
+				var/size_value = GLOB.named_penis_sizes[size_name]
+				if(size_value >= min_penis_size && size_value <= MAX_PENIS_SIZE)
+					available_sizes[size_name] = size_value
+			var/named_size = input(user, "Choose your penis size:", "Character Preference", find_key_by_value(available_sizes, penis_entry.penis_size)) as anything in available_sizes
 			if(isnull(named_size))
 				return
-			var/new_size = GLOB.named_penis_sizes[named_size]
-			penis_entry.penis_size = sanitize_integer(new_size, MIN_PENIS_SIZE, MAX_PENIS_SIZE, DEFAULT_PENIS_SIZE)
+			var/new_size = available_sizes[named_size]
+			penis_entry.penis_size = sanitize_integer(new_size, min_penis_size, MAX_PENIS_SIZE, DEFAULT_PENIS_SIZE)
 		if("functional")
 			penis_entry.functional = !penis_entry.functional
 		if("sheath_type")
+			if(!allows_sheath_customization)
+				return
 			switch(penis_entry.sheath_type)
 				if(SHEATH_TYPE_NONE)
 					penis_entry.sheath_type = SHEATH_TYPE_NORMAL
@@ -65,11 +161,18 @@
 					penis_entry.sheath_type = SHEATH_TYPE_SLIT
 				else
 					penis_entry.sheath_type = SHEATH_TYPE_NONE
+		if("ovi_toggle")
+			penis_entry.ovipositor = !penis_entry.ovipositor
+		else
+			oviposition_pref_topic(user, href_list["customizer_task"], penis_entry.egg_settings)
 
 /datum/customizer_entry/organ/penis
+	var/penis_taur_mode = FALSE
 	var/penis_size = DEFAULT_PENIS_SIZE
 	var/functional = TRUE
 	var/sheath_type = SHEATH_TYPE_NONE
+	var/ovipositor = FALSE
+	var/list/egg_settings
 
 /datum/customizer/organ/penis/human
 	customizer_choices = list(/datum/customizer_choice/organ/penis/human)
@@ -260,6 +363,21 @@
 		/datum/sprite_accessory/penis/tentacle,
 		)
 
+/datum/customizer_choice/organ/penis/bee_tail
+	min_penis_size = SMALL_PENIS_SIZE
+	name = "Penis (Bee Tail)"
+	organ_type = /obj/item/organ/penis/bee_tail
+	sprite_accessories = list(/datum/sprite_accessory/penis/bee_tail)
+	allows_sheath_customization = FALSE
+	allows_taur_mode = FALSE
+
+/datum/customizer_choice/organ/penis/ovipositor_ant
+	min_penis_size = SMALL_PENIS_SIZE
+	name = "Ovipositor"
+	organ_type = /obj/item/organ/penis/ovipositor_ant
+	sprite_accessories = list(/datum/sprite_accessory/penis/ovipositor_ant)
+	allows_sheath_customization = FALSE
+
 /datum/customizer/organ/testicles
 	abstract_type = /datum/customizer/organ/testicles
 	name = "Testicles"
@@ -428,6 +546,11 @@
 /datum/customizer/organ/vagina/is_allowed(datum/preferences/prefs)
 	return TRUE
 
+/datum/customizer/organ/vagina/sanitize_choice(datum/preferences/prefs, datum/customizer_entry/entry)
+	// Move older Oviduct selections into the original appearance picker without resetting them.
+	if(entry.customizer_choice_type == /datum/customizer_choice/organ/vagina/bee_tail)
+		entry.customizer_choice_type = default_choice
+
 /datum/customizer_choice/organ/vagina
 	abstract_type = /datum/customizer_choice/organ/vagina
 	name = "Vagina"
@@ -437,25 +560,49 @@
 	organ_dna_type = /datum/organ_dna/vagina
 
 /datum/customizer_entry/organ/vagina
+	var/vagina_taur_enabled = TRUE
 	var/fertility = TRUE
+	var/egg_layer = FALSE
+	var/list/egg_settings
+
+/datum/customizer_choice/organ/vagina/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
+	..()
+	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
+	vagina_entry.egg_layer = !!vagina_entry.egg_layer
+	vagina_entry.egg_settings = sanitize_oviposition_settings(vagina_entry.egg_settings)
+	vagina_entry.vagina_taur_enabled = !!vagina_entry.vagina_taur_enabled
 
 /datum/customizer_choice/organ/vagina/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
 	var/datum/organ_dna/vagina/vagina_dna = organ_dna
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
 	vagina_dna.fertility = vagina_entry.fertility
+	vagina_dna.egg_settings = vagina_entry.egg_layer ? sanitize_oviposition_settings(vagina_entry.egg_settings) : null
+	vagina_dna.vagina_taur_enabled = vagina_entry.vagina_taur_enabled
 
 /datum/customizer_choice/organ/vagina/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
 	dat += "<br>Fertile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=fertile''>[vagina_entry.fertility ? "Fertile" : "Sterile"]</a>"
+	if(!islist(vagina_entry.egg_settings))
+		vagina_entry.egg_settings = default_oviposition_settings()
+	oviposition_pref_choices(dat, vagina_entry.egg_settings, customizer_type, vagina_entry.egg_layer, "Egg layer")
+	dat += "<br><span title='Show vagina sprites on taur bodies'>Taur Vagina: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=vagina_taur_enabled'>[vagina_entry.vagina_taur_enabled ? "Enabled" : "Disabled"]</a></span>"
 
 /datum/customizer_choice/organ/vagina/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/vagina/vagina_entry = entry
+	if(!islist(vagina_entry.egg_settings))
+		vagina_entry.egg_settings = default_oviposition_settings()
 	switch(href_list["customizer_task"])
 		if("fertile")
 			vagina_entry.fertility = !vagina_entry.fertility
+		if("vagina_taur_enabled")
+			vagina_entry.vagina_taur_enabled = !vagina_entry.vagina_taur_enabled
+		if("ovi_toggle")
+			vagina_entry.egg_layer = !vagina_entry.egg_layer
+		else
+			oviposition_pref_topic(user, href_list["customizer_task"], vagina_entry.egg_settings)
 
 
 /datum/customizer/organ/vagina/human
@@ -467,6 +614,7 @@
 		/datum/sprite_accessory/vagina/gaping,
 		/datum/sprite_accessory/vagina/hairy,
 		/datum/sprite_accessory/vagina/trimmed,
+		/datum/sprite_accessory/vagina/bee_tail,
 		)
 	allows_accessory_color_customization = FALSE
 
@@ -479,6 +627,7 @@
 		/datum/sprite_accessory/vagina/gaping,
 		/datum/sprite_accessory/vagina/hairy,
 		/datum/sprite_accessory/vagina/trimmed,
+		/datum/sprite_accessory/vagina/bee_tail,
 		)
 	allows_accessory_color_customization = TRUE
 
@@ -493,6 +642,7 @@
 		/datum/sprite_accessory/vagina/trimmed,
 		/datum/sprite_accessory/vagina/spade,
 		/datum/sprite_accessory/vagina/furred,
+		/datum/sprite_accessory/vagina/bee_tail,
 		)
 
 /datum/customizer/organ/vagina/anthro
@@ -507,4 +657,11 @@
 		/datum/sprite_accessory/vagina/spade,
 		/datum/sprite_accessory/vagina/furred,
 		/datum/sprite_accessory/vagina/cloaca,
+		/datum/sprite_accessory/vagina/bee_tail,
 		)
+
+/datum/customizer_choice/organ/vagina/bee_tail
+	name = "Oviduct"
+	organ_type = /obj/item/organ/vagina
+	sprite_accessories = list(/datum/sprite_accessory/vagina/bee_tail)
+	allows_accessory_color_customization = TRUE

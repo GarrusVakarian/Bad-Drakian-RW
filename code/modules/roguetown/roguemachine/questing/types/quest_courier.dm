@@ -105,10 +105,13 @@
 	return delivery_parcel
 
 /datum/quest/courier/preview(obj/effect/landmark/quest_spawner/landmark)
+	var/list/available_locations = get_available_quest_delivery_locations(target_delivery_locations)
+	if(!length(available_locations))
+		return FALSE
 	. = ..()
 	if(!.)
 		return
-	target_delivery_location = pick(target_delivery_locations)
+	target_delivery_location = pick(available_locations)
 	progress_required = 1
 	var/list/possible_items = get_area_delivery_items()[target_delivery_location] || list(
 		/obj/item/natural/cloth,

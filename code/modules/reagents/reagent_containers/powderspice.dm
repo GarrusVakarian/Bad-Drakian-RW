@@ -529,12 +529,26 @@
 	description = ""
 	color = "#ddd3df" // rgb: 96, 165, 132
 	metabolization_rate = 1
+	var/combat_application = FALSE
+
+/datum/reagent/sleep_powder/on_mob_add(mob/living/M)
+	. = ..()
+	// Lock the effect when it enters the body; combat toggles cannot evade it.
+	combat_application = M.cmode
 
 // TO DO: eventually rewrite drowsyness code to do this instead then it can be expanded
 // The reason why I haven't is because vampire lords have some special code for drowsyness I'll ave to get to...
 /datum/reagent/sleep_powder/on_mob_metabolize(mob/living/carbon/M)
-	M.apply_status_effect(/datum/status_effect/debuff/knockout)
+	if(!combat_application)
+		M.apply_status_effect(/datum/status_effect/debuff/knockout)
 	..()
+
+/datum/reagent/sleep_powder/on_mob_life(mob/living/carbon/M)
+	if(combat_application)
+		M.Slowdown(10)
+		if(prob(20))
+			to_chat(M, span_warning("I feel my tense body slow down a little."))
+	return ..()
 
 
 /obj/item/reagent_containers/powder/sleep_powder

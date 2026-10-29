@@ -207,6 +207,7 @@
 	name = "Barbarian"
 	tutorial = "You are a brutal warrior, who has foregone armor in favor of pure strength. Crush your enemies, see them driven before you, and hear the lamentations of their women! Oh, and you can specialize in unarmed combat and wrestling."
 	outfit = /datum/outfit/job/roguetown/adventurer/barbarian
+	allowed_races = ALL_BUT_BLOODLESS
 	cmode_music = 'sound/music/cmode/antag/combat_darkstar.ogg'
 	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_CRITICAL_RESISTANCE, TRAIT_NOPAINSTUN)
 	category_tags = list(CTAG_ADVENTURER, CTAG_COURTAGENT)
@@ -645,6 +646,18 @@
 	subclass_social_rank = SOCIAL_RANK_DIRT
 
 /datum/outfit/job/adventurer/amazon/pre_equip(mob/living/carbon/human/H, visualsOnly)
+	// The character-menu dummy needs a representative outfit without equipment prompts.
+	if(visualsOnly)
+		armor = /obj/item/clothing/suit/roguetown/armor/leather/bikini
+		shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/bikini
+		pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/shorts
+		wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
+		shoes = /obj/item/clothing/shoes/roguetown/boots/furlinedboots
+		gloves = /obj/item/clothing/gloves/roguetown/fingerless_leather
+		backl = /obj/item/storage/backpack/rogue/satchel
+		belt = /obj/item/storage/belt/rogue/leather
+		neck = /obj/item/storage/belt/rogue/pouch/coins/poor
+		return
 
 	var/armor_styles = list("Leather Kini","Hide Armor Kini","Studded Leather Kini","Half Plate Kini","Plate Kini")
 	var/armor_choice = input(H, "Choose your armor style", "Available armor styles") as anything in armor_styles
@@ -845,14 +858,14 @@
 			backl = /obj/item/storage/backpack/rogue/satchel
 			belt = /obj/item/storage/belt/rogue/leather
 			neck = /obj/item/storage/belt/rogue/pouch/coins/poor
-			var/weapons = list("Great Sword","Eagle's Beak","Battle Axe","MY BARE HANDS!!!")
+			var/weapons = list("Great Sword","Lucerne","Battle Axe","MY BARE HANDS!!!")
 			var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 			switch(weapon_choice)
 				if("Great Sword")
 					H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_JOURNEYMAN, TRUE)
 					r_hand = /obj/item/rogueweapon/greatsword
 					backr = /obj/item/rogueweapon/scabbard/gwstrap
-				if("Eagle's Beak")
+				if("Lucerne")
 					H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_JOURNEYMAN, TRUE)
 					r_hand = /obj/item/rogueweapon/eaglebeak
 					backr = /obj/item/rogueweapon/scabbard/gwstrap

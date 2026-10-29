@@ -102,6 +102,8 @@
 	var/oindex = active_hand_index
 	active_hand_index = held_index
 	if(hud_used)
+		var/atom/movable/screen/inventory/hovered_slot = hud_used.overlay_curloc
+		hovered_slot?.clear_hover_overlay()
 		hud_used.throw_icon?.update_icon()
 		hud_used.give_intent?.update_icon()
 		var/atom/movable/screen/inventory/hand/H
@@ -221,6 +223,9 @@
 	return
 
 /mob/living/carbon/throw_item(atom/target, offhand = FALSE)
+	if(HAS_TRAIT(src, TRAIT_DEADITE))
+		to_chat(src, span_warning("...What?"))
+		return
 	. = ..()
 	throw_mode_off()
 	if(!target || !isturf(loc))
@@ -1160,6 +1165,7 @@
 					visible_message(span_danger("<b>[src] collapses, broken and bloodied!</b>"), \
 						span_userdanger("My bones are shattered... I cannot go on."))
 			stat = UNCONSCIOUS
+			cure_holdbreath() // In case you passed out from holding breathe
 			if(ishuman(src))
 				var/mob/living/carbon/human/H = src
 				H.dna?.species?.stop_wagging_tail(H)

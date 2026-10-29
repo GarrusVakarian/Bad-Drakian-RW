@@ -128,10 +128,24 @@
 	/obj/item/ash
 	)
 
+/obj/item/storage/roguebag/zizobane_stash
+	name = "bag of Zizo's Bane powder"
+	desc = "A sack holding a carefully saved supply of ground Zizo's Bane."
+	populate_contents = list(
+		/obj/item/reagent_containers/powder/sleep_powder,
+		/obj/item/reagent_containers/powder/sleep_powder,
+		/obj/item/reagent_containers/powder/sleep_powder
+	)
+
 /obj/item/storage/roguebag/fetish
+	name = "bag of fetish gear"
+	desc = "A discreet sack of assorted gear and emberwine, kept ready to handle guests."
 	populate_contents = list(
 		/obj/item/clothing/mask/rogue/blindfold,
+		/obj/item/leash,
+		/obj/item/clothing/neck/roguetown/collar/leather,
 		/obj/item/chastity/chastity_cage,
+		/obj/item/chastity/chastity_cage/flat,
 		/obj/item/chastity/chastity_belt,
 		/obj/item/reagent_containers/glass/bottle/alchemical/emberwine,
 		/obj/item/dildo/wood,
@@ -140,6 +154,22 @@
 		/obj/item/rogueweapon/whip,
 		/obj/item/rogueweapon/surgery/cautery/branding/crude
 	)
+/obj/item/storage/roguebag/cursed_keepsakes
+	name = "bag of cursed fetish gear"
+	desc = "A discreet sack of assorted gear, emberwine, and cursed keepsakes that are not easily removed."
+	populate_contents = list(
+		/obj/item/clothing/neck/roguetown/cursed_collar,
+		/obj/item/chastity/cursed,
+		/obj/item/clothing/mask/rogue/blindfold,
+		/obj/item/leash,
+		/obj/item/reagent_containers/glass/bottle/alchemical/emberwine,
+		/obj/item/dildo/wood,
+		/obj/item/natural/cloth,
+		/obj/item/rope/chain,
+		/obj/item/rogueweapon/whip,
+		/obj/item/rogueweapon/surgery/cautery/branding/crude
+	)
+
 /obj/item/storage/roguebag/gambling_kit_bundle
 	name = "gambling kit bundle"
 	desc = "A stuffed sack containing gaming essentials for a full table night."

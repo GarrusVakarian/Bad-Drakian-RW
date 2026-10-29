@@ -22,6 +22,8 @@
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || (user.STASTR > 12))
 		if(istype(user.rmb_intent, /datum/rmb_intent/strong))
 			user.sexcon.try_pelvis_crush(target)
+			if(HAS_TRAIT(target, TRAIT_POPPABLE))
+				user.sexcon.try_belly_pop(target)
 
 	user.sexcon.perform_sex_action(user, 2, 0, TRUE)
 	if(user.sexcon.check_active_ejaculation())
@@ -75,6 +77,8 @@
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || (user.STASTR > 12))
 		if(istype(user.rmb_intent, /datum/rmb_intent/strong))
 			user.sexcon.try_pelvis_crush(target)
+			if(HAS_TRAIT(target, TRAIT_POPPABLE))
+				user.sexcon.try_belly_pop(target)
 
 	user.sexcon.perform_sex_action(user, 2, 0, TRUE)
 	if(user.sexcon.check_active_ejaculation())

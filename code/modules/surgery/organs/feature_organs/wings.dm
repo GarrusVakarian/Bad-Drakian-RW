@@ -55,6 +55,10 @@
 		H.update_tongue_noise_verbs()
 
 /obj/item/organ/wings/Remove(mob/living/carbon/M, special = FALSE, drop_if_replaced = TRUE)
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		if(H.wings_held_open)
+			H.set_wings_held_open(FALSE)
 	. = ..()
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M

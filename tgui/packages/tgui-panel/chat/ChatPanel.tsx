@@ -27,7 +27,7 @@ export class ChatPanel extends Component<Props, State> {
     super(props);
     this.ref = createRef();
     this.state = {
-      scrollTracking: true,
+      scrollTracking: chatRenderer.scrollTracking,
     };
     this.handleScrollTrackingChange = (value) =>
       this.setState({
@@ -45,6 +45,7 @@ export class ChatPanel extends Component<Props, State> {
   }
 
   componentWillUnmount() {
+    chatRenderer.unmount();
     chatRenderer.events.off(
       'scrollTrackingChanged',
       this.handleScrollTrackingChange,

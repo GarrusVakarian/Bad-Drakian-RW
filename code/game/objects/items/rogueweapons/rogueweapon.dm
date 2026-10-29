@@ -109,7 +109,7 @@
 	..()
 
 /obj/item/rogueweapon/rmb_self(mob/user)
-	if(length(alt_intents))
+	if(length(alt_intents) && (user.cmode || !twirly))
 		if(altgripped)
 			ungrip(user)
 			return
@@ -171,3 +171,11 @@
 	blade_dulling = new_shaft
 	qdel(S)
 	new replaced_shaft(src.drop_location())
+
+/obj/item/rogueweapon/twirl_skill_needed()
+	return twirly - ((associated_skill == /datum/skill/magic/arcane) ? 1 : 0)
+
+/obj/item/rogueweapon/get_mechanics_examine(mob/user)
+	. = ..()
+	if(twirly)
+		. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed[length(alt_intents) ? ", out of combat mode" : ""]. Safe at [skill_to_string(twirl_skill_needed())] skill.")

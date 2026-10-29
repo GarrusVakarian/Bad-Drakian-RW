@@ -48,6 +48,42 @@
 	sellprice = 10
 	resistance_flags = FIRE_PROOF
 	dropshrink = 0.8
+	force = 10
+	associated_skill = /datum/skill/combat/whipsflails
+	sewrepair = TRUE
+	wbalance = WBALANCE_SWIFT
+	wdefense = 0
+	swingsound = WHIPWOOSH
+	possible_item_intents = list(
+		/datum/intent/whip/belt/tip,
+		/datum/intent/whip/belt/buckle,
+	)
+
+/datum/intent/whip/belt/tip
+	name = "belt lash"
+	blade_class = BCLASS_BLUNT
+	attack_verb = list("lashes", "cracks")
+	hitsound = list('sound/combat/hits/blunt/flailhit.ogg')
+	chargetime = 0
+	recovery = 5
+	damfactor = 0.5
+	penfactor = BLUNT_DEFAULT_PENFACTOR
+	reach = 1
+	icon_state = "inlash"
+	item_d_type = "slash"
+
+/datum/intent/whip/belt/buckle
+	name = "buckle strike"
+	blade_class = BCLASS_BLUNT
+	attack_verb = list("lashes", "cracks")
+	hitsound = list('sound/combat/hits/blunt/flailhit.ogg')
+	chargetime = 0
+	recovery = 5
+	damfactor = 1
+	penfactor = BLUNT_DEFAULT_PENFACTOR
+	reach = 1
+	icon_state = "instrike"
+	item_d_type = "slash"
 
 /obj/item/storage/belt/rogue/leather/plaquegold
 	name = "plaque belt"
@@ -78,6 +114,12 @@
 	desc = "A pair of slim black belts worn around the waist."
 	icon_state = "belt_double"
 	item_state = "belt_double"
+
+/obj/item/storage/belt/rogue/leather/beltshawl
+	name = "belt shawl"
+	desc = "A fancy shawl worn around the waist."
+	icon_state = "beltshawl"
+	item_state = "beltshawl"
 
 /obj/item/storage/belt/rogue/leather/plaquesilver
 	name = "plaque belt"
@@ -505,12 +547,12 @@
 
 /obj/item/storage/hip/orestore/bronze
 	name = "mechanized ore bag"
-	desc = "a ticking Ore bag for sorting and compressing ore, ingots, and gems"
+	desc = "A becogged bag for sorting and compressing ore, ingots, and gemeralds. It idly ticks to the rhythm of unseen mechanisms, yearning for earthly treats."
 	icon = 'icons/roguetown/items/misc.dmi'
 	//mob_overlay_icon = 'icons/roguetown/clothing/onmob/belts.dmi'
 	icon_state = "rucksack"
 	item_state = "rucksack"
-	slot_flags = ITEM_SLOT_HIP
+	slot_flags = ITEM_SLOT_HIP|ITEM_SLOT_BACK
 	w_class = WEIGHT_CLASS_NORMAL
 	max_integrity = 400
 	equip_sound = 'sound/blank.ogg'
@@ -518,3 +560,82 @@
 	anvilrepair = /datum/skill/craft/blacksmithing
 	smeltresult = /obj/item/ingot/bronze
 	component_type = /datum/component/storage/concrete/grid/orestore/bronze
+	var/current_choice_index = 1
+	var/static/list/filter_options = list(
+	list(/obj/item/rogueore, /obj/item/ingot, /obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl),
+	list(/obj/item/rogueore),
+	list(/obj/item/ingot),
+	list(/obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl)
+	)
+
+/obj/item/storage/hip/orestore/bronze/examine(mob/user)
+	. = ..()
+	var/str = "The bag is set to collect: "
+	switch(current_choice_index)
+		if(1)
+			str += "Everything"
+		if(2)
+			str += "Ore Only"
+		if(3)
+			str += "Ingots Only"
+		if(4)
+			str += "Gems Only"
+	. += span_notice(str)
+
+/obj/item/storage/hip/orestore/bronze/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_notice("Walking over or clicking on the tiles with selected items will automatically scoop them into the bag.")
+	. += span_notice("Right clicking the bag while it's outside of your active hand will toggle through various scoop filters.")
+
+/obj/item/storage/hip/orestore/bronze/attack_right(mob/user)
+	if(current_choice_index < length(filter_options))
+		current_choice_index++
+	else
+		current_choice_index = 1
+	var/list/filters = filter_options[current_choice_index]
+	var/datum/component/storage/concrete/grid/orestore/OS = GetComponent(/datum/component/storage/concrete/grid/orestore)
+	if(OS)
+		OS.set_holdable(filters)
+	var/str = "\The [src] will now collect: "
+	switch(current_choice_index)
+		if(1)
+			str += "Everything"
+		if(2)
+			str += "Ore Only"
+		if(3)
+			str += "Ingots Only"
+		if(4)
+			str += "Gems Only"
+	to_chat(user, span_notice(str))
+
+// I Do Not 100% understand how this works. This is probably buggy as fuck.
+/obj/item/storage/hip/orestore/bronze/equipped(mob/user, slot)
+	. = ..()
+	// i set override to true bc it kept producing a runtime unless i did. assuming this is fine. idfk.
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(on_user_moved), TRUE)
+
+/obj/item/storage/hip/orestore/bronze/dropped(mob/user)
+	. = ..()
+	UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
+
+/obj/item/storage/hip/orestore/bronze/proc/on_user_moved(mob/living/user)
+	SIGNAL_HANDLER
+	var/picked_up = FALSE
+	// sanity check
+	if(user.incapacitated() || !user.canUseStorage())
+		return
+	// ensure the turf is a turf. idk how this would happen but after turf fuckery im scared now.
+	var/turf/T = get_turf(user)
+	if(!T)
+		return
+	// nab the components of the storage device
+	var/datum/component/storage/S = GetComponent(/datum/component/storage)
+	if(!S)
+		return
+
+	for(var/obj/item/I in T)
+		if(S.can_be_inserted(I, TRUE, user))
+			S.handle_item_insertion(I, TRUE, user)
+			picked_up = TRUE
+	if(picked_up)
+		user.visible_message(span_info("[user] picks up the ore beneath them, placing it into the ore bag..."))

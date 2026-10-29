@@ -1,3 +1,9 @@
+/datum/stressevent/denied_release
+	timer = 5 MINUTES
+	stressadd = 6
+	max_stacks = 1
+	desc = "<span class='red'>I was brought close, only to be left frustrated.</span>"
+
 /datum/stressevent/cumok
 	timer = 15 MINUTES
 	stressadd = -2

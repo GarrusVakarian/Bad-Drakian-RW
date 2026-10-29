@@ -68,6 +68,13 @@ export const CHANGELOG_ENTRIES = [
 	],
 
 	[
+		["map"],
+		{
+			placeholders: ["added/modified/removed map content"],
+		},
+	],
+
+	[
 		["code_imp", "code"],
 		{
 			placeholders: ["changed some code"],

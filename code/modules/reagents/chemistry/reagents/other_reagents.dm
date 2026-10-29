@@ -57,12 +57,16 @@
 		..()
 
 /datum/reagent/blood/on_mob_life(mob/living/carbon/H)//I hate you
+	var/absorbed_blood = min(volume, metabolization_rate)
 	..()
 	if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
-		H.adjust_nutrition(10)
-		H.adjust_hydration(10)
+		H.adjust_nutrition(12)
+		H.adjust_hydration(12)
 		if(H.get_blood_volume() < BLOOD_VOLUME_NORMAL)
-			H.set_blood_volume(min(H.get_blood_volume()+4, BLOOD_VOLUME_NORMAL))//Less effective than just water.
+			H.set_blood_volume(min(H.get_blood_volume()+5, BLOOD_VOLUME_NORMAL)) //water should be toxic to hemophages, increasing it so it becomes a water replacement
+		return
+	if(HAS_TRAIT(H, TRAIT_BLOOD_DRINKER))
+		H.adjust_hydration(absorbed_blood * 4) // One third of water's hydration per unit; small amounts hydrate proportionally.
 		return
 	if(HAS_TRAIT(H, TRAIT_NASTY_EATER))
 		return
@@ -73,13 +77,16 @@
 		..()
 /datum/reagent/blood/shitty/on_mob_life(mob/living/carbon/H)
 	..()
-	if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
-		H.adjust_nutrition(3)
-		H.adjust_hydration(3)
+	if(HAS_TRAIT(H, TRAIT_HEMOPHAGE)) // this should be ass
+		H.adjust_nutrition(2)
+		H.adjust_hydration(2)
 		if(H.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 			H.set_blood_volume(min(H.get_blood_volume()+2, BLOOD_VOLUME_NORMAL))//Much less effective than just water.
 		if(prob(5))
 			to_chat(H, span_red("This will hardly do... I must procure a better source of lyfeblood..."))
+		return
+	// The parent blood metabolism already supplies the quirk's hydration.
+	if(HAS_TRAIT(H, TRAIT_BLOOD_DRINKER))
 		return
 	if(HAS_TRAIT(H, TRAIT_NASTY_EATER) && HAS_TRAIT(H, TRAIT_WILD_EATER))
 		return
@@ -134,7 +141,7 @@
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
-			M.add_nausea(2)
+			M.add_nausea(12) //should instant puke for clearification
 		else
 			H.adjust_hydration(hydration)
 			if(M.get_blood_volume() < BLOOD_VOLUME_NORMAL)
@@ -195,7 +202,7 @@
 			H.adjust_hydration(-hydration)  //saltwater dehydrates more than it hydrates
 			M.adjustToxLoss(0.25) // Slightly toxic
 			M.add_nausea(2)
-		else if(HAS_TRAIT(H, TRAIT_SEA_DRINKER))
+		else if(HAS_TRAIT(H, TRAIT_SEA_DRINKER) && !HAS_TRAIT(H, TRAIT_HEMOPHAGE))
 			H.adjust_hydration(hydration)
 	..()
 
@@ -338,16 +345,19 @@
 /datum/reagent/water/holywater/on_mob_life(mob/living/carbon/M)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
-		H.adjust_hydration(hydration)
-	var/old_count = LAZYACCESS(data, "misc")
-	LAZYSET(data, "misc", old_count + 1)
+		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
+			H.add_nausea(12)
+		else
+			H.adjust_hydration(hydration)
+	var/count = LAZYACCESS(data, "misc") + 1
+	LAZYSET(data, "misc", count)
 	M.jitteriness = min(M.jitteriness+4,10)
-	if(data >= 25)		// 10 units, 45 seconds @ metabolism 0.4 units & tick rate 1.8 sec
+	if(count >= 25)		// 10 units, 45 seconds @ metabolism 0.4 units & tick rate 1.8 sec
 		if(!M.stuttering)
 			M.stuttering = 1
 		M.stuttering = min(M.stuttering+4, 10)
 		M.Dizzy(5)
-	if(data >= 60)	// 30 units, 135 seconds
+	if(count >= 60)	// 30 units, 135 seconds
 		M.jitteriness = 0
 		M.stuttering = 0
 		holder.remove_reagent(type, volume)	// maybe this is a little too perfect and a max() cap on the statuses would be better??

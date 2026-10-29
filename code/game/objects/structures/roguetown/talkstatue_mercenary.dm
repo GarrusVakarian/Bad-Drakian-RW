@@ -46,6 +46,57 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 	playsound(loc, 'sound/misc/keyboard_enter.ogg', 100, FALSE, -1)
 	ui_interact(user)
 
+/// Enroll after class selection; an advertisement is optional and only lasts this round.
+/obj/structure/roguemachine/talkstatue/mercenary/proc/auto_register(mob/living/carbon/human/H)
+	if(QDELETED(H) || !H.mind || !H.advjob || H.stat == DEAD)
+		return FALSE
+	var/list/registry
+	var/role_name
+	if(role_matches(H, "Mercenary"))
+		registry = mercenary_status
+		role_name = "Mercenary"
+	else if(role_matches(H, "Adventurer"))
+		registry = adventurer_status
+		role_name = "Adventurer"
+	else if(role_matches(H, "Wretch"))
+		registry = wretch_status
+		role_name = "Wretch"
+	else
+		return FALSE
+	var/list/data = registry[H.real_name]
+	if(data && data["mob"] == H)
+		return FALSE // Re-equipping must not erase an ad, change status, or renew the link.
+	registry[H.real_name] = list("status" = "Available", "mob" = H, "message" = "")
+	if(role_name == "Wretch")
+		registry[H.real_name]["nom_de_guerre"] = wretch_descriptor(H)
+	if(H.key)
+		pending_registrations -= H.key
+		// Let class fluff, job greetings and the login dawn notice finish first.
+		addtimer(CALLBACK(src, PROC_REF(send_spawn_ad_link), H, role_name, H.key), 5 SECONDS)
+	return TRUE
+
+/obj/structure/roguemachine/talkstatue/mercenary/proc/send_spawn_ad_link(mob/living/carbon/human/H, role_name, expected_key)
+	if(QDELETED(H) || H.stat == DEAD || H.key != expected_key || !role_matches(H, role_name))
+		return
+	var/list/registry
+	switch(role_name)
+		if("Mercenary")
+			registry = mercenary_status
+		if("Adventurer")
+			registry = adventurer_status
+		if("Wretch")
+			registry = wretch_status
+		else
+			return
+	var/list/data = registry[H.real_name]
+	if(!data || data["mob"] != H)
+		return
+	pending_message_links[H.key] = H
+	// Give the player the full five minutes after the notice actually appears.
+	addtimer(CALLBACK(src, PROC_REF(expire_message_link), H.key, H), 5 MINUTES)
+	var/link_text = role_name == "Wretch" ? "Set my status, alias and advertisement for this round" : "Set my status and advertisement for this round"
+	to_chat(H, span_notice("I am listed on the [role_name] roster at the mercenary statue. <a href='?src=[REF(src)];set_message_remote=[REF(H)]'>[link_text]</a> (one use, expires in 5 minutes). I can visit the statue later to make further changes."))
+
 /obj/structure/roguemachine/talkstatue/mercenary/proc/message_single_mercenary(mob/living/carbon/human/sender)
 	var/list/available_mercenaries = list()
 	var/list/stale_keys = list()
@@ -178,9 +229,9 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 
 	if(href_list["register"])
 		var/mob/living/carbon/human/H = locate(href_list["register"])
-		if(!H)
+		if(!H || usr != H)
 			return
-		if(!pending_registrations[H.key])
+		if(pending_registrations[H.key] != H)
 			to_chat(usr, span_warning("That registration link has expired."))
 			return
 		if(H.mind?.assigned_role != "Mercenary")
@@ -193,8 +244,9 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 			to_chat(H, span_warning("I need to select my mercenary class before registering with the statue."))
 			return
 
-		var/list/merc_data = list("status" = "Available", "mob" = H, "message" = "")
-		mercenary_status[H.real_name] = merc_data
+		var/list/merc_data = mercenary_status[H.real_name]
+		if(!merc_data || merc_data["mob"] != H)
+			mercenary_status[H.real_name] = list("status" = "Available", "mob" = H, "message" = "")
 		pending_registrations -= H.key
 
 		to_chat(H, span_boldnotice("I have registered with the Mercenary Guild! I am now listed as <b>Available</b>."))
@@ -203,7 +255,7 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 
 		if(!QDELETED(H))
 			pending_message_links[H.key] = H
-			addtimer(CALLBACK(src, PROC_REF(expire_message_link), H.key), 2 MINUTES)
+			addtimer(CALLBACK(src, PROC_REF(expire_message_link), H.key, H), 2 MINUTES)
 		return
 
 	if(href_list["set_message_remote"])
@@ -213,28 +265,61 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 		if(usr != H)
 			to_chat(usr, span_warning("That link is not for me."))
 			return
-		if(!pending_message_links[H.key])
+		if(pending_message_links[H.key] != H)
 			to_chat(usr, span_warning("That message link has expired."))
 			return
-		if(!mercenary_status[H.real_name])
-			to_chat(usr, span_warning("I am not registered with the mercenary statue network."))
-			pending_message_links -= H.key
+		var/list/registry
+		var/role_name
+		if(role_matches(H, "Mercenary"))
+			registry = mercenary_status
+			role_name = "Mercenary"
+		else if(role_matches(H, "Adventurer"))
+			registry = adventurer_status
+			role_name = "Adventurer"
+		else if(role_matches(H, "Wretch"))
+			registry = wretch_status
+			role_name = "Wretch"
+		else
 			return
-		if(H.mind?.assigned_role != "Mercenary")
-			to_chat(usr, span_warning("I am no longer a mercenary."))
-			pending_message_links -= H.key
+		var/list/data = registry[H.real_name]
+		if(!data || data["mob"] != H || H.stat == DEAD)
 			return
-
-		var/list/merc_data = mercenary_status[H.real_name]
-		var/current_msg = merc_data["message"] || ""
-		var/new_msg = stripped_input(H, "Enter my mercenary message (max 300 characters):", "Mercenary Message", current_msg, 300)
-
-		if(new_msg != null)
-			merc_data["message"] = new_msg
-			to_chat(H, span_notice("My message has been recalled by the statue. I must visit it to make further changes."))
-			playsound(H.loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
-
+		// Consume before opening input so the same link cannot open multiple editors.
 		pending_message_links -= H.key
+		var/list/status_options
+		switch(role_name)
+			if("Mercenary")
+				status_options = list("Available", "Contracted", "Do not Disturb")
+			if("Adventurer")
+				status_options = list("Available", "Away", "Resting", "Do not Disturb")
+			if("Wretch")
+				status_options = list("Available", "On a Job", "Lying Low", "Do not Disturb")
+		var/new_status = input(H, "Choose my status for this round. Afterwards, I can edit my advertisement.", "[role_name] Status", data["status"]) as null|anything in status_options
+		if(!(new_status in status_options) || QDELETED(H) || usr != H || H.stat == DEAD)
+			return
+		if(!role_matches(H, role_name) || registry[H.real_name] != data || data["mob"] != H)
+			return
+		data["status"] = new_status
+		to_chat(H, span_notice("I set my status to: <b>[new_status]</b>"))
+		log_admin_private("[key_name(H)] set statue status to [new_status]")
+		if(role_name == "Wretch")
+			var/new_nom = stripped_input(H, "Choose my nom de guerre for this round (max 60 characters). Empty to use my physical descriptor.", "Nom de Guerre", data["nom_de_guerre"] || "", 60)
+			if(QDELETED(H) || usr != H || H.stat == DEAD)
+				return
+			if(!role_matches(H, role_name) || registry[H.real_name] != data || data["mob"] != H)
+				return
+			if(new_nom != null)
+				data["nom_de_guerre"] = new_nom
+				to_chat(H, span_notice("My nom de guerre has been updated."))
+				log_admin_private("[key_name(H)] set wretch nom de guerre: \"[new_nom]\"")
+		var/new_msg = stripped_input(H, "Enter my advertisement for this round (max [message_char_limit] characters):", "[role_name] Advertisement", data["message"] || "", message_char_limit)
+		if(new_msg == null || QDELETED(H) || usr != H || H.stat == DEAD)
+			return
+		if(!role_matches(H, role_name) || registry[H.real_name] != data || data["mob"] != H)
+			return
+		data["message"] = new_msg
+		to_chat(H, span_notice("My advertisement has been updated. I can visit the statue to make further changes."))
+		log_admin_private("[key_name(H)] set [role_name] statue advertisement: \"[new_msg]\"")
 		return
 
 	if(href_list["broadcast_interest"])
@@ -300,13 +385,15 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 			return
 
 		pending_direct_responses -= response_id
+		var/responder_name = role_matches(responder, "Wretch") ? wretch_display_name(responder) : responder.real_name
+		var/sender_name = role_matches(sender, "Wretch") ? wretch_display_name(sender) : sender.real_name
 
 		if(response_type == "yae")
-			to_chat(sender, span_notice("[responder.real_name] responded in affirmation to my message."))
-			to_chat(responder, span_notice("I responded in affirmation to [sender.real_name]."))
+			to_chat(sender, span_notice("[responder_name] responded in affirmation to my message."))
+			to_chat(responder, span_notice("I responded in affirmation to [sender_name]."))
 		else
-			to_chat(sender, span_notice("[responder.real_name] responded negatively to my message."))
-			to_chat(responder, span_notice("I responded negatively to [sender.real_name]."))
+			to_chat(sender, span_notice("[responder_name] responded negatively to my message."))
+			to_chat(responder, span_notice("I responded negatively to [sender_name]."))
 
 		playsound(sender.loc, 'sound/misc/notice (2).ogg', 100, FALSE, -1)
 		playsound(responder.loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
@@ -318,7 +405,9 @@ upstream. That cost gate was not reimplemented here - flagged for follow-up if w
 	if(pending_registrations[key])
 		pending_registrations -= key
 
-/obj/structure/roguemachine/talkstatue/mercenary/proc/expire_message_link(key)
+/obj/structure/roguemachine/talkstatue/mercenary/proc/expire_message_link(key, mob/expected_user = null)
+	if(expected_user && pending_message_links[key] != expected_user)
+		return // An older character's timer must not revoke their replacement's link.
 	if(pending_message_links[key])
 		pending_message_links -= key
 

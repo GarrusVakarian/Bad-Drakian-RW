@@ -85,8 +85,8 @@
 /area/rogue)
 "am" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/wrists/roguetown/bracers,
 /obj/item/clothing/wrists/roguetown/bracers,
@@ -103,8 +103,8 @@
 /area/rogue)
 "ao" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/leather/studded,
 /obj/item/clothing/suit/roguetown/armor/leather/studded,
@@ -120,8 +120,8 @@
 /area/rogue)
 "ap" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/plate,
 /obj/item/clothing/suit/roguetown/armor/plate,
@@ -143,8 +143,8 @@
 /area/rogue)
 "aq" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/gambeson,
 /obj/item/clothing/suit/roguetown/armor/gambeson,
@@ -158,8 +158,8 @@
 /area/rogue)
 "ar" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk,
 /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk,
@@ -172,8 +172,8 @@
 /area/rogue)
 "as" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/chainmail/iron,
 /obj/item/clothing/suit/roguetown/armor/chainmail/iron,
@@ -181,8 +181,8 @@
 /area/rogue)
 "at" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/suit/roguetown/armor/armordress,
 /obj/item/clothing/suit/roguetown/armor/armordress/alt,
@@ -191,8 +191,8 @@
 /area/rogue)
 "au" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/gloves/roguetown/chain,
 /obj/item/clothing/gloves/roguetown/chain,
@@ -205,8 +205,8 @@
 /area/rogue)
 "aw" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/head/roguetown/helmet/heavy/crusader,
 /obj/item/clothing/head/roguetown/helmet/heavy/crusader/t,
@@ -214,8 +214,8 @@
 /area/rogue)
 "ax" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/head/roguetown/helmet/sallet,
 /obj/item/clothing/head/roguetown/helmet/sallet,
@@ -225,13 +225,38 @@
 /turf/open/floor/rogue/carpet,
 /area/rogue)
 "ay" = (
-/obj/effect/proc_holder/spell/invoked/heal,
+/obj/structure/table/wood{
+	icon_state = "tablewood2";
+	dir = 10
+	},
+/obj/item/rogueweapon/halberd/blacksteel,
+/obj/item/rogueweapon/eaglebeak/blacksteel,
+/obj/item/rogueweapon/sword/long/blacksteel,
+/obj/item/rogueweapon/scabbard/sword/royal,
+/obj/item/rogueweapon/scabbard/gwstrap,
+/obj/item/rogueweapon/scabbard/gwstrap,
+/obj/item/rogueweapon/huntingknife/idagger/blacksteel,
+/obj/item/clothing/suit/roguetown/armor/gambeson/heavy,
+/obj/item/clothing/suit/roguetown/armor/plate/modern/blacksteel_full_plate,
+/obj/item/clothing/shoes/roguetown/boots/blacksteel/modern/plateboots,
+/obj/item/clothing/wrists/roguetown/bracers,
+/obj/item/clothing/ring/statonyx,
+/obj/item/clothing/neck/roguetown/coif/heavypadding,
+/obj/item/clothing/mask/rogue/facemask/steel/hound,
+/obj/item/clothing/head/roguetown/helmet/blacksteel/modern/armet,
+/obj/item/clothing/gloves/roguetown/blacksteel/modern/plategloves,
+/obj/item/clothing/cloak/cape/blkknight,
+/obj/item/clothing/cloak/darkcloak/minotaur/red,
+/obj/item/clothing/under/roguetown/platelegs/blacksteel/modern,
+/obj/item/flowercrown/rosa,
+/obj/item/storage/belt/rogue/leather/steel/tasset,
+/obj/item/clothing/ring/dragon_ring,
 /turf/open/floor/rogue/carpet,
 /area/rogue)
 "az" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/head/roguetown/helmet/sallet/visored,
 /obj/item/clothing/head/roguetown/helmet/sallet/visored,
@@ -241,8 +266,8 @@
 /area/rogue)
 "aA" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/under/roguetown/chainlegs,
 /obj/item/clothing/under/roguetown/chainlegs,
@@ -253,8 +278,8 @@
 /area/rogue)
 "aB" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/head/roguetown/helmet/leather,
 /obj/item/clothing/head/roguetown/helmet/leather,
@@ -264,8 +289,8 @@
 /area/rogue)
 "aC" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/mask/rogue/facemask/steel,
 /obj/item/clothing/mask/rogue/facemask/steel,
@@ -275,8 +300,8 @@
 /area/rogue)
 "aD" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/under/roguetown/heavy_leather_pants,
 /obj/item/clothing/under/roguetown/heavy_leather_pants,
@@ -286,8 +311,8 @@
 /area/rogue)
 "aE" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/head/roguetown/helmet,
 /obj/item/clothing/head/roguetown/helmet,
@@ -296,8 +321,8 @@
 /area/rogue)
 "aF" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/mask/rogue/facemask,
 /obj/item/clothing/mask/rogue/facemask,
@@ -309,8 +334,8 @@
 /area/rogue)
 "aG" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/under/roguetown/tights,
 /obj/item/clothing/under/roguetown/tights,
@@ -320,8 +345,8 @@
 /area/rogue)
 "aI" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/neck/roguetown/chaincoif,
 /obj/item/clothing/neck/roguetown/chaincoif,
@@ -331,8 +356,8 @@
 /area/rogue)
 "aJ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/ring/active/nomag,
 /obj/item/clothing/ring/active/nomag,
@@ -340,8 +365,8 @@
 /area/rogue)
 "aK" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/shoes/roguetown/boots,
 /obj/item/clothing/shoes/roguetown/boots,
@@ -352,8 +377,8 @@
 /area/rogue)
 "aL" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/neck/roguetown/coif,
 /obj/item/clothing/neck/roguetown/coif,
@@ -365,8 +390,8 @@
 /area/rogue)
 "aM" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/neck/roguetown/talkstone,
 /obj/item/clothing/neck/roguetown/talkstone,
@@ -376,8 +401,8 @@
 /area/rogue)
 "aN" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/shoes/roguetown/boots/armor,
 /obj/item/clothing/shoes/roguetown/boots/armor,
@@ -388,8 +413,8 @@
 /area/rogue)
 "aO" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/clothing/neck/roguetown/psicross,
 /obj/item/clothing/neck/roguetown/psicross,
@@ -402,8 +427,8 @@
 /area/rogue)
 "aS" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/greatsword/zwei,
 /obj/item/rogueweapon/greatsword/zwei,
@@ -412,8 +437,8 @@
 /area/rogue)
 "aT" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/flail,
 /obj/item/rogueweapon/flail,
@@ -422,8 +447,8 @@
 /area/rogue)
 "aU" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/eaglebeak/lucerne,
 /obj/item/rogueweapon/eaglebeak/lucerne,
@@ -431,8 +456,8 @@
 /area/rogue)
 "aV" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/halberd/bardiche,
 /obj/item/rogueweapon/halberd/bardiche,
@@ -440,8 +465,8 @@
 /area/rogue)
 "aW" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/spear,
 /obj/item/rogueweapon/spear,
@@ -449,8 +474,8 @@
 /area/rogue)
 "aX" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/long/exe,
 /obj/item/rogueweapon/sword/long/exe,
@@ -460,8 +485,8 @@
 /area/rogue)
 "aY" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/long,
 /obj/item/rogueweapon/sword/long,
@@ -473,8 +498,8 @@
 /area/rogue)
 "aZ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/iron,
 /obj/item/rogueweapon/sword/iron,
@@ -486,8 +511,8 @@
 /area/rogue)
 "ba" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/decorated,
 /obj/item/rogueweapon/sword/decorated,
@@ -498,8 +523,8 @@
 /area/rogue)
 "bb" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword,
 /obj/item/rogueweapon/sword,
@@ -509,8 +534,8 @@
 /area/rogue)
 "bd" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/rapier,
 /obj/item/rogueweapon/sword/rapier/dec,
@@ -518,8 +543,8 @@
 /area/rogue)
 "be" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace/woodclub,
 /obj/item/rogueweapon/mace/woodclub,
@@ -529,8 +554,8 @@
 /area/rogue)
 "bf" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace,
 /obj/item/rogueweapon/mace,
@@ -561,8 +586,8 @@
 /area/rogue)
 "bl" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace/goden,
 /obj/item/rogueweapon/mace/goden,
@@ -580,8 +605,8 @@
 /area/rogue)
 "bo" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/stoneaxe,
 /obj/item/rogueweapon/stoneaxe,
@@ -590,8 +615,8 @@
 /area/rogue)
 "bp" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/stoneaxe/woodcut,
 /obj/item/rogueweapon/stoneaxe/woodcut,
@@ -603,8 +628,8 @@
 /area/rogue)
 "bq" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/stoneaxe/battle,
 /obj/item/rogueweapon/stoneaxe/battle,
@@ -615,8 +640,8 @@
 /area/rogue)
 "br" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/shield/tower/metal,
 /obj/item/rogueweapon/shield/tower/metal,
@@ -624,8 +649,8 @@
 /area/rogue)
 "bs" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/shield/wood,
 /obj/item/rogueweapon/shield/wood,
@@ -633,8 +658,8 @@
 /area/rogue)
 "bt" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace/goden/steel,
 /obj/item/rogueweapon/mace/goden/steel,
@@ -663,8 +688,8 @@
 /area/rogue)
 "by" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace/steel,
 /obj/item/rogueweapon/mace/steel,
@@ -676,8 +701,8 @@
 "bz" = (
 /obj/structure/fluff/statue/knight/r,
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0;
 	pixel_y = 6
 	},
@@ -702,8 +727,8 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/water/pond,
 /area/rogue/indoors/ravoxarena)
@@ -724,8 +749,8 @@
 "cK" = (
 /obj/structure/fluff/statue/knight/r,
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0
 	},
 /turf/open/water/pond,
@@ -746,8 +771,8 @@
 /area/rogue/dietroyt)
 "do" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/sabre,
 /obj/item/rogueweapon/sword/sabre,
@@ -770,12 +795,12 @@
 /area/rogue/dietroyt/nomagic)
 "dT" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -788,8 +813,8 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -807,8 +832,8 @@
 /area/rogue/dietroyt)
 "fi" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/eaglebeak,
 /obj/item/rogueweapon/eaglebeak,
@@ -842,8 +867,8 @@
 /area/rogue/dietroyt)
 "gc" = (
 /obj/structure/spider/stickyweb{
-	dir = 4;
-	icon_state = "stickyweb2"
+	icon_state = "stickyweb2";
+	dir = 4
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -884,8 +909,8 @@
 /obj/structure/table/church,
 /obj/machinery/light/rogue/candle/floorcandle,
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -967,18 +992,18 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
 "iv" = (
 /obj/structure/mineral_door/wood/donjon{
-	locked = 1;
-	lockid = "dungeon";
+	name = "Punishment";
 	dir = 4;
+	locked = 1;
 	max_integrity = 5000;
-	name = "Punishment"
+	lockid = "dungeon"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -1036,8 +1061,8 @@
 /area/rogue/outdoors/mountains)
 "jH" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/flail/sflail,
 /obj/item/rogueweapon/flail/sflail,
@@ -1049,8 +1074,8 @@
 /area/rogue/dietroyt)
 "jQ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/huntingknife/idagger,
 /obj/item/rogueweapon/huntingknife/idagger,
@@ -1072,12 +1097,12 @@
 /area/rogue/under/wretch/graggarena)
 "kk" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -1086,27 +1111,27 @@
 /area/rogue/dietroyt)
 "kp" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /obj/effect/wisp/prestidigitation{
-	color = "#ff0d00";
-	desc = "An ominous manifestation of latent ambient magick";
-	light_color = "#ff0d00";
 	name = "Infernal Wisp";
+	desc = "An ominous manifestation of latent ambient magick";
 	pixel_x = 1;
-	pixel_y = -8
+	pixel_y = -8;
+	color = "#ff0d00";
+	light_color = "#ff0d00"
 	},
 /obj/structure/ritualcircle/graggar{
 	icon_state = "graggar_active_mortosasye_author"
@@ -1115,12 +1140,12 @@
 /area/rogue/under/wretch/graggarena)
 "ks" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -1135,8 +1160,8 @@
 /area/rogue/under/wretch/graggarena)
 "kF" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/greatsword,
 /obj/item/rogueweapon/greatsword,
@@ -1146,10 +1171,10 @@
 /area/rogue)
 "kI" = (
 /obj/effect/wisp/prestidigitation{
-	color = "#ff370f";
+	name = "Odd Wisp";
 	desc = "A peculiar natural phenomena, seemingly related to the roiling lava below";
-	light_color = "#ff5630";
-	name = "Odd Wisp"
+	color = "#ff370f";
+	light_color = "#ff5630"
 	},
 /turf/open/floor/rogue/underworld/road,
 /area/rogue/indoors/deathsedge)
@@ -1244,15 +1269,15 @@
 	pixel_y = 19
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
 "nQ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/cutlass,
 /obj/item/rogueweapon/sword/cutlass,
@@ -1260,8 +1285,8 @@
 /area/rogue)
 "nS" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -1294,8 +1319,8 @@
 /area/rogue/outdoors/mountains)
 "oC" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/cleanable/blood/splatter,
 /turf/open/floor/rogue/sand,
@@ -1310,8 +1335,8 @@
 /area/rogue/dietroyt)
 "pe" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -1323,8 +1348,8 @@
 /area/rogue/outdoors)
 "pE" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/shovel,
 /obj/item/rogueweapon/shovel,
@@ -1351,8 +1376,8 @@
 /area/rogue/indoors/deathsedge)
 "qi" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -1385,8 +1410,8 @@
 /area/rogue/outdoors)
 "qP" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -1437,8 +1462,8 @@
 /area/rogue/indoors/ravoxarena)
 "rK" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -1476,8 +1501,8 @@
 /obj/structure/table/church/end,
 /obj/machinery/light/rogue/candle/floorcandle,
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -1505,8 +1530,8 @@
 /area/rogue/dietroyt)
 "sP" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/halberd/glaive,
 /obj/item/rogueweapon/halberd/glaive,
@@ -1525,8 +1550,8 @@
 /area/rogue/dietroyt)
 "tx" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling,
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling,
@@ -1535,8 +1560,8 @@
 /area/rogue/outdoors)
 "tL" = (
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0
 	},
 /turf/open/floor/rogue/underworld/space/sparkle_quiet,
@@ -1550,8 +1575,8 @@
 /area/rogue/outdoors/mountains)
 "uj" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/cleanable/blood/splatter/walls,
 /turf/open/floor/rogue/sand,
@@ -1582,8 +1607,8 @@
 /area/rogue/dietroyt)
 "vl" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/halberd,
 /obj/item/rogueweapon/halberd,
@@ -1599,8 +1624,8 @@
 /area/rogue/under/wretch/graggarena)
 "vq" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/shield/tower,
 /obj/item/rogueweapon/shield/tower,
@@ -1608,11 +1633,11 @@
 /area/rogue)
 "vu" = (
 /obj/structure/mineral_door/wood/donjon{
-	locked = 1;
-	lockid = "dungeon";
+	name = "Pillory";
 	dir = 8;
+	locked = 1;
 	max_integrity = 5000;
-	name = "Pillory"
+	lockid = "dungeon"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -1635,16 +1660,17 @@
 /area/rogue/indoors/ravoxarena)
 "ww" = (
 /obj/structure/mineral_door/wood/donjon{
-	locked = 1;
-	lockid = "dungeon";
+	name = "Keep";
 	dir = 1;
+	locked = 1;
 	max_integrity = 5000;
-	name = "Keep"
+	lockid = "dungeon"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
 "wB" = (
 /obj/effect/landmark/start/new_player,
+/turf/closed/void,
 /area/start)
 "wO" = (
 /turf/closed/void,
@@ -1686,8 +1712,8 @@
 /area/rogue/indoors/ravoxarena)
 "xO" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/huntingknife/idagger/steel,
 /obj/item/rogueweapon/huntingknife/idagger/steel,
@@ -1699,8 +1725,8 @@
 "xR" = (
 /mob/living/simple_animal/hostile/retaliate/rogue/spider/mutated,
 /obj/structure/spider/stickyweb{
-	dir = 8;
-	icon_state = "stickyweb2"
+	icon_state = "stickyweb2";
+	dir = 8
 	},
 /turf/open/floor/rogue/grasspurple,
 /area/rogue/dietroyt)
@@ -1729,8 +1755,8 @@
 /area/rogue/dietroyt)
 "yR" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/projectile/bullet/reusable/sling_bullet/stone,
 /obj/projectile/bullet/reusable/sling_bullet/stone,
@@ -1748,8 +1774,8 @@
 /area/rogue/indoors/ravoxarena)
 "zd" = (
 /obj/structure/lever/wall{
-	redstone_id = "troytpillory";
-	name = "inner passage"
+	name = "inner passage";
+	redstone_id = "troytpillory"
 	},
 /turf/closed/wall/mineral/rogue/stone/unbreakable,
 /area/rogue/dietroyt)
@@ -1760,8 +1786,8 @@
 "zr" = (
 /obj/structure/fluff/statue/knight,
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0;
 	pixel_y = 6
 	},
@@ -1776,19 +1802,19 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/water/pond,
 /area/rogue/indoors/ravoxarena)
 "zL" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -1804,8 +1830,8 @@
 /area/rogue/under/wretch/graggarena)
 "AQ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/storage/belt/rogue/surgery_bag/full,
 /obj/item/storage/belt/rogue/surgery_bag/full,
@@ -1846,8 +1872,8 @@
 /area/rogue/under/wretch/graggarena)
 "BE" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -1866,30 +1892,30 @@
 /area/rogue/outdoors/mountains)
 "Ca" = (
 /obj/structure/fluff/traveltile/dungeoneer{
-	aportalgoesto = "siberia2b";
-	aportalid = "siberia1b"
+	aportalid = "siberia1b";
+	aportalgoesto = "siberia2b"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
 "Ch" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0;
 	pixel_y = 6
 	},
@@ -1919,8 +1945,8 @@
 "Cy" = (
 /obj/structure/fluff/statue/knight,
 /obj/effect/wisp/prestidigitation{
-	desc = "A small, fiery ball of light made up of mystical energy.";
 	name = "Will-o'-the-wisp";
+	desc = "A small, fiery ball of light made up of mystical energy.";
 	pixel_x = 0
 	},
 /turf/open/water/pond,
@@ -1956,8 +1982,8 @@
 /area/rogue/dietroyt)
 "Dm" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
@@ -2011,8 +2037,8 @@
 /area/rogue/dietroyt)
 "Eq" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/huntingknife/idagger/silver,
 /obj/item/rogueweapon/huntingknife/idagger/silver,
@@ -2048,8 +2074,8 @@
 /area/rogue/outdoors/mountains)
 "Fb" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -2116,6 +2142,13 @@
 	dir = 5
 	},
 /obj/structure/table/wood/long_table,
+/obj/item/inqarticles/tallowpot,
+/obj/item/reagent_containers/food/snacks/tallow,
+/obj/item/reagent_containers/food/snacks/tallow,
+/obj/item/reagent_containers/food/snacks/tallow,
+/obj/item/seal/custom,
+/obj/item/seal/custom,
+/obj/item/seal/custom,
 /turf/open/floor/rogue/cobblerock,
 /area/rogue/outdoors)
 "He" = (
@@ -2157,8 +2190,8 @@
 "IF" = (
 /mob/living/simple_animal/hostile/retaliate/rogue/spider/mutated,
 /obj/structure/spider/stickyweb{
-	dir = 4;
-	icon_state = "stickyweb2"
+	icon_state = "stickyweb2";
+	dir = 4
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -2190,8 +2223,8 @@
 /area/rogue/dietroyt)
 "Jp" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/falx,
 /obj/item/rogueweapon/sword/falx,
@@ -2206,8 +2239,8 @@
 /area/rogue/dietroyt)
 "JA" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/quiver/arrows,
 /obj/item/quiver/arrows,
@@ -2219,8 +2252,8 @@
 /area/rogue/outdoors)
 "JJ" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/pick,
 /obj/item/rogueweapon/pick,
@@ -2248,15 +2281,48 @@
 /area/rogue/indoors/ravoxarena)
 "Kt" = (
 /obj/structure/fluff/statue{
+	name = "Idol of Necra";
 	desc = "A worn looking statue sculpted in Necra's image.";
 	layer = 9;
-	name = "Idol of Necra";
 	pixel_x = -1;
 	pixel_y = 24
 	},
 /obj/structure/table/church/m,
 /turf/open/floor/rogue/churchrough,
 /area/rogue/indoors/deathsedge)
+"Kx" = (
+/obj/structure/table/wood{
+	icon_state = "tablewood2";
+	dir = 10
+	},
+/obj/item/flashlight/flare/torch/lantern/prelit,
+/obj/item/flashlight/flare/torch/lantern/prelit,
+/obj/item/flashlight/flare/torch/lantern/prelit,
+/obj/item/needle,
+/obj/item/needle,
+/obj/item/needle,
+/obj/item/needle,
+/obj/item/rope/chain,
+/obj/item/rope/chain,
+/obj/item/rope/chain,
+/obj/item/rope/chain,
+/obj/item/rope/chain,
+/obj/item/natural/bundle/cloth/bandage/full,
+/obj/item/natural/bundle/cloth/bandage/full,
+/obj/item/natural/bundle/cloth/bandage/full,
+/obj/item/natural/bundle/cloth/bandage/full,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew,
+/obj/item/reagent_containers/glass/bottle/alchemical/strongmanapot,
+/obj/item/reagent_containers/glass/bottle/alchemical/strongmanapot,
+/obj/item/reagent_containers/glass/bottle/alchemical/strongmanapot,
+/obj/item/reagent_containers/glass/bottle/alchemical/strongmanapot,
+/turf/open/floor/rogue/carpet,
+/area/rogue)
 "Kz" = (
 /obj/structure/bars/pipe{
 	dir = 4;
@@ -2296,8 +2362,8 @@
 /area/rogue/dietroyt)
 "LE" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/spear/billhook,
 /obj/item/rogueweapon/spear/billhook,
@@ -2306,8 +2372,8 @@
 /area/rogue)
 "LN" = (
 /obj/structure/spider/stickyweb{
-	dir = 8;
-	icon_state = "stickyweb2"
+	icon_state = "stickyweb2";
+	dir = 8
 	},
 /turf/open/floor/rogue/grasspurple,
 /area/rogue/dietroyt)
@@ -2317,12 +2383,12 @@
 /area/rogue/dietroyt)
 "Mm" = (
 /obj/effect/wisp/prestidigitation{
-	color = "#ff0d00";
-	desc = "An ominous manifestation of latent ambient magick";
-	light_color = "#ff0d00";
 	name = "Infernal Wisp";
+	desc = "An ominous manifestation of latent ambient magick";
 	pixel_x = 1;
-	pixel_y = -8
+	pixel_y = -8;
+	color = "#ff0d00";
+	light_color = "#ff0d00"
 	},
 /turf/open/water/bloody,
 /area/rogue/under/wretch/graggarena)
@@ -2372,8 +2438,8 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -2420,8 +2486,8 @@
 /area/rogue/outdoors)
 "Pk" = (
 /obj/structure/lever/wall{
-	redstone_id = "troytpillory_exit";
-	name = "outer passage"
+	name = "outer passage";
+	redstone_id = "troytpillory_exit"
 	},
 /turf/closed/wall/mineral/rogue/stone/unbreakable,
 /area/rogue/dietroyt)
@@ -2440,8 +2506,8 @@
 /area/rogue/dietroyt)
 "Ps" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -2452,8 +2518,8 @@
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/outdoors/mountains)
 "Qf" = (
-/obj/structure/flora/rogueshroom/happy/mushroom4,
 /mob/living/simple_animal/hostile/retaliate/smallrat,
+/obj/structure/flora/rogueshroom/happy/mushroom4,
 /turf/open/floor/rogue/grasspurple,
 /area/rogue/dietroyt)
 "Qi" = (
@@ -2483,8 +2549,8 @@
 	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
@@ -2532,8 +2598,8 @@
 /area/rogue/dietroyt)
 "RF" = (
 /obj/structure/fluff/traveltile/dungeoneer{
-	aportalgoesto = "siberia2";
-	aportalid = "siberia1"
+	aportalid = "siberia1";
+	aportalgoesto = "siberia2"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -2603,15 +2669,15 @@
 /area/rogue/indoors/ravoxarena)
 "TU" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/cobblerock,
 /area/rogue/outdoors/mountains)
 "Ub" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow,
 /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow,
@@ -2621,8 +2687,8 @@
 /area/rogue/outdoors)
 "Uf" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 4
+	dir = 4;
+	color = "#3f3f3f"
 	},
 /turf/open/water/pond,
 /area/rogue/indoors/ravoxarena)
@@ -2637,8 +2703,8 @@
 "Ut" = (
 /obj/effect/proc_holder/spell/invoked/heal,
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/mace/cudgel,
 /turf/open/floor/rogue/cobble,
@@ -2665,8 +2731,8 @@
 /area/rogue/indoors/ravoxarena)
 "Vh" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/quiver/bolts,
 /obj/item/quiver/bolts,
@@ -2677,8 +2743,8 @@
 /area/rogue/outdoors)
 "Vl" = (
 /obj/structure/table/wood{
-	dir = 10;
-	icon_state = "tablewood2"
+	icon_state = "tablewood2";
+	dir = 10
 	},
 /obj/item/rogueweapon/sword/short/gladius,
 /obj/item/rogueweapon/sword/short/gladius,
@@ -2711,11 +2777,11 @@
 /area/rogue/outdoors)
 "Wi" = (
 /obj/structure/mineral_door/wood/donjon{
-	locked = 1;
-	lockid = "dungeon";
+	name = "Dungeoneer's Quarters";
 	dir = 1;
+	locked = 1;
 	max_integrity = 5000;
-	name = "Dungeoneer's Quarters"
+	lockid = "dungeon"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
@@ -2725,8 +2791,8 @@
 /area/rogue/under/wretch/graggarena)
 "WN" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 1
+	dir = 1;
+	color = "#3f3f3f"
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/ravoxarena)
@@ -2749,8 +2815,8 @@
 /area/rogue/dietroyt)
 "XC" = (
 /obj/structure/fluff/traveltile{
-	aportalgoesto = "EscapeDieTroyt2";
-	aportalid = "EscapeDieTroyt1"
+	aportalid = "EscapeDieTroyt1";
+	aportalgoesto = "EscapeDieTroyt2"
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt/nomagic)
@@ -2835,8 +2901,8 @@
 /area/rogue/under/wretch/graggarena)
 "ZP" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /turf/open/water/pond,
 /area/rogue/indoors/ravoxarena)
@@ -2866,8 +2932,8 @@
 /area/rogue/dietroyt)
 "ZZ" = (
 /obj/effect/decal/edge{
-	color = "#3f3f3f";
-	dir = 8
+	dir = 8;
+	color = "#3f3f3f"
 	},
 /obj/effect/decal/edge{
 	color = "#3f3f3f"
@@ -3710,7 +3776,7 @@ aq
 av
 av
 ay
-av
+Kx
 aC
 aF
 aJ

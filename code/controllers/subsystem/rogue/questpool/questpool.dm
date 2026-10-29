@@ -12,8 +12,10 @@ SUBSYSTEM_DEF(questpool)
 	var/list/kill_count_by_region = list()
 	var/list/evergreen_count_by_region = list()
 	var/list/landmarks_by_type = list()
+	var/list/mapped_delivery_area_types = list()
 
 /datum/controller/subsystem/questpool/Initialize()
+	cache_delivery_area_types()
 	init_quest_factions()
 	for(var/obj/effect/landmark/quest_spawner/landmark as anything in GLOB.quest_landmarks_list)
 		register_landmark(landmark)
@@ -25,6 +27,20 @@ SUBSYSTEM_DEF(questpool)
 		world_spawners++
 	log_world("QuestPool: seeded [length(pool)] contracts from [length(GLOB.quest_landmarks_list)] landmarks ([world_spawners] spawner atoms in world, [length(SSregionthreat.threat_regions)] threat regions)")
 	return ..()
+
+/// Snapshot mapped area types after map initialization, before seeding quests.
+/datum/controller/subsystem/questpool/proc/cache_delivery_area_types()
+	mapped_delivery_area_types.Cut()
+	var/list/mapped_areas = list()
+	for(var/area/A as anything in GLOB.sortedAreas)
+		if(length(A.contents))
+			mapped_areas += A
+	for(var/location in typesof(/area))
+		for(var/area/A as anything in mapped_areas)
+			if(istype(A, location))
+				mapped_delivery_area_types[location] = TRUE
+				break
+		CHECK_TICK
 
 /datum/controller/subsystem/questpool/proc/get_nearest_ledger_turf(turf/reference)
 	var/turf/closest
