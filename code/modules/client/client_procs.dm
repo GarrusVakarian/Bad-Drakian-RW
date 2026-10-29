@@ -1156,7 +1156,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(prefs && prefs.chat_toggles & CHAT_PULLR)
 		to_chat(src, announcement)
 
-/client/proc/show_character_previews(mutable_appearance/MA)
+/client/proc/show_character_previews(mutable_appearance/MA, center_offset = 0, applied_center_offset = 0)
 	var/pos = 0
 	var/enlarged = prefs?.preview_enlarged
 	var/preview_width = enlarged ? 512 : 172
@@ -1193,7 +1193,10 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		LAZYSET(char_render_holders, "[D]", O)
 		screen += O
 		O.appearance = MA
-		O.transform = preview_transform
+		var/matrix/direction_transform = matrix(preview_transform)
+		var/direction_offset = (D == NORTH || D == SOUTH) ? center_offset : 0
+		direction_transform.Translate((direction_offset - applied_center_offset) * (enlarged ? 3 : 1), 0)
+		O.transform = direction_transform
 		O.dir = D
 		switch(pos)
 			if(1)

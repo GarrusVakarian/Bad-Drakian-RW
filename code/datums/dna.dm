@@ -19,6 +19,8 @@
 	var/list/list/body_markings = list()
 	///Current body size, used for proper re-sizing and keeping track of that
 	var/current_body_size = BODY_SIZE_NORMAL
+	/// Horizontal correction already applied to the holder's transform.
+	var/current_body_center_offset = 0
 
 /datum/dna/New(mob/living/new_holder)
 	if(istype(new_holder))
@@ -265,14 +267,32 @@
 	return
 
 /datum/dna/proc/update_body_size()
-	if(!holder || current_body_size == features["body_size"])
+	if(!holder)
 		return
-	var/change_multiplier = features["body_size"] / current_body_size
-	//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
-	var/translate = ((change_multiplier-1) * 32)/2
-	holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
-	holder.transform = holder.transform.Translate(0, translate)
-	current_body_size = features["body_size"]
+	update_body_center_offset(TRUE)
+	if(current_body_size != features["body_size"])
+		var/change_multiplier = features["body_size"] / current_body_size
+		//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
+		var/translate = ((change_multiplier-1) * 32)/2
+		holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
+		holder.transform = holder.transform.Translate(0, translate)
+		current_body_size = features["body_size"]
+	update_body_center_offset()
+
+/datum/dna/proc/get_body_center_offset(direction)
+	if(features["body_center_offset"] && (direction == NORTH || direction == SOUTH))
+		return 0.5 * current_body_size
+	return 0
+
+/datum/dna/proc/update_body_center_offset(remove = FALSE)
+	if(!holder)
+		return
+	var/new_offset = remove ? 0 : get_body_center_offset(holder.dir)
+	if(new_offset != current_body_center_offset)
+		var/matrix/adjusted = matrix(holder.transform)
+		adjusted.Translate(new_offset - current_body_center_offset, 0)
+		holder.transform = adjusted
+		current_body_center_offset = new_offset
 
 
 /////////////////////////// DNA HELPER-PROCS //////////////////////////////
