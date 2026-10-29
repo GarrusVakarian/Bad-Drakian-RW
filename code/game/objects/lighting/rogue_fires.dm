@@ -888,21 +888,41 @@
 	var/static/list/acceptable_beds = list(/obj/structure/bed, /obj/structure/flora/roguetree/stump, /obj/item/bedsheet)
 	var/datum/status_effect/buff/stamina_status_effect = /datum/status_effect/buff/campfire_stamina
 	var/obj/item/reagent_containers/glass/bucket/pot/pot
+	var/obj/item/cooking/pan/pan
+	var/obj/item/pan_food
+	var/pan_cooktime_divisor = 1
 	var/datum/looping_sound/boilloop/boilloop
 	var/pot_cooking = FALSE
 	var/cooking_generation = 0
 
 /obj/machinery/light/rogue/campfire/Destroy()
 	QDEL_NULL(boilloop)
+	if(pan_food)
+		pan_food.forceMove(get_turf(src))
+	if(pan)
+		pan.forceMove(get_turf(src))
 	if(pot)
 		pot.forceMove(get_turf(src))
 		pot = null
 	return ..()
 
+/obj/machinery/light/rogue/campfire/Exited(atom/movable/gone, direction)
+	. = ..()
+	if(gone == pan)
+		pan = null
+		if(pan_food)
+			pan_food.forceMove(get_turf(src))
+		update_icon()
+	if(gone == pan_food)
+		pan_food = null
+		update_icon()
+
 /obj/machinery/light/rogue/campfire/examine(mob/user)
 	. = ..()
 	if(pot)
 		. += span_notice("[pot] is on the fire. Left-click with an empty hand to remove it.")
+	if(pan)
+		. += span_notice("[pan] is on the fire. Left-click with an empty hand to remove [pan_food ? "the food first, then the pan" : "it"].")
 
 /obj/machinery/light/rogue/campfire/update_icon()
 	. = ..()
@@ -916,17 +936,38 @@
 		pot_overlay.pixel_y = -6
 		pot_overlay.layer = layer + 0.1
 		add_overlay(pot_overlay)
+	if(pan)
+		var/mutable_appearance/pan_overlay = mutable_appearance(pan)
+		pan_overlay.transform *= 0.85
+		pan_overlay.pixel_y = -6
+		pan_overlay.layer = layer + 0.1
+		add_overlay(pan_overlay)
+		if(pan_food)
+			var/mutable_appearance/food_overlay = mutable_appearance(pan_food)
+			food_overlay.pixel_y = -3
+			food_overlay.layer = layer + 0.2
+			add_overlay(food_overlay)
 
 /obj/machinery/light/rogue/campfire/attack_right(mob/user)
-	if(!on || !pot)
+	if(!on || (!pot && !pan))
 		return ..()
-	var/obj/item/reagent_containers/glass/bucket/pot/fanned_pot = pot
+	var/obj/item/fanned_cookware = pot ? pot : pan
 	var/cooktime_divisor = get_cooktime_divisor(user.get_skill_level(/datum/skill/craft/cooking))
 	while(do_after(user, 2 SECONDS / cooktime_divisor, target = src))
-		if(!on || pot != fanned_pot)
+		if(!on || (pot ? pot : pan) != fanned_cookware)
 			return
 		to_chat(user, span_info("I fan the flame on [src]."))
 		heat_pot()
+		heat_pan(cooktime_divisor)
+
+/obj/machinery/light/rogue/campfire/proc/heat_pan(cooktime_divisor = pan_cooktime_divisor)
+	if(!on || QDELETED(pan) || pan.loc != src || QDELETED(pan_food) || pan_food.loc != src)
+		return
+	var/obj/item/cooked_food = pan_food.cooking(20 * cooktime_divisor, 20, src)
+	if(cooked_food)
+		qdel(pan_food)
+		pan_food = cooked_food
+	update_icon()
 
 /obj/machinery/light/rogue/campfire/proc/heat_pot()
 	if(!pot?.reagents || !on)
@@ -942,7 +983,29 @@
 		boilloop.stop()
 
 /obj/machinery/light/rogue/campfire/attackby(obj/item/W, mob/living/user, params)
-	if(istype(W, /obj/item/reagent_containers/glass/bucket/pot) && !pot)
+	if(istype(W, /obj/item/cooking/pan) && !pot && !pan)
+		if(W.loc != user || !user.transferItemToLoc(W, src))
+			return
+		pan = W
+		playsound(src, 'sound/foley/dropsound/shovel_drop.ogg', 40, TRUE, -1)
+		update_icon()
+		return TRUE
+	if(pan && (istype(W, /obj/item/reagent_containers/food/snacks) || istype(W, /obj/item/seeds)))
+		if(pan_food)
+			to_chat(user, span_notice("Something is already cooking."))
+			return TRUE
+		if(W.loc != user || !user.transferItemToLoc(W, src))
+			return TRUE
+		pan_food = W
+		pan_cooktime_divisor = get_cooktime_divisor(user.get_skill_level(/datum/skill/craft/cooking))
+		if(istype(W, /obj/item/reagent_containers/food/snacks/egg) && W.icon_state != "rawegg")
+			playsound(src, 'modular/Neu_Food/sound/eggbreak.ogg', 100, TRUE, -1)
+			W.icon_state = "rawegg"
+		if(on)
+			playsound(src, 'sound/misc/frying.ogg', 80, FALSE, extrarange = 5)
+		update_icon()
+		return TRUE
+	if(istype(W, /obj/item/reagent_containers/glass/bucket/pot) && !pot && !pan)
 		if(W.loc != user || !user.transferItemToLoc(W, src))
 			return
 		pot = W
@@ -1049,6 +1112,7 @@
 
 	if(on)
 		heat_pot()
+		heat_pan()
 		var/list/hearers_in_range = get_hearers_in_LOS(healing_range, src, RECURSIVE_CONTENTS_CLIENT_MOBS)
 		for(var/mob/living/carbon/human/human in hearers_in_range)
 			var/distance = get_dist(src, human)
@@ -1080,6 +1144,13 @@
 		burn_out()
 
 /obj/machinery/light/rogue/campfire/attack_hand(mob/user)
+	if(pan)
+		if(!user.CanReach(src))
+			return TRUE
+		var/obj/item/removing = pan_food ? pan_food : pan
+		if(!user.put_in_active_hand(removing))
+			removing.forceMove(get_turf(user))
+		return TRUE
 	if(pot)
 		if(!user.CanReach(src))
 			return TRUE
