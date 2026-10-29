@@ -1169,7 +1169,9 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	// not enlarge its screen objects. Preserve the character's body scaling.
 	var/matrix/preview_transform = matrix(MA.transform)
 	preview_transform.Scale(enlarged ? 3 : 1)
-	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;zoom=2;zoom-mode=normal;letterbox=true")
+	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;zoom=2;letterbox=true")
+
+	sync_character_preview_sampling()
 
 	var/atom/movable/screen/char_preview/background = LAZYACCESS(char_render_holders, "bg")
 	if(background)
@@ -1211,6 +1213,11 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 				O.screen_loc = "character_preview_map:[preview_near],[preview_near]"
 			if(4)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_near]"
+
+/client/proc/sync_character_preview_sampling()
+	var/sampling = winget(src, "mapwindow.map", "zoom-mode")
+	if(sampling in list("normal", "distort", "blur"))
+		winset(src, "preferencess_window.character_preview_map", "zoom-mode=[sampling]")
 
 /client/proc/update_character_preview_center(enabled)
 	. = 0
