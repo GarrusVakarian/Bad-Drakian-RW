@@ -1,0 +1,4 @@
+author: annikaRU
+delete-after: true
+changes:
+- bugfix: Ported guild flooring and window-layout fixes to Neuhill.
