@@ -9,6 +9,7 @@
 	force = 1
 	throwforce = 10
 	w_class = WEIGHT_CLASS_TINY
+	slot_flags = ITEM_SLOT_MOUTH
 	obj_flags = CAN_BE_HIT
 	sellprice = 1
 	var/dildo_type = "human"
