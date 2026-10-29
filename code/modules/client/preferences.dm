@@ -844,15 +844,11 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Alternate alignment with a 2% width and height boost'>Center: [features["body_center_offset"] ? "Alternate" : "Default"]</a> <a id='body-scaling-mode' href='?_src_=prefs;preference=body_smooth_scaling;task=input' title='Switch sharp or smooth character scaling'>Scaling: [features["body_smooth_scaling"] ? "Smooth" : "Sharp"]</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Alternate alignment with a 2% height boost'>Center: [features["body_center_offset"] ? "Alternate" : "Default"]</a>"
 			dat += {"<script>
 				function updateBodyCenterOffset(enabled) {
 					var button = document.getElementById('body-center-offset');
 					if (button) button.innerHTML = 'Center: ' + (enabled === '1' ? 'Alternate' : 'Default');
-				}
-				function updateBodyScaling(enabled) {
-					var button = document.getElementById('body-scaling-mode');
-					if (button) button.innerHTML = 'Scaling: ' + (enabled === '1' ? 'Smooth' : 'Sharp');
 				}
 			</script>"}
 			dat += "<br><b>Markings:</b> <a href='?_src_=prefs;preference=markings;task=menu'>Change</a>"
@@ -2730,15 +2726,6 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					if(!parent.update_character_preview_center(features["body_center_offset"]))
 						update_preview_icon()
 					user << output(features["body_center_offset"] ? "1" : "0", "preferences_browser:updateBodyCenterOffset")
-					return
-
-				if("body_smooth_scaling")
-					if(!user?.client || user.client != parent)
-						return
-					features["body_smooth_scaling"] = !features["body_smooth_scaling"]
-					if(!parent.update_character_preview_scaling(features["body_smooth_scaling"]))
-						update_preview_icon()
-					user << output(features["body_smooth_scaling"] ? "1" : "0", "preferences_browser:updateBodyScaling")
 					return
 
 				if("body_size")
