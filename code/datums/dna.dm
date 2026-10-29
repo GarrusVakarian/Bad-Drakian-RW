@@ -269,6 +269,7 @@
 /datum/dna/proc/update_body_size()
 	if(!holder)
 		return
+	update_body_scaling()
 	update_body_center_offset(TRUE)
 	if(current_body_size != features["body_size"])
 		var/change_multiplier = features["body_size"] / current_body_size
@@ -278,6 +279,14 @@
 		holder.transform = holder.transform.Translate(0, translate)
 		current_body_size = features["body_size"]
 	update_body_center_offset()
+
+/datum/dna/proc/update_body_scaling()
+	if(!holder)
+		return
+	if(features["body_smooth_scaling"])
+		holder.appearance_flags &= ~PIXEL_SCALE
+	else
+		holder.appearance_flags |= PIXEL_SCALE
 
 /datum/dna/proc/get_body_center_offset(direction)
 	if(features["body_center_offset"] && (direction == NORTH || direction == SOUTH))

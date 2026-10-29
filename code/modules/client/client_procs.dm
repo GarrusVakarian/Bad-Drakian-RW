@@ -1204,6 +1204,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		O.preview_center_offset = direction_offset * (enlarged ? 3 : 1)
 		// A queued refresh may have captured an older preference before yielding.
 		O.update_center_offset(prefs && prefs.features["body_center_offset"])
+		O.update_scaling(prefs && prefs.features["body_smooth_scaling"])
 		switch(pos)
 			if(1)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_far]"
@@ -1225,6 +1226,14 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
 		if(O)
 			O.update_center_offset(enabled)
+			.++
+
+/client/proc/update_character_preview_scaling(smooth)
+	. = 0
+	for(var/D in GLOB.cardinals)
+		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
+		if(O)
+			O.update_scaling(smooth)
 			.++
 
 /client/proc/clear_character_previews()

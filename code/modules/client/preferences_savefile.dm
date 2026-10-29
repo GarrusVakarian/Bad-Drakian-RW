@@ -1031,6 +1031,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["pronouns"] >> pronouns
 	S["voice_type"] >> voice_type
 	S["voice_pack"] >> voice_pack
+	features["body_smooth_scaling"] = FALSE
+	S["body_smooth_scaling"] >> features["body_smooth_scaling"]
+	features["body_smooth_scaling"] = (features["body_smooth_scaling"] == TRUE)
 	features["body_center_offset"] = FALSE
 	S["body_center_offset"] >> features["body_center_offset"]
 	features["body_center_offset"] = (features["body_center_offset"] == TRUE)
@@ -1287,6 +1290,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["quirks"], get_quirk_typepaths())
 	WRITE_FILE(S["race_bonus"], race_bonus)
 	WRITE_FILE(S["combat_music"], preferences_typepath_or_null(combat_music))
+	WRITE_FILE(S["body_smooth_scaling"], features["body_smooth_scaling"])
 	WRITE_FILE(S["body_center_offset"], features["body_center_offset"])
 	WRITE_FILE(S["body_size"] , features["body_size"])
 	WRITE_FILE(S["nsfwflavortext"] , html_decode(nsfwflavortext))

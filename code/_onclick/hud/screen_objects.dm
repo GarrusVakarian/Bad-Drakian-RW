@@ -2318,6 +2318,12 @@
 	var/preview_center_scale = 0
 	var/preview_center_offset = 0
 
+/atom/movable/screen/char_preview/proc/update_scaling(smooth)
+	if(smooth)
+		appearance_flags &= ~PIXEL_SCALE
+	else
+		appearance_flags |= PIXEL_SCALE
+
 /atom/movable/screen/char_preview/proc/update_center_offset(enabled)
 	var/new_offset = (enabled && (dir == NORTH || dir == SOUTH)) ? preview_center_scale : 0
 	if(new_offset != preview_center_offset)
