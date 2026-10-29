@@ -2317,6 +2317,8 @@
 	icon_state = ""
 	var/preview_center_scale = 0
 	var/preview_center_offset = 0
+	var/preview_alternate = FALSE
+	var/preview_zoom = 1
 
 /atom/movable/screen/char_preview/proc/update_scaling(smooth)
 	if(smooth)
@@ -2325,6 +2327,16 @@
 		appearance_flags |= PIXEL_SCALE
 
 /atom/movable/screen/char_preview/proc/update_center_offset(enabled)
+	if(enabled != preview_alternate)
+		var/factor = enabled ? BODY_CENTER_ALTERNATE_SCALE : 1 / BODY_CENTER_ALTERNATE_SCALE
+		var/matrix/resized = matrix(transform)
+		resized.Translate(-preview_center_offset, 0)
+		resized.Scale(factor, factor)
+		resized.Translate(0, (factor - 1) * 16 * preview_zoom)
+		transform = resized
+		preview_center_offset = 0
+		preview_center_scale *= factor
+		preview_alternate = enabled
 	var/new_offset = (enabled && (dir == NORTH || dir == SOUTH)) ? preview_center_scale : 0
 	if(new_offset != preview_center_offset)
 		var/matrix/adjusted = matrix(transform)

@@ -70,6 +70,7 @@
 	var/preview_center_offset = 0
 	var/preview_applied_center_offset = 0
 	var/preview_body_size = BODY_SIZE_NORMAL
+	var/preview_alternate = FALSE
 	try
 		copy_to(mannequin, 1, TRUE, TRUE)
 
@@ -92,12 +93,13 @@
 		preview_center_offset = mannequin.dna.get_body_center_offset(SOUTH)
 		preview_applied_center_offset = mannequin.dna.current_body_center_offset
 		preview_body_size = mannequin.dna.current_body_size
+		preview_alternate = !!mannequin.dna.features["body_center_offset"]
 	catch(var/exception/error)
 		unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 		throw error
 	unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	// Release the shared mannequin before touching a client that may have disconnected.
-	parent?.show_character_previews(preview_appearance, preview_center_offset, preview_applied_center_offset, preview_body_size)
+	parent?.show_character_previews(preview_appearance, preview_center_offset, preview_applied_center_offset, preview_body_size, preview_alternate)
 
 /datum/preferences/proc/apply_preview_erect_state_to_mannequin(mob/living/carbon/human/mannequin)
 	if(!mannequin)

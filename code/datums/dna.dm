@@ -271,13 +271,14 @@
 		return
 	update_body_scaling()
 	update_body_center_offset(TRUE)
-	if(current_body_size != features["body_size"])
-		var/change_multiplier = features["body_size"] / current_body_size
+	var/desired_size = features["body_size"] * (features["body_center_offset"] ? BODY_CENTER_ALTERNATE_SCALE : 1)
+	if(current_body_size != desired_size)
+		var/change_multiplier = desired_size / current_body_size
 		//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
 		var/translate = ((change_multiplier-1) * 32)/2
 		holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
 		holder.transform = holder.transform.Translate(0, translate)
-		current_body_size = features["body_size"]
+		current_body_size = desired_size
 	update_body_center_offset()
 
 /datum/dna/proc/update_body_scaling()
