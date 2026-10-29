@@ -537,14 +537,14 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	switch(invocation_type)
 		if("shout")
 			if(prob(50))//Auto-mute? Fuck that noise
-				user.say(chosen_invocation, forced = "spell")
+				user.say(chosen_invocation, forced = "spell", count_for_stats = FALSE)
 			else
-				user.say(chosen_invocation, forced = "spell")
+				user.say(chosen_invocation, forced = "spell", count_for_stats = FALSE)
 		if("whisper")
 			if(prob(50))
-				user.whisper(chosen_invocation)
+				user.whisper(chosen_invocation, count_for_stats = FALSE)
 			else
-				user.whisper(chosen_invocation)
+				user.whisper(chosen_invocation, count_for_stats = FALSE)
 		if("emote")
 			var/emote_incantation = "<b>[usr.real_name]</b> [chosen_invocation]"
 			user.visible_message(emote_incantation, emote_incantation) //this is stupid, but it works.

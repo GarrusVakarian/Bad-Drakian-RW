@@ -81,7 +81,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	return new_msg
 
-/mob/living/say(message, bubble_type,list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, message_mode = null)
+/mob/living/say(message, bubble_type,list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, message_mode = null, count_for_stats = TRUE)
 	var/static/list/crit_allowed_modes = list(MODE_WHISPER = TRUE, MODE_CHANGELING = TRUE, MODE_ALIEN = TRUE)
 	var/static/list/unconscious_allowed_modes = list(MODE_CHANGELING = TRUE, MODE_ALIEN = TRUE)
 	var/talk_key = get_key(message)
@@ -222,7 +222,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	if(client)
 		last_words = message
-		record_featured_stat(FEATURED_STATS_SPEAKERS, src)	//Yappin'
+		if(count_for_stats)
+			record_featured_stat(FEATURED_STATS_SPEAKERS, src)	//Yappin'
 	if(findtext(message, "Abyssor"))	//funni
 		record_round_statistic(STATS_ABYSSOR_REMEMBERED)
 
@@ -728,8 +729,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	else
 		. = ..()
 
-/mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
-	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced)
+/mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
+	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced, count_for_stats = count_for_stats)
 
 /mob/living/get_language_holder(shadow=TRUE)
 	if(mind && shadow)
