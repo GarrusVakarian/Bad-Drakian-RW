@@ -9549,6 +9549,10 @@
 /obj/machinery/light/rogue/candle/floorcandle,
 /turf/open/floor/rogue/churchbrick,
 /area/rogue/indoors/town/church)
+"bQa" = (
+/obj/structure/roguemachine/ministry_bureau,
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/town/manor/rockhill)
 "bQd" = (
 /obj/structure/bookcase/random,
 /obj/structure/fluff/walldeco/church/line,
@@ -629379,7 +629383,7 @@ cQd
 pTR
 tpQ
 ged
-ged
+bQa
 ged
 wtF
 jZx

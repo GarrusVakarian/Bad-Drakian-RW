@@ -13,7 +13,7 @@
 	if(!istype(penis_entry) || !penis_entry.penis_taur_mode)
 		var/list/normal_choices = ..()
 		normal_choices = normal_choices.Copy()
-		if(prefs?.has_selected_bee_tail())
+		if(prefs?.has_selected_insect_tail())
 			normal_choices += /datum/customizer_choice/organ/penis/bee_tail
 		return normal_choices
 	// Taur mode has its own artwork-backed list, including for species whose normal choice is plain.
@@ -365,7 +365,7 @@
 
 /datum/customizer_choice/organ/penis/bee_tail
 	min_penis_size = SMALL_PENIS_SIZE
-	name = "Penis (Bee Tail)"
+	name = "Ovipositor"
 	organ_type = /obj/item/organ/penis/bee_tail
 	sprite_accessories = list(/datum/sprite_accessory/penis/bee_tail)
 	allows_sheath_customization = FALSE

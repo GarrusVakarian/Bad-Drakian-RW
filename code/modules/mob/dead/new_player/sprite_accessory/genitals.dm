@@ -204,7 +204,7 @@
 /datum/sprite_accessory/penis/bee_tail
 	icon = 'icons/mob/sprite_accessory/genitals/bee_tail_genitals.dmi'
 	icon_state = "bee_tail_penis_small_base"
-	name = "Penis (Bee Tail)"
+	name = "Ovipositor"
 	color_keys = 1
 	color_key_name = "Member"
 	color_key_defaults = list(KEY_MUT_COLOR_ONE)
@@ -221,7 +221,7 @@
 		return null
 	var/state = get_bee_tail_icon_state(penis.penis_size)
 	var/top_state = get_bee_tail_icon_state(penis.penis_size, TRUE)
-	// Regular Bee tails also draw on BODY_FRONT_LAYER; UP must sit above it.
+	// Bee and Insect tails also draw on BODY_FRONT_LAYER; UP must sit above it.
 	var/list/appearances = get_paired_overlay(state, top_state, color_string, -BODY_FRONT_LAYER + 0.1)
 	adjust_appearance_list(appearances, organ, bodypart, organ.owner)
 	return appearances
@@ -241,7 +241,7 @@
 	if(!owner || owner.get_taur_tail() || !..())
 		return FALSE
 	var/obj/item/organ/tail/tail = owner.getorganslot(ORGAN_SLOT_TAIL)
-	if(tail?.accessory_type != /datum/sprite_accessory/tail/bee || !tail.is_visible())
+	if(!(tail?.accessory_type in list(/datum/sprite_accessory/tail/bee, /datum/sprite_accessory/tail/insect)) || !tail.is_visible())
 		return FALSE
 	var/datum/sprite_accessory/tail/tail_accessory = SPRITE_ACCESSORY(tail.accessory_type)
 	return tail_accessory.is_visible(tail, null, owner)
@@ -446,11 +446,7 @@
 /datum/sprite_accessory/vagina/get_appearance(obj/item/organ/organ, obj/item/bodypart/bodypart, color_string)
 	var/obj/item/organ/vagina/vagina = organ
 	if(!vagina?.owner?.get_taur_tail() || !vagina.vagina_taur_enabled)
-		var/list/normal_appearances = ..()
-		if(length(normal_appearances) && vagina?.has_bee_tail_oviduct())
-			var/datum/sprite_accessory/vagina/bee_tail/oviduct = SPRITE_ACCESSORY(/datum/sprite_accessory/vagina/bee_tail)
-			normal_appearances += oviduct.get_appearance(organ, bodypart, color_string)
-		return normal_appearances
+		return ..()
 	if(!is_visible(organ, bodypart, organ.owner))
 		return null
 	color_string = sanitize_color_string(color_string)
@@ -534,8 +530,13 @@
 /datum/sprite_accessory/vagina/bee_tail/get_appearance(obj/item/organ/organ, obj/item/bodypart/bodypart, color_string)
 	if(!organ.owner || !is_visible(organ, bodypart, organ.owner))
 		return null
-	// Use the supplied directions on every body, without the generic taur frame swap.
-	var/list/appearances = get_overlay(get_icon_state(organ, bodypart, organ.owner), color_string)
+	// South draws behind the body; the other supplied directions retain their front layer.
+	var/state = get_icon_state(organ, bodypart, organ.owner)
+	var/list/appearances = get_overlay(state, color_string)
+	var/list/behind_appearances = get_overlay("[state]_behind", color_string)
+	for(var/mutable_appearance/appearance as anything in behind_appearances)
+		appearance.layer = -BODY_BEHIND_LAYER
+	appearances += behind_appearances
 	adjust_appearance_list(appearances, organ, bodypart, organ.owner)
 	return appearances
 

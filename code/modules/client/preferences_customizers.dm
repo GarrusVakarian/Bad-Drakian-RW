@@ -1,9 +1,9 @@
-/// A regular Bee tail enables its matching genital accessory outside taur mode.
-/datum/preferences/proc/has_selected_bee_tail()
+/// Bee and Insect tails share genital artwork outside taur mode.
+/datum/preferences/proc/has_selected_insect_tail()
 	if(taur_type)
 		return FALSE
 	for(var/datum/customizer_entry/entry as anything in customizer_entries)
-		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !entry.disabled && entry.accessory_type == /datum/sprite_accessory/tail/bee)
+		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !entry.disabled && (entry.accessory_type in list(/datum/sprite_accessory/tail/bee, /datum/sprite_accessory/tail/insect)))
 			return TRUE
 	return FALSE
 
@@ -199,7 +199,7 @@
 			customizer_entries += new_entry
 		else
 			choice.handle_topic(user, href_list, src, entry, customizer_type)
-	// Tail appearance changes can make the Bee-tail genital choice available or invalid.
+	// Tail appearance changes can make the insect-tail genital choice available or invalid.
 	validate_customizer_entries()
 	if(ishuman(user))
 		var/mob/living/carbon/human/humanized = user

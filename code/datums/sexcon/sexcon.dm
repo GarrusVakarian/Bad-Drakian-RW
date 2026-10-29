@@ -1028,7 +1028,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	tail?.update_maw_state()
 	// The oviduct reads arousal directly; the body cache detects sprite changes.
 	var/obj/item/organ/vagina/vagina = user.getorganslot(ORGAN_SLOT_VAGINA)
-	if(vagina && (vagina.accessory_type == /datum/sprite_accessory/vagina/bee_tail || vagina.has_bee_tail_oviduct()))
+	if(vagina?.accessory_type == /datum/sprite_accessory/vagina/bee_tail)
 		user.update_body_parts()
 
 /datum/sex_controller/proc/update_exposure()

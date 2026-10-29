@@ -58,7 +58,7 @@
 		owner.update_body_parts(TRUE)
 
 /obj/item/organ/penis/bee_tail
-	name = "bee-tail penis"
+	name = "ovipositor"
 	accessory_type = /datum/sprite_accessory/penis/bee_tail
 	penis_size = SMALL_PENIS_SIZE
 
@@ -193,23 +193,12 @@
 		return FALSE
 	return ..()
 
-/// Regular vagina styles can also display the opening on a visible Bee tail.
-/obj/item/organ/vagina/proc/has_bee_tail_oviduct()
-	if(accessory_type == /datum/sprite_accessory/vagina/bee_tail || !owner || owner.get_taur_tail())
-		return FALSE
-	var/obj/item/organ/tail/tail = owner.getorganslot(ORGAN_SLOT_TAIL)
-	if(tail?.accessory_type != /datum/sprite_accessory/tail/bee || !tail.is_visible())
-		return FALSE
-	var/datum/sprite_accessory/tail/tail_accessory = SPRITE_ACCESSORY(tail.accessory_type)
-	return tail_accessory.is_visible(tail, null, owner)
-
 /obj/item/organ/vagina/get_icon_cache_key(obj/item/bodypart/bodypart)
-	var/bee_tail_oviduct = has_bee_tail_oviduct()
 	var/oviduct_state
-	if(accessory_type == /datum/sprite_accessory/vagina/bee_tail || bee_tail_oviduct)
+	if(accessory_type == /datum/sprite_accessory/vagina/bee_tail)
 		var/datum/sprite_accessory/vagina/bee_tail/oviduct = SPRITE_ACCESSORY(/datum/sprite_accessory/vagina/bee_tail)
 		oviduct_state = oviduct.get_icon_state(src, bodypart, owner)
-	return "[..()]-[vagina_taur_enabled]-[!!owner?.get_taur_tail()]-[bee_tail_oviduct]-[oviduct_state]"
+	return "[..()]-[vagina_taur_enabled]-[!!owner?.get_taur_tail()]-[oviduct_state]"
 
 /obj/item/organ/vagina/imprint_organ_dna(datum/organ_dna/organ_dna)
 	..()

@@ -158,11 +158,17 @@
 /turf/open/floor/rogue/churchmarble,
 /area/rogue/indoors/town/church)
 "aax" = (
-/obj/structure/flora/roguegrass,
 /obj/effect/landmark/start/villager{
 	dir = 8
 	},
-/turf/open/floor/rogue/grass,
+/obj/structure/fluff/walldeco/church/line,
+/obj/structure/fluff/walldeco/church/line{
+	dir = 8
+	},
+/obj/structure/fluff/walldeco/church/line{
+	dir = 4
+	},
+/turf/open/floor/rogue/concrete,
 /area/rogue/outdoors/rtfield/rockhill)
 "aay" = (
 /obj/machinery/light/rogue/firebowl/standing/blue,
@@ -20482,6 +20488,9 @@
 	dir = 1;
 	pixel_y = 8
 	},
+/obj/structure/fluff/statue/small{
+	pass_flags = 1
+	},
 /turf/open/floor/carpet/royalblack,
 /area/rogue/indoors)
 "jFQ" = (
@@ -23631,6 +23640,10 @@
 "lkv" = (
 /turf/open/floor/rogue/grasscold,
 /area/rogue/under/underdark/rockhill/west)
+"lkw" = (
+/obj/structure/roguemachine/bathvend,
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/under/town/basement)
 "lkH" = (
 /obj/structure/roguemachine/mail{
 	pixel_y = -32;
@@ -23710,6 +23723,14 @@
 	pixel_y = 20
 	},
 /obj/item/reagent_containers/food/snacks/smallrat,
+/obj/item/clothing/head/roguetown/helmet/kettle/iron{
+	pixel_x = 4;
+	pixel_y = 37
+	},
+/obj/item/clothing/head/roguetown/helmet/kettle/iron{
+	pixel_x = -4;
+	pixel_y = 37
+	},
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/town/basement)
 "lnk" = (
@@ -24277,6 +24298,10 @@
 "lDj" = (
 /turf/open/floor/rogue/grassgrey,
 /area/rogue/indoors/shelter/bog)
+"lDn" = (
+/obj/structure/roguemachine/drugmachine,
+/turf/closed/wall/mineral/rogue/wooddark/vertical,
+/area/rogue/indoors)
 "lDS" = (
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/outdoors/woodsrat/safe)
@@ -27465,6 +27490,12 @@
 /obj/structure/vine,
 /turf/open/floor/rogue/grass,
 /area/rogue/outdoors/rtfield/rockhill)
+"mXX" = (
+/obj/structure/standingbell{
+	name = "church service bell"
+	},
+/turf/open/floor/rogue/church,
+/area/rogue/indoors/town/church)
 "mXY" = (
 /obj/structure/flora/roguegrass/herb/random,
 /obj/structure/flora/roguegrass/herb/random,
@@ -33286,6 +33317,12 @@
 /obj/structure/fluff/railing/border,
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors)
+"pOr" = (
+/obj/structure/roguemachine/lottery_roguetown{
+	pixel_y = 0
+	},
+/turf/closed/wall/mineral/rogue/wooddark,
+/area/rogue/indoors/town/tavern)
 "pOu" = (
 /obj/structure/fluff/railing/wood{
 	dir = 1;
@@ -38924,15 +38961,6 @@
 /turf/open/floor/rogue/wood,
 /area/rogue/indoors)
 "swT" = (
-/obj/structure/rack/rogue/shelf,
-/obj/item/clothing/head/roguetown/helmet/kettle/iron{
-	pixel_x = -4;
-	pixel_y = 37
-	},
-/obj/item/clothing/head/roguetown/helmet/kettle/iron{
-	pixel_x = 4;
-	pixel_y = 37
-	},
 /obj/structure/chair/stool/rogue,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/under/town/basement)
@@ -39128,10 +39156,6 @@
 	},
 /turf/open/floor/rogue/greenstone/runed,
 /area/rogue/under/dungeon/wizarddungeon)
-"sCQ" = (
-/obj/structure/fluff/traveltile/bathhouse_passage/cave,
-/turf/open/floor/rogue/grasspurple,
-/area/rogue/under/underdark/rockhill/west)
 "sCS" = (
 /obj/structure/table/wood,
 /obj/structure/globe{
@@ -41882,6 +41906,14 @@
 	pixel_y = 3
 	},
 /obj/item/reagent_containers/peppermill,
+/obj/item/natural/cloth{
+	pixel_x = 4;
+	pixel_y = 40
+	},
+/obj/item/reagent_containers/glass/bucket{
+	pixel_x = -4;
+	pixel_y = 42
+	},
 /turf/open/floor/rogue/tile,
 /area/rogue/indoors/town/manor)
 "tVE" = (
@@ -42495,6 +42527,14 @@
 	},
 /obj/item/cooking/pan,
 /obj/item/kitchen/rollingpin,
+/obj/item/storage/roguebag{
+	pixel_x = -6;
+	pixel_y = 42
+	},
+/obj/item/soap{
+	pixel_x = 4;
+	pixel_y = 36
+	},
 /turf/open/floor/rogue/tile,
 /area/rogue/indoors/town/manor)
 "ukK" = (
@@ -67985,7 +68025,7 @@ xaf
 xaf
 whb
 whb
-sCQ
+iTR
 rdM
 iTR
 whb
@@ -92605,7 +92645,7 @@ cTA
 lif
 vXC
 bmU
-jyI
+lkw
 swT
 iTw
 nPT
@@ -162988,7 +163028,7 @@ qvR
 fxx
 aRN
 gMf
-gMf
+mXX
 sdd
 aGq
 gMf
@@ -169330,7 +169370,7 @@ wmr
 ryI
 jCh
 jCh
-pOX
+lDn
 aax
 sjP
 fxx
@@ -174181,7 +174221,7 @@ grg
 jwP
 aJX
 aBL
-hhn
+pOr
 kQW
 sjP
 xvN
@@ -248148,7 +248188,7 @@ xlA
 xlA
 xlA
 xlA
-jCh
+ryI
 nqU
 qHb
 tFv

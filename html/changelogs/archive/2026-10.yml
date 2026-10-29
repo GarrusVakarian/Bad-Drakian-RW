@@ -873,6 +873,20 @@
       thrown items now end a deadite's rising protection before damage is applied;
       NPC attacks do not.
 2026-10-29:
+  GarrusVakarian:
+  - map: 'Smollhill: Brassface for slaver.'
+  - map: 'Smollhill: Purity right outside of slaver.'
+  - map: 'Smollhill: Xylix''s fortune at the tavern/inn.'
+  - map: 'Smollhill: Sack, cloth, soap, bucket in the baron''s kitchen.'
+  - map: 'Smollhill: Statue in the mercenary spawn spot.'
+  - map: 'Smollhill: Church service bell at the chapel.'
+  - map: 'Smollhill: Removed travel spot to Whitevein (since there is no Whitevein).'
+  PPooch, annikaRU, port by mypingishuge:
+  - rscadd: Councillors may establish ministries with important town roles at the
+      Ministry bureau in Neuhill, improving their skills.
+  - code_imp: Added support for Ratwood maple trees.
+  - bugfix: Seated ministers can use the bureau to clear an office whose sponsor was
+      deleted and petition again.
   _Rarity:
   - bugfix: Ported AP's Mechanized ore bags handling. Will automatically collect matching
       materials while worn or held.
@@ -899,3 +913,9 @@
   - bugfix: Deadite regeneration no longer repeats normal wound processing.
   - bugfix: Deadite recognition clears after curing a character whose mind has moved,
       and black blood retains its tint when pooling.
+  tatsu:
+  - rscadd: Insect tails can now use the existing tail ovipositor artwork.
+  - qol: Renamed the Bee tail penis option to Ovipositor.
+  - bugfix: Regular vagina selections no longer automatically display Oviduct artwork.
+  - image: Corrected the hard state Oviduct sprite placement.
+  - bugfix: South facing Oviduct sprites was offset and showing. Now it is not.
