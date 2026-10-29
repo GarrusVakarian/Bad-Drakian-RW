@@ -901,6 +901,8 @@
   - spellcheck: Expert Homesteader's description correctly lists its Mining limit
       as Expert instead of Legendary.
   - bugfix: Moved new rolling verbs into Emotes tab were they should be.
+  - bugfix: Automatic spell invocations and generated spell lines no longer count
+      toward Top Speakers.
   bearrrrrrrr:
   - rscadd: tithebound mercenaries
   mypingishuge:
