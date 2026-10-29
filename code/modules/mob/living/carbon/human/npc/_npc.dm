@@ -63,7 +63,7 @@
 
 /mob/living/carbon/human/Initialize(mapload)
 	. = ..()
-	our_cells = new(interesting_dist, interesting_dist, 1)
+	our_cells = new(interesting_dist, interesting_dist, 1, mode != NPC_AI_OFF)
 	set_new_cells()
 
 /mob/living/carbon/human/Destroy()
@@ -73,11 +73,19 @@
 /mob/living/carbon/human/proc/IsStandingStill()
 	return doing || resisting || pickpocketing
 
+/mob/living/carbon/human/proc/npc_ai_active()
+	return !QDELETED(src) && mode != NPC_AI_OFF && mode != NPC_AI_SLEEP && (!client || ai_when_client) && !isnull(get_turf(src))
+
 /mob/living/carbon/human/proc/handle_ai()
-	if(client)
-		if(!ai_when_client)
-			return
+	if(!npc_ai_active())
+		return FALSE
+	if(our_cells && !our_cells.vertical_range) // Converted player bodies can acquire NPC AI later.
+		our_cells.vertical_range = 1
+		set_new_cells()
+		if(!npc_ai_active())
+			return FALSE
 	START_PROCESSING(SShumannpc,src)
+	return TRUE
 
 /mob/living/carbon/human/proc/check_mouth_grabbed()
 	var/obj/item/bodypart/head/head = get_bodypart(BODY_ZONE_HEAD)
@@ -97,6 +105,9 @@
 	return FALSE
 
 /mob/living/carbon/human/proc/process_ai()
+	if(!npc_ai_active())
+		walk_to(src, 0)
+		return TRUE
 	if(IsDeadOrIncap())
 		walk_to(src,0)
 		return stat == DEAD // only stop processing if we're dead-dead
@@ -128,6 +139,8 @@
 	if(length(myPath))
 		steps_moved_this_turn += move_along_path()
 		// We could return here if we wanted to make moving use your turn.
+	if(!npc_ai_active()) // Movement may yield while the last nearby client leaves.
+		return TRUE
 	// Special case: Taunt people hiding in trees directly above us.
 	var/turf/my_turf = get_turf(src)
 	var/turf/their_turf = get_turf(target)
@@ -349,6 +362,8 @@
 	var/old_pathfinding_target = pathfinding_target
 	var/steps_to_take = maxStepsTick - steps_moved_this_turn // if this isn't our first movement step, limit how many we can take
 	for(var/movement_turn in 1 to steps_to_take)
+		if(QDELETED(src) || !npc_ai_active())
+			return
 		if(!length(myPath))
 			NPC_THINK("MOVEMENT TURN [movement_turn]: Path complete!")
 			return
@@ -461,8 +476,13 @@
 		var/const/MAX_RANGE_FIND = 32
 		NPC_THINK("Pathfinding to [pathfinding_target]...")
 		is_currently_pathing = TRUE
-		myPath = get_path_to(src, turf_of_target, TYPE_PROC_REF(/turf, Heuristic_cardinal_3d), MAX_RANGE_FIND + 1, 250, 1, adjacent = TYPE_PROC_REF(/turf, reachableTurftest3d))
+		var/list/new_path = get_path_to(src, turf_of_target, TYPE_PROC_REF(/turf, Heuristic_cardinal_3d), MAX_RANGE_FIND + 1, 250, 1, adjacent = TYPE_PROC_REF(/turf, reachableTurftest3d))
+		if(QDELETED(src))
+			return FALSE
 		is_currently_pathing = FALSE
+		if(!npc_ai_active() || pathfinding_target != new_target)
+			return FALSE
+		myPath = new_path
 		if(length(myPath))
 			myPath -= get_turf(src) // remove the turf we start on
 			pathing_frustration = 0
@@ -672,6 +692,8 @@
 				if(my_turf.Distance_cardinal_3d(target_turf, src) > 1)
 					if(!length(myPath)) // create a new path to the target
 						start_pathing_to(target)
+			if(!npc_ai_active()) // Pathfinding may yield while nearby clients leave.
+				return TRUE
 			// Flee before trying to pick up a weapon.
 			if(flee_in_pain && target && (target.stat == CONSCIOUS))
 				var/paine = get_complex_pain()
@@ -1055,6 +1077,7 @@
 
 	if(mode == NPC_AI_SLEEP)
 		mode = NPC_AI_IDLE
+		handle_ai()
 
 /mob/living/carbon/human/proc/on_client_exit(datum/source, datum/exited)
 	SIGNAL_HANDLER
@@ -1064,7 +1087,7 @@
 	consider_wakeup()
 
 /mob/living/carbon/human/proc/set_new_cells()
-	if(QDELETED(src)) // Move to nullspace causes move and causes this.
+	if(QDELETED(src) || !our_cells) // Movement can occur during initialization or deletion.
 		return
 	var/turf/our_turf = get_turf(src)
 	if(isnull(our_turf))
@@ -1086,16 +1109,20 @@
 
 /mob/living/carbon/human/proc/consider_wakeup()
 	if(mode == NPC_AI_OFF)
-		return
+		return FALSE
+	if(client || !our_cells)
+		return TRUE
 
 	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
 		if(length(grid.client_contents))
-			if(mode != NPC_AI_SLEEP && mode != NPC_AI_IDLE)
-				return TRUE
-			mode = NPC_AI_IDLE
+			if(mode == NPC_AI_SLEEP)
+				mode = NPC_AI_IDLE
+				handle_ai()
 			return TRUE
 
 	mode = NPC_AI_SLEEP
+	walk_to(src, 0)
+	STOP_PROCESSING(SShumannpc, src)
 	return FALSE
 
 /mob/living/carbon/human/Moved()

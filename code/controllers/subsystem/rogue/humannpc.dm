@@ -28,10 +28,15 @@ SUBSYSTEM_DEF(humannpc)
 
 /datum/controller/subsystem/humannpc/proc/try_process_ai(mob/living/carbon/human/thing)
 	set waitfor = FALSE
+	if(QDELETED(thing) || !thing.npc_ai_active())
+		STOP_PROCESSING(src, thing)
+		return
 	if(thing.ai_currently_active)
 		return // Already running from another tick, don't do another action!
 	thing.ai_currently_active = TRUE
 	. = thing.process_ai()
+	if(QDELETED(thing))
+		return
 	thing.ai_currently_active = FALSE
 	if(.)
 		STOP_PROCESSING(src, thing)

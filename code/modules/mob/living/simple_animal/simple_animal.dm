@@ -1167,12 +1167,19 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			stack_trace("Something attempted to set simple animals AI to an invalid state: [togglestatus]")
 
 /mob/living/simple_animal/proc/consider_wakeup()
+	if(!can_have_ai)
+		toggle_ai(AI_OFF)
+		return FALSE
+	if(AIStatus == AI_OFF || AIStatus == AI_Z_OFF || !our_cells)
+		return FALSE
+	if(client)
+		return TRUE
 	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
 		if(length(grid.client_contents))
 			toggle_ai(AI_ON)
 			return TRUE
 
-	toggle_ai(AI_OFF)
+	toggle_ai(AI_IDLE)
 	return FALSE
 
 /mob/living/simple_animal/adjustHealth(amount, updating_health = TRUE, forced = FALSE)
