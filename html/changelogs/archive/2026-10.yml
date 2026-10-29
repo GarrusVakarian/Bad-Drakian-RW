@@ -873,6 +873,10 @@
       thrown items now end a deadite's rising protection before damage is applied;
       NPC attacks do not.
 2026-10-29:
+  CentralSmith:
+  - bugfix: Pots and teapots can receive liquid poured from other containers.
+  - bugfix: Carved teapots now hold 120 units, matching ceramic teapots and stone
+      pots.
   GarrusVakarian:
   - map: 'Smollhill: Brassface for slaver.'
   - map: 'Smollhill: Purity right outside of slaver.'
