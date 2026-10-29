@@ -42,8 +42,8 @@
 	whisper(message)
 
 ///whisper a message
-/mob/proc/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
-	say(message, language) //only living mobs actually whisper, everything else just talks
+/mob/proc/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
+	say(message, language, count_for_stats = count_for_stats) //only living mobs actually whisper, everything else just talks
 
 
 /mob/verb/me_typing_indicator()

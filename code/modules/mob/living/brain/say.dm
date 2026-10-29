@@ -1,4 +1,4 @@
-/mob/living/brain/say(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
+/mob/living/brain/say(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
 	return
 
 /mob/living/brain/radio(message, message_mode, list/spans, language)
