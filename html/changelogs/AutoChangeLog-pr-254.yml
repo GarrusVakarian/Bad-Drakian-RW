@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Automatic spell invocations and generated spell lines no longer count toward Top Speakers."
