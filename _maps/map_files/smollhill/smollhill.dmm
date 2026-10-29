@@ -6425,9 +6425,6 @@
 	dir = 8
 	},
 /area/rogue/indoors/shelter/bog)
-"cWS" = (
-/turf/closed,
-/area/rogue/outdoors/rtfield/rockhill/above)
 "cWT" = (
 /turf/closed/mineral/rogue/bedrock,
 /area/rogue/outdoors/mountains)
@@ -7997,6 +7994,10 @@
 	},
 /obj/structure/roguemachine/mail/l{
 	mailtag = "Lowtown Baron's Manor - Baron's Quarters"
+	},
+/obj/item/roguekey/steward{
+	pixel_x = -8;
+	pixel_y = 2
 	},
 /turf/open/floor/rogue/ruinedwood,
 /area/rogue/indoors/town/manor/rockhill)
@@ -157759,7 +157760,7 @@ qXm
 xbD
 xbD
 uSG
-fxx
+qvR
 qvR
 eCS
 iIA
@@ -160472,7 +160473,7 @@ fxx
 qvR
 qXO
 uaL
-uaL
+qvR
 huL
 uaL
 huL
@@ -233557,11 +233558,11 @@ xlA
 xlA
 xlA
 xlA
-tOy
-pLf
-pLf
-pLf
-cDU
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -233859,11 +233860,11 @@ xlA
 xlA
 xlA
 xlA
-qjU
-tOy
-pLf
-cDU
-fIY
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -234161,11 +234162,11 @@ xlA
 xlA
 xlA
 xlA
-qjU
-qjU
-cSF
-fIY
-fIY
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -234463,11 +234464,11 @@ xlA
 xlA
 xlA
 xlA
-qjU
-qjU
-cSF
-fIY
-fIY
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -234765,11 +234766,11 @@ xlA
 xlA
 xlA
 xlA
-qjU
-rBH
-eSZ
-hJx
-fIY
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -235067,11 +235068,11 @@ xlA
 xlA
 xlA
 xlA
-rBH
-eSZ
-eSZ
-eSZ
-hJx
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
@@ -311796,14 +311797,14 @@ xlA
 xlA
 xlA
 xlA
-cWS
-cWS
-cWS
-cWS
-cWS
-cWS
-cWS
-cWS
+xlA
+xlA
+xlA
+xlA
+xlA
+xlA
+xlA
+xlA
 xlA
 xlA
 xlA
