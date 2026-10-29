@@ -886,7 +886,7 @@
 
 /datum/emote/living/scream/run_emote(mob/user, params, type_override, intentional, targetted)
 	. = ..()
-	if(. && user.mind)
+	if(. && user.mind && user.client)
 		record_featured_stat(FEATURED_STATS_SCREAMERS, user)
 
 /datum/emote/living/scream/painscream
