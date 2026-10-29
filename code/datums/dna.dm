@@ -19,7 +19,6 @@
 	var/list/list/body_markings = list()
 	///Current body size, used for proper re-sizing and keeping track of that
 	var/current_body_size = BODY_SIZE_NORMAL
-	var/current_body_height = BODY_SIZE_NORMAL
 	/// Horizontal correction already applied to the holder's transform.
 	var/current_body_center_offset = 0
 
@@ -272,16 +271,13 @@
 		return
 	update_body_center_offset(TRUE)
 	var/desired_size = features["body_size"]
-	var/desired_height = desired_size * (features["body_center_offset"] ? BODY_CENTER_ALTERNATE_HEIGHT : 1)
-	if(current_body_size != desired_size || current_body_height != desired_height)
+	if(current_body_size != desired_size)
 		var/change_multiplier = desired_size / current_body_size
-		var/height_multiplier = desired_height / current_body_height
 		//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
-		var/translate = ((height_multiplier-1) * 32)/2
-		holder.transform = holder.transform.Scale(change_multiplier, height_multiplier)
+		var/translate = ((change_multiplier-1) * 32)/2
+		holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
 		holder.transform = holder.transform.Translate(0, translate)
 		current_body_size = desired_size
-		current_body_height = desired_height
 	update_body_center_offset()
 
 /datum/dna/proc/get_body_center_offset(direction)

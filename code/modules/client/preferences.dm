@@ -844,7 +844,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Alternate alignment with a 2% height boost'>Center: [features["body_center_offset"] ? "Alternate" : "Default"]</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Switch horizontal pixel alignment for scaled sprites'>Center: [features["body_center_offset"] ? "Alternate" : "Default"]</a>"
 			dat += {"<script>
 				function updateBodyCenterOffset(enabled) {
 					var button = document.getElementById('body-center-offset');

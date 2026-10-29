@@ -1156,7 +1156,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(prefs && prefs.chat_toggles & CHAT_PULLR)
 		to_chat(src, announcement)
 
-/client/proc/show_character_previews(mutable_appearance/MA, center_offset = 0, applied_center_offset = 0, body_size = BODY_SIZE_NORMAL, alternate_mode = FALSE)
+/client/proc/show_character_previews(mutable_appearance/MA, center_offset = 0, applied_center_offset = 0, body_size = BODY_SIZE_NORMAL)
 	var/pos = 0
 	var/enlarged = prefs?.preview_enlarged
 	var/preview_width = enlarged ? 512 : 172
@@ -1202,8 +1202,6 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		O.dir = D
 		O.preview_center_scale = 0.5 * body_size * (enlarged ? 3 : 1)
 		O.preview_center_offset = direction_offset * (enlarged ? 3 : 1)
-		O.preview_zoom = enlarged ? 3 : 1
-		O.preview_alternate = alternate_mode
 		// A queued refresh may have captured an older preference before yielding.
 		O.update_center_offset(prefs && prefs.features["body_center_offset"])
 		switch(pos)
