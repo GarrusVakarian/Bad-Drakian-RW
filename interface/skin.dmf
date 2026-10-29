@@ -248,6 +248,7 @@ window "preferencess_window"
 		anchor2 = 50,0
 		background-color = #000000
 		right-click = true
-		icon-size = 64
-		zoom-mode = "distort"
+		zoom = 2
+		zoom-mode = "normal"
+		letterbox = true
 

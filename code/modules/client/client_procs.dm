@@ -1169,7 +1169,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	// not enlarge its screen objects. Preserve the character's body scaling.
 	var/matrix/preview_transform = matrix(MA.transform)
 	preview_transform.Scale(enlarged ? 3 : 1)
-	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;icon-size=64;zoom-mode=distort")
+	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;zoom=2;zoom-mode=normal;letterbox=true")
 
 	var/atom/movable/screen/char_preview/background = LAZYACCESS(char_render_holders, "bg")
 	if(background)
