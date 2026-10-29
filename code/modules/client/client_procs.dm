@@ -1156,7 +1156,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(prefs && prefs.chat_toggles & CHAT_PULLR)
 		to_chat(src, announcement)
 
-/client/proc/show_character_previews(mutable_appearance/MA, center_offset = 0, applied_center_offset = 0)
+/client/proc/show_character_previews(mutable_appearance/MA, center_offset = 0, applied_center_offset = 0, body_size = BODY_SIZE_NORMAL)
 	var/pos = 0
 	var/enlarged = prefs?.preview_enlarged
 	var/preview_width = enlarged ? 512 : 172
@@ -1198,6 +1198,10 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		direction_transform.Translate((direction_offset - applied_center_offset) * (enlarged ? 3 : 1), 0)
 		O.transform = direction_transform
 		O.dir = D
+		O.preview_center_scale = 0.5 * body_size * (enlarged ? 3 : 1)
+		O.preview_center_offset = direction_offset * (enlarged ? 3 : 1)
+		// A queued refresh may have captured an older preference before yielding.
+		O.update_center_offset(prefs && prefs.features["body_center_offset"])
 		switch(pos)
 			if(1)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_far]"
@@ -1207,6 +1211,14 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 				O.screen_loc = "character_preview_map:[preview_near],[preview_near]"
 			if(4)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_near]"
+
+/client/proc/update_character_preview_center(enabled)
+	. = 0
+	for(var/D in GLOB.cardinals)
+		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
+		if(O)
+			O.update_center_offset(enabled)
+			.++
 
 /client/proc/clear_character_previews()
 	for(var/key in char_render_holders)

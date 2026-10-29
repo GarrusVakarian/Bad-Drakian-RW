@@ -2315,6 +2315,16 @@
 /atom/movable/screen/char_preview
 	name = "Me."
 	icon_state = ""
+	var/preview_center_scale = 0
+	var/preview_center_offset = 0
+
+/atom/movable/screen/char_preview/proc/update_center_offset(enabled)
+	var/new_offset = (enabled && (dir == NORTH || dir == SOUTH)) ? preview_center_scale : 0
+	if(new_offset != preview_center_offset)
+		var/matrix/adjusted = matrix(transform)
+		adjusted.Translate(new_offset - preview_center_offset, 0)
+		transform = adjusted
+		preview_center_offset = new_offset
 //	var/list/prevcolors = list("background-color=#000000","background-color=#242f28","background-color=#302323","background-color=#999a63","background-color=#7e7e7e")
 
 //atom/movable/screen/char_preview/Click()
