@@ -987,3 +987,4 @@
       requested size during a refresh.
   - bugfix: Restored the Hefty Swing axe special to iron and steel greataxes and their
       related variants.
+  - balance: Large Frame now costs 0 quirk points instead of 3.
