@@ -173,3 +173,18 @@
 		/datum/crafting_recipe/gemstaff,
 		/datum/runeritual,
 	)
+
+/obj/item/recipe_book/cooking_recipes
+	name = "Cooking Recipes"
+	wiki_name = "Cooking Recipes"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/food_recipe, /datum/stew_recipe, /datum/crafting_recipe/roguetown/cooking)
+
+/obj/item/recipe_book/economy
+	name = "Economy"
+	wiki_name = "Economy"
+	wiki_section = "Guides"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/treasury_general, /datum/book_entry/treasury_realm, /datum/book_entry/treasury_merchant, /datum/book_entry/treasury_underground)

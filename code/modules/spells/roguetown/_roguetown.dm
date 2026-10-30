@@ -131,7 +131,9 @@
 	return stats
 
 /obj/effect/proc_holder/spell/invoked/projectile/generate_wiki_html(mob/user)
-	var/html = ..()
+	var/html = ..(user)
+	if(!ispath(projectile_type, /obj/projectile))
+		return html
 
 	var/proj_damage = initial(projectile_type:damage)
 	var/proj_damage_type = initial(projectile_type:damage_type)
@@ -140,7 +142,6 @@
 	var/proj_ap = initial(projectile_type:armor_penetration)
 	var/proj_npc_mult = initial(projectile_type:npc_simple_damage_mult)
 	var/proj_nodamage = initial(projectile_type:nodamage)
-	var/proj_guard = initial(projectile_type:guard_deflectable)
 
 	var/tiles_per_second = proj_speed > 0 ? round(10 / proj_speed, 0.1) : "Instant"
 
@@ -165,10 +166,6 @@
 		html += {"
 			<tr><th>Armor Penetration</th><td>[proj_ap]</td></tr>
 		"}
-
-	html += {"
-			<tr><th>Deflectable</th><td>[proj_guard ? "Yes" : "No"]</td></tr>
-	"}
 
 	if(projectile_amount > 1)
 		html += {"

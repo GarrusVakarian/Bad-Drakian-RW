@@ -11,6 +11,7 @@
 	var/open
 	var/base_icon_state
 	var/can_spawn = TRUE
+	var/wiki_only = FALSE
 	var/wiki_name
 	/// Which section this book appears in on the OOC Guidebook. "Crafting Recipes" or "Guides".
 	var/wiki_section = "Crafting Recipes"
@@ -26,7 +27,7 @@
 	. = ..()
 	current_reader = user
 	var/datum/recipe_wiki/wiki = get_recipe_wiki()
-	wiki.show_to_user(user, types, name)
+	wiki.show_to_user(user, types, name, type)
 
 /obj/item/recipe_book/getonmobprop(tag)
 	. = ..()
