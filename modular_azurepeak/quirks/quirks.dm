@@ -143,7 +143,7 @@
 	name = "Large Frame"
 	desc = "I'm simply built bigger than most. My strength and hardiness has nothing to show for my size, though."
 	custom_text = "This quirk increases your sprite size. Incompatible with the Giant virtue."
-	point_cost = 3
+	point_cost = 0
 	incompatible_virtues = list(/datum/virtue/size/giant)
 
 /datum/quirk/largeframe/apply_to_human(mob/living/carbon/human/recipient)
