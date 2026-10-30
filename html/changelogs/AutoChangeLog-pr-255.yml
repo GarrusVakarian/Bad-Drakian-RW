@@ -1,5 +1,0 @@
-author: "GarrusVakarian"
-delete-after: True
-changes:
-  - map: "Added a warehouse to Smollhill"
-  - map: "Fixed a strip of empty turfs floating in the air near low-town on both maps"

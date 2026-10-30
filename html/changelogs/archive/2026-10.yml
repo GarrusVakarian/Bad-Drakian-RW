@@ -947,3 +947,7 @@
   - bugfix: Regular vagina selections no longer automatically display Oviduct artwork.
   - image: Corrected the hard state Oviduct sprite placement.
   - bugfix: South facing Oviduct sprites was offset and showing. Now it is not.
+2026-10-30:
+  GarrusVakarian:
+  - map: Added a warehouse to Smollhill
+  - map: Fixed a strip of empty turfs floating in the air near low-town on both maps
