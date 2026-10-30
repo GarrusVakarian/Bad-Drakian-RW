@@ -279,7 +279,7 @@
 			mmb_intent = new INTENT_JUMP(src) // switch to jump intent
 		used_intent = mmb_intent
 		. = jump_action(jump_destination) // return whether the jump succeeded or failed
-		used_intent = null
+		used_intent = a_intent
 		QDEL_NULL(mmb_intent) // unset our intent after
 		m_intent = old_m_intent
 		if(.)
@@ -307,7 +307,7 @@
 			mmb_intent = new INTENT_JUMP(src) // switch to jump intent
 		used_intent = mmb_intent
 		. = jump_action(jump_destination) // return whether the jump succeeded or failed
-		used_intent = null
+		used_intent = a_intent
 		QDEL_NULL(mmb_intent) // unset our intent after
 		m_intent = old_m_intent
 		return
