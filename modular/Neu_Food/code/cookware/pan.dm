@@ -39,7 +39,7 @@
 
 /obj/item/cooking/pan/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Frying pans can be placed atop a hearth by left-clicking it. Left-click the placed frying pan with an ingredient to begin frying - so long as the hearth is lit.")
+	. += span_info("Frying pans can be placed atop a hearth or campfire by left-clicking it. Left-click the fire with an ingredient to begin frying while it is lit. Left-click a campfire with an empty hand to remove the food first, then the pan.")
 	. += span_info("Meats, cackleberries, and sliced vegetables are the ideal choices for frying. Other ingredients and recipes might require the gentle caress of an oven, instead.")
 	. += span_info("Leaving a fully baked item on the pan for too long will cause it to burn away.")
 	. += span_info("Right-click in combat mode, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Expert Cooking skill.")
@@ -64,3 +64,29 @@
 
 /obj/item/cooking/pan/twirl_fumble(mob/living/user)
 	return twirl_fumble_bonk(user, 'sound/combat/hits/blunt/frying_pan(1).ogg')
+
+// Hotrock ported from Azure Peak #7763 (Ollanius), originally adapted from Vanderlin.
+/obj/item/cooking/pan/stone
+	name = "hotrock"
+	desc = "Chiseled flat to fry flesh atop a hearth, these stones were the first to shepherd finer tastes to Psydonia's ur-civilizations."
+	icon = 'modular/Neu_Food/icons/cookware/hotrock.dmi'
+	icon_state = "stonepan"
+	throwforce = 20
+	w_class = WEIGHT_CLASS_HUGE
+	twohands_required = TRUE
+	blade_dulling = DULLING_BASH
+	max_integrity = 100
+	minstr = 9
+	destroy_sound = 'sound/foley/smash_rock.ogg'
+	attacked_sound = 'sound/foley/hit_rock.ogg'
+	throw_range = 5
+	grid_width = 64
+	grid_height = 64
+	slot_flags = null
+	possible_item_intents = list(/datum/intent/hit, /datum/intent/mace/smash/wood)
+	drop_sound = 'sound/foley/brickdrop.ogg'
+	pickup_sound = 'sound/foley/brickdrop.ogg'
+
+/obj/item/cooking/pan/stone/getonmobprop(tag)
+	if(tag == "gen")
+		return list("shrink" = 0.6,"sx" = -7,"sy" = -4,"nx" = 7,"ny" = -4,"wx" = -4,"wy" = -4,"ex" = 2,"ey" = -4,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
