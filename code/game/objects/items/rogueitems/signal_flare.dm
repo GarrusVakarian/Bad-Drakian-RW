@@ -378,8 +378,8 @@ GLOBAL_LIST_EMPTY(signal_flare_codebook)
 /obj/item/signal_flare_gun/proc/flare_illuminate(turf/origin, hex, meaning, colored_name, chosen_color, list/can_interpret)
 	// Illumination rounds burn wider and longer. Everything else is a normal flare.
 	var/illuminating = (chosen_color == FLARE_ILLUMINATION_COLOR)
-	var/glow_range = illuminating ? 12 : 8
-	var/glow_duration = illuminating ? 30 SECONDS : 10 SECONDS
+	var/glow_range = illuminating ? 24 : 8
+	var/glow_duration = illuminating ? 3 MINUTES : 10 SECONDS
 
 	// Burn above the rooftops where there's open sky, so walls don't swallow the light.
 	var/turf/glow_turf = origin
