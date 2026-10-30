@@ -735,7 +735,7 @@ BLIND     // can't see anything
 /obj/item/clothing/show_examine_hover_tooltip()
 	if(..())
 		return TRUE
-	if(slot_flags & ITEM_SLOT_HEAD)
+	if(slot_flags & (ITEM_SLOT_HEAD | ITEM_SLOT_MASK))
 		return TRUE
 	if(slot_flags & (ITEM_SLOT_BACK | ITEM_SLOT_BACKPACK | ITEM_SLOT_BELT | ITEM_SLOT_HIP | ITEM_SLOT_CLOAK))
 		return FALSE
