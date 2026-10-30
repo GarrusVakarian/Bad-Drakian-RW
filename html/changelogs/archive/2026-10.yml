@@ -957,6 +957,16 @@
   - bugfix: Notorious hunts now detect a defeated hunting party.
   - balance: Increased blockade wave timers from 10 to 15 minutes.
   - qol: Towners can open delivery parcels at their addressed destination.
+  - rscadd: Frying pans can now be used on campfires. Empty-hand clicking removes
+      the food first, then the pan.
+  - rscadd: Added craftable hotrocks, stone frying pans usable on hearths and campfires.
+      Ported from Azure Peak.
+  - bugfix: NPC screams no longer count toward Top Screamers.
+  - bugfix: Taur characters no longer mutate everyone after them  in the credit portraits.
+  - qol: Dildos can now be equipped in mouth sluuut
+  - bugfix: Fixed runtime errors for the Lizard accent.
+  - bugfix: NPCs now restore their attack intent after jumping. Prevents damage-calculation
+      runtimes during followup spear/lance charges.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
