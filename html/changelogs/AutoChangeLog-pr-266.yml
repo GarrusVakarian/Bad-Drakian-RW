@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Bandage rolls can apply a bandage directly to yourself or another character, consuming one piece only when treatment succeeds."
+  - bugfix: "Bandaging rechecks the limb and existing dressing after treatment so interrupted or competing attempts cannot overwrite a bandage."
