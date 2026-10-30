@@ -969,6 +969,8 @@
       runtimes during followup spear/lance charges.
   - rscadd: Right-drag yourself onto someone to request a piggyback ride, or drag
       them onto yourself to offer one.
+  - bugfix: Food preparation recipes such as raisins and smothered fruit now use Cooking
+      instead of Crafting.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
