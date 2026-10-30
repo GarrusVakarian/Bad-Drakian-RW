@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - code_imp: "Stop processing sleeping human NPCs and wake them through nearby-client grid events, including connected levels above and below."
+  - bugfix: "Sleeping NPC deadites no longer generate automatic idle noises."
+  - bugfix: "Ordinary animals wake again when players approach, and inactive animals no longer finish stale movement or speech turns."
