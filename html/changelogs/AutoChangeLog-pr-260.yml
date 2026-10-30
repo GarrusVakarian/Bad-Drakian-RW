@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - balance: "Wolkenmaw Illumination flares now light a 24-tile outer range for 3 minutes. Coloured signal flares are unchanged."
