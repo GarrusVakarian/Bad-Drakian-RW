@@ -281,6 +281,13 @@
 		current_body_size = desired_size
 	update_body_center_offset()
 
+/proc/next_sprite_center_mode(mode)
+	// Keep saved mode values stable while changing the button's cycle order.
+	var/static/list/next_modes = list(4, 2, 0, 1, 3)
+	if(!isnum(mode) || mode < 0 || mode > 4)
+		return 4
+	return next_modes[mode + 1]
+
 /proc/sprite_center_mode_name(mode)
 	var/static/list/modes = list("Default", "Right", "Left", "Up", "Down")
 	if(!isnum(mode) || mode < 0 || mode > 4)

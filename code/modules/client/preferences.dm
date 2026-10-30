@@ -848,7 +848,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Cycle Default, Right, Left, Up and Down pixel alignment'>Offset: [sprite_center_mode_name(features["body_center_offset"])]</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Cycle Default, Down, Up, Right and Left pixel alignment'>Offset: [sprite_center_mode_name(features["body_center_offset"])]</a>"
 			dat += {"<script>
 				function updateBodyCenterOffset(label) {
 					var button = document.getElementById('body-center-offset');
@@ -2734,7 +2734,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 				if("body_center_offset")
 					if(!user?.client || user.client != parent)
 						return
-					features["body_center_offset"] = (features["body_center_offset"] + 1) % 5
+					features["body_center_offset"] = next_sprite_center_mode(features["body_center_offset"])
 					if(!parent.update_character_preview_center(features["body_center_offset"]))
 						update_preview_icon()
 					user << output(sprite_center_mode_name(features["body_center_offset"]), "preferences_browser:updateBodyCenterOffset")
