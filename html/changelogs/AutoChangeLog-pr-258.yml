@@ -1,0 +1,7 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Improved contract ledgers, quest scrolls, scout reports, and treasury documentation for notorious bounties and hoard recovery."
+  - bugfix: "Notorious hunts now detect a defeated hunting party."
+  - balance: "Increased blockade wave timers from 10 to 15 minutes."
+  - qol: "Towners can open delivery parcels at their addressed destination."
