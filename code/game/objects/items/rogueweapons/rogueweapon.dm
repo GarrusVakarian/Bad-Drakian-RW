@@ -109,7 +109,7 @@
 	..()
 
 /obj/item/rogueweapon/rmb_self(mob/user)
-	if(length(alt_intents) && (user.cmode || !twirly))
+	if(length(alt_intents) && (wielded || user.cmode || !twirly))
 		if(altgripped)
 			ungrip(user)
 			return
@@ -117,6 +117,7 @@
 			ungrip(user)
 		altgrip(user)
 		user.update_inv_hands()
+		return
 	..()
 
 /obj/item/shaft
