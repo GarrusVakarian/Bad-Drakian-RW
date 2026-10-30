@@ -6368,12 +6368,6 @@
 /obj/structure/bookcase/random,
 /turf/open/floor/rogue/dirt,
 /area/rogue/outdoors/town/church)
-"cVe" = (
-/obj/structure/fluff/railing/border{
-	dir = 5
-	},
-/turf/open/floor/rogue/twig,
-/area/rogue/indoors/town/warehouse)
 "cVj" = (
 /obj/structure/fluff/railing/wood{
 	dir = 8;
@@ -13983,13 +13977,6 @@
 /obj/item/flashlight/flare/torch/lantern,
 /turf/open/floor/carpet/royalblack,
 /area/rogue/indoors/town/physician)
-"gzO" = (
-/obj/structure/roguemachine/steward_export,
-/obj/structure/fluff/railing/border{
-	dir = 4
-	},
-/turf/open/floor/rogue/twig,
-/area/rogue/indoors/town/warehouse)
 "gzS" = (
 /obj/item/natural/rock/iron,
 /obj/item/grown/log/tree/small,
@@ -27111,6 +27098,7 @@
 /area/rogue/indoors/town/manor)
 "mNN" = (
 /obj/effect/landmark/start/servant,
+/obj/effect/landmark/start/servantlate,
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/town/manor/rockhill)
 "mNP" = (
@@ -48140,6 +48128,7 @@
 /area/rogue/indoors/town/manor)
 "wRl" = (
 /obj/machinery/light/rogue/candle/l,
+/obj/structure/roguemachine/steward_export,
 /turf/open/floor/rogue/twig,
 /area/rogue/indoors/town/warehouse)
 "wRw" = (
@@ -157152,8 +157141,8 @@ wSn
 wSn
 qvR
 pOX
-gzO
-cVe
+txs
+txs
 txs
 pOX
 qvR
@@ -157760,7 +157749,7 @@ qXm
 xbD
 xbD
 uSG
-qvR
+fxx
 qvR
 eCS
 iIA
@@ -233558,11 +233547,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+tOy
+pLf
+pLf
+pLf
+cDU
 xlA
 xlA
 xlA
@@ -233860,11 +233849,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+qjU
+tOy
+pLf
+cDU
+fIY
 xlA
 xlA
 xlA
@@ -234162,11 +234151,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+qjU
+qjU
+cSF
+fIY
+fIY
 xlA
 xlA
 xlA
@@ -234464,11 +234453,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+qjU
+qjU
+cSF
+fIY
+fIY
 xlA
 xlA
 xlA
@@ -234766,11 +234755,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+qjU
+rBH
+eSZ
+hJx
+fIY
 xlA
 xlA
 xlA
@@ -235068,11 +235057,11 @@ xlA
 xlA
 xlA
 xlA
-xlA
-xlA
-xlA
-xlA
-xlA
+rBH
+eSZ
+eSZ
+eSZ
+hJx
 xlA
 xlA
 xlA

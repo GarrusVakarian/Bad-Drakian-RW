@@ -86963,12 +86963,6 @@
 	},
 /turf/open/floor/rogue/dirt,
 /area/rogue/outdoors/woodsrat/south)
-"seT" = (
-/obj/structure/fluff/railing/border{
-	dir = 8
-	},
-/turf/open/floor/rogue/blocks,
-/area/rogue/indoors/town)
 "seV" = (
 /obj/structure/vine,
 /turf/open/floor/rogue/dirt/road,
@@ -104424,12 +104418,6 @@
 /obj/item/signal_flare,
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/town/cell/warden)
-"vMz" = (
-/obj/structure/fluff/railing/border{
-	dir = 9
-	},
-/turf/open/floor/rogue/blocks,
-/area/rogue/indoors/town)
 "vMC" = (
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
 /obj/structure/rack/rogue,
@@ -404374,8 +404362,8 @@ wbg
 yht
 evo
 csV
+bol
 ogr
-rnE
 tEI
 kAj
 evo
@@ -404805,7 +404793,7 @@ wbg
 aOv
 vdN
 evo
-bol
+rnE
 rnE
 hsM
 qyM
@@ -405237,8 +405225,8 @@ wbg
 wbg
 vdN
 oRP
-seT
-vMz
+tty
+tty
 bst
 pVs
 wAo
