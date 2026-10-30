@@ -241,6 +241,9 @@
 
 	update_total()
 	R.update_total()
+	if(method == INGEST && amount > 0 && multiplier > 0 && length(transfer_log) && isliving(target_atom))
+		var/mob/living/recipient = target_atom
+		recipient.taste(R)
 	if(!no_react)
 		R.handle_reactions()
 		src.handle_reactions()
@@ -596,9 +599,6 @@
 	var/react_type
 	if(isliving(A))
 		react_type = "LIVING"
-		if(method == INGEST)
-			var/mob/living/L = A
-			L.taste(src)
 	else if(isturf(A))
 		react_type = "TURF"
 	else if(isobj(A))
