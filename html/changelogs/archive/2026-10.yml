@@ -978,3 +978,8 @@
       grip. Alternate-grip actions no longer fall through into twirling.
   - balance: Wolkenmaw Illumination flares now light a 24-tile outer range for 3 minutes.
       Coloured signal flares are unchanged.
+  - rscadd: Added an Offset button beside Sprite Scale that cycles through Default,
+      Down, Up, Right and Left alignments, updating the preview immediately and saving
+      the choice per character.
+  - bugfix: Preview Size updates in place and repeated clicks no longer reverse the
+      requested size during a refresh.
