@@ -533,6 +533,54 @@ SPECIALS START HERE
 	..()
 
 
+/datum/special_intent/quarterstaff_sweep
+	name = "Quarterstaff Sweep"
+	desc = "Sweep a five-tile frontal arc, knocking foes back and leaving them vulnerable. Aims for the targeted zone. Requires wielding the quarterstaff in both hands."
+	tile_coordinates = list(list(-1,-1), list(1,-1), list(-1,0), list(0,0), list(1,0))
+	post_icon_state = "sweep_fx"
+	sfx_pre_delay = 'sound/combat/wooshes/blunt/wooshmed (1).ogg'
+	sfx_post_delay = 'sound/combat/hits/blunt/woodblunt (1).ogg'
+	delay = 0.6 SECONDS
+	cooldown = 25 SECONDS
+	stamcost = 20
+	var/vulnerable_dur = 3 SECONDS
+	var/dam
+
+/datum/special_intent/quarterstaff_sweep/check_range(atom/source, atom/target)
+	if(!isliving(source))
+		return FALSE
+	var/mob/living/user = source
+	var/obj/item/W = user.get_active_held_item()
+	if(!W?.wielded)
+		to_chat(user, span_warning("I need to wield the quarterstaff in both hands!"))
+		return FALSE
+	return ..()
+
+/datum/special_intent/quarterstaff_sweep/process_attack()
+	var/obj/item/rogueweapon/W = iparent
+	if(istype(W))
+		dam = W.force_dynamic * max((max(howner.STASTR, howner.STAPER) / 10), 0.5)
+	. = ..()
+
+/datum/special_intent/quarterstaff_sweep/post_delay(list/turfs)
+	var/obj/item/W = iparent
+	if(QDELETED(howner) || QDELETED(W) || !W.wielded || howner.get_active_held_item() != W || howner.incapacitated())
+		return
+	return ..()
+
+/datum/special_intent/quarterstaff_sweep/apply_hit(turf/T)
+	for(var/mob/living/L in T)
+		if(L == howner)
+			continue
+		var/throwdir = get_dir(howner, L)
+		var/turf/throwtarget = get_ranged_target_turf(get_turf(L), throwdir, 1)
+		L.safe_throw_at(throwtarget, 1, 1, howner, force = MOVE_FORCE_EXTREMELY_STRONG)
+		var/obj/item/W = iparent
+		var/hit_zone = resolve_aimed_zone(howner.zone_selected, howner, L, howner.get_skill_level(W.associated_skill) * ACC_SKILL_BONUS_PER_LEVEL)
+		apply_generic_weapon_damage(L, dam, "blunt", hit_zone, bclass = BCLASS_BLUNT, no_pen = TRUE)
+		L.apply_status_effect(/datum/status_effect/debuff/vulnerable, vulnerable_dur)
+	..()
+
 /datum/special_intent/flail_sweep
 	name = "Flail Sweep"
 	desc = "Swings in a perfect circle all around you, pushing people aside. The more are struck, the more powerful the effect."
