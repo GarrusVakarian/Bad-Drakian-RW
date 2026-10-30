@@ -2070,3 +2070,14 @@ generate/load female uniform sprites matching all previously decided variables
 	if(boobs.breast_size == 0)
 		return FALSE
 	return TRUE
+
+/mob/living/carbon/human/update_transform(forcepixel)
+	dna?.update_body_center_offset(TRUE)
+	. = ..()
+	dna?.update_body_center_offset()
+
+/mob/living/carbon/human/setDir(newdir, ismousemovement)
+	var/previous_dir = dir
+	. = ..()
+	if(dir != previous_dir)
+		dna?.update_body_center_offset()

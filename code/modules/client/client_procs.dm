@@ -1156,20 +1156,18 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(prefs && prefs.chat_toggles & CHAT_PULLR)
 		to_chat(src, announcement)
 
-/client/proc/show_character_previews(mutable_appearance/MA)
+/client/proc/show_character_previews(mutable_appearance/MA, applied_center_offset = 0, applied_center_offset_y = 0, body_size = BODY_SIZE_NORMAL)
 	var/pos = 0
 	var/enlarged = prefs?.preview_enlarged
-	var/preview_width = enlarged ? 512 : 172
-	var/preview_height = enlarged ? 512 : 192
-	var/list/window_size = getviewsize(winget(src, "preferencess_window", "size"))
-	var/preview_x = round((window_size[1] - preview_width) / 2)
 	var/preview_near = enlarged ? "2" : "1"
 	var/preview_far = enlarged ? "5:16" : "2"
 	// Enlarge the appearance itself: increasing the map control's size does
 	// not enlarge its screen objects. Preserve the character's body scaling.
 	var/matrix/preview_transform = matrix(MA.transform)
 	preview_transform.Scale(enlarged ? 3 : 1)
-	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;icon-size=64;zoom-mode=distort")
+	set_character_preview_layout(enlarged)
+
+	sync_character_preview_sampling()
 
 	var/atom/movable/screen/char_preview/background = LAZYACCESS(char_render_holders, "bg")
 	if(background)
@@ -1193,8 +1191,14 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		LAZYSET(char_render_holders, "[D]", O)
 		screen += O
 		O.appearance = MA
-		O.transform = preview_transform
+		var/matrix/direction_transform = matrix(preview_transform)
+		direction_transform.Translate(-applied_center_offset * (enlarged ? 3 : 1), -applied_center_offset_y * (enlarged ? 3 : 1))
+		O.transform = direction_transform
 		O.dir = D
+		O.preview_magnification = enlarged ? 3 : 1
+		O.preview_center_scale = body_size * O.preview_magnification
+		// A queued refresh may have captured an older preference before yielding.
+		O.update_center_offset(prefs ? prefs.features["body_center_offset"] : 0)
 		switch(pos)
 			if(1)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_far]"
@@ -1204,6 +1208,75 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 				O.screen_loc = "character_preview_map:[preview_near],[preview_near]"
 			if(4)
 				O.screen_loc = "character_preview_map:[preview_far],[preview_near]"
+
+	// A size click can finish while this asynchronous preview is being prepared.
+	resize_character_previews(prefs?.preview_enlarged)
+
+/client/proc/set_character_preview_layout(enlarged)
+	var/preview_width = enlarged ? 512 : 172
+	var/preview_height = enlarged ? 512 : 192
+	var/list/window_size = getviewsize(winget(src, "preferencess_window", "size"))
+	var/preview_x = round((window_size[1] - preview_width) / 2)
+	winset(src, "preferencess_window.character_preview_map", "size=[preview_width]x[preview_height];pos=[preview_x],230;zoom=2;letterbox=true")
+
+/client/proc/resize_character_previews(enlarged)
+	var/magnification = enlarged ? 3 : 1
+	var/needs_resize = FALSE
+	. = 0
+	for(var/D in GLOB.cardinals)
+		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
+		if(!O)
+			continue
+		.++
+		if(O.preview_magnification == magnification)
+			continue
+		needs_resize = TRUE
+		var/factor = magnification / O.preview_magnification
+		var/matrix/resized = matrix(O.transform)
+		resized.Scale(factor, factor)
+		O.transform = resized
+		O.preview_center_scale *= factor
+		O.preview_center_offset *= factor
+		O.preview_center_offset_y *= factor
+		O.preview_magnification = magnification
+	if(!needs_resize && .)
+		return
+	winset(src, "preferencess_window", enlarged ? "min-size=1560x850" : "min-size=820x650")
+	winset(src, "preferencess_window", enlarged ? "size=1560x1000" : "size=820x850")
+	set_character_preview_layout(enlarged)
+	var/atom/movable/screen/char_preview/background = LAZYACCESS(char_render_holders, "bg")
+	if(background)
+		background.screen_loc = enlarged ? "character_preview_map:0,0 to 7,7" : "character_preview_map:0,0 to 3,3"
+	var/pos = 0
+	var/near = enlarged ? "2" : "1"
+	var/far = enlarged ? "5:16" : "2"
+	for(var/D in GLOB.cardinals)
+		pos++
+		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
+		if(!O)
+			continue
+		switch(pos)
+			if(1)
+				O.screen_loc = "character_preview_map:[far],[far]"
+			if(2)
+				O.screen_loc = "character_preview_map:[near],[far]"
+			if(3)
+				O.screen_loc = "character_preview_map:[near],[near]"
+			if(4)
+				O.screen_loc = "character_preview_map:[far],[near]"
+
+/client/proc/sync_character_preview_sampling()
+	var/sampling = winget(src, "mapwindow.map", "zoom-mode")
+	if(sampling in list("normal", "distort", "blur"))
+		winset(src, "preferencess_window.character_preview_map", "zoom-mode=[sampling]")
+
+/client/proc/update_character_preview_center(mode)
+	. = 0
+	for(var/D in GLOB.cardinals)
+		var/atom/movable/screen/char_preview/O = LAZYACCESS(char_render_holders, "[D]")
+		if(O)
+			O.update_center_offset(mode)
+			.++
 
 /client/proc/clear_character_previews()
 	for(var/key in char_render_holders)

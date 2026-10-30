@@ -622,19 +622,23 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			var/preview_column_width = preview_enlarged ? 544 : 204
 			dat += "<table style='width:100%;table-layout:fixed'>"
 			dat += "<colgroup><col><col id='character-preview-column' style='width:[preview_column_width]px'><col></colgroup>"
-			if(preview_enlarged)
-				// Native map sizes use display pixels; HTML uses CSS pixels.
-				// Avoid widening the gap again when Windows/browser scaling is on.
-				dat += {"<script>
-					(function () {
-						function fitPreviewColumn() {
-							var column = document.getElementById('character-preview-column');
-							column.style.width = (544 / (window.devicePixelRatio || 1)) + 'px';
-						}
-						fitPreviewColumn();
-						window.addEventListener('resize', fitPreviewColumn);
-					})();
-				</script>"}
+			dat += {"<script>
+				var previewSizeEnlarged = [preview_enlarged ? "true" : "false"];
+				function updatePreviewSize(value) {
+					previewSizeEnlarged = value === '1';
+					var column = document.getElementById('character-preview-column');
+					var spacer = document.getElementById('character-preview-space');
+					var button = document.getElementById('character-preview-size');
+					if (column) column.style.width = (previewSizeEnlarged ? 544 / (window.devicePixelRatio || 1) : 204) + 'px';
+					if (spacer) spacer.style.height = (previewSizeEnlarged ? 580 : 260) + 'px';
+					if (button) {
+						button.innerHTML = previewSizeEnlarged ? '3x' : 'Default';
+						button.href = '?_src_=prefs;preference=preview_size;enlarged=' + (previewSizeEnlarged ? '0' : '1');
+					}
+				}
+				window.addEventListener('load', function () { updatePreviewSize(previewSizeEnlarged ? '1' : '0'); });
+				window.addEventListener('resize', function () { updatePreviewSize(previewSizeEnlarged ? '1' : '0'); });
+			</script>"}
 			// Only one Row
 			dat += "<tr>"
 			// The identity and body columns share the remaining width.
@@ -798,7 +802,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			// The native map overlays this browser; reserve space for it above
 			// the preview controls so those links remain visible and clickable.
 			var/preview_space = preview_enlarged ? 580 : 260
-			dat += "<div style='height:[preview_space]px'></div>"
+			dat += "<div id='character-preview-space' style='height:[preview_space]px'></div>"
 			var/datum/job/highest_pref
 			for(var/job in job_preferences)
 				if(job_preferences[job] > highest_pref)
@@ -815,7 +819,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 					arousal_preview_label = "Hard"
 				else
 					arousal_preview_label = "None"
-			dat += "<div style='text-align: center'><br>Arousal Preview:<br><a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a><br><br>Preview Size:<br><a href='?_src_=prefs;preference=preview_size'>[preview_enlarged ? "3x" : "Default"]</a></div>"
+			dat += "<div style='text-align: center'><br>Arousal Preview:<br><a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a><br><br>Preview Size:<br><a id='character-preview-size' href='?_src_=prefs;preference=preview_size;enlarged=[preview_enlarged ? "0" : "1"]'>[preview_enlarged ? "3x" : "Default"]</a></div>"
 			// Rightmost body column.
 			dat += "</td><td valign='top'>"
 			dat += "<h2>Body</h2>"
@@ -844,7 +848,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Cycle Default, Down, Up, Right and Left pixel alignment'>Offset: [sprite_center_mode_name(features["body_center_offset"])]</a>"
+			dat += {"<script>
+				function updateBodyCenterOffset(label) {
+					var button = document.getElementById('body-center-offset');
+					if (button) button.innerHTML = 'Offset: ' + label;
+				}
+			</script>"}
 			dat += "<br><b>Markings:</b> <a href='?_src_=prefs;preference=markings;task=menu'>Change</a>"
 			dat += "<br><b>Descriptors:</b> <a href='?_src_=prefs;preference=descriptors;task=menu'>Change</a>"
 
@@ -1642,6 +1652,14 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			return
 
 /datum/preferences/proc/process_link(mob/user, list/href_list)
+	if(href_list["preference"] == "preview_size")
+		if(!user?.client || user.client != parent || !(href_list["enlarged"] in list("0", "1")))
+			return
+		preview_enlarged = href_list["enlarged"] == "1"
+		if(!parent.resize_character_previews(preview_enlarged))
+			update_preview_icon()
+		user << output(preview_enlarged ? "1" : "0", "preferences_browser:updatePreviewSize")
+		return
 	if(href_list["bancheck"])
 		var/list/ban_details = is_banned_from_with_details(user.ckey, user.client.address, user.client.computer_id, href_list["bancheck"])
 		var/admin = FALSE
@@ -2713,6 +2731,15 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						if(choice)
 							race_bonus = pref_species.custom_selection[choice]
 
+				if("body_center_offset")
+					if(!user?.client || user.client != parent)
+						return
+					features["body_center_offset"] = next_sprite_center_mode(features["body_center_offset"])
+					if(!parent.update_character_preview_center(features["body_center_offset"]))
+						update_preview_icon()
+					user << output(sprite_center_mode_name(features["body_center_offset"]), "preferences_browser:updateBodyCenterOffset")
+					return
+
 				if("body_size")
 					var/new_body_size = tgui_input_number(user, "Choose your desired sprite size:\n([BODY_SIZE_MIN*100]%-[BODY_SIZE_MAX*100]%), Warning: May make your character look distorted", "Character Preference", features["body_size"]*100)
 					if(new_body_size)
@@ -3220,9 +3247,6 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					user << browse(null, "window=preferences_browser")
 					user << browse(null, "window=lobby_window")
 					return
-
-				if("preview_size")
-					preview_enlarged = !preview_enlarged
 
 				if("preview_erect_state")
 					switch(preview_erect_state)

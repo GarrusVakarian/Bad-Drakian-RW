@@ -67,6 +67,9 @@
 	var/datum/job/previewJob = get_preview_job()
 	var/mob/living/carbon/human/dummy/mannequin = generate_or_wait_for_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	var/mutable_appearance/preview_appearance
+	var/preview_applied_center_offset = 0
+	var/preview_applied_center_offset_y = 0
+	var/preview_body_size = BODY_SIZE_NORMAL
 	try
 		copy_to(mannequin, 1, TRUE, TRUE)
 
@@ -86,12 +89,15 @@
 		mannequin.update_hair()
 		mannequin.rebuild_obscured_flags()
 		preview_appearance = new /mutable_appearance(mannequin)
+		preview_applied_center_offset = mannequin.dna.current_body_center_offset
+		preview_applied_center_offset_y = mannequin.dna.current_body_center_offset_y
+		preview_body_size = mannequin.dna.current_body_size
 	catch(var/exception/error)
 		unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 		throw error
 	unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	// Release the shared mannequin before touching a client that may have disconnected.
-	parent?.show_character_previews(preview_appearance)
+	parent?.show_character_previews(preview_appearance, preview_applied_center_offset, preview_applied_center_offset_y, preview_body_size)
 
 /datum/preferences/proc/apply_preview_erect_state_to_mannequin(mob/living/carbon/human/mannequin)
 	if(!mannequin)
