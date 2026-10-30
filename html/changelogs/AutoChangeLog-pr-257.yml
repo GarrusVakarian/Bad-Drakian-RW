@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Two-handed weapons can switch to their alternate grip outside combat mode again; one-handed twirlable weapons still require combat mode to select alternate grip. Alternate-grip actions no longer fall through into twirling."
