@@ -985,3 +985,5 @@
       the choice per character.
   - bugfix: Preview Size updates in place and repeated clicks no longer reverse the
       requested size during a refresh.
+  - bugfix: Restored the Hefty Swing axe special to iron and steel greataxes and their
+      related variants.
