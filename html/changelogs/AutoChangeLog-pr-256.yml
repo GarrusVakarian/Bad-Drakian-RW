@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added an Offset button beside Sprite Scale that cycles through Default, Down, Up, Right and Left alignments, updating the preview immediately and saving the choice per character."
+  - bugfix: "Preview Size updates in place and repeated clicks no longer reverse the requested size during a refresh."
