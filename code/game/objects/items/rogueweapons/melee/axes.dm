@@ -565,6 +565,7 @@
 	desc = "A heavy sweep that cuts through targets to the sides and front."
 
 /obj/item/rogueweapon/greataxe
+	special = /datum/special_intent/axe_swing
 	twirly = SKILL_LEVEL_EXPERT
 	twirl_speed = 6
 	force = 15
