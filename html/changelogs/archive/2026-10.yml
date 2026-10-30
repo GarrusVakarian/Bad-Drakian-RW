@@ -951,6 +951,12 @@
   GarrusVakarian:
   - map: Added a warehouse to Smollhill
   - map: Fixed a strip of empty turfs floating in the air near low-town on both maps
+  _Rarity:
+  - qol: Improved contract ledgers, quest scrolls, scout reports, and treasury documentation
+      for notorious bounties and hoard recovery.
+  - bugfix: Notorious hunts now detect a defeated hunting party.
+  - balance: Increased blockade wave timers from 10 to 15 minutes.
+  - qol: Towners can open delivery parcels at their addressed destination.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
