@@ -282,7 +282,7 @@
 	update_body_center_offset()
 
 /proc/sprite_center_mode_name(mode)
-	var/static/list/modes = list("Default", "Alternate - Right", "Alternate - Left", "Alternate - Up", "Alternate - Down")
+	var/static/list/modes = list("Default", "Right", "Left", "Up", "Down")
 	if(!isnum(mode) || mode < 0 || mode > 4)
 		return modes[1]
 	return modes[mode + 1]

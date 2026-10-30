@@ -2315,6 +2315,7 @@
 /atom/movable/screen/char_preview
 	name = "Me."
 	icon_state = ""
+	var/preview_magnification = 1
 	var/preview_center_scale = 0
 	var/preview_center_offset = 0
 	var/preview_center_offset_y = 0
