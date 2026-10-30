@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Food preparation recipes such as raisins and smothered fruit now use Cooking instead of Crafting."
