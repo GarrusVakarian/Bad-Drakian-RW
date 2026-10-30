@@ -971,6 +971,8 @@
       them onto yourself to offer one.
   - bugfix: Food preparation recipes such as raisins and smothered fruit now use Cooking
       instead of Crafting.
+  - rscadd: Quarterstaffs now have a two-handed Smash intent and Quarterstaff Sweep,
+      a special that knocks nearby foes back and leaves them Vulnerable.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
@@ -994,3 +996,7 @@
       show their equipment tooltips when examining a character.
   - bugfix: Multi-ingredient drinks, soups and stews are tasted after the complete
       gulp transfers, rather than after only the first ingredient arrives.
+  - qol: Bandage rolls can apply a bandage directly to yourself or another character,
+      consuming one piece only when treatment succeeds.
+  - bugfix: Bandaging rechecks the limb and existing dressing after treatment so interrupted
+      or competing attempts cannot overwrite a bandage.
