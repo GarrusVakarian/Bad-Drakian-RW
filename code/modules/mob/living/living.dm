@@ -2556,6 +2556,8 @@
 
 /mob/living/MouseDrop(mob/over)
 	. = ..()
+	if(.)
+		return
 	var/mob/living/user = usr
 	if(!istype(over) || !istype(user))
 		return

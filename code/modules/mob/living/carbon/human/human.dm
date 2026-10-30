@@ -894,9 +894,38 @@
 		item_head.show_inv(user)
 	. = ..()
 
+// Ported from Ochre-Valley/Ochre-Valley, commit 51a4619418957b818b2b64dd3f7cf63a0f2778e8.
+/mob/living/carbon/human/RightMouseDrop_T(atom/dragged, mob/living/user)
+	var/mob/living/carbon/target = dragged
+	if(!istype(target) || target == src || !isliving(user) || (user != src && user != target))
+		return ..()
+	if(user.get_active_held_item() || stat != CONSCIOUS || !can_piggyback(target))
+		return ..()
+	if(!Adjacent(target) || incapacitated(FALSE, TRUE) || target.incapacitated(FALSE, TRUE))
+		return TRUE
+
+	if(user == target)
+		to_chat(user, span_notice("You request a piggyback ride from [src]..."))
+		if(tgui_alert(src, "[user.name] is requesting a piggyback ride.", "Piggyback Ride", list("Yes, let them on", "No")) != "Yes, let them on")
+			to_chat(user, span_warning("[src] has denied you a piggyback ride!"))
+			return TRUE
+	else
+		to_chat(src, span_notice("You offer a piggyback ride to [target]..."))
+		if(tgui_alert(target, "[src.name] is offering to give you a piggyback ride.", "Piggyback Ride", list("Yes, get on", "No")) != "Yes, get on")
+			to_chat(src, span_warning("[target] has denied your piggyback ride!"))
+			return TRUE
+
+	// The other player may have moved or changed state while the prompt was open.
+	if(QDELETED(src) || QDELETED(target) || !Adjacent(target) || stat != CONSCIOUS || !can_piggyback(target))
+		return TRUE
+	if(user.get_active_held_item() || incapacitated(FALSE, TRUE) || target.incapacitated(FALSE, TRUE))
+		return TRUE
+	piggyback(target)
+	return TRUE
+
 //src is the user that will be carrying, target is the mob to be carried
 /mob/living/carbon/human/proc/can_piggyback(mob/living/carbon/target)
-	return (istype(target) && target.stat == CONSCIOUS)
+	return (istype(target) && target.stat == CONSCIOUS && !cmode && !target.cmode && Adjacent(target))
 
 /mob/living/carbon/human/proc/can_be_firemanned(mob/living/carbon/target)
 	return (ishuman(target) && !(target.mobility_flags & MOBILITY_STAND))

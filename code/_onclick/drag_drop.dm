@@ -13,7 +13,10 @@
 	if(!Adjacent(usr) || !over.Adjacent(usr))
 		return // should stop you from dragging through windows
 	var/list/L = params2list(params)
-	if (L["middle"])
+	if (L["right"] && over != src)
+		if(over.RightMouseDrop_T(src, usr))
+			return TRUE
+	else if (L["middle"])
 		over.MiddleMouseDrop_T(src,usr)
 	else
 		if(over == src)
@@ -36,6 +39,10 @@
 /atom/proc/MouseDrop_T(atom/dropping, mob/user)
 	SEND_SIGNAL(src, COMSIG_MOUSEDROPPED_ONTO, dropping, user)
 	return
+
+// Preserve existing right-drag behavior unless a receiver handles it separately.
+/atom/proc/RightMouseDrop_T(atom/dropping, mob/user)
+	MouseDrop_T(dropping, user)
 
 /atom/proc/MiddleMouseDrop_T(atom/dropping, mob/user)
 	if(dropping == user && isliving(user))
