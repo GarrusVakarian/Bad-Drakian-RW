@@ -1664,7 +1664,10 @@
 
 	//unbuckling yourself
 	if(buckled && last_special <= world.time)
+		var/was_piggyback = ishuman(buckled) && !buckled.buckle_lying
 		resist_buckle()
+		if(was_piggyback && !buckled)
+			Knockdown(1 SECONDS)
 		return
 
 	//Breaking out of a container (Locker, sleeper, cryo...)
@@ -1686,9 +1689,13 @@
 			if(restrained() && !prob(5))
 				return
 			var/datum/component/riding/human/riding_datum = GetComponent(/datum/component/riding/human)
-			if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE) && riding_datum)
-				for(var/mob/M in buckled_mobs)
-					riding_datum.force_dismount(M)
+			if(riding_datum && has_buckled_mobs())
+				for(var/mob/living/M in buckled_mobs.Copy())
+					if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE))
+						riding_datum.force_dismount(M)
+					else if(!buckle_lying)
+						if(user_unbuckle_mob(M, src))
+							M.Knockdown(1 SECONDS)
 			return
 
 /mob/living/proc/submit(instant = FALSE)
@@ -2556,6 +2563,8 @@
 
 /mob/living/MouseDrop(mob/over)
 	. = ..()
+	if(.)
+		return
 	var/mob/living/user = usr
 	if(!istype(over) || !istype(user))
 		return
