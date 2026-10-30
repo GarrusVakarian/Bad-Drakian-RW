@@ -21,6 +21,7 @@
 	var/current_body_size = BODY_SIZE_NORMAL
 	/// Horizontal correction already applied to the holder's transform.
 	var/current_body_center_offset = 0
+	var/current_body_center_offset_y = 0
 
 /datum/dna/New(mob/living/new_holder)
 	if(istype(new_holder))
@@ -280,20 +281,39 @@
 		current_body_size = desired_size
 	update_body_center_offset()
 
-/datum/dna/proc/get_body_center_offset(direction)
-	if(features["body_center_offset"] && (direction == NORTH || direction == SOUTH))
-		return 0.5 * current_body_size
+/proc/sprite_center_mode_name(mode)
+	var/static/list/modes = list("Default", "Alternate - Right", "Alternate - Left", "Alternate - Up", "Alternate - Down")
+	if(!isnum(mode) || mode < 0 || mode > 4)
+		return modes[1]
+	return modes[mode + 1]
+
+/proc/sprite_center_offset(mode, scale, direction, vertical = FALSE)
+	if(vertical)
+		if(mode == 3)
+			return 0.5 * scale
+		if(mode == 4)
+			return -0.5 * scale
+	else if(direction == NORTH || direction == SOUTH)
+		if(mode == 1)
+			return 0.5 * scale
+		if(mode == 2)
+			return -0.5 * scale
 	return 0
+
+/datum/dna/proc/get_body_center_offset(direction, vertical = FALSE)
+	return sprite_center_offset(features["body_center_offset"], current_body_size, direction, vertical)
 
 /datum/dna/proc/update_body_center_offset(remove = FALSE)
 	if(!holder)
 		return
 	var/new_offset = remove ? 0 : get_body_center_offset(holder.dir)
-	if(new_offset != current_body_center_offset)
+	var/new_offset_y = remove ? 0 : get_body_center_offset(holder.dir, TRUE)
+	if(new_offset != current_body_center_offset || new_offset_y != current_body_center_offset_y)
 		var/matrix/adjusted = matrix(holder.transform)
-		adjusted.Translate(new_offset - current_body_center_offset, 0)
+		adjusted.Translate(new_offset - current_body_center_offset, new_offset_y - current_body_center_offset_y)
 		holder.transform = adjusted
 		current_body_center_offset = new_offset
+		current_body_center_offset_y = new_offset_y
 
 
 /////////////////////////// DNA HELPER-PROCS //////////////////////////////

@@ -844,11 +844,11 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Switch horizontal pixel alignment for scaled sprites'>Center: [features["body_center_offset"] ? "Alternate" : "Default"]</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> <a id='body-center-offset' href='?_src_=prefs;preference=body_center_offset;task=input' title='Cycle Default, Right, Left, Up and Down pixel alignment'>Center: [sprite_center_mode_name(features["body_center_offset"])]</a>"
 			dat += {"<script>
-				function updateBodyCenterOffset(enabled) {
+				function updateBodyCenterOffset(label) {
 					var button = document.getElementById('body-center-offset');
-					if (button) button.innerHTML = 'Center: ' + (enabled === '1' ? 'Alternate' : 'Default');
+					if (button) button.innerHTML = 'Center: ' + label;
 				}
 			</script>"}
 			dat += "<br><b>Markings:</b> <a href='?_src_=prefs;preference=markings;task=menu'>Change</a>"
@@ -2722,10 +2722,10 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 				if("body_center_offset")
 					if(!user?.client || user.client != parent)
 						return
-					features["body_center_offset"] = !features["body_center_offset"]
+					features["body_center_offset"] = (features["body_center_offset"] + 1) % 5
 					if(!parent.update_character_preview_center(features["body_center_offset"]))
 						update_preview_icon()
-					user << output(features["body_center_offset"] ? "1" : "0", "preferences_browser:updateBodyCenterOffset")
+					user << output(sprite_center_mode_name(features["body_center_offset"]), "preferences_browser:updateBodyCenterOffset")
 					return
 
 				if("body_size")

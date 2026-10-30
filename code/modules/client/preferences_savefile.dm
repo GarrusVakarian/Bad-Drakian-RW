@@ -1033,7 +1033,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["voice_pack"] >> voice_pack
 	features["body_center_offset"] = FALSE
 	S["body_center_offset"] >> features["body_center_offset"]
-	features["body_center_offset"] = (features["body_center_offset"] == TRUE)
+	features["body_center_offset"] = sanitize_integer(features["body_center_offset"], 0, 4, 0)
 	S["body_size"] >> features["body_size"]
 	if (!features["body_size"])
 		features["body_size"] = BODY_SIZE_NORMAL

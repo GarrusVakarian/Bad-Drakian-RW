@@ -2317,14 +2317,17 @@
 	icon_state = ""
 	var/preview_center_scale = 0
 	var/preview_center_offset = 0
+	var/preview_center_offset_y = 0
 
-/atom/movable/screen/char_preview/proc/update_center_offset(enabled)
-	var/new_offset = (enabled && (dir == NORTH || dir == SOUTH)) ? preview_center_scale : 0
-	if(new_offset != preview_center_offset)
+/atom/movable/screen/char_preview/proc/update_center_offset(mode)
+	var/new_offset = sprite_center_offset(mode, preview_center_scale, dir)
+	var/new_offset_y = sprite_center_offset(mode, preview_center_scale, dir, TRUE)
+	if(new_offset != preview_center_offset || new_offset_y != preview_center_offset_y)
 		var/matrix/adjusted = matrix(transform)
-		adjusted.Translate(new_offset - preview_center_offset, 0)
+		adjusted.Translate(new_offset - preview_center_offset, new_offset_y - preview_center_offset_y)
 		transform = adjusted
 		preview_center_offset = new_offset
+		preview_center_offset_y = new_offset_y
 //	var/list/prevcolors = list("background-color=#000000","background-color=#242f28","background-color=#302323","background-color=#999a63","background-color=#7e7e7e")
 
 //atom/movable/screen/char_preview/Click()
