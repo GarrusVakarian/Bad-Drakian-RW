@@ -57,6 +57,7 @@ Firstly, the coordinates device. Eventually, I'll add free aim. But for now...
 	wdefense = 2
 	wdefense_wbonus = 2
 	possible_item_intents = list(INTENT_GENERIC)
+	special = null
 
 //The portable bombard's frame, lacking a barrel.
 /obj/item/bombard_frame
