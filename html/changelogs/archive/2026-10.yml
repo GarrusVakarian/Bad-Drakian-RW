@@ -992,3 +992,5 @@
   - balance: Large Frame now costs 0 quirk points instead of 3.
   - bugfix: Steel masks and other masks with alternate belt, hip or back slots now
       show their equipment tooltips when examining a character.
+  - bugfix: Multi-ingredient drinks, soups and stews are tasted after the complete
+      gulp transfers, rather than after only the first ingredient arrives.
