@@ -304,33 +304,48 @@
 			pic.color = get_detail_color()
 		add_overlay(pic)
 
-/obj/item/natural/cloth/proc/bandage(mob/living/M, mob/user)
-	if(!M.can_inject(user, TRUE))
-		return
-	if(!ishuman(M))
-		return
+/obj/item/natural/cloth/proc/bandage(mob/living/M, mob/user, obj/item/natural/bundle/cloth/bandage/source_roll = null)
+	var/from_roll = !isnull(source_roll)
+	if(QDELETED(src) || QDELETED(M) || QDELETED(user))
+		return FALSE
+	if(from_roll && (QDELETED(source_roll) || loc != source_roll || source_roll.amount < 1 || source_roll.loc != user || user.get_active_held_item() != source_roll))
+		return FALSE
+	if(!M.can_inject(user, TRUE) || !ishuman(M))
+		return FALSE
 	var/mob/living/carbon/human/H = M
-	var/obj/item/bodypart/affecting = H.get_bodypart(check_zone(user.zone_selected))
+	var/target_zone = check_zone(user.zone_selected)
+	var/obj/item/bodypart/affecting = H.get_bodypart(target_zone)
 	if(!affecting)
-		return
+		return FALSE
 	if(affecting.bandage)
 		to_chat(user, span_warning("There is already a bandage."))
-		return
+		return FALSE
 	var/used_time = bandage_speed
 	used_time -= ((user.get_skill_level(/datum/skill/misc/medicine) * 0.15) * bandage_speed) //15% time reduction per level
 	playsound(loc, 'sound/foley/bandage.ogg', 100, FALSE)
 	if(!move_after(user, used_time, target = M))
-		return
+		return FALSE
+	if(QDELETED(src) || QDELETED(user) || QDELETED(H) || QDELETED(affecting) || H.get_bodypart(target_zone) != affecting || affecting.bandage)
+		return FALSE
+	if(from_roll && (QDELETED(source_roll) || loc != source_roll || source_roll.amount < 1 || source_roll.loc != user || user.get_active_held_item() != source_roll))
+		return FALSE
+	if(!H.can_inject(user, TRUE))
+		return FALSE
 	playsound(loc, 'sound/foley/bandage.ogg', 100, FALSE)
 
-	user.dropItemToGround(src)
-	affecting.try_bandage(src)
+	if(!from_roll)
+		user.dropItemToGround(src)
+	if(!affecting.try_bandage(src))
+		return FALSE
+	if(from_roll)
+		source_roll.consume_bandage(user)
 	H.update_damage_overlays()
 
 	if(M == user)
 		user.visible_message(span_notice("[user] bandages [user.p_their()] [affecting]."), span_notice("I bandage my [affecting.name]."))
 	else
 		user.visible_message(span_notice("[user] bandages [M]'s [affecting]."), span_notice("I bandage [M]'s [affecting.name]."))
+	return TRUE
 
 /obj/item/natural/thorn
 	name = "thorn"
