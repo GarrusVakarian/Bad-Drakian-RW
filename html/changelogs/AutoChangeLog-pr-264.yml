@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Multi-ingredient drinks, soups and stews are tasted after the complete gulp transfers, rather than after only the first ingredient arrives."
