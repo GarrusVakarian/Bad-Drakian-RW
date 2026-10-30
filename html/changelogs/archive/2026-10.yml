@@ -976,3 +976,5 @@
   - bugfix: Two-handed weapons can switch to their alternate grip outside combat mode
       again; one-handed twirlable weapons still require combat mode to select alternate
       grip. Alternate-grip actions no longer fall through into twirling.
+  - balance: Wolkenmaw Illumination flares now light a 24-tile outer range for 3 minutes.
+      Coloured signal flares are unchanged.
