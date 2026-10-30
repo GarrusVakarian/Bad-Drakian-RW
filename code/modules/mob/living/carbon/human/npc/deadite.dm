@@ -98,7 +98,8 @@
 
 /mob/living/carbon/human/species/npc/deadite/handle_ai()
 	. = ..()
-	try_do_deadite_idle() // sort of a misnomer, just handles zombie noises
+	if(.)
+		try_do_deadite_idle() // sort of a misnomer, just handles zombie noises
 
 // This proc exists because non-converted deadites don't have minds and can't have the antag datum
 // So we need two separate entry points for this logic
@@ -140,6 +141,8 @@
 	return TRUE // use up our turn regardless of if the bite succeeded or not
 
 /mob/living/carbon/human/proc/try_do_deadite_idle()
+	if(!npc_ai_active() || IsDeadOrIncap())
+		return
 	if(!HAS_TRAIT(src, TRAIT_DEADITE))
 		return
 	if(mob_timers["deadite_idle"])

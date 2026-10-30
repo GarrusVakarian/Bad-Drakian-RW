@@ -11,6 +11,8 @@
  */
 /datum/cell_tracker
 	var/list/datum/spatial_grid_cell/member_cells = list()
+	/// Number of connected levels above and below to include; zero preserves same-level tracking.
+	var/vertical_range = 0
 	// Inner window
 	// If a cell is inside this space, it will be entered into our membership list
 	/// The height (y radius) of our inner window
@@ -28,7 +30,8 @@
 
 /// Accepts a width and height to use for this tracker
 /// Also accepts the ratio to use between inner and outer window. Optional, defaults to 2
-/datum/cell_tracker/New(width, height, inner_outer_ratio)
+/datum/cell_tracker/New(width, height, inner_outer_ratio, tracked_vertical_range = 0)
+	vertical_range = max(0, tracked_vertical_range)
 	set_bounds(width, height, inner_outer_ratio)
 	return ..()
 
@@ -87,13 +90,25 @@
 
 /// Recalculates our member list, returns a list in the form list(new members, old members) for reaction
 /// Accepts the turf to use as our "center"
+/datum/cell_tracker/proc/get_tracking_cells(turf/center, range_x, range_y)
+	. = SSspatial_grid.get_cells_in_bounds(center, range_x, range_y)
+	var/turf/above = center
+	var/turf/below = center
+	for(var/level in 1 to vertical_range)
+		above = above ? GET_TURF_ABOVE(above) : null
+		below = below ? GET_TURF_BELOW(below) : null
+		if(above)
+			. += SSspatial_grid.get_cells_in_bounds(above, range_x, range_y)
+		if(below)
+			. += SSspatial_grid.get_cells_in_bounds(below, range_x, range_y)
+
 /datum/cell_tracker/proc/recalculate_cells(turf/center)
 	if(!center)
 		CRASH("/datum/cell_tracker had an invalid location on refresh, ya done fucked")
 	// This is a mild waste of cpu time. Consider optimizing by adding a new helper function to get just the space between two bounds
 	// Assuming it ever becomes a real problem
-	var/list/datum/spatial_grid_cell/inner_window = SSspatial_grid.get_cells_in_bounds(center, inner_window_x_radius, inner_window_y_radius)
-	var/list/datum/spatial_grid_cell/outer_window = SSspatial_grid.get_cells_in_bounds(center, outer_window_x_radius, outer_window_y_radius)
+	var/list/datum/spatial_grid_cell/inner_window = get_tracking_cells(center, inner_window_x_radius, inner_window_y_radius)
+	var/list/datum/spatial_grid_cell/outer_window = get_tracking_cells(center, outer_window_x_radius, outer_window_y_radius)
 
 	var/list/datum/spatial_grid_cell/new_cells = inner_window - member_cells
 	// The outer window may contain cells we don't actually have, so we do it like this
