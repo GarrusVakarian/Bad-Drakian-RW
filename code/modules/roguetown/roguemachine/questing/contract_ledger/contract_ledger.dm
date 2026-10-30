@@ -41,6 +41,8 @@
 	. += span_info("Retrieval-quest items should be <b>dropped onto the marked tile</b> in front of the ledger.")
 	. += span_info("Abandoning a contract forfeits its deposit to the treasury and places you under a brief guild cooldown before you may abandon another.")
 	. += span_info("Heads taken from <b>contract targets</b> carry no bounty - the contract's reward is payment in full. Beasts and brigands you hunt outside a contract still fetch coin at a HEADEATER.")
+	. += span_info("A <b>Fellowship of [BLOCKADE_FELLOWSHIP_REQUIREMENT] or more</b> may pledge <b>[HOARD_RECOVERY_PLEDGE] mammons</b> to call a <b>Hoard Recovery</b> for an unblocked region with at least <b>[HOARD_RECOVERY_HOARD_MINIMUM] mammons</b> in its hoard. It pays the standard blockade reward and reclaims the hoard, subject to the Crown's Recovered Spoils tax.")
+	. += span_info("A <b>Notorious Bounty</b> may be controlled by a ghost playing the outlaw. Its reward rises by <b>[NOTORIOUS_BOUNTY_PLAYER_BONUS] mammons</b> if a ghost answers, or by <b>[NOTORIOUS_BOUNTY_NPC_BONUS] mammons</b> otherwise.")
 	. += span_info("The <b>Innkeeper</b> may compose rumor contracts here, spending Rumor Points to seed retrieval, courier, and light kill jobs across the realm.")
 	. += span_info("The <b>[english_list(GLOB.crown_authority_roles)]</b> may commission defense writs here - paid from the Burgher Pledge, the Crown's Purse, or issued as an unfunded Request. The Steward is the primary commissioner; the others substitute if the Steward is absent. A Regent sitting in the Lord's absence inherits commission authority for the duration of their regency.")
 	. += span_info("<b>Townsfolk</b> may post contracts of their own using their own coin. It can be pinned to the board or handed over in person. The <b>[english_list(GLOB.crown_authority_roles)]</b> may commission any of them, but it will draw from the Crown's Purse at double the price. Only the poster may open what is recovered.")
@@ -70,7 +72,7 @@
 	if(Q in SSquestpool.pool)
 		to_chat(user, span_warning("This writ is already pinned to the ledger."))
 		return
-	if(!Q.blockade_ref?.resolve())
+	if(Q.blockade_ref && !Q.blockade_ref.resolve())
 		to_chat(user, span_warning("The blockade this writ answers has already been lifted."))
 		return
 	Q.required_fellowship_size = BLOCKADE_FELLOWSHIP_REQUIREMENT
@@ -79,7 +81,7 @@
 	Q.quest_scroll_ref = null
 	writ.assigned_quest = null
 	SSquestpool.pool += Q
-	var/datum/blockade/B = Q.blockade_ref.resolve()
+	var/datum/blockade/B = Q.blockade_ref?.resolve()
 	if(B)
 		B.active_scroll_ref = null
 	playsound(src, 'sound/items/inqslip_sealed.ogg', 50, TRUE, -1)

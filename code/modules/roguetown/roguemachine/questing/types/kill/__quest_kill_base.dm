@@ -33,7 +33,7 @@
 	announce_to_bearer("<b>The road breathes easier.</b> This contract has driven [threat_bands_cleared] band(s) of threat from the region.")
 
 /datum/quest/kill/on_first_pop()
-	if(hunt_timer_id || complete)
+	if(hunt_timer_id || complete || failed)
 		return
 	hunt_timer_id = addtimer(CALLBACK(src, PROC_REF(on_hunt_timeout)), QUEST_KILL_HUNT_TIMER, TIMER_STOPPABLE)
 	hunt_warn_2m_id = addtimer(CALLBACK(src, PROC_REF(warn_hunt_time_left), "two minutes"), QUEST_KILL_HUNT_WARN_2M, TIMER_STOPPABLE)
@@ -57,11 +57,14 @@
 	announce_to_bearer("<b>[label] remain</b> before the quarry slips away.")
 
 /datum/quest/kill/proc/on_hunt_timeout()
-	if(complete)
+	fail_hunt("<b>The quarry has slipped away.</b> The writ smolders and crumbles in your grip.")
+
+/datum/quest/kill/proc/fail_hunt(message)
+	if(complete || failed)
 		return
-	hunt_timer_id = null
+	clear_hunt_timers()
 	failed = TRUE
-	announce_to_bearer("<b>The quarry has slipped away.</b> The writ smolders and crumbles in your grip.")
+	announce_to_bearer(message)
 	despawn_live_hunt_mobs()
 	var/obj/item/quest_writ/S = quest_scroll
 	if(S && !QDELETED(S))

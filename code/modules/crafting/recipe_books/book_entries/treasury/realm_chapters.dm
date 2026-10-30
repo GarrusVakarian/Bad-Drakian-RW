@@ -99,6 +99,8 @@
 		<h3>Breaking a Blockade</h3>
 		<p>The Crown - or an Alderman spending the Assembly's <b>defense allotment</b> (see <i>The City Assembly and the Alderman</i>) - commissions a <b>blockade-defense contract</b> at the Grand Contract Ledger. Adventurers take the writ, put down the besieging faction's waves, and the road reopens. A region that has just been cleared cannot be blockaded again for <b>[BLOCKADE_RECLEAR_COOLDOWN]</b> days.</p>
 
+		<p>The Steward may recall an unanswered writ after [BLOCKADE_RECALL_WINDOW_DS / 600] minutes. Waves begin on arrival, with [BLOCKADE_WAVE_TIMER_DS / 600] minutes to clear each wave and warnings at seven and a half, five, and two minutes remaining. Clearing the blockade also recovers the region's banditry hoard, subject to the Recovered Spoils tax.</p>
+
 		<p>Separately, a region's <b>Dangerous</b> or <b>Bleak</b> threat classification drains the Crown's Purse every dawn on its own, whether or not a blockade stands - see <i>Banditry</i>.</p>
 		</div>
 	"}
@@ -253,6 +255,10 @@
 			<li><b>Dangerous</b>: [BANDITRY_DRAIN_DANGEROUS_FLAT]m base + [BANDITRY_DRAIN_DANGEROUS_PER_PLAYER]m per active player.</li>
 			<li><b>Bleak</b>: [BANDITRY_DRAIN_BLEAK_FLAT]m base + [BANDITRY_DRAIN_BLEAK_PER_PLAYER]m per active player.</li>
 		</ul>
+
+		<h3>Banditry Hoard</h3>
+		<p>Mammons stolen from the Crown accumulate in each region as a banditry hoard, reported by scouts and the Steward's panels. Clearing a blockade or completing a Hoard Recovery writ recovers the hoard, subject to the Crown's Recovered Spoils tax.</p>
+		<p>The Steward may commission a recovery. A fellowship of [BLOCKADE_FELLOWSHIP_REQUIREMENT] or more may also pledge [HOARD_RECOVERY_PLEDGE] mammons at the Grand Contract Ledger to recover a hoard of at least [HOARD_RECOVERY_HOARD_MINIMUM] mammons in a region without an active blockade.</p>
 
 		<h3>The Floor and Banditry Debt</h3>
 		<p>Banditry alone will not reduce the Crown's Purse below <b>[BANDITRY_DEBT_FLOOR]m</b>. Anything beyond that becomes <b>banditry debt</b> - an accruing arrears that skims every coin of treasury inflow until paid.</p>

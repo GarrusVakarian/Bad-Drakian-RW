@@ -69,6 +69,13 @@
 	SIGNAL_HANDLER
 	return
 
+/obj/item/parcel/proc/can_unwrap(mob/user)
+	if(!user)
+		return FALSE
+	if(!ispath(delivery_area_type, /area))
+		return TRUE
+	return (user.job in allowed_jobs) || (user.job == "Towner" && istype(get_area(src), delivery_area_type))
+
 /obj/item/parcel/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/parcel) || I.w_class > WEIGHT_CLASS_BULKY || length(contained_items))
 		to_chat(user, span_warning("You can't wrap this in [src]."))
@@ -91,8 +98,8 @@
 
 	if(delivery_area_type)
 		var/area/quest_area = delivery_area_type
-		if(ispath(quest_area, /area) && !(user.job in allowed_jobs))
-			to_chat(user, span_warning("This parcel is sealed for delivery to [initial(quest_area.name)] and can only be opened by: [english_list(allowed_jobs)]!"))
+		if(ispath(quest_area, /area) && !can_unwrap(user))
+			to_chat(user, span_warning("This parcel is sealed for delivery to [initial(quest_area.name)]. It can be opened by [english_list(allowed_jobs)], or by a Towner at its destination."))
 			return FALSE
 
 	if(!do_after(user, 2 SECONDS, target = src))
@@ -128,7 +135,7 @@
 		return
 
 	. += span_info("This parcel is addressed to [initial(delivery_area.name)].")
-	. += (user.job in allowed_jobs) ? \
+	. += can_unwrap(user) ? \
 		span_notice("As [user.job], you're authorized to open this.") : \
 		span_warning("It's sealed with an official guild mark - only authorized personnel should open this!")
 
@@ -141,6 +148,9 @@
 	. = ..()
 	invisibility = initial(invisibility)
 	QDEL_NULL(proximity_monitor)
+
+/obj/item/parcel/towner_caravan/can_unwrap(mob/user)
+	return user && unlocked_by_owner_ref?.resolve() == user && user.stat != DEAD
 
 /obj/item/parcel/towner_caravan/attack_self(mob/user)
 	if(!length(contained_items))

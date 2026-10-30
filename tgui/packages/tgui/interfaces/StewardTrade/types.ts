@@ -82,6 +82,7 @@ export type BanditryProjection = {
   total: number;
   lines: string[];
   debt: number;
+  hoard_total: number;
 };
 
 export type MarketRegionOption = {
