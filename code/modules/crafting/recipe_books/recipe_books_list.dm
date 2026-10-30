@@ -1,6 +1,7 @@
 // Deleted the flavorful desc from Vanderlin until I can think of a better desc.
 /obj/item/recipe_book/leatherworking
 	name = "The Tanned Hide Tome: Mastery of Leather and Craft"
+	wiki_name = "Leatherworking"
 	icon_state = "book8_0"
 	base_icon_state = "book8"
 
@@ -11,6 +12,7 @@
 
 /obj/item/recipe_book/sewing
 	name = "Threads of Destiny: A Tailor's Codex"
+	wiki_name = "Sewing"
 	icon_state = "book7_0"
 	base_icon_state = "book7"
 
@@ -21,6 +23,7 @@
 
 /obj/item/recipe_book/blacksmithing
 	name = "The Smith's Legacy"
+	wiki_name = "Blacksmithing"
 	icon_state = "book3_0"
 	base_icon_state = "book3"
 
@@ -28,6 +31,7 @@
 
 /obj/item/recipe_book/engineering
 	name = "The Artificer's Handbook"
+	wiki_name = "Engineering"
 	icon_state = "book4_0"
 	base_icon_state = "book4"
 
@@ -39,6 +43,7 @@
 // Later
 /obj/item/recipe_book/builder
 	name = "The Builder's Handbook - For Carpenters and Masons"
+	wiki_name = "Building"
 	icon_state = "book5_0"
 	base_icon_state = "book5"
 
@@ -93,6 +98,7 @@
 
 /obj/item/recipe_book/ceramics
 	name = "The Potter's Handbook"
+	wiki_name = "Ceramics"
 	icon_state = "book5_0"
 	base_icon_state = "book5"
 
@@ -104,6 +110,7 @@
 // This book should be widely given to everyone
 /obj/item/recipe_book/survival
 	name = "The Survival Handbook"
+	wiki_name = "Survival"
 	desc = "A book full of recipes and tips for surviving in the wild. Can be used as fuel in a pinch."
 	icon_state = "book6_0"
 	base_icon_state = "book6"
@@ -116,6 +123,7 @@
 // TBD - Cauldron Recipes
 /obj/item/recipe_book/alchemy
 	name = "Secrets of Alchemy"
+	wiki_name = "Alchemy"
 	icon_state = "book3_0"
 	base_icon_state = "book3"
 
@@ -131,6 +139,7 @@
 
 /obj/item/recipe_book/cooking
 	name = "Guide to Brewing"
+	wiki_name = "Brewing"
 	desc = "A practical guide to brewing, distilling, bottling and selling drinks."
 	icon_state = "book2_0"
 	base_icon_state = "book2"
@@ -142,28 +151,18 @@
 
 /obj/item/recipe_book/cooking_guide
 	name = "Guide to Cooking"
+	wiki_name = "Cooking Guide"
+	wiki_section = "Guides"
 	desc = "A handwritten guide to ordinary kitchen work and recipes."
 	icon_state = "book7_0"
 	base_icon_state = "book7"
 	types = list(/datum/book_entry/cooking)
 
-/obj/item/recipe_book/cooking_guide/generate_categories()
-	. = ..()
-	var/list/preferred_order = list(
-		"Soups and Stews", "Meat", "Seafood", "Baked", "Pastries", "Cakes",
-		"Pies", "Eggs", "Rice", "Deep Frying", "Dairy", "Preserved", "Other"
-	)
-	var/list/reordered = list("All")
-	for(var/category in preferred_order)
-		if(category in categories)
-			reordered += category
-	for(var/category in categories)
-		if(!(category in reordered))
-			reordered += category
-	categories = reordered
 
 /obj/item/recipe_book/magic
 	name = "The Magister's Grimoire"
+	wiki_name = "Magic"
+	wiki_section = "Guides"
 	icon_state = "book4_0"
 	base_icon_state = "book4"
 
@@ -174,3 +173,18 @@
 		/datum/crafting_recipe/gemstaff,
 		/datum/runeritual,
 	)
+
+/obj/item/recipe_book/cooking_recipes
+	name = "Cooking Recipes"
+	wiki_name = "Cooking Recipes"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/food_recipe, /datum/stew_recipe, /datum/crafting_recipe/roguetown/cooking)
+
+/obj/item/recipe_book/economy
+	name = "Economy"
+	wiki_name = "Economy"
+	wiki_section = "Guides"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/treasury_general, /datum/book_entry/treasury_realm, /datum/book_entry/treasury_merchant, /datum/book_entry/treasury_underground)
