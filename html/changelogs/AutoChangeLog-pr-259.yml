@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Right-drag yourself onto someone to request a piggyback ride, or drag them onto yourself to offer one."
