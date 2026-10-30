@@ -967,6 +967,8 @@
   - bugfix: Fixed runtime errors for the Lizard accent.
   - bugfix: NPCs now restore their attack intent after jumping. Prevents damage-calculation
       runtimes during followup spear/lance charges.
+  - rscadd: Right-drag yourself onto someone to request a piggyback ride, or drag
+      them onto yourself to offer one.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
