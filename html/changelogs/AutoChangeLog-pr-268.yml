@@ -1,5 +1,0 @@
-author: "_Rarity (port), WeNeedMorePhoron, crekulon"
-delete-after: True
-changes:
-  - rscadd: "Added an OOC Encyclopedia for browsing recipes and guides."
-  - qol: "Recipe books now have search and category filters in a TGUI interface."

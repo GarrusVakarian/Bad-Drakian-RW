@@ -973,6 +973,9 @@
       instead of Crafting.
   - rscadd: Quarterstaffs now have a two-handed Smash intent and Quarterstaff Sweep,
       a special that knocks nearby foes back and leaves them Vulnerable.
+  _Rarity (port), WeNeedMorePhoron, crekulon:
+  - rscadd: Added an OOC Encyclopedia for browsing recipes and guides.
+  - qol: Recipe books now have search and category filters in a TGUI interface.
   mypingishuge:
   - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
       grid events, including connected levels above and below.
