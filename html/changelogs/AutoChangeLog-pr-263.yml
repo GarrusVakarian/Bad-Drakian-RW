@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Steel masks and other masks with alternate belt, hip or back slots now show their equipment tooltips when examining a character."
