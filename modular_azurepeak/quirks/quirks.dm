@@ -413,7 +413,7 @@
 	name = "Virgin"
 	point_cost = 0
 	desc = "I am inexperienced with intimacy, and attractive people leave me flustered."
-	custom_text = "Starts you as a virgin. Choose one or more pronoun groups that attract you, or Any. Seeing Pretty or Beautiful characters matching your choice can cause 2 stress for one minute, a brief tremble and occasional blushing, at most once per minute. Kisses and partnered panel actions share a separate one-minute reaction cooldown. Intimate attention from unselected pronouns instead causes 1 stress for one minute. Losing your virginity ends these reactions. A partner matching your choice grants 1 stress relief for five minutes; an unselected partner instead causes 1 stress for five minutes."
+	custom_text = "Starts you as a virgin. Choose who attracts you. Their company and touch can leave you flustered; unwanted attention feels uncomfortable. Your first experience replaces these nerves with brief confidence or unease."
 	added_traits = list(TRAIT_VIRGIN_NERVES)
 
 /datum/quirk/virgin/apply_to_human(mob/living/carbon/human/recipient)
