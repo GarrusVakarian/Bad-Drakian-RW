@@ -38,13 +38,13 @@
 			if("Any")
 				return TRUE
 			if("He/him")
-				if(partner.pronouns in list(HE_HIM, HE_HIM_F))
+				if(partner.pronouns == HE_HIM || partner.pronouns == HE_HIM_F)
 					return TRUE
 			if("She/her")
-				if(partner.pronouns in list(SHE_HER, SHE_HER_M))
+				if(partner.pronouns == SHE_HER || partner.pronouns == SHE_HER_M)
 					return TRUE
 			if("They/them")
-				if(partner.pronouns in list(THEY_THEM, THEY_THEM_F))
+				if(partner.pronouns == THEY_THEM || partner.pronouns == THEY_THEM_F)
 					return TRUE
 			if("It/its")
 				if(partner.pronouns == IT_ITS)
@@ -134,7 +134,7 @@
 	show_fluster(recipient)
 
 /mob/living/carbon/human/proc/react_to_virgin_affection(mob/living/carbon/human/partner)
-	if(QDELETED(src) || QDELETED(partner) || !ishuman(partner))
+	if(QDELETED(src) || !ishuman(partner) || QDELETED(partner))
 		return
 	var/datum/component/virgin_nerves/nerves = GetComponent(/datum/component/virgin_nerves)
 	if(istype(nerves))
