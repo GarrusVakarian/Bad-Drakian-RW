@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Combat Aware now reveals attack-location and fatigue feedback from humanoid NPCs without a mind datum."
