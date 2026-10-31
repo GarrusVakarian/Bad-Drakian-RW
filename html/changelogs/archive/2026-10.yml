@@ -1022,3 +1022,8 @@
       preference-dependent normal/anal first-experience messages and stress outcomes.
   - rscadd: 'Adds an After Impregnation lactation option to character customization,
       ported from Ratwood #3224 by IronDragoon.'
+  - bugfix: Combat status icons now disappear when their effects are removed.
+  - bugfix: Hefty Swing now checks living targets directly on the tiles it hits.
+  - bugfix: Fixed humanoid NPCs wasting turns on unavailable combat intents.
+  - balance: Humanoid NPCs now take two seconds to react to a newly raised guard with
+      a feint.

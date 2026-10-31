@@ -1,7 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Combat status icons now disappear when their effects are removed."
-  - bugfix: "Hefty Swing now checks living targets directly on the tiles it hits."
-  - bugfix: "Fixed humanoid NPCs wasting turns on unavailable combat intents."
-  - balance: "Humanoid NPCs now take two seconds to react to a newly raised guard with a feint."
