@@ -408,3 +408,14 @@
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already has self aware!"
 	added_traits = list(TRAIT_SELF_AWARE)
 	incompatible_traits = list(TRAIT_SELF_AWARE)
+
+/datum/quirk/virgin
+	name = "Virgin"
+	point_cost = 0
+	desc = "I am inexperienced with intimacy, and attractive people leave me flustered."
+	custom_text = "Starts you as a virgin. While conscious, seeing someone with Pretty or Beautiful can cause 2 stress for one minute, a brief tremble and occasional blushing, at most once per minute. These effects end when you lose your virginity."
+	added_traits = list(TRAIT_VIRGIN_NERVES)
+
+/datum/quirk/virgin/apply_to_human(mob/living/carbon/human/recipient)
+	recipient.virginity = TRUE
+	recipient.AddComponent(/datum/component/virgin_nerves)

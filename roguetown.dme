@@ -747,6 +747,7 @@
 #include "code\datums\components\temporary_pollutor.dm"
 #include "code\datums\components\tether.dm"
 #include "code\datums\components\vampire_disguise.dm"
+#include "code\datums\components\virgin_nerves.dm"
 #include "code\datums\components\waddling.dm"
 #include "code\datums\components\wallpress_doubletap.dm"
 #include "code\datums\components\wearertargeting.dm"

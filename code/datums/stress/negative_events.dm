@@ -576,3 +576,8 @@
 	timer = 25 MINUTES
 	stressadd = 3
 	desc = span_red("I couldn't pay my debts in time.")
+
+/datum/stressevent/virgin_nerves
+	timer = 1 MINUTES
+	stressadd = 2
+	desc = span_red("I feel flustered around someone so attractive.")
