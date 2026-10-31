@@ -1651,6 +1651,31 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			ShowChoices(user)
 			return
 
+/datum/preferences/proc/edit_roleplay_ad(mob/user)
+	if(!ismob(user) || !user.client || user.client != parent)
+		return FALSE
+	var/client/ad_client = user.client
+	to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved ad for future rounds, use this character customization menu. Leave this field empty to disable automatic posting."))
+	var/ad_slot = default_slot
+	var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for. Leave empty to remove your saved ad.", "Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
+	if(isnull(new_ad))
+		return FALSE
+	if(!ad_client || QDELETED(user) || user.client != ad_client || ad_client.mob != user || ad_client.prefs != src)
+		return FALSE
+	if(default_slot != ad_slot)
+		to_chat(user, span_warning("Your character slot changed. Reopen the roleplay ad editor for the character you want to edit."))
+		return FALSE
+	new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
+	roleplay_ad = length(trim(new_ad)) ? new_ad : null
+	save_character()
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(!H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == parent?.ckey)
+			H.roleplay_ad = roleplay_ad
+			H.publish_roleplay_ad()
+	to_chat(user, span_notice(roleplay_ad ? "Roleplay ad saved." : "Saved roleplay ad cleared."))
+	return TRUE
+
 /datum/preferences/proc/process_link(mob/user, list/href_list)
 	if(href_list["preference"] == "preview_size")
 		if(!user?.client || user.client != parent || !(href_list["enlarged"] in list("0", "1")))
@@ -2338,23 +2363,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					popup.set_content(dat.Join())
 					popup.open(FALSE)
 				if("roleplay_ad")
-					to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved ad for future rounds, use this character customization menu. Leave this field empty to disable automatic posting."))
-					var/ad_slot = default_slot
-					var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for. Leave empty to remove your saved ad.", "Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
-					if(isnull(new_ad))
+					if(!edit_roleplay_ad(user))
 						return
-					if(default_slot != ad_slot)
-						to_chat(user, span_warning("Your character slot changed. Reopen the roleplay ad editor for the character you want to edit."))
-						return
-					new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
-					roleplay_ad = length(trim(new_ad)) ? new_ad : null
-					save_character()
-					if(ishuman(user))
-						var/mob/living/carbon/human/H = user
-						if(!H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == parent?.ckey)
-							H.roleplay_ad = roleplay_ad
-							H.publish_roleplay_ad()
-					to_chat(user, span_notice(roleplay_ad ? "Roleplay ad saved." : "Saved roleplay ad cleared."))
 				if("flavortext")
 					to_chat(user, "<span class='notice'>["<span class='bold'>Flavortext should not include nonphysical nonsensory attributes such as backstory or the character's internal thoughts.</span>"]</span>")
 					var/new_flavortext = tgui_input_text(user, "Input your character description:", "Flavortext", flavortext, multiline = TRUE,  encode = FALSE, bigmodal = TRUE)
