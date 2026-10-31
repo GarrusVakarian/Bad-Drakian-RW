@@ -649,7 +649,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			to_chat(parent, span_boldwarning("This character's Background '[virtue_background.name]' has been retired and no longer grants anything - pick a replacement in character setup."))
 
 /datum/preferences/proc/_load_quirks(S)
-	virgin_attraction = "Any"
+	virgin_attraction = list("Any")
 	S["virgin_attraction"] >> virgin_attraction
 	virgin_attraction = sanitize_virgin_attraction(virgin_attraction)
 	var/list/quirk_types

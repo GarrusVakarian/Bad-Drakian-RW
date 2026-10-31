@@ -1,14 +1,23 @@
 /proc/virgin_attraction_options()
 	return list("Any", "He/him", "She/her", "They/them", "It/its")
 
-/proc/sanitize_virgin_attraction(choice)
-	return (choice in virgin_attraction_options()) ? choice : "Any"
+/proc/sanitize_virgin_attraction(choices)
+	// Migrate the original single-choice saves without losing their selection.
+	if(istext(choices))
+		choices = list(choices)
+	if(!islist(choices) || ("Any" in choices))
+		return list("Any")
+	var/list/selected = list()
+	for(var/option in virgin_attraction_options())
+		if(option != "Any" && (option in choices))
+			selected += option
+	return length(selected) ? selected : list("Any")
 
 /datum/component/virgin_nerves
 	/// This component belongs to one body; quirk definitions are shared.
 	var/next_check = 0
 	var/next_affection = 0
-	var/attraction = "Any"
+	var/list/attraction = list("Any")
 	/// Captured when an action clears the flag, not from a previous interaction.
 	var/unwanted_loss = FALSE
 
@@ -24,17 +33,22 @@
 	UnregisterSignal(parent, COMSIG_HUMAN_LIFE)
 
 /datum/component/virgin_nerves/proc/matches_attraction(mob/living/carbon/human/partner)
-	switch(attraction)
-		if("Any")
-			return TRUE
-		if("He/him")
-			return partner.pronouns in list(HE_HIM, HE_HIM_F)
-		if("She/her")
-			return partner.pronouns in list(SHE_HER, SHE_HER_M)
-		if("They/them")
-			return partner.pronouns in list(THEY_THEM, THEY_THEM_F)
-		if("It/its")
-			return partner.pronouns == IT_ITS
+	for(var/group in attraction)
+		switch(group)
+			if("Any")
+				return TRUE
+			if("He/him")
+				if(partner.pronouns in list(HE_HIM, HE_HIM_F))
+					return TRUE
+			if("She/her")
+				if(partner.pronouns in list(SHE_HER, SHE_HER_M))
+					return TRUE
+			if("They/them")
+				if(partner.pronouns in list(THEY_THEM, THEY_THEM_F))
+					return TRUE
+			if("It/its")
+				if(partner.pronouns == IT_ITS)
+					return TRUE
 	return FALSE
 
 /datum/component/virgin_nerves/proc/check_virginity(mob/living/carbon/human/recipient)

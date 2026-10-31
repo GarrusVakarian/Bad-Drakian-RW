@@ -244,7 +244,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo,
 		"virtue_background" = virtue_background,
 		"quirks" = quirks.Copy(),
-		"virgin_attraction" = virgin_attraction,
+		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1,
 		"vice2" = vice2,
 		"vice3" = vice3,
@@ -387,7 +387,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo?.type,
 		"virtue_background" = virtue_background?.type,
 		"quirks" = get_quirk_typepaths(),
-		"virgin_attraction" = virgin_attraction,
+		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1?.type,
 		"vice2" = vice2?.type,
 		"vice3" = vice3?.type,
@@ -1215,7 +1215,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
 
 		if(istype(current_quirk, /datum/quirk/virgin))
-			html += "<div class='statpack-stats'><b>Attracted to pronouns:</b> [sanitize_virgin_attraction(virgin_attraction)]</div>"
+			html += "<div class='statpack-stats'><b>Attracted to pronouns:</b> [english_list(sanitize_virgin_attraction(virgin_attraction))]</div>"
 
 		if(current_quirk.custom_text)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'>" + current_quirk.custom_text + "</div>"
@@ -2241,8 +2241,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	if(!has_quirk(/datum/quirk/virgin))
 		return
 	var/slot = default_slot
-	var/choice = tgui_input_list(user, "Which pronouns attract this character? Clothing variants use the same pronoun group.", "Virgin: Attraction", virgin_attraction_options(), sanitize_virgin_attraction(virgin_attraction))
-	if(!choice || QDELETED(user) || user.client != parent || slot != default_slot || !has_quirk(/datum/quirk/virgin))
+	var/list/choice = tgui_input_checkboxes(user, "Select one or more pronoun groups. Any includes everyone and overrides individual choices. Clothing variants count under the same pronouns.", "Virgin: Attraction", virgin_attraction_options(), min_checked = 1, max_checked = 5, default_checked = sanitize_virgin_attraction(virgin_attraction), strict_modern = TRUE)
+	if(!islist(choice) || !length(choice) || QDELETED(user) || user.client != parent || slot != default_slot || !has_quirk(/datum/quirk/virgin))
 		return
 	save_to_history()
 	virgin_attraction = sanitize_virgin_attraction(choice)
