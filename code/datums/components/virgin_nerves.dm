@@ -145,8 +145,10 @@
 	if(QDELETED(src) || !virginity)
 		return FALSE
 	var/datum/component/virgin_nerves/nerves = GetComponent(/datum/component/virgin_nerves)
-	if(istype(nerves) && !QDELETED(partner) && ishuman(partner) && partner != src)
+	if(istype(nerves) && ishuman(partner) && !QDELETED(partner) && partner != src)
 		nerves.unwanted_loss = !nerves.matches_attraction(partner)
+		if(partner.stat == CONSCIOUS)
+			to_chat(partner, virgin_positive_message("Their hesitant reactions make me wonder whether this was their first time."))
 	virginity = FALSE
 	return TRUE
 
@@ -187,5 +189,7 @@
 	if(istype(experience))
 		experience.unwanted_loss = !virgin_matches_attraction(experience.attraction, partner)
 		experience.before_normal = virginity
+		if(partner.stat == CONSCIOUS)
+			to_chat(partner, virgin_positive_message("They seem unfamiliar with this kind of intimacy. This may have been their first time."))
 	anal_virginity = FALSE
 	return TRUE
