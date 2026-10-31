@@ -139,6 +139,8 @@
 	var/roleplay_ad_slot
 	var/roleplay_ad_owner
 	var/roleplay_ad_is_gnoll = FALSE
+	/// Do not renew the optional Wretch statue invitation when class equipment is reapplied.
+	var/wretch_statue_invited = FALSE
 	var/ooc_extra
 	var/ooc_extra_img
 	var/ooc_extra_img_link
