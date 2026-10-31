@@ -167,16 +167,44 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 	data["adverts"] = adverts
 	return data
 
+/// Personal ads use the same editors as the OOC and character-customization menus.
+/obj/structure/roguemachine/rosewall/proc/handle_personal_ad(mob/living/carbon/human/H, action)
+	if(!istype(H) || !H.client || !Adjacent(H))
+		return FALSE
+	switch(action)
+		if("view_personal_ads")
+			H.client.view_roleplay_ads()
+		if("set_temporary_ad")
+			H.client.roleplay_ad_set()
+		if("set_renewing_ad")
+			var/datum/preferences/P = H.client.prefs
+			if(!P)
+				return FALSE
+			if(H.roleplay_ad_owner != H.ckey || H.roleplay_ad_slot != P.default_slot)
+				to_chat(H, span_warning("Select this character's slot in Character Setup before changing its renewing ad."))
+				return FALSE
+			if(H.roleplay_ad_is_gnoll)
+				if(!P.gnoll_prefs)
+					return FALSE
+				P.gnoll_prefs.edit_roleplay_ad(H)
+			else
+				P.edit_roleplay_ad(H)
+		else
+			return FALSE
+	return TRUE
+
 /obj/structure/roguemachine/rosewall/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	if(.)
 		return
-	if(!ishuman(usr))
+	if(!ishuman(ui?.user))
 		return
-	var/mob/living/carbon/human/H = usr
+	var/mob/living/carbon/human/H = ui.user
 	if(!Adjacent(H))
 		to_chat(H, span_warning("I need to be closer to the board."))
 		return
+	if(action in list("view_personal_ads", "set_temporary_ad", "set_renewing_ad"))
+		return handle_personal_ad(H, action)
 	switch(action)
 		if("set_status")
 			if(!can_advertise(H))
