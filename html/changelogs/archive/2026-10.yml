@@ -1004,6 +1004,8 @@
   - bugfix: Bandaging rechecks the limb and existing dressing after treatment so interrupted
       or competing attempts cannot overwrite a bandage.
 2026-10-31:
+  _Rarity (port), anything86:
+  - qol: Kicks aimed at an unreachable head now hit the chest instead of canceling.
   mypingishuge:
   - qol: Added a Personal Ads tab to the Rosewall for browsing ads and setting temporary
       or renewing advertisements.
