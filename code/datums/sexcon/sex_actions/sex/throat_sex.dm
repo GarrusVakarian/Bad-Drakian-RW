@@ -47,7 +47,7 @@
 		for(var/i = 1; i <= user.sexcon.get_load_bursts(); i++)
 			user.sexcon.cum_into(oral = TRUE, splashed_user = target, consume_charge = i == 1 ? TRUE : FALSE) // give facial status effect for the target, considering this was rough throat sex
 			sleep(10)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 	if(user.sexcon.considered_limp())
 		user.sexcon.perform_sex_action(target, 0, 2, FALSE)
@@ -96,7 +96,7 @@
 		for(var/i = 1; i <= user.sexcon.get_load_bursts(); i++)
 			user.sexcon.cum_into(oral = TRUE, splashed_user = target, consume_charge = i == 1 ? TRUE : FALSE) // give facial status effect for the target, considering this was rough throat sex
 			sleep(10)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 	if(user.sexcon.considered_limp())
 		user.sexcon.perform_sex_action(target, 0, 2, FALSE)

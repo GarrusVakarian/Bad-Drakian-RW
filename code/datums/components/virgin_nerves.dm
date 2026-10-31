@@ -9,6 +9,8 @@
 	var/next_check = 0
 	var/next_affection = 0
 	var/attraction = "Any"
+	/// Captured when an action clears the flag, not from a previous interaction.
+	var/unwanted_loss = FALSE
 
 /datum/component/virgin_nerves/Initialize()
 	if(!ishuman(parent))
@@ -40,10 +42,14 @@
 		return TRUE
 	recipient.remove_stress(/datum/stressevent/virgin_nerves)
 	recipient.remove_stress(/datum/stressevent/virgin_discomfort)
-	recipient.add_stress(/datum/stressevent/virgin_confidence)
 	REMOVE_TRAIT(recipient, TRAIT_VIRGIN_NERVES, TRAIT_VIRTUE)
-	to_chat(recipient, span_notice("I feel more confident about intimacy now."))
-	to_chat(recipient, span_info("The nervous flutter I felt around attractive people has faded."))
+	if(unwanted_loss)
+		recipient.add_stress(/datum/stressevent/virgin_regret)
+		to_chat(recipient, span_warning("That experience left me unsettled rather than more confident."))
+	else
+		recipient.add_stress(/datum/stressevent/virgin_confidence)
+		to_chat(recipient, span_notice("I feel more confident about intimacy now."))
+		to_chat(recipient, span_info("The nervous flutter I felt around attractive people has faded."))
 	qdel(src)
 	return FALSE
 
@@ -104,3 +110,13 @@
 	var/datum/component/virgin_nerves/nerves = GetComponent(/datum/component/virgin_nerves)
 	if(istype(nerves))
 		nerves.on_affection(src, partner)
+
+/// Keep the existing flag transition while attributing this first experience to its actual partner.
+/mob/living/carbon/human/proc/lose_virginity(mob/living/carbon/human/partner)
+	if(QDELETED(src) || !virginity)
+		return FALSE
+	var/datum/component/virgin_nerves/nerves = GetComponent(/datum/component/virgin_nerves)
+	if(istype(nerves) && !QDELETED(partner) && ishuman(partner) && partner != src)
+		nerves.unwanted_loss = !nerves.matches_attraction(partner)
+	virginity = FALSE
+	return TRUE

@@ -35,7 +35,7 @@
 				user.try_impregnate(target)
 			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 		var/datum/status_effect/facial/external/coating = target.has_status_effect(/datum/status_effect/facial/external)
 		if(coating)

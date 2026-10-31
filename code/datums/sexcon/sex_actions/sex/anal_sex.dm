@@ -35,7 +35,7 @@
 			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
 			sleep(10)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 	if(user.sexcon.considered_limp())
 		user.sexcon.perform_sex_action(target, 1.2, 4, FALSE)
@@ -91,7 +91,7 @@
 			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
 			sleep(10)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 	if(user.sexcon.considered_limp())
 		user.sexcon.perform_sex_action(target, 1.2, 4, FALSE)
