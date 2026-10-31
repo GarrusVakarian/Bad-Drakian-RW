@@ -1,0 +1,4 @@
+author: "_Rarity (port), anything86"
+delete-after: True
+changes:
+  - qol: "Kicks aimed at an unreachable head now hit the chest instead of canceling."
