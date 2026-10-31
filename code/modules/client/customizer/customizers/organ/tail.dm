@@ -51,7 +51,7 @@
 		)
 
 /datum/customizer/organ/tail/lupian
-	customizer_choices = list(/datum/customizer_choice/organ/tail/lupian)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/lupian, /datum/customizer_choice/organ/tail/anthro)
 
 /datum/customizer_choice/organ/tail/lupian
 	name = "Lupian Tail"
@@ -82,7 +82,7 @@
 		)
 
 /datum/customizer/organ/tail/lizard
-	customizer_choices = list(/datum/customizer_choice/organ/tail/lizard)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/lizard, /datum/customizer_choice/organ/tail/manticore)
 
 /datum/customizer_choice/organ/tail/lizard
 	name = "Sissean Tail"
@@ -164,11 +164,11 @@
 		)
 
 /datum/customizer/organ/tail/tiefling
-	customizer_choices = list(/datum/customizer_choice/organ/tail/tiefling)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/tiefling, /datum/customizer_choice/organ/tail/manticore)
 	allows_disabling = TRUE
 
 /datum/customizer/organ/tail/dullahan
-	customizer_choices = list(/datum/customizer_choice/organ/tail/dullahan)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/dullahan, /datum/customizer_choice/organ/tail/manticore)
 	allows_disabling = TRUE
 	default_disabled = TRUE
 
@@ -257,7 +257,7 @@
 	allows_accessory_color_customization = TRUE
 
 /datum/customizer/organ/tail/demihuman
-	customizer_choices = list(/datum/customizer_choice/organ/tail/demihuman)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/demihuman, /datum/customizer_choice/organ/tail/manticore)
 	allows_disabling = TRUE
 
 /datum/customizer_choice/organ/tail/demihuman
@@ -343,6 +343,9 @@
 	allows_disabling = TRUE
 	default_disabled = TRUE
 
+/datum/customizer/organ/tail/anthro/with_maw
+	customizer_choices = list(/datum/customizer_choice/organ/tail/anthro, /datum/customizer_choice/organ/tail/manticore)
+
 /datum/customizer_choice/organ/tail/anthro
 	name = "Wild-Kin Tail"
 	organ_type = /obj/item/organ/tail/anthro
@@ -425,7 +428,7 @@
 		)
 
 /datum/customizer/organ/tail/dullahan
-	customizer_choices = list(/datum/customizer_choice/organ/tail/dullahan)
+	customizer_choices = list(/datum/customizer_choice/organ/tail/dullahan, /datum/customizer_choice/organ/tail/manticore)
 	allows_disabling = TRUE
 	default_disabled = TRUE
 
