@@ -548,3 +548,8 @@
 	timer = 10 MINUTES
 	stressadd = -2
 	desc = span_green("Xylix spun the thread of fate in my favour! Truly, I am blessed!")
+
+/datum/stressevent/virgin_confidence
+	timer = 5 MINUTES
+	stressadd = -1
+	desc = span_green("I feel a little more confident about intimacy.")

@@ -12,6 +12,7 @@
 	playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/anal_ride_sex/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	user.lose_anal_virginity(target)
 	if(!user.sexcon.do_knot_action_as_bottom)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] rides [target]."))
 	else
@@ -33,7 +34,7 @@
 			else if(HAS_TRAIT(user, TRAIT_OVERLY_FERTILE) && !user.getorganslot(ORGAN_SLOT_VAGINA))
 				target.try_impregnate(user)
 			sleep(10)
-		target.virginity = FALSE
+		target.lose_virginity(user)
 
 	if(target.sexcon.considered_limp())
 		target.sexcon.perform_sex_action(user, 1.2, 4, FALSE, involved_penis = target.getorganslot(ORGAN_SLOT_PENIS))

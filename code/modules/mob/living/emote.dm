@@ -512,6 +512,11 @@
 			else
 				message_param = "kisses %t on \the [parse_zone(H.zone_selected)]."
 	playsound(target.loc, pick('sound/vo/kiss (1).ogg','sound/vo/kiss (2).ogg'), 100, FALSE, -1)
+	if(ishuman(user) && ishuman(target))
+		var/mob/living/carbon/human/kisser = user
+		var/mob/living/carbon/human/recipient = target
+		kisser.react_to_virgin_affection(recipient)
+		recipient.react_to_virgin_affection(kisser)
 	if(user.mind)
 		record_round_statistic(STATS_KISSES_MADE)
 		if(target.mind)

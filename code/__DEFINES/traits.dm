@@ -230,6 +230,7 @@
 #define TRAIT_BAD_MOOD "Bad Mood"
 #define TRAIT_NIGHT_OWL "Night Owl"
 #define TRAIT_BEAUTIFUL "Beautiful"
+#define TRAIT_VIRGIN_NERVES "Virgin"
 /// lesser version of beautiful
 #define TRAIT_PRETTY "Pretty"
 #define TRAIT_UNSETTLING "Unsettling"
@@ -422,6 +423,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_TOLERANT = span_info("I dream of an ideal future, one with peace between all races"),
 	TRAIT_NIGHT_OWL = span_info("I enjoy spending my time in the night."),
 	TRAIT_BEAUTIFUL = span_info("People love looking at my face"),
+	TRAIT_VIRGIN_NERVES = span_info("I am inexperienced with intimacy and become flustered around attractive people."),
 	TRAIT_PRETTY = span_info("I'm told I'm rather easy on the eyes."),
 	TRAIT_BEAUTIFUL_UNCANNY = span_info("<i>Some</i> would say my visage is an artwork created by the gods themselves; the others call me an unsettling abomination."),
 	TRAIT_UNSETTLING = span_warning("My appearance is deeply unsettling to most. There's something profoundly wrong about my features."),

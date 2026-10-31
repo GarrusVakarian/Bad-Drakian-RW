@@ -30,8 +30,8 @@
 			sleep(10)
 			target.sexcon.cum_into(splashed_user = user, knot_action = src, knot_swap_roles = TRUE, knot_btm = user, orifice = SEX_PART_CUNT, consume_charge = i == 1 ? TRUE : FALSE)
 			target.try_impregnate(user)
-		target.virginity = FALSE
-		user.virginity = FALSE
+		target.lose_virginity(user)
+		user.lose_virginity(target)
 
 	if(target.sexcon.considered_limp())
 		target.sexcon.perform_sex_action(user, 1.2, 3, FALSE, involved_penis = target.getorganslot(ORGAN_SLOT_PENIS))

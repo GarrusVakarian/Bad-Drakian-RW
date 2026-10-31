@@ -11,6 +11,7 @@
 	user.sexcon_action_message(span_notice("[user]'s tail curls around to the front of [target] before swallowing up their quivering dick. With arms wrapped tightly around [target.p_their()] waist, [user] eases [user.p_their()] partner down around [user.p_their()] length..."))
 
 /datum/sex_action/manticore_reacharound_anal/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	target.lose_anal_virginity(user)
 	..()
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || user.STASTR > 12)
 		user.sexcon.try_pelvis_crush(target)
@@ -35,7 +36,7 @@
 				user.try_impregnate(target)
 			else if(HAS_TRAIT(target, TRAIT_OVERLY_FERTILE) && !target.getorganslot(ORGAN_SLOT_VAGINA))
 				user.try_impregnate(target)
-		user.virginity = FALSE
+		user.lose_virginity(target)
 
 		var/datum/status_effect/facial/external/coating = target.has_status_effect(/datum/status_effect/facial/external)
 		if(coating)

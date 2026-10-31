@@ -69,8 +69,8 @@
 		if(i < bursts)
 			sleep(1 SECONDS)
 	if(ejaculated)
-		donor.virginity = FALSE
-		receiver.virginity = FALSE
+		donor.lose_virginity(receiver)
+		receiver.lose_virginity(donor)
 	return ejaculated
 
 /datum/sex_action/tailmaw/proc/handle_tailmaw_oral_climax(mob/living/carbon/human/owner, mob/living/carbon/human/receiver)

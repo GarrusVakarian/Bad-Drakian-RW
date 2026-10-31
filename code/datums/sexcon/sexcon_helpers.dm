@@ -37,6 +37,7 @@
 /mob/living
 	var/can_do_sex = TRUE
 	var/virginity = FALSE
+	var/anal_virginity = FALSE
 	var/mpreg = FALSE
 	var/mpreg_chance = IMPREG_PROB_DEFAULT
 

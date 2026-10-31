@@ -576,3 +576,28 @@
 	timer = 25 MINUTES
 	stressadd = 3
 	desc = span_red("I couldn't pay my debts in time.")
+
+/datum/stressevent/virgin_nerves
+	timer = 1 MINUTES
+	stressadd = 2
+	desc = span_red("I feel flustered around someone so attractive.")
+
+/datum/stressevent/virgin_discomfort
+	timer = 1 MINUTES
+	stressadd = 1
+	desc = span_red("That intimate attention left me uncomfortable.")
+
+/datum/stressevent/virgin_regret
+	timer = 5 MINUTES
+	stressadd = 1
+	desc = span_red("My first intimate experience left me unsettled.")
+
+/datum/stressevent/anal_regret
+	timer = 5 MINUTES
+	stressadd = 1
+	desc = span_red("My first anal experience left me unsettled.")
+
+/datum/stressevent/anal_first_regret
+	timer = 5 MINUTES
+	stressadd = 6
+	desc = span_red("Having my first anal experience before my other first time left me especially shaken.")

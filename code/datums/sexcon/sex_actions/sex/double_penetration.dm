@@ -22,6 +22,7 @@
 	playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/double_penetration_sex/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	target.lose_anal_virginity(user)
 	if(!user.sexcon.do_knot_action)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] fucks [target]'s holes together."))
 	else
@@ -42,8 +43,8 @@
 			user.sexcon.cum_into(splashed_user = target, orifice = SEX_PART_CUNT|SEX_PART_ANUS, consume_charge = i == 1 ? TRUE : FALSE)
 			user.try_impregnate(target)
 			sleep(10)
-		user.virginity = FALSE
-		target.virginity = FALSE
+		user.lose_virginity(target)
+		target.lose_virginity(user)
 
 	if(user.sexcon.considered_limp())
 		user.sexcon.perform_sex_action(target, 1.4, 4, FALSE)

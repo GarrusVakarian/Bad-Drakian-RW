@@ -1696,6 +1696,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/base_knot_mode = FALSE
 	var/subtle_message_tick_counter = 0
 	var/was_subtle_mode = do_subtle_action // By default, we set it to the same value as the panel toggle
+	var/virgin_reaction_checked = FALSE
 	show_progress = 1
 	suppress_moan = FALSE
 	action.on_start(user, target)
@@ -1753,6 +1754,10 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		if(!action.solo && target != user)
 			user.adjust_bodytemperature(3, max_temp = BODYTEMP_NORMAL_MIN + 5)
 			target.adjust_bodytemperature(3, max_temp = BODYTEMP_NORMAL_MIN + 5)
+			if(!virgin_reaction_checked)
+				virgin_reaction_checked = TRUE
+				user.react_to_virgin_affection(target)
+				target.react_to_virgin_affection(user)
 		action.on_perform(user, target)
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
