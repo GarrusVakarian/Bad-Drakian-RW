@@ -649,6 +649,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			to_chat(parent, span_boldwarning("This character's Background '[virtue_background.name]' has been retired and no longer grants anything - pick a replacement in character setup."))
 
 /datum/preferences/proc/_load_quirks(S)
+	virgin_attraction = "Any"
+	S["virgin_attraction"] >> virgin_attraction
+	virgin_attraction = sanitize_virgin_attraction(virgin_attraction)
 	var/list/quirk_types
 	S["quirks"] >> quirk_types
 
@@ -1285,6 +1288,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		background_typepath = /datum/virtue/background/none
 	WRITE_FILE(S["virtue_background"], background_typepath)
 	WRITE_FILE(S["quirks"], get_quirk_typepaths())
+	WRITE_FILE(S["virgin_attraction"], sanitize_virgin_attraction(virgin_attraction))
 	WRITE_FILE(S["race_bonus"], race_bonus)
 	WRITE_FILE(S["combat_music"], preferences_typepath_or_null(combat_music))
 	WRITE_FILE(S["body_center_offset"], features["body_center_offset"])

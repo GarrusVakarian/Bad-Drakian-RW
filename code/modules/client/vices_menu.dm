@@ -244,6 +244,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo,
 		"virtue_background" = virtue_background,
 		"quirks" = quirks.Copy(),
+		"virgin_attraction" = virgin_attraction,
 		"vice1" = vice1,
 		"vice2" = vice2,
 		"vice3" = vice3,
@@ -318,6 +319,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	virtue_background = snapshot["virtue_background"]
 	var/list/quirks_snapshot = snapshot["quirks"]
 	quirks = quirks_snapshot ? quirks_snapshot.Copy() : list()
+	virgin_attraction = sanitize_virgin_attraction(snapshot["virgin_attraction"])
 	vice1 = snapshot["vice1"]
 	vice2 = snapshot["vice2"]
 	vice3 = snapshot["vice3"]
@@ -385,6 +387,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo?.type,
 		"virtue_background" = virtue_background?.type,
 		"quirks" = get_quirk_typepaths(),
+		"virgin_attraction" = virgin_attraction,
 		"vice1" = vice1?.type,
 		"vice2" = vice2?.type,
 		"vice3" = vice3?.type,
@@ -481,6 +484,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		virtue_background = new /datum/virtue/background/none()
 
 	quirks = list()
+	virgin_attraction = sanitize_virgin_attraction(preset["virgin_attraction"])
 	var/quirks_preset = preset["quirks"]
 	if(islist(quirks_preset))
 		for(var/quirk_type in quirks_preset)
@@ -1210,6 +1214,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/scent_display = redolent_scent || get_default_redolent_scent(redolent_type)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
 
+		if(istype(current_quirk, /datum/quirk/virgin))
+			html += "<div class='statpack-stats'><b>Attracted to pronouns:</b> [sanitize_virgin_attraction(virgin_attraction)]</div>"
+
 		if(current_quirk.custom_text)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'>" + current_quirk.custom_text + "</div>"
 
@@ -1245,6 +1252,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		html += "<div class='actions'>"
 		if(istype(current_quirk, /datum/quirk/redolent))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];redolent_action=configure'>Configure Scent</a>"
+		if(istype(current_quirk, /datum/quirk/virgin))
+			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];quirk_action=remove;index=[i]'>Remove</a>"
 		html += "</div>"
 		html += "</div>"
@@ -1854,6 +1863,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			if(choice)
 				var/datum/quirk/selected = quirks_available[choice]
 				quirks += new selected.type()
+				if(istype(selected, /datum/quirk/virgin))
+					configure_virgin_attraction(usr)
 				to_chat(usr, span_notice("Added [choice] as a quirk."))
 				if(selected.desc)
 					to_chat(usr, "<span class='info'>[selected.desc]</span>")
@@ -1905,6 +1916,12 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				open_vices_menu(usr)
 			return
 	
+	if(href_list["virgin_action"])
+		if(href_list["virgin_action"] == "configure")
+			configure_virgin_attraction(usr)
+			open_vices_menu(usr)
+		return
+
 	if(href_list["redolent_action"])
 		if(href_list["redolent_action"] != "configure")
 			return
@@ -2219,3 +2236,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 						vars[slot_var] = language_path
 						to_chat(usr, span_notice("Selected [chosen_language] for language slot [slot] ([slot_cost] Triumphs)."))
 				open_vices_menu(usr)
+
+/datum/preferences/proc/configure_virgin_attraction(mob/user)
+	if(!has_quirk(/datum/quirk/virgin))
+		return
+	var/slot = default_slot
+	var/choice = tgui_input_list(user, "Which pronouns attract this character? Clothing variants use the same pronoun group.", "Virgin: Attraction", virgin_attraction_options(), sanitize_virgin_attraction(virgin_attraction))
+	if(!choice || QDELETED(user) || user.client != parent || slot != default_slot || !has_quirk(/datum/quirk/virgin))
+		return
+	save_to_history()
+	virgin_attraction = sanitize_virgin_attraction(choice)

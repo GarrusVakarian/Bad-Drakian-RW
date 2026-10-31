@@ -581,3 +581,8 @@
 	timer = 1 MINUTES
 	stressadd = 2
 	desc = span_red("I feel flustered around someone so attractive.")
+
+/datum/stressevent/virgin_discomfort
+	timer = 1 MINUTES
+	stressadd = 1
+	desc = span_red("That intimate attention left me uncomfortable.")

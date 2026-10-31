@@ -94,6 +94,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	// See modular_azurepeak/virtues/background.dm.
 	var/datum/virtue/background/virtue_background = new /datum/virtue/background/none
 	var/list/quirks = list()
+	var/virgin_attraction = "Any"
 	var/selected_title = "None"
 	var/age = AGE_ADULT						//age of character
 	var/datum/origin/origin
