@@ -834,7 +834,6 @@
 	if((HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) || HAS_TRAIT(L, TRAIT_TALONKICKS)) && !HAS_TRAIT(L, TRAIT_DEADITE))
 		acceptable.Add(BODY_ZONE_HEAD)
 	if( !(check_zone(L.zone_selected) in acceptable) )
-		to_chat(L, span_warning("I can't reach that."))
 		return FALSE
 	return TRUE
 

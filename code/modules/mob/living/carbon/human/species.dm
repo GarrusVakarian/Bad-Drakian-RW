@@ -1812,7 +1812,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 		var/selzone = melee_accuracy_check(user.zone_selected, user, target, /datum/skill/combat/unarmed, user.used_intent)
 		if(kickchest)
-			selzone = target.get_bodypart(BODY_ZONE_CHEST)
+			selzone = BODY_ZONE_CHEST
 		var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 		if(!affecting)
 			affecting = target.get_bodypart(BODY_ZONE_CHEST)
