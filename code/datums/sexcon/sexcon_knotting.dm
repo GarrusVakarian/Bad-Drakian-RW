@@ -459,6 +459,7 @@
 			if(!facial)
 				btm.apply_status_effect(/datum/status_effect/facial)
 				btm.visible_message(span_love("[btm] takes a load down their throat!"), span_love("I take a load down my throat!"))
+				top.sexcon.grant_oral_intake_nutrition(btm)
 			else
 				facial.refresh_cum()
 			if(btm.reagents)

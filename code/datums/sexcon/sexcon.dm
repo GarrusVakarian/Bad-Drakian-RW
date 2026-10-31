@@ -529,6 +529,7 @@
 			splashed_user.apply_status_effect(status_type)
 			if(oral)
 				splashed_user.visible_message(span_love("[splashed_user] takes a load down their throat!"), span_love("I take a load down my throat!"))
+				grant_oral_intake_nutrition(splashed_user)
 			else
 				splashed_user.visible_message(span_love("[splashed_user] takes a load inside them!"), span_love("I take a load inside me!"))
 		else
@@ -576,6 +577,17 @@
 		target.apply_status_effect(/datum/status_effect/creampie_leak/long, orifice)
 	else
 		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
+
+/// Return the actual nutrition restored by a newly announced oral intake.
+/datum/sex_controller/proc/grant_oral_intake_nutrition(mob/living/carbon/human/consumer)
+	if(!ishuman(user) || !ishuman(consumer) || QDELETED(user) || QDELETED(consumer) || HAS_TRAIT(consumer, TRAIT_HEMOPHAGE))
+		return 0
+	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
+	if(!istype(testes) || !isnum(testes.ball_size))
+		return 0
+	var/nutrition_before = consumer.nutrition
+	consumer.adjust_nutrition(25 * clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
+	return max(0, consumer.nutrition - nutrition_before)
 
 /datum/sex_controller/proc/apply_cum_consumed_buff(mob/living/carbon/human/consumer)
 	if(!consumer)
