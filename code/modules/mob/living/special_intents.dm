@@ -686,7 +686,7 @@ SPECIALS START HERE
 	playsound(howner, 'sound/combat/rend_start.ogg', 100, TRUE)
 
 /datum/special_intent/axe_swing/apply_hit(turf/T)
-	for(var/mob/living/L in get_hearers_in_view(0, T))
+	for(var/mob/living/L in T)
 		if(L != howner)
 			L.Immobilize(immob_dur)
 			if(L.mobility_flags & MOBILITY_STAND)

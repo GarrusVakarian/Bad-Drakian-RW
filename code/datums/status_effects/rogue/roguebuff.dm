@@ -1828,6 +1828,8 @@
 /datum/status_effect/buff/clash
 	id = "clash"
 	duration = 4 SECONDS
+	/// NPCs keep acting normally before they can react to this guard.
+	var/npc_reaction_time
 	var/expired_naturally = FALSE
 	var/sfx_on_apply = 'sound/combat/clash_initiate.ogg'
 	var/swingdelay_mod = 5
@@ -1839,6 +1841,7 @@
 
 //We have a lot of signals as the ability is meant to be interrupted by or interact with a lot of mechanics.
 /datum/status_effect/buff/clash/on_creation(mob/living/new_owner, ...)
+	npc_reaction_time = world.time + 2 SECONDS
 	//!Danger! Zone!
 	//These signals use OVERRIDES and can OVERLAP with anything else using them.
 	//At the moment we have no way of prioritising one signal over the other, it's first-come first-serve. Keep this in mind.
