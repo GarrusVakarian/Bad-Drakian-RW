@@ -217,7 +217,6 @@
 		return FALSE
 	to_chat(owner, span_love("I feel a surge of warmth in my belly, I'm definitely pregnant!"))
 	pregnant = TRUE
-	//TODO add a way to trigger lactating when pregnancy happens
 	return TRUE
 
 /obj/item/organ/vagina/bee_tail
@@ -234,6 +233,8 @@
 	accessory_type = /datum/sprite_accessory/breasts/pair
 	var/breast_size = DEFAULT_BREASTS_SIZE
 	var/lactating = FALSE
+	/// Waiting to start lactating once the owner becomes pregnant
+	var/lactates_on_impregnation = FALSE
 	var/milk_stored = 0
 	var/milk_max = 75
 	var/branded_writing = ""
