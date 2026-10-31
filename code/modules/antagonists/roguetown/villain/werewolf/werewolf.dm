@@ -64,7 +64,7 @@
 		return
 
 /datum/antagonist/werewolf/greet()
-	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust."))
+	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust.<br>(This guidance is to help guide the mindset of playing verewolf, rather than hard rules limiting your roleplay. Be tactful and have fun!:<br>While verevolfs are still quite powerful, the goal is for them to be ERP antags. Your focus should be on scenes or enabling them, rather than PvP. The curse running through your veins has turned you into an intelligent beast of lust and desire. The only method of infection is your \"Voluntary Bite\" ability. After you transform you'll remain a verevolf until using the \"Give In To Daylight\" ability and the dae star shining.<br>Don't blatantly go around in high-town. You can do things there but it needs to be kept subtle. If you're pinning someone down in public in the middle of low-town and people try to drive you away, you should likely flee to continue the story instead of kill them or stand and fight in town. Ideally such a creature would keep more to the bog instead of town.)"))
 	return ..()
 
 /datum/antagonist/werewolf/lesser/greet()
