@@ -1007,6 +1007,8 @@
   _Rarity:
   - qol: "Wretches now choose whether to join the mercenary statue\u2019s roster through\
       \ their spawn chat link instead of being listed automatically."
+  - qol: Sleeping characters can receive subtle LOOC and subtle emotes, hear normal
+      local speech, and reliably hear whispers from the same or adjacent tiles.
   _Rarity (port), anything86:
   - qol: Kicks aimed at an unreachable head now hit the chest instead of canceling.
   mypingishuge:
