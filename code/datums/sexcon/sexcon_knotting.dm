@@ -462,6 +462,8 @@
 				top.sexcon.grant_oral_intake_nutrition(btm)
 			else
 				facial.refresh_cum()
+				to_chat(btm, span_love("I take another load down my throat..."))
+				top.sexcon.grant_oral_intake_nutrition(btm, repeat_intake = TRUE)
 			if(btm.reagents)
 				if(top.getorganslot(ORGAN_SLOT_PENIS))
 					btm.reagents.add_reagent(/datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume())

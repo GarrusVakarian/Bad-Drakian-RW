@@ -534,6 +534,9 @@
 				splashed_user.visible_message(span_love("[splashed_user] takes a load inside them!"), span_love("I take a load inside me!"))
 		else
 			splashed_type.refresh_cum()
+			if(oral)
+				to_chat(splashed_user, span_love("I take another load down my throat..."))
+				grant_oral_intake_nutrition(splashed_user, repeat_intake = TRUE)
 		if(oral && splashed_user.reagents) //cum fills hunger if taking it orally
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
 				splashed_user.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume())
@@ -578,8 +581,8 @@
 	else
 		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
 
-/// Return the actual nutrition restored by a newly announced oral intake.
-/datum/sex_controller/proc/grant_oral_intake_nutrition(mob/living/carbon/human/consumer)
+/// Return the actual nutrition restored; repeated intake grants half the normal amount.
+/datum/sex_controller/proc/grant_oral_intake_nutrition(mob/living/carbon/human/consumer, repeat_intake = FALSE)
 	if(!ishuman(user) || !ishuman(consumer) || QDELETED(user) || QDELETED(consumer) || HAS_TRAIT(consumer, TRAIT_HEMOPHAGE))
 		return 0
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
@@ -595,6 +598,8 @@
 	var/obj/item/bodypart/taur/taur_parts = user.get_taur_tail()
 	if(istype(taur_parts))
 		nutrition_gain *= 1.5
+	if(repeat_intake)
+		nutrition_gain *= 0.5
 	consumer.adjust_nutrition(nutrition_gain)
 	return max(0, consumer.nutrition - nutrition_before)
 
