@@ -843,6 +843,19 @@
 	swap_hand() // switch back to mainhand
 	return TRUE // end your turn
 
+/// Only use an available intent, and preserve the current stance if dispatch fails.
+/mob/living/carbon/human/proc/npc_try_rmb_attack(intent_type, mob/living/victim)
+	if(!(intent_type in possible_rmb_intents))
+		return FALSE
+	var/datum/rmb_intent/previous_intent = rmb_intent
+	swap_rmb_intent(intent_type)
+	if(try_special_attack(victim))
+		return TRUE
+	rmb_intent = previous_intent
+	if(hud_used?.rmb_intent)
+		hud_used.rmb_intent.update_icon()
+	return FALSE
+
 /// A proc used in monkey_attack. Selects and performs our preferred attack.
 /// Returns TRUE if our turn has been used.
 /mob/living/carbon/human/proc/do_best_melee_attack(mob/living/victim)
@@ -862,14 +875,12 @@
 	Weapon = get_active_held_item()
 	OffWeapon = get_inactive_held_item()
 
-	//Feint Riposte check before we do any further attacks to teach our enemy a lesson.
-	if(smart_combatant && istype(Weapon, /obj/item/rogueweapon)) //Make sure we have a proper weapon in hand. No feinting with a stick or some shit.
-		if(!has_status_effect(/datum/status_effect/debuff/feintcd) && target.has_status_effect(/datum/status_effect/buff/clash))
-			if(possible_rmb_intents & /datum/rmb_intent/feint)
-				swap_rmb_intent(/datum/rmb_intent/feint)
-				if(Adjacent(target))
-					try_special_attack(target)
-					return TRUE //Attempt to feint and ruin their clash...
+	var/datum/status_effect/buff/clash/guard = victim.has_status_effect(/datum/status_effect/buff/clash)
+	var/waiting_for_guard_reaction = guard && world.time < guard.npc_reaction_time
+	if(smart_combatant && istype(Weapon, /obj/item/rogueweapon) && guard && !waiting_for_guard_reaction)
+		if(!has_status_effect(/datum/status_effect/debuff/feintcd) && Adjacent(victim))
+			if(npc_try_rmb_attack(/datum/rmb_intent/feint, victim))
+				return TRUE
 
 	// What is the chance we try to grab with our offhand?
 	var/make_grab_chance = Weapon ? 5 : 20 // If unarmed, 20% chance; otherwise 5%
@@ -915,28 +926,23 @@
 
 			if(special_attacker && prob(50) && !has_status_effect(/datum/status_effect/debuff/specialcd)) //Only if we use specials...
 				if(weapon_special_intents)
-					if(possible_rmb_intents & /datum/rmb_intent/strong)
-						swap_rmb_intent(/datum/rmb_intent/strong)
-						try_special_attack(target)
-						return TRUE //We used our special intent on the target as soon as we could.
+					if(npc_try_rmb_attack(/datum/rmb_intent/strong, victim))
+						return TRUE
 
 			if(smart_combatant && prob(50)) // Only if we use rmb intents...
-				if(possible_rmb_intents)
+				if(length(possible_rmb_intents))
 					if(!has_status_effect(/datum/status_effect/debuff/feintcd))
-						if(possible_rmb_intents & /datum/rmb_intent/feint && rmb_intent != /datum/rmb_intent/feint && prob(50))
-							swap_rmb_intent(/datum/rmb_intent/feint)
-							try_special_attack(target)
-							return TRUE
+						if(!waiting_for_guard_reaction && !istype(rmb_intent, /datum/rmb_intent/feint) && prob(50))
+							if(npc_try_rmb_attack(/datum/rmb_intent/feint, victim))
+								return TRUE
 					else if(!has_status_effect(/datum/status_effect/debuff/clashcd))
-						if(possible_rmb_intents & /datum/rmb_intent/riposte && rmb_intent != /datum/rmb_intent/riposte && prob(50))
-							swap_rmb_intent(/datum/rmb_intent/riposte)
-							try_special_attack(target)
-							return TRUE
+						if(!istype(rmb_intent, /datum/rmb_intent/riposte) && prob(50))
+							if(npc_try_rmb_attack(/datum/rmb_intent/riposte, victim))
+								return TRUE
 					else if(!has_status_effect(/datum/status_effect/debuff/baitcd)) //May work sometimes; more than likely it wont however.
-						if(possible_rmb_intents & /datum/rmb_intent/aimed && rmb_intent != /datum/rmb_intent/aimed) //Default to aimed as the final choice to attempt baiting.
-							swap_rmb_intent(/datum/rmb_intent/aimed)
-							try_special_attack(target)
-							return TRUE
+						if(!istype(rmb_intent, /datum/rmb_intent/aimed)) //Default to aimed as the final choice to attempt baiting.
+							if(npc_try_rmb_attack(/datum/rmb_intent/aimed, victim))
+								return TRUE
 
 		if(!did_we_change_intent) //Always default regardless.
 			rog_intent_change(1)
