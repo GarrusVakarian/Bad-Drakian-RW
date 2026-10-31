@@ -586,7 +586,16 @@
 	if(!istype(testes) || !isnum(testes.ball_size))
 		return 0
 	var/nutrition_before = consumer.nutrition
-	consumer.adjust_nutrition(25 * clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
+	var/nutrition_gain = 50
+	switch(clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
+		if(MIN_TESTICLES_SIZE)
+			nutrition_gain = 25
+		if(MAX_TESTICLES_SIZE)
+			nutrition_gain = 200
+	var/obj/item/bodypart/taur/taur_parts = user.get_taur_tail()
+	if(istype(taur_parts))
+		nutrition_gain *= 1.5
+	consumer.adjust_nutrition(nutrition_gain)
 	return max(0, consumer.nutrition - nutrition_before)
 
 /datum/sex_controller/proc/apply_cum_consumed_buff(mob/living/carbon/human/consumer)
