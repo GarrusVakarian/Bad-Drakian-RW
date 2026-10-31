@@ -1003,3 +1003,7 @@
       consuming one piece only when treatment succeeds.
   - bugfix: Bandaging rechecks the limb and existing dressing after treatment so interrupted
       or competing attempts cannot overwrite a bandage.
+2026-10-31:
+  mypingishuge:
+  - qol: Added a Personal Ads tab to the Rosewall for browsing ads and setting temporary
+      or renewing advertisements.
