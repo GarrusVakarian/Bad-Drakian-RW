@@ -122,12 +122,12 @@
 	if(partner == recipient || partner.stat == DEAD || !recipient.Adjacent(partner) || world.time < next_affection)
 		return
 	if(!matches_attraction(partner))
-		next_affection = world.time + 1 MINUTES
+		next_affection = world.time + 2 MINUTES
 		recipient.add_stress(/datum/stressevent/virgin_discomfort)
 		to_chat(recipient, virgin_negative_message(pick("This closeness leaves me uneasy rather than excited.", "I feel uncomfortable with their intimate attention.")))
 		to_chat(partner, virgin_positive_message("[recipient]'s heart pounds audibly, and a nervous sheen of sweat forms on their skin. They seem uneasy with the contact."))
 		return
-	next_affection = world.time + 1 MINUTES
+	next_affection = world.time + 2 MINUTES
 	recipient.add_stress(/datum/stressevent/virgin_nerves)
 	to_chat(recipient, virgin_positive_message(pick("Their touch makes my heart race. I can hardly hide how flustered I feel.", "I feel a nervous warmth spread through me at their affection.")))
 	to_chat(partner, virgin_positive_message("I can hear [recipient]'s heart pounding, and notice a nervous sheen of sweat on their skin."))
