@@ -1009,6 +1009,7 @@
       \ their spawn chat link instead of being listed automatically."
   - qol: Sleeping characters can receive subtle LOOC and subtle emotes, hear normal
       local speech, and reliably hear whispers from the same or adjacent tiles.
+  - sound: "Port Ochre Valley\u2019s notification sound for regular LOOC messages."
   _Rarity (port), anything86:
   - qol: Kicks aimed at an unreachable head now hit the chest instead of canceling.
   mypingishuge:
