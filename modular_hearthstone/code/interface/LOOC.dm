@@ -237,6 +237,7 @@
 		seen[C] = TRUE
 		var/outgoing_msg = ((C in GLOB.admins) && (C.prefs.admin_chat_toggles & CHAT_ADMINLOOC)) ? msg_adm : msg_reg
 		to_chat(C, outgoing_msg)
+		M.playsound_local(get_turf(M), 'sound/misc/looc_smol.ogg', 30, TRUE)
 
 	for(var/client/C in GLOB.admins)
 		if(seen[C] || !(C.prefs.admin_chat_toggles & CHAT_ADMINLOOC) || !(C.prefs.chat_toggles & CHAT_OOC))
