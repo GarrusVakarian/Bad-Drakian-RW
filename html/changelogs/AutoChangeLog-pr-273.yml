@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - sound: "Port Ochre Valley’s notification sound for regular LOOC messages."
