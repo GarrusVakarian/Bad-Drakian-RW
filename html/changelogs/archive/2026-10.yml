@@ -1015,3 +1015,10 @@
   mypingishuge:
   - qol: Added a Personal Ads tab to the Rosewall for browsing ads and setting temporary
       or renewing advertisements.
+  - bugfix: Combat Aware now reveals attack-location and fatigue feedback from humanoid
+      NPCs without a mind datum.
+  - rscadd: Adds a free Virgin quirk with saved attraction choices, mild nervousness,
+      flavor text for kisses and partnered panel reactions, occasional blushing and
+      preference-dependent normal/anal first-experience messages and stress outcomes.
+  - rscadd: 'Adds an After Impregnation lactation option to character customization,
+      ported from Ratwood #3224 by IronDragoon.'
