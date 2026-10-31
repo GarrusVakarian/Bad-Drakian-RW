@@ -11,6 +11,7 @@
 	playsound(target, 'sound/misc/mat/insert (1).ogg', 25, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/manticore_tailpeg/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	target.lose_anal_virginity(user)
 	..()
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || user.STASTR > 12)
 		if(istype(user.rmb_intent, /datum/rmb_intent/strong))

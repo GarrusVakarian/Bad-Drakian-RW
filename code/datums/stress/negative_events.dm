@@ -591,3 +591,13 @@
 	timer = 5 MINUTES
 	stressadd = 1
 	desc = span_red("My first intimate experience left me unsettled.")
+
+/datum/stressevent/anal_regret
+	timer = 5 MINUTES
+	stressadd = 1
+	desc = span_red("My first anal experience left me unsettled.")
+
+/datum/stressevent/anal_first_regret
+	timer = 5 MINUTES
+	stressadd = 6
+	desc = span_red("Having my first anal experience before my other first time left me especially shaken.")
