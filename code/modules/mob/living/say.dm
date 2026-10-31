@@ -416,7 +416,10 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	last_heard_raw_message = raw_message
 	// Recompose message for AI hrefs, language incomprehension.
 	message = compose_message(speaker, message_language, raw_message, radio_freq, spans, message_mode)
-	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type)
+	// Local speech remains intelligible while sleeping; whispers still require adjacency.
+	var/is_whisper = message_mode == MODE_WHISPER || message_mode == MODE_WHISPER_CRIT
+	var/allow_sleeping = !radio_freq && (!is_whisper || (speaker && speaker.z == z && (get_dist(src, speaker) in 0 to 1)))
+	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type, allow_sleeping = allow_sleeping)
 	return message
 
 /mob/living/send_speech(message, message_range = 6, obj/source = src, bubble_type = bubble_icon, list/spans, datum/language/message_language=null, message_mode, original_message)

@@ -151,7 +151,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 /**
  * Show a message to this mob (visual or audible)
  */
-/mob/proc/show_message(msg, type, alt_msg, alt_type)//Message, type of message (1 or 2), alternative message, alt message type (1 or 2)
+/mob/proc/show_message(msg, type, alt_msg, alt_type, allow_sleeping = FALSE)//Message, type of message (1 or 2), alternative message, alt message type (1 or 2)
 	if(!client)
 		return
 
@@ -174,7 +174,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 				if(type & MSG_VISUAL && eye_blind)
 					return
 	// voice muffling
-	if(stat == UNCONSCIOUS)
+	if(stat == UNCONSCIOUS && !(allow_sleeping && IsSleeping()))
 		if(type & MSG_AUDIBLE) //audio
 			if(findtext(msg, "snores.")) //No spamming people with their own snoring.
 				return

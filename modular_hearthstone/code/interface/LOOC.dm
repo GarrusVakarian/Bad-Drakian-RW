@@ -83,7 +83,7 @@
 
 	// L.client, so NPCs and disconnected bodies stay out of the picker
 	for(var/mob/living/L in hearers)
-		if(L.client && L.stat == CONSCIOUS && L != S)
+		if(L.client && (L.stat == CONSCIOUS || (L.stat == UNCONSCIOUS && L.IsSleeping())) && L != S)
 			if(!L.rogue_sneaking && L.name != "Unknown")
 				recipient_choices += L
 
