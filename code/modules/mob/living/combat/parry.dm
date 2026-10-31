@@ -249,7 +249,7 @@
 			used_weapon.take_damage(intdam, BRUTE, used_weapon.d_type)
 			used_weapon.remove_bintegrity(sharp_loss, attacker)
 
-		if(mind && attacker.mind && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
+		if(client && (ishuman(attacker) || attacker.mind) && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
 			var/text = "[bodyzone2readablezone(attacker.zone_selected)]..."
 			if(HAS_TRAIT(attacker, TRAIT_DECEIVING_MEEKNESS))
 				if(prob(10))

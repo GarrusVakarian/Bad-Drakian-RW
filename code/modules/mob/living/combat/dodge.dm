@@ -263,7 +263,7 @@
 			attacker.visible_message(span_warning("<b>[attacker]</b> clips [src]'s weapon!"))
 			playsound(attacker, 'sound/misc/weapon_clip.ogg', 100)
 
-	if(mind && attacker.mind && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
+	if(client && (ishuman(attacker) || attacker.mind) && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
 		var/text = "[bodyzone2readablezone(attacker.zone_selected)]..."
 		if(HAS_TRAIT(attacker, TRAIT_DECEIVING_MEEKNESS))
 			if(prob(10))

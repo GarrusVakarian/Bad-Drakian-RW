@@ -135,7 +135,7 @@
 							C.heart_attack()
 							return FALSE
 
-	if(ishuman(src) && mind && added > 0)
+	if(ishuman(src) && added > 0)
 		var/mob/living/carbon/human/H = src
 		var/text
 		var/x_offset = 20
