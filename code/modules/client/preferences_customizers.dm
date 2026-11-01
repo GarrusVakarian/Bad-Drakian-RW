@@ -12,6 +12,7 @@
 	listclearnulls(customizer_entries)
 	var/datum/species/species = pref_species
 	var/list/customizers = species.customizers
+	var/list/merged_customizers = list()
 	/// Check if we have any customizer entries that don't match.
 	for(var/datum/customizer_entry/entry as anything in customizer_entries)
 		// Preserve saved tail choices and colors when adding the fertility setting.
@@ -24,6 +25,15 @@
 			tail_entry.disabled = entry.disabled
 			customizer_entries[customizer_entries.Find(entry)] = tail_entry
 			entry = tail_entry
+		// Retain a saved organ choice when its former panel was merged into another.
+		if(ispath(entry.customizer_type, /datum/customizer/organ) && !(entry.customizer_type in customizers))
+			for(var/customizer_type in customizers)
+				var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+				if(!customizer || !(entry.customizer_choice_type in customizer.customizer_choices))
+					continue
+				entry.customizer_type = customizer_type
+				merged_customizers |= customizer_type
+				break
 		var/validated = FALSE
 		for(var/customizer_type as anything in customizers)
 			if(customizer_type != entry.customizer_type)
@@ -40,6 +50,20 @@
 
 		if(!validated)
 			customizer_entries -= entry
+
+	// The last enabled entry won the organ slot before consolidation; keep that choice.
+	for(var/customizer_type in merged_customizers)
+		var/datum/customizer_entry/retained_entry
+		for(var/datum/customizer_entry/entry as anything in customizer_entries.Copy())
+			if(entry.customizer_type != customizer_type)
+				continue
+			if(!retained_entry)
+				retained_entry = entry
+			else if(!entry.disabled)
+				customizer_entries -= retained_entry
+				retained_entry = entry
+			else
+				customizer_entries -= entry
 
 	/// Check if we have any missing customizer entries
 	for(var/customizer_type as anything in customizers)

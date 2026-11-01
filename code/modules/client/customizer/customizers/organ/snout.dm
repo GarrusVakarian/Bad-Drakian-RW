@@ -94,7 +94,7 @@
 		)
 
 /datum/customizer/organ/snout/lupian
-	customizer_choices = list(/datum/customizer_choice/organ/snout/lupian)
+	customizer_choices = list(/datum/customizer_choice/organ/snout/lupian, /datum/customizer_choice/organ/snout/anthro)
 
 /datum/customizer_choice/organ/snout/lupian
 	name = "Lupian Snout"
