@@ -691,6 +691,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 /datum/species/proc/spec_death(gibbed, mob/living/carbon/human/H)
 	return
 
+/datum/species/proc/intercept_death(mob/living/carbon/human/H, gibbed)
+	return FALSE
+
 /datum/species/proc/auto_equip(mob/living/carbon/human/H)
 	// handles the equipping of species-specific gear
 	return
