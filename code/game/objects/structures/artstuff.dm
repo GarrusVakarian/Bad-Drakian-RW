@@ -84,7 +84,9 @@
 		return
 	if(user in showers)
 		return
-	user?.client.screen += used_canvas
+	if(!user?.client)
+		return
+	user.client.screen += used_canvas
 	showers |= user
 	RegisterSignal(user, COMSIG_MOVABLE_TURF_ENTERED, PROC_REF(remove_shower))
 
@@ -119,7 +121,9 @@
 		return
 	if(user in showers)
 		return
-	user?.client.screen += used_canvas
+	if(!user?.client)
+		return
+	user.client.screen += used_canvas
 	showers |= user
 	RegisterSignal(user, COMSIG_MOVABLE_TURF_ENTERED, PROC_REF(remove_shower))
 
@@ -143,9 +147,11 @@
 	source.client?.screen -= used_canvas
 	UnregisterSignal(source, COMSIG_MOVABLE_TURF_ENTERED)
 
-/obj/item/canvas/proc/update_drawing(x, y, current_color)
+/obj/item/canvas/proc/update_drawing(x, y, current_color, mob/user)
+	if(!user?.client)
+		return FALSE
 	painted = TRUE
-	LAZYOR(painter_ckeys, usr.ckey)
+	LAZYOR(painter_ckeys, user.ckey)
 	if("[x][y]" in overlay_to_index)
 		cut_overlay(overlay_to_index["[x][y]"])
 		overlay_to_index -= "[x][y]"
@@ -158,7 +164,7 @@
 	overlay_to_index["[x][y]"] = MA
 	current_overlays++
 	if(current_overlays > 150)
-		icon = usr.client.RenderIcon(src)
+		icon = user.client.RenderIcon(src)
 		current_overlays = 0
 		cut_overlays()
 		overlay_to_index = list()
@@ -227,9 +233,12 @@
 
 /atom/movable/screen/canvas/Click(location, control, params)
 	. = ..()
+	var/mob/user = usr
+	if(!user?.client || QDELETED(host))
+		return
 	if(host.item_flags & IN_STORAGE)
 		return
-	var/obj/item/paint_brush/brush = usr.get_active_held_item()
+	var/obj/item/paint_brush/brush = user.get_active_held_item()
 	if(!istype(brush))
 		return
 	var/current_color = brush.current_color
@@ -270,12 +279,12 @@
 	overlay_to_index |= "[x][y]"
 	overlay_to_index["[x][y]"] = MA
 	if(current_overlays > 150)
-		icon = usr.client.RenderIcon(src)
+		icon = user.client.RenderIcon(src)
 		current_overlays = 0
 		cut_overlays()
 		overlay_to_index = list()
 
-	host.update_drawing(x, y, current_color)
+	host.update_drawing(x, y, current_color, user)
 
 /// Mapping helper: hangs a random archived player painting at its mapped position, each painting at most once per round. Deletes itself if none are left, with the empty spots picked at random.
 /obj/item/canvas/random_painting

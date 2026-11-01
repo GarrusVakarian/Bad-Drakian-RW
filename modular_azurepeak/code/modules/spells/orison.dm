@@ -448,7 +448,7 @@
 			var/list/water_contents = list(/datum/reagent/water/cursed = water_qty)
 			if(user.patron.undead_hater == TRUE)
 				water_contents = list(/datum/reagent/water/blessed = water_qty)
-			
+
 			if(istype(user.patron, /datum/patron/divine/pestra))
 				if(istype(user.rmb_intent, /datum/rmb_intent/weak)|| holy_skill < SKILL_LEVEL_APPRENTICE)
 					water_contents = list(/datum/reagent/water/blessed = water_qty)

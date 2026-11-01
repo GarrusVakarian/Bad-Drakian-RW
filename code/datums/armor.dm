@@ -33,7 +33,7 @@
 	src.acid = acid
 	src.magic = magic
 	src.bullet = bullet
-	
+
 	tag = ARMORID
 
 /datum/armor/proc/modifyRating(blunt = 0, slash = 0, stab = 0, piercing = 0, fire = 0, acid = 0, magic = 0, bullet = 0)

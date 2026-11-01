@@ -20,7 +20,7 @@
 		STATKEY_STR = 2,
 		STATKEY_SPD = -1
 	)
-	
+
 	subclass_skills = list(
 		/datum/skill/combat/swords = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/maces = SKILL_LEVEL_JOURNEYMAN,

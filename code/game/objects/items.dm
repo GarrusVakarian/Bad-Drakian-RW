@@ -2101,7 +2101,11 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/try_salvage(mob/living/user, time_skill, fail_skill)
 	if(!sewrepair || !salvage_result)
 		return FALSE
-	if(!do_after(user, 70 - time_skill * 10, target = user))
+	if(!user || QDELETED(user))
+		return FALSE
+	if(!do_after(user, max(1, 70 - time_skill * 10), target = src))
+		return TRUE
+	if(QDELETED(src) || QDELETED(user) || !user.Adjacent(src) || !sewrepair || !salvage_result)
 		return TRUE
 	var/turf/T = get_turf(src)
 	if(fiber_salvage)

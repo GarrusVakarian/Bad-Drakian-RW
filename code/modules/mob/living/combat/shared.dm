@@ -1,5 +1,5 @@
 /mob/living/proc/ancestor_reroll(prob2defend)
-	if(!HAS_TRAIT(src, TRAIT_ANCESTOR_GUARDIAN) || mob_timers["ancestor_reroll"] == GLOB.dayspassed)
+	if(!HAS_TRAIT(src, TRAIT_ANCESTOR_GUARDIAN) || (("ancestor_reroll" in mob_timers) && mob_timers["ancestor_reroll"] == GLOB.dayspassed))
 		return FALSE
 	mob_timers["ancestor_reroll"] = GLOB.dayspassed
 	if(!prob(prob2defend))

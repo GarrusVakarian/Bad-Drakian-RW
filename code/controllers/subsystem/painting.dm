@@ -47,10 +47,25 @@ SUBSYSTEM_DEF(paintings)
 			return FALSE
 
 	var/image_path = archive.get_image_path(file_name)
-	fdel(image_path)
-	if(!fcopy(painting, image_path))
+	var/staged_image = "[image_path].tmp"
+	var/backup_image = "[image_path].bak"
+	fdel(staged_image)
+	fdel(backup_image)
+	var/had_image = fexists(image_path)
+	if(!fcopy(painting, staged_image) || (had_image && !fcopy(image_path, backup_image)))
+		fdel(staged_image)
 		player_archive_feedback(user, "The archive could not store this painting.")
 		return FALSE
+	if(!fcopy(staged_image, image_path))
+		if(had_image)
+			fcopy(backup_image, image_path)
+		else
+			fdel(image_path)
+		fdel(staged_image)
+		fdel(backup_image)
+		player_archive_feedback(user, "The archive could not store this painting.")
+		return FALSE
+	fdel(staged_image)
 	var/list/contents = list(
 		"painting_title" = "[painting_title]",
 		"author" = "[canvas.author]",
@@ -58,7 +73,14 @@ SUBSYSTEM_DEF(paintings)
 		"canvas_size" = canvas.canvas_size,
 		"ic_date" = get_ic_date_short_as_string(),
 	)
-	return archive.add_entry(file_name, contents, user)
+	var/saved = archive.add_entry(file_name, contents, user)
+	if(!saved)
+		if(had_image)
+			fcopy(backup_image, image_path)
+		else
+			fdel(image_path)
+	fdel(backup_image)
+	return saved
 
 /// Reserves a random archived painting of the given size that has not been hung this round. Returns its filename, or null if there are none left.
 /datum/controller/subsystem/paintings/proc/claim_random_painting(canvas_size)

@@ -33,10 +33,13 @@
 	return player_archive_display_text(user?.real_name)
 
 /proc/write_player_archive_file(path, list/contents)
-	fdel(path)
-	if(!text2file(json_encode(contents), path))
+	var/staged_path = "[path].tmp"
+	fdel(staged_path)
+	if(!text2file(json_encode(contents), staged_path) || !fcopy(staged_path, path))
+		fdel(staged_path)
 		message_admins("Unable to save archive file [path].")
 		return FALSE
+	fdel(staged_path)
 	return TRUE
 
 /// Returns the archive of the given kind, either PLAYER_ARCHIVE_BOOKS or PLAYER_ARCHIVE_PAINTINGS.

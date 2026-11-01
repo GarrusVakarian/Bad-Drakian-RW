@@ -88,7 +88,7 @@
 	firefuel = 15 MINUTES
 	smeltresult = /obj/item/rogueore/coal/charcoal
 	sellprice = 1
-	
+
 /obj/item/rogueore/cinnabar
 	name = "cinnabar"
 	desc = "Red gems that contain the essence of quicksilver."

@@ -501,7 +501,7 @@
 	var/newforce = get_complex_damage(I, user, blade_dulling)
 	if(isclothing(src) || istype(src, /obj/item/rogueweapon))
 		newforce = min(newforce, 5)
-	newforce *= I.demolition_mod
+	newforce *= isnull(user.used_intent.demolition_mod) ? I.demolition_mod : user.used_intent.demolition_mod
 	if(!newforce)
 		testing("dam33")
 		return 0

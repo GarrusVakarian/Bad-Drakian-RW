@@ -86,6 +86,7 @@ SUBSYSTEM_DEF(librarian)
 		_book_titles_contents -= "[book_title]"
 		fdel("data/player_generated_books/_book_titles.json")
 		text2file(json_encode(_book_titles_contents), "data/player_generated_books/_book_titles.json")
+		archive?.load_entries()
 		return TRUE
 	else
 		message_admins("!!! _book_titles.json no longer exists, previous book title list has been lost. !!!")

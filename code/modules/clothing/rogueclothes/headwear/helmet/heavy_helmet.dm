@@ -257,7 +257,7 @@
 	icon_state = "gildeddrowhelm"
 	adjustable = CAN_CADJUST
 	emote_environment = 3
-	body_parts_covered = FULL_HEAD
+	body_parts_covered = HEAD|EARS|HAIR|NOSE|EYES|MOUTH
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDESNOUT
 	flags_cover = HEADCOVERSEYES
 	body_parts_covered = HEAD|EARS|HAIR|NOSE|EYES|MOUTH

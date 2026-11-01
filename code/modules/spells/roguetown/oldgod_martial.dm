@@ -308,7 +308,7 @@ Given the nature of Psydon, two of these are INTENDED to be refluffed Tennite sp
 	hitsound = 'sound/combat/hits/hi_bolt (1).ogg'
 	speed = 0.3
 	npc_simple_damage_mult = 7
-	
+
 
 /obj/projectile/bullet/reusable/heavy_bolt/lux/on_hit(target)
 	. = ..()
@@ -357,7 +357,7 @@ Given the nature of Psydon, two of these are INTENDED to be refluffed Tennite sp
 				visible_message(span_warning("[M] is engulfed in flames originating from [src]!"))
 				M.apply_damage(75, BRUTE, spread_damage = TRUE)
 				M.apply_damage(25, BURN, spread_damage = TRUE)
-		
+
 	for(var/turf/open/visual in range(radius, fallzone))
 		var/obj/effect/temp_visual/luxturf/luxspread = new /obj/effect/temp_visual/luxturf(visual)
 		var/datum/effect_system/smoke_spread/S = new /datum/effect_system/smoke_spread/fast // SMOKE EFFECT

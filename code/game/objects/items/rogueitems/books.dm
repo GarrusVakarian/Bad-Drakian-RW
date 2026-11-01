@@ -823,3 +823,7 @@ GLOBAL_LIST_INIT(player_book_categories, list(
 		var/list/verses = world.file2list("strings/zizobibble.txt")
 		m = pick(verses)
 		user.say(m)
+
+// Compatibility for existing maps using the old Xylix book path.
+/obj/item/book/rogue/xylix
+	parent_type = /obj/item/book/rogue/secret/xylix

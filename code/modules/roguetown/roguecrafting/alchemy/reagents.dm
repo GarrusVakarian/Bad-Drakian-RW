@@ -319,7 +319,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	if(!ishuman(M))
 		return ..()
 	var/mob/living/carbon/human/H = M
-	
+
 	var/already_zombied= FALSE
 	var/datum/status_effect/zombie_infection/infection = H.has_status_effect(/datum/status_effect/zombie_infection)
 	if(infection)
@@ -336,9 +336,10 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 		var/datum/antagonist/zombie/Z = H.mind?.has_antag_datum(/datum/antagonist/zombie)
 		if(Z)
 			Z.wake_zombie(TRUE)
-		
-	M.reagents.remove_reagent(src, 1000000000000000)
-	return ..()
+
+	. = ..()
+	if(!QDELETED(M))
+		M.reagents?.remove_reagent(type, volume)
 
 /datum/reagent/bloodacid // Quietus Poison for Vampires
 	name = "Vitae Acid"

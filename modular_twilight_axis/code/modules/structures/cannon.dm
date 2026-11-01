@@ -228,7 +228,7 @@
 	damage = 110
 	damage_type = BRUTE
 	flag = "piercing"
-	armor_penetration = PEN_BSTEEL
+	armor_penetration = 100 // Maximum penetration in BD's percentage armor system.
 	speed = 2.5
 	woundclass = BCLASS_PIERCE
 	embedchance = 100
@@ -265,7 +265,7 @@
 /obj/structure/cannon/Initialize(mapload)
 	. = ..()
 	dir = NORTH
-	update_icon() 
+	update_icon()
 
 /obj/structure/cannon/Destroy()
 	if(bullet_loaded)
@@ -479,7 +479,7 @@
 		powder.p_x = 16
 		powder.p_y = 16
 		powder.fire()
-	
+
 	qdel(bullet_loaded)
 	bullet_loaded = null
 	powder_loaded = FALSE

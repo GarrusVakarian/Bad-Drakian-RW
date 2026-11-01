@@ -46,4 +46,3 @@
 /obj/item/reagent_containers/lux/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/construct_refueling, 1000, 'sound/magic/cosmic_expansion.ogg')
-

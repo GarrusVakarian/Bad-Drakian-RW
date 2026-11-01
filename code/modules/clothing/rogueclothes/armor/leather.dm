@@ -91,7 +91,7 @@
 /obj/item/clothing/suit/roguetown/armor/leather/studded/warden
 	name = "forester's armor"
 	desc = "A hardened leather harness with a large pauldron worn over a maille coat, associated with the wardens."
-	body_parts_covered = COVERAGE_TORSO
+	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	icon = 'icons/roguetown/clothing/special/warden.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/warden.dmi'
 	icon_state = "forestleather"

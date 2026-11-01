@@ -5,7 +5,7 @@
 /datum/component/construct_refueling/Initialize(amount = 250, sound = 'sound/items/flint.ogg')
 	if(!isitem(parent))
 		return COMPONENT_INCOMPATIBLE
-		
+
 	energy_amount = amount
 	fuel_sound = sound
 
@@ -28,7 +28,7 @@
 		user.visible_message(span_notice("[user] attempts to press [source] to [target]."), span_notice("I attempt to press [source] to [target]."))
 		if(!do_mob(user, target, 3 SECONDS))
 			return
-			
+
 		if(!try_add_energy(target))
 			return
 
