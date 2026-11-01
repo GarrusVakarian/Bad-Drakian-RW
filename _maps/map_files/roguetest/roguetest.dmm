@@ -162,6 +162,10 @@
 "ej" = (
 /turf/closed/mineral/random/rogue/med,
 /area/rogue/outdoors/rtfield)
+"er" = (
+/obj/machinery/printingpress,
+/turf/open/floor/rogue/tile/harem,
+/area/rogue/indoors)
 "eC" = (
 /obj/machinery/light/rogue/candle/l,
 /turf/open/floor/rogue/ruinedwood/spiral,
@@ -319,6 +323,13 @@
 "lS" = (
 /mob/living/simple_animal/hostile/retaliate/rogue/cow,
 /turf/open/floor/rogue/hay,
+/area/rogue/indoors)
+"lW" = (
+/obj/structure/stairs{
+	dir = 8
+	},
+/obj/item/roguemachine/mastermail,
+/turf/open/floor/rogue/ruinedwood/herringbone,
 /area/rogue/indoors)
 "lY" = (
 /obj/structure/fluff/railing/border{
@@ -623,6 +634,10 @@
 "sJ" = (
 /obj/structure/roguewindow,
 /turf/open/floor/rogue/blocks/newstone/alt,
+/area/rogue/indoors)
+"ta" = (
+/obj/item/canvas,
+/turf/open/floor/rogue/tile/harem,
 /area/rogue/indoors)
 "tc" = (
 /obj/machinery/light/rogue/candle/l,
@@ -990,6 +1005,10 @@
 /obj/item/clothing/ring/signet,
 /turf/open/floor/rogue/tile/harem,
 /area/rogue/indoors)
+"BG" = (
+/obj/item/canvas/random_painting,
+/turf/closed/wall/mineral/rogue/decowood/vert,
+/area/rogue/indoors)
 "BH" = (
 /obj/item/natural/clay,
 /obj/item/natural/clay,
@@ -1228,6 +1247,10 @@
 /obj/item/rogueweapon/mace/woodclub,
 /obj/item/rogueweapon/mace/woodclub,
 /turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors)
+"Ko" = (
+/obj/structure/bookcase/random,
+/turf/open/floor/rogue/tile/harem,
 /area/rogue/indoors)
 "Kx" = (
 /obj/structure/flora/roguegrass,
@@ -1882,8 +1905,8 @@ Nb
 aF
 zo
 WY
-zo
-zo
+BG
+Ko
 Ey
 tc
 Ey
@@ -1988,7 +2011,7 @@ zb
 rp
 cU
 mx
-Ey
+ta
 zo
 BX
 Ey
@@ -2038,8 +2061,8 @@ Ey
 Ey
 zo
 DG
-zo
-zo
+BG
+er
 Ey
 zo
 KJ
@@ -2086,7 +2109,7 @@ dB
 AO
 zo
 zo
-tW
+lW
 tW
 zo
 zo
