@@ -138,6 +138,6 @@
 	blade_class = BCLASS_CUT
 	hitsound = "genchop"
 	chargetime = 20
-	penfactor = PEN_LIGHT
+	penfactor = PEN_NONE
 	swingdelay = 3
 	item_d_type = "stab"
