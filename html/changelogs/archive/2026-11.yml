@@ -1,3 +1,7 @@
 2026-11-01:
+  _Rarity:
+  - bugfix: Fixed Undo Last Change failing in character customization.
+  - qol: Added scene-focused roleplay guidance to the Verevolf greeting. They'd rather
+      fuck you than kill you.
   mypingishuge:
   - qol: 'Added item icons beside examine names. Ported from Ratwood #3231.'
