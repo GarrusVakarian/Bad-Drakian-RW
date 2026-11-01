@@ -1,4 +1,6 @@
 2026-11-01:
+  GarrusVakarian:
+  - rscadd: Added a new type of booze (requested)
   _Rarity:
   - bugfix: Fixed Undo Last Change failing in character customization.
   - qol: Added scene-focused roleplay guidance to the Verevolf greeting. They'd rather
