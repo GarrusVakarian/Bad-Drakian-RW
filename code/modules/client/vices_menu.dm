@@ -299,7 +299,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	)
 	
 	// Add to history
-	customization_history.Insert(1, snapshot)
+	customization_history.Insert(1, list(snapshot))
 	
 	// Keep only last 10 entries
 	if(customization_history.len > 10)
