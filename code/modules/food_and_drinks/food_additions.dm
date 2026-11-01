@@ -27,9 +27,13 @@
 /obj/item/reagent_containers/pre_attack(atom/target, mob/living/user, params)
 	if(..())
 		return TRUE
-	if(!istype(user) || !istype(target, /obj/item/reagent_containers/food/snacks))
+	if(!istype(user))
 		return FALSE
 	var/is_powder = istype(src, /obj/item/reagent_containers/powder) || istype(src, /obj/item/reagent_containers/food/snacks/allspice)
+	if(is_powder && user.used_intent?.type == /datum/intent/sprinkle && istype(target, /obj/item/reagent_containers/glass))
+		return sprinkle_into_drink(target, user)
+	if(!istype(target, /obj/item/reagent_containers/food/snacks))
+		return FALSE
 	if(!(is_powder && user.used_intent?.type == /datum/intent/sprinkle) && !(istype(src, /obj/item/reagent_containers/glass) && user.used_intent?.type == INTENT_POUR))
 		return FALSE
 	var/obj/item/reagent_containers/food/snacks/food = target
@@ -65,8 +69,45 @@
 
 /obj/item/reagent_containers/powder/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use Sprinkle intent on solid food to add powder. Food can absorb up to five drams of liquid and powder combined.")
+	. += span_info("Use Sprinkle intent on solid food or an open drink container to add powder. Food can absorb five drams in total; drink containers accept up to five drams per application, space permitting.")
 
 /obj/item/reagent_containers/food/snacks/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Pour liquid or sprinkle powder onto this food to add up to five drams in total.")
+
+/obj/item/reagent_containers/proc/can_sprinkle_into_drink(mob/living/user, obj/item/reagent_containers/glass/vessel)
+	if(!istype(user) || QDELETED(user) || !istype(vessel) || QDELETED(vessel) || vessel == src || QDELETED(src))
+		return FALSE
+	if(loc != user || user.get_active_held_item() != src || !user.Adjacent(vessel))
+		return FALSE
+	if(!reagents?.total_volume || vessel.closed || !vessel.is_open_container())
+		return FALSE
+	return (istype(src, /obj/item/reagent_containers/powder) || istype(src, /obj/item/reagent_containers/food/snacks/allspice)) && user.used_intent?.type == /datum/intent/sprinkle
+
+/obj/item/reagent_containers/proc/sprinkle_into_drink(obj/item/reagent_containers/glass/vessel, mob/living/user)
+	if(!can_sprinkle_into_drink(user, vessel))
+		if(istype(user) && !QDELETED(user))
+			to_chat(user, span_warning("I need powder in hand and an open vessel within reach."))
+		return TRUE
+	if(vessel.reagents.total_volume >= vessel.reagents.maximum_volume)
+		to_chat(user, span_warning("[vessel] is full."))
+		return TRUE
+	var/atom/vessel_location = vessel.loc
+	to_chat(user, span_notice("I start sprinkling [src] into [vessel]..."))
+	if(!do_after(user, 2 SECONDS, target = vessel))
+		return TRUE
+	if(!can_sprinkle_into_drink(user, vessel) || vessel.loc != vessel_location)
+		return TRUE
+	var/amount = min(5, reagents.total_volume, vessel.reagents.maximum_volume - vessel.reagents.total_volume)
+	if(amount <= 0)
+		return TRUE
+	var/transferred = reagents.trans_to(vessel, amount, transfered_by = user)
+	if(transferred && !QDELETED(user) && !QDELETED(src) && !QDELETED(vessel))
+		user.visible_message(span_notice("[user] sprinkles [src] into [vessel]."), span_notice("I sprinkle [src] into [vessel]."))
+	if(!QDELETED(src) && reagents && !reagents.total_volume)
+		qdel(src)
+	return TRUE
+
+/obj/item/reagent_containers/glass/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Powders and allspice can be sprinkled into this vessel while it is open. Each application adds up to five drams, space permitting.")
