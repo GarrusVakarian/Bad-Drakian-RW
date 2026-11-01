@@ -36,6 +36,10 @@
 /datum/intent/axe/cut/battle
 	penfactor = 25
 
+/datum/intent/axe/chop/long/woodcutter
+	reach = 2
+	demolition_mod = 3
+
 /datum/intent/axe/bash
 	name = "bash"
 	icon_state = "inbash"
@@ -367,7 +371,7 @@
 	desc = "A long-handled axe with a carved grip, made of high quality wood. Perfect for those in the lumber trade."
 	max_integrity = 300		//100 higher than normal; basically it's main difference.
 	possible_item_intents = list(/datum/intent/axe/cut,/datum/intent/axe/chop, /datum/intent/axe/bash, /datum/intent/sword/peel)
-	gripped_intents = list(/datum/intent/axe/cut/long, /datum/intent/axe/chop/long, /datum/intent/axe/bash, /datum/intent/sword/peel)
+	gripped_intents = list(/datum/intent/axe/cut/long, /datum/intent/axe/chop/long/woodcutter, /datum/intent/axe/bash, /datum/intent/sword/peel)
 	wlength = WLENGTH_LONG
 	w_class = WEIGHT_CLASS_BULKY
 	demolition_mod = 2.5			//Base is 1.25, so 25% extra. Helps w/ caprentry and building kinda.
