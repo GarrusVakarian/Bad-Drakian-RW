@@ -943,7 +943,7 @@
 	item_state = "bone_dagger"
 	throwforce = 28
 	max_integrity = 100
-	armor_penetration = PEN_HEAVY
+	armor_penetration = PEN_MEDIUM
 	icon_state = "throw_knifes"
 	embedding = list("embed_chance" = 30, "embedded_pain_multiplier" = 4, "embedded_fall_chance" = 5, "embedded_ignore_throwspeed_threshold" = TRUE)
 	picklvl = 0.9
@@ -969,7 +969,7 @@
 	item_state = "bone_dagger"
 	force = 10
 	throwforce = 20
-	armor_penetration = PEN_HEAVY
+	armor_penetration = PEN_MEDIUM
 	max_integrity = 150
 	wdefense = 3
 	icon_state = "throw_knifesil"
@@ -994,7 +994,7 @@
 	item_state = "bone_dagger"
 	force = 10
 	throwforce = 20
-	armor_penetration = PEN_HEAVY
+	armor_penetration = PEN_MEDIUM
 	max_integrity = 150
 	wdefense = 3
 	icon_state = "throw_knifep"

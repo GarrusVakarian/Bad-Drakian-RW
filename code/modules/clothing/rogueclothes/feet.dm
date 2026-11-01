@@ -234,7 +234,6 @@
 	gender = PLURAL
 	icon_state = "shalal"
 	item_state = "shalal"
-	armor = ARMOR_PADDED_BAD
 	heat_protection = FOOT_LEFT | FOOT_RIGHT
 	max_heat_protection_temperature = BODYTEMP_HEAT_LEVEL_ONE_MAX
 

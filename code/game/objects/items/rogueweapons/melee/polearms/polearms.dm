@@ -1201,7 +1201,7 @@
 	icon = 'icons/roguetown/weapons/polearms64.dmi'
 	icon_state = "bronzespear"
 	smeltresult = /obj/item/ingot/bronze
-	armor_penetration = PEN_MEDIUM //In-between a spear and javelin.
+	armor_penetration = PEN_LIGHT //In-between a spear and javelin.
 	embedding = list("embedded_pain_multiplier" = 4, "embed_chance" = 33, "embedded_fall_chance" = 2)
 	max_blade_int = 225
 	max_integrity = 155

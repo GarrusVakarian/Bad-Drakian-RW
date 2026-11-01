@@ -163,7 +163,7 @@
 	attack_verb = list("bites, chomps")
 	animname = "cut"
 	hitsound = "genslash"
-	penfactor = PEN_LIGHT
+	penfactor = PEN_NONE
 	miss_text = "slashes the air with its fangs!"
 	miss_sound = "bluntswoosh"
 	item_d_type = "slash"
