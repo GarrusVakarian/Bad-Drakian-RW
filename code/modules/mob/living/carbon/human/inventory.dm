@@ -511,5 +511,8 @@
 	var/obj/item/rogueweapon/scabbard/scab = use_thing ? use_thing : equipped
 	if(!istype(scab))
 		return FALSE
+	// Unrelated items should still enter the containing bag normally.
+	if(use_thing && thing && !scab.accepts_weapon(thing))
+		return FALSE
 	return scab.quickdraw_interact(src, thing)
 
