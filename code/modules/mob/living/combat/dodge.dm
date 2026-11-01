@@ -205,13 +205,13 @@
 		if((!defender_dualw && !attacker_dualw) || (defender_dualw && attacker_dualw)) //They cancel each other out
 			if(attacker_feedback)
 				attacker_feedback = "Advantage cancelled out!"
-			if(prob(prob2defend))
+			if((prob(prob2defend) || ancestor_reroll(prob2defend)))
 				dodge_status = TRUE
 		else if(attacker_dualw)
-			if(prob(prob2defend) && extraattroll)
+			if((prob(prob2defend) || ancestor_reroll(prob2defend)) && extraattroll)
 				dodge_status = TRUE
 		else if(defender_dualw)
-			if(prob(prob2defend) && extradefroll)
+			if((prob(prob2defend) || ancestor_reroll(prob2defend)) && extradefroll)
 				dodge_status = TRUE
 
 		if(attacker_feedback)

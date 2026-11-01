@@ -28,6 +28,8 @@
 	. = ..()
 	if(!. || QDELETED(src))
 		return
+	if(HAS_TRAIT(new_owner, TRAIT_DEADITE_RESISTANCE))
+		time_to_transform *= 2
 	transformation_time = world.time + time_to_transform
 	message_cooldown_time = world.time + message_cooldown_amount
 	infected_wake = from_infected_wake
