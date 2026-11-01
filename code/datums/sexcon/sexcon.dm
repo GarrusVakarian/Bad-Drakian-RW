@@ -539,9 +539,9 @@
 				grant_oral_intake_nutrition(splashed_user, repeat_intake = TRUE)
 		if(oral && splashed_user.reagents) //cum fills hunger if taking it orally
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
-				splashed_user.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume())
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume())
 			else
-				splashed_user.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/femcum, 2)
 			apply_cum_consumed_buff(splashed_user)
 		if(!oral && user?.dna?.species?.id == "gnoll")
 			splashed_user.has_gnoll_scent_this_round = TRUE
@@ -580,6 +580,17 @@
 		target.apply_status_effect(/datum/status_effect/creampie_leak/long, orifice)
 	else
 		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
+
+/// Announce the incoming flavor directly so every successful intake has feedback.
+/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount)
+	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
+		return FALSE
+	if(!consumer.reagents.add_reagent(reagent_type, amount))
+		return FALSE
+	if(consumer.get_taste_sensitivity() <= 100)
+		var/datum/reagent/fluid = reagent_type
+		to_chat(consumer, span_info("I can taste [initial(fluid.taste_description)]."))
+	return TRUE
 
 /// Return the actual nutrition restored; repeated intake grants half the normal amount.
 /datum/sex_controller/proc/grant_oral_intake_nutrition(mob/living/carbon/human/consumer, repeat_intake = FALSE)
