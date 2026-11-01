@@ -319,7 +319,7 @@ Given the nature of Psydon, two of these are INTENDED to be refluffed Tennite sp
 	name = "lux projectile"
 	damage = 10//We handle this by way of the on hit below.
 	damage_type = BURN//Maybe
-	armor_penetration = 100//+20 over standard. Doesn't really matter, though.
+	armor_penetration = PEN_BSTEEL//+20 over standard. Doesn't really matter, though.
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/heavy_bolt/lux
 	hitsound = 'sound/combat/hits/hi_bolt (1).ogg'
 	speed = 0.3

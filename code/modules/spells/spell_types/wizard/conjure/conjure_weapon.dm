@@ -58,7 +58,7 @@
 		"Steel Warhammer" = /obj/item/rogueweapon/mace/warhammer/steel,
 		"Steel Flail" = /obj/item/rogueweapon/flail/sflail,
 		"Whip" = /obj/item/rogueweapon/whip,
-		"Steel Knuckles" = /obj/item/rogueweapon/knuckles,
+		"Steel Knuckles" = /obj/item/clothing/gloves/roguetown/knuckles,
 		"Hound Claws" = /obj/item/rogueweapon/handclaw,
 		"Kanabo" = /obj/item/rogueweapon/mace/goden/kanabo,
 		"Kodachi" = /obj/item/rogueweapon/sword/short/kazengun,

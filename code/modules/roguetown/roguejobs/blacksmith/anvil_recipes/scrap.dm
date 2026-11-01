@@ -129,7 +129,7 @@
 
 /datum/anvil_recipe/weapons/scrap/knuckles
 	name = "Knuckles, Scrap"
-	created_item = /obj/item/rogueweapon/knuckles/ancient/decrepit/scrap
+	created_item = /obj/item/clothing/gloves/roguetown/knuckles/decrepit/scrap
 	display_category = ITEM_CAT_WEAPONS_MACES
 
 /datum/anvil_recipe/weapons/scrap/shortsword

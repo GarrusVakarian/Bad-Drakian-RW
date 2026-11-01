@@ -247,7 +247,7 @@
 	smeltresult = /obj/item/ingot/scrap
 	sellprice = SCRAP_SELLPRICE
 
-/obj/item/rogueweapon/knuckles/ancient/decrepit/scrap
+/obj/item/clothing/gloves/roguetown/knuckles/decrepit/scrap
 	name = "scrap knuckles"
 	desc = "A knuckles hammered out of scrap slag, likely by some apprentice's hand. Pitted, rust-flecked and brittle - good enough to swing, and good enough to learn on."
 	icon_state = "scrap_aknuckle"
