@@ -42,8 +42,8 @@
 /mob/living/carbon/human/proc/finalize_pickpocket_steal(mob/living/carbon/human/victim, obj/item/picked, exp_to_gain)
 	put_in_active_hand(picked)
 	to_chat(src, span_green("I stole [picked]!"))
-	victim.log_message("has had \the [picked] stolen by [key_name(src)]", LOG_ATTACK, color="white", meta = list(LOG_META_ATTACKER = ckey))
-	log_message("has stolen \the [picked] from [key_name(victim)]", LOG_ATTACK, color="white", meta = list(LOG_META_TARGET = victim.ckey))
+	victim.log_message("has had \the [picked] stolen by [key_name(src)]", LOG_ATTACK, color="white")
+	log_message("has stolen \the [picked] from [key_name(victim)]", LOG_ATTACK, color="white")
 	if(victim.client && victim.stat != DEAD)
 		SEND_SIGNAL(src, COMSIG_ITEM_STOLEN, victim)
 		record_featured_stat(FEATURED_STATS_THIEVES, src)
@@ -149,6 +149,12 @@
 	return
 
 /datum/pickpocket_session/proc/attempt_lift(obj/item/wanted)
+	if(QDELETED(thief) || QDELETED(victim) || QDELETED(container) || QDELETED(wanted) || !STR)
+		qdel(src)
+		return
+	if(!thief.client || thief.active_storage != STR || !thief.Adjacent(victim) || thief.incapacitated() || victim.cmode || !(wanted in container.contents))
+		qdel(src)
+		return
 	if(thief.get_active_held_item())
 		to_chat(thief, span_warning("My hand is full."))
 		qdel(src)
@@ -163,17 +169,11 @@
 		thief.finalize_pickpocket_steal(victim, wanted, exp_to_gain)
 	qdel(src)
 
-/datum/intent/steal
-	name = "steal"
-	dodgeable_intent = FALSE
-	parriable_intent = FALSE
-	chargedrain = 0
-	chargetime = 0
-	noaa = TRUE
-
-/datum/intent/steal/on_mmb(mob/living/carbon/human/victim, mob/living/carbon/human/thief, params)
-	if(!ishuman(victim) || !ishuman(thief))
+/// Triggered by RMB in combat mode with the weak rmb intent.
+/mob/living/carbon/human/proc/attempt_steal(mob/living/carbon/human/thief, mob/living/carbon/human/victim)
+	if(!ishuman(victim) || !ishuman(thief) || thief == victim)
 		return
+	var/clickcd = CLICK_CD_MELEE
 	var/list/stealmods = list("chance_add" = 0, "range_add" = 0)
 	SEND_SIGNAL(thief, COMSIG_HUMAN_PRE_STEAL, stealmods)
 	var/range_add = stealmods["range_add"]
@@ -182,7 +182,7 @@
 	var/steal_radius = 1 + range_add
 	var/list/stealablezones = list("chest", "neck", "groin", "r_hand", "l_hand", "r_leg", "l_leg", "l_arm", "r_arm")
 	// Pickpocketting checks
-	if(get_dist(thief, victim) > steal_radius)
+	if(!thief.Adjacent(victim) || get_dist(thief, victim) > steal_radius)
 		to_chat(thief, span_warning("[victim] is too far away."))
 		return
 	if(thief.get_active_held_item())
@@ -207,7 +207,9 @@
 	if(!do_after(thief, 1 SECONDS, target = victim, progress = 0))
 		return
 	// Pickpocketting checks after the channel in case something changed
-	if(get_dist(thief, victim) > steal_radius)
+	if(QDELETED(thief) || QDELETED(victim))
+		return
+	if(!thief.Adjacent(victim) || get_dist(thief, victim) > steal_radius)
 		to_chat(thief, span_warning("[victim] is too far away."))
 		return
 	if(thief.get_active_held_item())
@@ -219,8 +221,6 @@
 	if(!(thief.zone_selected in stealablezones))
 		to_chat(thief, span_warning("What am I going to steal from there?"))
 		return
-
-	thief.break_invisibility()
 
 	// No lifting from the front - it has to be from behind, or off someone who can't see at all.
 	var/victim_unaware = victim.IsUnconscious() || victim.eyesclosed || victim.eye_blind || victim.eye_blurry || !(victim.mobility_flags & MOBILITY_STAND)
@@ -240,8 +240,8 @@
 	var/margin = thief_score - victim_score
 
 	if(margin < 0)
-		victim.log_message("has had an attempted pickpocket by [key_name(thief)]", LOG_ATTACK, color="white", meta = list(LOG_META_ATTACKER = thief.ckey))
-		thief.log_message("has attempted to pickpocket [key_name(victim)]", LOG_ATTACK, color="white", meta = list(LOG_META_TARGET = victim.ckey))
+		victim.log_message("has had an attempted pickpocket by [key_name(thief)]", LOG_ATTACK, color="white")
+		thief.log_message("has attempted to pickpocket [key_name(victim)]", LOG_ATTACK, color="white")
 		if(margin < PICKPOCKET_FUMBLE_FLOOR)
 			thief.visible_message(span_danger("[thief] is caught rummaging through [victim]'s belongings!"))
 			victim.balloon_alert(victim, "thief!")
