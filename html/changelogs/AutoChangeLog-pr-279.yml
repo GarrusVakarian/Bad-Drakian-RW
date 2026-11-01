@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Added item icons beside examine names. Ported from Ratwood #3231."
