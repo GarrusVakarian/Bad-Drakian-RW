@@ -529,17 +529,15 @@
 			splashed_user.apply_status_effect(status_type)
 			if(oral)
 				splashed_user.visible_message(span_love("[splashed_user] takes a load down their throat!"), span_love("I take a load down my throat!"))
-				grant_oral_intake_nutrition(splashed_user)
 			else
 				splashed_user.visible_message(span_love("[splashed_user] takes a load inside them!"), span_love("I take a load inside me!"))
 		else
 			splashed_type.refresh_cum()
 			if(oral)
 				to_chat(splashed_user, span_love("I take another load down my throat..."))
-				grant_oral_intake_nutrition(splashed_user, repeat_intake = TRUE)
 		if(oral && splashed_user.reagents) //cum fills hunger if taking it orally
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
-				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume())
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume(), repeat_intake = !!splashed_type)
 			else
 				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/femcum, 2)
 			apply_cum_consumed_buff(splashed_user)
@@ -582,9 +580,13 @@
 		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
-/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount)
+/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)
 	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
 		return FALSE
+	if(!isnum(amount) || amount <= 0)
+		return FALSE
+	if(reagent_type == /datum/reagent/erpjuice/cum)
+		amount += get_oral_intake_extra_volume(repeat_intake)
 	if(!consumer.reagents.add_reagent(reagent_type, amount))
 		return FALSE
 	if(consumer.get_taste_sensitivity() <= 100)
@@ -592,27 +594,25 @@
 		to_chat(consumer, span_info("I can taste [initial(fluid.taste_description)]."))
 	return TRUE
 
-/// Return the actual nutrition restored; repeated intake grants half the normal amount.
-/datum/sex_controller/proc/grant_oral_intake_nutrition(mob/living/carbon/human/consumer, repeat_intake = FALSE)
-	if(!ishuman(user) || !ishuman(consumer) || QDELETED(user) || QDELETED(consumer) || HAS_TRAIT(consumer, TRAIT_HEMOPHAGE))
+/// Extra volume for oral intake only; repeated intake grants half the amount.
+/datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
+	if(!ishuman(user) || QDELETED(user))
 		return 0
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	if(!istype(testes) || !isnum(testes.ball_size))
 		return 0
-	var/nutrition_before = consumer.nutrition
-	var/nutrition_gain = 50
+	var/extra_volume = 10
 	switch(clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
 		if(MIN_TESTICLES_SIZE)
-			nutrition_gain = 25
+			extra_volume = 5
 		if(MAX_TESTICLES_SIZE)
-			nutrition_gain = 200
+			extra_volume = 30
 	var/obj/item/bodypart/taur/taur_parts = user.get_taur_tail()
 	if(istype(taur_parts))
-		nutrition_gain *= 1.5
+		extra_volume *= 1.5
 	if(repeat_intake)
-		nutrition_gain *= 0.5
-	consumer.adjust_nutrition(nutrition_gain)
-	return max(0, consumer.nutrition - nutrition_before)
+		extra_volume *= 0.5
+	return extra_volume
 
 /datum/sex_controller/proc/apply_cum_consumed_buff(mob/living/carbon/human/consumer)
 	if(!consumer)
