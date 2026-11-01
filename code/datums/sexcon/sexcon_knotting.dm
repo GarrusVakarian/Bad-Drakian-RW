@@ -461,11 +461,12 @@
 				btm.visible_message(span_love("[btm] takes a load down their throat!"), span_love("I take a load down my throat!"))
 			else
 				facial.refresh_cum()
+				to_chat(btm, span_love("I take another load down my throat..."))
 			if(btm.reagents)
 				if(top.getorganslot(ORGAN_SLOT_PENIS))
-					btm.reagents.add_reagent(/datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume())
+					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume(), repeat_intake = !!facial)
 				else
-					btm.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
+					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/femcum, 2)
 			top.sexcon.apply_cum_consumed_buff(btm)
 			modular_record_collar_receive_event(btm, top)
 	knot_exit(keep_top_status, keep_btm_status)

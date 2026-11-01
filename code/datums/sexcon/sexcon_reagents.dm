@@ -120,4 +120,4 @@
 
 /datum/reagent/erpjuice/femcum
 	description = "A slightly milky fluid, thin and watery in texture."
-	taste_description = "faintly sweet and mineraly"
+	taste_description = "faintly sweet with a mineral flavor"
