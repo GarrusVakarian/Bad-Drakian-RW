@@ -630,6 +630,7 @@ GLOBAL_LIST_EMPTY(custom_fermentation_recipes)
 /obj/item/reagent_containers/glass/bottle/brewing_bottle/brandy_pear
 /obj/item/reagent_containers/glass/bottle/brewing_bottle/valerian_tea
 /obj/item/reagent_containers/glass/bottle/brewing_bottle/calendula_tea
+/obj/item/reagent_containers/glass/bottle/brewing_bottle/rosegoldgin
 
 /obj/structure/fermentation_keg/distiller
 	name = "copper distiller"
