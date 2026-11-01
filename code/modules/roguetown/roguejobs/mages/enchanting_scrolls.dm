@@ -107,7 +107,7 @@ T1 Enchantments below here*/
 /obj/item/enchantmentscroll/basic/holding/attack_obj(obj/item/O, mob/living/user)
 	if(!..())
 		return
-	if(istype(O,/obj/item/storage))
+	if(istype(O, /obj/item/storage) || istype(O, /obj/item/natural/saddle))
 		to_chat(user, span_notice("You open [src] and place [O] within. Moments later, it flashes blue with arcana, and [src] crumbles to dust."))
 		var/magiceffect= new component
 		O.AddComponent(/datum/component/magic_item, magiceffect)
