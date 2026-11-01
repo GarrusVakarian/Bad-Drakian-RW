@@ -101,6 +101,8 @@
 
 /// Called from ejaculate() when climaxing without a partner. Any formed clutch drops out.
 /datum/sex_controller/proc/modular_lay_eggs_on_climax()
+	if(!user.automatic_egg_laying)
+		return
 	var/laid = 0
 	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
 		var/obj/item/organ/egg_organ = user.getorganslot(slot)

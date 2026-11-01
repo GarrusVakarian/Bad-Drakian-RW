@@ -1,5 +1,10 @@
 // Eggs implanted into a host by an ovipositor. They incubate for a while, after which the host
-// can lay them with the Lay Eggs verb. Left too long, the host's body pushes them out on its own.
+// can lay them with the Lay Eggs verb. Left too long, the host's body pushes them out on its own
+// unless automatic egg laying is disabled.
+
+/mob/living/carbon/human
+	/// Whether climax and overdue implanted eggs can cause automatic laying this round.
+	var/automatic_egg_laying = TRUE
 
 /datum/component/implanted_eggs
 	dupe_mode = COMPONENT_DUPE_UNIQUE
@@ -44,6 +49,8 @@
 		announced_ripe = TRUE
 		to_chat(host, span_love("The eggs inside me shift and settle low. They're ready to be laid."))
 		return
+	if(!host.automatic_egg_laying)
+		return
 	for(var/list/egg as anything in ripe)
 		if(world.time >= egg["ripe_at"] + OVI_OVERDUE_TIME)
 			var/laid = lay_ripe_eggs()
@@ -66,6 +73,15 @@
 		return
 	verbs += /mob/living/carbon/human/proc/lay_eggs
 	verbs += /mob/living/carbon/human/proc/check_eggs
+	verbs += /mob/living/carbon/human/proc/toggle_automatic_egg_laying
+
+/mob/living/carbon/human/proc/toggle_automatic_egg_laying()
+	set name = "Automatic Egg Laying"
+	set category = "IC"
+	set desc = "Toggle automatic laying on climax and when implanted eggs become overdue."
+
+	automatic_egg_laying = !automatic_egg_laying
+	to_chat(src, span_notice("Automatic egg laying is now [automatic_egg_laying ? "enabled" : "disabled"]. [automatic_egg_laying ? "Climax and overdue implanted eggs can make me lay automatically." : "I will retain my eggs until I use Lay Eggs."]"))
 
 /mob/living/carbon/human/proc/lay_eggs()
 	set name = "Lay Eggs"
