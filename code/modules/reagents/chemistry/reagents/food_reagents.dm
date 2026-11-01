@@ -143,6 +143,7 @@
 	color = "#835c5c"
 
 /datum/reagent/consumable/sodiumchloride
+	nutriment_factor = 0
 	name = "Table Salt"
 	description = "A salt made of sodium chloride. Commonly used to season food."
 	reagent_state = SOLID
