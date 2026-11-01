@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Ported \"Big Legs\" and \"Big Legs, Stanced\" to taur body customization."
