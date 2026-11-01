@@ -3,5 +3,6 @@
   - bugfix: Fixed Undo Last Change failing in character customization.
   - qol: Added scene-focused roleplay guidance to the Verevolf greeting. They'd rather
       fuck you than kill you.
+  - rscadd: Ported "Big Legs" and "Big Legs, Stanced" to taur body customization.
   mypingishuge:
   - qol: 'Added item icons beside examine names. Ported from Ratwood #3231.'
