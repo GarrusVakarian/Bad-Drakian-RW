@@ -5,6 +5,8 @@
 /mob/living/carbon/human
 	/// Whether climax and overdue implanted eggs can cause automatic laying this round.
 	var/automatic_egg_laying = TRUE
+	/// Maximum total stored eggs to lay at one climax.
+	var/climax_egg_count = OVI_EGG_DEFAULT_CLUTCH
 
 /datum/component/implanted_eggs
 	dupe_mode = COMPONENT_DUPE_UNIQUE
@@ -74,6 +76,18 @@
 	verbs += /mob/living/carbon/human/proc/lay_eggs
 	verbs += /mob/living/carbon/human/proc/check_eggs
 	verbs += /mob/living/carbon/human/proc/toggle_automatic_egg_laying
+	verbs += /mob/living/carbon/human/proc/configure_climax_egg_count
+
+/mob/living/carbon/human/proc/configure_climax_egg_count()
+	set name = "Climax Egg Count"
+	set category = "IC"
+	set desc = "Choose how many stored eggs to lay at climax, from 1 to 6."
+
+	var/count = tgui_input_number(src, "Maximum eggs to lay per climax (1-6). Any remaining eggs stay stored.", "Climax Egg Count", climax_egg_count, max_value = OVI_EGG_MAX_CLUTCH, min_value = 1)
+	if(isnull(count))
+		return
+	climax_egg_count = clamp(round(count), 1, OVI_EGG_MAX_CLUTCH)
+	to_chat(src, span_notice("I will lay up to [climax_egg_count] egg\s at climax when automatic egg laying is enabled."))
 
 /mob/living/carbon/human/proc/toggle_automatic_egg_laying()
 	set name = "Automatic Egg Laying"
