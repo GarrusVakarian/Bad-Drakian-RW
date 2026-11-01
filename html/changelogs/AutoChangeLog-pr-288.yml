@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - rscadd: "Added an Automatic Egg Laying verb to toggle automatic laying. And a Climax Egg Count verb to choose between 1 and 6 eggs per climax."
