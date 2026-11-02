@@ -91,9 +91,9 @@
 		if(!H.sexcon)
 			H.icon_state = "wwolf_m"
 		else if(H.sexcon.arousal >= 20 && H.sexcon.manual_arousal == 1 || H.sexcon.manual_arousal == 4)
-			H.icon_state = "wwolf_m-e"
+			H.icon_state = "wwolf_m"
 		else if(H.sexcon.arousal >= 10 && H.sexcon.manual_arousal == 1 || H.sexcon.manual_arousal == 3)
-			H.icon_state = "wwolf_m-p"
+			H.icon_state = "wwolf_m"
 		else
 			H.icon_state = "wwolf_m"
 	else
