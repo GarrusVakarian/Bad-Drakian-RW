@@ -1,0 +1,5 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - rscadd: "Added body writing. You can use a quill to write on yourself, or on other people. Use soap to wash off body writing."
+  - bugfix: "Fixed an old runtime in branding code."
