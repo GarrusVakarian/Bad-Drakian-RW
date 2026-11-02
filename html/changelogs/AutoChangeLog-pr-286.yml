@@ -1,5 +1,0 @@
-author: "mypingishuge <3 _Rarity"
-delete-after: True
-changes:
-  - rscadd: "Solid food can absorb liquids and sprinkled powders, up to 5u total per item."
-  - bugfix: "Fine and coarse salt contain real, non-nutritious salt instead of flour."

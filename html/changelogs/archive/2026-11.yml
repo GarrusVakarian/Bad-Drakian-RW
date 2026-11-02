@@ -26,3 +26,6 @@
   mypingishuge <3 _Rarity:
   - bugfix: Bag and belt hotkeys draw and return blades in stored sheaths/scabbards
       without pulling their holders out of storage.
+  - rscadd: Solid food can absorb liquids and sprinkled powders, up to 5u total per
+      item.
+  - bugfix: Fine and coarse salt contain real, non-nutritious salt instead of flour.
