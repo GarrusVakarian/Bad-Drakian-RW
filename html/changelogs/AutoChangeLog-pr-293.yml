@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - rscadd: "You can now choose a second deity. It confers no mechanical advantage. You can just throw up their gang sign."
