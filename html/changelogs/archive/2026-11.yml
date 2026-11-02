@@ -19,6 +19,12 @@
   GarrusVakarian:
   - rscadd: You can now choose a second deity. It confers no mechanical advantage.
       You can just throw up their gang sign.
+  - map: A couple of doors in the Smollhill chapel are now locked. The chest is also
+      locked now. The chapel itself remains open.
+  - map: Added a default exit to Necra's domain to Smollhill.
+  - rscadd: Added body writing. You can use a quill to write on yourself, or on other
+      people. Use soap to wash off body writing.
+  - bugfix: Fixed an old runtime in branding code.
   _Rarity:
   - image: "Updated werewolf sprites with Lutowski\u2019s artwork from Azure Peak."
   - qol: Sleeping players reliably receive nearby audible emotes and speech. Get to
