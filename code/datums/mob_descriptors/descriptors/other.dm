@@ -102,7 +102,7 @@
 	if(length(penis.body_writing))
 		body_writing_text = penis.body_writing
 	if(length(body_writing_text))
-		body_written = ", with <span style='font-size:150%;'>[span_purple(body_writing_text)]</span> written on it"
+		body_written = ", with <span style='font-size:150%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
 	var/base_description = "[used_name][branded][body_written]"
 	base_description = append_chastity_genital_note(base_description, H, watcher, ORGAN_SLOT_PENIS)
@@ -169,7 +169,7 @@
 	if(length(testes.body_writing))
 		body_writing_text = testes.body_writing
 	if(length(body_writing_text))
-		body_written = ", with <span style='font-size:125%;'>[span_purple(body_writing_text)]</span> written on it"
+		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
 	var/base_description = "[adjective] pair of balls[branded][body_written]"
 	var/datum/mob_descriptor/pubes/pubes_descriptor = MOB_DESCRIPTOR(/datum/mob_descriptor/pubes)
@@ -245,7 +245,7 @@
 	if(length(vagina.body_writing))
 		body_writing_text = vagina.body_writing
 	if(length(body_writing_text))
-		body_written = ", with <span style='font-size:125%;'>[span_purple(body_writing_text)]</span> written on it"
+		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
 	var/base_description = "a [vagina_type][arousal_modifier][branded][body_written]"
 	base_description = append_chastity_genital_note(base_description, H, watcher, ORGAN_SLOT_VAGINA)
@@ -323,7 +323,7 @@
 	if(length(breasts.body_writing))
 		body_writing_text = breasts.body_writing
 	if(length(body_writing_text))
-		body_written = ", with <span style='font-size:125%;'>[span_purple(body_writing_text)]</span> written on them"
+		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on them"
 
 	if(breasts.breast_size == 0)
 		return "[adjective][branded][body_written]"

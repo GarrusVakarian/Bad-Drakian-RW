@@ -878,31 +878,31 @@
 			if(length(branded_bodypart.body_writing))
 				brand_text = branded_bodypart.body_writing
 			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone))
-				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_purple(brand_text)]."
+				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_beautiful_fem(brand_text)]."
 			if(istype(branded_bodypart, /obj/item/bodypart/chest))
 				var/obj/item/bodypart/chest/chest = branded_bodypart
 				var/chest_brand_text = ""
 				if(length(chest.body_writing_on_buttocks))
 					chest_brand_text = chest.body_writing_on_buttocks
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_purple(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_beautiful_fem(chest_brand_text)]."
 				var/stomach_brand_text = ""
 				if(length(chest.body_writing_on_stomach))
 					stomach_brand_text = chest.body_writing_on_stomach
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
-					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_purple(stomach_brand_text)]."
+					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_beautiful_fem(stomach_brand_text)]."
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
 				var/obj/item/bodypart/head/head = branded_bodypart
 				var/neck_brand_text = ""
 				if(length(head.body_writing_on_neck))
 					neck_brand_text = head.body_writing_on_neck
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
-					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_purple(neck_brand_text)]."
+					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_beautiful_fem(neck_brand_text)]."
 				var/mouth_brand_text = ""
 				if(length(head.body_writing_on_mouth))
 					mouth_brand_text = head.body_writing_on_neck
 				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
-					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_purple(mouth_brand_text)]."
+					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_beautiful_fem(mouth_brand_text)]."
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)

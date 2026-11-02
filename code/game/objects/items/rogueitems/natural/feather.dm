@@ -222,7 +222,7 @@
 
 // Sends a message confirming body writing has completed.
 /obj/item/natural/feather/proc/send_writing_result_messages(mob/living/user, mob/living/carbon/human/target, final_answer, writing_text)
-	user.visible_message(span_info("[user] writes  on [target]'s [LOWER_TEXT(final_answer)]! The fresh ink shows [span_purple(writing_text)]."))
+	user.visible_message(span_info("[user] writes  on [target]'s [LOWER_TEXT(final_answer)]! The fresh ink shows [span_beautiful_fem(writing_text)]."))
 	to_chat(target, span_userdanger("Someone wrote on your body!"))
 
 // Single entry point for action-phase combat logs.
