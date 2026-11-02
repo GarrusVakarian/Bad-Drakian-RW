@@ -23,6 +23,9 @@
   - image: "Updated werewolf sprites with Lutowski\u2019s artwork from Azure Peak."
   - qol: Sleeping players reliably receive nearby audible emotes and speech. Get to
       sleep and still be included as a player in the RP.
+  mypingishuge:
+  - qol: Added persistent NEW badges and dismissible reminders for Content Toggles,
+      Set Roleplay Ad and Sprite Offset, with easier-to-find character-sheet links.
   mypingishuge <3 _Rarity:
   - bugfix: Bag and belt hotkeys draw and return blades in stored sheaths/scabbards
       without pulling their holders out of storage.
