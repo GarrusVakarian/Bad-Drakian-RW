@@ -103,7 +103,6 @@
 	min_chaos = 2
 	villain_events = list(/datum/round_event_control/antagonist/solo/dreamwalker)
 
-/*
 /datum/round_modifier/lich
 	name = "Lich"
 	desc = "The dead march forward in lockstep!"
@@ -111,4 +110,3 @@
 	weight = 6
 	min_chaos = 3
 	villain_events = list(/datum/round_event_control/antagonist/solo/lich)
-*/
