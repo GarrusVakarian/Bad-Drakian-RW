@@ -490,6 +490,7 @@
 	mill_result = /obj/item/reagent_containers/food/snacks/pepper
 
 /obj/item/reagent_containers/food/snacks/allspice
+	possible_item_intents = list(/datum/intent/food, /datum/intent/sprinkle)
 	name = "allspice"
 	desc = "A blend of spices that can liven up even the dreariest broths."
 	icon = 'icons/roguetown/items/produce.dmi'
