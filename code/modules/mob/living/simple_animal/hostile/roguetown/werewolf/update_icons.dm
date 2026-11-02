@@ -166,7 +166,7 @@
 	remove_overlay(DAMAGE_LAYER)
 	testing("dambegin")
 	var/list/hands = list()
-	var/mutable_appearance/inhand_overlay = mutable_appearance("[icon_state]-dam", layer=-DAMAGE_LAYER)
+	var/mutable_appearance/inhand_overlay = mutable_appearance(icon, icon_state == icon_dead ? "wwolf_dead-dam" : "wwolf-dam", layer=-DAMAGE_LAYER)
 	var/numba = 255 * (health / maxHealth)
 	inhand_overlay.alpha = 255 - numba
 	testing("damalpha [inhand_overlay.alpha]")
