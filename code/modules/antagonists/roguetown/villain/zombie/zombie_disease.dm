@@ -63,9 +63,15 @@
 
 /datum/status_effect/zombie_infection/on_apply()
 	. = ..()
+	var/warning_message = pick(infection_messages)
+	if(prob(10))
+		to_chat(owner, span_userdanger("[warning_message]"))
+	else
+		to_chat(owner, span_danger("[warning_message]"))
 	var/mob/living/carbon/human/H = owner
 	if(!ishuman(H)) // Everything below needs a human
 		return FALSE
+	H.vomit(1, blood = TRUE, stun = FALSE)
 	return TRUE
 
 /datum/status_effect/zombie_infection/on_remove()

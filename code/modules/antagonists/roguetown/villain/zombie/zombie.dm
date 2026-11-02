@@ -374,9 +374,10 @@
 	zombie.set_blood_volume(BLOOD_VOLUME_NORMAL)
 	zombie.setOxyLoss(0, updating_health = FALSE, forced = TRUE)
 	zombie.setToxLoss(0, updating_health = FALSE, forced = TRUE)
-	zombie.adjustBruteLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
-	zombie.adjustFireLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
-	zombie.heal_wounds(INFINITY)
+	if(!infected_wake)	// if we died, heal all this too
+		zombie.adjustBruteLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
+		zombie.adjustFireLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
+		zombie.heal_wounds(INFINITY)
 	if(zombie.stat == DEAD)
 		if(!zombie.become_alive(UNCONSCIOUS)) // Backstops the pre-heal foreign gate above
 			qdel(src)
@@ -444,11 +445,13 @@
 	zombie.set_blood_volume(BLOOD_VOLUME_NORMAL)
 	zombie.setOxyLoss(0, updating_health = FALSE, forced = TRUE) // Zombies don't breathe
 	zombie.setToxLoss(0, updating_health = FALSE, forced = TRUE) // Zombies are immune to poison
-	zombie.adjustBruteLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
-	zombie.adjustFireLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
-	zombie.heal_wounds(INFINITY) // Heal all non-permanent wounds
-	playsound(get_turf(zombie), 'sound/magic/woundheal_crunch.ogg', 80, FALSE, -1)
-	to_chat(zombie, span_userdanger("Your bones snap back into place and your flesh knits itself back together as you rise again in undeath."))
+
+	if (infected_wake || converted)
+		zombie.adjustBruteLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
+		zombie.adjustFireLoss(-INFINITY, updating_health = FALSE, forced = TRUE)
+		zombie.heal_wounds(INFINITY) // Heal all non-permanent wounds
+		playsound(get_turf(zombie), 'sound/magic/woundheal_crunch.ogg', 80, FALSE, -1)
+		to_chat(zombie, span_userdanger("Your bones snap back into place and your flesh knits itself back together as you rise again in undeath."))
 
 	if(zombie.stat == DEAD)
 		if(!zombie.become_alive(UNCONSCIOUS)) // Backstops the pre-heal foreign gate above. The corpse stays
@@ -478,19 +481,19 @@
 ///Making sure they're not any other antag as well as adding the zombie datum to their mind
 /mob/living/carbon/human/proc/zombie_check_can_convert()
 	if(!mind)
-		return FALSE
+		return
 	if(mind.has_antag_datum(/datum/antagonist/vampire))
-		return FALSE
+		return
 	if(mind.has_antag_datum(/datum/antagonist/werewolf))
-		return FALSE
+		return
 	if(mind.has_antag_datum(/datum/antagonist/zombie))
-		return FALSE
+		return
 	if(mind.has_antag_datum(/datum/antagonist/skeleton))
-		return FALSE
+		return
 	if(mind.has_antag_datum(/datum/antagonist/gnoll))
 		return FALSE
 	if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE))
-		return FALSE
+		return
 	return mind.add_antag_datum(/datum/antagonist/zombie)
 
 /atom/movable/screen/alert/status_effect/debuff/deadite_grace
