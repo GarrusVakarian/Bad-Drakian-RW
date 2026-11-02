@@ -221,6 +221,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		return FALSE
 
 	//general preferences
+	load_character_sheet_feature_state(S)
 	S["asaycolor"]			>> asaycolor
 	S["ooccolor"]			>> ooccolor
 	S["lastchangelog"]		>> lastchangelog
@@ -382,6 +383,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//ROGUETOWN
 	parallax = PARALLAX_INSANE
 
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
 	verify_keybindings_valid()
 	return TRUE
 
@@ -430,6 +433,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["version"] , SAVEFILE_VERSION_MAX)		//updates (or failing that the sanity checks) will ensure data is not invalid at load. Assume up-to-date
 
 	//general preferences
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
+	S.cd = "/feature_discovery"
+	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
+	S.cd = "/"
 	WRITE_FILE(S["asaycolor"], asaycolor)
 	WRITE_FILE(S["triumphs"], triumphs)
 	WRITE_FILE(S["musicvol"], musicvol)
