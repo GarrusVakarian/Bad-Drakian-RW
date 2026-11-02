@@ -18,6 +18,8 @@
 2026-11-02:
   _Rarity:
   - image: "Updated werewolf sprites with Lutowski\u2019s artwork from Azure Peak."
+  - qol: Sleeping players reliably receive nearby audible emotes and speech. Get to
+      sleep and still be included as a player in the RP.
   mypingishuge <3 _Rarity:
   - bugfix: Bag and belt hotkeys draw and return blades in stored sheaths/scabbards
       without pulling their holders out of storage.
