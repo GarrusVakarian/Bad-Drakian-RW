@@ -54,4 +54,3 @@
 		/obj/item/natural/cured/essence = 1,
 		)
 	craftdiff = 2
-
