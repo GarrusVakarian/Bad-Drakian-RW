@@ -145,7 +145,7 @@
 		if(show_runechat)
 			runechat_msg_to_use = runechat_msg ? runechat_msg : pre_color_msg
 		if(emote_type == EMOTE_AUDIBLE)
-			emotelocation.audible_message(msg, runechat_message = runechat_msg_to_use, log_seen = SEEN_LOG_EMOTE, log_seen_msg = seen_log_msg, ignored_mobs = hidden_ghosts)
+			emotelocation.audible_message(msg, runechat_message = runechat_msg_to_use, log_seen = SEEN_LOG_EMOTE, log_seen_msg = seen_log_msg, ignored_mobs = hidden_ghosts, allow_sleeping = TRUE)
 		else
 			emotelocation.visible_message(msg, runechat_message = runechat_msg_to_use, log_seen = SEEN_LOG_EMOTE, log_seen_msg = seen_log_msg, ignored_mobs = hidden_ghosts)
 
@@ -260,7 +260,9 @@
 	if(is_type_in_typecache(user, mob_type_blacklist_typecache))
 		return FALSE
 	if(status_check && !is_type_in_typecache(user, mob_type_ignore_stat_typecache))
-		if(user.stat > stat_allowed)
+		// Let sleeping players emote intentionally without enabling unconscious automatic emotes.
+		var/sleeping_player_emote = intentional && user.stat == UNCONSCIOUS && user.IsSleeping()
+		if(user.stat > stat_allowed && !sleeping_player_emote)
 			if(!intentional)
 				return FALSE
 /*			switch(user.stat)
