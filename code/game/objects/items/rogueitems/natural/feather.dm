@@ -212,7 +212,7 @@
 			if(length(head.body_writing_on_mouth))
 				return TRUE
 	for(var/obj/item/organ/organ as anything in target.internal_organs)
-		if("body_writing" in organ.vars && length(organ.vars["body_writing"]))
+		if(("body_writing" in organ.vars) && length(organ.vars["body_writing"]))
 			return TRUE
 	return FALSE
 
@@ -246,8 +246,7 @@
 	if(!istype(user.a_intent, /datum/intent/use))
 		return ..()
 	if(!ishuman(A))
-		to_chat(user, span_warning("I cannot write on [A]."))
-		return TRUE
+		return ..()
 	var/mob/living/carbon/human/target = A
 	var/precise_zone = user.zone_selected // We need this up here to stay consistent past the do_after.
 	var/body_zone = check_zone(precise_zone)

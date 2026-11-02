@@ -900,7 +900,7 @@
 					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_beautiful_fem(neck_brand_text)]."
 				var/mouth_brand_text = ""
 				if(length(head.body_writing_on_mouth))
-					mouth_brand_text = head.body_writing_on_neck
+					mouth_brand_text = head.body_writing_on_mouth
 				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
 					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_beautiful_fem(mouth_brand_text)]."
 

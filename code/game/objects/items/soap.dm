@@ -78,6 +78,9 @@
 		if(do_after(user, src.cleanspeed, target = target))
 			wash_atom(target,CLEAN_MEDIUM)
 			to_chat(user, span_notice("I clean \the [target.name]."))
+			if(ishuman(target))
+				var/mob/living/carbon/human/T = target
+				T.clean_all_body_writing()
 			for(var/obj/effect/decal/cleanable/C in target)
 				qdel(C)
 			target.remove_atom_colour(WASHABLE_COLOUR_PRIORITY)
@@ -109,6 +112,7 @@
 			if(HAS_TRAIT(H, TRAIT_REDOLENT))
 				H.redolent_on_bath()
 		H.remove_status_effect(/datum/status_effect/debuff/stinky_contact)
+		H.clean_all_body_writing()
 		uses -= 1
 		if(uses == 0)
 			qdel(src)
