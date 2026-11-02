@@ -1,0 +1,5 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - map: "A couple of doors in the Smollhill chapel are now locked. The chest is also locked now. The chapel itself remains open."
+  - map: "Added a default exit to Necra's domain to Smollhill."
