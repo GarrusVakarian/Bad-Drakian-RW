@@ -1346,4 +1346,12 @@
 	icon_state = "undivided_s"
 	sellprice = 50
 
+/obj/item/clothing/neck/roguetown/cravat
+	name = "cravat"
+	desc = "An otavan fashion, a strip of tied cloth that can be donned on the neck to make oneself look more sophisticated."
+	icon_state = "cravat"
 
+/obj/item/clothing/neck/roguetown/ruffle
+	name = "ruffled collar"
+	desc = "A ridiculous lace collar typically worn by jesters."
+	icon_state = "ruffle"
