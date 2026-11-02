@@ -330,7 +330,7 @@
 				. += "[m3] got weird hands! They don't look right!"
 			else
 				. += "[m3][hand_number > 1 ? "" : " a"] <span class='bloody'>blood-stained</span> hand[hand_number > 1 ? "s" : ""]!"
-	
+
 	//belt
 	if(belt && !(SLOT_BELT in obscured))
 		var/str = "[m3] [get_examine_item_name_with_hover(user, belt)] about [m2] waist. "
@@ -852,7 +852,7 @@
 					if(chest.enslavement_mark)
 						chest_brand_text = "[chest_brand_text], a mark of ownership"
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters has been branded with ") + "[span_boldwarning(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)]."
 				var/stomach_brand_text = ""
 				if(length(chest.branded_writing_on_stomach))
 					stomach_brand_text = chest.branded_writing_on_stomach
@@ -871,6 +871,33 @@
 					neck_brand_text = "a mark of ownership"
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
 					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)]."
+
+	if(bodywritten) // our body has been written on, now check what body-writings we've got. genital body-writings handled separately.
+		for(var/obj/item/bodypart/branded_bodypart as anything in bodyparts)
+			var/brand_text = ""
+			if(length(branded_bodypart.body_writing))
+				brand_text = branded_bodypart.body_writing
+			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone))
+				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_purple(brand_text)]."
+			if(istype(branded_bodypart, /obj/item/bodypart/chest))
+				var/obj/item/bodypart/chest/chest = branded_bodypart
+				var/chest_brand_text = ""
+				if(length(chest.body_writing_on_buttocks))
+					chest_brand_text = chest.body_writing_on_buttocks
+				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
+					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_purple(chest_brand_text)]."
+				var/stomach_brand_text = ""
+				if(length(chest.body_writing_on_stomach))
+					stomach_brand_text = chest.body_writing_on_stomach
+				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
+					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_purple(stomach_brand_text)]."
+			else if(istype(branded_bodypart, /obj/item/bodypart/head))
+				var/obj/item/bodypart/head/neck = branded_bodypart
+				var/neck_brand_text = ""
+				if(length(neck.body_writing_on_neck))
+					neck_brand_text = neck.body_writing_on_neck
+				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
+					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_purple(neck_brand_text)]."
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
@@ -1376,7 +1403,7 @@
 		return
 	if(HAS_TRAIT(examiner, TRAIT_HERETIC_SEER))
 		seer = TRUE
-	
+
 	if(HAS_TRAIT(src, TRAIT_COMMIE) && (HAS_TRAIT(examiner, TRAIT_COMMIE)||seer))
 		heretic_text += "♠"
 	else if(HAS_TRAIT(src, TRAIT_CABAL) && (HAS_TRAIT(examiner, TRAIT_CABAL)||seer))
