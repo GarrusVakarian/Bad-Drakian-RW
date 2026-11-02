@@ -1,4 +1,0 @@
-author: "mypingishuge <3 _Rarity"
-delete-after: True
-changes:
-  - bugfix: "Bag and belt hotkeys draw and return blades in stored sheaths/scabbards without pulling their holders out of storage."
