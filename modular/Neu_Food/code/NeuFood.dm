@@ -360,7 +360,7 @@
 	desc = ""
 	gender = PLURAL
 	icon_state = "salt"
-	list_reagents = list(/datum/reagent/floure = 1)
+	list_reagents = list(/datum/reagent/consumable/sodiumchloride = 1)
 	volume = 1
 	sellprice = 0
 
@@ -442,7 +442,7 @@
 	desc = "Somewhat gritty, coarse salt. Could be ground down into finer salt."
 	gender = PLURAL
 	icon_state = "salt"
-	list_reagents = list(/datum/reagent/floure = 1)
+	list_reagents = list(/datum/reagent/consumable/sodiumchloride = 1)
 	volume = 1
 	sellprice = 0
 	color = "#999797"
