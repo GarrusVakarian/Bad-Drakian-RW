@@ -42,7 +42,10 @@
 				for(var/mob/living/carbon/human/H in viewers(world.view, src))
 					var/pass = FALSE
 					if(H.patron?.type == private_patron || (H.client?.prefs?.polytheist_patron != "NONE" && H.client?.prefs?.polytheist_patron?.type == private_patron) || private_patron == /datum/patron/divine/xylix)	//Xylixians will always flash the observer's religion to them.
-						vis_contents += new /obj/effect/temp_visual/stress_event/invisible(null, H, icon_path, "sign_[private_patron::name]", offset_list, y_offset, icon_plane)
+						var/sign_name = private_patron == /datum/patron/divine/xylix ? H.patron?.name : private_patron::name
+						if(!sign_name)
+							continue
+						vis_contents += new /obj/effect/temp_visual/stress_event/invisible(null, H, icon_path, "sign_[sign_name]", offset_list, y_offset, icon_plane)
 						pass = TRUE
 					else if(HAS_TRAIT(H, TRAIT_HERETIC_SEER) && ispath(private_patron, /datum/patron/inhumen))	//Seers should see all inhumen symbols.
 						vis_contents += new /obj/effect/temp_visual/stress_event/invisible(null, H, icon_path, "sign_[private_patron::name]", offset_list, y_offset, icon_plane)
