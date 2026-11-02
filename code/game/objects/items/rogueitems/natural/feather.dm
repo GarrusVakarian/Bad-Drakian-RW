@@ -3,7 +3,7 @@
 	name = "feather"
 	icon_state = "feather"
 	possible_item_intents = list(/datum/intent/use)
-	desc = "A fluffy feather."
+	desc = "A fluffy feather. Can be used to write on paper, skin, fur and scales alike."
 	force = 0
 	throwforce = 0
 	obj_flags = null
@@ -70,6 +70,10 @@
 			if(!istype(writing_part, /obj/item/bodypart/head))
 				return null
 			return list("holder" = writing_part, "text_var" = "body_writing_on_neck")
+		if("Mouth")
+			if(!istype(writing_part, /obj/item/bodypart/head))
+				return null
+			return list("holder" = writing_part, "text_var" = "body_writing_on_mouth")
 		if("Breasts")
 			if(QDELETED(tits))
 				return null
