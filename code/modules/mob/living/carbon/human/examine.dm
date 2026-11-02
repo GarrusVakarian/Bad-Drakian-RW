@@ -892,12 +892,17 @@
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
 					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_purple(stomach_brand_text)]."
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
-				var/obj/item/bodypart/head/neck = branded_bodypart
+				var/obj/item/bodypart/head/head = branded_bodypart
 				var/neck_brand_text = ""
-				if(length(neck.body_writing_on_neck))
-					neck_brand_text = neck.body_writing_on_neck
+				if(length(head.body_writing_on_neck))
+					neck_brand_text = head.body_writing_on_neck
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
 					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_purple(neck_brand_text)]."
+				var/mouth_brand_text = ""
+				if(length(head.body_writing_on_mouth))
+					mouth_brand_text = head.body_writing_on_neck
+				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
+					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_purple(mouth_brand_text)]."
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)

@@ -50,6 +50,8 @@
 	var/branded_writing_on_neck = ""
 	/// Body writing unique for head so it can be applied to neck
 	var/body_writing_on_neck = ""
+	/// Body writing unique for head so it can be applied to mouth
+	var/body_writing_on_mouth = ""
 
 	grid_width = 64
 	grid_height = 64
