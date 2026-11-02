@@ -85,6 +85,10 @@
 		to_chat(user, span_warning("\The [attacking_item] should be used at an anvil, not \the [src]!"))
 		return
 
+	if(istype(attacking_item, /obj/item/storage/roguebag) && length(attacking_item.contents))
+		load_sack(attacking_item, user)
+		return
+
 	if(attacking_item.firefuel)
 		. = ..()
 		if(!.) //False/null if using the item as fuel. If true, we want to try smelt it so go onto next segment.
@@ -99,6 +103,32 @@
 		return
 
 	to_chat(user, span_warning("\The [attacking_item] cannot be smelted."))
+
+/// Take only accepted, top-level sack contents through the storage component.
+/obj/machinery/light/rogue/smelter/proc/load_sack(obj/item/storage/roguebag/bag, mob/living/user)
+	if(actively_smelting)
+		to_chat(user, span_warning("The furnace is currently smelting. Wait for it to finish."))
+		return FALSE
+	var/datum/component/storage/storage = bag.GetComponent(/datum/component/storage)
+	if(!storage || storage.locked)
+		return FALSE
+	var/list/bag_items = list()
+	SEND_SIGNAL(bag, COMSIG_TRY_STORAGE_RETURN_INVENTORY, bag_items, FALSE)
+	var/loaded = 0
+	for(var/obj/item/bagged_item in bag_items)
+		if(length(contained_items) >= max_contained_items)
+			break
+		if(!bagged_item.smeltresult && !is_scrap_ingredient(bagged_item))
+			continue
+		if(!SEND_SIGNAL(bag, COMSIG_TRY_STORAGE_TAKE, bagged_item, get_turf(src)))
+			continue
+		if(add_item(bagged_item, user))
+			loaded++
+		else
+			SEND_SIGNAL(bag, COMSIG_TRY_STORAGE_INSERT, bagged_item, user)
+	if(!loaded)
+		to_chat(user, span_warning("No items could be loaded from the sack. Check its contents and the furnace's capacity."))
+	return loaded > 0
 
 /obj/machinery/light/rogue/smelter/attack_right(mob/user)
 	var/obj/item/held_item = user.get_active_held_item()
