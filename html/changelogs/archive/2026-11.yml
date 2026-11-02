@@ -29,6 +29,7 @@
   - image: "Updated werewolf sprites with Lutowski\u2019s artwork from Azure Peak."
   - qol: Sleeping players reliably receive nearby audible emotes and speech. Get to
       sleep and still be included as a player in the RP.
+  - rscadd: Added encyclopedia lobby link
   mypingishuge:
   - qol: Added persistent NEW badges and dismissible reminders for Content Toggles,
       Set Roleplay Ad and Sprite Offset, with easier-to-find character-sheet links.
