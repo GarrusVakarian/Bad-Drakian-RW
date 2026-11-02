@@ -63,16 +63,20 @@
 	if(HAS_TRAIT(A, TRAIT_NODROP))
 		to_chat(user, span_warning("I cannot sheath [A] while it is bound."))
 		return FALSE
-	if(valid_blade && !istype(A, valid_blade))
+	if(!accepts_weapon(A))
 		to_chat(user, span_warning("[A] won't fit in there."))
+		return FALSE
+	return TRUE
+
+/// Check compatibility without occupancy, binding, or feedback side effects.
+/obj/item/rogueweapon/scabbard/proc/accepts_weapon(obj/item/A)
+	if(valid_blade && !istype(A, valid_blade))
 		return FALSE
 	if(valid_blades)
 		if(!(A.type in valid_blades))
-			to_chat(user, span_warning("[A] won't fit in there."))
 			return FALSE
 	if(invalid_blades)
 		if(A.type in invalid_blades)
-			to_chat(user, span_warning("[A] won't fit in there."))
 			return FALSE
 	return TRUE
 
@@ -322,7 +326,7 @@
 		/obj/item/rogueweapon/huntingknife/idagger/silver/stake
 	)
 
-/obj/item/rogueweapon/scabbard/sheath/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/sheath/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
 		if(!istype(A, /obj/item/rogueweapon))
@@ -442,11 +446,9 @@
 
 	max_integrity = 0
 
-/obj/item/rogueweapon/scabbard/gwstrap/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/gwstrap/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
-		if(sheathed)
-			return FALSE
 		if(istype(A, /obj/item/rogueweapon))
 			if(A.w_class >= WEIGHT_CLASS_BULKY)
 				return TRUE
@@ -558,7 +560,7 @@
 	max_integrity = 750
 
 
-/obj/item/rogueweapon/scabbard/sheath/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/sheath/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
 		if(!istype(A, /obj/item/rogueweapon))
