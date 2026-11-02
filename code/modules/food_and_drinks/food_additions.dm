@@ -2,6 +2,28 @@
 	/// Shared lifetime allowance for manually poured liquids and sprinkled powders.
 	var/food_additions_used = 0
 
+/// Read-only checks: leave recognized preparation to the normal attackby chain.
+/obj/item/reagent_containers/food/snacks/proc/has_preparation_interaction(obj/item/ingredient)
+	return FALSE
+
+/obj/item/reagent_containers/food/snacks/rogue/has_preparation_interaction(obj/item/ingredient)
+	return active_recipe || SScooking.get_recipe(src, ingredient)
+
+/obj/item/reagent_containers/food/snacks/grown/rice/has_preparation_interaction(obj/item/ingredient)
+	return !water_added
+
+/// Capture preparation changes on an item that survives another player's recipe step.
+/obj/item/reagent_containers/food/snacks/proc/get_food_preparation_state()
+	return list(cooked_type, fried_type)
+
+/obj/item/reagent_containers/food/snacks/rogue/get_food_preparation_state()
+	. = ..()
+	. += list(active_recipe, prepped_recipe, current_step, process_step)
+
+/obj/item/reagent_containers/food/snacks/grown/rice/get_food_preparation_state()
+	. = ..()
+	. += list(water_added)
+
 /datum/intent/sprinkle
 	name = "sprinkle"
 	icon_state = "infeed"
@@ -22,8 +44,7 @@
 		return !vessel.closed && vessel.spillable && vessel.is_drainable() && user.used_intent?.type == INTENT_POUR
 	return (istype(src, /obj/item/reagent_containers/powder) || istype(src, /obj/item/reagent_containers/food/snacks/allspice)) && user.used_intent?.type == /datum/intent/sprinkle
 
-// Explicit intents intercept before recipe attackby handlers. Other intents
-// retain their existing crafting, feeding, filling and splashing behavior.
+// Recognized preparation takes priority; otherwise Pour and Sprinkle add reagents.
 /obj/item/reagent_containers/pre_attack(atom/target, mob/living/user, params)
 	if(..())
 		return TRUE
@@ -36,14 +57,20 @@
 	if(!can_season_food(user, food))
 		to_chat(user, span_warning("I can't add anything to [food] from [src] right now."))
 		return TRUE
+	if(food.has_preparation_interaction(src))
+		return FALSE
 	if(food.food_additions_used >= 5)
 		to_chat(user, span_warning("[food] can't absorb any more."))
 		return TRUE
 	var/atom/food_location = food.loc
+	var/list/preparation_state = food.get_food_preparation_state()
 	to_chat(user, span_notice("I start [is_powder ? "sprinkling" : "pouring"] [src] onto [food]..."))
 	if(!do_after(user, 2 SECONDS, target = food))
 		return TRUE
 	if(!can_season_food(user, food) || food.loc != food_location)
+		return TRUE
+	if(food.has_preparation_interaction(src) || !compare_list(preparation_state, food.get_food_preparation_state()))
+		to_chat(user, span_warning("[food]'s preparation changed. I stop adding to it."))
 		return TRUE
 	// Recheck after waiting: another application may have used the allowance.
 	var/portion = is_powder ? 5 : (user.m_intent == MOVE_INTENT_SNEAK ? 1 : amount_per_transfer_from_this)
@@ -70,3 +97,4 @@
 /obj/item/reagent_containers/food/snacks/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Pour liquid or sprinkle powder onto this food to add up to five drams in total.")
+	. += span_info("Matching recipes take priority and consume their required ingredients; other reagents in the mixture are not automatically added to the result. Apply additions to finished food to avoid losing them during preparation. Slicing shares additives between slices.")
