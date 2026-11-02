@@ -1,0 +1,4 @@
+author: "Muzanemus"
+delete-after: True
+changes:
+  - bugfix: "Fix male werewolf's going invisible when they get aroused (aroused pintle soon™)"
