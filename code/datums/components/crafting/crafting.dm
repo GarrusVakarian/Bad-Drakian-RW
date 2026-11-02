@@ -834,9 +834,6 @@
 	set desc = "Toggles between legacy and miacraft"
 	set hidden = 1
 	usr.client.legacycraft = !legacycraft
-	if(prefs && !prefs.content_toggles_customized)
-		prefs.content_toggles_customized = TRUE
-		prefs.save_preferences()
 
 /client
 	var/legacycraft = FALSE

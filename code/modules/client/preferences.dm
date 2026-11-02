@@ -423,7 +423,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/roleplay_ad
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
-	var/content_toggles_customized = FALSE
 	var/tmp/character_sheet_notice_generation = 0
 
 	var/rumour
@@ -616,7 +615,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	location = "in the character sheet's upper-right corner, below Keybinds"
 
 /datum/character_sheet_feature/content_toggles/is_eligible(datum/preferences/preferences)
-	return !preferences.content_toggles_customized && !preferences.has_customized_content_toggles()
+	return !preferences.has_customized_content_toggles()
 
 /datum/character_sheet_feature/roleplay_ad
 	id = "roleplay_ad"
@@ -684,22 +683,18 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /// Keep unknown IDs as tombstones: removing and later reintroducing a feature must not restore NEW.
 /datum/preferences/proc/load_character_sheet_feature_state(savefile/S)
+	var/previous_directory = S.cd
+	S.cd = "/"
 	var/saved_state
-	S["seen_character_sheet_features"] >> saved_state
+	if("feature_discovery" in S.dir)
+		S.cd = "/feature_discovery"
+		S["seen_features"] >> saved_state
+	S.cd = previous_directory
 	seen_character_sheet_features = list()
 	if(islist(saved_state))
 		for(var/feature_id in saved_state)
 			if(istext(feature_id) && saved_state[feature_id] == TRUE)
 				seen_character_sheet_features[feature_id] = TRUE
-	// Migrate saves made with the earlier local draft's individual Boolean flags.
-	var/old_content_toggles_seen
-	var/old_roleplay_ad_seen
-	S["content_toggles_seen"] >> old_content_toggles_seen
-	S["roleplay_ad_seen"] >> old_roleplay_ad_seen
-	if(old_content_toggles_seen == TRUE)
-		seen_character_sheet_features["content_toggles"] = TRUE
-	if(old_roleplay_ad_seen == TRUE)
-		seen_character_sheet_features["roleplay_ad"] = TRUE
 
 /datum/preferences/proc/dismiss_character_sheet_feature(mob/user, feature)
 	if(!parent || user?.client != parent)
@@ -3934,7 +3929,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	if(length(V.added_traits))
 		dat += "<font color = '#a3ffe0'><font size = 3>This [is_background ? "Background" : "Virtue"] grants the following traits: <br>"
 		for(var/TR in V.added_traits)
-			dat += "[TR] â€” <font size = 2>[GLOB.roguetraits[TR]]</font><br>"
+			dat += "[TR] — <font size = 2>[GLOB.roguetraits[TR]]</font><br>"
 		dat += "</font>"
 	if(length(V.added_stashed_items))
 		dat += "<font color = '#eeffa3'><font size = 3>This [is_background ? "Background" : "Virtue"] adds the following items to your stash: <br>"
