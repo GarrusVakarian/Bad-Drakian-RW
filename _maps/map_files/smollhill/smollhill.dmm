@@ -2241,6 +2241,7 @@
 /area/rogue/indoors/shelter/bog)
 "aUe" = (
 /obj/structure/mineral_door/wood/donjon/stone{
+	locked = 1;
 	lockid = "church"
 	},
 /obj/structure/stairs/stone{
@@ -4724,6 +4725,10 @@
 /obj/machinery/light/rogue/candle/off,
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/dungeon)
+"chv" = (
+/obj/effect/landmark/deaths_door/exit,
+/turf/open/floor/rogue/blocks,
+/area/rogue/under/town/basement)
 "chB" = (
 /obj/effect/spawner/lootdrop/general_loot_low,
 /turf/open/floor/rogue/ruinedwood/spiral,
@@ -15096,6 +15101,13 @@
 	dir = 1
 	},
 /area/rogue/indoors/town/church/chapel)
+"hcz" = (
+/obj/structure/mineral_door/wood/donjon/stone{
+	locked = 1;
+	lockid = "church"
+	},
+/turf/open/floor/rogue/wood,
+/area/rogue/indoors/town/church)
 "hcJ" = (
 /obj/effect/decal/remains/human,
 /turf/open/floor/rogue/naturalstone,
@@ -19358,6 +19370,7 @@
 /obj/item/reagent_containers/lux,
 /obj/item/rope/chain,
 /obj/structure/closet/crate/chest{
+	locked = 1;
 	lockid = "church"
 	},
 /obj/item/rope/chain,
@@ -51088,6 +51101,7 @@
 /area/rogue/outdoors/woodsrat/south)
 "yen" = (
 /obj/structure/mineral_door/wood/donjon/stone{
+	locked = 0;
 	lockid = "church"
 	},
 /turf/open/floor/rogue/herringbone,
@@ -81961,7 +81975,7 @@ whb
 bNC
 bNC
 gUu
-cBf
+chv
 gUu
 dGJ
 scn
@@ -238400,7 +238414,7 @@ xiP
 xiP
 tML
 hXH
-rXf
+hcz
 lwQ
 cQz
 teW
@@ -239306,7 +239320,7 @@ ffv
 ffv
 ffv
 mjT
-rXf
+hcz
 jdI
 uhR
 teW
