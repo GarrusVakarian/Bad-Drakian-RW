@@ -1578,6 +1578,9 @@
 
 /mob/living/carbon/human/proc/update_tongue_noise_verbs()
 	var/static/list/all_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
 		/mob/living/carbon/human/verb/emote_meow,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
@@ -1664,6 +1667,11 @@
 		/mob/living/carbon/human/verb/emote_hiss,
 		/mob/living/carbon/human/verb/emote_phiss,
 	)
+	var/static/list/construct_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
+	)
 	var/static/list/moth_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_chitter,
 	)
@@ -1686,6 +1694,8 @@
 		allowed_verbs += harpy_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/lizard))
 		allowed_verbs += lizard_tongue_noise_verbs
+	if(istype(tongue, /obj/item/organ/tongue/construct))
+		allowed_verbs += construct_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/moth))
 		allowed_verbs += moth_tongue_noise_verbs
 	if(istype(wings, /obj/item/organ/wings/moth))
@@ -2741,3 +2751,59 @@
 	set category = "Emotes"
 
 	emote("quest", intentional = TRUE)
+
+
+// counting construct emotes as "animal" for the same reason all of the above are (preferences)
+/datum/emote/living/emote_construct_tick
+	key = "tick"
+	key_third_person = "ticks"
+	message = "emits a mechanical ticking."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_tick()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Tick"
+		set category = "Noises"
+		emote("tick", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_creak
+	key = "creak"
+	key_third_person = "creaks"
+	message = "creaks."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_creak()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Creak"
+		set category = "Noises"
+		emote("creak", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_spark
+	key = "spark"
+	key_third_person = "sparks"
+	message = "twitches and emits a small arcyne spark."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	snd_vol = 25
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_spark()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Spark"
+		set category = "Noises"
+		emote("spark", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return

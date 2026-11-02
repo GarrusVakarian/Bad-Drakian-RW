@@ -188,4 +188,10 @@
 			//jokes on YOU, I'm adding the yeen cackle!
 			if("ycackle")
 				used = list('sound/vo/mobs/hyena/cackle.ogg')
+			if("tick")
+				used = list('sound/misc/clockloop.ogg')
+			if("creak")
+				used = list('sound/foley/trap.ogg')
+			if("spark")
+				used = list('sound/foley/machinebreak.ogg')
 	return used
