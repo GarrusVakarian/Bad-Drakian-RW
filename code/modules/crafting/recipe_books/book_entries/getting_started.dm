@@ -28,6 +28,7 @@
 			<li><b>Z</b> drops the held item or releases a held grab.</li>
 			<li><b>V</b> toggles standing and resting. <b>X</b> resists grabs, restraints and other situations you may be able to escape.</li>
 			<li><b>C</b> toggles combat mode. Check its state before clicking another character.</li>
+			<li><b>Sneak</b> on your HUD toggles careful movement. Use it before crossing wilderness vegetation to avoid triggering ordinary ambushes and maneater grabs. Sneak has no default hotkey; you can assign one in Keybinds.</li>
 			<li>Drag a character's sprite onto your own to inspect their equipment. Drag your own sprite onto itself to inspect yours.</li>
 		</ul>
 		<p>Right-click and middle-click have context-sensitive actions. Examine an unfamiliar item or intent before experimenting on another person.</p>
@@ -85,12 +86,23 @@
 	return {"
 		<h3>Before leaving town</h3>
 		<p>Bring <b>food, water, a light source, bandages and suitable equipment</b>. Find someone to travel with, learn your route back and tell companions if you are inexperienced. Wilderness creatures and ambushes can overwhelm an unprepared traveller.</p>
+		<h3>Sneak before crossing vegetation</h3>
+		<p><b>Click the Sneak button on your HUD before entering grass or bushes.</b> Click it again to return to walking, or assign a Sneak hotkey in Keybinds. Switching to another movement mode ends sneaking, so check the button before continuing.</p>
+		<p><b>Sneaking avoids the ordinary ambush triggers from crossing vegetation and prevents maneaters from grabbing you when you step over them.</b> Maneaters can look like grass until disturbed. Sneak is useful even when you are not trying to hide from another character.</p>
+		<p>This does not protect you from enemies already nearby, or from ambushes triggered by companions. Travel carefully together rather than assuming one sneaking person makes the whole party safe.</p>
+		<h3>If a maneater grabs you</h3>
+		<ol>
+			<li><b>Press X, the default Resist hotkey, to start struggling.</b> Use Resist, not Yield.</li>
+			<li><b>Let the struggle run.</b> It makes repeated escape attempts automatically, with a better chance after each failed attempt. You do not need to spam X. Avoid moving or starting other timed actions while struggling.</li>
+			<li>If the struggle stops and you are still caught, <b>use Resist again</b>. Call for help: another character can try to pull you free or break the plant.</li>
+		</ol>
+		<p><b>Act immediately.</b> A maneater starts chewing shortly after catching you and can tear off a limb if you remain trapped. Strength helps escape attempts, but a failed first attempt does not mean you cannot get free.</p>
 		<h3>If a fight starts</h3>
 		<ul>
 			<li>Turn on <b>combat mode</b> when you intend to defend yourself.</li>
 			<li>Hold a weapon you are trained to use. Suitable armor and defensive equipment matter too.</li>
 			<li>Watch your stamina and leave room to retreat before you exhaust yourself.</li>
-			<li>Use <b>Resist</b>, normally X, if a creature grabs you. Escape attempts are not guaranteed.</li>
+			<li>Use <b>Resist</b>, normally X, if a creature grabs you. For a maneater, start the struggle and let its repeated attempts finish as described above.</li>
 			<li>Practice unfamiliar mechanics with a willing partner in a safe place.</li>
 		</ul>
 		<p>You do not need to join every fight you encounter. Give scenes room to develop, communicate when needed and follow BD's conflict rules. Mechanical <b>Yield</b> signals surrender to players; do not expect hostile NPCs to respect it.</p>
