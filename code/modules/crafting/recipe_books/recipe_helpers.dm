@@ -204,13 +204,7 @@
 				for(var/zone in inherentList)
 					html += "<b><font color = '#000833'>[capitalize(zone)]</b></font> | "
 			html += "<br>"
-		if(C.prevent_crits)
-			if(length(C.prevent_crits))
-				html += "\n<b>PREVENTS CRITS:</b>"
-				for(var/X in C.prevent_crits)
-					if(X == BCLASS_PICK)	//BCLASS_PICK is named "stab", and "stabbing" is its own damage class. Prevents confusion.
-						X = "pick"
-					html += ("\n<b>[capitalize(X)]</b><br>")
+
 		html += "INTEGRITY: [bookarmor.max_integrity]<br>"
 		if(bookarmor.armor_class == ARMOR_CLASS_HEAVY)
 			html += "<b>AC: </b>HEAVY<br>"
@@ -247,7 +241,7 @@
 				if(WLENGTH_GREAT)
 					html += "Great<br>"
 
-		if(bookweapon.alt_intents)
+		if(bookweapon.has_altgrip_modes())
 			html += "\n<b>GRIP: ALT-GRIP (right click while in hand)</b><br>"
 		if(bookweapon.gripped_intents)
 			html += "\n<b>TWO-HANDED: Yes</b><br>"

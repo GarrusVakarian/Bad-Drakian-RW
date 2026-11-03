@@ -222,7 +222,7 @@ The canister effect, when using canister shot or adjacent stuff.
 	damage = 5//Very many of them, but very low damage and AP.
 	range = 12//We want this to go beyond screen, in case of far misses.
 	pass_flags = PASSTABLE | PASSGRILLE
-	armor_penetration = 20
+	armor_penetration = PEN_MEDIUM
 	damage_type = BRUTE
 	woundclass = BCLASS_PICK
 	flag = "piercing"

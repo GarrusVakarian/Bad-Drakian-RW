@@ -66,7 +66,7 @@
 	animname = "bite"
 	blade_class = BCLASS_BITE //i really hope this shit's going to work well
 	hitsound = list('sound/combat/hits/bladed/smallslash (1).ogg', 'sound/combat/hits/bladed/smallslash (2).ogg', 'sound/combat/hits/bladed/smallslash (3).ogg')
-	penfactor = 25
+	penfactor = PEN_MEDIUM
 	swingdelay = 1 SECONDS
 	clickcd = CLICK_CD_MASSIVE
 	damfactor = 1.5 //bites you bites you bites yo

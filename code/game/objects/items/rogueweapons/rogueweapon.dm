@@ -13,7 +13,7 @@
 	throwforce = 10
 	w_class = WEIGHT_CLASS_NORMAL
 	block_chance = 0
-	armor_penetration = 0
+	armor_penetration = PEN_NONE
 	sharpness = IS_SHARP
 	possible_item_intents = list(SWORD_CUT, SWORD_THRUST)
 	can_parry = TRUE
@@ -90,7 +90,7 @@
 		wdefense /= 2
 	if(wdefense_wbonus)
 		wdefense_wbonus = -3
-	wdefense_dynamic = wdefense
+	update_wdefense_dynamic()
 	if(sharpness & IS_SHARP)
 		sharpness = IS_BLUNT
 	if(can_parry)
@@ -103,13 +103,13 @@
 	armor_penetration = initial(armor_penetration)
 	wdefense = initial(wdefense)
 	wdefense_wbonus = initial(wdefense_wbonus)
-	wdefense_dynamic = wdefense
+	update_wdefense_dynamic()
 	sharpness = initial(sharpness)
 	can_parry = initial(can_parry)
 	..()
 
 /obj/item/rogueweapon/rmb_self(mob/user)
-	if(length(alt_intents) && (wielded || user.cmode || !twirly))
+	if(has_altgrip_modes() && (wielded || user.cmode || !twirly))
 		if(altgripped)
 			ungrip(user)
 			return
@@ -179,4 +179,4 @@
 /obj/item/rogueweapon/get_mechanics_examine(mob/user)
 	. = ..()
 	if(twirly)
-		. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed[length(alt_intents) ? ", out of combat mode" : ""]. Safe at [skill_to_string(twirl_skill_needed())] skill.")
+		. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed[has_altgrip_modes() ? ", out of combat mode" : ""]. Safe at [skill_to_string(twirl_skill_needed())] skill.")

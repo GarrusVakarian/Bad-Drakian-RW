@@ -871,7 +871,7 @@
 /obj/item/storage/roguebag/brawlknuck
 	populate_contents = list(
 		/obj/item/clothing/wrists/roguetown/bracers/leather,
-		/obj/item/rogueweapon/knuckles,
+		/obj/item/clothing/gloves/roguetown/knuckles,
 		/obj/item/needle/thorn
 	)
 

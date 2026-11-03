@@ -10,17 +10,17 @@
 	animname = "cut"
 	blade_class = BCLASS_CUT
 	hitsound = list('sound/combat/hits/bladed/smallslash (1).ogg', 'sound/combat/hits/bladed/smallslash (2).ogg', 'sound/combat/hits/bladed/smallslash (3).ogg')
-	penfactor = 0
+	penfactor = PEN_NONE
 	chargetime = 0
 	swingdelay = 0
-	clickcd = 10
+	clickcd = CLICK_CD_QUICK
 	item_d_type = "slash"
 
 /// For unusually heavy daggers with a strong cutting edge.
 /datum/intent/dagger/cut/heavy
 	name = "heavy cut"
 	damfactor = 1.2
-	penfactor = 20
+	penfactor = PEN_LIGHT
 	clickcd = 11
 
 /datum/intent/dagger/cut/light
@@ -35,24 +35,27 @@
 	animname = "stab"
 	blade_class = BCLASS_STAB
 	hitsound = list('sound/combat/hits/bladed/genstab (1).ogg', 'sound/combat/hits/bladed/genstab (2).ogg', 'sound/combat/hits/bladed/genstab (3).ogg')
-	penfactor = 40
+	penfactor = PEN_MEDIUM
 	chargetime = 0
-	clickcd = 8
+	clickcd = CLICK_CD_QUICK
 	item_d_type = "stab"
 
 // A slightly weaker thrust for daggers with a curved blade, or which otherwise aren't very good at stabbing.
 /datum/intent/dagger/thrust/weak
 	name = "lopsided thrust"
 	damfactor = 0.8
+	swingdelay = 0.5 SECONDS
+	penfactor = PEN_MEDIUM // Slightly more pen, to compensate in penetration for the lower damage.
+	clickcd = CLICK_CD_QUICK
 
 /datum/intent/dagger/thrust/pick
 	name = "icepick stab"
 	icon_state = "inpick"
 	attack_verb = list("stabs", "impales")
 	hitsound = list('sound/combat/hits/bladed/genstab (1).ogg', 'sound/combat/hits/bladed/genstab (2).ogg', 'sound/combat/hits/bladed/genstab (3).ogg')
-	penfactor = 80
-	clickcd = 14
-	swingdelay = 12
+	penfactor = PEN_BSTEEL
+	clickcd = 1.4 SECONDS
+	swingdelay = 1.2 SECONDS
 	damfactor = 1.1
 	blade_class = BCLASS_PICK
 
@@ -64,7 +67,7 @@
 	blade_class = BCLASS_BLUNT
 	hitsound = list('sound/combat/hits/blunt/bluntsmall (1).ogg', 'sound/combat/hits/blunt/bluntsmall (2).ogg', 'sound/combat/hits/kick/kick.ogg')
 	damfactor = 0.6 // Less damage than a normal attack I don't want this to be better than stabbing
-	penfactor = BLUNT_DEFAULT_PENFACTOR
+	penfactor = PEN_NONE
 	clickcd = 14
 	recovery = 10
 	item_d_type = "blunt"
@@ -79,7 +82,7 @@
 	animname = "chop"
 	blade_class = BCLASS_CHOP
 	hitsound = list('sound/combat/hits/bladed/smallslash (1).ogg', 'sound/combat/hits/bladed/smallslash (2).ogg', 'sound/combat/hits/bladed/smallslash (3).ogg')
-	penfactor = 10
+	penfactor = PEN_LIGHT
 	damfactor = 1.5
 	swingdelay = 5
 	clickcd = 10
@@ -87,7 +90,7 @@
 
 /datum/intent/dagger/chop/cleaver
 	hitsound = list('sound/combat/hits/bladed/genchop (1).ogg', 'sound/combat/hits/bladed/genchop (2).ogg', 'sound/combat/hits/bladed/genchop (3).ogg')
-	penfactor = 30
+	penfactor = PEN_MEDIUM
 
 //knife and dagger objs ฅ^•ﻌ•^ฅ
 
@@ -170,7 +173,7 @@
 	icon_state = "inpick"
 	attack_verb = list("stabs", "impales")
 	hitsound = list('sound/combat/hits/bladed/genstab (1).ogg', 'sound/combat/hits/bladed/genstab (2).ogg', 'sound/combat/hits/bladed/genstab (3).ogg')
-	penfactor = 55
+	penfactor = PEN_MEDIUM
 	clickcd = 12
 	swingdelay = 6 //Halfway point between a 'stab' and 'pick'.
 	damfactor = 1.05
@@ -183,7 +186,7 @@
 	animname = "chop"
 	blade_class = BCLASS_CHOP
 	hitsound = list('sound/combat/hits/bladed/smallslash (1).ogg', 'sound/combat/hits/bladed/smallslash (2).ogg', 'sound/combat/hits/bladed/smallslash (3).ogg')
-	penfactor = 15
+	penfactor = PEN_LIGHT
 	damfactor = 1.3
 	swingdelay = 5
 	clickcd = 10
@@ -310,7 +313,7 @@
 	animname = "stab"
 	blade_class = BCLASS_STAB
 	hitsound = list('sound/combat/hits/bladed/genstab (1).ogg', 'sound/combat/hits/bladed/genstab (2).ogg', 'sound/combat/hits/bladed/genstab (3).ogg')
-	penfactor = 20
+	penfactor = PEN_LIGHT
 	damfactor = 0.9
 	chargetime = 0
 	clickcd = 8
@@ -324,7 +327,7 @@
 	blade_class = BCLASS_CHOP
 	reach = 1
 	swingdelay = 10
-	penfactor = BLUNT_DEFAULT_PENFACTOR
+	penfactor = PEN_NONE
 	damfactor = 2
 	clickcd = CLICK_CD_CHARGED
 	no_early_release = TRUE
@@ -356,7 +359,7 @@
 /datum/intent/dagger/thrust/quick
 	name = "quick thrust"
 	attack_verb = list("thrusts", "shanks")
-	penfactor = 10
+	penfactor = PEN_LIGHT
 	intent_intdamage_factor = 0.1
 	clickcd = 4 //Halved penetration, doubled attack speed. This is either going to be extremely funny, or extremely evil.
 	misscost = 10
@@ -391,6 +394,7 @@
 	smeltresult = /obj/item/ingot/iron
 	picklvl = 1.0
 	is_tool = FALSE
+	special = /datum/special_intent/dagger_dash
 
 /obj/item/rogueweapon/huntingknife/idagger/virtue
 	possible_item_intents = list(/datum/intent/dagger/thrust,/datum/intent/dagger/cut, /datum/intent/dagger/thrust/pick, /datum/intent/dagger/sucker_punch)
@@ -477,12 +481,12 @@
 *
 */
 /datum/intent/dagger/thrust/wood
-	penfactor = 15 //it is still a pointy piece of wood!
+	penfactor = PEN_NONE
 	blade_class = BCLASS_BLUNT
 	hitsound = list('sound/combat/hits/blunt/metalblunt (1).ogg', 'sound/combat/hits/blunt/metalblunt (2).ogg', 'sound/combat/hits/blunt/metalblunt (3).ogg')
 
 /datum/intent/dagger/thrust/pick/wood
-	penfactor = 35 //it is still a pointy piece of wood!
+	penfactor = PEN_NONE
 	blade_class = BCLASS_BLUNT
 	hitsound = list('sound/combat/hits/blunt/metalblunt (1).ogg', 'sound/combat/hits/blunt/metalblunt (2).ogg', 'sound/combat/hits/blunt/metalblunt (3).ogg')
 
@@ -562,7 +566,7 @@
 	force = 30 //The only instance of this dagger existing, outside of special admin-ran events, is when the Priest joins. They spawn with this on their person. Should be safe from Judgement-tier thefts.
 	throwforce = 33
 	throw_speed = 3
-	armor_penetration = 50 //Only accounted for when thrown. Plays into the idea of 'divine intervention' - a literal 'hail mary' when facing down a terrible beast.
+	armor_penetration = PEN_HEAVY //Only accounted for when thrown. Plays into the idea of 'divine intervention' - a literal 'hail mary' when facing down a terrible beast.
 	embedding = list("embed_chance" = 99, "embedded_pain_multiplier" = 1, "embedded_fall_chance" = 0, "embedded_ignore_throwspeed_threshold" = TRUE) //The 'last resort' for a Bishop. Ensures penetration and embedding, at the cost of the dagger itself.
 	max_integrity = 222
 	max_blade_int = 333
@@ -831,7 +835,8 @@
 		force = 20
 		force_dynamic = 20
 		wdefense = 6
-		wdefense_dynamic = 6
+		update_force_dynamic()
+		update_wdefense_dynamic()
 		w_class = WEIGHT_CLASS_NORMAL
 		throwforce = 23
 		icon_state = "navaja_o"
@@ -850,7 +855,7 @@
 		attack_verb = list("stubbed", "poked")
 		sharpness = IS_BLUNT
 		wdefense = 2
-		wdefense_dynamic = 2
+		update_wdefense_dynamic()
 		equip_delay_self = 0 SECONDS
 		unequip_delay_self = 0 SECONDS
 		inv_storage_delay = 0 SECONDS
@@ -871,7 +876,7 @@
 	playsound(src.loc, 'sound/blank.ogg', 50, TRUE)
 	if(extended)
 		force = 20
-		force_dynamic = 20
+		update_force_dynamic()
 		wdefense = 7
 		wdefense_dynamic = 7
 		w_class = WEIGHT_CLASS_NORMAL
@@ -885,14 +890,14 @@
 		inv_storage_delay = initial(inv_storage_delay)
 	else
 		force = 5
-		force_dynamic = 5
+		update_force_dynamic()
 		w_class = WEIGHT_CLASS_SMALL
 		throwforce = 5
 		icon_state = "mtnavaja_c"
 		attack_verb = list("stubbed", "poked")
 		sharpness = IS_BLUNT
 		wdefense = 2
-		wdefense_dynamic = 2
+		update_wdefense_dynamic()
 		equip_delay_self = 0 SECONDS
 		unequip_delay_self = 0 SECONDS
 		inv_storage_delay = 0 SECONDS
@@ -906,7 +911,7 @@
 	throwforce = 22
 	throw_speed = 4
 	max_integrity = 50
-	armor_penetration = 30
+	armor_penetration = PEN_MEDIUM
 	wdefense = 1
 	icon_state = "throw_knifei"
 	embedding = list("embed_chance" = 25, "embedded_pain_multiplier" = 4, "embedded_fall_chance" = 10, "embedded_ignore_throwspeed_threshold" = TRUE)
@@ -938,7 +943,7 @@
 	item_state = "bone_dagger"
 	throwforce = 28
 	max_integrity = 100
-	armor_penetration = 40
+	armor_penetration = PEN_MEDIUM
 	icon_state = "throw_knifes"
 	embedding = list("embed_chance" = 30, "embedded_pain_multiplier" = 4, "embedded_fall_chance" = 5, "embedded_ignore_throwspeed_threshold" = TRUE)
 	picklvl = 0.9
@@ -964,7 +969,7 @@
 	item_state = "bone_dagger"
 	force = 10
 	throwforce = 20
-	armor_penetration = 50
+	armor_penetration = PEN_MEDIUM
 	max_integrity = 150
 	wdefense = 3
 	icon_state = "throw_knifesil"
@@ -989,7 +994,7 @@
 	item_state = "bone_dagger"
 	force = 10
 	throwforce = 20
-	armor_penetration = 50
+	armor_penetration = PEN_MEDIUM
 	max_integrity = 150
 	wdefense = 3
 	icon_state = "throw_knifep"
@@ -1016,7 +1021,7 @@
 	max_blade_int = 200
 	force = 16
 	throwforce = 28
-	armor_penetration = 50
+	armor_penetration = PEN_HEAVY
 	icon_state = "throw_knifebs"
 	embedding = list("embed_chance" = 60, "embedded_pain_multiplier" = 5, "embedded_fall_chance" = 0, "embedded_ignore_throwspeed_threshold" = TRUE)
 	smeltresult = null
@@ -1031,7 +1036,7 @@
 	force = 10
 	throwforce = 10
 	throw_speed = 2
-	armor_penetration = 20
+	armor_penetration = PEN_MEDIUM
 	embedding = list("embed_chance" = 75, "embedded_pain_multiplier" = 5, "embedded_fall_chance" = 10, "embedded_ignore_throwspeed_threshold" = TRUE)
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop/cleaver, /datum/intent/snip, /datum/intent/dagger/thrust/quick)
 	picklvl = 0.8

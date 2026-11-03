@@ -310,7 +310,7 @@
 	damage = 15
 	range = 8
 	pass_flags = PASSTABLE | PASSGRILLE
-	armor_penetration = 15
+	armor_penetration = PEN_NONE
 	damage_type = BRUTE
 	nodamage = FALSE
 	embedchance = 20

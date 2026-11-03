@@ -95,29 +95,25 @@
 			return TRUE
 		I.do_special_attack_effect(user, null, null, src, null)
 
-/mob/living/simple_animal/getarmor(def_zone, type, damage, armor_penetration, blade_dulling, peeldivisor, intdamfactor = 1, used_weapon)
+/mob/living/simple_animal/getarmor(def_zone, type, damage, armor_penetration, blade_dulling, intdamfactor = 1, used_weapon)
 	if(!type)
 		return 0
 	var/armorval = 0
 	if(bbarding && !bbarding.obj_broken)
 		armorval = bbarding.armor.getRating(type)
 		var/intdamage = damage
-		if(type != "blunt")
-			if((damage + armor_penetration) > armorval)
-				intdamage = (damage + armor_penetration) - armorval
-
-			if(intdamfactor != 1)
-				intdamage *= intdamfactor
-
-			bbarding.take_damage(intdamage, damage_flag = type, sound_effect = FALSE, armor_penetration = 100)
-		else
-			if(mind)
-				if(armorval > 0)
-					intdamage -= intdamage * ((armorval / 1.66) / 100)	//Reduces it up to 60% (100 dmg -> 40 dmg at Blunt S armor (100))
-			if(intdamfactor != 1)
-				intdamage *= intdamfactor
-
-			bbarding.take_damage(intdamage, damage_flag = type, sound_effect = FALSE, armor_penetration = 100)
+		if(type in ARMOR_DR_ABSORB_TYPES)
+			intdamage *= 1 / (1 + BLUNT_DR_COEFFICIENT * armorval)
+		else if(type in ARMOR_DR_PIERCE_TYPES)
+			intdamage *= 1 - (1 / (1 + 0.2 * armorval))
+		else if(armorval > 0)
+			if(armor_penetration == armorval)
+				intdamage *= PEN_PASSTHROUGH_PROJ_EQUAL
+			else if(armor_penetration > armorval)
+				intdamage *= PEN_PASSTHROUGH_PROJ_MORE
+		if(intdamfactor != 1)
+			intdamage *= intdamfactor
+		bbarding.take_damage(intdamage, damage_flag = type, sound_effect = FALSE, armor_penetration = 100)
 
 	return armorval
 
@@ -166,7 +162,7 @@
 			var/haha = M.used_intent.item_d_type
 			var/armor = run_armor_check(null, haha, armor_penetration = M.used_intent.penfactor, damage = damage)
 			if(armor > 0)
-				next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
+				next_attack_msg += VISMSG_ARMOR_BLOCKED
 			attack_threshold_check(damage, hitlim, armorcheck = armor)
 			log_combat(M, src, "attacked")
 			updatehealth()
@@ -259,7 +255,7 @@
 		var/haha = M.used_intent.item_d_type
 		var/armor = run_armor_check(null, haha, armor_penetration = M.used_intent.penfactor, damage = damage)
 		if(armor > 0)
-			next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
+			next_attack_msg += VISMSG_ARMOR_BLOCKED
 		attack_threshold_check(damage, hitlim, armorcheck = armor)
 		log_combat(M, src, "attacked")
 		updatehealth()
@@ -278,7 +274,7 @@
 		var/haha = M.d_type
 		var/armor = run_armor_check(null, haha, armor_penetration = M.armor_penetration, damage = damage)
 		if(armor > 0)
-			next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
+			next_attack_msg += VISMSG_ARMOR_BLOCKED
 		attack_threshold_check(damage, hitlim, M.melee_damage_type, armor)
 		simple_woundcritroll(M.a_intent.blade_class, damage, M, hitlim)
 		visible_message(span_danger("\The [M] [pick(M.a_intent.attack_verb)] [src]![next_attack_msg.Join()]"), \
@@ -309,7 +305,7 @@
 	var/hitlim = simple_limb_hit(user.zone_selected)
 	var/armor = run_armor_check(null, "stab", armor_penetration = 0, damage = damage)
 	if(armor > 0)
-		user.next_attack_msg += " <span class='warning'>Armor stops the damage.</span>"
+		user.next_attack_msg += VISMSG_ARMOR_BLOCKED
 	if(src.apply_damage(damage, BRUTE, hitlim, armor))
 		if(istype(user, /mob/living/carbon/human/species/werewolf))
 			visible_message(span_danger("The werewolf bites into [src] and thrashes!"))
