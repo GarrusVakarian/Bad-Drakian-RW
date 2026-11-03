@@ -43,3 +43,6 @@
   - rscadd: Solid food can absorb liquids and sprinkled powders, up to 5u total per
       item.
   - bugfix: Fine and coarse salt contain real, non-nutritious salt instead of flour.
+2026-11-03:
+  _Rarity:
+  - server: Added optional round-start stall diagnostics, enabled with LOG_ROUNDSTART_STALLS
