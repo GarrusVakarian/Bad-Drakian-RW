@@ -118,3 +118,23 @@
       of injury-level garbling.
   - bugfix: Scent of the Grave no longer offers NPC corpses as tracking targets. Ghosted
       and disconnected player corpses remain detectable.
+  - bugfix: '(zRainbowcat) Prevents simultaneous hide scraping from duplicating leather.
+      (Azure #9660)'
+  - bugfix: '(effyank) Assassin disguises also copy pronouns and voice packs. (Azure
+      #9784)'
+  - bugfix: '(BobProductive) Restores mob interaction through the stat panel. (Azure
+      #9662)'
+  - bugfix: '(KatTheFox) Corrects nickname highlight colors. (Azure #9687)'
+  - bugfix: '(KatTheFox) Restores mouseover information for characters with the Blindness
+      flaw. (Azure #9598)'
+  - bugfix: '(WeNeedMorePhoron) Corrects NPC low-health stealth detection and rat/spider
+      targeting. (Azure #9716)'
+  - rscadd: '(crekulon) Adds Tick, Creak and Spark noises for constructs. (Azure #9790)'
+  - rscadd: '(WeNeedMorePhoron) Adds craftable stockbait for attracting livestock.
+      (Azure #9694)'
+  - bugfix: '(WeNeedMorePhoron) Prevents duplicate Saddleborn mount selection. (Azure
+      #9620)'
+  - qol: '(OrbisAnima) Allows loading smeltable sack contents directly into smelters.
+      (Azure #9667)'
+  - rscadd: '(7erracotta) Adds six hats and collars, with sewing recipes and loadout
+      options. (Azure #9829)'
