@@ -11909,6 +11909,10 @@
 /obj/item/rope/chain,
 /obj/item/rope/chain,
 /obj/item/rope/chain,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/indoors/town/cell/warden)
 "fEp" = (
@@ -23962,6 +23966,7 @@
 /obj/item/cooking/pan,
 /obj/item/reagent_containers/glass/bucket,
 /obj/item/kitchen/rollingpin,
+/obj/item/rogueweapon/shovel/small,
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/indoors/town/cell/warden)
 "lro" = (
@@ -28284,6 +28289,10 @@
 	dir = 10
 	},
 /area/rogue/outdoors/rtfield/rockhill/above)
+"nsx" = (
+/obj/structure/fluff/statue/gargoyle/candles,
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/town/cell/warden)
 "nsy" = (
 /obj/structure/flora/roguegrass,
 /turf/open/floor/rogue/dirt/nospawn,
@@ -42142,6 +42151,7 @@
 	icon_state = "largetable";
 	dir = 1
 	},
+/obj/item/book/rogue/law,
 /turf/open/floor/rogue/herringbone,
 /area/rogue/indoors/town/warden)
 "tYR" = (
@@ -93478,7 +93488,7 @@ tXv
 lkr
 vjO
 eia
-dIs
+nsx
 naY
 kFN
 exa
@@ -94082,7 +94092,7 @@ eia
 eia
 eyr
 eia
-dIs
+nsx
 naY
 ssr
 csA
