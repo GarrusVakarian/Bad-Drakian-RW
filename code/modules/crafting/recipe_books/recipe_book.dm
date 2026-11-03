@@ -15,6 +15,8 @@
 	var/wiki_name
 	/// Which section this book appears in on the OOC Guidebook. "Crafting Recipes" or "Guides".
 	var/wiki_section = "Crafting Recipes"
+	/// Lower values appear first in the encyclopedia; equal values sort by name.
+	var/wiki_order = 0
 	resistance_flags = FLAMMABLE
 
 /obj/item/recipe_book/dropped(mob/user, silent)
