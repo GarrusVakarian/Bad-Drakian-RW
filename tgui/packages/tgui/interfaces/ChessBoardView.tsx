@@ -5,7 +5,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-
 import { Button, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
