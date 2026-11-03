@@ -116577,6 +116577,67 @@
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
+"aaa" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	pixel_y = 0;
+	wrotesign = "Rockhill - East - Follow the road south!"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bogsafe)
+"aai" = (
+/obj/structure/fluff/railing/wood{
+	dir = 4;
+	pixel_x = 9
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/outdoors/bogsafe)
+"aak" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bogsafe)
+"aal" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/dirt,
+/area/rogue/outdoors/bograt/west)
+"aam" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bograt/west)
+"aao" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/bograt/west)
+"aat" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bograt/north)
+"aau" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/bograt/north)
+"aav" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt,
+/area/rogue/outdoors/bograt/north)
 
 (1,1,1) = {"
 fyc
@@ -228323,9 +228384,9 @@ oUd
 jFa
 cYc
 gUR
-psr
-psr
-psr
+fIz
+fIz
+fIz
 cYc
 cYc
 cYc
@@ -228747,22 +228808,22 @@ aad
 aad
 aad
 wDr
+fIz
+fIz
+fIz
 psr
-psr
-psr
-cYc
-psr
-psr
-psr
-psr
-xLX
+fIz
+fIz
+fIz
+fIz
+aai
 tYg
 cYc
-psr
-xLX
-xLX
-psr
-psr
+fIz
+aai
+aai
+fIz
+fIz
 bCY
 jFa
 nJf
@@ -229195,9 +229256,9 @@ kst
 kst
 pac
 cYc
-psr
-psr
-psr
+fIz
+fIz
+fIz
 psr
 cYc
 voc
@@ -229630,9 +229691,9 @@ pac
 cYc
 cYc
 cYc
-psr
-psr
-psr
+fIz
+fIz
+fIz
 jFa
 nsy
 voc
@@ -230064,10 +230125,10 @@ oUd
 pac
 jFa
 jFa
-psr
-psr
+fIz
+fIz
 nsy
-jFa
+aak
 rri
 lxs
 lxs
@@ -230498,7 +230559,7 @@ mlz
 rpL
 cYc
 jFa
-psr
+fIz
 nsy
 uRH
 lxs
@@ -230930,7 +230991,7 @@ kst
 nsy
 jFa
 jFa
-psr
+fIz
 jFa
 ujL
 lxs
@@ -231363,7 +231424,7 @@ kst
 voc
 pac
 jFa
-lxs
+qBR
 lxs
 lxs
 ujL
@@ -231795,7 +231856,7 @@ smf
 ujL
 sUQ
 rfA
-lxs
+qBR
 lxs
 rfA
 ujL
@@ -232227,7 +232288,7 @@ oqo
 ujL
 ujL
 rfA
-lxs
+qBR
 lxs
 rfA
 rfA
@@ -233091,7 +233152,7 @@ smf
 oqo
 rfA
 rfA
-lxs
+qBR
 rfA
 rfA
 smf
@@ -233523,8 +233584,8 @@ smf
 smf
 oqo
 rfA
-lxs
-lxs
+qBR
+qBR
 sUQ
 rfA
 smf
@@ -233956,7 +234017,7 @@ smf
 oqo
 rfA
 rfA
-lxs
+qBR
 ujL
 lxs
 rfA
@@ -234388,7 +234449,7 @@ smf
 smf
 oqo
 rfA
-lxs
+qBR
 rfA
 rfA
 waO
@@ -235252,7 +235313,7 @@ smf
 grB
 oqo
 haL
-lxs
+qBR
 ujL
 ujL
 ujL
@@ -235684,7 +235745,7 @@ smf
 smf
 oqo
 nKS
-lxs
+qBR
 rfA
 ujL
 ujL
@@ -236116,7 +236177,7 @@ smf
 smf
 oqo
 rri
-lxs
+qBR
 uRH
 ujL
 oqo
@@ -236547,8 +236608,8 @@ smf
 smf
 oqo
 uRH
-lxs
-lxs
+ujL
+qBR
 ujL
 oqo
 smf
@@ -236979,8 +237040,8 @@ oqo
 oqo
 oqo
 mJk
-lxs
-lxs
+ujL
+qBR
 oqo
 smf
 smf
@@ -237411,7 +237472,7 @@ oqo
 ujL
 ujL
 haL
-lxs
+qBR
 rfA
 oqo
 smf
@@ -237843,7 +237904,7 @@ ujL
 rfA
 ujL
 ujL
-lxs
+qBR
 smf
 rfA
 oqo
@@ -238274,8 +238335,8 @@ ujL
 rfA
 rfA
 qYw
-lxs
-lxs
+qBR
+qBR
 smf
 ujL
 ujL
@@ -238706,7 +238767,7 @@ ujL
 qYw
 rfA
 rfA
-lxs
+qBR
 smf
 rfA
 ujL
@@ -239570,7 +239631,7 @@ rfA
 ujL
 jdv
 lxs
-lxs
+qBR
 oXL
 rfA
 rfA
@@ -240002,7 +240063,7 @@ rfA
 rfA
 rfA
 lxs
-lxs
+qBR
 ujL
 smf
 smf
@@ -240434,7 +240495,7 @@ oXL
 rfA
 rfA
 lxs
-lxs
+qBR
 smf
 khC
 smf
@@ -240866,7 +240927,7 @@ rfA
 rfA
 qYw
 lxs
-lxs
+ujL
 ujL
 rfA
 rfA
@@ -241298,7 +241359,7 @@ rfA
 smf
 smf
 lxs
-lxs
+qBR
 rfA
 rfA
 rfA
@@ -241730,7 +241791,7 @@ smf
 ujL
 rfA
 lxs
-lxs
+qBR
 rfA
 rfA
 ujL
@@ -242162,7 +242223,7 @@ ujL
 ujL
 oXL
 lxs
-lxs
+ujL
 ujL
 ujL
 ujL
@@ -242594,7 +242655,7 @@ ujL
 ujL
 lxs
 lxs
-lxs
+qBR
 rfA
 oXL
 smf
@@ -243026,9 +243087,9 @@ oXL
 lxs
 gbp
 rfA
-lxs
+qBR
 rfA
-rfA
+jdv
 smf
 smf
 rfA
@@ -243458,9 +243519,9 @@ lxs
 lxs
 ujL
 rfA
-lxs
-lxs
-rfA
+qBR
+qBR
+aal
 ujL
 oXL
 qYw
@@ -243891,7 +243952,7 @@ rfA
 ujL
 rfA
 rfA
-lxs
+qBR
 rfA
 ujL
 rfA
@@ -244755,8 +244816,8 @@ oqo
 smf
 smf
 oqo
-lxs
-lxs
+qBR
+qBR
 qYw
 ujL
 rfA
@@ -245188,8 +245249,8 @@ smf
 smf
 oqo
 rfA
-lxs
-lxs
+qBR
+qBR
 lxs
 lxs
 rfA
@@ -245621,7 +245682,7 @@ smf
 oqo
 lxs
 rfA
-lxs
+qBR
 rfA
 rfA
 ujL
@@ -246053,7 +246114,7 @@ smf
 oqo
 smf
 qYw
-lxs
+qBR
 rfA
 ujL
 ujL
@@ -246485,7 +246546,7 @@ smf
 oqo
 ujL
 rfA
-lxs
+ujL
 uRH
 ujL
 ujL
@@ -246918,7 +246979,7 @@ oqo
 rfA
 rfA
 ujL
-lxs
+qBR
 ujL
 ujL
 ujL
@@ -247349,8 +247410,8 @@ smf
 ujL
 rfA
 rfA
-rfA
-lxs
+jdv
+qBR
 oXL
 ujL
 whb
@@ -247782,8 +247843,8 @@ rfA
 rfA
 ujL
 smf
-lxs
-lxs
+qBR
+qBR
 ujL
 whb
 whb
@@ -248215,7 +248276,7 @@ rfA
 ujL
 smf
 rfA
-lxs
+qBR
 ujL
 ujL
 aae
@@ -248647,7 +248708,7 @@ ujL
 rfA
 rfA
 rfA
-lxs
+qBR
 rfA
 rfA
 rfA
@@ -249078,8 +249139,8 @@ rfA
 rfA
 ujL
 rfA
-lxs
-lxs
+qBR
+qBR
 rfA
 rfA
 rfA
@@ -249510,7 +249571,7 @@ ujL
 ujL
 rfA
 ujL
-lxs
+qBR
 oXL
 ujL
 rfA
@@ -249941,7 +250002,7 @@ rfA
 ujL
 ujL
 uRH
-lxs
+qBR
 lxs
 aJL
 rfA
@@ -250373,7 +250434,7 @@ rfA
 ujL
 rfA
 qYw
-lxs
+qBR
 lxs
 smf
 rfA
@@ -250805,7 +250866,7 @@ smf
 smf
 ujL
 rfA
-lxs
+qBR
 rfA
 rfA
 rfA
@@ -251237,7 +251298,7 @@ rfA
 qYw
 ujL
 rfA
-lxs
+qBR
 rfA
 rfA
 rfA
@@ -251668,7 +251729,7 @@ ujL
 rfA
 ujL
 ujL
-lxs
+qBR
 ujL
 ujL
 rfA
@@ -252099,9 +252160,9 @@ ujL
 uRH
 ujL
 rfA
-lxs
-ujL
-rfA
+qBR
+aam
+jdv
 rfA
 rfA
 smf
@@ -252530,7 +252591,7 @@ rfA
 ujL
 ujL
 rfA
-lxs
+qBR
 ujL
 rfA
 ujL
@@ -252961,8 +253022,8 @@ lxs
 smf
 ujL
 ujL
-lxs
-lxs
+qBR
+qBR
 ujL
 ujL
 oqo
@@ -253391,9 +253452,9 @@ aOf
 smf
 rfA
 ujL
-rfA
-rfA
-lxs
+qBR
+ujL
+qBR
 ujL
 qNe
 ujL
@@ -253821,8 +253882,8 @@ smf
 smf
 smf
 smf
-ujL
-rfA
+rri
+qBR
 ujL
 ujL
 ujL
@@ -254686,7 +254747,7 @@ uRH
 uRH
 ujL
 rfA
-lxs
+qBR
 ujL
 ujL
 rfA
@@ -255118,7 +255179,7 @@ ujL
 ujL
 ujL
 lxs
-lxs
+qBR
 ujL
 ujL
 oqo
@@ -255549,8 +255610,8 @@ ujL
 ujL
 ujL
 lxs
-lxs
-lxs
+qBR
+qBR
 rfA
 smf
 aOf
@@ -255981,7 +256042,7 @@ ujL
 lxs
 lxs
 lxs
-lxs
+qBR
 rfA
 rfA
 smf
@@ -256406,13 +256467,13 @@ smf
 rfA
 ujL
 rri
-lxs
+aao
 lxs
 qux
-lxs
-lxs
-lxs
-lxs
+qBR
+qBR
+qBR
+qBR
 lxs
 rfA
 rfA
@@ -256835,13 +256896,13 @@ lxs
 lxs
 rfA
 ujL
+qBR
+qBR
+qBR
+qBR
 lxs
-lxs
-lxs
-lxs
-lxs
-lxs
-lxs
+qBR
+qBR
 rfA
 qYw
 rfA
@@ -257276,7 +257337,7 @@ rfA
 rfA
 rfA
 rfA
-ujL
+rri
 ujL
 lxs
 lxs
@@ -257698,8 +257759,8 @@ rfA
 rfA
 lxs
 ujL
-lxs
-lxs
+qBR
+qBR
 rfA
 smf
 ujL
@@ -258129,7 +258190,7 @@ oqo
 uRH
 rfA
 lxs
-lxs
+qBR
 qux
 rfA
 ujL
@@ -258561,7 +258622,7 @@ rfA
 rfA
 ujL
 lxs
-lxs
+qBR
 rfA
 ujL
 smf
@@ -258992,8 +259053,8 @@ ujL
 ujL
 ujL
 ujL
-lxs
-lxs
+qBR
+qBR
 ujL
 ujL
 ujL
@@ -259422,9 +259483,9 @@ smf
 oqo
 ujL
 rfA
-lxs
-lxs
-lxs
+qBR
+qBR
+qBR
 rfA
 ujL
 ujL
@@ -259854,7 +259915,7 @@ oqo
 rfA
 ujL
 gbp
-lxs
+qBR
 qux
 rfA
 smf
@@ -260286,7 +260347,7 @@ rfA
 ujL
 ujL
 ujL
-lxs
+qBR
 qux
 rfA
 ujL
@@ -261149,7 +261210,7 @@ ujL
 rfA
 ujL
 ujL
-lxs
+qBR
 qux
 ujL
 ujL
@@ -261580,7 +261641,7 @@ ujL
 ujL
 quT
 ujL
-lxs
+qBR
 qux
 qux
 ujL
@@ -262010,8 +262071,8 @@ lxs
 ujL
 ujL
 rfA
-ujL
-lxs
+nKS
+qBR
 qux
 qux
 ujL
@@ -262442,8 +262503,8 @@ lxs
 ujL
 ujL
 lxs
-lxs
-lxs
+kiI
+qBR
 qux
 lxs
 lxs
@@ -271514,7 +271575,7 @@ fPd
 fPd
 sYx
 fPd
-fPd
+idS
 lOV
 azy
 fPd
@@ -271946,7 +272007,7 @@ fPd
 fPd
 fPd
 fPd
-fPd
+aat
 azy
 azy
 fPd
@@ -272379,7 +272440,7 @@ fPd
 sYx
 sYx
 fPd
-azy
+lOV
 azy
 fPd
 fPd
@@ -272811,7 +272872,7 @@ fPd
 fPd
 fPd
 ljM
-azy
+lOV
 azy
 fPd
 fPd
@@ -273243,7 +273304,7 @@ fGG
 fPd
 fcx
 lOV
-azy
+lOV
 fPd
 sYx
 sYx
@@ -274538,7 +274599,7 @@ fPd
 cuM
 fPd
 azy
-azy
+lOV
 sqd
 sYx
 sYx
@@ -274970,7 +275031,7 @@ fPd
 fPd
 fPd
 fPd
-azy
+lOV
 ljM
 lOV
 djA
@@ -275402,7 +275463,7 @@ fPd
 fGG
 fPd
 fGG
-azy
+lOV
 ljM
 ljM
 djA
@@ -276268,7 +276329,7 @@ fPd
 sYx
 lOV
 fPd
-fPd
+idS
 fPd
 sYx
 sYx
@@ -278425,7 +278486,7 @@ fPd
 fPd
 fPd
 fPd
-azy
+lOV
 fPd
 fPd
 fPd
@@ -279290,8 +279351,8 @@ fPd
 cuM
 fPd
 lOV
-azy
-fPd
+aau
+idS
 fPd
 fPd
 fPd
@@ -282308,9 +282369,9 @@ fPd
 rKh
 fPd
 fPd
-sYx
+aav
 azy
-lOV
+azy
 lOV
 fPd
 fPd
@@ -285330,7 +285391,7 @@ sAu
 fPd
 qMq
 azy
-lOV
+azy
 azy
 fPd
 fPd
@@ -286625,7 +286686,7 @@ sYx
 sAu
 sYx
 azy
-lOV
+azy
 lOV
 qMq
 sYx
@@ -288352,7 +288413,7 @@ sqd
 fPd
 azy
 lOV
-sYx
+aav
 azy
 sYx
 fPd
@@ -338471,9 +338532,9 @@ sYw
 sYw
 svL
 quC
-psr
-psr
-fEx
+fIz
+fIz
+aaa
 oke
 kKp
 kKp
@@ -338904,8 +338965,8 @@ sYw
 xLG
 dxj
 bWx
-psr
-psr
+fIz
+fIz
 wDr
 kKp
 kKp
