@@ -651,6 +651,14 @@
 	var/nausea = 0
 	var/pain_threshold = 0
 	var/bleeding_tier = 0
+	var/chem_pain = 0
+
+/mob/living/carbon/proc/update_chem_pain()
+	chem_pain = 0
+	for(var/datum/reagent/r in reagents?.reagent_list)
+		if(r.pain && r.metabolizing)
+			chem_pain += r.pain
+	mark_pain_hud_dirty()
 
 /mob/living/carbon/proc/add_nausea(amt)
 	nausea = clamp(nausea + amt, 0, 300)
@@ -893,6 +901,12 @@
 	if(HAS_TRAIT(src, TRAIT_DARKVISION))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_DARKVISION)
 		see_in_dark = max(see_in_dark, 12)
+
+	if(HAS_TRAIT(src, TRAIT_LIGHT_SENSITIVITY))
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_DARKVISION)
+		see_in_dark = max(see_in_dark, 12)
+		if(HAS_TRAIT(src, TRAIT_DARKVISION))
+			lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_SENSITIVE_DARKVISION)
 
 	if(HAS_TRAIT(src, TRAIT_NOCSHADES))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_NOCSHADES)

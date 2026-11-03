@@ -199,9 +199,9 @@
 	var/chance_add = stealmods["chance_add"]
 	if(!isnum(chance_add))
 		chance_add = 0
-	var/effective_targetperception = victim.STAPER
+	var/effective_targetperception = victim.STAPER + (HAS_TRAIT(victim, TRAIT_WATCHFUL) ? 1 : 0)
 	if(chance_add > 0)
-		effective_targetperception = max(0, round(victim.STAPER * (100 - chance_add) / 100))
+		effective_targetperception = max(0, round(effective_targetperception * (100 - chance_add) / 100))
 	var/exp_to_gain = thief.STAINT
 	to_chat(thief, span_notice("I try to steal from [victim]..."))
 	if(!do_after(thief, 1 SECONDS, target = victim, progress = 0))

@@ -473,9 +473,11 @@
 	//body temp
 	switch(bodytemperature)
 		if(0 to BODYTEMP_COLD_LEVEL_ONE_MAX)
-			msg += span_biginfo("<font color='#023E8A'> [m1] shivering uncontrollably</font>")
+			if(!HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+				msg += span_biginfo("<font color='#023E8A'> [m1] shivering uncontrollably</font>")
 		if(BODYTEMP_COLD_LEVEL_ONE_MAX to BODYTEMP_NORMAL_MIN)
-			msg += span_biginfo("<font color='#99e6ff'> [m1] shivering</font>")
+			if(!HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+				msg += span_biginfo("<font color='#99e6ff'> [m1] shivering</font>")
 		if(BODYTEMP_NORMAL_MAX to BODYTEMP_HEAT_LEVEL_ONE_MAX)
 			msg += span_biginfo("<font color='#ffff00'> [m1] sweating</font>")
 		if(BODYTEMP_HEAT_LEVEL_ONE_MAX to 600)
