@@ -187,6 +187,9 @@ GLOBAL_LIST_EMPTY(last_words)
 		return "an unknown locale, wreathed in enigmatic fog"
 	if(!A.deathsight_message || A.deathsight_message == "a locale wreathed in enigmatic fog")
 		return generate_relative_deathsight(observer)
+	// Other callers without a watcher (such as culling memories) keep area-only text.
+	if(observer)
+		return "[A.deathsight_message] ([generate_relative_deathsight(observer)])"
 	return A.deathsight_message
 
 /mob/living/proc/generate_relative_deathsight(mob/observer)
@@ -218,4 +221,6 @@ GLOBAL_LIST_EMPTY(last_words)
 		parts += "[zdiff] level\s above me"
 	else if(zdiff < 0)
 		parts += "[abs(zdiff)] level\s below me"
+	else
+		parts += "on my level"
 	return jointext(parts, ", ")
