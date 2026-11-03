@@ -672,6 +672,8 @@
 		. = verb_sing
 	else
 		. = ..()
+	if(istype(original_owner))
+		. = original_owner.apply_sore_jaw_speech_modifier(.)
 
 // Head inventory.
 /obj/item/bodypart/head/dullahan/proc/show_inv(mob/user)
