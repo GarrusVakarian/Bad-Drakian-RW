@@ -552,13 +552,15 @@
 
 /datum/reagents/proc/update_total()
 	var/list/cached_reagents = reagent_list
-	total_volume = 0
+	// del_reagent() can recalculate totals recursively; keep this pass's sum local.
+	var/new_total = 0
 	for(var/reagent in cached_reagents)
 		var/datum/reagent/R = reagent
 		if(R.volume < 0.1)
 			del_reagent(R.type)
 		else
-			total_volume += R.volume
+			new_total += R.volume
+	total_volume = new_total
 
 	return 0
 
@@ -746,16 +748,14 @@
 
 		//reduce the volume
 		remove_amount = min(cached_reagent.volume, amount)
-		cached_reagent.volume -= amount
+		cached_reagent.volume -= remove_amount
 
 		total_removed_amount += remove_amount
+		update_total()
 		if(!safety)//So it does not handle reactions when it need not to
 			handle_reactions()
 		if(my_atom)
 			my_atom.on_reagent_change(REM_REAGENT)
-
-	//update the holder & handle reactions
-	update_total()
 
 	return total_removed_amount
 
