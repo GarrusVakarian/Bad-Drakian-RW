@@ -707,6 +707,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	
 	// Clean up duplicate vices/virtues (one-time fix for existing characters)
 	fix_duplicate_vices()
+	refresh_customization_size_preview()
 	
 	var/html_content = generate_vices_html(user)
 	user << browse(html_content, "window=character_custom;size=750x500")

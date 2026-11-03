@@ -55,6 +55,32 @@
 			highest_priority = job_preferences[job]
 	return preview_job
 
+/datum/preferences
+	/// Visual customization multiplier used for the last prepared character preview.
+	var/last_preview_customization_scale = 1
+
+/datum/preferences/proc/get_preview_customization_scale()
+	if(istype(virtue, /datum/virtue/size/giant) || (istype(statpack, /datum/statpack/wildcard/virtuous) && istype(virtuetwo, /datum/virtue/size/giant)) || has_quirk(/datum/quirk/largeframe))
+		return 1.25
+	return 1
+
+/// Selection changes, presets and undo/redo all return through the customization menu.
+/datum/preferences/proc/refresh_customization_size_preview()
+	if(get_preview_customization_scale() == last_preview_customization_scale)
+		return FALSE
+	update_preview_icon()
+	return TRUE
+
+/// Apply the same visual transform as Giant/Large Frame to a fresh appearance only.
+/// Do not modify the shared mannequin or run customization gameplay effects here.
+/datum/preferences/proc/apply_preview_customization_size(mutable_appearance/preview_appearance, multiplier)
+	if(!preview_appearance || multiplier == 1)
+		return
+	var/matrix/sized_transform = matrix(preview_appearance.transform)
+	sized_transform.Scale(multiplier, multiplier)
+	sized_transform.Translate(0, (multiplier - 1) * 16)
+	preview_appearance.transform = sized_transform
+
 /datum/preferences/proc/update_preview_icon(jobOnly = FALSE)
 	set waitfor = 0
 	clear_hair_preview_cache()
@@ -89,6 +115,9 @@
 		mannequin.update_hair()
 		mannequin.rebuild_obscured_flags()
 		preview_appearance = new /mutable_appearance(mannequin)
+		var/customization_scale = get_preview_customization_scale()
+		apply_preview_customization_size(preview_appearance, customization_scale)
+		last_preview_customization_scale = customization_scale
 		preview_applied_center_offset = mannequin.dna.current_body_center_offset
 		preview_applied_center_offset_y = mannequin.dna.current_body_center_offset_y
 		preview_body_size = mannequin.dna.current_body_size
