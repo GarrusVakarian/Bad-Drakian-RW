@@ -50,3 +50,57 @@
   - qol: Giant's description now explicitly lists its +1 CON bonus.
   - qol: Character creation previews show the size increase from Giant and Large Frame.
   - bugfix: Casting Message no longer cancels Stalk for Gnolls.
+  - rscadd: '(Kroto-Ker) Fluvians gain longer wing-assisted jumps, fluttering and
+      moth squeaks. (Ratwood #3026)'
+  - bugfix: '(Sauna38) Fixes the Town Crier/Loudmouth hat being invisible when worn.
+      (Ratwood #3124)'
+  - rscadd: '(trueroguan) Adds clothing hem hiking: hold up supported garments with
+      both hands. (Ratwood #2725)'
+  - rscadd: '(SirSwagmeyer) Adds a weaponsmithing recipe for the Dueling Messer. (Ratwood
+      #2920)'
+  - bugfix: '(Xander3359) Fixes food preparation, milling and salt sifting; boiling
+      removes blessed/cursed water effects. (Ratwood #3082)'
+  - rscadd: '(Kroto-Ker) Adds origin-specific traits. (Ratwood #3069)'
+  - bugfix: '(HelennaC) Corrects SLOOC chat colors. (Ratwood #3144)'
+  - bugfix: '(The-Sun-In-Splendour) Fixes crankbox examine information. (Ratwood #3092)'
+  - bugfix: '(Randumb-Phantomb) Corrects the Psydonic full-plate crafting recipe name.
+      (Ratwood #2992)'
+  - rscadd: '(Gug1234) Adds a preference for container-based milking. (Ratwood #3037)'
+  - bugfix: '(Xander3359) Restores animated hypnophrase text. (Ratwood #3146)'
+  - rscadd: '(Kaolin1234) Adds the Weaver Spider body option for arachnids. (Ratwood
+      #3156)'
+  - bugfix: '(CentralSmith) Fixes pipes getting stuck after burning out. (Ratwood
+      #3180)'
+  - bugfix: '(Arturlang) Prevents runaway terrain-layer buildup. (Ratwood #3178)'
+  - rscadd: '(IronDragoon) Adds printing presses, painting archives, archive management
+      and random archived book/painting placements. (Ratwood #3063)'
+  - bugfix: '(ariaworld) Corrects hardened leather bracer alignment on feminine bodies.
+      (Ratwood #3197)'
+  - bugfix: '(Arturlang) Fixes broken anvil recipes and missing recipe results. (Ratwood
+      #3170)'
+  - rscadd: '(Arturlang) Adds a separate preference for tailmaw messages. (Ratwood
+      #3177)'
+  - bugfix: '(Xander3359) Gives Psydonites faith-appropriate Fabled Lover messages.
+      (Ratwood #3187)'
+  - bugfix: '(eirenxiv) Taking the Martyr oath no longer dulls the weapon. (Ratwood
+      #3181)'
+  - bugfix: '(IronDragoon) Tailmaw examine text respects the viewer''s content preference.
+      (Ratwood #3210)'
+  - bugfix: '(Kaolin1234) Refines Weaver Spider sprites. (Ratwood #3208)'
+  - rscadd: '(X404ErrorX) Adds padded/bronze corslets, spaulders, poleyns and loadout
+      options; retains BD armor coverage. (Ratwood #3164)'
+  - bugfix: '(zVineatic) Corrects middle-aged and elderly stat descriptions. (Ratwood
+      #3211)'
+  - bugfix: '(eirenxiv) Metal repair kits can repair Kazengun scabbards and sheaths.
+      (Ratwood #3205)'
+  - bugfix: '(Arturlang) Fixes missing scabbard and sheath sprites. (Ratwood #3202)'
+  - bugfix: '(petwir1) Fixes Inquisitor duster repairability. (Ratwood #3213)'
+  - rscadd: '(wikimody) Adds Pestra healing medicines and medicinal pain relief; fixes
+      Pestra prayer recognition. (Ratwood #3018)'
+  - bugfix: '(Arturlang) Fixes ooze shapeshifting allowing unintended immortality.
+      (Ratwood #3152)'
+  - rscadd: '(annikaRU) Adds field cannons, artificer tools/equipment and related
+      machinery improvements. (Ratwood #3104)'
+  - bugfix: '(Nid4259) Corrects the Grand Duke subclass name to Valiant Chief. (Ratwood
+      #3220)'
+  - balance: Templars cannot choose Hemophage or Silver Weakness.
