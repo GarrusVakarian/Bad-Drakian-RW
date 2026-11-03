@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - server: "Added optional round-start stall diagnostics, enabled with LOG_ROUNDSTART_STALLS"
