@@ -1373,6 +1373,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				if(prob(3))
 					if(try_deny_panel_climax())
 						return
+					if(has_pending_panel_climax())
+						return
 					ejaculate(climax_part)
 					if(splashed_user)
 						var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1389,6 +1391,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return FALSE
 	if(try_deny_panel_climax())
 		return
+	if(has_pending_panel_climax())
+		return
 	ejaculate(climax_part)
 	if(splashed_user)
 		var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1397,6 +1401,38 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		else
 			facial.refresh_cum()
 		modular_record_collar_receive_event(splashed_user, user)
+
+/// Let the scheduled action perform its own completion without replaying an
+/// action tick here. The donor may be receiving an action, not initiating one.
+/datum/sex_controller/proc/has_pending_panel_climax()
+	if(!ishuman(user) || QDELETED(user))
+		return FALSE
+	var/list/active_actions = list(src)
+	if(panel_triumph_actions)
+		active_actions |= panel_triumph_actions
+	for(var/datum/sex_controller/action_controller in active_actions)
+		if(QDELETED(action_controller) || !action_controller.current_action || action_controller.desire_stop)
+			continue
+		var/mob/living/carbon/human/actor = action_controller.user
+		var/mob/living/carbon/human/recipient = action_controller.target
+		if(!ishuman(actor) || QDELETED(actor) || !ishuman(recipient) || QDELETED(recipient) || actor.sexcon != action_controller)
+			continue
+		if(!actor.client?.prefs?.sexable || !recipient.client?.prefs?.sexable)
+			continue
+		var/datum/sex_action/action = SEX_ACTION(action_controller.current_action)
+		if(!istype(action))
+			continue
+		if(!((user == actor && action.handles_user_climax) || (user == recipient && action.handles_target_climax)))
+			continue
+		// Retargeting clears this captured partner before the old loop exits.
+		if(!action.solo && action_controller.panel_triumph_target != recipient)
+			continue
+		if(!action_controller.can_perform_action(action_controller.current_action, actor.incapacitated()))
+			continue
+		// on_perform may still be delivering another participant's bursts even
+		// after is_finished becomes true. Let loop cleanup release this priority.
+		return TRUE
+	return FALSE
 
 /datum/sex_controller/proc/handle_container_ejaculation()
 	if(arousal < PASSIVE_EJAC_THRESHOLD)

@@ -41,6 +41,9 @@
 	var/obj/effect/proc_holder/spell/user_required_spell_type
 	/// If solo is TRUE, user must equal target.
 	var/solo = FALSE
+	/// This participant has a dedicated completion path in on_perform.
+	var/handles_user_climax = FALSE
+	var/handles_target_climax = FALSE
 
 /datum/sex_action/proc/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(solo)

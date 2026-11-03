@@ -1,4 +1,5 @@
 /datum/sex_action/masturbate_container
+	handles_user_climax = TRUE
 	name = "Masturbate cock into container"
 	category = SEX_CATEGORY_HANDS
 	user_sex_part = SEX_PART_COCK
