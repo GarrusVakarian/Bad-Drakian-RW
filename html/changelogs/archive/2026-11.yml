@@ -46,3 +46,6 @@
 2026-11-03:
   _Rarity:
   - server: Added optional round-start stall diagnostics, enabled with LOG_ROUNDSTART_STALLS
+  mypingishuge:
+  - qol: Giant's description now explicitly lists its +1 CON bonus.
+  - qol: Character creation previews show the size increase from Giant and Large Frame.
