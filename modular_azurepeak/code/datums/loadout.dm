@@ -2631,3 +2631,27 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/horsey/shoes
 	name = "Horsey Leg Harness"
 	path = /obj/item/clothing/shoes/roguetown/boots/horsey
+
+/datum/loadout_item/cravat
+	name = "Cravat"
+	path = /obj/item/clothing/neck/roguetown/cravat
+
+/datum/loadout_item/ruffle
+	name = "Ruffled Collar"
+	path = /obj/item/clothing/neck/roguetown/ruffle
+
+/datum/loadout_item/veiledhat
+	name = "Veiled Hat"
+	path = /obj/item/clothing/head/roguetown/veiledhat
+
+/datum/loadout_item/flotsam
+	name = "Flotsam Bonnet"
+	path = /obj/item/clothing/head/roguetown/flotsam
+
+/datum/loadout_item/nightcap
+	name = "Nitecap"
+	path = /obj/item/clothing/head/roguetown/nightcap
+
+/datum/loadout_item/doublehennin
+	name = "Dual Hennin"
+	path = /obj/item/clothing/head/roguetown/doublehennin

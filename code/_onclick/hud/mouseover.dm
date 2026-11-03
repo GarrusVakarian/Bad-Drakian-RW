@@ -174,7 +174,11 @@
 		if(isliving(p))
 			var/mob/living/L = p
 			if(!L.can_see_cone(src))
-				return FALSE
+				if(!ishuman(p))
+					return FALSE
+				var/mob/living/carbon/human/H = p
+				if(!H.has_flaw(/datum/charflaw/noeyeall))
+					return FALSE
 		if(alpha == 0)
 			return FALSE
 		if(!p.x || !p.y)

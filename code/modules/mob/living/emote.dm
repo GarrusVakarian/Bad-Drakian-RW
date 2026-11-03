@@ -1585,6 +1585,9 @@
 
 /mob/living/carbon/human/proc/update_tongue_noise_verbs()
 	var/static/list/all_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
 		/mob/living/carbon/human/verb/emote_meow,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
@@ -1672,6 +1675,11 @@
 		/mob/living/carbon/human/verb/emote_hiss,
 		/mob/living/carbon/human/verb/emote_phiss,
 	)
+	var/static/list/construct_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
+	)
 	var/static/list/moth_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_chitter,
 		/mob/living/carbon/human/verb/emote_msqueak,
@@ -1695,6 +1703,8 @@
 		allowed_verbs += harpy_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/lizard))
 		allowed_verbs += lizard_tongue_noise_verbs
+	if(istype(tongue, /obj/item/organ/tongue/construct))
+		allowed_verbs += construct_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/moth))
 		allowed_verbs += moth_tongue_noise_verbs
 	if(istype(wings, /obj/item/organ/wings/moth))
@@ -1980,6 +1990,19 @@
 	vary = TRUE
 	show_runechat = FALSE
 	is_animal = TRUE
+
+/datum/emote/living/cackle/run_emote(mob/living/user, params, type_override, intentional = FALSE, targetted = FALSE, animal = FALSE)
+	. = ..()
+	if(. && !QDELETED(user))
+		// Apply Xylix buff to those with the trait who hear the cackling
+		// Only apply if the hearer is not the one cackling
+		for(var/mob/living/carbon/human/H in hearers(7, user))
+			if(H == user || !H.client)
+				continue
+			if(HAS_TRAIT(H, TRAIT_XYLIX) && !H.has_status_effect(/datum/status_effect/buff/xylix_joy))
+				H.apply_status_effect(/datum/status_effect/buff/xylix_joy)
+				to_chat(H, span_info("The cackling brings a smile to my face, and fortune to my steps!"))
+
 
 /mob/living/carbon/human/verb/emote_cackle()
 	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
@@ -2813,3 +2836,59 @@
 	set category = "Emotes"
 
 	emote("quest", intentional = TRUE)
+
+
+// counting construct emotes as "animal" for the same reason all of the above are (preferences)
+/datum/emote/living/emote_construct_tick
+	key = "tick"
+	key_third_person = "ticks"
+	message = "emits a mechanical ticking."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_tick()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Tick"
+		set category = "Noises"
+		emote("tick", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_creak
+	key = "creak"
+	key_third_person = "creaks"
+	message = "creaks."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_creak()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Creak"
+		set category = "Noises"
+		emote("creak", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_spark
+	key = "spark"
+	key_third_person = "sparks"
+	message = "twitches and emits a small arcyne spark."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	snd_vol = 25
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_spark()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Spark"
+		set category = "Noises"
+		emote("spark", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return

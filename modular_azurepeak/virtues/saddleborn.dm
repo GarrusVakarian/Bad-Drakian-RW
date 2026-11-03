@@ -105,8 +105,14 @@ GLOBAL_LIST_INIT(virtue_mount_choices_noble, (list(
 	overlay_state = "book1"
 	chargedrain = 0
 	chargetime = 0
+	var/choosing = FALSE
 
 /obj/effect/proc_holder/spell/self/choose_riding_virtue_mount/cast(list/targets, mob/living/carbon/human/user = usr)
+	if(choosing)
+		to_chat(user, span_warning("I am already calling my steed."))
+		return
+	if(!can_finish_mount_choice(user))
+		return
 	. = ..()
 	//list of spells you can learn, it may be good to move this somewhere else eventually
 	var/area/place = get_area(user.loc)
@@ -132,53 +138,62 @@ GLOBAL_LIST_INIT(virtue_mount_choices_noble, (list(
 
 	choices = sortList(choices)
 
-	var/choice = input("What form does your treasured steed take?") as null|anything in choices
+	choosing = TRUE
+	var/choice = input(user, "What form does your treasured steed take?") as null|anything in choices
 	var/mob/living/simple_animal/our_chosen_honse = choices[choice]
 
-	if (!our_chosen_honse)
+	if(!can_finish_mount_choice(user))
+		return
+	if(!our_chosen_honse)
+		choosing = FALSE
 		return
 
 	var/has_name = alert(user, "Have you named your noble steed?", "Saddleborn", "Yes", "No")
+	if(!can_finish_mount_choice(user))
+		return
 	if (!has_name)
 		has_name = "No"
 	
-	//spawn in our creature and set it up
+	// Finish every prompt before creating the mount: inputs can outlive the caster.
+	var/fogbeast_color_choice
+	if(ispath(our_chosen_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast))
+		fogbeast_color_choice = input(user, "What color is your trusty steed?") as null|anything in GLOB.valid_fogbeast_colors
+		if(!can_finish_mount_choice(user))
+			return
+	var/honse_name
+	if(has_name == "Yes")
+		honse_name = input(user, "What is your steed's name?", "Saddleborn")
+		if(!can_finish_mount_choice(user))
+			return
+	var/barding_choice
+	if(HAS_TRAIT(user, TRAIT_NOBLE) && (ispath(our_chosen_honse, /mob/living/simple_animal/hostile/retaliate/rogue/saiga) || ispath(our_chosen_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast)))
+		barding_choice = input(user, "What protection have you acquired for your steed?", "Saddleborn") as anything in list("None", "Padded Barding", "Chainmail Barding")
+		if(!can_finish_mount_choice(user))
+			return
+
 	var/mob/living/simple_animal/the_real_honse
 	if(ispath(our_chosen_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast))
-		var/fogbeast_color_choice = input("What color is your trusty steed?") as null|anything in GLOB.valid_fogbeast_colors
 		the_real_honse = new our_chosen_honse(user.loc, fogbeast_color_choice)
 	else
 		the_real_honse = new our_chosen_honse(user.loc)
 	the_real_honse.owner = user
 	the_real_honse.AddComponent(/datum/component/precious_creature, user)
 	user.saddleborn_mount = WEAKREF(the_real_honse)
-
-	if (has_name == "Yes")
-		var/honse_name = input(user, "What is your steed's name?", "Saddleborn")
-		if (honse_name)
-			the_real_honse.name = honse_name
-			the_real_honse.real_name = honse_name
-
-	if(HAS_TRAIT(user, TRAIT_NOBLE) && istype(the_real_honse, /mob/living/simple_animal/hostile/retaliate/rogue/saiga))
-		var/saiga_barding = list("None","Padded Barding","Chainmail Barding")
-		var/saiga_barding_choice = input(user, "What protection have you acquired for your steed?", "Saddleborn") as anything in saiga_barding
-		switch(saiga_barding_choice)
-			if("Padded Barding")
-				the_real_honse.bbarding = new /obj/item/clothing/barding()
-				the_real_honse.update_icon()
-			if("Chainmail Barding")
-				the_real_honse.bbarding = new /obj/item/clothing/barding/chain()
-				the_real_honse.update_icon()
-	else if(HAS_TRAIT(user, TRAIT_NOBLE) && istype(the_real_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast))
-		var/fogbeast_barding = list("None","Padded Barding","Chainmail Barding")
-		var/fogbeast_barding_choice = input(user, "What protection have you acquired for your steed?", "Saddleborn") as anything in fogbeast_barding
-		switch(fogbeast_barding_choice)
-			if("Padded Barding")
-				the_real_honse.bbarding = new /obj/item/clothing/barding/fogbeast()
-				the_real_honse.update_icon()
-			if("Chainmail Barding")
-				the_real_honse.bbarding = new /obj/item/clothing/barding/fogbeast/chain()
-				the_real_honse.update_icon()
+	if(honse_name)
+		the_real_honse.name = honse_name
+		the_real_honse.real_name = honse_name
+	if(barding_choice == "Padded Barding")
+		if(istype(the_real_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast))
+			the_real_honse.bbarding = new /obj/item/clothing/barding/fogbeast()
+		else
+			the_real_honse.bbarding = new /obj/item/clothing/barding()
+	else if(barding_choice == "Chainmail Barding")
+		if(istype(the_real_honse, /mob/living/simple_animal/hostile/retaliate/rogue/fogbeast))
+			the_real_honse.bbarding = new /obj/item/clothing/barding/fogbeast/chain()
+		else
+			the_real_honse.bbarding = new /obj/item/clothing/barding/chain()
+	if(the_real_honse.bbarding)
+		the_real_honse.update_icon()
 
 	user.visible_message(span_info("[user] whistles sharply, and [the_real_honse] pads up from afar to their side."), span_notice("With a trusty whistle, my treasured steed returns to my side."))
 	playsound(user, 'sound/magic/saddleborn-call.ogg', 150, FALSE, 5)
@@ -191,6 +206,20 @@ GLOBAL_LIST_INIT(virtue_mount_choices_noble, (list(
 	user.AddSpell(new /obj/effect/proc_holder/spell/self/saddleborn/sendaway)
 	user.AddSpell(new /obj/effect/proc_holder/spell/self/saddleborn/whistle)
 	qdel(src)
+
+/// Recheck after each input without relying on the implicit usr across a sleep.
+/obj/effect/proc_holder/spell/self/choose_riding_virtue_mount/proc/can_finish_mount_choice(mob/living/carbon/human/user)
+	if(QDELETED(src))
+		return FALSE
+	if(QDELETED(user) || !user.client || user.stat == DEAD || user.saddleborn_mount?.resolve())
+		choosing = FALSE
+		return FALSE
+	var/area/place = get_area(user)
+	if(!isturf(user.loc) || !place?.outdoors)
+		choosing = FALSE
+		to_chat(user, span_warning("You need to be outside to call your steed!"))
+		return FALSE
+	return TRUE
 
 /obj/effect/proc_holder/spell/self/saddleborn/proc/get_mount(mob/living/carbon/human/user)
 	return user.saddleborn_mount?.resolve()
