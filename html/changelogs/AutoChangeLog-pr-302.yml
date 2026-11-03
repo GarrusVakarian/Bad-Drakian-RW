@@ -1,0 +1,11 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Equipment icons in character examines are slightly smaller."
+  - qol: "(borneblood) Whispers of the Dead gives rough bearings, distance and elevation for both named and unnamed locations. (Azure #9628)"
+  - bugfix: "Airborne characters and jumping mounts no longer disturb ground vegetation or trigger its ambushes and maneaters."
+  - rscadd: "Crossbows can be twirled one-handed, safely at Expert Crossbows skill."
+  - qol: "Draw and stow javelins with the bag hotkey without taking the entire javelin bag."
+  - bugfix: "Scent descriptions remain visible to scent-immune characters who can smell, and natural scents no longer hide inherited markings."
+  - qol: "Temporary jaw soreness uses readable speech with a sore-jaw description instead of injury-level garbling."
+  - bugfix: "Scent of the Grave no longer offers NPC corpses as tracking targets. Ghosted and disconnected player corpses remain detectable."
