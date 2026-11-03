@@ -282,29 +282,51 @@
 			if(!eatarrow(javelin))
 				break
 
-/obj/item/quiver/javelin/attackby(obj/A, loc, params)
-	if(A.type in subtypesof(/obj/item/ammo_casing/caseless/rogue/javelin))
-		if(arrows.len < max_storage)
-			if(ismob(loc))
-				var/mob/M = loc
-				M.doUnEquip(A, TRUE, src, TRUE, silent = TRUE)
-			else
-				A.forceMove(src)
-			arrows += A
-			update_icon()
-		else
-			to_chat(loc, span_warning("Full!"))
+/obj/item/quiver/javelin/attackby(obj/item/A, mob/user, params)
+	if(!istype(A, /obj/item/ammo_casing/caseless/rogue/javelin))
+		return ..()
+	if(length(arrows) >= max_storage)
+		to_chat(user, span_warning("Full!"))
 		return
-	..()
+	if(A.loc == user)
+		if(!user.transferItemToLoc(A, src))
+			return
+	else
+		A.forceMove(src)
+	arrows += A
+	update_icon()
+
+/obj/item/quiver/javelin/quickdraw_interact(mob/living/user, obj/item/held_item)
+	if(held_item)
+		if(!istype(held_item, /obj/item/ammo_casing/caseless/rogue/javelin))
+			return ..()
+		attackby(held_item, user)
+		return TRUE
+	draw_javelin(user, TRUE)
+	return TRUE
+
+/obj/item/quiver/javelin/proc/draw_javelin(mob/user, active_only = FALSE)
+	if(!length(arrows))
+		to_chat(user, span_warning("[src] is empty!"))
+		return FALSE
+	var/obj/item/javelin = arrows[length(arrows)]
+	if(QDELETED(javelin) || javelin.loc != src)
+		return FALSE
+	var/drawn = user.put_in_active_hand(javelin)
+	if(!drawn && !active_only)
+		var/list/empty_hands = user.get_empty_held_indexes()
+		for(var/hand_index in empty_hands)
+			if(user.put_in_hand(javelin, hand_index))
+				drawn = TRUE
+				break
+	if(!drawn)
+		return FALSE
+	arrows -= javelin
+	update_icon()
+	return TRUE
 
 /obj/item/quiver/javelin/attack_right(mob/user)
-	if(arrows.len)
-		var/obj/O = arrows[arrows.len]
-		arrows -= O
-		O.forceMove(user.loc)
-		user.put_in_hands(O)
-		update_icon()
-		return TRUE
+	return draw_javelin(user)
 
 /obj/item/quiver/javelin/examine(mob/user)
 	. = ..()
@@ -320,35 +342,35 @@
 /obj/item/quiver/javelin/iron/Initialize(mapload)
 	. = ..()
 	for(var/i in 1 to max_storage)
-		var/obj/item/ammo_casing/caseless/rogue/javelin/A = new()
+		var/obj/item/ammo_casing/caseless/rogue/javelin/A = new(src)
 		arrows += A
 	update_icon()
 
 /obj/item/quiver/javelin/steel/Initialize(mapload)
 	. = ..()
 	for(var/i in 1 to max_storage)
-		var/obj/item/ammo_casing/caseless/rogue/javelin/steel/A = new()
+		var/obj/item/ammo_casing/caseless/rogue/javelin/steel/A = new(src)
 		arrows += A
 	update_icon()
 
 /obj/item/quiver/javelin/ancient/Initialize(mapload)
 	. = ..()
 	for(var/i in 1 to max_storage)
-		var/obj/item/ammo_casing/caseless/rogue/javelin/steel/ancient/A = new()
+		var/obj/item/ammo_casing/caseless/rogue/javelin/steel/ancient/A = new(src)
 		arrows += A
 	update_icon()
 
 /obj/item/quiver/javelin/stone/Initialize(mapload)
 	. = ..()
 	for(var/i in 1 to max_storage)
-		var/obj/item/ammo_casing/caseless/rogue/javelin/stone/A = new()
+		var/obj/item/ammo_casing/caseless/rogue/javelin/stone/A = new(src)
 		arrows += A
 	update_icon()
 
 /obj/item/quiver/javelin/bronze/Initialize(mapload)
 	. = ..()
 	for(var/i in 1 to 4)
-		var/obj/item/ammo_casing/caseless/rogue/javelin/bronze/A = new()
+		var/obj/item/ammo_casing/caseless/rogue/javelin/bronze/A = new(src)
 		arrows += A
 	update_icon()
 

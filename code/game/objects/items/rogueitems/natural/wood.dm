@@ -273,6 +273,8 @@
 	metalizer_result = /obj/item/needle
 
 /obj/item/grown/log/tree/stick/Crossed(mob/living/L)
+	if(istype(L) && L.is_airborne_over_vegetation())
+		return
 	. = ..()
 	if(istype(L))
 		var/prob2break = 33

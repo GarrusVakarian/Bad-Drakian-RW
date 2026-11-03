@@ -464,7 +464,7 @@
 
 	if(isliving(AM))
 		var/mob/living/L = AM
-		if(L.m_intent == MOVE_INTENT_SNEAK)
+		if(L.is_airborne_over_vegetation() || L.m_intent == MOVE_INTENT_SNEAK)
 			return
 		else
 			if(!(HAS_TRAIT(L, TRAIT_AZURENATIVE) && L.m_intent != MOVE_INTENT_RUN))
@@ -517,6 +517,10 @@
 
 
 /obj/structure/flora/roguegrass/bush/Crossed(atom/movable/AM)
+	if(isliving(AM))
+		var/mob/living/L = AM
+		if(L.is_airborne_over_vegetation())
+			return
 	..()
 
 	if(!isliving(AM))
@@ -796,6 +800,10 @@
 	icon_state = "thornbush"
 
 /obj/structure/flora/roguegrass/thorn_bush/Crossed(atom/movable/AM)
+	if(isliving(AM))
+		var/mob/living/L = AM
+		if(L.is_airborne_over_vegetation())
+			return
 	..()
 	if(!isliving(AM))
 		return

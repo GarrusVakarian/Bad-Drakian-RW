@@ -1,7 +1,7 @@
 /mob/living/carbon/human/say_mod(input, message_mode)
 	verb_say = dna.species.say_mod
 	if(slurring)
-		return "slurs"
+		return apply_sore_jaw_speech_modifier("slurs")
 	else
 		. = ..()
 

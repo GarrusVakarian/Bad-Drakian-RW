@@ -731,6 +731,13 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		. = verb_sing
 	else
 		. = ..()
+	. = apply_sore_jaw_speech_modifier(.)
+
+/// Keep the selected whisper/sing/species verb and the original words readable.
+/mob/living/proc/apply_sore_jaw_speech_modifier(speech_verb)
+	if(HAS_TRAIT(src, TRAIT_SORE_JAW))
+		return "[speech_verb] through a sore jaw"
+	return speech_verb
 
 /mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
 	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced, count_for_stats = count_for_stats)
