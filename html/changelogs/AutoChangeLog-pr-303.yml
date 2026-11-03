@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Giant's description now explicitly lists its +1 CON bonus."
+  - qol: "Character creation previews show the size increase from Giant and Large Frame."
