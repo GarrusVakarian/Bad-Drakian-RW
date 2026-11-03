@@ -12,6 +12,9 @@
 	/// The stat threshold needed to pass the identify check.
 	var/identify_difficulty = 15
 
+/obj/effect/proc_holder/spell/self/message/gnoll
+	breaks_invisibility = FALSE
+
 /obj/effect/proc_holder/spell/self/message/cast(list/targets, mob/user)
 	. = ..()
 
