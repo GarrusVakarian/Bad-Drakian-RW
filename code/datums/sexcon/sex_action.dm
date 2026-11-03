@@ -44,6 +44,8 @@
 	/// This participant has a dedicated completion path in on_perform.
 	var/handles_user_climax = FALSE
 	var/handles_target_climax = FALSE
+	/// Minimum arousal accepted by this action's completion handler.
+	var/climax_arousal_threshold = ACTIVE_EJAC_THRESHOLD
 
 /datum/sex_action/proc/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(solo)

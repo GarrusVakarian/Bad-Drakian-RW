@@ -1,5 +1,6 @@
 /datum/sex_action/masturbate_container
 	handles_user_climax = TRUE
+	climax_arousal_threshold = PASSIVE_EJAC_THRESHOLD
 	name = "Masturbate cock into container"
 	category = SEX_CATEGORY_HANDS
 	user_sex_part = SEX_PART_COCK

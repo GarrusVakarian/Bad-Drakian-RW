@@ -113,3 +113,6 @@ GLOBAL_LIST_INIT(sex_actions, build_sex_actions())
 	#define ERP_LOCATION 6
 	#define ERP_GRABS 7
 	#define ERP_SKIPUNDIES 8
+
+// Covers the longest existing two-participant delivery sequence plus scheduler slack.
+#define SEX_ACTION_PROGRESS_GRACE (15 SECONDS)

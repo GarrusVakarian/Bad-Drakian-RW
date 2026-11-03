@@ -36,6 +36,9 @@
 	var/mob/living/carbon/human/panel_triumph_target
 	/// Other controllers currently performing partnered actions on us.
 	var/list/panel_triumph_actions
+	/// Identity and progress deadline of the current action loop.
+	var/panel_action_session = 0
+	var/panel_action_deadline = 0
 	/// Invalidates oxygen-healing callbacks when a make-out action stops or restarts.
 	var/kissing_oxygen_session = 0
 	/// Recipient-side cooldown shared by every initiator; base recovery cannot stack.
@@ -893,7 +896,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 
 /// Stop tracking immediately on cancellation, completion or controller deletion.
 /datum/sex_controller/proc/clear_panel_triumph_action()
-	if(panel_triumph_target?.sexcon)
+	if(ishuman(panel_triumph_target) && !QDELETED(panel_triumph_target) && panel_triumph_target.sexcon)
 		LAZYREMOVE(panel_triumph_target.sexcon.panel_triumph_actions, src)
 	panel_triumph_target = null
 
@@ -1405,13 +1408,16 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 /// Let the scheduled action perform its own completion without replaying an
 /// action tick here. The donor may be receiving an action, not initiating one.
 /datum/sex_controller/proc/has_pending_panel_climax()
-	if(!ishuman(user) || QDELETED(user))
+	if(!ishuman(user) || QDELETED(user) || is_spent() || !can_ejaculate())
 		return FALSE
 	var/list/active_actions = list(src)
 	if(panel_triumph_actions)
 		active_actions |= panel_triumph_actions
 	for(var/datum/sex_controller/action_controller in active_actions)
-		if(QDELETED(action_controller) || !action_controller.current_action || action_controller.desire_stop)
+		if(QDELETED(action_controller))
+			continue
+		action_controller.expire_panel_action()
+		if(!action_controller.current_action || action_controller.desire_stop)
 			continue
 		var/mob/living/carbon/human/actor = action_controller.user
 		var/mob/living/carbon/human/recipient = action_controller.target
@@ -1420,7 +1426,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		if(!actor.client?.prefs?.sexable || !recipient.client?.prefs?.sexable)
 			continue
 		var/datum/sex_action/action = SEX_ACTION(action_controller.current_action)
-		if(!istype(action))
+		if(!istype(action) || arousal < action.climax_arousal_threshold)
 			continue
 		if(!((user == actor && action.handles_user_climax) || (user == recipient && action.handles_target_climax)))
 			continue
@@ -1513,6 +1519,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return TRUE
 
 /datum/sex_controller/proc/process_sexcon(dt)
+	expire_panel_action()
 	handle_arousal_unhorny(dt)
 	handle_charge(dt)
 	handle_passive_ejaculation()
@@ -1711,15 +1718,24 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	desire_stop = TRUE
 	user.doing = FALSE
 
-/datum/sex_controller/proc/stop_current_action()
+/// Recover abandoned loops even when no completion is currently pending.
+/datum/sex_controller/proc/expire_panel_action()
+	if(current_action && world.time >= panel_action_deadline)
+		stop_current_action()
+
+/datum/sex_controller/proc/stop_current_action(session = null)
+	if(!isnull(session) && session != panel_action_session)
+		return
 	clear_panel_triumph_action()
 	if(!current_action)
 		return
 	var/datum/sex_action/action = SEX_ACTION(current_action)
-	if(!user.sexcon.knotted_status) // never show the remove message, unless unknotted
-		action.on_finish(user, target)
+	panel_action_session++
+	panel_action_deadline = 0
+	suppress_action_messages = FALSE
 	desire_stop = FALSE
-	user.doing = FALSE
+	if(ishuman(user) && !QDELETED(user))
+		user.doing = FALSE
 	orison_indulgence_notice_shown = FALSE
 	current_action = null
 	bed = null
@@ -1730,6 +1746,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	collar_bell_target = FALSE
 	popwarning = FALSE
 	using_zones = list()
+	// Clear state first: a failed finish callback must not strand this session.
+	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(target) && !QDELETED(target))
+		action.on_finish(user, target)
 
 /datum/sex_controller/proc/try_start_action(action_type)
 	if(action_type == current_action)
@@ -1758,9 +1777,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		panel_triumph_target = target
 		LAZYOR(target.sexcon.panel_triumph_actions, src)
 	log_combat(user, target, "Started sex action: [action.name]")
-	INVOKE_ASYNC(src, PROC_REF(sex_action_loop))
+	panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
+	INVOKE_ASYNC(src, PROC_REF(sex_action_loop), ++panel_action_session)
 
-/datum/sex_controller/proc/sex_action_loop()
+/datum/sex_controller/proc/sex_action_loop(session)
+	if(session != panel_action_session)
+		return
 	// Do action loop
 	var/performed_action_type = current_action
 	var/datum/sex_action/action = SEX_ACTION(current_action)
@@ -1775,7 +1797,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	action.on_start(user, target)
 	find_occupying_furniture()
 	find_occupying_grass()
-	while(TRUE)
+	while(session == panel_action_session)
 		if(!target?.client?.prefs?.sexable) // no prefs/sexability means we should safely stop the loop
 			break
 		var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
@@ -1787,8 +1809,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		// Bad Drakian adjustment: halve panel stamina costs.
 		if(!user.stamina_add(stamina_cost * 0.5, show_xp_popup = FALSE))
 			break
-		if(!do_after(user, (action.do_time / get_speed_multiplier()), target = target, progress = show_progress))
+		var/action_delay = action.do_time / get_speed_multiplier()
+		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
+		if(!do_after(user, action_delay, target = target, progress = show_progress))
 			break
+		if(session != panel_action_session)
+			return
 		if(current_action == null || performed_action_type != current_action)
 			break
 		if(!can_perform_action(current_action, user.incapacitated()))
@@ -1831,7 +1857,11 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				virgin_reaction_checked = TRUE
 				user.react_to_virgin_affection(target)
 				target.react_to_virgin_affection(user)
+		// Existing delivery routines can sleep for up to ten one-second bursts.
+		panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
 		action.on_perform(user, target)
+		if(session != panel_action_session)
+			return
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
 		// It could want to finish afterwards the performed action
@@ -1839,7 +1869,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			break
 		if(!action.continous)
 			break
-	stop_current_action()
+	stop_current_action(session)
 
 /datum/sex_controller/proc/can_perform_action(action_type, incapacitated)
 	if(!action_type)
