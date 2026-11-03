@@ -34,7 +34,7 @@
 /datum/sanctified_tree_data
 	/// Back-reference to the owning sanctified tree.
 	var/obj/structure/flora/roguetree/wise/sanctified/tree
-	/// Once-per-tree ritual completion flags.
+	/// Types of rituals completed on this tree.
 	var/list/rituals_completed = list()
 	/// Per-player soulbind registry: list of ckey strings.
 	var/list/soulbound_players = list()
@@ -399,9 +399,10 @@
 	var/list/ritual_names = list()
 	for(var/datum/druid_ritual/new_ritual as anything in subtypesof(/datum/druid_ritual))
 		new_ritual = new new_ritual
+		new_ritual.ritual_holder = tree_data
 		if(!new_ritual.can_see_ritual(user))
 			continue
-		if(new_ritual.unique_tree_rite && (locate(new_ritual) in tree_data.rituals_completed))
+		if(new_ritual.unique_tree_rite && (new_ritual.type in tree_data.rituals_completed))
 			new_ritual.name = "[new_ritual.name] (Completed)"
 		possible_rituals += new_ritual.name
 		ritual_names[new_ritual.name] = new_ritual
@@ -418,8 +419,12 @@
 	selected_ritual.prepare_tracker()
 	if(!confirm_start_ritual(user, selected_ritual))
 		return
+	if(QDELETED(src) || QDELETED(user) || !tree_data || tree_data.active_ritual || tree_data.wedding_active)
+		return
+	if(!selected_ritual.can_start_ritual(user))
+		to_chat(user, span_info("That ritual can no longer be started."))
+		return
 	tree_data.active_ritual = selected_ritual
-	selected_ritual.ritual_holder = tree_data
 	to_chat(user, span_notice("I begin the ritual. Offer items by clicking the tree while holding them. Use the amulet only if I need to cancel."))
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/confirm_start_ritual(mob/living/user, datum/druid_ritual/selected_ritual)
@@ -480,8 +485,6 @@
 	var/experience_payout = 0
 	/// TRUE if the ritual is once-per-tree
 	var/unique_tree_rite = FALSE // Repeatable rituals by default
-	/// If the rite isn't repeatable, mark as completed
-	var/rite_completed = FALSE
 
 	/// Spell this ritual grants on completion
 	var/granted_spell
@@ -514,7 +517,7 @@
 /datum/druid_ritual/proc/can_start_ritual(mob/druid)
 	if(!druid.mind)
 		return FALSE
-	if(unique_tree_rite && rite_completed)
+	if(unique_tree_rite && (type in ritual_holder?.rituals_completed))
 		return FALSE
 	var/druidic_level = druid.get_skill_level(/datum/skill/magic/druidic)
 	if(druidic_level < druid_ritual_tier)
@@ -594,7 +597,7 @@
 /datum/druid_ritual/proc/on_complete(mob/living/user)
 	playsound(get_turf(user), 'sound/ambience/noises/mystical (4).ogg', 70, TRUE)
 	user.visible_message(span_green("The [name] blazes with golden light as [user.name] completes a sacred ritual!"))
-	ritual_holder.rituals_completed |= src
+	ritual_holder.rituals_completed |= type
 	ritual_holder.active_ritual = null
 	if(experience_payout > 0 && user.mind)
 		user.mind.add_sleep_experience(/datum/skill/magic/druidic, experience_payout)
