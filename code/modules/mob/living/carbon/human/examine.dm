@@ -40,7 +40,7 @@
 /mob/living/carbon/human/proc/get_examine_item_name_with_hover(mob/user, obj/item/I)
 	if(!I)
 		return ""
-	var/display_name = I.get_examine_string(user)
+	var/display_name = "<span class=\"examine-equipment\">[I.get_examine_string(user)]</span>"
 	var/list/highlight_status = I.get_examine_highlight_status()
 	if(highlight_status)
 		display_name = I.get_examine_highlight_labeled_string(highlight_status[1], display_name)
@@ -118,20 +118,7 @@
 		if(item)
 			. += span_notice("You get the feeling [m2] most valuable possession is \a [item].")
 
-	if(user != src && get_dist(user, src) <= 3)
-		var/reeking_naturally = is_redolent_reeking()
-		if(reeking_naturally || has_status_effect(/datum/status_effect/debuff/stinky_contact))
-			var/can_see_stink = !isliving(user) // adminghost always sees it
-			if(isliving(user))
-				var/mob/living/living_user = user
-				can_see_stink = living_user.can_smell() && !HAS_TRAIT(living_user, TRAIT_NOSTINK)
-			if(can_see_stink)
-				if(reeking_naturally)
-					. += redolent_examine_text(redolent_scent_type, redolent_scent)
-				else
-					var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
-					if(contact_stink)
-						. += contact_stink.get_examine_text()
+	. += get_redolent_examine_lines(user)
 
 	if(HAS_TRAIT(src, TRAIT_DEADITE))
 		. += span_userdanger("DEADITE!")

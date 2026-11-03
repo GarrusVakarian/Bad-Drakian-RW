@@ -220,6 +220,26 @@
 	redolent_visual_effect(src, redolent_scent_type)
 	redolent_stink_aura(src, redolent_scent_type)
 
+/// Scent immunity prevents discomfort, not recognition of a smell.
+/mob/living/carbon/human/proc/get_redolent_examine_lines(mob/user)
+	var/list/lines = list()
+	if(!user || user == src)
+		return lines
+	var/turf/scent_turf = get_turf(src)
+	var/turf/viewer_turf = get_turf(user)
+	if(!scent_turf || !viewer_turf || scent_turf.z != viewer_turf.z || get_dist(viewer_turf, scent_turf) > 3)
+		return lines
+	if(isliving(user))
+		var/mob/living/living_user = user
+		if(!living_user.can_smell())
+			return lines
+	if(is_redolent_reeking())
+		lines += redolent_examine_text(redolent_scent_type, redolent_scent)
+	var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
+	if(contact_stink)
+		lines |= contact_stink.get_examine_text()
+	return lines
+
 /proc/redolent_aura_tick_delay(scent_type)
 	return 30 SECONDS
 
@@ -360,7 +380,7 @@
 	name = "Rough Lover"
 	desc = "With strong intent, I am a violent partner in bed. Breaking pelvis and spirit alike."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a bedbreaker!"
-	point_cost = 2
+	point_cost = 0
 	added_traits = list(TRAIT_DEATHBYSNUSNU)
 	incompatible_traits = list(TRAIT_DEATHBYSNUSNU)
 

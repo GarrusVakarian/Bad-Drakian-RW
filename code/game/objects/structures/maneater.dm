@@ -56,6 +56,10 @@
 	return ..()
 
 /obj/structure/flora/roguegrass/maneater/real/Crossed(atom/movable/AM)
+	if(isliving(AM))
+		var/mob/living/L = AM
+		if(L.is_airborne_over_vegetation())
+			return
 	..()
 	if(obj_broken)
 		return

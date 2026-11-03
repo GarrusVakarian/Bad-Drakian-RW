@@ -1,6 +1,7 @@
 
 /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 	has_item_quality = TRUE
+	twirly = SKILL_LEVEL_EXPERT
 	name = "crossbow"
 	desc = "A deadly weapon that shoots a bolt with terrific power."
 	icon = 'icons/roguetown/weapons/misc32.dmi'
@@ -370,3 +371,9 @@
 	max_ammo = 1
 	start_empty = TRUE
 
+/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/twirl_user_skill(mob/living/user)
+	return user.get_skill_level(/datum/skill/combat/crossbows)
+
+/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/examine(mob/user)
+	. = ..()
+	. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Expert Crossbows skill.")
