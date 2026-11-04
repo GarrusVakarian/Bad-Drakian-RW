@@ -518,6 +518,7 @@
 		set_light(0)
 		return
 	if(!locked)
+		set_light(0)
 		icon_state = "svendorcart0"
 		return
 	else
@@ -525,6 +526,12 @@
 	if(held_items.len)
 		set_light(1, 1, 1, l_color = "#1b7bf1")
 		add_overlay(mutable_appearance(icon, "vendor-gen"))
+	else
+		set_light(0)
+
+/obj/structure/roguemachine/vendor/mobile/obj_break(damage_flag)
+	. = ..()
+	update_icon()
 
 /obj/structure/roguemachine/vendor/mobile/get_mechanics_examine(mob/user)
 	. = list()
