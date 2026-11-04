@@ -246,7 +246,13 @@
 				if(iscarbon(M) && M != user)
 					user.stamina_add(rand(1,3))
 					var/mob/living/carbon/C = M
-					if(get_location_accessible(C, BODY_ZONE_PRECISE_NECK))
+					var/obj/item/clothing/suit/roguetown/armor/regenerating/skin/gnoll_armor/skin
+					if(ishuman(C))
+						var/mob/living/carbon/human/H = C
+						if(istype(H.skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/gnoll_armor))
+							skin = H.skin_armor
+					var/protected_by_skin = skin && !skin.obj_broken && skin.obj_integrity > 0 && (skin.body_parts_covered_dynamic & NECK)
+					if(!protected_by_skin && get_location_accessible(C, BODY_ZONE_PRECISE_NECK))
 						if(prob(25))
 							C.emote("choke")
 						var/choke_damage
@@ -264,7 +270,7 @@
 								span_userdanger("[user] [pick("chokes", "strangles")] me[chokehold ? " with a chokehold" : ""]!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE, user)
 						to_chat(user, span_danger("I [pick("choke", "strangle")] [C][chokehold ? " with a chokehold" : ""]!"))
 					else
-						to_chat(user, span_warning("I can't reach [C]'s throat!"))
+						to_chat(user, span_warning("[C]'s neck is covered! I can't get a choking grip!"))
 					user.changeNext_move(CLICK_CD_GRABBING)	//Stops spam for choking.
 		if(/datum/intent/grab/hostage)
 			if(user.buckled)
