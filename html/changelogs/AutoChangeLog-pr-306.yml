@@ -1,0 +1,6 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - balance: "Hide role labels for wildshaped."
+  - bugfix: "Unlit Sunder now expires after 10 seconds instead of permanently preventing healing."
+  - bugfix: "Failed or cancelled Message casts no longer charge fatigue."
