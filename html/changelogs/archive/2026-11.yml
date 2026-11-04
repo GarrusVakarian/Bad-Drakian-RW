@@ -138,3 +138,7 @@
       (Azure #9667)'
   - rscadd: '(7erracotta) Adds six hats and collars, with sewing recipes and loadout
       options. (Azure #9829)'
+2026-11-04:
+  _Rarity:
+  - rscadd: (Patapollla) Added a folding chess, checkers, and backgammon board to
+      character loadouts and merchant imports.
