@@ -62,7 +62,7 @@
 	name = "Verevolf"
 	desc = "Men don the skin of wolves in darkling night."
 	cost = 2
-	weight = 5
+	weight = 10
 	min_chaos = 1
 	villain_events = list(/datum/round_event_control/antagonist/solo/werewolf)
 
