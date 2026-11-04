@@ -81,7 +81,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aap" = (
 /obj/structure/chair/bench/church/r{
 	dir = 8
@@ -90,7 +90,7 @@
 	dir = 8
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaq" = (
 /turf/open/floor/rogue/churchmarble,
 /area/rogue/indoors/town/physician)
@@ -103,13 +103,13 @@
 	dir = 8
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aas" = (
 /obj/effect/landmark/start/churchling{
 	dir = 8
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aat" = (
 /obj/structure/fluff/railing/border{
 	dir = 10
@@ -118,7 +118,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aau" = (
 /obj/structure/chair/bench/church{
 	dir = 8
@@ -127,7 +127,7 @@
 	dir = 8
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aav" = (
 /obj/structure/fluff/walldeco/church/line{
 	dir = 4;
@@ -140,7 +140,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/churchbrick,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaw" = (
 /obj/structure/fluff/walldeco/church/line{
 	dir = 1
@@ -156,7 +156,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aax" = (
 /obj/effect/landmark/start/villager{
 	dir = 8
@@ -187,7 +187,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/churchbrick,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaA" = (
 /obj/structure/fluff/walldeco/church/line{
 	pixel_x = -1;
@@ -204,7 +204,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaB" = (
 /obj/structure/fluff/railing/border{
 	dir = 9
@@ -213,7 +213,7 @@
 	dir = 4
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaC" = (
 /obj/machinery/light/rogue/candle{
 	pixel_y = -32
@@ -225,7 +225,7 @@
 	dir = 8
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aaD" = (
 /obj/structure/fluff/railing/border{
 	dir = 9
@@ -284,6 +284,67 @@
 /obj/effect/landmark/observer_start,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/outdoors/rtfield/rockhill)
+"aaM" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	pixel_y = 0;
+	wrotesign = "Rockhill - East - Follow the road south!"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bogsafe)
+"aaN" = (
+/obj/structure/fluff/railing/wood{
+	dir = 4;
+	pixel_x = 9
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/outdoors/bogsafe)
+"aaO" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bogsafe)
+"aaP" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/dirt,
+/area/rogue/outdoors/bograt/west)
+"aaQ" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bograt/west)
+"aaR" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/bograt/west)
+"aaS" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bograt/north)
+"aaT" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/bograt/north)
+"aaU" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt,
+/area/rogue/outdoors/bograt/north)
 "aaY" = (
 /obj/structure/flora/hotspring_rocks/grassy,
 /turf/open/floor/rogue/cobble/mossy,
@@ -1589,7 +1650,7 @@
 	pixel_y = -2
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "aGv" = (
 /obj/machinery/light/rogue/firebowl/standing/green,
 /turf/open/floor/rogue/ruinedwood,
@@ -4230,7 +4291,7 @@
 	},
 /obj/machinery/light/rogue/candle,
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "bSu" = (
 /turf/closed/wall/mineral/rogue/decostone/end{
 	dir = 8
@@ -4827,7 +4888,7 @@
 	color = "#ffd9f2"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "ciV" = (
 /obj/structure/fluff/railing/border{
 	dir = 6
@@ -6539,7 +6600,7 @@
 "daa" = (
 /obj/structure/fluff/statue/knight/r,
 /turf/open/floor/rogue/concrete,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "dac" = (
 /obj/machinery/light/rogue/campfire/fireplace/blue{
 	pixel_y = 32
@@ -6728,7 +6789,7 @@
 	},
 /obj/machinery/light/rogue/candle/l,
 /turf/open/floor/rogue/concrete,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "deD" = (
 /obj/machinery/light/rogue/campfire/fireplace{
 	pixel_x = 0;
@@ -7030,7 +7091,7 @@
 	color = "#ffd9f2"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "dkW" = (
 /turf/closed/wall/mineral/rogue/pipe{
 	name = "damaged metal wall";
@@ -8770,7 +8831,7 @@
 	dir = 1
 	},
 /turf/open/floor/rogue/churchbrick,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "eeo" = (
 /obj/structure/flora/roguegrass/thorn_bush,
 /obj/structure/flora/roguegrass,
@@ -10788,7 +10849,7 @@
 	pixel_y = -3
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "fay" = (
 /obj/item/natural/worms/leech,
 /obj/item/natural/worms/leech{
@@ -11931,14 +11992,6 @@
 	},
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/dungeon/wizarddungeon)
-"fEx" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	pixel_y = 0;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bogsafe)
 "fEz" = (
 /obj/structure/chair/bench/church{
 	dir = 1
@@ -14453,9 +14506,6 @@
 /obj/structure/bookcase/random/fiction,
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/dungeon/sunkenchurch)
-"gMf" = (
-/turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
 "gMj" = (
 /obj/structure/closet/crate/roguecloset/inn/chest{
 	keylock = 1;
@@ -14661,7 +14711,7 @@
 "gRY" = (
 /obj/machinery/light/rogue/candle/l,
 /turf/open/floor/rogue/concrete,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "gSc" = (
 /obj/item/grown/log/tree/stick,
 /obj/structure/chair/wood/rogue{
@@ -16601,7 +16651,7 @@
 	pixel_y = -2
 	},
 /turf/open/floor/rogue/churchbrick,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "hMU" = (
 /obj/structure/closet/crate/chest/wicker,
 /obj/item/rogueweapon/thresher,
@@ -20190,7 +20240,7 @@
 "jxN" = (
 /obj/machinery/light/rogue/candle/l,
 /turf/open/floor/carpet/red,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "jxO" = (
 /turf/open/floor/carpet/red,
 /area/rogue/indoors/town/physician)
@@ -24246,7 +24296,7 @@
 "lzw" = (
 /obj/structure/mirror,
 /turf/open/floor/carpet/red,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "lzy" = (
 /obj/item/grown/log/tree/small,
 /turf/open/floor/rogue/dirt,
@@ -25907,7 +25957,7 @@
 	lockid = "priest"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "mlS" = (
 /obj/structure/mineral_door/wood/deadbolt{
 	dir = 1;
@@ -26030,7 +26080,7 @@
 	color = "#ffd9f2"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "mph" = (
 /obj/structure/rack/rogue,
 /obj/item/rogueweapon/sickle,
@@ -26108,7 +26158,7 @@
 	pixel_y = -32
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "mqI" = (
 /obj/structure/closet/crate/roguecloset,
 /obj/item/grown/log/tree/small,
@@ -27541,7 +27591,7 @@
 	name = "church service bell"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "mXY" = (
 /obj/structure/flora/roguegrass/herb/random,
 /obj/structure/flora/roguegrass/herb/random,
@@ -28076,7 +28126,7 @@
 	pixel_y = 5
 	},
 /turf/open/floor/rogue/concrete,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "nnM" = (
 /turf/closed/wall/mineral/rogue/stonebrick,
 /area/rogue/outdoors/bograt/sunken)
@@ -28358,7 +28408,7 @@
 	pixel_y = 12
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "nut" = (
 /obj/structure/rack/rogue/shelf,
 /obj/effect/decal/cobbleedge{
@@ -31200,7 +31250,7 @@
 	dir = 1
 	},
 /turf/open/floor/rogue/churchrough,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "oNE" = (
 /turf/open/water/cleanshallow,
 /area/rogue/under/cavewet)
@@ -32081,6 +32131,9 @@
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/under/town/basement)
+"piw" = (
+/turf/open/floor/rogue/concrete,
+/area/rogue/indoors/town/church/chapel)
 "piz" = (
 /obj/structure/rack/rogue,
 /obj/item/rogueweapon/spear,
@@ -38291,7 +38344,7 @@
 	dir = 1
 	},
 /turf/open/floor/rogue/churchmarble,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "sdj" = (
 /obj/structure/fluff/railing/border{
 	dir = 9
@@ -42178,7 +42231,7 @@
 	mailtag = "Church"
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "tZD" = (
 /obj/structure/flora/roguegrass/water/reeds,
 /turf/open/floor/rogue/dirt,
@@ -44178,7 +44231,7 @@
 	pixel_y = -2
 	},
 /turf/open/floor/rogue/churchrough,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "uWV" = (
 /obj/structure/roguewindow/openclose/reinforced{
 	dir = 4
@@ -45140,7 +45193,7 @@
 	dir = 1
 	},
 /turf/open/floor/carpet/red,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "vsI" = (
 /obj/structure/fluff/railing/border{
 	dir = 1
@@ -47424,9 +47477,6 @@
 /obj/structure/stairs,
 /turf/open/floor/rogue/woodturned,
 /area/rogue/outdoors/bograt/west)
-"wAE" = (
-/turf/open/floor/carpet/red,
-/area/rogue/indoors/town/church)
 "wAI" = (
 /obj/structure/flora/mushroomcluster,
 /turf/open/floor/rogue/naturalstone,
@@ -48710,7 +48760,7 @@
 	pixel_x = 2
 	},
 /turf/open/floor/rogue/church,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "xdW" = (
 /obj/structure/flagpole,
 /obj/structure/fluff/walldeco/customflag{
@@ -50178,7 +50228,7 @@
 /obj/item/roguekey/priest,
 /obj/item/scomstone,
 /turf/open/floor/carpet/royalblack,
-/area/rogue/indoors/town/church)
+/area/rogue/indoors/town/church/chapel)
 "xJC" = (
 /obj/structure/flora/roguegrass/reedbush,
 /turf/open/water/swamp,
@@ -50278,13 +50328,6 @@
 /obj/item/paper,
 /turf/open/floor/rogue/blocks/green,
 /area/rogue/under/dungeon/wizarddungeon)
-"xLX" = (
-/obj/structure/fluff/railing/wood{
-	dir = 4;
-	pixel_x = 9
-	},
-/turf/open/floor/rogue/dirt/road,
-/area/rogue/outdoors/bogsafe)
 "xMc" = (
 /obj/machinery/light/rogue/candle/red{
 	pixel_y = -32
@@ -51410,67 +51453,6 @@
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
-"aaM" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	pixel_y = 0;
-	wrotesign = "Rockhill - East - Follow the road south!"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bogsafe)
-"aaN" = (
-/obj/structure/fluff/railing/wood{
-	dir = 4;
-	pixel_x = 9
-	},
-/turf/open/floor/rogue/cobblerock,
-/area/rogue/outdoors/bogsafe)
-"aaO" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/dirt/nospawn,
-/area/rogue/outdoors/bogsafe)
-"aaP" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/dirt,
-/area/rogue/outdoors/bograt/west)
-"aaQ" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/west)
-"aaR" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/dirt/road,
-/area/rogue/outdoors/bograt/west)
-"aaS" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/north)
-"aaT" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/dirt/road,
-/area/rogue/outdoors/bograt/north)
-"aaU" = (
-/obj/machinery/light/rogue/firebowl/stump,
-/turf/open/floor/rogue/dirt,
-/area/rogue/outdoors/bograt/north)
 
 (1,1,1) = {"
 pMX
@@ -159961,8 +159943,8 @@ nrs
 fZk
 teW
 lzw
-wAE
-wAE
+unH
+unH
 xJz
 teW
 xnu
@@ -160563,10 +160545,10 @@ nrs
 sjP
 teW
 deB
-tBL
+piw
 oND
 uWL
-tBL
+piw
 gRY
 yen
 vBj
@@ -161469,10 +161451,10 @@ fxx
 nrs
 teW
 bSs
-tML
+uSx
 fao
 nus
-tML
+uSx
 mqh
 ozS
 vmF
@@ -162979,10 +162961,10 @@ fxx
 sjP
 teW
 aas
-tML
+uSx
 sdd
 aGq
-tML
+uSx
 aas
 teW
 cqP
@@ -163280,12 +163262,12 @@ jQD
 qvR
 fxx
 aRN
-gMf
+ntK
 mXX
 sdd
 aGq
-gMf
-gMf
+ntK
+ntK
 aRN
 xQw
 cwp
