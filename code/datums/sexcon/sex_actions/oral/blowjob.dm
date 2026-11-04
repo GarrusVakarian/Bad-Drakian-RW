@@ -1,4 +1,5 @@
 /datum/sex_action/blowjob
+	handles_target_climax = TRUE
 	name = "Suck them off"
 	check_same_tile = FALSE
 	category = SEX_CATEGORY_PENETRATE

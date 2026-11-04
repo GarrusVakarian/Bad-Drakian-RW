@@ -1,4 +1,5 @@
 /datum/sex_action/masturbate_penis_over
+	handles_user_climax = TRUE
 	name = "Jerk over them"
 	check_same_tile = FALSE
 	category = SEX_CATEGORY_HANDS

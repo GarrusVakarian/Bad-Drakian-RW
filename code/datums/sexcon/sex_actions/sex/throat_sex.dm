@@ -1,4 +1,5 @@
 /datum/sex_action/throat_sex
+	handles_user_climax = TRUE
 	name = "Fuck their throat"
 	stamina_cost = 1.0
 	category = SEX_CATEGORY_PENETRATE

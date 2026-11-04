@@ -1,4 +1,5 @@
 /datum/sex_action/anal_ride_sex
+	handles_target_climax = TRUE
 	name = "Ride them anally"
 	stamina_cost = 1.0
 	aggro_grab_instead_same_tile = FALSE

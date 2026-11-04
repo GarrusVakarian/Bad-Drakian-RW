@@ -1,4 +1,5 @@
 /datum/sex_action/force_blowjob
+	handles_user_climax = TRUE
 	name = "Force them to suck"
 	require_grab = TRUE
 	stamina_cost = 1.0
