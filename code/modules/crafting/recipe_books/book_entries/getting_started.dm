@@ -101,7 +101,7 @@
 		</li>
 		<li><p><strong>Let the struggle run.</strong> It makes repeated escape attempts automatically, with a better chance after each failed attempt. You do not need to spam X. Avoid moving or starting other timed actions while struggling.</p>
 		</li>
-		<li><p>If the struggle stops and you are still caught, <strong>use Resist again</strong>. Call for help: another character can try to pull you free or break the plant. Ending your phrase with two exclamation marks (example: “Help!!”) will yell instead, reaching further.</p>
+		<li><p>If the struggle stops and you are still caught, <strong>use Resist again</strong>. Call for help: another character can try to pull you free or break the plant.</p>
 		</li>
 		</ol>
 		<p><strong>Act immediately.</strong> A maneater starts chewing shortly after catching you and can tear off a limb if you remain trapped. Having armor is essential to surviving maneaters.</p>
@@ -120,7 +120,7 @@
 		<li><p>Practice unfamiliar mechanics with a willing partner in a safe place.</p>
 		</li>
 		</ul>
-		<p>Combat has deep mechanics, such as multiple RMB intents and RMB actions (swapped through Shift-1~6), wrestling, spells and miracles. Shift-click them to see what they do.</p>
+		<p>Combat has deep mechanics, such as multiple RMB intents and RMB actions (swapped through Shift-1~6), wrestling, spells and miracles. Shift-click them to see what they do.<br><br><strong>Call for help:</strong> ending your phrase with two exclamation marks (example: “Help!!”) will yell instead, reaching further.</p>
 	"}
 
 /datum/book_entry/getting_started/death
