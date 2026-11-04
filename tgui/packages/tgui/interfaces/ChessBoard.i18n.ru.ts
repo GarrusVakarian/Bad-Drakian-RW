@@ -1,0 +1,81 @@
+import type { ChessBoardLocale } from './ChessBoardView';
+
+const locale: ChessBoardLocale = {
+  windowTitle: 'Игровая доска',
+  emptySeat: 'Свободно',
+  modeOptions: {
+    chess: 'Шахматы',
+    checkers: 'Шашки',
+    nards: 'Нарды',
+  },
+  promotionLabels: {
+    queen: 'Ферзь',
+    rook: 'Ладья',
+    bishop: 'Слон',
+    knight: 'Конь',
+  },
+  sections: {
+    board: 'Доска',
+    status: 'Статус',
+    controls: 'Места и управление',
+    promotion: 'Превращение пешки',
+    history: 'История ходов',
+  },
+  labels: {
+    mode: 'Режим',
+    rules: 'Правила',
+    white: 'Белые',
+    black: 'Чёрные',
+    you: 'Вы',
+    turn: 'Ход',
+    availableDice: 'Доступные кости',
+    whiteOff: 'Белые выведены',
+    blackOff: 'Чёрные выведены',
+  },
+  buttons: {
+    sitWhite: 'Сесть за белых',
+    releaseWhite: 'Освободить белых',
+    sitBlack: 'Сесть за чёрных',
+    releaseBlack: 'Освободить чёрных',
+    pause: 'Пауза',
+    resume: 'Продолжить',
+    reset: 'Сбросить доску',
+    confirmReset: 'Подтвердить сброс',
+    cancel: 'Отмена',
+    cancelResetRequest: 'Отменить запрос сброса',
+    pack: 'Собрать доску',
+    flip: 'Опрокинуть доску',
+    changeMode: 'Сменить режим',
+    confirmModeSwitch: 'Подтвердить смену режима',
+    cancelRequest: 'Отменить запрос',
+    rollDice: 'Бросить кости',
+    bearOff: 'Снять в дом',
+  },
+  modePicker: {
+    title: 'Выбор режима',
+    description: 'Выберите режим для этой доски.',
+    checkersRulesTitle: 'Правила шашек',
+    checkersRulesDescription: 'Выберите, как должна ходить дамка.',
+    nardsRulesTitle: 'Правила нард',
+    nardsRulesDescription: 'Выберите длинные или короткие нарды.',
+    regularKing: 'Обычная дамка',
+    flyingKing: 'Дальняя дамка',
+    shortNards: 'Короткие нарды',
+    longNards: 'Длинные нарды',
+    close: 'Закрыть',
+    back: 'Назад',
+  },
+  messages: {
+    noModeSelected: 'Режим ещё не выбран. Используйте кнопку смены режима.',
+    controlHint:
+      'Во время активной партии смена игроков выполняется через паузу. Для смены режима во время уже начавшейся партии требуется согласие обоих игроков.',
+    promotionPrompt: 'Выберите фигуру для превращения пешки.',
+    noMoves: 'Ходов ещё не было.',
+    dash: '-',
+  },
+  nards: {
+    tavernLetters: ['Т', 'А', 'В', 'Е', 'Р', 'Н', 'А'],
+  },
+};
+
+export default locale;
