@@ -226,6 +226,8 @@
 	return used_title || mind?.assigned_role || job
 
 /mob/living/carbon/human/get_mouseover_role_title()
+	if(istype(src, /mob/living/carbon/human/species/wildshape))
+		return
 	if(!migrant_type && job)
 		var/datum/job/J = SSjob.GetJob(job)
 		if(!J || J.wanderer_examine)
