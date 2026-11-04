@@ -153,3 +153,5 @@
   mypingishuge:
   - bugfix: Panel actions keep their action-specific climax messages, sounds and fluid
       delivery instead of sometimes falling back to a generic response.
+  - rscadd: Added Getting Started as the first encyclopedia guide, with practical
+      instructions and tips for new players.
