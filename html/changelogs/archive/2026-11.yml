@@ -142,3 +142,6 @@
   _Rarity:
   - rscadd: (Patapollla) Added a folding chess, checkers, and backgammon board to
       character loadouts and merchant imports.
+  mypingishuge:
+  - bugfix: Panel actions keep their action-specific climax messages, sounds and fluid
+      delivery instead of sometimes falling back to a generic response.

@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Panel actions keep their action-specific climax messages, sounds and fluid delivery instead of sometimes falling back to a generic response."
