@@ -25,13 +25,17 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 				"wiki_name" = book.wiki_name || book.name,
 				"types" = book.types.Copy(),
 				"path" = book_type,
-				"wiki_section" = book.wiki_section
+				"wiki_section" = book.wiki_section,
+				"wiki_order" = book.wiki_order
 			))
 		cached_book_recipes["[book_type]"] = build_recipe_list(book.types)
 		qdel(book)
 	book_entries = sortTim(book_entries, GLOBAL_PROC_REF(cmp_book_entries))
 
 /proc/cmp_book_entries(list/a, list/b)
+	var/order_difference = a["wiki_order"] - b["wiki_order"]
+	if(order_difference)
+		return order_difference
 	return sorttext(b["wiki_name"], a["wiki_name"])
 
 /proc/get_recipe_wiki()
