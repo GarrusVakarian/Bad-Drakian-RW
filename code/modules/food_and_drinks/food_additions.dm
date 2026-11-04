@@ -7,7 +7,14 @@
 	return FALSE
 
 /obj/item/reagent_containers/food/snacks/rogue/has_preparation_interaction(obj/item/ingredient)
-	return active_recipe || SScooking.get_recipe(src, ingredient)
+	if(!active_recipe)
+		return !!SScooking.get_recipe(src, ingredient)
+	if(current_step < 1 || current_step > length(active_recipe.ingredients))
+		return FALSE
+	var/requirement = active_recipe.ingredients[current_step]
+	if(ispath(requirement, /datum/reagent))
+		return ingredient.reagents && ingredient.reagents.has_reagent(requirement, active_recipe.ingredients[requirement])
+	return istype(ingredient, requirement)
 
 /obj/item/reagent_containers/food/snacks/grown/rice/has_preparation_interaction(obj/item/ingredient)
 	return !water_added
