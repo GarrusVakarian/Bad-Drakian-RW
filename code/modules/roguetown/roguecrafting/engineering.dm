@@ -29,7 +29,7 @@
 
 /datum/crafting_recipe/roguetown/engineering/peddlercart
 	name = "peddler cart"
-	category = "Machines"
+	display_category = ITEM_CAT_ENG_MACHINERY
 	result = /obj/structure/roguemachine/vendor/mobile
 	reqs = list(
 		/obj/item/grown/log/tree/small = 1,
