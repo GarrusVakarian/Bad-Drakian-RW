@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added Getting Started as the first encyclopedia guide, with practical instructions and tips for new players."
