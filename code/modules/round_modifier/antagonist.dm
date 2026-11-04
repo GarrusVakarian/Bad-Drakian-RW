@@ -58,15 +58,13 @@
 	min_chaos = 3
 	job_slots = list("Wretch" = 5)
 
-/*
 /datum/round_modifier/werewolf
 	name = "Verevolf"
 	desc = "Men don the skin of wolves in darkling night."
-	cost = 6
+	cost = 2
 	weight = 5
-	min_chaos = 2
+	min_chaos = 1
 	villain_events = list(/datum/round_event_control/antagonist/solo/werewolf)
-*/
 
 /datum/round_modifier/vampire
 	name = "Vampyres"
