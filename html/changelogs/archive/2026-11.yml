@@ -144,6 +144,12 @@
       character loadouts and merchant imports.
   - rscadd: (felindis) Added craftable peddler carts with key-controlled stocking
       access and lockable wheels.
+  - balance: Hide role labels for wildshaped.
+  - bugfix: Unlit Sunder now expires after 10 seconds instead of permanently preventing
+      healing.
+  - bugfix: Failed or cancelled Message casts no longer charge fatigue.
+  - config: Enabled werewolf round modifier. Chaos will now have a 16%-53% chance
+      to pick the werewolf modifier at round start.
   mypingishuge:
   - bugfix: Panel actions keep their action-specific climax messages, sounds and fluid
       delivery instead of sometimes falling back to a generic response.

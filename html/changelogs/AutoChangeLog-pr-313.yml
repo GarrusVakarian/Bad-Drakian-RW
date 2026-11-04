@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - config: "Enabled werewolf round modifier. Chaos will now have a 16%-53% chance to pick the werewolf modifier at round start."
