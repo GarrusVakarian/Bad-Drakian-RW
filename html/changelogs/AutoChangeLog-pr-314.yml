@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - balance: "Intact gnoll skin now prevents choking until broken, depleted, or no longer covering the neck."
+  - spellcheck: "Clarified the message shown when neck coverage prevents choking."
