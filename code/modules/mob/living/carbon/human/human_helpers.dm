@@ -373,3 +373,20 @@
 
 /mob/living/carbon/human/proc/ReturnRelation(mob/living/carbon/human/stranger)
 	return family_datum.ReturnRelation(src, stranger)
+
+// Cleans all body writing off of the mob.
+/mob/living/carbon/human/proc/clean_all_body_writing()
+	for(var/obj/item/bodypart/bodypart as anything in bodyparts)
+		bodypart.body_writing = ""
+		if(istype(bodypart, /obj/item/bodypart/chest))
+			var/obj/item/bodypart/chest/chest = bodypart
+			chest.body_writing_on_buttocks = ""
+			chest.body_writing_on_stomach = ""
+		else if(istype(bodypart, /obj/item/bodypart/head))
+			var/obj/item/bodypart/head/head = bodypart
+			head.body_writing_on_neck = ""
+			head.body_writing_on_mouth = ""
+	for(var/obj/item/organ/organ as anything in internal_organs)
+		if("body_writing" in organ.vars)
+			organ.vars["body_writing"] = ""
+	bodywritten = FALSE

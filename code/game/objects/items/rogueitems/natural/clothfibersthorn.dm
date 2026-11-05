@@ -365,6 +365,8 @@
 	qdel(src)
 
 /obj/item/natural/thorn/Crossed(mob/living/L)
+	if(istype(L) && L.is_airborne_over_vegetation())
+		return
 	. = ..()
 	if(istype(L))
 		var/prob2break = 33

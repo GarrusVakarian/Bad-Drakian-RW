@@ -1,4 +1,5 @@
 /datum/sex_action/force_milk_genitals
+	handles_target_climax = TRUE
 	name = "Forcibly milk cock"
 	check_same_tile = FALSE
 	category = SEX_CATEGORY_HANDS

@@ -38,6 +38,8 @@
 
 	/// Stores weapon
 	var/obj/item/rogueweapon/sheathed
+	/// Sheathe icon used when this scabbard has no state for the sheathed weapon's own sheathe_icon
+	var/fallback_sheathe_icon = ""
 
 	var/sheathe_time = 0.1 SECONDS
 	var/sheathe_sound = 'sound/foley/equip/scabbard_holster.ogg'
@@ -63,16 +65,20 @@
 	if(HAS_TRAIT(A, TRAIT_NODROP))
 		to_chat(user, span_warning("I cannot sheath [A] while it is bound."))
 		return FALSE
-	if(valid_blade && !istype(A, valid_blade))
+	if(!accepts_weapon(A))
 		to_chat(user, span_warning("[A] won't fit in there."))
+		return FALSE
+	return TRUE
+
+/// Check compatibility without occupancy, binding, or feedback side effects.
+/obj/item/rogueweapon/scabbard/proc/accepts_weapon(obj/item/A)
+	if(valid_blade && !istype(A, valid_blade))
 		return FALSE
 	if(valid_blades)
 		if(!(A.type in valid_blades))
-			to_chat(user, span_warning("[A] won't fit in there."))
 			return FALSE
 	if(invalid_blades)
 		if(A.type in invalid_blades)
-			to_chat(user, span_warning("[A] won't fit in there."))
 			return FALSE
 	return TRUE
 
@@ -207,6 +213,8 @@
 /obj/item/rogueweapon/scabbard/update_icon(mob/living/user)
 	if(sheathed)
 		icon_state = "[initial(icon_state)]_[sheathed.sheathe_icon]"
+		if(!icon_exists(icon, icon_state))
+			icon_state = "[initial(icon_state)]_[fallback_sheathe_icon]"
 	else
 		icon_state = "[initial(icon_state)]"
 
@@ -309,6 +317,7 @@
 	item_state = "sheath"
 
 	valid_blade = /obj/item/rogueweapon/huntingknife
+	fallback_sheathe_icon = "gendagger"
 	w_class = WEIGHT_CLASS_SMALL
 
 	grid_width = 32
@@ -322,7 +331,7 @@
 		/obj/item/rogueweapon/huntingknife/idagger/silver/stake
 	)
 
-/obj/item/rogueweapon/scabbard/sheath/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/sheath/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
 		if(!istype(A, /obj/item/rogueweapon))
@@ -442,11 +451,9 @@
 
 	max_integrity = 0
 
-/obj/item/rogueweapon/scabbard/gwstrap/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/gwstrap/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
-		if(sheathed)
-			return FALSE
 		if(istype(A, /obj/item/rogueweapon))
 			if(A.w_class >= WEIGHT_CLASS_BULKY)
 				return TRUE
@@ -542,6 +549,7 @@
 	sewrepair = TRUE
 
 	valid_blade = /obj/item/rogueweapon/sword
+	fallback_sheathe_icon = "gensword"
 //You'd think think it'd look for subtypes, but no.
 	invalid_blades = list(
 		/obj/item/rogueweapon/sword/long/exe,
@@ -558,7 +566,7 @@
 	max_integrity = 750
 
 
-/obj/item/rogueweapon/scabbard/sheath/weapon_check(mob/living/user, obj/item/A)
+/obj/item/rogueweapon/scabbard/sheath/accepts_weapon(obj/item/A)
 	. = ..()
 	if(.)
 		if(!istype(A, /obj/item/rogueweapon))
@@ -723,6 +731,7 @@
 	desc = "A piece of steel lined with wood. Great for batting away blows."
 	icon_state = "kazscab"
 	item_state = "kazscab"
+	fallback_sheathe_icon = "mulyeog"
 	// Only accept Kazengun swords
 	valid_blades = list(
 		/obj/item/rogueweapon/sword/short/kazengun,
@@ -735,6 +744,7 @@
 	associated_skill = /datum/skill/combat/swords
 	possible_item_intents = list(SHIELD_BASH, SHIELD_BLOCK, SHIELD_SMASH)
 	can_parry = TRUE
+	sewrepair = FALSE
 	wdefense = 8
 
 	max_integrity = 220
@@ -804,6 +814,7 @@
 	desc = "A plain lacquered scabbard with simple steel hardware. A plain dark cloth serves to hang it from a belt."
 	icon_state = "kazscabyuruku"
 	item_state = "kazscabyuruku"
+	fallback_sheathe_icon = "kodachi"
 	associated_skill = /datum/skill/combat/swords
 	possible_item_intents = list(SHIELD_BASH, SHIELD_BLOCK, SHIELD_SMASH)
 	// Only accept Kazengun swords (kodachi variant)
@@ -821,6 +832,7 @@
 	desc = "A simple lacquered sheath, for shorter eastern-styled blades."
 	icon_state = "kazscabdagger"
 	item_state = "kazscabdagger"
+	fallback_sheathe_icon = "tanto"
 	// Only accept Kazengun daggers
 	valid_blades = list(
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun
@@ -828,6 +840,7 @@
 	associated_skill = /datum/skill/combat/knives
 	possible_item_intents = list(SHIELD_BASH, SHIELD_BLOCK)
 	can_parry = TRUE
+	sewrepair = FALSE
 	wdefense = 3
 
 	max_integrity = 0

@@ -1,4 +1,5 @@
 /datum/sex_action/anal_sex
+	handles_user_climax = TRUE
 	name = "Sodomize them"
 	stamina_cost = 1.0
 	category = SEX_CATEGORY_PENETRATE

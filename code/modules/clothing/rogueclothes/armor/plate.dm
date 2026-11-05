@@ -520,6 +520,7 @@
 	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
 
 /obj/item/clothing/suit/roguetown/armor/plate/cuirass/fluted/gold
+	is_gold = TRUE
 	name = "golden cuirass"
 	icon_state = "goldcuirass"
 	desc = "A resplendant cuirass of pure gold, fitted with tassets for additional coverage. It is dressed atop a besilked arming \
@@ -622,6 +623,7 @@
 	sleevetype = "shirt"
 	max_integrity = ARMOR_INT_CHEST_LIGHT_MASTER
 	sewrepair = TRUE
+	anvilrepair = FALSE //this must be specified because it's a variant of scale
 	equip_delay_self = 4 SECONDS
 	armor_class = ARMOR_CLASS_LIGHT
 	armor = ARMOR_LEATHER_STUDDED
@@ -662,6 +664,8 @@
 	max_integrity = ARMOR_INT_CHEST_PLATE_BRIGANDINE
 	armor_class = ARMOR_CLASS_MEDIUM
 	armor = ARMOR_CUIRASS
+	sewrepair = FALSE
+	anvilrepair = /datum/skill/craft/armorsmithing //this has to be re-specified, because it is a variant of the previous version
 	smelt_bar_num = 2
 	smeltresult = /obj/item/ingot/steel
 	blocksound = PLATEHIT

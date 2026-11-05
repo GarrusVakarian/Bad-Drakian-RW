@@ -154,6 +154,10 @@
 				used = list('sound/vo/mobs/goat/idle (1).ogg', 'sound/vo/mobs/goat/idle (2).ogg', 'sound/vo/mobs/goat/idle (3).ogg')
 			if("chitter")
 				used = 'sound/vo/moth/mothchitter.ogg'
+			if("flutter")
+				used = 'sound/vo/moth/moth_flutter.ogg'
+			if("msqueak")
+				used = 'sound/vo/moth/moth_squeak.ogg'
 			if("strain")
 				used = 'sound/vo/male/gen/strain.ogg'
 			if("moan")
@@ -189,4 +193,10 @@
 			//jokes on YOU, I'm adding the yeen cackle!
 			if("ycackle")
 				used = list('sound/vo/mobs/hyena/cackle.ogg')
+			if("tick")
+				used = list('sound/misc/clockloop.ogg')
+			if("creak")
+				used = list('sound/foley/trap.ogg')
+			if("spark")
+				used = list('sound/foley/machinebreak.ogg')
 	return used

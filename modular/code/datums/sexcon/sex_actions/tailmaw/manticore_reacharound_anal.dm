@@ -1,4 +1,6 @@
 /datum/sex_action/manticore_reacharound_anal
+	handles_user_climax = TRUE
+	handles_target_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Fuck their ass while engulfing their dick"
 	check_same_tile = FALSE

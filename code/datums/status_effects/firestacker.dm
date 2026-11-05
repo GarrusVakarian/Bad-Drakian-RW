@@ -273,6 +273,21 @@
 /datum/status_effect/fire_handler/fire_stacks/sunder
 	id = "fire_stacks_sunder"
 	fire_alert_type = /atom/movable/screen/alert/fire/sunder
+	duration = 10 SECONDS
+
+/datum/status_effect/fire_handler/fire_stacks/sunder/refresh(mob/living/new_owner, new_stacks, forced = FALSE)
+	. = ..()
+	if(!on_fire && new_stacks > 0)
+		duration = world.time + initial(duration)
+
+/datum/status_effect/fire_handler/fire_stacks/sunder/ignite(silent = FALSE)
+	. = ..()
+	if(.)
+		duration = -1
+
+/datum/status_effect/fire_handler/fire_stacks/sunder/extinguish()
+	. = ..()
+	duration = world.time + initial(duration)
 
 /datum/status_effect/fire_handler/fire_stacks/sunder/harm_human(seconds_per_tick, no_protection = FALSE)
 	var/mob/living/carbon/human/victim = owner

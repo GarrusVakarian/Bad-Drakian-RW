@@ -151,10 +151,10 @@
 
 	var/parry_status = FALSE
 	if(defender_dualw)
-		if(prob(prob2defend) && extradefroll)
+		if((prob(prob2defend) || ancestor_reroll(prob2defend)) && extradefroll)
 			parry_status = TRUE
 	else
-		if(prob(prob2defend))
+		if((prob(prob2defend) || ancestor_reroll(prob2defend)))
 			parry_status = TRUE
 
 	if(parry_status)

@@ -511,11 +511,8 @@
 	var/obj/item/rogueweapon/scabbard/scab = use_thing ? use_thing : equipped
 	if(!istype(scab))
 		return FALSE
-	if(!thing)
-		if(!scab.sheathed)
-			return FALSE
-		return scab.attack_hand(src)
-	if(!istype(thing, scab.valid_blade))
+	// Unrelated items should still enter the containing bag normally.
+	if(use_thing && thing && !scab.accepts_weapon(thing))
 		return FALSE
-	return scab.attackby(thing, src)
+	return scab.quickdraw_interact(src, thing)
 

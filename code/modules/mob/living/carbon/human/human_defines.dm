@@ -222,6 +222,7 @@
 	var/hypothermia_timer_id
 
 	var/branded = FALSE // Saves time during examine if character hasn't been branded at all
+	var/bodywritten = FALSE // Saves time during examine if character hasn't been bodywritten at all
 
 	//For tracking how long a player hasn't moved
 	var/time_of_last_move = 0

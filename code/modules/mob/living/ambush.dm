@@ -2,6 +2,10 @@ GLOBAL_VAR_INIT(ambush_chance_pct, 20) // Please don't raise this over 100 admin
 GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each individual mob being considered for an ambush
 // Instead of setting it on area and hoping no one forgets it on area we're just doing this
 
+/// Ground-level vegetation does not react while a mob passes above it.
+/mob/living/proc/is_airborne_over_vegetation()
+	return jumping || throwing || zfalling || is_flying()
+
 /mob/living/proc/ambushable()
 	if(stat)
 		return FALSE
@@ -30,6 +34,8 @@ GLOBAL_VAR_INIT(ambush_mobconsider_cooldown, 2 MINUTES) // Cooldown for each ind
 			true_ambush_chance *= 1.5
 		else if(danger_level == DANGER_LEVEL_BLEAK)
 			true_ambush_chance *= 2
+	if(HAS_TRAIT(src, TRAIT_LOCAL_KNOWLEDGE))
+		true_ambush_chance *= 0.75
 	if(!always && prob(100 - true_ambush_chance))
 		return FALSE
 	if(!always)

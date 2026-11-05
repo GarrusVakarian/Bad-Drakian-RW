@@ -145,6 +145,9 @@ LOG_MANIFEST
 ## log job divide debugging information
 #LOG_JOB_DEBUG
 
+# Warn once when a round setup operation stalls for at least 15 seconds, then log its recovery.
+#LOG_ROUNDSTART_STALLS
+
 ## log all world.Topic() calls
 # LOG_WORLD_TOPIC
 

@@ -1086,9 +1086,11 @@
 	faction = target.faction
 	deathsound = target.deathsound
 	gender = target.gender
+	pronouns = target.pronouns
 	real_name = target.real_name
 	voice_color = target.voice_color
 	voice_pitch = target.voice_pitch
+	voice_type = target.voice_type
 	detail_color = target.detail_color
 	skin_tone = target.skin_tone
 	lip_style = target.lip_style
@@ -1308,6 +1310,11 @@
 	var/three_quarter_delta = (base_delta * 0.75)
 	if(protection > 0)
 		(final_delta -= (three_quarter_delta * protection))
+
+	if(base_delta < 0 && HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+		final_delta *= 0.75
+	else if(base_delta > 0 && HAS_TRAIT(src, TRAIT_HEAT_RESISTANCE))
+		final_delta *= 0.5
 
 	adjust_bodytemperature(final_delta)
 

@@ -188,3 +188,12 @@
 	can_spawn = FALSE
 	wiki_only = TRUE
 	types = list(/datum/book_entry/treasury_general, /datum/book_entry/treasury_realm, /datum/book_entry/treasury_merchant, /datum/book_entry/treasury_underground)
+
+/obj/item/recipe_book/getting_started
+	name = "Getting Started"
+	wiki_name = "Getting Started"
+	wiki_section = "Guides"
+	wiki_order = -1
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/getting_started)

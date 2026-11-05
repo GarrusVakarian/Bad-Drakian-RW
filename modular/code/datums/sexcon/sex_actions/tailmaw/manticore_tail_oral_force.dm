@@ -1,4 +1,5 @@
 /datum/sex_action/manticore_tail_oral_force
+	handles_user_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Force tail maw onto their mouth"
 	check_same_tile = FALSE

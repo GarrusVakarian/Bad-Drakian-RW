@@ -40,7 +40,7 @@
 /mob/living/carbon/human/proc/get_examine_item_name_with_hover(mob/user, obj/item/I)
 	if(!I)
 		return ""
-	var/display_name = I.get_examine_string(user)
+	var/display_name = "<span class=\"examine-equipment\">[I.get_examine_string(user)]</span>"
 	var/list/highlight_status = I.get_examine_highlight_status()
 	if(highlight_status)
 		display_name = I.get_examine_highlight_labeled_string(highlight_status[1], display_name)
@@ -118,20 +118,7 @@
 		if(item)
 			. += span_notice("You get the feeling [m2] most valuable possession is \a [item].")
 
-	if(user != src && get_dist(user, src) <= 3)
-		var/reeking_naturally = is_redolent_reeking()
-		if(reeking_naturally || has_status_effect(/datum/status_effect/debuff/stinky_contact))
-			var/can_see_stink = !isliving(user) // adminghost always sees it
-			if(isliving(user))
-				var/mob/living/living_user = user
-				can_see_stink = living_user.can_smell() && !HAS_TRAIT(living_user, TRAIT_NOSTINK)
-			if(can_see_stink)
-				if(reeking_naturally)
-					. += redolent_examine_text(redolent_scent_type, redolent_scent)
-				else
-					var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
-					if(contact_stink)
-						. += contact_stink.get_examine_text()
+	. += get_redolent_examine_lines(user)
 
 	if(HAS_TRAIT(src, TRAIT_DEADITE))
 		. += span_userdanger("DEADITE!")
@@ -330,7 +317,7 @@
 				. += "[m3] got weird hands! They don't look right!"
 			else
 				. += "[m3][hand_number > 1 ? "" : " a"] <span class='bloody'>blood-stained</span> hand[hand_number > 1 ? "s" : ""]!"
-	
+
 	//belt
 	if(belt && !(SLOT_BELT in obscured))
 		var/str = "[m3] [get_examine_item_name_with_hover(user, belt)] about [m2] waist. "
@@ -473,9 +460,11 @@
 	//body temp
 	switch(bodytemperature)
 		if(0 to BODYTEMP_COLD_LEVEL_ONE_MAX)
-			msg += span_biginfo("<font color='#023E8A'> [m1] shivering uncontrollably</font>")
+			if(!HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+				msg += span_biginfo("<font color='#023E8A'> [m1] shivering uncontrollably</font>")
 		if(BODYTEMP_COLD_LEVEL_ONE_MAX to BODYTEMP_NORMAL_MIN)
-			msg += span_biginfo("<font color='#99e6ff'> [m1] shivering</font>")
+			if(!HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+				msg += span_biginfo("<font color='#99e6ff'> [m1] shivering</font>")
 		if(BODYTEMP_NORMAL_MAX to BODYTEMP_HEAT_LEVEL_ONE_MAX)
 			msg += span_biginfo("<font color='#ffff00'> [m1] sweating</font>")
 		if(BODYTEMP_HEAT_LEVEL_ONE_MAX to 600)
@@ -852,7 +841,7 @@
 					if(chest.enslavement_mark)
 						chest_brand_text = "[chest_brand_text], a mark of ownership"
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters has been branded with ") + "[span_boldwarning(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)]."
 				var/stomach_brand_text = ""
 				if(length(chest.branded_writing_on_stomach))
 					stomach_brand_text = chest.branded_writing_on_stomach
@@ -871,6 +860,38 @@
 					neck_brand_text = "a mark of ownership"
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
 					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)]."
+
+	if(bodywritten) // our body has been written on, now check what body-writings we've got. genital body-writings handled separately.
+		for(var/obj/item/bodypart/branded_bodypart as anything in bodyparts)
+			var/brand_text = ""
+			if(length(branded_bodypart.body_writing))
+				brand_text = branded_bodypart.body_writing
+			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone))
+				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_beautiful_fem(brand_text)]."
+			if(istype(branded_bodypart, /obj/item/bodypart/chest))
+				var/obj/item/bodypart/chest/chest = branded_bodypart
+				var/chest_brand_text = ""
+				if(length(chest.body_writing_on_buttocks))
+					chest_brand_text = chest.body_writing_on_buttocks
+				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
+					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_beautiful_fem(chest_brand_text)]."
+				var/stomach_brand_text = ""
+				if(length(chest.body_writing_on_stomach))
+					stomach_brand_text = chest.body_writing_on_stomach
+				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
+					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_beautiful_fem(stomach_brand_text)]."
+			else if(istype(branded_bodypart, /obj/item/bodypart/head))
+				var/obj/item/bodypart/head/head = branded_bodypart
+				var/neck_brand_text = ""
+				if(length(head.body_writing_on_neck))
+					neck_brand_text = head.body_writing_on_neck
+				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
+					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_beautiful_fem(neck_brand_text)]."
+				var/mouth_brand_text = ""
+				if(length(head.body_writing_on_mouth))
+					mouth_brand_text = head.body_writing_on_mouth
+				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
+					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_beautiful_fem(mouth_brand_text)]."
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
@@ -1376,7 +1397,7 @@
 		return
 	if(HAS_TRAIT(examiner, TRAIT_HERETIC_SEER))
 		seer = TRUE
-	
+
 	if(HAS_TRAIT(src, TRAIT_COMMIE) && (HAS_TRAIT(examiner, TRAIT_COMMIE)||seer))
 		heretic_text += "♠"
 	else if(HAS_TRAIT(src, TRAIT_CABAL) && (HAS_TRAIT(examiner, TRAIT_CABAL)||seer))

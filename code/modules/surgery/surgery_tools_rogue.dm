@@ -496,7 +496,7 @@
 	for(var/obj/item/organ/organ as anything in target.internal_organs)
 		if(organ.enslavement_mark)
 			return TRUE
-		if("branded_writing" in organ.vars && length(organ.vars["branded_writing"]))
+		if(("branded_writing" in organ.vars) && length(organ.vars["branded_writing"]))
 			return TRUE
 	return FALSE
 
@@ -560,7 +560,7 @@
 		return TRUE
 	var/mob/living/carbon/human/target = A
 	var/precise_zone = user.zone_selected // We need this up here to stay consistent past the do_after.
-	var/body_zone = check_zone(precise_zone) 
+	var/body_zone = check_zone(precise_zone)
 	var/obj/item/bodypart/branding_part = target.get_bodypart(body_zone)
 	var/branding_self = user == target
 	if(!get_location_accessible(target, user.zone_selected))
@@ -710,7 +710,7 @@
 		target.Knockdown(1 SECONDS)
 	if(apply_message)
 		send_branding_result_messages(user, target, description_recoil, final_answer, branding_text)
-	
+
 	target.emote(prob(50) ? "painscream" : "scream", forced = TRUE)
 	target.Stun(40)
 	target.fullscreen_redflash("redflash2")

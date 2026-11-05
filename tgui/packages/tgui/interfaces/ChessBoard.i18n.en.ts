@@ -1,0 +1,81 @@
+import type { ChessBoardLocale } from './ChessBoardView';
+
+const locale: ChessBoardLocale = {
+  windowTitle: 'Game board',
+  emptySeat: 'Open',
+  modeOptions: {
+    chess: 'Chess',
+    checkers: 'Checkers',
+    nards: 'Backgammon',
+  },
+  promotionLabels: {
+    queen: 'Queen',
+    rook: 'Rook',
+    bishop: 'Bishop',
+    knight: 'Knight',
+  },
+  sections: {
+    board: 'Board',
+    status: 'Status',
+    controls: 'Seats and Controls',
+    promotion: 'Pawn Promotion',
+    history: 'Move History',
+  },
+  labels: {
+    mode: 'Mode',
+    rules: 'Rules',
+    white: 'White',
+    black: 'Black',
+    you: 'You',
+    turn: 'Turn',
+    availableDice: 'Available dice',
+    whiteOff: 'White borne off',
+    blackOff: 'Black borne off',
+  },
+  buttons: {
+    sitWhite: 'Sit as White',
+    releaseWhite: 'Release White',
+    sitBlack: 'Sit as Black',
+    releaseBlack: 'Release Black',
+    pause: 'Pause',
+    resume: 'Resume',
+    reset: 'Reset Board',
+    confirmReset: 'Confirm Reset',
+    cancel: 'Cancel',
+    cancelResetRequest: 'Cancel Reset Request',
+    pack: 'Pack Board',
+    flip: 'Flip Board',
+    changeMode: 'Change Mode',
+    confirmModeSwitch: 'Confirm Mode Change',
+    cancelRequest: 'Cancel Request',
+    rollDice: 'Roll Dice',
+    bearOff: 'Bear Off',
+  },
+  modePicker: {
+    title: 'Choose Mode',
+    description: 'Choose the game for this board.',
+    checkersRulesTitle: 'Checkers Rules',
+    checkersRulesDescription: 'Choose how kings move.',
+    nardsRulesTitle: 'Backgammon Rules',
+    nardsRulesDescription: 'Choose short or long backgammon.',
+    regularKing: 'Regular King',
+    flyingKing: 'Flying King',
+    shortNards: 'Short Backgammon',
+    longNards: 'Long Backgammon',
+    close: 'Close',
+    back: 'Back',
+  },
+  messages: {
+    noModeSelected: 'No mode selected yet. Use the change mode button.',
+    controlHint:
+      'During an active game, seats can be changed only while paused. Changing mode after the game has started requires both players to agree.',
+    promotionPrompt: 'Choose the piece for pawn promotion.',
+    noMoves: 'No moves yet.',
+    dash: '-',
+  },
+  nards: {
+    tavernLetters: ['T', 'A', 'V', 'E', 'R', 'N'],
+  },
+};
+
+export default locale;

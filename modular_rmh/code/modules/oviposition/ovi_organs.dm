@@ -44,14 +44,17 @@
 	if(eggs_stored >= clutch)
 		to_chat(owner, span_love("My [get_oviposition_location_name()] feels heavy and full. A clutch is ready."))
 
-/// Lays every stored egg onto the owner's turf. Returns how many were laid.
-/obj/item/organ/proc/lay_stored_eggs()
+/// Lays stored eggs onto the owner's turf, optionally limited. Returns how many were laid.
+/obj/item/organ/proc/lay_stored_eggs(limit = INFINITY)
 	if(!owner || eggs_stored <= 0)
 		return 0
+	var/count = min(eggs_stored, max(0, limit))
+	if(!count)
+		return 0
 	var/list/appearances = list()
-	for(var/i in 1 to eggs_stored)
+	for(var/i in 1 to count)
 		appearances += list(get_oviposition_egg_appearance(egg_settings, owner))
-	eggs_stored = 0
+	eggs_stored -= count
 	return spawn_oviposition_eggs(owner, appearances)
 
 /obj/item/organ/penis/on_life()
@@ -99,13 +102,15 @@
 		return
 	ovipositor.implant_eggs(receiver)
 
-/// Called from ejaculate() when climaxing without a partner. Any formed clutch drops out.
+/// Called from ejaculate() when climaxing without a partner. Lays up to the chosen total.
 /datum/sex_controller/proc/modular_lay_eggs_on_climax()
+	if(!user.automatic_egg_laying)
+		return
 	var/laid = 0
 	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
 		var/obj/item/organ/egg_organ = user.getorganslot(slot)
 		if(egg_organ?.egg_settings)
-			laid += egg_organ.lay_stored_eggs()
+			laid += egg_organ.lay_stored_eggs(user.climax_egg_count - laid)
 	if(laid)
 		var/egg_text = laid == 1 ? "an egg" : "[laid] eggs"
 		user.visible_message(span_love("[user] lays [egg_text]!"), span_love("I lay [egg_text]!"))

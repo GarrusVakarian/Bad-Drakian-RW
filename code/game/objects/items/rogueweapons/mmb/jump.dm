@@ -67,6 +67,8 @@
 	if(m_intent == MOVE_INTENT_RUN)
 		if(animal_mount)
 			animal_mount.emote("leap", forced = TRUE)
+		else if(HAS_TRAIT(src, TRAIT_BEWINGED))
+			emote("flutter", forced = TRUE)
 		else
 			emote("leap", forced = TRUE)
 		OffBalance(30)
@@ -78,10 +80,16 @@
 	else
 		if(animal_mount)
 			animal_mount.emote("jump", forced = TRUE)
-		emote("jump", forced = TRUE)
+		if(HAS_TRAIT(src, TRAIT_BEWINGED))
+			emote("flutter", forced = TRUE)
+		else
+			emote("jump", forced = TRUE)
 		OffBalance(20)
 		jadded = 20
 		jrange = 2
+
+	if(HAS_TRAIT(src, TRAIT_BEWINGED))
+		jrange += 1
 
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
@@ -100,6 +108,7 @@
 	var/atom/movable/jump_movable = src
 	var/mob/living/simple_animal/animal_mount = get_buckled_animal_mount()
 	var/was_mounted = FALSE
+	var/mount_prev_jumping
 	var/mount_prev_pixel_z
 	var/mount_prev_pass_flags
 	var/prev_layer
@@ -113,6 +122,8 @@
 			mount_riding.driver = null
 		animal_mount.unbuckle_mob(src, TRUE)
 		was_mounted = TRUE
+		mount_prev_jumping = animal_mount.jumping
+		animal_mount.jumping = TRUE
 
 	var/do_a_flip
 	var/flip_direction = FLIP_DIRECTION_CLOCKWISE
@@ -209,6 +220,7 @@
 		layer = prev_layer
 	if(was_mounted && animal_mount && !QDELETED(animal_mount))
 		animal_mount.pass_flags = mount_prev_pass_flags
+		animal_mount.jumping = mount_prev_jumping
 
 	if(was_mounted && animal_mount && !QDELETED(animal_mount) && isturf(src.loc))
 		animal_mount.forceMove(get_turf(src))

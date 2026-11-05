@@ -46,6 +46,9 @@
 			to_chat(user, span_warning("I begin scraping the hide's skin..."))
 			if(!do_after(user, work_time, target = user))
 				return
+			if(!hide)
+				to_chat(user, span_warning("There is no hide on the rack anymore."))
+				return
 			playsound(src,pick('sound/items/book_open.ogg','sound/items/book_page.ogg'), 100, FALSE)
 			QDEL_NULL(hide)
 			user.mind.add_sleep_experience(/datum/skill/craft/tanning, user.STAINT * 2) //these numbers may need some revision

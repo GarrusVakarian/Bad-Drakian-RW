@@ -1014,7 +1014,7 @@
 			// we just got hit by something hidden so try and find them
 			if (prob(5))
 				visible_message(span_notice("[src] begins searching around frantically..."))
-			var/extra_chance = (health <= maxHealth * 50) ? 30 : 0 // if we're below half health, we're way more alert
+			var/extra_chance = (health <= maxHealth * 0.5) ? 30 : 0 // if we're below half health, we're way more alert
 			if (!npc_detect_sneak(L, extra_chance))
 				return
 		NPC_THINK("Hunting [L]!")

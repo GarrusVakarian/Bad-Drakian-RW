@@ -221,6 +221,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		return FALSE
 
 	//general preferences
+	load_character_sheet_feature_state(S)
 	S["asaycolor"]			>> asaycolor
 	S["ooccolor"]			>> ooccolor
 	S["lastchangelog"]		>> lastchangelog
@@ -281,6 +282,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["pits"]				>> pits
 	S["descriptor_color"]	>> descriptor_color
 	S["cursed_collarable"] 	>> cursed_collarable
+	S["milkable"]			>> milkable
+	S["manticore_tail_messages"]	>> manticore_tail_messages
 	S["shake"]				>> shake
 	S["no_redflash"] 		>> no_redflash
 	S["mastervol"]			>> mastervol
@@ -382,6 +385,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//ROGUETOWN
 	parallax = PARALLAX_INSANE
 
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
 	verify_keybindings_valid()
 	return TRUE
 
@@ -430,6 +435,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["version"] , SAVEFILE_VERSION_MAX)		//updates (or failing that the sanity checks) will ensure data is not invalid at load. Assume up-to-date
 
 	//general preferences
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
+	S.cd = "/feature_discovery"
+	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
+	S.cd = "/"
 	WRITE_FILE(S["asaycolor"], asaycolor)
 	WRITE_FILE(S["triumphs"], triumphs)
 	WRITE_FILE(S["musicvol"], musicvol)
@@ -468,6 +478,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["pits"], pits)
 	WRITE_FILE(S["descriptor_color"], descriptor_color)
 	WRITE_FILE(S["cursed_collarable"], cursed_collarable)
+	WRITE_FILE(S["milkable"], milkable)
+	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
 	WRITE_FILE(S["shake"], shake)
 	WRITE_FILE(S["no_redflash"], no_redflash)
 	WRITE_FILE(S["lastclass"], lastclass)
@@ -958,7 +970,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		to_chat(parent, span_warning("Couldn't load gnoll prefs!"))
 
 	var/patron_typepath
-	S["selected_patron"]	>> patron_typepath
+	S["selected_patron"] >> patron_typepath
 	if(patron_typepath)
 		selected_patron = GLOB.patronlist[patron_typepath]
 		if(!selected_patron) //failsafe
@@ -968,6 +980,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		// No patron saved, set default
 		selected_patron = GLOB.patronlist[default_patron]
+
+	S["polytheist_patron"] >> patron_typepath
+	if(patron_typepath)
+		polytheist_patron = GLOB.patronlist[patron_typepath] // Could be null, nobody forced to be polytheist
+	else
+		polytheist_patron = "NONE"
 
 	//Custom names
 	for(var/custom_name_id in GLOB.preferences_custom_names)
@@ -1231,7 +1249,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["all_quirks"]			, all_quirks)
 
 	//Patron
-	WRITE_FILE(S["selected_patron"]		, preferences_typepath_or_null(selected_patron))
+	WRITE_FILE(S["selected_patron"], preferences_typepath_or_null(selected_patron))
+	WRITE_FILE(S["polytheist_patron"], preferences_typepath_or_null(polytheist_patron))
 
 	// Organs
 	var/list/packed_hair = list()

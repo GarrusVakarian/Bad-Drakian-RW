@@ -113,6 +113,8 @@
 
 	/// Branded writing on body part
 	var/branded_writing = ""
+	/// Body writing on body part
+	var/body_writing = ""
 	/// Branded enslavement mark
 	var/enslavement_mark = FALSE
 	/// Full real name of the mob who branded this part, if it was branded as owned property
@@ -774,7 +776,7 @@
 			draw_organ_features = FALSE
 		if(NO_BODYPART_FEATURES in owner_species.species_traits)
 			draw_bodypart_features = FALSE
-	
+
 	// Organ overlays
 	if(!skeletonized && draw_organ_features)
 		for(var/obj/item/organ/organ as anything in get_organs())
@@ -814,6 +816,8 @@
 
 	var/branded_writing_on_buttocks = ""
 	var/branded_writing_on_stomach = ""
+	var/body_writing_on_buttocks = ""
+	var/body_writing_on_stomach = ""
 
 	grid_width = 64
 	grid_height = 96

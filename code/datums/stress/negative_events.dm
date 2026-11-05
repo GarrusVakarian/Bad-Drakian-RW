@@ -601,3 +601,7 @@
 	timer = 5 MINUTES
 	stressadd = 6
 	desc = span_red("Having my first anal experience before my other first time left me especially shaken.")
+/datum/stressevent/sunlit
+	timer = 1 MINUTES
+	stressadd = 2
+	desc = span_red("IT'S TOO BRIGHT!")

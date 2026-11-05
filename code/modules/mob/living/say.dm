@@ -577,7 +577,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			var/mob/living/carbon/human/target = AM
 			var/name_to_highlight = target.nickname
 			if(name_to_highlight && name_to_highlight != "" && name_to_highlight != "Please Change Me")	//We don't need to highlight an unset or blank one.
-				highlighted_message = replacetext_char(message, name_to_highlight, "<b><font color = #[target.highlight_color]>[name_to_highlight]</font></b>")
+				highlighted_message = replacetext_char(message, name_to_highlight, "<b><font color = [target.highlight_color]>[name_to_highlight]</font></b>")
 			var/datum/species/dullahan/target_species = target.dna?.species
 			if(istype(target_species) && target_species.headless)
 				tocheck = target_species.my_head
@@ -731,6 +731,13 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		. = verb_sing
 	else
 		. = ..()
+	. = apply_sore_jaw_speech_modifier(.)
+
+/// Keep the selected whisper/sing/species verb and the original words readable.
+/mob/living/proc/apply_sore_jaw_speech_modifier(speech_verb)
+	if(HAS_TRAIT(src, TRAIT_SORE_JAW))
+		return "[speech_verb] through a sore jaw"
+	return speech_verb
 
 /mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
 	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced, count_for_stats = count_for_stats)

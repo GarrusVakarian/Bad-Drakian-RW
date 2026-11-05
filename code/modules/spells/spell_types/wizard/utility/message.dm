@@ -12,6 +12,9 @@
 	/// The stat threshold needed to pass the identify check.
 	var/identify_difficulty = 15
 
+/obj/effect/proc_holder/spell/self/message/gnoll
+	breaks_invisibility = FALSE
+
 /obj/effect/proc_holder/spell/self/message/cast(list/targets, mob/user)
 	. = ..()
 
@@ -23,7 +26,7 @@
 	else
 		to_chat(user, span_warning("I don't know anyone."))
 		revert_cast()
-		return
+		return FALSE
 
 	eligible_players = sortList(eligible_players)
 	user.emote("me", 1, "mutters an incantation and their mouth briefly flashes white.", TRUE, custom_me = TRUE)
@@ -31,7 +34,7 @@
 	if(isnull(input))
 		to_chat(user, span_warning("No target selected."))
 		revert_cast()
-		return
+		return FALSE
 
 	for(var/mob/living/carbon/human/HL in GLOB.human_list)
 		if(HL.real_name == input)
@@ -52,7 +55,7 @@
 			var/message = sanitize(input(user, "You successfully make a connection! [is_projection == TRUE ? "What sensory vision are you trying to send into their mind?" : "What are you trying to whisper into their mind?"]"))
 			if(!message)
 				revert_cast()
-				return
+				return FALSE
 
 			if(alert(user, "Send anonymously?", "", "Yes", "No") == "No") //yes or no popup, if you say No run this code
 				identify_difficulty = 0 //anyone can clear this
@@ -99,4 +102,4 @@
 			
 	to_chat(user, span_warning("I seek a mental connection, but can't find [input]."))
 	revert_cast()
-	return
+	return FALSE

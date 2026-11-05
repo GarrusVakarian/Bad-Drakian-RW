@@ -1,12 +1,168 @@
 2026-11-01:
+  GarrusVakarian:
+  - rscadd: Added a new type of booze (requested)
   _Rarity:
   - bugfix: Fixed Undo Last Change failing in character customization.
   - qol: Added scene-focused roleplay guidance to the Verevolf greeting. They'd rather
       fuck you than kill you.
   - rscadd: Ported "Big Legs" and "Big Legs, Stanced" to taur body customization.
+  - qol: Allow storage enchantment scrolls to be used on saddles
+  - rscadd: Added an Automatic Egg Laying verb to toggle automatic laying. And a Climax
+      Egg Count verb to choose between 1 and 6 eggs per climax.
   mypingishuge:
   - qol: 'Added item icons beside examine names. Ported from Ratwood #3231.'
   - rscadd: Oral cumshots add 5/10/30 extra units of cum based on donor's testicle
       size, increased by 50% for taur donors. Repeats add half the extra amount.
   - rscadd: Oral cumshots now display the received fluid's flavor.
   - spellcheck: Changes femcum's taste to "faintly sweet with a mineral flavor".
+2026-11-02:
+  GarrusVakarian:
+  - rscadd: You can now choose a second deity. It confers no mechanical advantage.
+      You can just throw up their gang sign.
+  - map: A couple of doors in the Smollhill chapel are now locked. The chest is also
+      locked now. The chapel itself remains open.
+  - map: Added a default exit to Necra's domain to Smollhill.
+  - rscadd: Added body writing. You can use a quill to write on yourself, or on other
+      people. Use soap to wash off body writing.
+  - bugfix: Fixed an old runtime in branding code.
+  Muzanemus:
+  - bugfix: "Fix male werewolf's going invisible when they get aroused (aroused pintle\
+      \ soon\u2122)"
+  _Rarity:
+  - image: "Updated werewolf sprites with Lutowski\u2019s artwork from Azure Peak."
+  - qol: Sleeping players reliably receive nearby audible emotes and speech. Get to
+      sleep and still be included as a player in the RP.
+  - rscadd: Added encyclopedia lobby link
+  - rscdel: Remove unimplemented Big Man thug option
+  mypingishuge:
+  - qol: Added persistent NEW badges and dismissible reminders for Content Toggles,
+      Set Roleplay Ad and Sprite Offset, with easier-to-find character-sheet links.
+  mypingishuge <3 _Rarity:
+  - bugfix: Bag and belt hotkeys draw and return blades in stored sheaths/scabbards
+      without pulling their holders out of storage.
+  - rscadd: Solid food can absorb liquids and sprinkled powders, up to 5u total per
+      item.
+  - bugfix: Fine and coarse salt contain real, non-nutritious salt instead of flour.
+2026-11-03:
+  _Rarity:
+  - server: Added optional round-start stall diagnostics, enabled with LOG_ROUNDSTART_STALLS
+  mypingishuge:
+  - qol: Giant's description now explicitly lists its +1 CON bonus.
+  - qol: Character creation previews show the size increase from Giant and Large Frame.
+  - bugfix: Casting Message no longer cancels Stalk for Gnolls.
+  - rscadd: '(Kroto-Ker) Fluvians gain longer wing-assisted jumps, fluttering and
+      moth squeaks. (Ratwood #3026)'
+  - bugfix: '(Sauna38) Fixes the Town Crier/Loudmouth hat being invisible when worn.
+      (Ratwood #3124)'
+  - rscadd: '(trueroguan) Adds clothing hem hiking: hold up supported garments with
+      both hands. (Ratwood #2725)'
+  - rscadd: '(SirSwagmeyer) Adds a weaponsmithing recipe for the Dueling Messer. (Ratwood
+      #2920)'
+  - bugfix: '(Xander3359) Fixes food preparation, milling and salt sifting; boiling
+      removes blessed/cursed water effects. (Ratwood #3082)'
+  - rscadd: '(Kroto-Ker) Adds origin-specific traits. (Ratwood #3069)'
+  - bugfix: '(HelennaC) Corrects SLOOC chat colors. (Ratwood #3144)'
+  - bugfix: '(The-Sun-In-Splendour) Fixes crankbox examine information. (Ratwood #3092)'
+  - bugfix: '(Randumb-Phantomb) Corrects the Psydonic full-plate crafting recipe name.
+      (Ratwood #2992)'
+  - rscadd: '(Gug1234) Adds a preference for container-based milking. (Ratwood #3037)'
+  - bugfix: '(Xander3359) Restores animated hypnophrase text. (Ratwood #3146)'
+  - rscadd: '(Kaolin1234) Adds the Weaver Spider body option for arachnids. (Ratwood
+      #3156)'
+  - bugfix: '(CentralSmith) Fixes pipes getting stuck after burning out. (Ratwood
+      #3180)'
+  - bugfix: '(Arturlang) Prevents runaway terrain-layer buildup. (Ratwood #3178)'
+  - rscadd: '(IronDragoon) Adds printing presses, painting archives, archive management
+      and random archived book/painting placements. (Ratwood #3063)'
+  - bugfix: '(ariaworld) Corrects hardened leather bracer alignment on feminine bodies.
+      (Ratwood #3197)'
+  - bugfix: '(Arturlang) Fixes broken anvil recipes and missing recipe results. (Ratwood
+      #3170)'
+  - rscadd: '(Arturlang) Adds a separate preference for tailmaw messages. (Ratwood
+      #3177)'
+  - bugfix: '(Xander3359) Gives Psydonites faith-appropriate Fabled Lover messages.
+      (Ratwood #3187)'
+  - bugfix: '(eirenxiv) Taking the Martyr oath no longer dulls the weapon. (Ratwood
+      #3181)'
+  - bugfix: '(IronDragoon) Tailmaw examine text respects the viewer''s content preference.
+      (Ratwood #3210)'
+  - bugfix: '(Kaolin1234) Refines Weaver Spider sprites. (Ratwood #3208)'
+  - rscadd: '(X404ErrorX) Adds padded/bronze corslets, spaulders, poleyns and loadout
+      options; retains BD armor coverage. (Ratwood #3164)'
+  - bugfix: '(zVineatic) Corrects middle-aged and elderly stat descriptions. (Ratwood
+      #3211)'
+  - bugfix: '(eirenxiv) Metal repair kits can repair Kazengun scabbards and sheaths.
+      (Ratwood #3205)'
+  - bugfix: '(Arturlang) Fixes missing scabbard and sheath sprites. (Ratwood #3202)'
+  - bugfix: '(petwir1) Fixes Inquisitor duster repairability. (Ratwood #3213)'
+  - rscadd: '(wikimody) Adds Pestra healing medicines and medicinal pain relief; fixes
+      Pestra prayer recognition. (Ratwood #3018)'
+  - bugfix: '(Arturlang) Fixes ooze shapeshifting allowing unintended immortality.
+      (Ratwood #3152)'
+  - rscadd: '(annikaRU) Adds field cannons, artificer tools/equipment and related
+      machinery improvements. (Ratwood #3104)'
+  - bugfix: '(Nid4259) Corrects the Grand Duke subclass name to Valiant Chief. (Ratwood
+      #3220)'
+  - balance: Templars cannot choose Hemophage or Silver Weakness.
+  - qol: Equipment icons in character examines are slightly smaller.
+  - qol: '(borneblood) Whispers of the Dead gives rough bearings, distance and elevation
+      for both named and unnamed locations. (Azure #9628)'
+  - bugfix: Airborne characters and jumping mounts no longer disturb ground vegetation
+      or trigger its ambushes and maneaters.
+  - rscadd: Crossbows can be twirled one-handed, safely at Expert Crossbows skill.
+  - qol: Draw and stow javelins with the bag hotkey without taking the entire javelin
+      bag.
+  - bugfix: Scent descriptions remain visible to scent-immune characters who can smell,
+      and natural scents no longer hide inherited markings.
+  - qol: Temporary jaw soreness uses readable speech with a sore-jaw description instead
+      of injury-level garbling.
+  - bugfix: Scent of the Grave no longer offers NPC corpses as tracking targets. Ghosted
+      and disconnected player corpses remain detectable.
+  - bugfix: '(zRainbowcat) Prevents simultaneous hide scraping from duplicating leather.
+      (Azure #9660)'
+  - bugfix: '(effyank) Assassin disguises also copy pronouns and voice packs. (Azure
+      #9784)'
+  - bugfix: '(BobProductive) Restores mob interaction through the stat panel. (Azure
+      #9662)'
+  - bugfix: '(KatTheFox) Corrects nickname highlight colors. (Azure #9687)'
+  - bugfix: '(KatTheFox) Restores mouseover information for characters with the Blindness
+      flaw. (Azure #9598)'
+  - bugfix: '(WeNeedMorePhoron) Corrects NPC low-health stealth detection and rat/spider
+      targeting. (Azure #9716)'
+  - rscadd: '(crekulon) Adds Tick, Creak and Spark noises for constructs. (Azure #9790)'
+  - rscadd: '(WeNeedMorePhoron) Adds craftable stockbait for attracting livestock.
+      (Azure #9694)'
+  - bugfix: '(WeNeedMorePhoron) Prevents duplicate Saddleborn mount selection. (Azure
+      #9620)'
+  - qol: '(OrbisAnima) Allows loading smeltable sack contents directly into smelters.
+      (Azure #9667)'
+  - rscadd: '(7erracotta) Adds six hats and collars, with sewing recipes and loadout
+      options. (Azure #9829)'
+2026-11-04:
+  _Rarity:
+  - rscadd: (Patapollla) Added a folding chess, checkers, and backgammon board to
+      character loadouts and merchant imports.
+  - rscadd: (felindis) Added craftable peddler carts with key-controlled stocking
+      access and lockable wheels.
+  - balance: Hide role labels for wildshaped.
+  - bugfix: Unlit Sunder now expires after 10 seconds instead of permanently preventing
+      healing.
+  - bugfix: Failed or cancelled Message casts no longer charge fatigue.
+  - config: Enabled werewolf round modifier. Chaos will now have a 16%-53% chance
+      to pick the werewolf modifier at round start.
+  mypingishuge:
+  - bugfix: Panel actions keep their action-specific climax messages, sounds and fluid
+      delivery instead of sometimes falling back to a generic response.
+  - rscadd: Added Getting Started as the first encyclopedia guide, with practical
+      instructions and tips for new players.
+2026-11-05:
+  GarrusVakarian:
+  - map: the southwestern bog on Smollhill now contains some saltwater and deep saltwater
+      tiles.
+  mypingishuge:
+  - bugfix: Active cooking recipes no longer block unrelated food seasoning.
+  - bugfix: Starting food preparation without a table no longer leaves an active recipe
+      behind.
+  - balance: Intact gnoll skin now prevents choking until broken, depleted, or no
+      longer covering the neck.
+  - spellcheck: Clarified the message shown when neck coverage prevents choking.
