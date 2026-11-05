@@ -175,3 +175,4 @@
       taxes to the Crown."
   - balance: The unpaid-tax examine warning now appears after one unpaid in-game day
       instead of two.
+  - rscadd: Character-choice popups show descriptions and costs alongside option names.
