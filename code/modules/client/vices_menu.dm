@@ -1702,7 +1702,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available)
+			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1749,7 +1749,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available)
+			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1798,7 +1798,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				return
 
 			backgrounds_available = sort_list(backgrounds_available)
-			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available)
+			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, option_details = get_customization_picker_details(backgrounds_available))
 
 			if(choice)
 				var/datum/virtue/background/selected = backgrounds_available[choice]
@@ -1859,7 +1859,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/triumph_collateral = get_triumph_collateral()
 			if(triumph_collateral)
 				prompt_text += "\n(Costs [triumph_collateral] TRIUMPHS)"
-			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available)
+			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
 
 			if(choice)
 				var/datum/quirk/selected = quirks_available[choice]
@@ -1900,7 +1900,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				statpacks_available[display_name] = SP
 			
 			statpacks_available = sort_list(statpacks_available)
-			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available)
+			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, large_window = TRUE)
 			
 			if(choice)
 				var/datum/statpack/selected = statpacks_available[choice]
@@ -2007,7 +2007,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					vices_available[vice_name] = vice_type
 				
 				vices_available = sort_list(vices_available)
-				var/choice = tgui_input_list(usr, "Select a vice for slot [slot]:", "Vice Selection", vices_available)
+				var/choice = tgui_input_list(usr, "Select a vice for slot [slot]:", "Vice Selection", vices_available, option_details = get_customization_picker_details(vices_available, slot))
 			
 				if(choice)
 					var/datum/charflaw/selected = vices_available[choice]
@@ -2247,3 +2247,47 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		return
 	save_to_history()
 	virgin_attraction = sanitize_virgin_attraction(choice)
+
+/// Display metadata only; original names remain the authoritative return values.
+/datum/preferences/proc/get_customization_picker_details(list/options, vice_slot = 0)
+	var/list/details = list()
+	for(var/option in options)
+		var/value = options[option]
+		var/label = option
+		var/description = ""
+		var/cost = ""
+		if(ispath(value, /datum/charflaw))
+			var/datum/charflaw/vice = GLOB.charflaw_singletons[value]
+			if(!istype(vice))
+				continue
+			description = vice.desc
+			label = replacetext(label, " (+[vice.point_value] Q-Points)", "")
+			var/points = vice_slot == 1 ? 0 : vice.point_value
+			cost = vice_slot == 1 ? "0 Q-Points (first vice)" : "+[points] Q-Point[points == 1 ? "" : "s"]"
+		else if(istype(value, /datum/customization_trait))
+			var/datum/customization_trait/pick = value
+			description = pick.desc
+			if(istype(pick, /datum/quirk))
+				var/datum/quirk/quirk = pick
+				var/suffix = " ([quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"])"
+				if(copytext(label, -length(suffix)) == suffix)
+					label = copytext(label, 1, -length(suffix))
+				cost = "[quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"]"
+			if(pick.triumph_cost)
+				var/static/regex/triumph_suffix = regex(@"\s*\(-[0-9]+(?:\.[0-9]+)?\s*(?:TRI|TRIUMPHS?)\)\s*$", "i")
+				label = triumph_suffix.Replace(label, "")
+				cost += "[cost ? "; " : ""][pick.triumph_cost] TRIUMPHS"
+				// New() already appends this sentence to desc; show it once in the cost column.
+				description = replacetext(description, "Costs [pick.triumph_cost] TRIUMPHS.", "")
+		else
+			continue
+		details[option] = list("label" = label, "description" = customization_picker_plain_text(description), "cost" = cost)
+	return details
+
+/// Render existing description formatting as plain text, never executable HTML.
+/proc/customization_picker_plain_text(text)
+	if(!istext(text))
+		return ""
+	var/static/regex/breaks = regex(@"<br\s*/?>|</p>|</li>", "gi")
+	var/static/regex/tags = regex(@"<[^>]*>", "g")
+	return trim(html_decode(tags.Replace(breaks.Replace(text, "\n"), "")))
