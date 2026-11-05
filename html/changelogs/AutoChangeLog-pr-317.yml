@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "The Excidium now has a public Consult Unpaid Taxes menu listing names and amounts owed to the Crown."
+  - qol: "Replaced the unclear \"Destitute..\" examine message with \"They owe unpaid taxes to the Crown.\""
+  - balance: "The unpaid-tax examine warning now appears after one unpaid in-game day instead of two."
