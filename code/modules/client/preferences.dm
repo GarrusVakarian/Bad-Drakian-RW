@@ -2335,7 +2335,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						if(length(pref_species.restricted_virtues) && (B.type in pref_species.restricted_virtues))
 							continue
 						background_choices[B.name] = B
-					var/background_choice = tgui_input_list(user, "What was my lyfe before?", "BACKGROUND (LOADOUTS PLACED WITHIN THY STASH)", background_choices)
+					var/background_choice = tgui_input_list(user, "What was my lyfe before?", "BACKGROUND (LOADOUTS PLACED WITHIN THY STASH)", background_choices, option_details = get_customization_picker_details(background_choices))
 					if(background_choice)
 						virtue_background = background_choices[background_choice]
 						to_chat(user, process_virtue_text(virtue_background))

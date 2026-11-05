@@ -1,13 +1,27 @@
 import { useState } from 'react';
 import { useBackend } from 'tgui/backend';
 import { Window } from 'tgui/layouts';
-import { Autofocus, Button, Divider, Input, Section, Stack } from 'tgui-core/components';
+import {
+  Autofocus,
+  Button,
+  Divider,
+  Input,
+  Section,
+  Stack,
+} from 'tgui-core/components';
 import { isAlphabetic, isNumeric, KEY } from 'tgui-core/keys';
 
 import { InputButtons } from './common/InputButtons';
 import { Loader } from './common/Loader';
 
+type OptionDetails = {
+  label: string;
+  description: string;
+  cost: string;
+};
+
 type ListInputData = {
+  option_details?: Record<string, OptionDetails>;
   enable_preview: boolean;
   init_value: string;
   items: string[];
@@ -22,6 +36,7 @@ export const ListInputModal = (props) => {
   const { act, data } = useBackend<ListInputData>();
   const {
     items = [],
+    option_details = {},
     message = '',
     init_value,
     large_buttons,
@@ -30,6 +45,7 @@ export const ListInputModal = (props) => {
     enable_preview,
     previewing,
   } = data;
+  const hasDetails = Object.keys(option_details).length > 0;
   const [selected, setSelected] = useState(items.indexOf(init_value));
   const [searchBarVisible, setSearchBarVisible] = useState(items.length > 9);
   const [searchQuery, setSearchQuery] = useState('');
@@ -127,7 +143,7 @@ export const ListInputModal = (props) => {
   }
 
   return (
-    <Window title={title} width={325} height={windowHeight}>
+    <Window title={title} width={hasDetails ? 900 : 325} height={windowHeight}>
       {timeout && <Loader value={timeout} />}
       <Window.Content
         onKeyDown={(event) => {
@@ -156,6 +172,7 @@ export const ListInputModal = (props) => {
           <Stack fill vertical>
             <Stack.Item grow>
               <ListDisplay
+                optionDetails={option_details}
                 filteredItems={filteredItems}
                 onClick={onClick}
                 onFocusSearch={onFocusSearch}
@@ -184,11 +201,21 @@ export const ListInputModal = (props) => {
                   <Stack.Item>
                     <Button
                       color="transparent"
-                      className={previewing ? 'input-button__cancel' : 'input-button__submit'}
-                      disabled={!filteredItems.length || selected === null || selected < 0}
+                      className={
+                        previewing
+                          ? 'input-button__cancel'
+                          : 'input-button__submit'
+                      }
+                      disabled={
+                        !filteredItems.length ||
+                        selected === null ||
+                        selected < 0
+                      }
                       m={0.5}
                       onClick={() =>
-                        act('preview_toggle', { entry: filteredItems[selected] })
+                        act('preview_toggle', {
+                          entry: filteredItems[selected],
+                        })
                       }
                       textAlign="center"
                     >
@@ -214,8 +241,15 @@ export const ListInputModal = (props) => {
  */
 const ListDisplay = (props) => {
   const { act } = useBackend<ListInputData>();
-  const { filteredItems, onClick, onFocusSearch, searchBarVisible, selected } =
-    props;
+  const {
+    filteredItems,
+    onClick,
+    onFocusSearch,
+    searchBarVisible,
+    selected,
+    optionDetails,
+  } = props;
+  const hasDetails = Object.keys(optionDetails).length > 0;
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     const key = event.key;
@@ -231,7 +265,9 @@ const ListDisplay = (props) => {
       {filteredItems.map((item, index) => {
         return (
           <Button
-            className="candystripe"
+            className={
+              hasDetails ? 'candystripe ListInput__DetailedRow' : 'candystripe'
+            }
             color="transparent"
             fluid
             id={index}
@@ -250,7 +286,24 @@ const ListDisplay = (props) => {
               transition: 'none',
             }}
           >
-            {item.replace(/^\w/, (c) => c.toUpperCase())}
+            {hasDetails ? (
+              <>
+                <span className="ListInput__OptionName">
+                  {optionDetails[item]?.label || item}
+                  {!!optionDetails[item]?.cost && (
+                    <span className="ListInput__OptionCost">
+                      {optionDetails[item].cost}
+                    </span>
+                  )}
+                </span>
+                <span className="ListInput__OptionDescription">
+                  {optionDetails[item]?.description ||
+                    'No description available.'}
+                </span>
+              </>
+            ) : (
+              item.replace(/^\w/, (c) => c.toUpperCase())
+            )}
           </Button>
         );
       })}

@@ -28,3 +28,37 @@
   transition-duration: var(--transition-time-slow);
   transition-timing-function: ease-out;
 }
+
+.ListInput__DetailedRow {
+  white-space: normal;
+  line-height: 1.4;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.ListInput__DetailedRow > .Button__content {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.ListInput__OptionName {
+  flex: 0 0 13rem;
+  padding-right: 1rem;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.ListInput__OptionCost {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #e6cd8e;
+}
+
+.ListInput__OptionDescription {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}

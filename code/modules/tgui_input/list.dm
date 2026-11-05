@@ -9,8 +9,9 @@
  * * items - The options that can be chosen by the user, each string is assigned a button on the UI.
  * * default - If an option is already preselected on the UI. Current values, etc.
  * * timeout - The timeout of the input box, after which the menu will close and qdel itself. Set to zero for no timeout.
+ * * option_details - Optional label/description/cost records keyed by original option name; enables the wider layout.
  */
-/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE)
+/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE, list/option_details = null)
 	if (!user)
 		user = usr
 	if(!length(items))
@@ -28,7 +29,7 @@
 	/// Client does NOT have tgui_input on: Returns regular input
 	if(!user.client.prefs.tgui_pref && !strict_modern)
 		return input(user, message, title, default) as null|anything in items
-	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview)
+	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview, option_details)
 	if(input.invalid)
 		qdel(input)
 		return
@@ -53,6 +54,8 @@
 	var/list/items
 	/// Buttons (strings specifically) mapped to the actual value (e.g. a mob or a verb)
 	var/list/items_map
+	/// Optional display-only metadata, keyed by the same sanitized names as items.
+	var/list/option_details
 	/// The button that the user has pressed, null if no selection has been made
 	var/choice
 	/// The default button to be selected
@@ -76,11 +79,12 @@
 	/// Owning client for preview actions.
 	var/client/preview_owner
 
-/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview)
+/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview, list/option_details)
 	src.title = title
 	src.message = message
 	src.items = list()
 	src.items_map = list()
+	src.option_details = list()
 	src.default = default
 	src.state = ui_state
 	src.enable_combat_music_preview = !!enable_preview
@@ -97,6 +101,8 @@
 		string_key = avoid_assoc_duplicate_keys(string_key, repeat_items)
 		src.items += string_key
 		src.items_map[string_key] = i
+		if(islist(option_details?[i]))
+			src.option_details[string_key] = option_details[i]
 
 	if(length(src.items) == 0)
 		invalid = TRUE
@@ -110,6 +116,7 @@
 	state = null
 	items?.Cut()
 	items_map?.Cut()
+	option_details?.Cut()
 	return ..()
 
 /**
@@ -138,6 +145,7 @@
 	var/list/data = list()
 	data["init_value"] = default || items[1]
 	data["items"] = items
+	data["option_details"] = option_details
 	data["large_buttons"] = FALSE // user.read_preference(/datum/preference/toggle/tgui_large_buttons)
 	data["message"] = message
 	data["swapped_buttons"] = FALSE // !user.read_preference(/datum/preference/toggle/tgui_swapped_buttons)
