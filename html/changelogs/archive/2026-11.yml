@@ -155,3 +155,11 @@
       delivery instead of sometimes falling back to a generic response.
   - rscadd: Added Getting Started as the first encyclopedia guide, with practical
       instructions and tips for new players.
+2026-11-05:
+  mypingishuge:
+  - bugfix: Active cooking recipes no longer block unrelated food seasoning.
+  - bugfix: Starting food preparation without a table no longer leaves an active recipe
+      behind.
+  - balance: Intact gnoll skin now prevents choking until broken, depleted, or no
+      longer covering the neck.
+  - spellcheck: Clarified the message shown when neck coverage prevents choking.
