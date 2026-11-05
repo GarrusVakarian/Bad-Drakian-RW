@@ -39,7 +39,7 @@
 	var/mob/living/carbon/human/H = user
 
 	// Main Menu
-	var/list/choices = list("Consult Bounties", "Set Bounty", "Print List of Bounties", "Remove Bounty", "Collect Change")
+	var/list/choices = list("Consult Bounties", "Consult Unpaid Taxes", "Set Bounty", "Print List of Bounties", "Remove Bounty", "Collect Change")
 	var/selection = input(user, "The Excidium listens", src) as null|anything in choices
 
 	if(!Adjacent(user, src)) // User can move while selecting, sanity check
@@ -49,6 +49,9 @@
 
 		if("Consult Bounties")
 			consult_bounties(H)
+
+		if("Consult Unpaid Taxes")
+			consult_unpaid_taxes(H)
 
 		if("Set Bounty")
 			set_bounty(H)
@@ -78,11 +81,37 @@
 		var/datum/browser/popup = new(user, "BOUNTIES", "", 500, 300, src)
 		popup.set_content(consult_menu)
 		popup.open()
+		UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
 		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved))
 	else
 		say("No bounties are currently active.")
 
-/// Subscribes to COMSIG_MOVABLE_MOVED to prevent the user from having bounty screen open when not adjacent to the machine
+/// Shows current poll-tax debts in the same consultation window as bounties.
+/obj/structure/roguemachine/bounty/proc/consult_unpaid_taxes(mob/living/carbon/human/user)
+	if(!user || !user.client || !Adjacent(user, src) || !SStreasury)
+		return
+
+	var/debt_found = FALSE
+	var/consult_menu = "<center>UNPAID TAXES<BR>--------------<BR>"
+	for(var/mob/living/owner in SStreasury.poll_tax_owed)
+		if(QDELETED(owner))
+			continue
+		var/owed = SStreasury.poll_tax_owed[owner]
+		if(owed <= 0)
+			continue
+		consult_menu += "[html_encode(owner.real_name)]: [owed] mammons<BR>"
+		debt_found = TRUE
+
+	if(debt_found)
+		var/datum/browser/popup = new(user, "BOUNTIES", "", 500, 300, src)
+		popup.set_content(consult_menu)
+		popup.open()
+		UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
+		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved))
+	else
+		say("No unpaid taxes are currently recorded.")
+
+/// Closes the consultation window when its reader leaves the machine.
 /obj/structure/roguemachine/bounty/proc/user_moved(mob/former_user)
 	SIGNAL_HANDLER
 

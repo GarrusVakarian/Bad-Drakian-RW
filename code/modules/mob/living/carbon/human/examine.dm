@@ -200,7 +200,7 @@
 			if(ishuman(user))
 				var/mob/living/carbon/human/arrears_viewer = user
 				if((arrears_viewer.job in GLOB.garrison_positions) || (arrears_viewer.job in GLOB.courtier_positions) || (arrears_viewer.job in GLOB.noble_positions))
-					. += span_smallred("Destitute..")
+					. += span_smallred("They owe unpaid taxes to the Crown.")
 
 	if(wear_shirt && !(SLOT_SHIRT in obscured))
 		var/str = "[m3] [get_examine_item_name_with_hover(user, wear_shirt)]. "
