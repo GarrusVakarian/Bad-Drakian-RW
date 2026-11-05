@@ -396,6 +396,7 @@
 	customizer_entry_type = /datum/customizer_entry/organ/testicles
 	organ_slot = ORGAN_SLOT_TESTICLES
 	var/can_customize_size = TRUE
+	var/size_label = "Ball size"
 
 /datum/customizer_choice/organ/testicles/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
 	..()
@@ -414,7 +415,7 @@
 	..()
 	var/datum/customizer_entry/organ/testicles/testicles_entry = entry
 	if(can_customize_size)
-		dat += "<br>Ball size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ball_size''>[find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)]</a>"
+		dat += "<br>[size_label]: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ball_size''>[find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)]</a>"
 	dat += "<br>Virile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=virile''>[testicles_entry.virility ? "Virile" : "Sterile"]</a>"
 
 /datum/customizer_choice/organ/testicles/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
@@ -422,7 +423,7 @@
 	var/datum/customizer_entry/organ/testicles/testicles_entry = entry
 	switch(href_list["customizer_task"])
 		if("ball_size")
-			var/named_size = input(user, "Choose your ball size:", "Character Preference", find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)) as anything in GLOB.named_ball_sizes
+			var/named_size = input(user, "Choose your [LOWER_TEXT(size_label)]:", "Character Preference", find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)) as anything in GLOB.named_ball_sizes
 			if(isnull(named_size))
 				return
 			var/new_size = GLOB.named_ball_sizes[named_size]
@@ -456,9 +457,9 @@
 
 /datum/customizer_choice/organ/testicles/internal
 	name = "Internal testicles"
+	size_label = "Size"
 	organ_type = /obj/item/organ/testicles/internal
 	sprite_accessories = null
-	can_customize_size = FALSE
 
 /datum/customizer_entry/organ/testicles
 	var/ball_size = DEFAULT_TESTICLES_SIZE
