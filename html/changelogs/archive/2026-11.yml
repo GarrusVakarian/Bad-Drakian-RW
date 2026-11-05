@@ -156,6 +156,9 @@
   - rscadd: Added Getting Started as the first encyclopedia guide, with practical
       instructions and tips for new players.
 2026-11-05:
+  GarrusVakarian:
+  - map: the southwestern bog on Smollhill now contains some saltwater and deep saltwater
+      tiles.
   mypingishuge:
   - bugfix: Active cooking recipes no longer block unrelated food seasoning.
   - bugfix: Starting food preparation without a table no longer leaves an active recipe
