@@ -1604,6 +1604,8 @@
 		/mob/living/carbon/human/verb/emote_howl,
 		/mob/living/carbon/human/verb/emote_cackle,
 		/mob/living/carbon/human/verb/emote_whine,
+		/mob/living/carbon/human/verb/emote_foxyip,
+		/mob/living/carbon/human/verb/emote_foxwhine,
 		/mob/living/carbon/human/verb/emote_trill,
 		/mob/living/carbon/human/verb/emote_purr,
 		/mob/living/carbon/human/verb/emote_moo,
@@ -1637,6 +1639,8 @@
 		/mob/living/carbon/human/verb/emote_howl,
 		/mob/living/carbon/human/verb/emote_cackle,
 		/mob/living/carbon/human/verb/emote_whine,
+		/mob/living/carbon/human/verb/emote_foxyip,
+		/mob/living/carbon/human/verb/emote_foxwhine,
 		/mob/living/carbon/human/verb/emote_trill,
 		/mob/living/carbon/human/verb/emote_purr,
 		/mob/living/carbon/human/verb/emote_moo,
@@ -2344,6 +2348,46 @@
 	set category = "Noises"
 
 	emote("yip", intentional = TRUE)
+
+/datum/emote/living/foxyip
+	key = "foxyip"
+	key_third_person = "foxyips"
+	message = "yips like a fox!"
+	emote_type = EMOTE_AUDIBLE
+	message_muffled = "makes a muffled yip!"
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/datum/emote/living/foxyip/can_run_emote(mob/user, status_check = TRUE, intentional = FALSE)
+	if(!..())
+		return FALSE
+	if(!ishuman(user))
+		return FALSE
+	var/mob/living/carbon/human/H = user
+	return istype(H.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue)
+
+/mob/living/carbon/human/verb/emote_foxyip()
+	set name = "Fox Yip"
+	set category = "Noises"
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("foxyip", intentional = TRUE)
+
+/datum/emote/living/foxwhine
+	parent_type = /datum/emote/living/foxyip
+	key = "foxwhine"
+	key_third_person = "foxwhines"
+	message = "whines like a fox."
+	message_muffled = "makes a muffled whine!"
+
+/mob/living/carbon/human/verb/emote_foxwhine()
+	set name = "Fox Whine"
+	set category = "Noises"
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("foxwhine", intentional = TRUE)
 
 /datum/emote/living/yap
 	key = "yap"
