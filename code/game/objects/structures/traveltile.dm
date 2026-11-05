@@ -160,7 +160,7 @@
 			if(world.time >= L.travel_pq_notice_after)
 				L.travel_pq_notice_after = world.time + 2 SECONDS
 				to_chat(L, span_boldwarning("This portal requires [min_travel_pq] PQ to enter alone. Use the northwest portal instead!"))
-				L.playsound_local(L, 'sound/misc/fail.ogg', 50, FALSE, pressure_affected = FALSE)
+				L.playsound_local(L, 'sound/misc/looc_smol.ogg', 30, TRUE, pressure_affected = FALSE)
 			return FALSE
 #endif
 	return TRUE
