@@ -166,3 +166,9 @@
   - balance: Intact gnoll skin now prevents choking until broken, depleted, or no
       longer covering the neck.
   - spellcheck: Clarified the message shown when neck coverage prevents choking.
+  - rscadd: The Excidium now has a public Consult Unpaid Taxes menu listing names
+      and amounts owed to the Crown.
+  - qol: Replaced the unclear "Destitute.." examine message with "They owe unpaid
+      taxes to the Crown."
+  - balance: The unpaid-tax examine warning now appears after one unpaid in-game day
+      instead of two.
