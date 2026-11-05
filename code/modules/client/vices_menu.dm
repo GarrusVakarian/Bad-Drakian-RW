@@ -1900,7 +1900,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				statpacks_available[display_name] = SP
 			
 			statpacks_available = sort_list(statpacks_available)
-			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available)
+			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, large_window = TRUE)
 			
 			if(choice)
 				var/datum/statpack/selected = statpacks_available[choice]
@@ -2266,16 +2266,16 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			cost = vice_slot == 1 ? "0 Q-Points (first vice)" : "+[points] Q-Point[points == 1 ? "" : "s"]"
 		else if(istype(value, /datum/customization_trait))
 			var/datum/customization_trait/pick = value
-			if(istype(pick, /datum/virtue))
-				description = process_virtue_text(pick)
-			else if(istype(pick, /datum/quirk))
+			description = pick.desc
+			if(istype(pick, /datum/quirk))
 				var/datum/quirk/quirk = pick
-				description = jointext(list(quirk.desc, quirk.custom_text, quirk.warning_text), "\n")
 				var/suffix = " ([quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"])"
 				if(copytext(label, -length(suffix)) == suffix)
 					label = copytext(label, 1, -length(suffix))
 				cost = "[quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"]"
 			if(pick.triumph_cost)
+				var/static/regex/triumph_suffix = regex(@"\s*\(-[0-9]+(?:\.[0-9]+)?\s*(?:TRI|TRIUMPHS?)\)\s*$", "i")
+				label = triumph_suffix.Replace(label, "")
 				cost += "[cost ? "; " : ""][pick.triumph_cost] TRIUMPHS"
 				// New() already appends this sentence to desc; show it once in the cost column.
 				description = replacetext(description, "Costs [pick.triumph_cost] TRIUMPHS.", "")

@@ -62,3 +62,10 @@
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
+
+// Match the beige description text in the character customization window.
+.ListInput__OptionName,
+.ListInput__OptionDescription,
+.ListInput__PlainExpandedRow > .Button__content {
+  color: #aa8f8f;
+}

@@ -9,9 +9,10 @@
  * * items - The options that can be chosen by the user, each string is assigned a button on the UI.
  * * default - If an option is already preselected on the UI. Current values, etc.
  * * timeout - The timeout of the input box, after which the menu will close and qdel itself. Set to zero for no timeout.
- * * option_details - Optional label/description/cost records keyed by original option name; enables the wider layout.
+ * * option_details - Optional label/description/cost records keyed by original option name; enables the expanded layout.
+ * * large_window - Expands the window while retaining the ordinary list layout.
  */
-/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE, list/option_details = null)
+/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE, list/option_details = null, large_window = FALSE)
 	if (!user)
 		user = usr
 	if(!length(items))
@@ -29,7 +30,7 @@
 	/// Client does NOT have tgui_input on: Returns regular input
 	if(!user.client.prefs.tgui_pref && !strict_modern)
 		return input(user, message, title, default) as null|anything in items
-	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview, option_details)
+	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview, option_details, large_window)
 	if(input.invalid)
 		qdel(input)
 		return
@@ -56,6 +57,8 @@
 	var/list/items_map
 	/// Optional display-only metadata, keyed by the same sanitized names as items.
 	var/list/option_details
+	/// Expands the window without requiring description metadata (e.g. statpacks).
+	var/large_window = FALSE
 	/// The button that the user has pressed, null if no selection has been made
 	var/choice
 	/// The default button to be selected
@@ -79,12 +82,13 @@
 	/// Owning client for preview actions.
 	var/client/preview_owner
 
-/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview, list/option_details)
+/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview, list/option_details, large_window = FALSE)
 	src.title = title
 	src.message = message
 	src.items = list()
 	src.items_map = list()
 	src.option_details = list()
+	src.large_window = !!large_window
 	src.default = default
 	src.state = ui_state
 	src.enable_combat_music_preview = !!enable_preview
@@ -146,6 +150,7 @@
 	data["init_value"] = default || items[1]
 	data["items"] = items
 	data["option_details"] = option_details
+	data["large_window"] = large_window
 	data["large_buttons"] = FALSE // user.read_preference(/datum/preference/toggle/tgui_large_buttons)
 	data["message"] = message
 	data["swapped_buttons"] = FALSE // !user.read_preference(/datum/preference/toggle/tgui_swapped_buttons)

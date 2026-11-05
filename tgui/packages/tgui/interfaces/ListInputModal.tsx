@@ -22,6 +22,7 @@ type OptionDetails = {
 
 type ListInputData = {
   option_details?: Record<string, OptionDetails>;
+  large_window?: boolean;
   enable_preview: boolean;
   init_value: string;
   items: string[];
@@ -37,6 +38,7 @@ export const ListInputModal = (props) => {
   const {
     items = [],
     option_details = {},
+    large_window = false,
     message = '',
     init_value,
     large_buttons,
@@ -46,6 +48,7 @@ export const ListInputModal = (props) => {
     previewing,
   } = data;
   const hasDetails = Object.keys(option_details).length > 0;
+  const expandedWindow = hasDetails || large_window;
   const [selected, setSelected] = useState(items.indexOf(init_value));
   const [searchBarVisible, setSearchBarVisible] = useState(items.length > 9);
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,7 +146,11 @@ export const ListInputModal = (props) => {
   }
 
   return (
-    <Window title={title} width={hasDetails ? 900 : 325} height={windowHeight}>
+    <Window
+      title={title}
+      width={expandedWindow ? 900 : 325}
+      height={expandedWindow ? 900 : windowHeight}
+    >
       {timeout && <Loader value={timeout} />}
       <Window.Content
         onKeyDown={(event) => {
@@ -173,6 +180,7 @@ export const ListInputModal = (props) => {
             <Stack.Item grow>
               <ListDisplay
                 optionDetails={option_details}
+                largeWindow={large_window}
                 filteredItems={filteredItems}
                 onClick={onClick}
                 onFocusSearch={onFocusSearch}
@@ -248,6 +256,7 @@ const ListDisplay = (props) => {
     searchBarVisible,
     selected,
     optionDetails,
+    largeWindow,
   } = props;
   const hasDetails = Object.keys(optionDetails).length > 0;
 
@@ -266,7 +275,11 @@ const ListDisplay = (props) => {
         return (
           <Button
             className={
-              hasDetails ? 'candystripe ListInput__DetailedRow' : 'candystripe'
+              hasDetails
+                ? 'candystripe ListInput__DetailedRow'
+                : largeWindow
+                  ? 'candystripe ListInput__PlainExpandedRow'
+                  : 'candystripe'
             }
             color="transparent"
             fluid
