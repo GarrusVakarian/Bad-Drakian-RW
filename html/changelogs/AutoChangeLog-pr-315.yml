@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Active cooking recipes no longer block unrelated food seasoning."
+  - bugfix: "Starting food preparation without a table no longer leaves an active recipe behind."
