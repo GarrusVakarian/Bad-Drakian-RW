@@ -159,6 +159,9 @@
   GarrusVakarian:
   - map: the southwestern bog on Smollhill now contains some saltwater and deep saltwater
       tiles.
+  _Rarity:
+  - rscadd: Added sizes for internal testies! This lets you choose how much the character
+      will produce during certain actions like external testies do.
   mypingishuge:
   - bugfix: Active cooking recipes no longer block unrelated food seasoning.
   - bugfix: Starting food preparation without a table no longer leaves an active recipe

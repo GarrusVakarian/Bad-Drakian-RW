@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - rscadd: "Added sizes for internal testies! This lets you choose how much the character will produce during certain actions like external testies do."
