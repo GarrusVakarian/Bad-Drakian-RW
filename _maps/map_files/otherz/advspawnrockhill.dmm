@@ -170,6 +170,7 @@
 /area/rogue/underworld/adventurespawn)
 "uw" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
+	min_travel_pq = 5;
 	aportalgoesto = "rockhill2";
 	name = "Southwestern path to Rockhill"
 	},
@@ -177,6 +178,7 @@
 /area/rogue/underworld/adventurespawn)
 "vv" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
+	min_travel_pq = 5;
 	aportalgoesto = "rockhill3";
 	name = "Southern path to Rockhill"
 	},
@@ -218,6 +220,7 @@
 /area/rogue/underworld/adventurespawn)
 "yF" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
+	min_travel_pq = 5;
 	aportalgoesto = "rockhillsilly";
 	name = "Unlucky path to Rockhill"
 	},
@@ -388,6 +391,7 @@
 /area/rogue/underworld/adventurespawn)
 "UT" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
+	min_travel_pq = 5;
 	aportalgoesto = "rockhill4";
 	name = "Eastern path to Rockhill"
 	},
@@ -402,6 +406,7 @@
 /area/rogue/underworld/adventurespawn)
 "VD" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
+	min_travel_pq = 5;
 	aportalgoesto = "RockhillRandom";
 	name = "Mysterious path to Rockhill"
 	},

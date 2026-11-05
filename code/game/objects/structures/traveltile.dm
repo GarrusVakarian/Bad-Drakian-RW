@@ -48,6 +48,8 @@
 	var/travel_access_hint = null
 	var/watchable = TRUE
 	var/craftblock = TRUE
+	/// Optional PQ requirement for the traveller; pulled companions travel with their escort.
+	var/min_travel_pq = null
 
 /obj/structure/fluff/traveltile/Initialize(mapload)
 	GLOB.traveltiles += src
@@ -129,6 +131,8 @@
 /obj/structure/fluff/traveltile/proc/try_living_travel(obj/structure/fluff/traveltile/T, mob/living/L)
 	if(!can_go(L))
 		return FALSE
+	if(!has_travel_pq(L))
+		return FALSE
 	if(has_retained_knot(L))
 		return FALSE
 	if(L.pulledby)
@@ -140,9 +144,20 @@
 		if(L.pulledby)
 			to_chat(L, span_warning("I can't go, something's holding onto me."))
 			return FALSE
+		if(!has_travel_pq(L))
+			return FALSE
 		perform_travel(T, L)
 		return TRUE
 	return FALSE
+
+/obj/structure/fluff/traveltile/proc/has_travel_pq(mob/living/L)
+#ifdef USES_PQ
+	if(!isnull(min_travel_pq))
+		if(!L.ckey || get_playerquality(L.ckey) < min_travel_pq)
+			to_chat(L, span_warning("This portal requires [min_travel_pq] PQ to enter alone. Use the northwest portal instead!"))
+			return FALSE
+#endif
+	return TRUE
 
 /obj/structure/fluff/traveltile/proc/has_retained_knot(mob/living/L)
 	for(var/mob/living/carbon/human/H in list(L, L.pulling))
