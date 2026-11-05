@@ -150,11 +150,17 @@
 		return TRUE
 	return FALSE
 
+/mob/living
+	var/travel_pq_notice_after = 0
+
 /obj/structure/fluff/traveltile/proc/has_travel_pq(mob/living/L)
 #ifdef USES_PQ
 	if(!isnull(min_travel_pq))
 		if(!L.ckey || get_playerquality(L.ckey) < min_travel_pq)
-			to_chat(L, span_warning("This portal requires [min_travel_pq] PQ to enter alone. Use the northwest portal instead!"))
+			if(world.time >= L.travel_pq_notice_after)
+				L.travel_pq_notice_after = world.time + 2 SECONDS
+				to_chat(L, span_boldwarning("This portal requires [min_travel_pq] PQ to enter alone. Use the northwest portal instead!"))
+				L.playsound_local(L, 'sound/misc/fail.ogg', 50, FALSE, pressure_affected = FALSE)
 			return FALSE
 #endif
 	return TRUE
