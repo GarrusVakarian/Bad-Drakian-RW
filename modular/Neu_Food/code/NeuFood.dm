@@ -102,18 +102,16 @@
 	cut_overlays()
 
 /obj/item/reagent_containers/food/snacks/rogue/attackby(obj/item/I, mob/living/user)
-	if(!active_recipe)
-		var/datum/food_recipe/R = SScooking.get_recipe(src, I)
-		if(R)
-			active_recipe = R
-		else
-			return ..()
+	var/datum/food_recipe/recipe = active_recipe || SScooking.get_recipe(src, I)
+	if(!recipe)
+		return ..()
 
 	var/obj/structure/table/T = locate() in loc
 	if(!T)
 		to_chat(user, span_warning("You need a table to prepare [src.name]."))
 		return
 
+	active_recipe = recipe
 	var/requirement = active_recipe.ingredients[current_step]
 
 	if(ispath(requirement, /datum/reagent))
