@@ -189,5 +189,7 @@
   - bugfix: Fixed apostrophes, quotation marks, and other special characters displaying
       as HTML codes on custom loadout items. Custom descriptions also preserve line
       breaks in examine text.
+  - balance: "Lowered the folded chessboard\u2019s base price from 80 to 25 mammons.\
+      \ GO PLAY!"
   mypingishuge:
   - sound: Androgynous voices use only the second generic female warcry recording.
