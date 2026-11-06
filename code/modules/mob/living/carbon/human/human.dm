@@ -647,7 +647,7 @@
 
 	var/toxloss = getToxLoss()
 	var/oxyloss = getOxyLoss()
-	var/painpercent = get_complex_pain() / pain_threshold
+	var/painpercent = get_complex_pain() / get_pain_threshold()
 	painpercent = painpercent * 100
 
 	var/usedloss = 0

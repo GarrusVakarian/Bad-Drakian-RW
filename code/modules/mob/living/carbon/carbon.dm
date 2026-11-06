@@ -1,11 +1,7 @@
 /mob/living/carbon/Initialize(mapload)
 	. = ..()
 
-	pain_threshold = HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH) ? ((STAWIL + 5) * 10) : (STAWIL * 10)
-	if(has_flaw(/datum/charflaw/addiction/masochist)) // Masochists handle pain better by about 1 endurance point
-		pain_threshold += 10
-	if(HAS_TRAIT(src, TRAIT_NOPAIN))
-		pain_threshold = 250
+	pain_threshold = get_pain_threshold()
 
 	create_reagents(1000)
 	update_body_parts() //to update the carbon's new bodyparts appearance
@@ -650,6 +646,8 @@
 /mob/living/carbon
 	var/nausea = 0
 	var/pain_threshold = 0
+	/// Last threshold observed for the pain HUD; detects stat/trait changes even without new damage.
+	var/last_pain_hud_threshold = null
 	var/bleeding_tier = 0
 	var/chem_pain = 0
 
@@ -1537,3 +1535,26 @@
 	if((cmode) && (mind) && (!handcuffed) && (stat == CONSCIOUS))
 		return 0
 	. = ..()
+
+/// Current tolerance used by periodic pain checks and the heart's pain indicator.
+/mob/living/carbon/proc/get_pain_threshold()
+	if(HAS_TRAIT(src, TRAIT_NOPAIN))
+		return 250
+	var/threshold = STAWIL * 10
+	if(HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH))
+		threshold += 50
+	if(has_flaw(/datum/charflaw/addiction/masochist))
+		threshold += 10
+	if(has_status_effect(/datum/status_effect/buff/battle_cry))
+		threshold += 10
+	return max(threshold, 1)
+
+/// Catch direct stat assignments as well as status/trait changes on the normal life update.
+/mob/living/carbon/proc/refresh_pain_threshold_hud()
+	if(!hud_used)
+		return
+	var/threshold = get_pain_threshold()
+	if(threshold == last_pain_hud_threshold)
+		return
+	last_pain_hud_threshold = threshold
+	mark_pain_hud_dirty()
