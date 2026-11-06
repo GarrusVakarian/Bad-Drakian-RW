@@ -122,6 +122,9 @@
 	var/gaze_examine = hypnotic_gaze_examine(user)
 	if(gaze_examine)
 		. += gaze_examine
+	var/trance_examine = hypnotized_examine(user)
+	if(trance_examine)
+		. += trance_examine
 
 	if(HAS_TRAIT(src, TRAIT_DEADITE))
 		. += span_userdanger("DEADITE!")

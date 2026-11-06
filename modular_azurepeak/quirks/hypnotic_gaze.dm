@@ -1,4 +1,5 @@
-#define HYPNOTIC_GAZE_CHANNEL_TIME (5 SECONDS)
+#define HYPNOTIC_GAZE_CHANNEL_TIME (10 SECONDS)
+#define HYPNOTIC_GAZE_PENDING_TIME (10 MINUTES)
 #define HYPNOTIC_GAZE_REMINDER_TIME (20 MINUTES)
 
 /proc/hypnotic_gaze_styles()
@@ -32,7 +33,7 @@
 	name = "Hypnotic Gaze"
 	desc = "My gaze draws others in, leaving my words lingering deep within their thoughts."
 	point_cost = 1
-	custom_text = "Grants Hypnotic Gaze: a two-tile, five-second stationary channel. The next words the target hears from me become a lasting suggestion. Recasting releases them."
+	custom_text = "Grants Hypnotic Gaze: a two-tile, ten-second stationary channel. The next words the target hears from me become a lasting suggestion. Recasting releases them."
 
 /datum/quirk/hypnotic_gaze/apply_to_human(mob/living/carbon/human/recipient)
 	recipient.hypnotic_gaze_text = sanitize_hypnotic_gaze_text(recipient.client?.prefs?.hypnotic_gaze_text)
@@ -50,11 +51,21 @@
 	var/hypnotic_gaze_style = "Hypnotext"
 	var/datum/hypnotic_gaze_channel/hypnotic_gaze_channel
 
+// Use current eye-cover flags, not identity hiding or merely occupying the mask slot.
 /mob/living/carbon/human/proc/hypnotic_eyes_visible()
-	if(wear_mask || !getorganslot(ORGAN_SLOT_EYES) || get_eye_protection() > 0)
+	if(!getorganslot(ORGAN_SLOT_EYES) || is_eyes_covered() || get_eye_protection() > 0)
 		return FALSE
-	if((head?.flags_cover & HEADCOVERSEYES) || (glasses?.flags_cover & GLASSESCOVERSEYES))
-		return FALSE
+	// Cloth eye coverings do not consistently set flags_cover. Armor coverage
+	// alone is not visibility: rag masks and transparent spectacles cover EYES too.
+	for(var/obj/item/clothing/C in list(head, wear_mask, glasses))
+		if(istype(C, /obj/item/clothing/mask))
+			var/obj/item/clothing/mask/M = C
+			if(M.mask_adjusted)
+				continue
+		if(C.flags_cover & (MASKCOVERSEYES | HEADCOVERSEYES | GLASSESCOVERSEYES))
+			return FALSE
+		if(istype(C, /obj/item/clothing/glasses/blindfold) || istype(C, /obj/item/clothing/mask/rogue/blindfold) || istype(C, /obj/item/clothing/mask/rogue/duelmask))
+			return FALSE
 	return TRUE
 
 /mob/living/carbon/human/proc/hypnotic_gaze_examine(mob/viewer)
@@ -68,10 +79,10 @@
 
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
-	desc = "Hold another's gaze for five seconds. Your next words they hear become a lasting suggestion. Cast again to release an existing suggestion."
+	desc = "Hold another's gaze for ten seconds. Your next words they hear become a lasting suggestion. Cast again to release an existing suggestion."
 	range = 2
-	chargetime = 0
-	no_early_release = FALSE
+	chargetime = 1 SECONDS
+	no_early_release = TRUE
 	recharge_time = 5 SECONDS
 	invocation_type = "none"
 	ignore_los = FALSE
@@ -79,6 +90,10 @@
 	mute_allowed = TRUE
 	releasedrain = 0
 	var/datum/hypnotic_gaze_channel/channel
+
+// Keep the preparatory mouse charge at exactly one second.
+/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/get_chargetime()
+	return chargetime
 
 // A channel is not a cooldown, and neither stats nor Leyline Haste alter these times.
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/process()
@@ -104,7 +119,12 @@
 	var/mob/living/carbon/human/caster = user
 	var/mob/living/carbon/human/target = length(targets) ? targets[1] : null
 	if(channel || !hypnotic_gaze_can_channel(caster, target) || caster.hypnotic_gaze_channel || target.hypnotic_gaze_channel)
-		to_chat(user, span_warning("I cannot establish eye contact right now."))
+		var/failure_message = "I cannot establish eye contact right now."
+		if(istype(caster) && !caster.hypnotic_eyes_visible())
+			failure_message = "My eyes are covered!"
+		else if(istype(target) && !target.hypnotic_eyes_visible())
+			failure_message = "Their eyes are covered!"
+		to_chat(user, span_warning(failure_message))
 		charge_counter = 0
 		start_recharge()
 		return FALSE
@@ -164,6 +184,8 @@
 	var/mob/living/carbon/human/target
 	var/cancelled = FALSE
 	var/list/movement_sources = list()
+	var/datum/progressbar/caster_bar
+	var/datum/progressbar/target_bar
 
 /datum/hypnotic_gaze_channel/New(mob/living/carbon/human/new_caster, mob/living/carbon/human/new_target)
 	caster = new_caster
@@ -186,14 +208,21 @@
 	cancelled = TRUE
 
 /datum/hypnotic_gaze_channel/proc/await_channel()
-	var/deadline = world.time + HYPNOTIC_GAZE_CHANNEL_TIME
+	var/start = world.time
+	var/deadline = start + HYPNOTIC_GAZE_CHANNEL_TIME
+	caster_bar = new(caster, HYPNOTIC_GAZE_CHANNEL_TIME, caster)
+	target_bar = new(target, HYPNOTIC_GAZE_CHANNEL_TIME, target)
 	while(world.time < deadline)
 		if(cancelled || !hypnotic_gaze_can_channel(caster, target))
 			return FALSE
 		stoplag(1)
+		caster_bar.update(world.time - start)
+		target_bar.update(world.time - start)
 	return !cancelled && hypnotic_gaze_can_channel(caster, target)
 
 /datum/hypnotic_gaze_channel/Destroy()
+	QDEL_NULL(caster_bar)
+	QDEL_NULL(target_bar)
 	if(!QDELETED(caster))
 		UnregisterSignal(caster, list(COMSIG_MOB_LOGOUT, COMSIG_MOB_DEATH, COMSIG_MIND_TRANSFER, COMSIG_QDELETING))
 		if(caster.hypnotic_gaze_channel == src)
@@ -223,6 +252,8 @@
 	var/datum/weakref/body_ref
 	var/phrase
 	var/reminder_timer
+	var/pending_timer
+	var/datum/status_effect/debuff/hypnotized/status
 
 /datum/hypnotic_suggestion/New(datum/mind/target_mind, datum/mind/caster_mind)
 	target_mind_ref = WEAKREF(target_mind)
@@ -231,6 +262,7 @@
 	RegisterSignal(target_mind, COMSIG_QDELETING, PROC_REF(owner_deleted))
 	RegisterSignal(caster_mind, COMSIG_QDELETING, PROC_REF(caster_deleted))
 	bind_body(target_mind.current)
+	pending_timer = addtimer(CALLBACK(src, PROC_REF(expire_pending)), HYPNOTIC_GAZE_PENDING_TIME, TIMER_STOPPABLE)
 	return ..()
 
 /datum/hypnotic_suggestion/proc/bind_body(mob/body)
@@ -241,10 +273,27 @@
 	if(!phrase && isliving(body))
 		var/mob/living/L = body
 		L.hypnotic_pending = src
+	if(isliving(body))
+		var/mob/living/L = body
+		// Possessing a previously occupied body must not retain its former mind's HUD state.
+		var/datum/status_effect/debuff/hypnotized/old_status = L.has_status_effect(/datum/status_effect/debuff/hypnotized)
+		if(istype(old_status))
+			var/datum/hypnotic_suggestion/old_suggestion = old_status.suggestion_ref?.resolve()
+			if(old_suggestion && old_suggestion != src)
+				old_suggestion.unbind_body()
+			else
+				qdel(old_status)
+		var/datum/status_effect/debuff/hypnotized/new_status = L.apply_status_effect(/datum/status_effect/debuff/hypnotized, src)
+		if(istype(new_status) && !QDELETED(new_status))
+			status = new_status
 	RegisterSignal(body, COMSIG_MIND_TRANSFER, PROC_REF(body_transferred))
 	RegisterSignal(body, COMSIG_QDELETING, PROC_REF(body_deleted))
 
 /datum/hypnotic_suggestion/proc/unbind_body()
+	if(!QDELETED(status))
+		status.suggestion_ref = null
+		qdel(status)
+	status = null
 	var/mob/body = body_ref?.resolve()
 	if(!QDELETED(body))
 		if(isliving(body))
@@ -292,9 +341,26 @@
 		return FALSE
 	if(listener.hypnotic_pending == src)
 		listener.hypnotic_pending = null
+	if(pending_timer)
+		deltimer(pending_timer)
+		pending_timer = null
+	if(!QDELETED(status))
+		status.update_description()
 	reminder_timer = addtimer(CALLBACK(src, PROC_REF(remind)), HYPNOTIC_GAZE_REMINDER_TIME, TIMER_STOPPABLE)
 	log_game("HYPNOTIC GAZE: [key_name(caster)] suggested '[phrase]' to [key_name(listener)].")
 	return TRUE
+
+/datum/hypnotic_suggestion/proc/suggestion_text()
+	return phrase ? "You feel compelled to obey: [phrase]" : "Your mind is in a trance, awaiting a suggestion."
+
+/datum/hypnotic_suggestion/proc/expire_pending()
+	pending_timer = null
+	if(phrase)
+		return
+	var/datum/mind/M = target_mind_ref?.resolve()
+	if(M?.hypnotic_suggestion == src && M.current)
+		to_chat(M.current, span_hypnophrase("The trance fades. Your thoughts are your own again."))
+	qdel(src)
 
 /datum/hypnotic_suggestion/proc/remind()
 	reminder_timer = null
@@ -304,10 +370,13 @@
 		return
 	var/mob/living/body = target_mind.current
 	if(istype(body) && !QDELETED(body) && body.client && body.stat != DEAD)
-		to_chat(body, hypnotic_gaze_format("You feel compelled to obey: [phrase]"))
+		to_chat(body, hypnotic_gaze_format(suggestion_text()))
 	reminder_timer = addtimer(CALLBACK(src, PROC_REF(remind)), HYPNOTIC_GAZE_REMINDER_TIME, TIMER_STOPPABLE)
 
 /datum/hypnotic_suggestion/Destroy()
+	if(pending_timer)
+		deltimer(pending_timer)
+		pending_timer = null
 	if(reminder_timer)
 		deltimer(reminder_timer)
 		reminder_timer = null
@@ -321,3 +390,48 @@
 	if(caster_mind)
 		UnregisterSignal(caster_mind, COMSIG_QDELETING)
 	return ..()
+
+/// A visible HUD debuff, managed by the mind-owned suggestion rather than ticking.
+/datum/status_effect/debuff/hypnotized
+	id = "hypnotic_gaze"
+	status_type = STATUS_EFFECT_UNIQUE
+	duration = -1
+	tick_interval = -1
+	needs_processing = FALSE
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/hypnotized
+	var/datum/weakref/suggestion_ref
+
+/datum/status_effect/debuff/hypnotized/on_creation(mob/living/new_owner, datum/hypnotic_suggestion/suggestion)
+	suggestion_ref = WEAKREF(suggestion)
+	. = ..()
+	if(.)
+		update_description()
+
+/datum/status_effect/debuff/hypnotized/proc/update_description()
+	var/datum/hypnotic_suggestion/S = suggestion_ref?.resolve()
+	if(S && linked_alert)
+		linked_alert.desc = hypnotic_gaze_format(S.suggestion_text())
+
+/datum/status_effect/debuff/hypnotized/on_remove()
+	var/datum/hypnotic_suggestion/S = suggestion_ref?.resolve()
+	suggestion_ref = null
+	if(S && S.body_ref?.resolve() == owner)
+		qdel(S)
+	return ..()
+
+/atom/movable/screen/alert/status_effect/debuff/hypnotized
+	name = "Hypnotized"
+	desc = "Your mind is in a trance, awaiting a suggestion."
+	icon_state = "blackeye"
+
+/mob/living/carbon/human/proc/hypnotized_examine(mob/viewer)
+	var/datum/hypnotic_suggestion/S = mind?.hypnotic_suggestion
+	if(!S || viewer == src || !viewer || !hypnotic_eyes_visible())
+		return null
+	if(isliving(viewer))
+		var/mob/living/L = viewer
+		if(L.eye_blind)
+			return null
+	if(viewer.mind && viewer.mind == S.caster_mind_ref?.resolve())
+		return span_hypnophrase("I have subdued their will.")
+	return span_warning("Their eyes look a little strange.")
