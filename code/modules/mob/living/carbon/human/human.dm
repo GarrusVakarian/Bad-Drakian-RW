@@ -647,7 +647,7 @@
 
 	var/toxloss = getToxLoss()
 	var/oxyloss = getOxyLoss()
-	var/painpercent = get_complex_pain() / pain_threshold
+	var/painpercent = get_complex_pain() / get_pain_threshold()
 	painpercent = painpercent * 100
 
 	var/usedloss = 0
@@ -691,17 +691,16 @@
 		else
 			hud_used.bloods.icon_state = "damelse"
 	if(painpercent > 0)
-		switch(painpercent)
-			if(1 to 29)
-				painoverlay = "painloss20"
-			if(30 to 59)
-				painoverlay = "painloss40"
-			if(60 to 79)
-				painoverlay = "painloss60"
-			if(80 to 99)
-				painoverlay = "painloss80"
-			if(100 to 999)
-				painoverlay = "painloss100"
+		if(painpercent < 30)
+			painoverlay = "painloss20"
+		else if(painpercent < 60)
+			painoverlay = "painloss40"
+		else if(painpercent < 80)
+			painoverlay = "painloss60"
+		else if(painpercent < 100)
+			painoverlay = "painloss80"
+		else
+			painoverlay = "painloss100"
 	var/atom/movable/screen/healths/blood/blood_hud = hud_used.bloods
 	if(istype(blood_hud))
 		blood_hud.update_indicator_states(toxoverlay, oxyoverlay, painoverlay)

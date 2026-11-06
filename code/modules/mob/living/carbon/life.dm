@@ -11,6 +11,7 @@
 		return
 
 	. = ..()
+	refresh_pain_threshold_hud()
 
 	if(times_fired % 2 == 0) // every 2nd (other) tick, update damage hud.
 		if(damageoverlaytemp)
@@ -61,6 +62,7 @@
 	. = ..()
 	if (QDELETED(src))
 		return
+	refresh_pain_threshold_hud()
 	handle_wounds()
 	handle_embedded_objects()
 	handle_blood()
@@ -71,17 +73,16 @@
 	if(HAS_TRAIT(src, TRAIT_NOPAIN))
 		return
 	if(!stat)
-		var/pain_threshold = HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH) ? ((STAWIL + 5) * 10) : (STAWIL * 10)
-		if(has_flaw(/datum/charflaw/addiction/masochist)) // Masochists handle pain better by about 1 endurance point
-			pain_threshold += 10
+		var/pain_willpower = STAWIL
+		var/pain_threshold = get_pain_threshold()
 		if(has_status_effect(/datum/status_effect/buff/battle_cry))
-			pain_threshold += 10
+			pain_willpower += 1
 		var/painpercent = get_complex_pain() / pain_threshold
 		painpercent = painpercent * 100
 
 		if(world.time > mob_timers["painstun"])
 			mob_timers["painstun"] = world.time + 100
-			var/probby = 40 - (STAWIL * 2)
+			var/probby = 40 - (pain_willpower * 2)
 			probby = max(probby, 10)
 			if(lying || IsKnockdown())
 				if(prob(3) && (painpercent >= 80) )
