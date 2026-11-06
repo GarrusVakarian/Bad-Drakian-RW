@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added Gods and Lands encyclopedia guides with religious lore, regional lore, origin traits and language bonuses."
+  - spellcheck: "Corrected Ascendants in the faith selection menu."
