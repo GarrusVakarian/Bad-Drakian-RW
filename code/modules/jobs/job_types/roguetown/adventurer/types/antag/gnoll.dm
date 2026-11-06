@@ -70,6 +70,8 @@
 		charflaw = null
 		headshot_link = null
 
+	ensure_gnoll_sadism()
+
 	// Gnolls should not inherit player-authored social metadata from their base slot.
 	headshot_link = null
 	flavortext = null
