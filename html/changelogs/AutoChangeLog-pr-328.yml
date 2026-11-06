@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "The heart pain indicator reflects current Willpower and pain-tolerance effects, updating when their threshold changes."
+  - bugfix: "Fullscreen pain visuals and shove grip-break checks use current pain tolerance, and fractional pain percentages no longer hide the heart pain indicator."
+  - bugfix: "Gronn's Battle Cry now also improves the periodic pain-collapse roll."
