@@ -1589,6 +1589,7 @@
 		/mob/living/carbon/human/verb/emote_construct_creak,
 		/mob/living/carbon/human/verb/emote_construct_spark,
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1624,6 +1625,7 @@
 	)
 	var/static/list/wild_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1729,6 +1731,25 @@
 	else
 		show_tongue_noise_warning()
 		return
+
+/datum/emote/living/mrrp
+	key = "mrrp"
+	key_third_person = "mrrps!"
+	message = "mrrps!"
+	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
+	message_muffled = "makes a muffled sound!"
+	vary = TRUE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_mrrp()
+	set name = "Mrrp"
+	set category = "Noises"
+
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("mrrp", intentional = TRUE, animal = TRUE)
 
 /datum/emote/living/caw
 	key = "caw"
