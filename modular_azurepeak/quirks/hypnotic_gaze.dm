@@ -79,6 +79,8 @@
 
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
+	action_icon_state = "necraeye"
+	overlay_state = "necraeye"
 	desc = "Hold another's gaze for ten seconds. Your next words they hear become a lasting suggestion. Cast again to release an existing suggestion."
 	range = 2
 	chargetime = 1 SECONDS
