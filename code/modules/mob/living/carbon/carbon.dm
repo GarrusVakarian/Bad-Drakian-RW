@@ -1,8 +1,6 @@
 /mob/living/carbon/Initialize(mapload)
 	. = ..()
 
-	pain_threshold = get_pain_threshold()
-
 	create_reagents(1000)
 	update_body_parts() //to update the carbon's new bodyparts appearance
 	GLOB.carbon_list += src
@@ -645,7 +643,6 @@
 
 /mob/living/carbon
 	var/nausea = 0
-	var/pain_threshold = 0
 	/// Last threshold observed for the pain HUD; detects stat/trait changes even without new damage.
 	var/last_pain_hud_threshold = null
 	var/bleeding_tier = 0
@@ -1077,7 +1074,7 @@
 		clear_fullscreen("oxy")
 
 	var/flash_pain = FALSE
-	var/hurtdamage = ((get_complex_pain() / (STAWIL * 10)) * 100) //what percent out of 100 to max pain
+	var/hurtdamage = ((get_complex_pain() / get_pain_threshold()) * 100) //what percent out of 100 to max pain
 	var/severity = 0
 	switch(hurtdamage)
 		if(-INFINITY to 5)
