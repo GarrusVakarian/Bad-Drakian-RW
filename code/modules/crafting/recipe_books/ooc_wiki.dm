@@ -270,3 +270,32 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 
 	var/datum/recipe_wiki/wiki = get_recipe_wiki()
 	wiki.show_library(mob)
+
+/// Direct chat link to Chapter I, without changing the normal Encyclopedia verb.
+/client/verb/getting_started_guide()
+	set name = "Getting-Started"
+	set category = "OOC"
+	set hidden = TRUE
+
+	var/datum/recipe_wiki/wiki = get_recipe_wiki()
+	wiki.show_to_user(mob, list(/datum/book_entry/getting_started), "Getting Started", /obj/item/recipe_book/getting_started)
+
+/mob/living/carbon/human
+	var/getting_started_reminder_scheduled = FALSE
+
+/// Called after setup returns, so outfit/loadout prompts finish before the delay begins.
+/mob/living/carbon/human/proc/schedule_getting_started_reminder()
+	if(getting_started_reminder_scheduled || !client || advsetup || stat == DEAD)
+		return
+	if(get_playerquality(client.ckey) > 5)
+		return
+	getting_started_reminder_scheduled = TRUE
+	addtimer(CALLBACK(src, PROC_REF(show_getting_started_reminder), client.ckey), 10 SECONDS)
+
+/mob/living/carbon/human/proc/show_getting_started_reminder(player_ckey)
+	if(!client || client.ckey != player_ckey || advsetup || stat == DEAD)
+		return
+	if(get_playerquality(client.ckey) > 5)
+		return
+	to_chat(src, span_notice("New to the game? Read the <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> chapter of the Encyclopedia for essential information and instructions to help you begin."))
+	playsound_local(src, 'sound/misc/looc_smol.ogg', 30, TRUE)
