@@ -41,7 +41,7 @@
 		if(TRAIT_STEPPE_RIDER)
 			return "Improves mounted movement speed, halves the delay when urging a mount into a run, and makes it less likely that thorns will throw you from your mount."
 		if(TRAIT_HEARTY_DRINKER)
-			return "Strong alcohol grants +1 Luck for five minutes. Drinking more refreshes the duration."
+			return "Strong alcohol grants +1 Luck. The five-minute buff refreshes while the alcohol is being metabolized."
 		if(TRAIT_BATTLE_CRY)
 			return "Using Warcry grants the Battle Cry buff for one minute, increasing your pain threshold by 10."
 		if(TRAIT_METICULOUS)
@@ -57,7 +57,7 @@
 		if(TRAIT_ANCESTOR_GUARDIAN)
 			return "Gives one additional chance to pass a failed parry or dodge roll per in-game day. The opportunity is spent even if the extra roll fails."
 		if(TRAIT_LIGHT_SENSITIVITY)
-			return "Improves dark vision, but sunlight causes stress and can apply Sun Blinded (-5 Perception) unless suitable headgear shields you. Certain flashes also stun you for two seconds."
+			return "Improves dark vision, but sunlight causes stress. Without suitable protective headgear, sunlight also applies Sun Blinded (-5 Perception). Certain flashes also stun you for two seconds."
 		if(TRAIT_BLACKLEG)
 			return "Allows you to rig coin flips and dice rolls in your favour."
 	return null
