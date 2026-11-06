@@ -320,7 +320,7 @@
 "Mq" = (
 /obj/structure/fluff/traveltile/rockhillentrance{
 	aportalgoesto = "rockhill1";
-	name = "North-Western path to Rockhill"
+	name = "Northwestern path to Rockhill"
 	},
 /turf/open/floor/rogue/underworld/road,
 /area/rogue/underworld/adventurespawn)
