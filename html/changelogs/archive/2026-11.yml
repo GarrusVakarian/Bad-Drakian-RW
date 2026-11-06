@@ -181,3 +181,7 @@
   - rscadd: '(TheRealSlimRedwoods) Added Fox Yip and Fox Whine to the Noises tab and
       as *foxyip and *foxwhine commands for characters with animal tongues, using
       sounds from NovaSector #6571.'
+2026-11-06:
+  GarrusVakarian:
+  - bugfix: hardened job spawning subsystem, hopefully preventing lengthy spawn delays
+      caused by runtimes.
