@@ -235,7 +235,7 @@
 			return FALSE
 	else
 		for(var/mob/living/carbon/human/person as anything in GLOB.human_list)
-			if(lowertext(person.real_name) == lowertext(destination))
+			if(LOWER_TEXT(person.real_name) == LOWER_TEXT(destination))
 				recipient = person
 				break
 		if(!recipient)
