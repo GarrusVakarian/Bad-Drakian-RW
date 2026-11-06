@@ -207,6 +207,8 @@ GLOBAL_LIST_INIT(defense_quest_tier_costs, list(
 // Blockade wave scaling (July blockade rescale): base wave budget plus per-defender scaling.
 #define BLOCKADE_WAVE_BASE_TP 180
 #define BLOCKADE_DEFENDER_SCAN_RANGE 7
+#define BLOCKADE_CLEAR_TRIUMPHS 1
+#define BLOCKADE_TRIUMPH_HELPER_RANGE 15
 #define BLOCKADE_DEFENDER_SCALE_MIN 3
 #define BLOCKADE_DEFENDER_SCALE_MAX FELLOWSHIP_MAX_MEMBERS
 #define BLOCKADE_TP_PER_EXTRA_DEFENDER 0.20

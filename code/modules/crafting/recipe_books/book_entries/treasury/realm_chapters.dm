@@ -100,6 +100,7 @@
 		<p>The Crown - or an Alderman spending the Assembly's <b>defense allotment</b> (see <i>The City Assembly and the Alderman</i>) - commissions a <b>blockade-defense contract</b> at the Grand Contract Ledger. Adventurers take the writ, put down the besieging faction's waves, and the road reopens. A region that has just been cleared cannot be blockaded again for <b>[BLOCKADE_RECLEAR_COOLDOWN]</b> days.</p>
 
 		<p>The Steward may recall an unanswered writ after [BLOCKADE_RECALL_WINDOW_DS / 600] minutes. Waves begin on arrival, with [BLOCKADE_WAVE_TIMER_DS / 600] minutes to clear each wave and warnings at seven and a half, five, and two minutes remaining. Clearing the blockade also recovers the region's banditry hoard, subject to the Recovered Spoils tax.</p>
+		<p>Clearing a blockade or completing a Hoard Recovery writ awards <b>[BLOCKADE_CLEAR_TRIUMPHS] Triumph</b> to the fellowship recorded when its first wave starts, and to living players within <b>[BLOCKADE_TRIUMPH_HELPER_RANGE] tiles</b> of the character receiving the completion coin payout, on the same level. Each account is rewarded once per writ. If no character receives a payout, only the recorded fellowship qualifies.</p>
 
 		<p>Separately, a region's <b>Dangerous</b> or <b>Bleak</b> threat classification drains the Crown's Purse every dawn on its own, whether or not a blockade stands - see <i>Banditry</i>.</p>
 		</div>
@@ -258,6 +259,7 @@
 
 		<h3>Banditry Hoard</h3>
 		<p>Mammons stolen from the Crown accumulate in each region as a banditry hoard, reported by scouts and the Steward's panels. Clearing a blockade or completing a Hoard Recovery writ recovers the hoard, subject to the Crown's Recovered Spoils tax.</p>
+		<p>Completing a Hoard Recovery writ also grants <b>[BLOCKADE_CLEAR_TRIUMPHS] Triumph</b> to its first-wave fellowship and living players within <b>[BLOCKADE_TRIUMPH_HELPER_RANGE] tiles</b> of the coin recipient on the same level, once per account.</p>
 		<p>The Steward may commission a recovery. A fellowship of [BLOCKADE_FELLOWSHIP_REQUIREMENT] or more may also pledge [HOARD_RECOVERY_PLEDGE] mammons at the Grand Contract Ledger to recover a hoard of at least [HOARD_RECOVERY_HOARD_MINIMUM] mammons in a region without an active blockade.</p>
 
 		<h3>The Floor and Banditry Debt</h3>

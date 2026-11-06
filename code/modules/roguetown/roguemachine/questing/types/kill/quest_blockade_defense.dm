@@ -28,6 +28,10 @@
 	var/datum/fund/funding_fund
 	var/funding_cost = 0
 	var/warrant_consumed = 0
+	/// First-wave fellowship snapshot; weakrefs do not keep departed bodies alive.
+	var/list/fellowship_roster = list()
+	var/triumph_roster_recorded = FALSE
+	var/triumphs_awarded = FALSE
 
 /datum/quest/kill/blockade_defense/get_scroll_type()
 	return /obj/item/quest_writ/blockade
@@ -157,6 +161,51 @@
 	var/n = clamp(max_defenders_seen, BLOCKADE_DEFENDER_SCALE_MIN, BLOCKADE_DEFENDER_SCALE_MAX)
 	return 1 + (n - BLOCKADE_DEFENDER_SCALE_MIN) * BLOCKADE_REWARD_PER_EXTRA_DEFENDER
 
+/// Snapshot once, so late fellowship changes cannot manufacture extra rewards.
+/datum/quest/kill/blockade_defense/proc/record_triumph_fellowship()
+	if(triumph_roster_recorded)
+		return
+	triumph_roster_recorded = TRUE
+	var/mob/living/lead = quest_receiver_reference?.resolve()
+	if(!istype(lead) || QDELETED(lead))
+		return
+	var/list/members = list(lead)
+	var/datum/fellowship/F = lead.current_fellowship
+	if(!QDELETED(F))
+		members |= F.get_members()
+	for(var/mob/living/member in members)
+		if(!QDELETED(member))
+			fellowship_roster += WEAKREF(member)
+
+/// Single completion-time player scan, centered on the actual coin recipient.
+/datum/quest/kill/blockade_defense/proc/award_defender_triumphs(mob/coin_recipient)
+	if(triumphs_awarded || !complete || failed || (quest_type != QUEST_BLOCKADE_DEFENSE && quest_type != QUEST_HOARD_RECOVERY))
+		return
+	triumphs_awarded = TRUE
+	var/list/candidates = list()
+	for(var/datum/weakref/W as anything in fellowship_roster)
+		var/mob/living/member = W.resolve()
+		if(!QDELETED(member))
+			candidates |= member
+	var/turf/center = QDELETED(coin_recipient) ? null : get_turf(coin_recipient)
+	if(center)
+		for(var/mob/living/helper in GLOB.player_list)
+			if(QDELETED(helper) || !helper.client || helper.stat == DEAD)
+				continue
+			var/turf/helper_turf = get_turf(helper)
+			if(helper_turf && helper_turf.z == center.z && get_dist(helper_turf, center) <= BLOCKADE_TRIUMPH_HELPER_RANGE)
+				candidates |= helper
+	var/list/rewarded_accounts = list()
+	var/reward_reason = quest_type == QUEST_HOARD_RECOVERY ? "You helped recover a bandit hoard, making the realm safer." : "You helped clear a blockade, making the realm safer."
+	for(var/mob/living/recipient in candidates)
+		if(QDELETED(recipient) || !recipient.mind)
+			continue
+		var/account_key = ckey(recipient.mind.key)
+		if(!account_key || rewarded_accounts[account_key])
+			continue
+		rewarded_accounts[account_key] = TRUE
+		recipient.mind.adjust_triumphs(BLOCKADE_CLEAR_TRIUMPHS, TRUE, reward_reason)
+
 /datum/quest/kill/blockade_defense/proc/spawn_wave(wave_num)
 	if(failed || complete)
 		return
@@ -180,6 +229,8 @@
 	if(spawned <= 0)
 		fail_quest("composition_empty")
 		return
+	if(wave_num == 1)
+		record_triumph_fellowship()
 	clear_wave_timers()
 	wave_timer_id = addtimer(CALLBACK(src, PROC_REF(on_wave_timeout), wave_num), BLOCKADE_WAVE_TIMER_DS, TIMER_STOPPABLE)
 	// Chat pings at 7.5 min, 5 min and 2 min left. Skipped if the wave timer is shorter than the threshold.
@@ -322,19 +373,24 @@
 /// fellowship doesn't have to risk the scroll on the trip home. Scroll burns afterward
 /// to prevent double-minting at the contract ledger.
 /datum/quest/kill/blockade_defense/mark_complete()
+	if(complete || failed)
+		return
 	..()
 	clear_wave_timers()
 	var/datum/blockade/B = blockade_ref?.resolve()
-	if(B)
+	var/cleared_blockade = !QDELETED(B)
+	if(cleared_blockade)
 		B.active_scroll_ref = null
 		B.active_quest_ref = null
 		SSeconomy.clear_blockade(B, "cleared")
 	var/mob/lead = quest_receiver_reference?.resolve()
+	var/mob/coin_recipient
 	var/payout = round(reward_amount * reward_turnout_mult())
 	if(payout > 0)
 		if(lead && SStreasury.has_account(lead))
 			var/datum/fund/lead_account = SStreasury.get_account(lead)
-			SStreasury.mint(lead_account, payout, "Blockade defense reward ([quest_giver_name || "Crown"] -> [lead.real_name])")
+			if(SStreasury.mint(lead_account, payout, "Blockade defense reward ([quest_giver_name || "Crown"] -> [lead.real_name])"))
+				coin_recipient = lead
 			var/tax_amt = 0
 			if(!levy_exempt)
 				tax_amt = SStreasury.apply_tax(lead_account, payout, TAX_CATEGORY_CONTRACT_LEVY, "Blockade defense")
@@ -354,7 +410,8 @@
 		TR.banditry_hoard = 0
 		if(lead && SStreasury.has_account(lead))
 			var/datum/fund/spoils_account = SStreasury.get_account(lead)
-			SStreasury.mint(spoils_account, spoils, "Recovered Spoils ([region])")
+			if(SStreasury.mint(spoils_account, spoils, "Recovered Spoils ([region])"))
+				coin_recipient = lead
 			var/spoils_tax = SStreasury.apply_tax(spoils_account, spoils, TAX_CATEGORY_RECOVERED_SPOILS, region)
 			if(spoils_tax > 0)
 				record_featured_stat(FEATURED_STATS_TAX_PAYERS, lead, spoils_tax)
@@ -364,6 +421,8 @@
 			SStreasury.mint(SStreasury.discretionary_fund, spoils, "Recovered Spoils (unbanked bearer, [region])")
 			announce_to_bearer("The bandits' hoard of [spoils] mammons is seized in the Crown's name.")
 		GLOB.azure_round_stats[STATS_BANDITRY_HOARD_OUTSTANDING] = SSeconomy.total_banditry_hoard()
+	if(cleared_blockade || quest_type == QUEST_HOARD_RECOVERY)
+		award_defender_triumphs(coin_recipient)
 	var/obj/item/quest_writ/S = quest_scroll
 	if(S && !QDELETED(S))
 		qdel(S)
