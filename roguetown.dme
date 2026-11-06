@@ -3554,6 +3554,7 @@
 #include "modular_azurepeak\code\modules\spells\pantheon\inhumen\matthios.dm"
 #include "modular_azurepeak\code\modules\spells\pantheon\inhumen\zizo.dm"
 #include "modular_azurepeak\quirks\quirks.dm"
+#include "modular_azurepeak\quirks\hypnotic_gaze.dm"
 #include "modular_azurepeak\statpacks\agile.dm"
 #include "modular_azurepeak\statpacks\mental.dm"
 #include "modular_azurepeak\statpacks\physical.dm"

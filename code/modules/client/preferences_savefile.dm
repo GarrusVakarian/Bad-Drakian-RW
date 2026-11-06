@@ -598,6 +598,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	vice6 = (vice6_type && ispath(vice6_type)) ? new vice6_type() : null
 	S["redolent_type"] >> redolent_type
 	S["redolent_scent"] >> redolent_scent
+	S["hypnotic_gaze_text"] >> hypnotic_gaze_text
+	S["hypnotic_gaze_style"] >> hypnotic_gaze_style
+	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(hypnotic_gaze_text)
+	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(hypnotic_gaze_style)
 	if(isnull(redolent_type)) // legacy savefile key from when this was named malodorous
 		S["malodorous_type"] >> redolent_type
 		S["malodorous_scent"] >> redolent_scent
@@ -1220,6 +1224,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["vice6"], preferences_typepath_or_null(vice6))
 	WRITE_FILE(S["redolent_type"], redolent_type)
 	WRITE_FILE(S["redolent_scent"], redolent_scent)
+	WRITE_FILE(S["hypnotic_gaze_text"], hypnotic_gaze_text)
+	WRITE_FILE(S["hypnotic_gaze_style"], hypnotic_gaze_style)
 	WRITE_FILE(S["feature_mcolor"]		, features["mcolor"])
 	WRITE_FILE(S["feature_mcolor2"]		, features["mcolor2"])
 	WRITE_FILE(S["feature_mcolor3"]		, features["mcolor3"])

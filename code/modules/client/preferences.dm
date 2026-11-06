@@ -330,6 +330,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/charflaw/vice6
 	var/redolent_type = "Neutral"
 	var/redolent_scent = ""
+	var/hypnotic_gaze_text = "Their eyes are enticing to gaze into."
+	var/hypnotic_gaze_style = "Hypnotext"
 
 	var/setspouse = ""
 	var/gender_choice = ANY_GENDER
