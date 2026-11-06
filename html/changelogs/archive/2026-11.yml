@@ -191,5 +191,10 @@
       breaks in examine text.
   - balance: "Lowered the folded chessboard\u2019s base price from 80 to 25 mammons.\
       \ GO PLAY!"
+  - sound: Added the `*mrrp` animal emote and a Mrrp verb under Noises for characters
+      with a wild tongue.
   mypingishuge:
   - sound: Androgynous voices use only the second generic female warcry recording.
+  - rscadd: 'Gnolls gain Gnoll Sadism: Sadist recognition and a temporary mood benefit
+      from satisfaction, without deprivation penalties. Choosing ordinary Sadist replaces
+      this innate version.'
