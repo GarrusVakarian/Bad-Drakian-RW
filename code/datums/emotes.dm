@@ -205,6 +205,9 @@
 						else
 							possible_sounds = H.dna.species.soundpack_m.get_sound(key, modifier)
 			// LETHALSTONE ADDITION END
+			// Narrow only the generic pool; preserve custom and muffled voicepack sounds.
+			if(H.voice_type == VOICE_TYPE_ANDR && key == "warcry" && islist(possible_sounds) && ('sound/vo/female/gen/warcry_female2.ogg' in possible_sounds))
+				possible_sounds = 'sound/vo/female/gen/warcry_female2.ogg'
 			if(possible_sounds)
 				if(islist(possible_sounds))
 					var/list/PS = possible_sounds
