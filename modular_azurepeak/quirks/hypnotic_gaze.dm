@@ -79,8 +79,10 @@
 
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
-	action_icon_state = "necraeye"
-	overlay_state = "necraeye"
+	// Spiral: tgstation/tgstation, icons/hud/screen_alert.dmi, state "hypnosis".
+	action_icon = 'icons/mob/actions/hypnotic_gaze.dmi'
+	action_icon_state = "hypnosis"
+	overlay_state = "hypnosis"
 	desc = "Hold another's gaze for ten seconds. Your next words they hear become a lasting suggestion. Cast again to release an existing suggestion."
 	range = 2
 	chargetime = 1 SECONDS
