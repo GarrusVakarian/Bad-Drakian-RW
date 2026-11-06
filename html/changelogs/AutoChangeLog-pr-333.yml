@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - bugfix: "Required roles now check all six vice slots at round start."

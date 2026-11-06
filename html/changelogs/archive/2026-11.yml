@@ -193,6 +193,9 @@
       \ GO PLAY!"
   - sound: Added the `*mrrp` animal emote and a Mrrp verb under Noises for characters
       with a wild tongue.
+  - bugfix: Required roles now check all six vice slots at round start.
+  - bugfix: Jumping over a lit campfire no longer sets you on fire. Landing on it
+      or walking into it still does, silly
   mypingishuge:
   - sound: Androgynous voices use only the second generic female warcry recording.
   - rscadd: 'Gnolls gain Gnoll Sadism: Sadist recognition and a temporary mood benefit
