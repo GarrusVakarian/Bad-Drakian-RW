@@ -1076,7 +1076,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Tail" : "Taur Tertiary"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
 
 			dat += "<b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a><BR>"
-			dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>[origin ? origin.name : "None"]</a><BR>"
+			if(origin)
+				dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input' oncontextmenu='window.location.href=\"?_src_=prefs;preference=origin_reset\";return false;' title='Right-click to reset to None'>[origin.name]</a><BR>"
+			else
+				dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>None</a><BR>"
 
 //			dat += "<br><b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a>"
 //			if(randomise[RANDOM_BODY] || randomise[RANDOM_BODY_ANTAG]) //doesn't work unless random body
@@ -2165,6 +2168,13 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		if(mark_character_sheet_feature_seen("revenant_customization"))
 			refresh_character_sheet_if_open(user)
 		ShowCustomizers(user)
+		return
+	else if(href_list["preference"] == "origin_reset")
+		if(origin)
+			origin = null
+			save_character()
+			user << browse(null, "window=origin_map")
+			ShowChoices(user)
 		return
 	else if(href_list["preference"] == "origin_select")
 		select_origin(user, href_list["type"])
