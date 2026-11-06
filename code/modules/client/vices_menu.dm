@@ -1794,7 +1794,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
+			var/current_choice = get_customization_picker_default(virtues_available, virtue)
+			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, default = current_choice, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1841,7 +1842,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
+			var/current_choice = get_customization_picker_default(virtues_available, virtuetwo)
+			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, default = current_choice, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1890,7 +1892,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				return
 
 			backgrounds_available = sort_list(backgrounds_available)
-			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, option_details = get_customization_picker_details(backgrounds_available))
+			var/current_choice = get_customization_picker_default(backgrounds_available, virtue_background)
+			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, default = current_choice, option_details = get_customization_picker_details(backgrounds_available))
 
 			if(choice)
 				var/datum/virtue/background/selected = backgrounds_available[choice]
@@ -1998,7 +2001,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				statpacks_available[display_name] = SP
 			
 			statpacks_available = sort_list(statpacks_available)
-			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, large_window = TRUE)
+			var/current_choice = get_customization_picker_default(statpacks_available, statpack)
+			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, default = current_choice, large_window = TRUE)
 			
 			if(choice)
 				var/datum/statpack/selected = statpacks_available[choice]
@@ -2426,6 +2430,16 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		return
 	save_to_history()
 	virgin_attraction = sanitize_virgin_attraction(choice)
+
+/// Find the option label for the saved pick, which may be a separate instance.
+/datum/preferences/proc/get_customization_picker_default(list/options, datum/current_pick)
+	if(!current_pick)
+		return null
+	for(var/option in options)
+		var/datum/pick = options[option]
+		if(pick.type == current_pick.type)
+			return option
+	return null
 
 /// Display metadata only; original names remain the authoritative return values.
 /datum/preferences/proc/get_customization_picker_details(list/options, vice_slot = 0)

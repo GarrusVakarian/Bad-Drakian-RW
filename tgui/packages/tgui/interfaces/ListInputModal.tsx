@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBackend } from 'tgui/backend';
 import { Window } from 'tgui/layouts';
 import {
@@ -51,9 +51,19 @@ export const ListInputModal = (props) => {
   } = data;
   const hasDetails = Object.keys(option_details).length > 0;
   const expandedWindow = hasDetails || large_window;
-  const [selected, setSelected] = useState(items.indexOf(init_value));
+  const initialSelection = items.indexOf(init_value);
+  const [selected, setSelected] = useState(initialSelection);
   const [searchBarVisible, setSearchBarVisible] = useState(items.length > 9);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (initialSelection > 0) {
+      document
+        .getElementById(initialSelection.toString())
+        ?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [initialSelection]);
+
   // User presses up or down on keyboard
   // Simulates clicking an item
 
