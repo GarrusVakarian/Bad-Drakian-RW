@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Fixed apostrophes, quotation marks, and other special characters displaying as HTML codes on custom loadout items. Custom descriptions also preserve line breaks in examine text."
