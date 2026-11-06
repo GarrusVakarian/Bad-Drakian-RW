@@ -215,3 +215,6 @@
   - balance: Nobility now costs 4 Triumphs; Bronze Golem, Scrappy Survivor and Man
       in The Pub cost 6; Traveling Scholar costs 8. All virtues previously costing
       5 Triumphs now cost 4, and those costing 3 now cost 2.
+  - rscadd: Added Gods and Lands encyclopedia guides with religious lore, regional
+      lore, origin traits and language bonuses.
+  - spellcheck: Corrected Ascendants in the faith selection menu.
