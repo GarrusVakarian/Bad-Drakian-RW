@@ -1,12 +1,12 @@
 /datum/virtue/utility/noble
-	name = "Nobility (-1 Triumph)"
+	name = "Nobility (-4 TRI)"
 	desc = "By birth, blade or brain, I am a titled noble known to the royalty of these lands, supported by an estate and enjoying the standing of my peers. \
 			I've cleverly stashed away a healthy amount of coinage, alongside a familial heirloom."
 	added_traits = list(TRAIT_NOBLE)
 	added_skills = list(list(/datum/skill/misc/reading, 1, 6))
 	added_stashed_items = list("Heirloom Amulet" = /obj/item/clothing/neck/roguetown/ornateamulet/noble,
 								"Hefty Coinpurse" = /obj/item/storage/belt/rogue/pouch/coins/virtuepouch)
-	triumph_cost = 1 //BD Cost dropped to 1
+	triumph_cost = 4
 
 /datum/virtue/utility/noble/apply_to_human(mob/living/carbon/human/recipient)
 	SStreasury.noble_incomes[recipient] += 15
@@ -141,10 +141,10 @@
 //that keep old saves resolving.
 
 /datum/virtue/utility/homesteader
-	name = "Pilgrim (-3 TRI)"
+	name = "Pilgrim (-2 TRI)"
 	added_traits = list(TRAIT_HOMESTEAD_EXPERT)
 	desc= "As they say, 'hearth is where the heart is'. You are intimately familiar with the labors of lyfe, and have stowed away everything necessary to start anew: a hunting dagger, your trusty hoe, and a sack of assorted supplies."
-	triumph_cost = 3
+	triumph_cost = 2
 	added_stashed_items = list(
 		"Hoe" = /obj/item/rogueweapon/hoe,
 		"Bag of Food" = /obj/item/storage/roguebag/food,
