@@ -625,7 +625,7 @@ SUBSYSTEM_DEF(job)
 				if(length(job.virtue_restrictions) && ((player.client.prefs.virtue?.type in job.virtue_restrictions) || (player.client.prefs.virtuetwo?.type in job.virtue_restrictions) || (player.client.prefs.virtue_background?.type in job.virtue_restrictions)))
 					continue
 
-				if(length(job.vice_restrictions) && (player.client.prefs.charflaw?.type in job.vice_restrictions))
+				if(has_restricted_vice(player.client.prefs, job))
 					continue
 
 				if(job.plevel_req > player.client.patreonlevel())
