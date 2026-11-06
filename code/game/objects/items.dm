@@ -8,6 +8,8 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item
 	name = "item"
 	var/original_name = null // Stores the original name if item was renamed
+	/// Escaped description applied by the loadout claim. Later changes to desc use normal hover escaping.
+	var/loadout_desc_html
 	icon = 'icons/obj/items_and_weapons.dmi'
 	///icon state name for inhanf overlays
 	var/item_state = null
@@ -750,6 +752,8 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/get_hover_examine_description()
 	if(!desc)
 		return null
+	if(desc == loadout_desc_html)
+		return loadout_desc_html
 	return html_encode(desc)
 
 /obj/item/proc/get_hover_examine_condition_text()
