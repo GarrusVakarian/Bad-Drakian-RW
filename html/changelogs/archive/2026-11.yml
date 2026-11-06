@@ -185,3 +185,5 @@
   GarrusVakarian:
   - bugfix: hardened job spawning subsystem, hopefully preventing lengthy spawn delays
       caused by runtimes.
+  mypingishuge:
+  - sound: Androgynous voices use only the second generic female warcry recording.
