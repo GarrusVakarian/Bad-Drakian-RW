@@ -197,3 +197,19 @@
 	can_spawn = FALSE
 	wiki_only = TRUE
 	types = list(/datum/book_entry/getting_started)
+
+/obj/item/recipe_book/gods
+	name = "Gods"
+	wiki_name = "Gods"
+	wiki_section = "Guides"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/gods)
+
+/obj/item/recipe_book/lands
+	name = "Lands"
+	wiki_name = "Lands"
+	wiki_section = "Guides"
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/lands)
