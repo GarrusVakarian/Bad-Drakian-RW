@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - bugfix: "hardened job spawning subsystem, hopefully preventing lengthy spawn delays caused by runtimes."
