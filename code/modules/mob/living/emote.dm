@@ -1574,6 +1574,7 @@
 /mob/living/carbon/human/proc/update_tongue_noise_verbs()
 	var/static/list/all_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1606,6 +1607,7 @@
 	)
 	var/static/list/wild_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1713,13 +1715,13 @@
 	is_animal = TRUE
 
 /mob/living/carbon/human/verb/emote_mrrp()
-	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
-		set name = "Mrrp"
-		set category = "Noises"
-		emote("mrrp", intentional = TRUE, animal = TRUE)
-	else
-		to_chat(usr, span_warning("Your tongue doesn't do that"))
+	set name = "Mrrp"
+	set category = "Noises"
+
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
 		return
+	emote("mrrp", intentional = TRUE, animal = TRUE)
 
 /datum/emote/living/caw
 	key = "caw"
