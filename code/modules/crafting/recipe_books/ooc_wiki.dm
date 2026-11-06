@@ -198,10 +198,15 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	var/list/recipes = list()
 	for(var/atom/entry_path as anything in valid_paths)
 		var/recipe_category = get_recipe_category(entry_path) || "All"
+		var/chapter_order = 0
+		if(ispath(entry_path, /datum/book_entry))
+			var/datum/book_entry/chapter = entry_path
+			chapter_order = initial(chapter.chapter_order)
 		recipes += list(list(
 			"name" = initial(entry_path.name),
 			"path" = "[entry_path]",
-			"category" = recipe_category
+			"category" = recipe_category,
+			"chapter_order" = chapter_order
 		))
 	if(/datum/food_recipe in types)
 		for(var/base in SScooking.recipe_index)
@@ -261,6 +266,9 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	recipes += list(list("name" = recipe.name, "path" = key, "category" = recipe.book_category))
 
 /proc/cmp_wiki_recipe_entries(list/a, list/b)
+	var/order_difference = a["chapter_order"] - b["chapter_order"]
+	if(order_difference)
+		return order_difference
 	return sorttext(b["name"], a["name"])
 
 /client/verb/ooc_wiki()
