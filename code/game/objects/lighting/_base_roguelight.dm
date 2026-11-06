@@ -126,6 +126,8 @@
 
 /obj/machinery/light/rogue/Crossed(atom/movable/AM, oldLoc)
 	..()
+	if(AM.throwing?.jumping && istype(src, /obj/machinery/light/rogue/campfire))
+		return
 	if(crossfire)
 		if(on)
 			AM.fire_act(1,5)
