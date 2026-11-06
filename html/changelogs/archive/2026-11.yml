@@ -185,5 +185,9 @@
   GarrusVakarian:
   - bugfix: hardened job spawning subsystem, hopefully preventing lengthy spawn delays
       caused by runtimes.
+  _Rarity:
+  - bugfix: Fixed apostrophes, quotation marks, and other special characters displaying
+      as HTML codes on custom loadout items. Custom descriptions also preserve line
+      breaks in examine text.
   mypingishuge:
   - sound: Androgynous voices use only the second generic female warcry recording.
