@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Jumping over a lit campfire no longer sets you on fire. Landing on it or walking into it still does, silly"
