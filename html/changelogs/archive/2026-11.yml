@@ -226,3 +226,9 @@
       10 seconds after character setup, with a LOOC notification sound.
   - rscadd: Selecting a character origin now explains its regional traits and their
       effects in chat.
+  - rscadd: Adventurer and refugee spawn routes warn players below 5 PQ, except northwest.
+      Try the same portal again to proceed anyway; pulled companions can travel with
+      their escort.
+  - balance: Druid requires 1 PQ on Neuhill and Smollhill.
+  - spellcheck: Renamed the North-Western path to Rockhill to Northwestern path to
+      Rockhill.
