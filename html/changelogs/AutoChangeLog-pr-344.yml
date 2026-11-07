@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - map: "fixes the Smollhill chapel to allow sermons to be held inside."
