@@ -630,7 +630,7 @@
 		return
 	return throw_at(target, range, speed, thrower, spin, diagonals_first, callback, force)
 
-/atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = FALSE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, extra = FALSE) //If this returns FALSE then callback will not be called.
+/atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = FALSE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, extra = FALSE, jumping = FALSE) //If this returns FALSE then callback will not be called.
 	. = FALSE
 	if (!target || speed <= 0 || move_resist == INFINITY)
 		return
@@ -686,6 +686,7 @@
 	TT.bonus_throwforce = bonus_throwforce
 	TT.callback = callback
 	TT.extra = extra
+	TT.jumping = jumping
 	if(!QDELETED(thrower))
 		TT.target_zone = thrower.zone_selected
 

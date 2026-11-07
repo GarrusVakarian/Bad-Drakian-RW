@@ -102,6 +102,7 @@
 		/datum/customizer/bodypart_feature/pubes/feathered,
 		/datum/customizer/bodypart_feature/pits/feathered,
 		/datum/customizer/organ/ears/anthro,
+		/datum/customizer/organ/neck_feature/anthro,
 		)
 	body_marking_sets = list(
 		/datum/body_marking_set/none,

@@ -239,7 +239,7 @@
 
 	W.AddSpell(new /obj/effect/proc_holder/spell/self/howl)
 	W.AddSpell(new /obj/effect/proc_holder/spell/self/claws)
-	W.AddSpell(new /obj/effect/proc_holder/spell/targeted/woundlick)
+	W.AddSpell(new /obj/effect/proc_holder/spell/targeted/woundlick/werewolf)
 	W.AddSpell(new /obj/effect/proc_holder/spell/invoked/voluntary_bite)
 	W.AddSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
 
@@ -304,7 +304,7 @@
 
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/howl)
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/claws)
-	W.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick)
+	W.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick/werewolf)
 	W.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
 	W.regenerate_icons()
 

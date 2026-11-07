@@ -142,6 +142,93 @@
   _Rarity:
   - rscadd: (Patapollla) Added a folding chess, checkers, and backgammon board to
       character loadouts and merchant imports.
+  - rscadd: (felindis) Added craftable peddler carts with key-controlled stocking
+      access and lockable wheels.
+  - balance: Hide role labels for wildshaped.
+  - bugfix: Unlit Sunder now expires after 10 seconds instead of permanently preventing
+      healing.
+  - bugfix: Failed or cancelled Message casts no longer charge fatigue.
+  - config: Enabled werewolf round modifier. Chaos will now have a 16%-53% chance
+      to pick the werewolf modifier at round start.
   mypingishuge:
   - bugfix: Panel actions keep their action-specific climax messages, sounds and fluid
       delivery instead of sometimes falling back to a generic response.
+  - rscadd: Added Getting Started as the first encyclopedia guide, with practical
+      instructions and tips for new players.
+2026-11-05:
+  GarrusVakarian:
+  - map: the southwestern bog on Smollhill now contains some saltwater and deep saltwater
+      tiles.
+  _Rarity:
+  - rscadd: Added sizes for internal testies! This lets you choose how much the character
+      will produce during certain actions like external testies do.
+  mypingishuge:
+  - bugfix: Active cooking recipes no longer block unrelated food seasoning.
+  - bugfix: Starting food preparation without a table no longer leaves an active recipe
+      behind.
+  - balance: Intact gnoll skin now prevents choking until broken, depleted, or no
+      longer covering the neck.
+  - spellcheck: Clarified the message shown when neck coverage prevents choking.
+  - rscadd: The Excidium now has a public Consult Unpaid Taxes menu listing names
+      and amounts owed to the Crown.
+  - qol: Replaced the unclear "Destitute.." examine message with "They owe unpaid
+      taxes to the Crown."
+  - balance: The unpaid-tax examine warning now appears after one unpaid in-game day
+      instead of two.
+  - rscadd: Character-choice popups show descriptions and costs alongside option names.
+  - rscadd: Powders and allspice can be sprinkled into open drink containers, up to
+      5u per application.
+  - rscadd: '(TheRealSlimRedwoods) Added Fox Yip and Fox Whine to the Noises tab and
+      as *foxyip and *foxwhine commands for characters with animal tongues, using
+      sounds from NovaSector #6571.'
+2026-11-06:
+  GarrusVakarian:
+  - bugfix: hardened job spawning subsystem, hopefully preventing lengthy spawn delays
+      caused by runtimes.
+  _Rarity:
+  - bugfix: Fixed apostrophes, quotation marks, and other special characters displaying
+      as HTML codes on custom loadout items. Custom descriptions also preserve line
+      breaks in examine text.
+  - balance: "Lowered the folded chessboard\u2019s base price from 80 to 25 mammons.\
+      \ GO PLAY!"
+  - sound: Added the `*mrrp` animal emote and a Mrrp verb under Noises for characters
+      with a wild tongue.
+  - bugfix: Required roles now check all six vice slots at round start.
+  - bugfix: Jumping over a lit campfire no longer sets you on fire. Landing on it
+      or walking into it still does, silly
+  - qol: Right-click HERMES to write letters and manage postage and writing supplies
+      in one window.
+  - rscadd: HERMES offers one free composed letter per player every five minutes.
+      Additional letters cost one mammon.
+  mypingishuge:
+  - sound: Androgynous voices use only the second generic female warcry recording.
+  - rscadd: 'Gnolls gain Gnoll Sadism: Sadist recognition and a temporary mood benefit
+      from satisfaction, without deprivation penalties. Choosing ordinary Sadist replaces
+      this innate version.'
+  - bugfix: The heart pain indicator reflects current Willpower and pain-tolerance
+      effects, updating when their threshold changes.
+  - bugfix: Fullscreen pain visuals and shove grip-break checks use current pain tolerance,
+      and fractional pain percentages no longer hide the heart pain indicator.
+  - bugfix: Gronn's Battle Cry now also improves the periodic pain-collapse roll.
+  - balance: Reduced Disgraced Noble to 0 QP; Gossiper, Pretty and Raw Diet to 1 QP;
+      Dream Dust to 2 QP.
+  - balance: Nobility now costs 4 Triumphs; Bronze Golem, Scrappy Survivor and Man
+      in The Pub cost 6; Traveling Scholar costs 8. All virtues previously costing
+      5 Triumphs now cost 4, and those costing 3 now cost 2.
+  - rscadd: Added Gods and Lands encyclopedia guides with religious lore, regional
+      lore, origin traits and language bonuses.
+  - spellcheck: Corrected Ascendants in the faith selection menu.
+2026-11-07:
+  Chlorotrifluoride:
+  - image: Removed the built in fluff of harpy(alt1) and harpy(bat) wings.
+  mypingishuge:
+  - rscadd: Players with 5 PQ or below receive a Getting Started encyclopedia link
+      10 seconds after character setup, with a LOOC notification sound.
+  - rscadd: Selecting a character origin now explains its regional traits and their
+      effects in chat.
+  - rscadd: Adventurer and refugee spawn routes warn players below 5 PQ, except northwest.
+      Try the same portal again to proceed anyway; pulled companions can travel with
+      their escort.
+  - balance: Druid requires 1 PQ on Neuhill and Smollhill.
+  - spellcheck: Renamed the North-Western path to Rockhill to Northwestern path to
+      Rockhill.

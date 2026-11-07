@@ -25,13 +25,17 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 				"wiki_name" = book.wiki_name || book.name,
 				"types" = book.types.Copy(),
 				"path" = book_type,
-				"wiki_section" = book.wiki_section
+				"wiki_section" = book.wiki_section,
+				"wiki_order" = book.wiki_order
 			))
 		cached_book_recipes["[book_type]"] = build_recipe_list(book.types)
 		qdel(book)
 	book_entries = sortTim(book_entries, GLOBAL_PROC_REF(cmp_book_entries))
 
 /proc/cmp_book_entries(list/a, list/b)
+	var/order_difference = a["wiki_order"] - b["wiki_order"]
+	if(order_difference)
+		return order_difference
 	return sorttext(b["wiki_name"], a["wiki_name"])
 
 /proc/get_recipe_wiki()
@@ -194,10 +198,15 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	var/list/recipes = list()
 	for(var/atom/entry_path as anything in valid_paths)
 		var/recipe_category = get_recipe_category(entry_path) || "All"
+		var/chapter_order = 0
+		if(ispath(entry_path, /datum/book_entry))
+			var/datum/book_entry/chapter = entry_path
+			chapter_order = initial(chapter.chapter_order)
 		recipes += list(list(
 			"name" = initial(entry_path.name),
 			"path" = "[entry_path]",
-			"category" = recipe_category
+			"category" = recipe_category,
+			"chapter_order" = chapter_order
 		))
 	if(/datum/food_recipe in types)
 		for(var/base in SScooking.recipe_index)
@@ -257,6 +266,9 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	recipes += list(list("name" = recipe.name, "path" = key, "category" = recipe.book_category))
 
 /proc/cmp_wiki_recipe_entries(list/a, list/b)
+	var/order_difference = a["chapter_order"] - b["chapter_order"]
+	if(order_difference)
+		return order_difference
 	return sorttext(b["name"], a["name"])
 
 /client/verb/ooc_wiki()
@@ -266,3 +278,32 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 
 	var/datum/recipe_wiki/wiki = get_recipe_wiki()
 	wiki.show_library(mob)
+
+/// Direct chat link to Chapter I, without changing the normal Encyclopedia verb.
+/client/verb/getting_started_guide()
+	set name = "Getting-Started"
+	set category = "OOC"
+	set hidden = TRUE
+
+	var/datum/recipe_wiki/wiki = get_recipe_wiki()
+	wiki.show_to_user(mob, list(/datum/book_entry/getting_started), "Getting Started", /obj/item/recipe_book/getting_started)
+
+/mob/living/carbon/human
+	var/getting_started_reminder_scheduled = FALSE
+
+/// Called after setup returns, so outfit/loadout prompts finish before the delay begins.
+/mob/living/carbon/human/proc/schedule_getting_started_reminder()
+	if(getting_started_reminder_scheduled || !client || advsetup || stat == DEAD)
+		return
+	if(get_playerquality(client.ckey) > 5)
+		return
+	getting_started_reminder_scheduled = TRUE
+	addtimer(CALLBACK(src, PROC_REF(show_getting_started_reminder), client.ckey), 10 SECONDS)
+
+/mob/living/carbon/human/proc/show_getting_started_reminder(player_ckey)
+	if(!client || client.ckey != player_ckey || advsetup || stat == DEAD)
+		return
+	if(get_playerquality(client.ckey) > 5)
+		return
+	to_chat(src, span_notice("New to the game? Read the <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> chapter of the Encyclopedia for essential information and instructions to help you begin."))
+	playsound_local(src, 'sound/misc/looc_smol.ogg', 30, TRUE)

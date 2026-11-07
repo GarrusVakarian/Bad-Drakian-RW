@@ -1,6 +1,28 @@
 /datum/voicepack/proc/get_sound(soundin, modifiers)
 	return
 
+// Fox recordings from NovaSector #6571 by TheRealSlimRedwoods.
+/datum/voicepack/proc/get_fox_sound(soundin)
+	switch(soundin)
+		if("foxyip")
+			return 'sound/vo/fox/fox_squeak.ogg'
+		if("foxwhine")
+			return list(
+				'sound/vo/fox/fox1.ogg',
+				'sound/vo/fox/fox2.ogg',
+				'sound/vo/fox/fox3.ogg',
+				'sound/vo/fox/fox4.ogg',
+				'sound/vo/fox/fox5.ogg',
+				'sound/vo/fox/fox6.ogg',
+				'sound/vo/fox/fox7.ogg',
+				'sound/vo/fox/fox8.ogg',
+				'sound/vo/fox/fox9.ogg',
+				'sound/vo/fox/fox10.ogg',
+				'sound/vo/fox/fox11.ogg',
+				'sound/vo/fox/fox12.ogg',
+				'sound/vo/fox/fox13.ogg',
+			)
+
 /datum/voicepack/proc/getfold(soundin)
 	var/used
 	if(istext(soundin))

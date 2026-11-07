@@ -7,7 +7,7 @@
 //	where you would want the updater procs below to run
 
 //	This also works with decimals.
-#define SAVEFILE_VERSION_MAX 38
+#define SAVEFILE_VERSION_MAX 39
 
 // Safely extract a type path from datums or type values; returns null if unset/invalid.
 /proc/preferences_typepath_or_null(value)
@@ -1143,8 +1143,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	S["customizer_entries"] >> customizer_entries
 
-	var/save_version = savefile_needs_update(S)
-	if(save_version > 0 && save_version < 38)
+	// Validation creates missing entries, so record what the slot actually saved first.
+	var/legacy_wing_accessory
+	if(needs_update > 0 && needs_update < 39 && islist(customizer_entries))
+		if(!get_customizer_entry_for_customizer_type(/datum/customizer/organ/neck_feature/anthro))
+			for(var/datum/customizer_entry/entry in customizer_entries)
+				if(ispath(entry.customizer_type, /datum/customizer/organ/wings) && !entry.disabled)
+					legacy_wing_accessory = entry.accessory_type
+					break
+
+	if(needs_update > 0 && needs_update < 38)
 	// Here's the plan, we save the old type and the old color, then re-apply them after validation. Should be seamless
 		var/old_accessory_type
 		var/old_selected_color
@@ -1163,8 +1171,30 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			new_wing_entry.accessory_type = old_accessory_type
 
 	validate_customizer_entries()
+	if(legacy_wing_accessory)
+		migrate_legacy_wing_fluff(legacy_wing_accessory)
 
 	return TRUE
+
+/datum/preferences/proc/migrate_legacy_wing_fluff(legacy_wing_accessory)
+	var/fluff_sprite
+	switch(legacy_wing_accessory)
+		if(/datum/sprite_accessory/wings/wide/harpywingsalt1, /datum/sprite_accessory/wings/wide/harpywingsalt2)
+			fluff_sprite = /datum/sprite_accessory/neck_feature/mammal_fluff/fluff
+		if(/datum/sprite_accessory/wings/wide/harpywingsalt1_top, /datum/sprite_accessory/wings/wide/harpywingsalt2_top)
+			fluff_sprite = /datum/sprite_accessory/neck_feature/mammal_fluff/fluff_front
+		else
+			return
+
+	var/datum/customizer_entry/fluff = get_customizer_entry_for_customizer_type(/datum/customizer/organ/neck_feature/anthro)
+	var/datum/customizer_entry/organ/wings/wings = locate(/datum/customizer_entry/organ/wings) in customizer_entries
+	if(!fluff || !wings || wings.disabled || wings.accessory_type != legacy_wing_accessory)
+		return
+
+	fluff.customizer_choice_type = /datum/customizer_choice/organ/neck_feature/anthro_fluff
+	fluff.accessory_type = fluff_sprite
+	fluff.accessory_colors = wings.wings_color
+	fluff.disabled = FALSE
 
 /datum/preferences/proc/save_character()
 	if(!path)

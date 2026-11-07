@@ -31,7 +31,7 @@
 
 /datum/quirk/dream_dust
 	name = "Dream Dust"
-	point_cost = 3
+	point_cost = 2
 	desc = "I keep a little dream dust tucked away for when the occasion calls for it."
 	custom_text = "Adds a bag containing three portions of Zizo's Bane powder to your stash."
 	added_stashed_items = list("Bag of Zizo's Bane Powder" = /obj/item/storage/roguebag/zizobane_stash)
@@ -90,6 +90,7 @@
 	incompatible_traits = list(TRAIT_NOSTINK)
 
 /datum/quirk/disgracednoble
+	point_cost = 0
 	name = "Disgraced Noble"
 	desc = "I was a scion of a noble house... long ago. Now I am a commoner, and my family name is a source of shame."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
@@ -125,7 +126,7 @@
 	desc = "Despite my lowborn blood, I've made a habit out of brushing shoulders with the nobility and learning their secrets."
 	custom_text = "Lets you view noble gossip."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_GOSSIPER)
 	incompatible_virtues = list(/datum/virtue/background/tracker)
 	incompatible_traits = list(TRAIT_NOBLE)
@@ -360,7 +361,7 @@
 	name = "Pretty"
 	desc = "I'm no great beauty, but people seem to like looking at my face well enough."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already beautiful!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_PRETTY)
 	incompatible_virtues = list(/datum/virtue/utility/socialite)
 	incompatible_quirks = list(/datum/quirk/ugly)
@@ -371,7 +372,7 @@
 	desc = "Be it from unnatural anatomy or simply a bizarre tolerance, I can eat raw meat and uncooked food as if it were natural."
 	custom_text = "Lets you eat raw meat and uncooked food without getting poisoned. Rotten food, organs, and dirty water will still poison you."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already possesses an unnatural metabolism!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_RAW_EATER)
 	incompatible_virtues = list(/datum/virtue/utility/feral_appetite)
 	incompatible_traits = list(TRAIT_NASTY_EATER, TRAIT_ORGAN_EATER, TRAIT_WILD_EATER)

@@ -2202,7 +2202,7 @@
 /mob/living/proc/check_weakness(obj/item/weapon, mob/living/attacker)
 	return 1 //This is not a boolean, it's the multiplier for the damage the weapon does.
 
-/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force)
+/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force, extra = FALSE, jumping = FALSE)
 	stop_pulling()
 	. = ..()
 

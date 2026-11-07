@@ -110,6 +110,8 @@
 				used = 'sound/vo/psst.ogg'
 			if("meow")
 				used = list('sound/vo/mobs/cat/cat_meow1.ogg', 'sound/vo/mobs/cat/cat_meow2.ogg', 'sound/vo/mobs/cat/cat_meow3.ogg', 'sound/vo/mobs/cat/cat_meow4.ogg')
+			if("mrrp")
+				used = list('sound/vo/mobs/cat/mrrp.ogg')
 			if("caw")
 				used = list('sound/vo/mobs/bird/CROW_01.ogg', 'sound/vo/mobs/bird/CROW_03.ogg',)
 			if("peep")
@@ -164,6 +166,8 @@
 				used = list('sound/vo/male/gen/sound_vo_male_gen_moan (1).ogg','sound/vo/male/gen/sound_vo_male_gen_moan (2).ogg','sound/vo/male/gen/sound_vo_male_gen_moan (3).ogg')
 			if("yip")
 				used = list('sound/vo/yip.ogg', 'sound/vo/yip2.ogg', 'sound/vo/yip3.ogg')
+			if("foxyip", "foxwhine")
+				used = get_fox_sound(soundin)
 			if("yap")
 				used = list('sound/vo/yap.ogg')
 			if("salute")
