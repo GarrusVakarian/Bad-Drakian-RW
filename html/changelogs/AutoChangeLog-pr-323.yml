@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Players with 5 PQ or below receive a Getting Started encyclopedia link 10 seconds after character setup, with a LOOC notification sound."

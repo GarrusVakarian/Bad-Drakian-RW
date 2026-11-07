@@ -218,3 +218,7 @@
   - rscadd: Added Gods and Lands encyclopedia guides with religious lore, regional
       lore, origin traits and language bonuses.
   - spellcheck: Corrected Ascendants in the faith selection menu.
+2026-11-07:
+  mypingishuge:
+  - rscadd: Players with 5 PQ or below receive a Getting Started encyclopedia link
+      10 seconds after character setup, with a LOOC notification sound.
