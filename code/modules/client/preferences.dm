@@ -431,6 +431,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
 	var/tmp/character_sheet_notice_generation = 0
+	var/tmp/revenant_customization_eligible
 
 	var/rumour
 
@@ -641,6 +642,44 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /datum/character_sheet_feature/sprite_offset/is_eligible(datum/preferences/preferences)
 	return !preferences.features["body_center_offset"]
+
+/datum/character_sheet_feature/revenant_customization
+	id = "revenant_customization"
+	label = "Revenant Customization"
+	explanation = "Revenants now have additional Wild-Kin features. Select your revenant to customize them; taur bodies are in the Body section and additional markings are under Markings."
+	location = "under Features -> Change, with a shared reminder on Taur Body Type when available"
+
+/datum/character_sheet_feature/revenant_customization/is_eligible(datum/preferences/preferences)
+	return preferences.has_revenant_customization_character()
+
+/// Evaluate once per preferences session; a negative result is dismissed by the discovery system.
+/datum/preferences/proc/has_revenant_customization_character()
+	if(!isnull(revenant_customization_eligible))
+		return revenant_customization_eligible
+	revenant_customization_eligible = FALSE
+	if(istype(pref_species, /datum/species/dullahan))
+		revenant_customization_eligible = TRUE
+		return TRUE
+	if(parent && ishuman(parent.mob))
+		var/mob/living/carbon/human/H = parent.mob
+		if(H.dna && istype(H.dna.species, /datum/species/dullahan))
+			revenant_customization_eligible = TRUE
+			return TRUE
+	if(!path || !fexists(path))
+		return FALSE
+	var/savefile/S = new(path)
+	S.cd = "/"
+	var/list/slots = S.dir.Copy()
+	for(var/slot in slots)
+		if(!istext(slot) || findtext(slot, "character") != 1 || text2num(copytext(slot, 10)) <= 0)
+			continue
+		S.cd = "/[slot]"
+		var/saved_species
+		S["species"] >> saved_species
+		if(saved_species == /datum/species/dullahan::name)
+			revenant_customization_eligible = TRUE
+			break
+	return revenant_customization_eligible
 
 /proc/get_character_sheet_features()
 	var/static/list/features
@@ -928,7 +967,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			if(LAZYLEN(pref_species.allowed_taur_types))
 				var/obj/item/bodypart/taur/T = taur_type
 				var/name = ispath(T) ? T::name : "None"
-				dat += "<b>Taur Body Type:</b> <a href='?_src_=prefs;preference=taur_type;task=input'>[name]</a><BR>"
+				dat += "<b>Taur Body Type:</b> " + character_sheet_feature_link("revenant_customization", "?_src_=prefs;preference=taur_type;task=input", "Choose your taur body. Revenants now have Wild-Kin taur options.", name) + "<BR>"
 				dat += "<b>Taur Color:</b> <span style='border: 1px solid #161616; background-color: #[taur_color];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_color;task=input'>Change</a><BR>"
 				dat += "<b>Taur Markings:</b> <span style='border: 1px solid #161616; background-color: #[taur_markings];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_markings;task=input'>Change</a><BR>"
 				dat += "<b>Taur Tertiary:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
@@ -1058,7 +1097,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Voice Pitch: </b><a href='?_src_=prefs;preference=voice_pitch;task=input'>[voice_pitch]</a>"
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
-			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
+			dat += "<br><b>Features:</b> " + character_sheet_feature_link("revenant_customization", "?_src_=prefs;preference=customizers;task=menu", "Customize your features. Revenants now have additional Wild-Kin options.", "Change")
 			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> "
 			dat += sprite_offset_feature_link()
 			dat += {"<script>
@@ -2019,6 +2058,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		return
 
 	else if(href_list["preference"] == "customizers")
+		if(mark_character_sheet_feature_seen("revenant_customization"))
+			refresh_character_sheet_if_open(user)
 		ShowCustomizers(user)
 		return
 	else if(href_list["preference"] == "origin_select")
@@ -2303,6 +2344,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						to_chat(user, span_bad("There are no available taur bodies for this species."))
 						return
 
+					if(mark_character_sheet_feature_seen("revenant_customization"))
+						refresh_character_sheet_if_open(user)
 					var/list/taur_selection
 					if(pref_species.forced_taur)
 						taur_selection = list()
