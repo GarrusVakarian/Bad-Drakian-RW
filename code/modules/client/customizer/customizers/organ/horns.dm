@@ -198,8 +198,8 @@
 	default_disabled =  TRUE
 
 /datum/customizer_choice/organ/horns/lamia
+	parent_type = /datum/customizer_choice/organ/horns/humanoid
 	name = "Horns"
 	organ_type = /obj/item/organ/horns
-	sprite_accessories = list(
-		/datum/sprite_accessory/horns/angler,
-		)
+	default_accessory = /datum/sprite_accessory/horns/angler
+	generic_random_pick = FALSE
