@@ -628,6 +628,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/character_sheet_feature/content_toggles/is_eligible(datum/preferences/preferences)
 	return !preferences.has_customized_content_toggles()
 
+/datum/character_sheet_feature/hypnosis_consent
+	id = "hypnosis_consent"
+	label = "Content Toggles"
+	explanation = "New consent toggles are available, including Enable Hypnosis Content, which is off by default."
+	location = "in the character sheet's upper-right corner, below Keybinds"
+
 /datum/character_sheet_feature/roleplay_ad
 	id = "roleplay_ad"
 	label = "Set Roleplay Ad"
@@ -673,7 +679,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/content_toggles_are_new()
-	return character_sheet_feature_is_new("content_toggles")
+	return character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles")
+
+/datum/preferences/proc/content_toggles_feature_id()
+	return character_sheet_feature_is_new("hypnosis_consent") ? "hypnosis_consent" : "content_toggles"
 
 /datum/preferences/proc/roleplay_ad_is_new()
 	return character_sheet_feature_is_new("roleplay_ad")
@@ -710,6 +719,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/dismiss_character_sheet_feature(mob/user, feature)
 	if(!parent || user?.client != parent)
 		return FALSE
+	if(feature == "content_toggles")
+		feature = "hypnosis_consent"
 	if(!mark_character_sheet_feature_seen(feature))
 		return FALSE
 	refresh_character_sheet_if_open(user)
@@ -722,6 +733,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	if(!istype(features[feature], /datum/character_sheet_feature) || seen_character_sheet_features[feature])
 		return FALSE
 	seen_character_sheet_features[feature] = TRUE
+	if(feature == "hypnosis_consent")
+		seen_character_sheet_features["content_toggles"] = TRUE
 	save_preferences()
 	return TRUE
 
@@ -739,6 +752,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		return
 	var/list/features = get_character_sheet_features()
 	for(var/feature_id in features)
+		// The new consent announcement supersedes the introductory toggles reminder.
+		if(feature_id == "content_toggles" && character_sheet_feature_is_new("hypnosis_consent"))
+			continue
 		if(!character_sheet_feature_is_new(feature_id))
 			continue
 		var/datum/character_sheet_feature/feature = features[feature_id]
@@ -805,7 +821,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "</td>"
 
 			dat += "<td style='width:33%;text-align:right;vertical-align:top'>"
-			dat += character_sheet_feature_link("content_toggles", "?_src_=prefs;preference=toggles", "Gameplay, display, sound and content preferences.")
+			dat += character_sheet_feature_link(content_toggles_feature_id(), "?_src_=prefs;preference=toggles", "Gameplay, display, sound and content preferences.")
 			dat += "<br>"
 			dat += character_sheet_feature_link("roleplay_ad", "?_src_=prefs;preference=roleplay_ad;task=input", "Save an advertisement for this character to post automatically when you spawn.")
 			dat += "</td>"
