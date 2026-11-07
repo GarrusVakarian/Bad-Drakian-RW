@@ -505,7 +505,7 @@
 
 /// Lamia's lower body supplies the tail appearance; this accessory enables only the organ mechanics.
 /datum/sprite_accessory/tail/tailmaw/lamia
-	name = "Lamia Tail Maw (No Sprite)"
+	name = "Lamia Tailmaw (No Sprite)"
 	icon = null
 	icon_state = null
 	color_keys = 0
