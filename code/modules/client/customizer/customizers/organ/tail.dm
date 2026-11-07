@@ -497,8 +497,21 @@
 		/datum/sprite_accessory/tail/tailmaw2,
 		/datum/sprite_accessory/tail/tailmaw2_head,
 		/datum/sprite_accessory/tail/tailmaw2_stripes,
-		/datum/sprite_accessory/tail/tailmaw2_headstripes
-		)
+		/datum/sprite_accessory/tail/tailmaw2_headstripes,
+		/datum/sprite_accessory/tail/lunasune,
+		/datum/sprite_accessory/tail/spade,
+		/datum/sprite_accessory/tail/owl,
+		/datum/sprite_accessory/tail/pinecone,
+		/datum/sprite_accessory/tail/forked_long,
+		/datum/sprite_accessory/tail/haven,
+		/datum/sprite_accessory/tail/swallow,
+		/datum/sprite_accessory/tail/zorzor,
+		/datum/sprite_accessory/tail/large_snake,
+		/datum/sprite_accessory/tail/large_snake_plain,
+		/datum/sprite_accessory/tail/largestriped,
+		/datum/sprite_accessory/tail/shadekin,
+		/datum/sprite_accessory/tail/shadekin/short,
+	)
 	allows_accessory_color_customization = TRUE
 
 /datum/customizer/organ/tail/harpy
