@@ -6,6 +6,7 @@
 
 GLOBAL_LIST_INIT(manticore_plain_tailmaw_accessories, list(
 	/datum/sprite_accessory/tail/tailmaw,
+	/datum/sprite_accessory/tail/tailmaw/lamia,
 	/datum/sprite_accessory/tail/tailmaw2,
 	/datum/sprite_accessory/tail/tailmaw2_head,
 	/datum/sprite_accessory/tail/tailmaw2_stripes,
