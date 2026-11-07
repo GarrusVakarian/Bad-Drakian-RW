@@ -448,7 +448,7 @@
 	name = "Hypnotized"
 	icon = 'icons/mob/actions/hypnotic_gaze.dmi'
 	desc = "Your mind is in a trance, awaiting a suggestion."
-	icon_state = "hypnosis"
+	icon_state = "hypnosis_debuff"
 
 /mob/living/carbon/human/proc/hypnotized_examine(mob/viewer)
 	var/datum/hypnotic_suggestion/S = mind?.hypnotic_suggestion
