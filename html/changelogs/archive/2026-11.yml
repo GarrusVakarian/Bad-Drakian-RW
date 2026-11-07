@@ -219,6 +219,8 @@
       lore, origin traits and language bonuses.
   - spellcheck: Corrected Ascendants in the faith selection menu.
 2026-11-07:
+  Chlorotrifluoride:
+  - image: Removed the built in fluff of harpy(alt1) and harpy(bat) wings.
   mypingishuge:
   - rscadd: Players with 5 PQ or below receive a Getting Started encyclopedia link
       10 seconds after character setup, with a LOOC notification sound.
