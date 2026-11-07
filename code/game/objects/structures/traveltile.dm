@@ -48,7 +48,7 @@
 	var/travel_access_hint = null
 	var/watchable = TRUE
 	var/craftblock = TRUE
-	/// Optional PQ requirement for the traveller; pulled companions travel with their escort.
+	/// Optional PQ warning for the traveller; retrying the same portal acknowledges it.
 	var/min_travel_pq = null
 
 /obj/structure/fluff/traveltile/Initialize(mapload)
@@ -151,16 +151,21 @@
 	return FALSE
 
 /mob/living
-	var/travel_pq_notice_after = 0
+	/// Portal references mapped to the account that received its warning.
+	var/list/travel_pq_warned_portals
 
 /obj/structure/fluff/traveltile/proc/has_travel_pq(mob/living/L)
 #ifdef USES_PQ
 	if(!isnull(min_travel_pq))
 		if(!L.ckey || get_playerquality(L.ckey) < min_travel_pq)
-			if(world.time >= L.travel_pq_notice_after)
-				L.travel_pq_notice_after = world.time + 2 SECONDS
-				to_chat(L, span_boldwarning("This portal requires [min_travel_pq] PQ to enter alone. Use the northwest portal instead!"))
-				L.playsound_local(L, 'sound/misc/looc_smol.ogg', 30, TRUE, pressure_affected = FALSE)
+			var/portal_ref = REF(src)
+			if(L.ckey && L.travel_pq_warned_portals?[portal_ref] == L.ckey)
+				return TRUE
+			to_chat(L, span_boldwarning("The northwest portal is the safe route for new adventurers, use that instead! Or try again to ignore this warning."))
+			L.playsound_local(L, 'sound/misc/looc_smol.ogg', 30, TRUE, pressure_affected = FALSE)
+			if(L.ckey)
+				LAZYINITLIST(L.travel_pq_warned_portals)
+				L.travel_pq_warned_portals[portal_ref] = L.ckey
 			return FALSE
 #endif
 	return TRUE
