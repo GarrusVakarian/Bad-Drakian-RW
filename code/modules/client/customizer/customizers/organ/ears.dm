@@ -274,9 +274,24 @@
 		)
 
 /datum/customizer/organ/ears/lamia
-	customizer_choices = list(/datum/customizer_choice/organ/ears/lizard, /datum/customizer_choice/organ/ears/elf)
+	customizer_choices = list(/datum/customizer_choice/organ/ears/lizard, /datum/customizer_choice/organ/ears/elf, /datum/customizer_choice/organ/ears/lamia)
 	allows_disabling = TRUE
 	default_disabled = TRUE
+
+/datum/customizer_choice/organ/ears/lamia
+	parent_type = /datum/customizer_choice/organ/ears/anthro
+	name = "All Ears"
+	default_accessory = /datum/sprite_accessory/ears/cobrahood
+
+/datum/customizer_choice/organ/ears/lamia/New()
+	// Build this shared choice once; never mutate the other species' accessory lists.
+	sprite_accessories = list()
+	for(var/accessory_type in subtypesof(/datum/sprite_accessory/ears))
+		var/datum/sprite_accessory/accessory = accessory_type
+		if(is_abstract(accessory_type) || !initial(accessory.name) || !initial(accessory.icon_state))
+			continue
+		sprite_accessories += accessory_type
+	return ..()
 
 /datum/customizer/organ/ears/tiefling
 	customizer_choices = list(/datum/customizer_choice/organ/ears/tiefling)
