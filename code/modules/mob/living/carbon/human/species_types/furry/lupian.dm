@@ -2,6 +2,10 @@
 	race = /datum/species/lupian
 
 /datum/species/lupian
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Lupian"
 	id = "lupian"
 	desc = "<b>Lupian</b><br>\

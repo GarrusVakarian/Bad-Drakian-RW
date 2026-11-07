@@ -1,4 +1,8 @@
 /datum/species/orc
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Orc"
 	id = "orc"
 	desc = "<b>Orcs</b><br>\

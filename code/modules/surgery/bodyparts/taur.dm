@@ -172,7 +172,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 
 // Ported from Ochre-Valley bf7ad24875 by SomeDeviant.
 /obj/item/bodypart/taur/biglegs
-	name = "Big Legs"
+	name = "Digitigrade Big Legs"
 	icon = 'icons/mob/taurs/big_legs.dmi'
 	taur_icon_state = "biglegs_s"
 	taur_markings_state = "biglegs_norm"
@@ -180,7 +180,7 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	uses_taur_genital_sprites = FALSE
 
 /obj/item/bodypart/taur/biglegsstanced
-	name = "Big Legs, Stanced"
+	name = "Digitigrade Big Legs, Stanced"
 	icon = 'icons/mob/taurs/big_legs.dmi'
 	taur_icon_state = "biglegsstanced_s"
 	taur_markings_state = "biglegs_stanced"
