@@ -2,10 +2,6 @@
 	race = /datum/species/human/halfelf
 
 /datum/species/human/halfelf
-	allowed_taur_types = list(
-		/obj/item/bodypart/taur/biglegs,
-		/obj/item/bodypart/taur/biglegsstanced,
-	)
 	name = "Half-Elf"
 	id = "helf"
 	desc = "<b>Half Elf</b><br>\
