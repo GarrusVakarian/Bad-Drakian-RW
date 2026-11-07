@@ -91,6 +91,7 @@
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
 	// Spiral: tgstation/tgstation, icons/hud/screen_alert.dmi, state "hypnosis".
+	// Cropped to a transparent circle and scaled to 24px within the 32px HUD tile.
 	action_icon = 'icons/mob/actions/hypnotic_gaze.dmi'
 	action_icon_state = "hypnosis"
 	overlay_state = "hypnosis"
@@ -445,8 +446,9 @@
 
 /atom/movable/screen/alert/status_effect/debuff/hypnotized
 	name = "Hypnotized"
+	icon = 'icons/mob/actions/hypnotic_gaze.dmi'
 	desc = "Your mind is in a trance, awaiting a suggestion."
-	icon_state = "blackeye"
+	icon_state = "hypnosis"
 
 /mob/living/carbon/human/proc/hypnotized_examine(mob/viewer)
 	var/datum/hypnotic_suggestion/S = mind?.hypnotic_suggestion
