@@ -91,7 +91,7 @@
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
 	// Spiral: tgstation/tgstation, icons/hud/screen_alert.dmi, state "hypnosis".
-	// Cropped to a transparent circle and scaled to 24px within the 32px HUD tile.
+	// Scaled down and clipped to a transparent 20px circle within the 32px HUD tile.
 	action_icon = 'icons/mob/actions/hypnotic_gaze.dmi'
 	action_icon_state = "hypnosis"
 	overlay_state = "hypnosis"
