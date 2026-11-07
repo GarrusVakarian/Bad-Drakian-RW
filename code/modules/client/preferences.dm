@@ -1875,7 +1875,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		return FALSE
 	origin = chosen_origin
 	save_character()
-	to_chat(user, "<b>Origin: [html_encode(chosen_origin.name)]</b><br><b>Region Traits</b>[chosen_origin.get_traits_html()]")
+	to_chat(user, "<b>Origin: [html_encode(chosen_origin.name)]</b><br><b>Region Traits</b>[chosen_origin.get_traits_html()]", type = MESSAGE_TYPE_INFO)
 	user << browse(null, "window=origin_map")
 	ShowChoices(user)
 	return TRUE
