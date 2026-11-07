@@ -439,6 +439,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		seen_character_sheet_features["content_toggles"] = TRUE
 	S.cd = "/feature_discovery"
 	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
+	WRITE_FILE(S["revenant_customization_eligible"], revenant_customization_eligible)
 	S.cd = "/"
 	WRITE_FILE(S["asaycolor"], asaycolor)
 	WRITE_FILE(S["triumphs"], triumphs)

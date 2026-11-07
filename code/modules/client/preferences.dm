@@ -431,7 +431,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
 	var/tmp/character_sheet_notice_generation = 0
-	var/tmp/revenant_customization_eligible
+	var/revenant_customization_eligible
 
 	var/rumour
 
@@ -652,33 +652,28 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/character_sheet_feature/revenant_customization/is_eligible(datum/preferences/preferences)
 	return preferences.has_revenant_customization_character()
 
-/// Evaluate once per preferences session; a negative result is dismissed by the discovery system.
+/// Persist the first eligibility result account-wide, including before the reminder is dismissed.
 /datum/preferences/proc/has_revenant_customization_character()
 	if(!isnull(revenant_customization_eligible))
 		return revenant_customization_eligible
-	revenant_customization_eligible = FALSE
-	if(istype(pref_species, /datum/species/dullahan))
-		revenant_customization_eligible = TRUE
-		return TRUE
-	if(parent && ishuman(parent.mob))
+	revenant_customization_eligible = istype(pref_species, /datum/species/dullahan)
+	if(!revenant_customization_eligible && parent && ishuman(parent.mob))
 		var/mob/living/carbon/human/H = parent.mob
-		if(H.dna && istype(H.dna.species, /datum/species/dullahan))
-			revenant_customization_eligible = TRUE
-			return TRUE
-	if(!path || !fexists(path))
-		return FALSE
-	var/savefile/S = new(path)
-	S.cd = "/"
-	var/list/slots = S.dir.Copy()
-	for(var/slot in slots)
-		if(!istext(slot) || findtext(slot, "character") != 1 || text2num(copytext(slot, 10)) <= 0)
-			continue
-		S.cd = "/[slot]"
-		var/saved_species
-		S["species"] >> saved_species
-		if(saved_species == /datum/species/dullahan::name)
-			revenant_customization_eligible = TRUE
-			break
+		revenant_customization_eligible = H.dna && istype(H.dna.species, /datum/species/dullahan)
+	if(!revenant_customization_eligible && path && fexists(path))
+		var/savefile/S = new(path)
+		S.cd = "/"
+		var/list/slots = S.dir.Copy()
+		for(var/slot in slots)
+			if(!istext(slot) || findtext(slot, "character") != 1 || text2num(copytext(slot, 10)) <= 0)
+				continue
+			S.cd = "/[slot]"
+			var/saved_species
+			S["species"] >> saved_species
+			if(saved_species == /datum/species/dullahan::name)
+				revenant_customization_eligible = TRUE
+				break
+	save_preferences()
 	return revenant_customization_eligible
 
 /proc/get_character_sheet_features()
@@ -732,10 +727,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/previous_directory = S.cd
 	S.cd = "/"
 	var/saved_state
+	var/saved_revenant_eligibility
 	if("feature_discovery" in S.dir)
 		S.cd = "/feature_discovery"
 		S["seen_features"] >> saved_state
+		S["revenant_customization_eligible"] >> saved_revenant_eligibility
 	S.cd = previous_directory
+	revenant_customization_eligible = isnum(saved_revenant_eligibility) ? !!saved_revenant_eligibility : null
 	seen_character_sheet_features = list()
 	if(islist(saved_state))
 		for(var/feature_id in saved_state)
