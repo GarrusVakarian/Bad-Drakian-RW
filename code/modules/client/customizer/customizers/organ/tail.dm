@@ -545,10 +545,10 @@
 	allows_accessory_color_customization = TRUE
 
 /datum/customizer/organ/tail/manticore/lamia
-	name = "Tail Maw (No Sprite)"
+	name = "Tailmaw (No Sprite)"
 	customizer_choices = list(/datum/customizer_choice/organ/tail/manticore/lamia)
 
 /datum/customizer_choice/organ/tail/manticore/lamia
-	name = "Lamia Tail Maw (No Sprite)"
+	name = "Lamia Tailmaw (No Sprite)"
 	sprite_accessories = list(/datum/sprite_accessory/tail/tailmaw/lamia)
 	allows_accessory_color_customization = FALSE
