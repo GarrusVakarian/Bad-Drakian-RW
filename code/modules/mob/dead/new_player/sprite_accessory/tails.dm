@@ -502,3 +502,13 @@
 	color_keys = 3
 	color_key_names = list("Tail", "Stripes", "Head")
 	can_wag = TRUE
+
+/// Lamia's lower body supplies the tail appearance; this accessory enables only the organ mechanics.
+/datum/sprite_accessory/tail/tailmaw/lamia
+	name = "Lamia Tail Maw (No Sprite)"
+	icon = null
+	icon_state = null
+	color_keys = 0
+	color_disabled = TRUE
+	relevant_layers = null
+	can_wag = FALSE
