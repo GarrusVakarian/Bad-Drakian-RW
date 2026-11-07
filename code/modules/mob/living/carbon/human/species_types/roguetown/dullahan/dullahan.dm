@@ -5,10 +5,6 @@
 	race = /datum/species/dullahan
 
 /datum/species/dullahan
-	allowed_taur_types = list(
-		/obj/item/bodypart/taur/biglegs,
-		/obj/item/bodypart/taur/biglegsstanced,
-	)
 	name = "Revenant"
 	id = "revenant"
 	desc = "<b>Revenant</b><br>\
