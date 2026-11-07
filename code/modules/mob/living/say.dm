@@ -394,7 +394,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		return FALSE
 	return TRUE
 
-/mob/living/Hear(message, atom/movable/speaker, datum/language/message_language, raw_message, radio_freq, list/spans, message_mode, original_message)
+/mob/living/Hear(message, atom/movable/speaker, datum/language/message_language, raw_message, radio_freq, list/spans, message_mode, original_message, hypnotic_speech = FALSE)
 	. = ..()
 	if(!client)
 		return
@@ -419,6 +419,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	// Local speech remains intelligible while sleeping; whispers still require adjacency.
 	var/is_whisper = message_mode == MODE_WHISPER || message_mode == MODE_WHISPER_CRIT
 	var/allow_sleeping = !radio_freq && (!is_whisper || (speaker && speaker.z == z && (get_dist(src, speaker) in 0 to 1)))
+	if(hypnotic_speech && hypnotic_pending?.capture(src, speaker, message_language, raw_message, radio_freq, message_mode, allow_sleeping))
+		message = span_hypnophrase(message)
 	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type, allow_sleeping = allow_sleeping)
 	return message
 
@@ -585,7 +587,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			AM.Hear(eavesrendered, src, message_language, eavesdropping, null, spans, message_mode, original_message)
 			heard_message += AM
 		else
-			AM.Hear(rendered, src, message_language, highlighted_message || message, null, spans, message_mode, original_message)
+			AM.Hear(rendered, src, message_language, highlighted_message || message, null, spans, message_mode, original_message, TRUE)
 			heard_message += AM
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_LIVING_SAY_SPECIAL, src, message)
 

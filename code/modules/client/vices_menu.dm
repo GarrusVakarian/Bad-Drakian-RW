@@ -253,6 +253,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"vice6" = vice6,
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
+		"hypnotic_gaze_text" = hypnotic_gaze_text,
+		"hypnotic_gaze_text_version" = 1,
+		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"loadout" = loadout,
 		"loadout2" = loadout2,
 		"loadout3" = loadout3,
@@ -328,6 +331,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	vice6 = snapshot["vice6"]
 	redolent_type = snapshot["redolent_type"]
 	redolent_scent = snapshot["redolent_scent"]
+	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(snapshot["hypnotic_gaze_text"])
+	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(snapshot["hypnotic_gaze_style"])
 	loadout = snapshot["loadout"]
 	loadout2 = snapshot["loadout2"]
 	loadout3 = snapshot["loadout3"]
@@ -396,6 +401,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"vice6" = vice6?.type,
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
+		"hypnotic_gaze_text" = hypnotic_gaze_text,
+		"hypnotic_gaze_text_version" = 1,
+		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"loadout" = loadout?.type,
 		"loadout2" = loadout2?.type,
 		"loadout3" = loadout3?.type,
@@ -528,6 +536,11 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		vice6 = null
 	redolent_type = preset["redolent_type"] || "Neutral"
 	redolent_scent = preset["redolent_scent"] || ""
+	var/gaze_text = preset["hypnotic_gaze_text"]
+	if(preset["hypnotic_gaze_text_version"] != 1 && istext(gaze_text))
+		gaze_text = html_decode(gaze_text)
+	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(gaze_text)
+	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(preset["hypnotic_gaze_style"])
 	
 	// Load loadout types and instantiate them if valid
 	var/loadout_type = string_to_typepath(preset["loadout"])
@@ -1215,6 +1228,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/scent_display = redolent_scent || get_default_redolent_scent(redolent_type)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
 
+		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
+			html += "<div class='statpack-stats'>[hypnotic_gaze_format(sanitize_hypnotic_gaze_text(hypnotic_gaze_text), hypnotic_gaze_style)]</div>"
+
 		if(istype(current_quirk, /datum/quirk/virgin))
 			html += "<div class='statpack-stats'><b>Attracted to pronouns:</b> [english_list(sanitize_virgin_attraction(virgin_attraction))]</div>"
 
@@ -1253,6 +1269,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		html += "<div class='actions'>"
 		if(istype(current_quirk, /datum/quirk/redolent))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];redolent_action=configure'>Configure Scent</a>"
+		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
+			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];hypnotic_gaze_action=configure'>Configure Gaze</a>"
 		if(istype(current_quirk, /datum/quirk/virgin))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];quirk_action=remove;index=[i]'>Remove</a>"
@@ -1921,6 +1939,24 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(href_list["virgin_action"] == "configure")
 			configure_virgin_attraction(usr)
 			open_vices_menu(usr)
+		return
+
+	if(href_list["hypnotic_gaze_action"])
+		if(href_list["hypnotic_gaze_action"] != "configure" || !has_quirk(/datum/quirk/hypnotic_gaze))
+			return
+		var/mob/editor = usr
+		if(!editor || editor.client != parent)
+			return
+		var/new_style = tgui_input_list(editor, "Choose your gaze's examine style:", "Hypnotic Gaze", hypnotic_gaze_styles(), hypnotic_gaze_style)
+		if(!new_style)
+			return
+		var/new_text = tgui_input_text(editor, "Text shown when others can see your eyes:", "Hypnotic Gaze", hypnotic_gaze_text, max_length = 100, multiline = TRUE, encode = FALSE)
+		if(isnull(new_text) || !editor || editor.client != parent || !has_quirk(/datum/quirk/hypnotic_gaze))
+			return
+		save_to_history()
+		hypnotic_gaze_text = sanitize_hypnotic_gaze_text(new_text)
+		hypnotic_gaze_style = sanitize_hypnotic_gaze_style(new_style)
+		open_vices_menu(editor)
 		return
 
 	if(href_list["redolent_action"])

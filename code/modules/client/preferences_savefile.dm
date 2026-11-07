@@ -284,6 +284,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["cursed_collarable"] 	>> cursed_collarable
 	S["milkable"]			>> milkable
 	S["manticore_tail_messages"]	>> manticore_tail_messages
+	S["hypnosis_content"] >> hypnosis_content
+	hypnosis_content = sanitize_integer(hypnosis_content, 0, 1, FALSE)
 	S["shake"]				>> shake
 	S["no_redflash"] 		>> no_redflash
 	S["mastervol"]			>> mastervol
@@ -480,6 +482,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["cursed_collarable"], cursed_collarable)
 	WRITE_FILE(S["milkable"], milkable)
 	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
+	WRITE_FILE(S["hypnosis_content"], hypnosis_content)
 	WRITE_FILE(S["shake"], shake)
 	WRITE_FILE(S["no_redflash"], no_redflash)
 	WRITE_FILE(S["lastclass"], lastclass)
@@ -598,6 +601,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	vice6 = (vice6_type && ispath(vice6_type)) ? new vice6_type() : null
 	S["redolent_type"] >> redolent_type
 	S["redolent_scent"] >> redolent_scent
+	S["hypnotic_gaze_text"] >> hypnotic_gaze_text
+	S["hypnotic_gaze_style"] >> hypnotic_gaze_style
+	var/hypnotic_gaze_text_version
+	S["hypnotic_gaze_text_version"] >> hypnotic_gaze_text_version
+	if(hypnotic_gaze_text_version != 1 && istext(hypnotic_gaze_text))
+		hypnotic_gaze_text = html_decode(hypnotic_gaze_text)
+	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(hypnotic_gaze_text)
+	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(hypnotic_gaze_style)
 	if(isnull(redolent_type)) // legacy savefile key from when this was named malodorous
 		S["malodorous_type"] >> redolent_type
 		S["malodorous_scent"] >> redolent_scent
@@ -1220,6 +1231,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["vice6"], preferences_typepath_or_null(vice6))
 	WRITE_FILE(S["redolent_type"], redolent_type)
 	WRITE_FILE(S["redolent_scent"], redolent_scent)
+	WRITE_FILE(S["hypnotic_gaze_text"], hypnotic_gaze_text)
+	WRITE_FILE(S["hypnotic_gaze_style"], hypnotic_gaze_style)
+	WRITE_FILE(S["hypnotic_gaze_text_version"], 1)
 	WRITE_FILE(S["feature_mcolor"]		, features["mcolor"])
 	WRITE_FILE(S["feature_mcolor2"]		, features["mcolor2"])
 	WRITE_FILE(S["feature_mcolor3"]		, features["mcolor3"])
