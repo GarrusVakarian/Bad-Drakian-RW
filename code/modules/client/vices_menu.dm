@@ -254,6 +254,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
 		"hypnotic_gaze_text" = hypnotic_gaze_text,
+		"hypnotic_gaze_text_version" = 1,
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"loadout" = loadout,
 		"loadout2" = loadout2,
@@ -401,6 +402,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
 		"hypnotic_gaze_text" = hypnotic_gaze_text,
+		"hypnotic_gaze_text_version" = 1,
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"loadout" = loadout?.type,
 		"loadout2" = loadout2?.type,
@@ -534,7 +536,10 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		vice6 = null
 	redolent_type = preset["redolent_type"] || "Neutral"
 	redolent_scent = preset["redolent_scent"] || ""
-	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(preset["hypnotic_gaze_text"])
+	var/gaze_text = preset["hypnotic_gaze_text"]
+	if(preset["hypnotic_gaze_text_version"] != 1 && istext(gaze_text))
+		gaze_text = html_decode(gaze_text)
+	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(gaze_text)
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(preset["hypnotic_gaze_style"])
 	
 	// Load loadout types and instantiate them if valid
@@ -1945,7 +1950,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/new_style = tgui_input_list(editor, "Choose your gaze's examine style:", "Hypnotic Gaze", hypnotic_gaze_styles(), hypnotic_gaze_style)
 		if(!new_style)
 			return
-		var/new_text = tgui_input_text(editor, "Text shown when others can see your eyes:", "Hypnotic Gaze", hypnotic_gaze_text, max_length = 100, multiline = TRUE)
+		var/new_text = tgui_input_text(editor, "Text shown when others can see your eyes:", "Hypnotic Gaze", hypnotic_gaze_text, max_length = 100, multiline = TRUE, encode = FALSE)
 		if(isnull(new_text) || !editor || editor.client != parent || !has_quirk(/datum/quirk/hypnotic_gaze))
 			return
 		save_to_history()

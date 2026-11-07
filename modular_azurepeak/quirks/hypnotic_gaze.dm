@@ -2,13 +2,24 @@
 #define HYPNOTIC_GAZE_PENDING_TIME (10 MINUTES)
 #define HYPNOTIC_GAZE_REMINDER_TIME (20 MINUTES)
 
+/proc/hypnosis_content_enabled(mob/participant)
+	return !!participant?.client?.prefs?.hypnosis_content
+
+/// Speech arrives HTML-encoded, with optional renderer-inserted formatting tags.
+/// Strip only actual markup, decode exactly once, and encode only at display time.
+/proc/hypnotic_speech_plaintext(text)
+	if(!istext(text))
+		return ""
+	var/static/regex/markup = regex(@"<[^>]*>", "g")
+	return trim(copytext_char(html_decode(markup.Replace(text, "")), 1, MAX_MESSAGE_LEN))
+
 /proc/hypnotic_gaze_styles()
 	return list("Hypnotext", "Purple", "Pink", "Velvet", "Gold", "Cult Red")
 
 /proc/sanitize_hypnotic_gaze_text(text)
 	if(!istext(text))
 		return "Their eyes are enticing to gaze into."
-	text = trim(copytext_char(html_decode(strip_html(text)), 1, 101))
+	text = trim(copytext_char(text, 1, 101))
 	return length(text) ? text : "Their eyes are enticing to gaze into."
 
 /proc/sanitize_hypnotic_gaze_style(style)
@@ -69,7 +80,7 @@
 	return TRUE
 
 /mob/living/carbon/human/proc/hypnotic_gaze_examine(mob/viewer)
-	if(viewer == src || !viewer || !hypnotic_gaze_text || !hypnotic_eyes_visible())
+	if(viewer == src || !hypnosis_content_enabled(viewer) || !hypnotic_gaze_text || !hypnotic_eyes_visible())
 		return null
 	if(isliving(viewer))
 		var/mob/living/L = viewer
@@ -124,7 +135,11 @@
 	var/mob/living/carbon/human/target = length(targets) ? targets[1] : null
 	if(channel || !hypnotic_gaze_can_channel(caster, target) || caster.hypnotic_gaze_channel || target.hypnotic_gaze_channel)
 		var/failure_message = "I cannot establish eye contact right now."
-		if(istype(caster) && !caster.hypnotic_eyes_visible())
+		if(!hypnosis_content_enabled(caster))
+			failure_message = "I do not have hypnosis content enabled in my toggles!"
+		else if(istype(target) && !hypnosis_content_enabled(target))
+			failure_message = "They do not consent to hypnosis content."
+		else if(istype(caster) && !caster.hypnotic_eyes_visible())
 			failure_message = "My eyes are covered!"
 		else if(istype(target) && !target.hypnotic_eyes_visible())
 			failure_message = "Their eyes are covered!"
@@ -150,9 +165,9 @@
 	charge_counter = 0
 	start_recharge()
 	if(!success)
-		if(!QDELETED(caster))
+		if(!QDELETED(caster) && hypnosis_content_enabled(caster))
 			to_chat(caster, span_hypnophrase("Your concentration breaks, and their thoughts slip beyond your reach."))
-		if(!QDELETED(target))
+		if(!QDELETED(target) && hypnosis_content_enabled(target))
 			to_chat(target, span_hypnophrase("The gaze breaks before it can settle into your thoughts."))
 		return FALSE
 	var/datum/hypnotic_suggestion/existing = target.mind.hypnotic_suggestion
@@ -175,6 +190,8 @@
 	if(!istype(caster) || !istype(target) || QDELETED(caster) || QDELETED(target) || caster == target)
 		return FALSE
 	if(!caster.client || !target.client || !caster.mind || !target.mind || caster.stat != CONSCIOUS || target.stat != CONSCIOUS)
+		return FALSE
+	if(!hypnosis_content_enabled(caster) || !hypnosis_content_enabled(target))
 		return FALSE
 	if(!caster.hypnotic_eyes_visible() || !target.hypnotic_eyes_visible() || caster.eye_blind || target.eye_blind)
 		return FALSE
@@ -326,7 +343,7 @@
 
 /// Called only for fully delivered local speech, never eavesdropped fragments/emotes.
 /datum/hypnotic_suggestion/proc/capture(mob/living/listener, atom/movable/speaker, datum/language/language, raw_message, radio_freq, message_mode, allow_sleeping)
-	if(phrase || QDELETED(listener) || !listener.client || !listener.can_hear() || listener.stat == DEAD)
+	if(phrase || QDELETED(listener) || !hypnosis_content_enabled(listener) || !listener.can_hear() || listener.stat == DEAD)
 		return FALSE
 	if(listener.stat != CONSCIOUS && !(allow_sleeping && listener.IsSleeping()))
 		return FALSE
@@ -335,11 +352,11 @@
 	if(!target_mind || !caster_mind || listener.mind != target_mind || !isliving(speaker))
 		return FALSE
 	var/mob/living/caster = speaker
-	if(caster.mind != caster_mind || radio_freq || !language || !(listener.has_language(language) || listener.check_language_hear(language)))
+	if(caster.mind != caster_mind || !hypnosis_content_enabled(caster) || radio_freq || !language || !(listener.has_language(language) || listener.check_language_hear(language)))
 		return FALSE
 	if(message_mode && message_mode != MODE_WHISPER && message_mode != MODE_WHISPER_CRIT)
 		return FALSE
-	phrase = trim(copytext_char(html_decode(strip_html(raw_message)), 1, MAX_MESSAGE_LEN))
+	phrase = hypnotic_speech_plaintext(raw_message)
 	if(!length(phrase))
 		phrase = null
 		return FALSE
@@ -362,7 +379,7 @@
 	if(phrase)
 		return
 	var/datum/mind/M = target_mind_ref?.resolve()
-	if(M?.hypnotic_suggestion == src && M.current)
+	if(M?.hypnotic_suggestion == src && hypnosis_content_enabled(M.current))
 		to_chat(M.current, span_hypnophrase("The trance fades. Your thoughts are your own again."))
 	qdel(src)
 
@@ -373,7 +390,10 @@
 		qdel(src)
 		return
 	var/mob/living/body = target_mind.current
-	if(istype(body) && !QDELETED(body) && body.client && body.stat != DEAD)
+	if(istype(body) && body.client && !hypnosis_content_enabled(body))
+		qdel(src)
+		return
+	if(istype(body) && !QDELETED(body) && hypnosis_content_enabled(body) && body.stat != DEAD)
 		to_chat(body, hypnotic_gaze_format(suggestion_text()))
 	reminder_timer = addtimer(CALLBACK(src, PROC_REF(remind)), HYPNOTIC_GAZE_REMINDER_TIME, TIMER_STOPPABLE)
 
@@ -430,7 +450,7 @@
 
 /mob/living/carbon/human/proc/hypnotized_examine(mob/viewer)
 	var/datum/hypnotic_suggestion/S = mind?.hypnotic_suggestion
-	if(!S || viewer == src || !viewer || !hypnotic_eyes_visible())
+	if(!S || viewer == src || !hypnosis_content_enabled(viewer) || !hypnotic_eyes_visible())
 		return null
 	if(isliving(viewer))
 		var/mob/living/L = viewer
