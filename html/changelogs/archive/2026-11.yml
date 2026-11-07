@@ -234,3 +234,7 @@
   - balance: Druid requires 1 PQ on Neuhill and Smollhill.
   - spellcheck: Renamed the North-Western path to Rockhill to Northwestern path to
       Rockhill.
+  - bugfix: Blocked throws between z-levels now explain that the target must be tackled
+      down first, preserve the grab and cancel throw mode and looking upstairs.
+  - spellcheck: Giant's effects explanation now mentions that it can throw non-Giant
+      characters without an aggressive grab.

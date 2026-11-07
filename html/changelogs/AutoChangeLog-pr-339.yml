@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Blocked throws between z-levels now explain that the target must be tackled down first, preserve the grab and cancel throw mode and looking upstairs."
-  - spellcheck: "Giant's effects explanation now mentions that it can throw non-Giant characters without an aggressive grab."
