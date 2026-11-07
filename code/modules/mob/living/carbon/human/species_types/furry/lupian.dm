@@ -93,6 +93,7 @@
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/tail/lupian, 
 		/datum/customizer/organ/tail/anthro,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/snout/lupian,
 		/datum/customizer/organ/snout/anthro,
 		/datum/customizer/organ/ears/lupian,

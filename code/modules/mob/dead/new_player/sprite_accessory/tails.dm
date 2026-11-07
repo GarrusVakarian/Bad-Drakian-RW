@@ -502,3 +502,13 @@
 	color_keys = 3
 	color_key_names = list("Tail", "Stripes", "Head")
 	can_wag = TRUE
+
+/// Mechanics-only option; normal tail visuals are resolved from the other tail preferences.
+/datum/sprite_accessory/tail/tailmaw/spriteless
+	name = "Tailmaw (No Sprite)"
+	icon = null
+	icon_state = null
+	color_keys = 0
+	color_disabled = TRUE
+	relevant_layers = null
+	can_wag = FALSE
