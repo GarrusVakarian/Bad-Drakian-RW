@@ -83,12 +83,12 @@
 
 	// L.client, so NPCs and disconnected bodies stay out of the picker
 	for(var/mob/living/L in hearers)
-		if(L.client && (L.stat == CONSCIOUS || (L.stat == UNCONSCIOUS && L.IsSleeping())) && L != S)
+		if(L.client && L.stat < DEAD && L != S)
 			if(!L.rogue_sneaking && L.name != "Unknown")
 				recipient_choices += L
 
 	var/recipient_choice = input(src, "Pick a target?", "SLOOC") in recipient_choices
-	if(!recipient_choice)
+	if(!recipient_choice || QDELETED(S) || mob != S)
 		return
 
 	mob.log_talk(msg, LOG_LOOC)
@@ -102,7 +102,10 @@
 		recipient_label = "Same Tile"
 		recipient_admin_label = recipient_label
 	else
-		var/mob/target = recipient_choice
+		var/mob/living/target = recipient_choice
+		if(!istype(target) || QDELETED(target) || target.stat == DEAD || !target.client)
+			to_chat(src, span_boldwarning("The subtle LOOC target is no longer available, try again."))
+			return
 		recipient_label = target.name
 		if(target.ckey)
 			recipient_admin_label = "[recipient_label] ([target.ckey])"
@@ -136,7 +139,7 @@
 			to_chat(C, outgoing_msg)
 	else
 		var/mob/target = recipient_choice
-		if(get_dist(get_turf(target), get_turf(S)) > distance)
+		if(target.z != S.z || get_dist(get_turf(target), get_turf(S)) > distance)
 			to_chat(src, span_boldwarning("The subtle LOOC target moved out of view, try again."))
 			return
 		var/client/target_client = target?.client
