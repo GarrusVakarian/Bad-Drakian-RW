@@ -1858,14 +1858,27 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		if(C)
 			C.clear_character_previews()
 	if(href_list["preference"] == "origin_select")
-		var/mob/user = usr
-		var/chosen_type = text2path(href_list["type"])
-		if(chosen_type && (chosen_type in GLOB.origins))
-			origin = GLOB.origins[chosen_type]
-			save_character()
-			user << browse(null, "window=origin_map")
-			ShowChoices(user)
-			return
+		select_origin(usr, href_list["type"])
+		return
+
+/// Both the origin map's direct links and preference links use the same checked selection path.
+/datum/preferences/proc/select_origin(mob/user, type_text)
+	if(!ismob(user) || QDELETED(user) || !user.client || user.client != parent || parent.prefs != src || parent.mob != user)
+		return FALSE
+	if(!istext(type_text))
+		return FALSE
+	var/chosen_type = text2path(type_text)
+	if(!ispath(chosen_type, /datum/origin) || !(chosen_type in GLOB.origins))
+		return FALSE
+	var/datum/origin/chosen_origin = GLOB.origins[chosen_type]
+	if(!istype(chosen_origin))
+		return FALSE
+	origin = chosen_origin
+	save_character()
+	to_chat(user, "<b>Origin: [html_encode(chosen_origin.name)]</b><br><b>Region Traits</b>[chosen_origin.get_traits_html()]", type = MESSAGE_TYPE_INFO)
+	user << browse(null, "window=origin_map")
+	ShowChoices(user)
+	return TRUE
 
 /datum/preferences/proc/edit_roleplay_ad(mob/user)
 	if(!ismob(user) || !user.client || user.client != parent)
@@ -2009,13 +2022,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		ShowCustomizers(user)
 		return
 	else if(href_list["preference"] == "origin_select")
-		var/chosen_type = text2path(href_list["type"])
-		if(chosen_type && (chosen_type in GLOB.origins))
-			origin = GLOB.origins[chosen_type]
-			save_character()
-			user << browse(null, "window=origin_map")
-			ShowChoices(user)
-			return
+		select_origin(user, href_list["type"])
 		return
 	else if(href_list["preference"] == "triumph_buy_menu")
 		SStriumphs.startup_triumphs_menu(user.client)
