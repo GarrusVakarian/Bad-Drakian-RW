@@ -503,9 +503,9 @@
 	color_key_names = list("Tail", "Stripes", "Head")
 	can_wag = TRUE
 
-/// Lamia's lower body supplies the tail appearance; this accessory enables only the organ mechanics.
-/datum/sprite_accessory/tail/tailmaw/lamia
-	name = "Lamia Tailmaw (No Sprite)"
+/// Mechanics-only option; normal tail visuals are resolved from the other tail preferences.
+/datum/sprite_accessory/tail/tailmaw/spriteless
+	name = "Tailmaw (No Sprite)"
 	icon = null
 	icon_state = null
 	color_keys = 0

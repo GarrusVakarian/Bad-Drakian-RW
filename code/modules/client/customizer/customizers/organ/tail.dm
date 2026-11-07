@@ -532,6 +532,7 @@
 	organ_type = /obj/item/organ/tail/manticore
 	sprite_accessories = list(
 		/datum/sprite_accessory/tail/manticore,
+		/datum/sprite_accessory/tail/tailmaw/spriteless,
 		/datum/sprite_accessory/tail/tailmaw,
 		/datum/sprite_accessory/tail/tailmaw2,
 		/datum/sprite_accessory/tail/tailmaw2_head,
@@ -549,6 +550,50 @@
 	customizer_choices = list(/datum/customizer_choice/organ/tail/manticore/lamia)
 
 /datum/customizer_choice/organ/tail/manticore/lamia
-	name = "Lamia Tailmaw (No Sprite)"
-	sprite_accessories = list(/datum/sprite_accessory/tail/tailmaw/lamia)
+	name = "Tailmaw (No Sprite)"
+	sprite_accessories = list(/datum/sprite_accessory/tail/tailmaw/spriteless)
 	allows_accessory_color_customization = FALSE
+
+/datum/customizer/organ/tail/manticore/tailed
+	name = "Tailmaw"
+
+/datum/customizer_choice/organ/tail/manticore/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
+	..()
+	if(entry.accessory_type != /datum/sprite_accessory/tail/tailmaw/spriteless)
+		return
+	organ_dna.organ_type = /obj/item/organ/tail/manticore/spriteless
+	var/datum/organ_dna/visual_dna = get_tailmaw_visual_dna(prefs)
+	if(visual_dna)
+		organ_dna.accessory_type = visual_dna.accessory_type
+		organ_dna.accessory_colors = visual_dna.accessory_colors
+		qdel(visual_dna)
+
+/// Match the last enabled normal tail entry, as the ordinary organ-DNA pipeline does.
+/proc/get_tailmaw_visual_dna(datum/preferences/prefs)
+	if(!prefs?.pref_species)
+		return null
+	var/datum/organ_dna/visual_dna
+	for(var/datum/customizer_entry/entry as anything in prefs.customizer_entries)
+		if(!istype(entry) || entry.disabled || !ispath(entry.customizer_type, /datum/customizer/organ/tail) || ispath(entry.customizer_type, /datum/customizer/organ/tail/manticore))
+			continue
+		if(!(entry.customizer_type in prefs.pref_species.customizers))
+			continue
+		var/datum/customizer_choice/organ/tail/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+		if(!istype(choice))
+			continue
+		QDEL_NULL(visual_dna)
+		visual_dna = choice.create_organ_dna(entry, prefs)
+	if(visual_dna)
+		return visual_dna
+	var/obj/item/organ/tail/species_tail = prefs.pref_species.organs?[ORGAN_SLOT_TAIL]
+	if(!ispath(species_tail, /obj/item/organ/tail))
+		return null
+	visual_dna = new /datum/organ_dna/tail()
+	visual_dna.organ_type = species_tail
+	visual_dna.accessory_type = initial(species_tail.accessory_type)
+	visual_dna.accessory_colors = initial(species_tail.accessory_colors)
+	if(visual_dna.accessory_type && !visual_dna.accessory_colors)
+		var/datum/sprite_accessory/accessory = SPRITE_ACCESSORY(visual_dna.accessory_type)
+		if(istype(accessory))
+			visual_dna.accessory_colors = accessory.get_default_colors(color_key_source_list_from_prefs(prefs))
+	return visual_dna

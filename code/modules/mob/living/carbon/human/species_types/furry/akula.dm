@@ -86,6 +86,7 @@
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/snout/akula,
 		/datum/customizer/organ/tail/axian,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/ears/axian,
 		/datum/customizer/organ/horns/anthro,
 		/datum/customizer/organ/testicles/anthro,
