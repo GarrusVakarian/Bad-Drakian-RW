@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Selecting a character origin now explains its regional traits and their effects in chat."
