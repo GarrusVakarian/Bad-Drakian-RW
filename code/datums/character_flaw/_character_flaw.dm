@@ -655,11 +655,11 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	point_value = 2
 
 /datum/charflaw/sleepless/on_mob_creation(mob/user)
-	ADD_TRAIT(user, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	ADD_TRAIT(user, TRAIT_NOSLEEP, type)
 
 /datum/charflaw/sleepless/on_removal(mob/user)
 	..()
-	REMOVE_TRAIT(user, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	REMOVE_TRAIT(user, TRAIT_NOSLEEP, type)
 
 /datum/charflaw/mute
 	name = "Mute"
