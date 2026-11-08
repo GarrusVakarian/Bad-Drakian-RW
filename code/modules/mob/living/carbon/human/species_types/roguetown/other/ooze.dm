@@ -75,6 +75,7 @@
 		/datum/customizer/bodypart_feature/pubes,
 		/datum/customizer/bodypart_feature/pits,
 		/datum/customizer/organ/tail/anthro,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/tail_feature/anthro,
 		/datum/customizer/organ/snout/anthro,
 		/datum/customizer/organ/ears/anthro,

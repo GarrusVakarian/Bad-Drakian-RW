@@ -96,6 +96,7 @@
 		/datum/customizer/bodypart_feature/underwear,
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/tail/vulpkanin,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/snout/vulpkanin,
 		/datum/customizer/organ/ears/vulpkanin,
 		/datum/customizer/organ/horns/anthro,

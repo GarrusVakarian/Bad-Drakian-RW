@@ -140,7 +140,12 @@
 		var/datum/organ_dna/dna = customizer_choice.create_organ_dna(entry, src)
 		if(!dna)
 			continue
-		organ_list[customizer_choice.get_organ_slot()] = dna
+		var/slot = customizer_choice.get_organ_slot()
+		var/datum/organ_dna/existing_dna = organ_list[slot]
+		if(slot == ORGAN_SLOT_TAIL && existing_dna && ispath(existing_dna.organ_type, /obj/item/organ/tail/manticore) && !ispath(dna.organ_type, /obj/item/organ/tail/manticore))
+			qdel(dna)
+			continue
+		organ_list[slot] = dna
 
 	return organ_list
 
