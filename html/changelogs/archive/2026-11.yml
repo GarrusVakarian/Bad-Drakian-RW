@@ -252,6 +252,8 @@
   - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by\
       \ Astrata\u2019s curse."
   - bugfix: Oozes now use their selected accent and speech mannerism in spoken chat.
+  - bugfix: "Viciously mocking a Baron or Baroness now counts toward Xylix\u2019s\
+      \ Mock Monarch objective."
   mypingishuge:
   - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
       35 minutes before its first increase."
