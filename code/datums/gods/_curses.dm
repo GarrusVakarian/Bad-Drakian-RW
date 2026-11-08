@@ -190,11 +190,11 @@
 	. = ..()
 	if(curse_resist && prob(50))
 		return
-	ADD_TRAIT(owner, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	ADD_TRAIT(owner, TRAIT_NOSLEEP, type)
 
 /datum/curse/astrata/on_loss(mob/living/carbon/human/owner, curse_resist = FALSE)
 	. = ..()
-	REMOVE_TRAIT(owner, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	REMOVE_TRAIT(owner, TRAIT_NOSLEEP, type)
 
 //NECRA//
 /datum/curse/necra/on_gain(mob/living/carbon/human/owner, curse_resist = FALSE)
