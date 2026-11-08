@@ -72,7 +72,10 @@
 		ui.set_state(GLOB.always_state)
 		if(!ui.open())
 			return
-	if(owner?.prefs && user?.client == owner && owner.prefs.mark_character_sheet_feature_seen("hypnosis_consent"))
+	if(!owner?.prefs || user?.client != owner)
+		return
+	// Marking Hypnosis Consent also marks Content Toggles. Fall back when consent is already seen.
+	if(owner.prefs.mark_character_sheet_feature_seen("hypnosis_consent") || owner.prefs.mark_character_sheet_feature_seen("content_toggles"))
 		owner.prefs.refresh_character_sheet_if_open(user)
 
 /datum/toggle_options_menu/ui_data(mob/user)
