@@ -14,7 +14,7 @@
 	return trim(copytext_char(html_decode(markup.Replace(text, "")), 1, MAX_MESSAGE_LEN))
 
 /proc/hypnotic_gaze_styles()
-	return list("Hypnotext", "Purple", "Pink", "Velvet", "Gold", "Cult Red")
+	return list("Hypnotext", "Purple", "Pink", "Velvet", "Gold", "Green", "Cult Red")
 
 /proc/sanitize_hypnotic_gaze_text(text)
 	if(!istext(text))
@@ -24,6 +24,12 @@
 
 /proc/sanitize_hypnotic_gaze_style(style)
 	return (style in hypnotic_gaze_styles()) ? style : "Hypnotext"
+
+/proc/sanitize_hypnotic_presence_text(text)
+	if(!istext(text))
+		return "There is something strangely compelling about their presence."
+	text = trim(copytext_char(text, 1, 101))
+	return length(text) ? text : "There is something strangely compelling about their presence."
 
 /proc/hypnotic_gaze_format(text, style = "Hypnotext")
 	text = html_encode(text)
@@ -36,6 +42,8 @@
 			return "<span style='color:#c45b85'>[text]</span>"
 		if("Gold")
 			return "<span style='color:#e8c65a'>[text]</span>"
+		if("Green")
+			return "<span style='color:#72c779'>[text]</span>"
 		if("Cult Red")
 			return "<span class='cult'>[text]</span>"
 	return span_hypnophrase(text)
@@ -44,22 +52,41 @@
 	name = "Hypnotic Gaze"
 	desc = "My gaze draws others in, leaving my words lingering deep within their thoughts."
 	point_cost = 1
+	incompatible_quirks = list(/datum/quirk/hypnotic_presence)
 	custom_text = "Grants Hypnotic Gaze: a two-tile, ten-second stationary channel. The next words the target hears from me become a lasting suggestion. Recasting releases them."
+	var/is_presence = FALSE
+	var/hypnotic_spell_type = /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
+
+/datum/quirk/hypnotic_presence
+	parent_type = /datum/quirk/hypnotic_gaze
+	name = "Hypnotic Presence"
+	desc = "Something about my presence draws others in, leaving my words lingering deep within their thoughts."
+	custom_text = "Grants Hypnotic Presence: a two-tile, ten-second stationary channel that does not require exposed eyes. The next words the target hears from me become a lasting suggestion. Recasting releases them."
+	incompatible_quirks = list(/datum/quirk/hypnotic_gaze)
+	is_presence = TRUE
+	hypnotic_spell_type = /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/presence
 
 /datum/quirk/hypnotic_gaze/apply_to_human(mob/living/carbon/human/recipient)
-	recipient.hypnotic_gaze_text = sanitize_hypnotic_gaze_text(recipient.client?.prefs?.hypnotic_gaze_text)
-	recipient.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_gaze_style)
 	if(locate(/obj/effect/proc_holder/spell/invoked/hypnotic_gaze) in recipient.mob_spell_list)
 		return
+	if(recipient.mind?.has_spell(/obj/effect/proc_holder/spell/invoked/hypnotic_gaze))
+		return
+	recipient.hypnotic_presence = is_presence
+	if(is_presence)
+		recipient.hypnotic_gaze_text = sanitize_hypnotic_presence_text(recipient.client?.prefs?.hypnotic_presence_text)
+		recipient.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_presence_style)
+	else
+		recipient.hypnotic_gaze_text = sanitize_hypnotic_gaze_text(recipient.client?.prefs?.hypnotic_gaze_text)
+		recipient.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_gaze_style)
 	if(recipient.mind)
-		if(!recipient.mind.has_spell(/obj/effect/proc_holder/spell/invoked/hypnotic_gaze))
-			recipient.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/hypnotic_gaze)
-	else if(!(locate(/obj/effect/proc_holder/spell/invoked/hypnotic_gaze) in recipient.mob_spell_list))
-		recipient.AddSpell(new /obj/effect/proc_holder/spell/invoked/hypnotic_gaze)
+		recipient.mind.AddSpell(new hypnotic_spell_type)
+	else
+		recipient.AddSpell(new hypnotic_spell_type)
 
 /mob/living/carbon/human
 	var/hypnotic_gaze_text
 	var/hypnotic_gaze_style = "Hypnotext"
+	var/hypnotic_presence = FALSE
 	var/datum/hypnotic_gaze_channel/hypnotic_gaze_channel
 
 // Use current eye-cover flags, not identity hiding or merely occupying the mask slot.
@@ -80,12 +107,15 @@
 	return TRUE
 
 /mob/living/carbon/human/proc/hypnotic_gaze_examine(mob/viewer)
-	if(viewer == src || !hypnosis_content_enabled(viewer) || !hypnotic_gaze_text || !hypnotic_eyes_visible())
+	if(viewer == src || !hypnosis_content_enabled(viewer) || !hypnotic_gaze_text)
 		return null
-	if(isliving(viewer))
-		var/mob/living/L = viewer
-		if(L.eye_blind)
+	if(!hypnotic_presence)
+		if(!hypnotic_eyes_visible())
 			return null
+		if(isliving(viewer))
+			var/mob/living/L = viewer
+			if(L.eye_blind)
+				return null
 	return hypnotic_gaze_format(hypnotic_gaze_text, hypnotic_gaze_style)
 
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
@@ -106,6 +136,28 @@
 	mute_allowed = TRUE
 	releasedrain = 0
 	var/datum/hypnotic_gaze_channel/channel
+	var/requires_eye_contact = TRUE
+	var/connection_error = "I cannot establish eye contact right now."
+	var/channel_caster_text = "You fix your gaze upon them, beginning to pierce the surface of their mind."
+	var/channel_target_text = "Their gaze draws you in. You feel compelled to meet their eyes."
+	var/interrupted_target_text = "The gaze breaks before it can settle into your thoughts."
+	var/trance_target_text = "Your thoughts soften beneath their gaze. Your mind feels especially receptive to their next words."
+	var/trance_caster_text = "Their mind lies open. The next words they hear from you will become a lasting suggestion, remembered until another gaze releases them."
+	var/release_target_text = "Your mind clears. Those words no longer command your thoughts."
+	var/release_caster_text = "You release their mind from its lingering suggestion."
+
+/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/presence
+	name = "Hypnotic Presence"
+	desc = "Focus your influence on someone for ten seconds. The next words they hear from you become a lasting suggestion. Cast again to release an existing trance or suggestion."
+	requires_eye_contact = FALSE
+	connection_error = "I cannot establish a connection right now."
+	channel_caster_text = "You focus your influence upon them, gently pressing against the surface of their thoughts."
+	channel_target_text = "Something about their presence draws you in. You feel an unusual pull upon your attention."
+	interrupted_target_text = "The influence fades before it can settle into your thoughts."
+	trance_target_text = "Your thoughts soften, and the world around you seems less important. Your mind feels especially receptive to their next words."
+	trance_caster_text = "Their mind lies open. The next words they hear from you will become a lasting suggestion, remembered until another hypnotic influence releases them."
+	release_target_text = "Your mind clears. The lingering influence releases its hold upon your thoughts."
+	release_caster_text = "You release their mind from its lingering influence."
 
 // Keep the preparatory mouse charge at exactly one second.
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/get_chargetime()
@@ -134,15 +186,15 @@
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/cast(list/targets, mob/living/user)
 	var/mob/living/carbon/human/caster = user
 	var/mob/living/carbon/human/target = length(targets) ? targets[1] : null
-	if(channel || !hypnotic_gaze_can_channel(caster, target) || caster.hypnotic_gaze_channel || target.hypnotic_gaze_channel)
-		var/failure_message = "I cannot establish eye contact right now."
+	if(channel || !hypnotic_gaze_can_channel(caster, target, requires_eye_contact) || caster.hypnotic_gaze_channel || target.hypnotic_gaze_channel)
+		var/failure_message = connection_error
 		if(!hypnosis_content_enabled(caster))
 			failure_message = "I do not have hypnosis content enabled in my toggles!"
 		else if(istype(target) && !hypnosis_content_enabled(target))
 			failure_message = "They do not consent to hypnosis content."
-		else if(istype(caster) && !caster.hypnotic_eyes_visible())
+		else if(requires_eye_contact && istype(caster) && !caster.hypnotic_eyes_visible())
 			failure_message = "My eyes are covered!"
-		else if(istype(target) && !target.hypnotic_eyes_visible())
+		else if(requires_eye_contact && istype(target) && !target.hypnotic_eyes_visible())
 			failure_message = "Their eyes are covered!"
 		to_chat(user, span_warning(failure_message))
 		charge_counter = 0
@@ -150,15 +202,15 @@
 		return FALSE
 	var/releasing = !!target.mind.hypnotic_suggestion
 	var/datum/weakref/original_suggestion_ref = releasing ? WEAKREF(target.mind.hypnotic_suggestion) : null
-	channel = new(caster, target)
+	channel = new(caster, target, requires_eye_contact)
 	var/datum/hypnotic_gaze_channel/attempt = channel
-	to_chat(caster, span_hypnophrase("You fix your gaze upon them, beginning to pierce the surface of their mind."))
-	to_chat(target, span_hypnophrase("Their gaze draws you in. You feel compelled to meet their eyes."))
+	to_chat(caster, span_hypnophrase(channel_caster_text))
+	to_chat(target, span_hypnophrase(channel_target_text))
 	var/success = FALSE
 	try
 		success = attempt.await_channel()
 	catch(var/exception/error)
-		stack_trace("Hypnotic Gaze channel failed: [error]")
+		stack_trace("[name] channel failed: [error]")
 	qdel(attempt)
 	if(QDELETED(src))
 		return FALSE
@@ -169,7 +221,7 @@
 		if(!QDELETED(caster) && hypnosis_content_enabled(caster))
 			to_chat(caster, span_hypnophrase("Your concentration breaks, and their thoughts slip beyond your reach."))
 		if(!QDELETED(target) && hypnosis_content_enabled(target))
-			to_chat(target, span_hypnophrase("The gaze breaks before it can settle into your thoughts."))
+			to_chat(target, span_hypnophrase(interrupted_target_text))
 		return FALSE
 	var/datum/hypnotic_suggestion/existing = target.mind.hypnotic_suggestion
 	if(releasing)
@@ -177,41 +229,44 @@
 			return FALSE
 		if(existing)
 			qdel(existing)
-		to_chat(target, span_hypnophrase("Your mind clears. Those words no longer command your thoughts."))
-		to_chat(caster, span_hypnophrase("You release their mind from its lingering suggestion."))
+		to_chat(target, span_hypnophrase(release_target_text))
+		to_chat(caster, span_hypnophrase(release_caster_text))
 	else
 		if(existing)
 			return FALSE
 		new /datum/hypnotic_suggestion(target.mind, caster.mind)
-		to_chat(target, span_hypnophrase("Your thoughts soften beneath their gaze. Your mind feels especially receptive to their next words."))
-		to_chat(caster, span_hypnophrase("Their mind lies open. The next words they hear from you will become a lasting suggestion, remembered until another gaze releases them."))
+		to_chat(target, span_hypnophrase(trance_target_text))
+		to_chat(caster, span_hypnophrase(trance_caster_text))
 	return ..()
 
-/proc/hypnotic_gaze_can_channel(mob/living/carbon/human/caster, mob/living/carbon/human/target)
+/proc/hypnotic_gaze_can_channel(mob/living/carbon/human/caster, mob/living/carbon/human/target, requires_eye_contact = TRUE)
 	if(!istype(caster) || !istype(target) || QDELETED(caster) || QDELETED(target) || caster == target)
 		return FALSE
 	if(!caster.client || !target.client || !caster.mind || !target.mind || caster.stat != CONSCIOUS || target.stat != CONSCIOUS)
 		return FALSE
 	if(!hypnosis_content_enabled(caster) || !hypnosis_content_enabled(target))
 		return FALSE
-	if(!caster.hypnotic_eyes_visible() || !target.hypnotic_eyes_visible() || caster.eye_blind || target.eye_blind)
+	if(requires_eye_contact && (!caster.hypnotic_eyes_visible() || !target.hypnotic_eyes_visible() || caster.eye_blind || target.eye_blind))
 		return FALSE
 	var/turf/A = get_turf(caster)
 	var/turf/B = get_turf(target)
-	return A && B && A.z == B.z && get_dist(A, B) <= 2 && (target in view(2, caster))
+	// A turf-based view retains obstruction checks without inheriting a blind caster's sight.
+	return A && B && A.z == B.z && get_dist(A, B) <= 2 && (target in view(2, requires_eye_contact ? caster : A))
 
 /// Short-lived reservation and movement listeners, only while actually channeling.
 /datum/hypnotic_gaze_channel
 	var/mob/living/carbon/human/caster
 	var/mob/living/carbon/human/target
 	var/cancelled = FALSE
+	var/requires_eye_contact = TRUE
 	var/list/movement_sources = list()
 	var/datum/progressbar/caster_bar
 	var/datum/progressbar/target_bar
 
-/datum/hypnotic_gaze_channel/New(mob/living/carbon/human/new_caster, mob/living/carbon/human/new_target)
+/datum/hypnotic_gaze_channel/New(mob/living/carbon/human/new_caster, mob/living/carbon/human/new_target, needs_eyes = TRUE)
 	caster = new_caster
 	target = new_target
+	requires_eye_contact = needs_eyes
 	caster.hypnotic_gaze_channel = src
 	target.hypnotic_gaze_channel = src
 	RegisterSignal(caster, list(COMSIG_MOB_LOGOUT, COMSIG_MOB_DEATH, COMSIG_MIND_TRANSFER, COMSIG_QDELETING), PROC_REF(interrupt))
@@ -235,12 +290,12 @@
 	caster_bar = new(caster, HYPNOTIC_GAZE_CHANNEL_TIME, caster)
 	target_bar = new(target, HYPNOTIC_GAZE_CHANNEL_TIME, target)
 	while(world.time < deadline)
-		if(cancelled || !hypnotic_gaze_can_channel(caster, target))
+		if(cancelled || !hypnotic_gaze_can_channel(caster, target, requires_eye_contact))
 			return FALSE
 		stoplag(1)
 		caster_bar.update(world.time - start)
 		target_bar.update(world.time - start)
-	return !cancelled && hypnotic_gaze_can_channel(caster, target)
+	return !cancelled && hypnotic_gaze_can_channel(caster, target, requires_eye_contact)
 
 /datum/hypnotic_gaze_channel/Destroy()
 	QDEL_NULL(caster_bar)
@@ -369,7 +424,7 @@
 	if(!QDELETED(status))
 		status.update_description()
 	reminder_timer = addtimer(CALLBACK(src, PROC_REF(remind)), HYPNOTIC_GAZE_REMINDER_TIME, TIMER_STOPPABLE)
-	log_game("HYPNOTIC GAZE: [key_name(caster)] suggested '[phrase]' to [key_name(listener)].")
+	log_game("HYPNOSIS: [key_name(caster)] suggested '[phrase]' to [key_name(listener)].")
 	return TRUE
 
 /datum/hypnotic_suggestion/proc/suggestion_text()
