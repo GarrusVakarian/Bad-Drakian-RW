@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Oozes now use their selected accent and speech mannerism in spoken chat."
