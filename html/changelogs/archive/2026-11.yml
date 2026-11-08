@@ -251,3 +251,5 @@
   mypingishuge:
   - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
       35 minutes before its first increase."
+  - bugfix: "Using the knuckles\u2019 Upper Cut no longer resets your sprite size\
+      \ or vertical offset."

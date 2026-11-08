@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Using the knuckles’ Upper Cut no longer resets your sprite size or vertical offset."
