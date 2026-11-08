@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25–35 minutes before its first increase."
