@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and a spell that plants lasting suggestions. Enable Hypnosis Content in Content Toggles to participate."
