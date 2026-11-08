@@ -484,7 +484,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			unlock_content = C.IsByondMember()
 			if(unlock_content)
 				max_save_slots = 100
+	// Detect a fresh account before loading/migrating can replace a rejected save.
+	// An existing file without discovery metadata is still an existing account.
+	var/is_new_preferences_account = istype(C) && (!path || !fexists(path))
 	var/loaded_preferences_successfully = load_preferences()
+	if(is_new_preferences_account && !loaded_preferences_successfully)
+		acknowledge_current_character_sheet_features()
 	if(loaded_preferences_successfully)
 		if(load_character())
 			if(check_nameban(C.ckey) || (C.blacklisted() == 1))
@@ -655,6 +660,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				CRASH("Duplicate character-sheet feature ID: [feature.id]")
 			features[feature.id] = feature
 	return features
+
+/// First-time setup only: snapshot today's registered IDs, not future additions.
+/// The constructor's existing save_preferences() call persists this in one write.
+/datum/preferences/proc/acknowledge_current_character_sheet_features()
+	for(var/feature_id in get_character_sheet_features())
+		seen_character_sheet_features[feature_id] = TRUE
 
 /datum/preferences/proc/character_sheet_feature_is_new(feature_id)
 	if(!istext(feature_id))
