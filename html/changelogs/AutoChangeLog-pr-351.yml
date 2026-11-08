@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added Hypnotic Presence, a consent-based alternative to Hypnotic Gaze that does not require exposed eyes. The quirks are mutually exclusive."
