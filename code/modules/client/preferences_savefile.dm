@@ -222,6 +222,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	//general preferences
 	load_character_sheet_feature_state(S)
+	S["content_toggles_intro"] >> content_toggles_intro
 	S["asaycolor"]			>> asaycolor
 	S["ooccolor"]			>> ooccolor
 	S["lastchangelog"]		>> lastchangelog
@@ -442,6 +443,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S.cd = "/feature_discovery"
 	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
 	S.cd = "/"
+	WRITE_FILE(S["content_toggles_intro"], content_toggles_intro)
 	WRITE_FILE(S["asaycolor"], asaycolor)
 	WRITE_FILE(S["triumphs"], triumphs)
 	WRITE_FILE(S["musicvol"], musicvol)
