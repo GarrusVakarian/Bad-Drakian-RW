@@ -180,6 +180,8 @@
 #define COMSIG_EXIT_AREA "exit_area" 							//from base of area/Exited(): (/area)
 
 #define COMSIG_MIND_TRANSFER "mind_transfer"
+/// Sent to the mind before far travel or admin removal permanently despawns its character.
+#define COMSIG_MIND_PERMANENT_DEPARTURE "mind_permanent_departure"
 
 #define COMSIG_CLICK_RIGHT_SHIFT "shift_right_click"
 
