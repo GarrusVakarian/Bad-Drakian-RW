@@ -522,7 +522,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/greedy/proc/determine_starting_mammons(mob/living/carbon/human/user)
 	var/starting_mammons = get_total_mammons(user)
-	required_mammons = min(round(starting_mammons * 0.7), 50)
+	required_mammons = round(starting_mammons * 0.7)
 	extra_increment_value = round(starting_mammons * 0.15)
 
 /datum/charflaw/greedy/proc/mammon_increase(mob/living/carbon/human/user)
