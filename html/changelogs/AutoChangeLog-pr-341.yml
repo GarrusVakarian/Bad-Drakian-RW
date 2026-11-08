@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Tailed species can enable optional Tailmaw customization, including a no-sprite option that keeps their existing tail appearance."
