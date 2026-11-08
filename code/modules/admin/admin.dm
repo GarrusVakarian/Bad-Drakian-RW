@@ -1396,6 +1396,8 @@
 	else if(admin)
 		to_chat(admin, span_warning("[src] has no key to return to the lobby."))
 	if(delete_character)
+		if(mind)
+			SEND_SIGNAL(mind, COMSIG_MIND_PERMANENT_DEPARTURE)
 		qdel(src)
 	return TRUE
 
