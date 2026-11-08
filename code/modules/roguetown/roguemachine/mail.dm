@@ -1,12 +1,18 @@
+#define HERMES_PAPER_COST 1
+#define HERMES_QUILL_COST 5
+#define HERMES_LETTER_COST 1
+#define HERMES_LETTER_LIMIT 2000
+
 /obj/structure/roguemachine/mail
 	name = "HERMES"
-	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. A coin slot activates the mechanism for dispensing parchment(a zenny) and quills(a ziliqua)."
+	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Write a free letter every five minutes, or insert coins for postage and writing supplies."
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "mail"
 	density = FALSE
 	blade_dulling = DULLING_BASH
 	pixel_y = 32
-	var/coin_loaded = FALSE
+	var/coin_loaded = 0
+	var/static/list/next_free_send = list()
 	var/inqcoins = 0
 	var/inqonly = FALSE // Has the Inquisitor locked Marque-spending for lessers?
 	var/keycontrol = "puritan"
@@ -107,16 +113,17 @@
 		var/obj/item/D = new drug_type(get_turf(H))
 		H.put_in_hands(D)
 	if(HAS_TRAIT(user, TRAIT_INQUISITION))
-		if(!coin_loaded && !inqcoins)
+		if(!inqcoins)
 			to_chat(user, span_notice("It needs a Marque."))
 			return
 		user.changeNext_move(CLICK_CD_MELEE)
-		display_marquette(usr)
+		display_marquette(user)
 
 /obj/structure/roguemachine/mail/examine(mob/user)
 	. = ..()
-	. += span_info("Load a coin inside, then right click to send a letter.")
-	. += span_info("Left click with a paper to send a prewritten letter for free.")
+	. += "<a href='?src=[REF(src)];directory=1'>Directory:</a> [mailtag]"
+	. += span_info("Right click to write a letter, or insert coins to buy postage, parchment, and quills.")
+	. += span_info("Use a paper or wrapped package on the machine to send it for free.")
 	if(HAS_TRAIT(user, TRAIT_INQUISITION))
 		. += span_info("<br>The MARQUETTE can be accessed via a secret compartment fitted within the HERMES. Load a Marque to access it.")
 
@@ -127,93 +134,156 @@
 	. = ..()
 	if(.)
 		return
-	user.changeNext_move(CLICK_CD_INTENTCAP)
-	if(!coin_loaded)
-		to_chat(user, span_warning("The machine doesn't respond. It needs a coin."))
-		return
 	if(inqcoins)
-		to_chat(user, span_warning("The machine doesn't respond."))
+		to_chat(user, span_warning("The MARQUETTE is in use."))
 		return
-	var/send2place = sanitize(input(user, "Where to? (Person or #number)", "ROGUETOWN", null))
-	if(!send2place)
-		return
-	var/sentfrom = sanitize(input(user, "Who is this letter from?", "ROGUETOWN", null))
-	if(!sentfrom)
-		sentfrom = "Anonymous"
-	var/sender_ckey = user.ckey
-	var/recipient_ckey = null
-	if(!findtext(send2place, "#"))
-		for(var/mob/living/carbon/human/H in GLOB.human_list)
-			if(H.real_name == send2place)
-				recipient_ckey = H.ckey
-				break
-	var/t = stripped_multiline_input("Write Your Letter", "ROGUETOWN", no_trim=TRUE)
-	if(t)
-		if(length(t) > 2000)
-			to_chat(user, span_warning("Too long. Try again."))
-			return
-	if(!coin_loaded)
-		return
-	if(!Adjacent(user))
-		return
-	var/obj/item/paper/P = new
-	P.info += t
-	P.mailer = sentfrom
-	P.mailedto = send2place
-	P.update_icon()
-	if(findtext(send2place, "#"))
-		var/box2find = text2num(copytext(send2place, findtext(send2place, "#")+1))
-		var/found = FALSE
-		for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
-			if(X.ournum == box2find)
-				found = TRUE
-				P.mailer = sentfrom
-				P.mailedto = send2place
-				P.update_icon()
-				GLOB.fax_panel.register_player_letter(sentfrom, send2place, t)
-				P.forceMove(X.loc)
-				X.say("New mail!")
-				playsound(X, 'sound/misc/hiss.ogg', 100, FALSE, -1)
-				break
-		if(found)
-			visible_message(span_warning("[user] sends something."))
-			playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-			coin_loaded = FALSE
+	ui_interact(user)
+
+// The free letter is shared across all terminals for each player.
+/obj/structure/roguemachine/mail/proc/free_send_remaining(mob/user)
+	var/next_send = next_free_send[user.ckey] || 0
+	return max(0, next_send - world.time)
+
+/obj/structure/roguemachine/mail/ui_state(mob/user)
+	return GLOB.human_adjacent_state
+
+/obj/structure/roguemachine/mail/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "Hermes", "HERMES")
+		ui.open()
+
+/obj/structure/roguemachine/mail/ui_static_data(mob/user)
+	return list("paper_cost" = HERMES_PAPER_COST, "quill_cost" = HERMES_QUILL_COST, "letter_cost" = HERMES_LETTER_COST, "letter_limit" = HERMES_LETTER_LIMIT, "name_limit" = MAX_NAME_LEN)
+
+/obj/structure/roguemachine/mail/ui_data(mob/user)
+	return list("balance" = coin_loaded, "free_send_remaining_ds" = free_send_remaining(user), "marquette_in_use" = inqcoins > 0)
+
+/obj/structure/roguemachine/mail/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	if(..())
+		return TRUE
+	var/mob/user = usr
+	if(inqcoins || !user.ckey || !ishuman(user) || !Adjacent(user))
+		return TRUE
+	switch(action)
+		if("buy_paper", "buy_quill")
+			var/cost = action == "buy_paper" ? HERMES_PAPER_COST : HERMES_QUILL_COST
+			if(coin_loaded < cost)
+				return TRUE
+			coin_loaded -= cost
+			var/item_type = action == "buy_paper" ? /obj/item/paper : /obj/item/natural/feather
+			var/obj/item/supply = new item_type(get_turf(src))
+			user.put_in_hands(supply)
+			playsound(src, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 			update_icon()
-			return
-		else
-			to_chat(user, span_warning("Failed to send it. Bad number?"))
+			return TRUE
+		if("refund")
+			if(coin_loaded > 0)
+				var/refund = coin_loaded
+				coin_loaded = 0
+				budget2change(refund, user)
+				playsound(src, 'sound/misc/coininsert.ogg', 100, FALSE, -1)
+				update_icon()
+			return TRUE
+		if("send_letter")
+			var/is_free = !free_send_remaining(user)
+			if(!is_free && coin_loaded < HERMES_LETTER_COST)
+				to_chat(user, span_warning("No free letter ready. Wait or insert a coin."))
+				return TRUE
+			var/destination = params["recipient"]
+			var/sender = params["sender"]
+			var/content = params["content"]
+			if(!istext(destination) || !istext(sender) || !istext(content))
+				return TRUE
+			if(!length(trim(content)) || length_char(content) > HERMES_LETTER_LIMIT)
+				to_chat(user, span_warning("Write a letter of up to [HERMES_LETTER_LIMIT] characters."))
+				return TRUE
+			var/obj/item/paper/letter = new
+			var/parsed_content = parsemarkdown(html_encode(content), user)
+			letter.info = "<font face=\"[FOUNTAIN_PEN_FONT]\" color=#14103f>[parsed_content]</font>"
+			if(!send_mail(letter, destination, sender, user))
+				qdel(letter)
+				return TRUE
+			if(is_free)
+				next_free_send[user.ckey] = world.time + HERMES_FREE_COOLDOWN
+			else
+				coin_loaded -= HERMES_LETTER_COST
+				SStreasury.mint(SStreasury.discretionary_fund, HERMES_LETTER_COST, "Mail Income")
+				record_round_statistic(STATS_TAXES_COLLECTED, HERMES_LETTER_COST)
+				update_icon()
+			return TRUE
+
+/// Shared delivery for composed letters and physical mail. Failed delivery leaves postage and the original item alone.
+/obj/structure/roguemachine/mail/proc/send_mail(obj/item/parcel, destination, sender, mob/user, hand_delivery = FALSE)
+	destination = trim(destination)
+	if(!length(destination) || length_char(destination) > MAX_NAME_LEN)
+		to_chat(user, span_warning("Enter a character's name or a HERMES number."))
+		return FALSE
+	var/obj/structure/roguemachine/mail/box
+	var/mob/living/carbon/human/recipient
+	var/obj/item/roguemachine/mastermail/master
+	if(copytext(destination, 1, 2) == "#")
+		var/static/regex/box_address = regex("^#\[0-9\]+$")
+		if(box_address.Find(destination))
+			var/number = text2num(copytext(destination, 2))
+			for(var/obj/structure/roguemachine/mail/machine as anything in SSroguemachine.hermailers)
+				if(machine.ournum == number)
+					box = machine
+					break
+		if(!box)
+			to_chat(user, span_warning("No HERMES has that number."))
+			return FALSE
 	else
-		if(!send2place)
-			return
-		if(SSroguemachine.hermailermaster)
-			var/obj/item/roguemachine/mastermail/X = SSroguemachine.hermailermaster
-			if(!recipient_ckey)
-				for(var/mob/living/carbon/human/H in GLOB.human_list)
-					if(H.real_name == send2place)
-						recipient_ckey = H.ckey
-						break
-			P.mailer = sentfrom
-			P.mailedto = send2place
-			P.update_icon()
-			GLOB.fax_panel.register_player_letter(sentfrom, send2place, t, sender_ckey, recipient_ckey)
-			P.forceMove(X.loc)
-			var/datum/component/storage/STR = X.GetComponent(/datum/component/storage)
-			STR.handle_item_insertion(P, prevent_warning=TRUE)
-			X.new_mail=TRUE
-			X.update_icon()
-			send_ooc_note("New letter from <b>[sentfrom].</b>", name = send2place)
-			for(var/mob/living/carbon/human/H in GLOB.human_list)
-				if(H.real_name == send2place)
-					H.apply_status_effect(/datum/status_effect/ugotmail)
-					H.playsound_local(H, 'sound/misc/mail.ogg', 100, FALSE, -1)
-		else
+		for(var/mob/living/carbon/human/person as anything in GLOB.human_list)
+			if(LOWER_TEXT(person.real_name) == LOWER_TEXT(destination))
+				recipient = person
+				break
+		if(!recipient)
+			to_chat(user, span_warning("There's no one by that name to receive it."))
+			return FALSE
+		destination = recipient.real_name
+		master = SSroguemachine.hermailermaster
+		if(QDELETED(master))
 			to_chat(user, span_warning("The master of mails has perished?"))
-			return
-		visible_message(span_warning("[user] sends something."))
-		playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-		coin_loaded = FALSE
-		update_icon()
+			return FALSE
+	if(box)
+		if(hand_delivery && !user.temporarilyRemoveItemFromInventory(parcel))
+			return FALSE
+		parcel.forceMove(box.drop_location())
+	else
+		var/datum/component/storage/storage = master.GetComponent(/datum/component/storage)
+		if(!storage?.handle_item_insertion(parcel, TRUE, hand_delivery ? user : null))
+			to_chat(user, span_warning("The master mailer could not accept this delivery."))
+			return FALSE
+	sender = sanitize(copytext_char(trim(sender), 1, MAX_NAME_LEN + 1)) || "Anonymous"
+	parcel.mailer = sender
+	parcel.mailedto = destination
+	var/obj/item/paper/letter
+	if(istype(parcel, /obj/item/paper))
+		letter = parcel
+	else if(istype(parcel, /obj/item/smallDelivery))
+		var/obj/item/smallDelivery/package = parcel
+		letter = package.note
+	if(letter)
+		if(sender != "Anonymous" && !findtext_char(copytext_char(letter.info, max(1, length_char(letter.info) - 149)), sender))
+			letter.info += "<br><font face=\"[FOUNTAIN_PEN_FONT]\" color=#14103f>[sender]</font>"
+		letter.reload_fields()
+		letter.update_icon()
+	if(letter != parcel)
+		parcel.update_icon()
+	GLOB.fax_panel.register_player_letter(sender, destination, letter?.info, user.ckey, recipient?.ckey)
+	if(box)
+		box.say("New mail!")
+		playsound(box, 'sound/misc/hiss.ogg', 100, FALSE, -1)
+	else
+		master.new_mail = TRUE
+		master.update_icon()
+		send_ooc_note("A new letter has arrived for you.", name = destination)
+		recipient.apply_status_effect(/datum/status_effect/ugotmail)
+		recipient.playsound_local(recipient, 'sound/misc/mail.ogg', 100, FALSE, -1)
+	visible_message(span_warning("[user] sends something."))
+	playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
+	return TRUE
 
 /obj/structure/roguemachine/mail/attackby(obj/item/P, mob/user, params)
 	if(istype(P, /obj/item/merctoken))
@@ -369,7 +439,7 @@
 							GLOB.confessors += ", [I.signee]"
 						else
 							GLOB.confessors += "[I.signee]"
-				if(no | selfreport)
+				if(no || selfreport || stopfarming)
 					if(I.paired)
 						qdel(I.paired)
 					qdel(I)
@@ -543,129 +613,50 @@
 
 	if(istype(P, /obj/item/paper) || istype(P, /obj/item/smallDelivery))
 		if(inqcoins)
-			to_chat(user, span_warning("The machine doesn't respond."))
+			to_chat(user, span_warning("The MARQUETTE is in use."))
 			return
-		if(alert(user, "Send Mail?",,"YES","NO") == "YES")
-			var/send2place = sanitize(input(user, "Where to? (Person or #number)", "ROGUETOWN", null))
-			var/sentfrom = sanitize(input(user, "Who is this from? (Leave blank to send anonymously)", "ROGUETOWN", null))
-			if(!sentfrom)
-				sentfrom = "Anonymous"
-			var/sender_ckey = user.ckey
-			var/recipient_ckey = null
-			if(!findtext(send2place, "#"))
-				for(var/mob/living/carbon/human/H in GLOB.human_list)
-					if(H.real_name == send2place)
-						recipient_ckey = H.ckey
-						break
-			if(findtext(send2place, "#"))
-				var/box2find = text2num(copytext(send2place, findtext(send2place, "#")+1))
-				testing("box2find [box2find]")
-				var/found = FALSE
-				for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
-					if(X.ournum == box2find)
-						found = TRUE
-						P.mailer = sentfrom
-						P.mailedto = send2place
-						P.update_icon()
-						var/letter_text = ""
-						var/obj/item/paper/letter_paper = null
-						var/obj/item/smallDelivery/letter_package = null
-						if(istype(P, /obj/item/paper))
-							letter_paper = P
-							letter_text = letter_paper.info
-						else if(istype(P, /obj/item/smallDelivery))
-							letter_package = P
-							if(letter_package.note)
-								letter_text = letter_package.note.info
-						GLOB.fax_panel.register_player_letter(sentfrom, send2place, letter_text, sender_ckey, recipient_ckey)
-						P.forceMove(X.loc)
-						X.say("New mail!")
-						playsound(X, 'sound/misc/hiss.ogg', 100, FALSE, -1)
-						break
-				if(found)
-					visible_message(span_warning("[user] sends something."))
-					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-					return
-				else
-					to_chat(user, span_warning("Cannot send it. Bad number?"))
-			else
-				if(!send2place)
-					return
-				var/mob/living/carbon/human/mailrecipient = null
-				for(var/mob/living/carbon/human/H in GLOB.human_list)
-					if(H.real_name == send2place)
-						mailrecipient = H
-						recipient_ckey = H.ckey
-						break
-				if(!mailrecipient && (alert("Could not find recipient [send2place]. Still send the letter?", "", "YES", "NO") == "NO")) // ask player if they still want to send a letter to a non-found character
-					return
-				var/findmaster
-				if(SSroguemachine.hermailermaster)
-					var/obj/item/roguemachine/mastermail/X = SSroguemachine.hermailermaster
-					findmaster = TRUE
-					P.mailer = sentfrom
-					P.mailedto = send2place
-					P.update_icon()
-					var/letter_text = ""
-					var/obj/item/paper/letter_paper = null
-					var/obj/item/smallDelivery/letter_package = null
-					if(istype(P, /obj/item/paper))
-						letter_paper = P
-						letter_text = letter_paper.info
-					else if(istype(P, /obj/item/smallDelivery))
-						letter_package = P
-						if(letter_package.note)
-							letter_text = letter_package.note.info
-					GLOB.fax_panel.register_player_letter(sentfrom, send2place, letter_text, sender_ckey, recipient_ckey)
-					P.forceMove(X.loc)
-					var/datum/component/storage/STR = X.GetComponent(/datum/component/storage)
-					STR.handle_item_insertion(P, prevent_warning=TRUE)
-					X.new_mail=TRUE
-					X.update_icon()
-					playsound(src.loc, 'sound/misc/hiss.ogg', 100, FALSE, -1)
-				if(!findmaster)
-					to_chat(user, span_warning("The master of mails has perished?"))
-				else
-					visible_message(span_warning("[user] sends something."))
-					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-					send_ooc_note("New letter from <b>[sentfrom].</b>", name = send2place)
-					if(mailrecipient)
-						mailrecipient.apply_status_effect(/datum/status_effect/ugotmail)
-						mailrecipient.playsound_local(mailrecipient, 'sound/misc/mail.ogg', 100, FALSE, -1)
-					return
+		if(alert(user, "Send Mail?", "HERMES", "Yes", "No") != "Yes")
+			return
+		var/destination = input(user, "Where to? (Person or #number)", "HERMES") as null|text
+		if(!destination)
+			return
+		var/sender = input(user, "Who is this from? (Leave blank to send anonymously)", "HERMES") as null|text
+		if(QDELETED(src) || QDELETED(P) || inqcoins || P.loc != user || !user.canUseTopic(src, BE_CLOSE, no_tk = TRUE) || !Adjacent(user))
+			return
+		send_mail(P, destination, sender || "", user, hand_delivery = TRUE)
+		return
 
 	if(istype(P, /obj/item/roguecoin/gilbranze))
 		return
 
 	if(istype(P, /obj/item/roguecoin/inqcoin))
 		if(HAS_TRAIT(user, TRAIT_INQUISITION))
-			if(coin_loaded && !inqcoins)
+			if(coin_loaded)
 				return
 			var/obj/item/roguecoin/M = P
-			coin_loaded = TRUE
 			inqcoins += M.quantity
 			update_icon()
 			qdel(M)
 			playsound(src, 'sound/misc/coininsert.ogg', 100, FALSE, -1)
-			return display_marquette(usr)
+			SStgui.update_uis(src)
+			return display_marquette(user)
 		else
 			return
 
 	if(istype(P, /obj/item/roguecoin))
+		if(inqcoins)
+			to_chat(user, span_warning("The MARQUETTE is in use."))
+			return
 		var/obj/item/roguecoin/C = P
-		switch(C.get_real_price())
-			if(1)
-				qdel(C)
-				var/obj/item/paper/papier = new
-				user.put_in_hands(papier)
-			if(5)
-				qdel(C)
-				var/obj/item/natural/feather/quill = new
-				user.put_in_hands(quill)
-			else
-				to_chat(user, span_warning("Not a valid denomination! Insert 1 mammon for paper, 5 mammon for a quill."))
-				return
+		var/coin_value = C.get_real_price()
+		if(coin_value <= 0)
+			return
+		coin_loaded += coin_value
+		qdel(C)
 		playsound(src, 'sound/misc/coininsert.ogg', 100, FALSE, -1)
+		update_icon()
+		SStgui.update_uis(src)
+		ui_interact(user)
 		return
 	..()
 
@@ -679,7 +670,7 @@
 
 /obj/structure/roguemachine/mail/update_icon()
 	cut_overlays()
-	if(coin_loaded)
+	if(coin_loaded || inqcoins)
 		if(inqcoins > 0)
 			add_overlay(mutable_appearance(icon, "mail-i"))
 			set_light(1, 1, 1, l_color = "#ffffff")
@@ -689,10 +680,6 @@
 	else
 		add_overlay(mutable_appearance(icon, "mail-s"))
 		set_light(1, 1, 1, l_color = "#ff0d0d")
-
-/obj/structure/roguemachine/mail/examine(mob/user)
-	. = ..()
-	. += "<a href='?src=[REF(src)];directory=1'>Directory:</a> [mailtag]"
 
 /obj/structure/roguemachine/mail/proc/view_directory(mob/user)
 	var/dat
@@ -858,13 +845,15 @@
 	if(href_list["directory"])
 		view_directory(usr)
 		return
+	if(!HAS_TRAIT(usr, TRAIT_INQUISITION))
+		return
 	if(href_list["eject"])
 		if(inqcoins <= 0)
 			return
-		coin_loaded = FALSE
-		update_icon()
 		budget2change(inqcoins, usr, "MARQUE")
 		inqcoins = 0
+		update_icon()
+		SStgui.update_uis(src)
 
 	if(href_list["changecat"])
 		cat_current = href_list["changecat"]
@@ -878,13 +867,15 @@
 		var/path = text2path(href_list["buy"])
 		var/datum/inqports/PA = GLOB.inqsupplies[path]
 
+		if(!PA || inqcoins < PA.marquescost || (inqonly && !HAS_TRAIT(usr, TRAIT_PURITAN)) || (PA.maximum && !PA.remaining))
+			return
 		inqcoins -= PA.marquescost
 		if(PA.maximum)
 			decreaseremaining(PA)
 		visible_message(span_warning("[usr] sends something."))
 		if(!inqcoins)
-			coin_loaded = FALSE
 			update_icon()
+			SStgui.update_uis(src)
 		playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 		var/area/A = GLOB.areas_by_type[/area/rogue/indoors/inq/import]
 		if(!A)
@@ -902,3 +893,8 @@
 /*
 	INQUISITION INTERACTIONS - END
 */
+
+#undef HERMES_PAPER_COST
+#undef HERMES_QUILL_COST
+#undef HERMES_LETTER_COST
+#undef HERMES_LETTER_LIMIT

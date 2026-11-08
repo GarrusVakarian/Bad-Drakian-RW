@@ -898,6 +898,8 @@ There are several things that need to be remembered:
 						if(OFFSET_BELT_F in dna.species.offset_features)
 							mbeltoverlay.pixel_x += dna.species.offset_features[OFFSET_BELT_F][1]
 							mbeltoverlay.pixel_y += dna.species.offset_features[OFFSET_BELT_F][2]
+					if(has_hiked_hem())
+						mbeltoverlay.pixel_y += 2 //the belt sits on the underwear rows; ride above them while the hem is held up
 				standing_front += mbeltoverlay
 				if(istype(belt, /obj/item/storage/belt/rogue)) // check if belt has dildo attached
 					var/obj/item/storage/belt/rogue/belt_with_dildo = belt
@@ -1595,7 +1597,7 @@ There are several things that need to be remembered:
 	return mutable_appearance(GLOB.female_clothing_icons[t_color], layer = -layer)
 
 /proc/wear_dismembered_version(t_color, icon, layer, sleeveindex, type)
-	var/index = "[t_color][sleeveindex]"
+	var/index = "[t_color][sleeveindex][icon]"
 	var/icon/clothing_icon = GLOB.dismembered_clothing_icons[index]
 	if(!clothing_icon) 	//Create standing/laying icons if they don't exist
 		generate_dismembered_clothing(index,t_color,icon,sleeveindex, type)
@@ -1794,7 +1796,7 @@ generate/load female uniform sprites matching all previously decided variables
 
 
 	if(!isinhands && HAS_BLOOD_DNA(src))
-		var/index = "[t_state][sleeveindex]"
+		var/index = "[t_state][sleeveindex][file2use]"
 		var/static/list/bloody_onmob = list()
 		var/icon/clothing_icon = bloody_onmob["[index][(boobed_overlay) ? "_boob" : ""]"]
 		if(!clothing_icon)
@@ -1990,6 +1992,8 @@ generate/load female uniform sprites matching all previously decided variables
 		. += BP.generate_limb_cache_key(hideaux = should_hide_bodypart_aux(BP))
 
 	. += "[obscured_flags]"	//features are drawn through is_visible(), which reads this
+	// These change organ visibility/layers without changing clothing or organ appearance keys.
+	. += "crotch:[sexcon?.bottom_exposed]-sprites:[sexcon?.hide_pintle_visuals]-underwear:[!!underwear]"
 
 	if(HAS_TRAIT(src, TRAIT_HUSK))
 		. += "husk"
@@ -2068,3 +2072,14 @@ generate/load female uniform sprites matching all previously decided variables
 	if(boobs.breast_size == 0)
 		return FALSE
 	return TRUE
+
+/mob/living/carbon/human/update_transform(forcepixel)
+	dna?.update_body_center_offset(TRUE)
+	. = ..()
+	dna?.update_body_center_offset()
+
+/mob/living/carbon/human/setDir(newdir, ismousemovement)
+	var/previous_dir = dir
+	. = ..()
+	if(dir != previous_dir)
+		dna?.update_body_center_offset()

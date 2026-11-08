@@ -1,4 +1,5 @@
 /datum/sex_action/manticore_tailpeg_receive
+	handles_user_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Fuck their tail maw"
 	check_same_tile = FALSE

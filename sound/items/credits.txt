@@ -9,3 +9,9 @@ source: https://github.com/Rotwood-Vale/Ratwood-Keep/pull/1910
 license: "CC-BY-SA-3.0"
 Made and posted by GentleJester#8754 on the SS14 discord.
 source: https://discord.com/channels/310555209753690112/311537926376783886/1097222920813674527
+
+- broom_sweep.ogg
+Made by Hazelrat; imported unchanged from Azure Peak.
+License: CC-BY-SA-3.0 (Azure Peak's default asset license).
+Source: https://github.com/Azure-Peak/Azure-Peak/blob/8035796e311b30a72027089e30c56a35f72d115b/sound/items/broom_sweep.ogg
+Original commit: 373791edd2a2d62e0b9503d41b817b045056d8b7

@@ -19,6 +19,9 @@
 	var/list/list/body_markings = list()
 	///Current body size, used for proper re-sizing and keeping track of that
 	var/current_body_size = BODY_SIZE_NORMAL
+	/// Horizontal correction already applied to the holder's transform.
+	var/current_body_center_offset = 0
+	var/current_body_center_offset_y = 0
 
 /datum/dna/New(mob/living/new_holder)
 	if(istype(new_holder))
@@ -265,14 +268,59 @@
 	return
 
 /datum/dna/proc/update_body_size()
-	if(!holder || current_body_size == features["body_size"])
+	if(!holder)
 		return
-	var/change_multiplier = features["body_size"] / current_body_size
-	//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
-	var/translate = ((change_multiplier-1) * 32)/2
-	holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
-	holder.transform = holder.transform.Translate(0, translate)
-	current_body_size = features["body_size"]
+	update_body_center_offset(TRUE)
+	var/desired_size = features["body_size"]
+	if(current_body_size != desired_size)
+		var/change_multiplier = desired_size / current_body_size
+		//We update the translation to make sure our character doesn't go out of the southern bounds of the tile
+		var/translate = ((change_multiplier-1) * 32)/2
+		holder.transform = holder.transform.Scale(change_multiplier, change_multiplier)
+		holder.transform = holder.transform.Translate(0, translate)
+		current_body_size = desired_size
+	update_body_center_offset()
+
+/proc/next_sprite_center_mode(mode)
+	// Keep saved mode values stable while changing the button's cycle order.
+	var/static/list/next_modes = list(4, 2, 0, 1, 3)
+	if(!isnum(mode) || mode < 0 || mode > 4)
+		return 4
+	return next_modes[mode + 1]
+
+/proc/sprite_center_mode_name(mode)
+	var/static/list/modes = list("Default", "Right", "Left", "Up", "Down")
+	if(!isnum(mode) || mode < 0 || mode > 4)
+		return modes[1]
+	return modes[mode + 1]
+
+/proc/sprite_center_offset(mode, scale, direction, vertical = FALSE)
+	if(vertical)
+		if(mode == 3)
+			return 0.5 * scale
+		if(mode == 4)
+			return -0.5 * scale
+	else if(direction == NORTH || direction == SOUTH)
+		if(mode == 1)
+			return 0.5 * scale
+		if(mode == 2)
+			return -0.5 * scale
+	return 0
+
+/datum/dna/proc/get_body_center_offset(direction, vertical = FALSE)
+	return sprite_center_offset(features["body_center_offset"], current_body_size, direction, vertical)
+
+/datum/dna/proc/update_body_center_offset(remove = FALSE)
+	if(!holder)
+		return
+	var/new_offset = remove ? 0 : get_body_center_offset(holder.dir)
+	var/new_offset_y = remove ? 0 : get_body_center_offset(holder.dir, TRUE)
+	if(new_offset != current_body_center_offset || new_offset_y != current_body_center_offset_y)
+		var/matrix/adjusted = matrix(holder.transform)
+		adjusted.Translate(new_offset - current_body_center_offset, new_offset_y - current_body_center_offset_y)
+		holder.transform = adjusted
+		current_body_center_offset = new_offset
+		current_body_center_offset_y = new_offset_y
 
 
 /////////////////////////// DNA HELPER-PROCS //////////////////////////////

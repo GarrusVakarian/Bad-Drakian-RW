@@ -97,7 +97,7 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/wolf_undead/proc/reanimation()
 	if(!QDELETED(src) && stat != DEAD)
-		visible_message(span_danger("The [src] stands back up."))
+		visible_message(span_danger("[src] [pick("stands back up!", "shambles upright!", "lumbers to [p_their()] feet!", "rises again!")]"))
 		health = maxHealth
 		leg_health = max_leg_health
 		head_health = max_head_health

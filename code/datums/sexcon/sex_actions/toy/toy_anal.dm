@@ -27,7 +27,7 @@
 	user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] pleasures [user.p_their()] butt with \the [dildo]."))
 	user.sexcon.outercourse_noise(user)
 
-	user.sexcon.perform_sex_action(user, 2, 6, TRUE)
+	user.sexcon.perform_sex_action(user, 2, 6, TRUE, apply_sensitivity = FALSE)
 	user.sexcon.handle_passive_ejaculation()
 
 	if(dildo)

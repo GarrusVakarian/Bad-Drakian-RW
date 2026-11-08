@@ -24,12 +24,14 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if(!job)
 		// Apply the stuff if we dont have a job for some reason
 		apply_character_post_equipment(character, player)
+		character.schedule_getting_started_reminder()
 		return
 	if(length(job.advclass_cat_rolls))
 		// Dont apply the stuff, let adv class handler do it later
 		return
 	// Apply the stuff if we have a job that has no adv classes
 	apply_character_post_equipment(character, player)
+	character.schedule_getting_started_reminder()
 
 /proc/apply_character_post_equipment(mob/living/carbon/human/character, client/player)
 	if(!player)
@@ -129,8 +131,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		else
 			to_chat(character, "Incorrect Background parameters! It will not be applied.")
 	else
-		record_featured_object_stat(FEATURED_STATS_BACKGROUNDS, "None")
-		record_featured_object_stat(FEATURED_STATS_BACKGROUNDS_LEAST, "None")
+		record_background_pick(character)
 
 /// Background validation, the counterpart to virtue_check() - they are applied to the same character
 /// from their own preference slot, so they get their own gate rather than sharing the virtue one.
@@ -173,6 +174,13 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 			triumphs_spent += triumph_cost
 			available_points = 0
 		apply_quirk(character, Q)
+		if(istype(Q, /datum/quirk/virgin))
+			var/datum/component/virgin_nerves/nerves = character.GetComponent(/datum/component/virgin_nerves)
+			if(istype(nerves))
+				nerves.attraction = sanitize_virgin_attraction(player.prefs.virgin_attraction)
+			var/datum/component/anal_inexperience/experience = character.GetComponent(/datum/component/anal_inexperience)
+			if(istype(experience))
+				experience.attraction = sanitize_virgin_attraction(player.prefs.virgin_attraction)
 
 	if(triumphs_spent)
 		character.adjust_triumphs(-triumphs_spent, FALSE)

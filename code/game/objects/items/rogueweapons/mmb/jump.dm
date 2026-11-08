@@ -67,6 +67,8 @@
 	if(m_intent == MOVE_INTENT_RUN)
 		if(animal_mount)
 			animal_mount.emote("leap", forced = TRUE)
+		else if(HAS_TRAIT(src, TRAIT_BEWINGED))
+			emote("flutter", forced = TRUE)
 		else
 			emote("leap", forced = TRUE)
 		OffBalance(30)
@@ -78,10 +80,16 @@
 	else
 		if(animal_mount)
 			animal_mount.emote("jump", forced = TRUE)
-		emote("jump", forced = TRUE)
+		if(HAS_TRAIT(src, TRAIT_BEWINGED))
+			emote("flutter", forced = TRUE)
+		else
+			emote("jump", forced = TRUE)
 		OffBalance(20)
 		jadded = 20
 		jrange = 2
+
+	if(HAS_TRAIT(src, TRAIT_BEWINGED))
+		jrange += 1
 
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
@@ -98,8 +106,10 @@
 
 /mob/living/proc/jump_action_resolve(atom/A, jadded, jrange, jextra)
 	var/atom/movable/jump_movable = src
+	var/turf/jump_start = get_turf(src)
 	var/mob/living/simple_animal/animal_mount = get_buckled_animal_mount()
 	var/was_mounted = FALSE
+	var/mount_prev_jumping
 	var/mount_prev_pixel_z
 	var/mount_prev_pass_flags
 	var/prev_layer
@@ -113,6 +123,8 @@
 			mount_riding.driver = null
 		animal_mount.unbuckle_mob(src, TRUE)
 		was_mounted = TRUE
+		mount_prev_jumping = animal_mount.jumping
+		animal_mount.jumping = TRUE
 
 	var/do_a_flip
 	var/flip_direction = FLIP_DIRECTION_CLOCKWISE
@@ -142,7 +154,8 @@
 			animate(transform = prev_transform, time = 0)
 
 		if(jextra)
-			jump_movable.throw_at(A, jrange, 1, jump_movable, spin = FALSE)
+			// The running jump lands after its extra step.
+			jump_throw(A, jrange)
 			while(jump_movable.throwing)
 				if(was_mounted && animal_mount && !QDELETED(animal_mount) && isturf(src.loc))
 					var/turf/current_jump_turf = get_turf(src)
@@ -156,7 +169,7 @@
 					animal_mount.step_y = step_y
 					animal_mount.zfalling = mount_was_zfalling
 				sleep(1)
-			jump_movable.throw_at(get_step(jump_movable, jump_movable.dir), 1, 1, jump_movable, spin = FALSE)
+			jump_to_land(get_step(jump_movable, jump_movable.dir), 1, jump_start)
 			while(jump_movable.throwing)
 				if(was_mounted && animal_mount && !QDELETED(animal_mount) && isturf(src.loc))
 					var/turf/current_jump_turf = get_turf(src)
@@ -171,7 +184,7 @@
 					animal_mount.zfalling = mount_was_zfalling
 				sleep(1)
 		else
-			jump_movable.throw_at(A, jrange, 1, jump_movable, spin = FALSE)
+			jump_to_land(A, jrange, jump_start)
 			while(jump_movable.throwing)
 				if(was_mounted && animal_mount && !QDELETED(animal_mount) && isturf(src.loc))
 					var/turf/current_jump_turf = get_turf(src)
@@ -187,6 +200,8 @@
 				sleep(1)
 		if(!HAS_TRAIT(src, TRAIT_ZJUMP) && (m_intent == MOVE_INTENT_RUN))	//Jesters and werewolves don't get immobilized at all
 			Immobilize((HAS_TRAIT(src, TRAIT_LEAPER) ? 5 : 10))	//Acrobatics get half the time
+			if(HAS_TRAIT(src, TRAIT_DEADITE))
+				Knockdown(10)
 		if(isopenturf(jump_movable.loc))
 			var/turf/open/T = jump_movable.loc
 			if(T.landsound)
@@ -196,7 +211,7 @@
 		animate(src, pixel_z = pixel_z + 6, time = 1)
 		animate(pixel_z = prev_pixel_z, transform = turn(transform, pick(-12, 0, 12)), time=2)
 		animate(transform = prev_transform, time = 0)
-		jump_movable.throw_at(A, 1, 1, jump_movable, spin = FALSE)
+		jump_to_land(A, 1, jump_start)
 
 	if(mob_offsets)
 		for(var/o in mob_offsets)
@@ -207,6 +222,7 @@
 		layer = prev_layer
 	if(was_mounted && animal_mount && !QDELETED(animal_mount))
 		animal_mount.pass_flags = mount_prev_pass_flags
+		animal_mount.jumping = mount_prev_jumping
 
 	if(was_mounted && animal_mount && !QDELETED(animal_mount) && isturf(src.loc))
 		animal_mount.forceMove(get_turf(src))
@@ -219,6 +235,23 @@
 
 #undef FLIP_DIRECTION_CLOCKWISE
 #undef FLIP_DIRECTION_ANTICLOCKWISE
+
+/mob/living/proc/jump_throw(atom/target, jump_range, datum/callback/landing)
+	// The last argument marks this throw as a jump before its first movement tick.
+	return throw_at(target, jump_range, 1, src, FALSE, FALSE, landing, MOVE_FORCE_STRONG, FALSE, TRUE)
+
+/mob/living/proc/jump_to_land(atom/target, jump_range, turf/jump_start)
+	var/datum/callback/landing = CALLBACK(src, PROC_REF(check_campfire_landing), jump_start)
+	if(!jump_throw(target, jump_range, landing))
+		qdel(landing)
+		check_campfire_landing(jump_start)
+
+/mob/living/proc/check_campfire_landing(turf/jump_start)
+	if(!isturf(loc) || loc == jump_start)
+		return
+	for(var/obj/machinery/light/rogue/campfire/fire in loc)
+		if(fire.on && fire.crossfire)
+			fire_act(1, 5)
 
 /mob/living/proc/get_jump_range()
 	if(!check_armor_skill() || get_item_by_slot(SLOT_LEGCUFFED))

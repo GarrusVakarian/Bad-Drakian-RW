@@ -90,7 +90,8 @@ export const Panel = (props) => {
               {game.roundRestartedAt && (
                 <Notifications.Item>
                   The connection has been closed because the server is
-                  restarting. Please wait while you automatically reconnect.
+                  restarting. Auto-reconnect will keep trying for up to 10
+                  minutes.
                 </Notifications.Item>
               )}
             </Notifications>

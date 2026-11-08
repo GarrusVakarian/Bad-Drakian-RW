@@ -1100,6 +1100,8 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 					new_delay -= 5 + amt/6
 				else
 					new_delay -= 3
+			if(HAS_TRAIT(user, TRAIT_STEPPE_RIDER))
+				new_delay -= 0.25
 			var/health_deficiency = getBruteLoss() + getFireLoss()
 			if(!HAS_TRAIT(src, TRAIT_IGNOREDAMAGESLOWDOWN) && (health <= round(maxHealth * 0.5) || health_deficiency >= round(maxHealth * 0.5)))
 				new_delay = max(new_delay, initial(move_to_delay) + 2)
@@ -1167,12 +1169,19 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			stack_trace("Something attempted to set simple animals AI to an invalid state: [togglestatus]")
 
 /mob/living/simple_animal/proc/consider_wakeup()
+	if(!can_have_ai)
+		toggle_ai(AI_OFF)
+		return FALSE
+	if(AIStatus == AI_OFF || AIStatus == AI_Z_OFF || !our_cells)
+		return FALSE
+	if(client)
+		return TRUE
 	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
 		if(length(grid.client_contents))
 			toggle_ai(AI_ON)
 			return TRUE
 
-	toggle_ai(AI_OFF)
+	toggle_ai(AI_IDLE)
 	return FALSE
 
 /mob/living/simple_animal/adjustHealth(amount, updating_health = TRUE, forced = FALSE)

@@ -7,7 +7,7 @@
 //	where you would want the updater procs below to run
 
 //	This also works with decimals.
-#define SAVEFILE_VERSION_MAX 38
+#define SAVEFILE_VERSION_MAX 39
 
 // Safely extract a type path from datums or type values; returns null if unset/invalid.
 /proc/preferences_typepath_or_null(value)
@@ -221,6 +221,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		return FALSE
 
 	//general preferences
+	load_character_sheet_feature_state(S)
 	S["asaycolor"]			>> asaycolor
 	S["ooccolor"]			>> ooccolor
 	S["lastchangelog"]		>> lastchangelog
@@ -281,6 +282,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["pits"]				>> pits
 	S["descriptor_color"]	>> descriptor_color
 	S["cursed_collarable"] 	>> cursed_collarable
+	S["milkable"]			>> milkable
+	S["manticore_tail_messages"]	>> manticore_tail_messages
 	S["shake"]				>> shake
 	S["no_redflash"] 		>> no_redflash
 	S["mastervol"]			>> mastervol
@@ -382,6 +385,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//ROGUETOWN
 	parallax = PARALLAX_INSANE
 
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
 	verify_keybindings_valid()
 	return TRUE
 
@@ -430,6 +435,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["version"] , SAVEFILE_VERSION_MAX)		//updates (or failing that the sanity checks) will ensure data is not invalid at load. Assume up-to-date
 
 	//general preferences
+	if(!seen_character_sheet_features["content_toggles"] && has_customized_content_toggles())
+		seen_character_sheet_features["content_toggles"] = TRUE
+	S.cd = "/feature_discovery"
+	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
+	S.cd = "/"
 	WRITE_FILE(S["asaycolor"], asaycolor)
 	WRITE_FILE(S["triumphs"], triumphs)
 	WRITE_FILE(S["musicvol"], musicvol)
@@ -468,6 +478,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["pits"], pits)
 	WRITE_FILE(S["descriptor_color"], descriptor_color)
 	WRITE_FILE(S["cursed_collarable"], cursed_collarable)
+	WRITE_FILE(S["milkable"], milkable)
+	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
 	WRITE_FILE(S["shake"], shake)
 	WRITE_FILE(S["no_redflash"], no_redflash)
 	WRITE_FILE(S["lastclass"], lastclass)
@@ -649,6 +661,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			to_chat(parent, span_boldwarning("This character's Background '[virtue_background.name]' has been retired and no longer grants anything - pick a replacement in character setup."))
 
 /datum/preferences/proc/_load_quirks(S)
+	virgin_attraction = list("Any")
+	S["virgin_attraction"] >> virgin_attraction
+	virgin_attraction = sanitize_virgin_attraction(virgin_attraction)
 	var/list/quirk_types
 	S["quirks"] >> quirk_types
 
@@ -955,7 +970,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		to_chat(parent, span_warning("Couldn't load gnoll prefs!"))
 
 	var/patron_typepath
-	S["selected_patron"]	>> patron_typepath
+	S["selected_patron"] >> patron_typepath
 	if(patron_typepath)
 		selected_patron = GLOB.patronlist[patron_typepath]
 		if(!selected_patron) //failsafe
@@ -965,6 +980,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		// No patron saved, set default
 		selected_patron = GLOB.patronlist[default_patron]
+
+	S["polytheist_patron"] >> patron_typepath
+	if(patron_typepath)
+		polytheist_patron = GLOB.patronlist[patron_typepath] // Could be null, nobody forced to be polytheist
+	else
+		polytheist_patron = "NONE"
 
 	//Custom names
 	for(var/custom_name_id in GLOB.preferences_custom_names)
@@ -1031,6 +1052,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["pronouns"] >> pronouns
 	S["voice_type"] >> voice_type
 	S["voice_pack"] >> voice_pack
+	features["body_center_offset"] = FALSE
+	S["body_center_offset"] >> features["body_center_offset"]
+	features["body_center_offset"] = sanitize_integer(features["body_center_offset"], 0, 4, 0)
 	S["body_size"] >> features["body_size"]
 	if (!features["body_size"])
 		features["body_size"] = BODY_SIZE_NORMAL
@@ -1119,8 +1143,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	S["customizer_entries"] >> customizer_entries
 
-	var/save_version = savefile_needs_update(S)
-	if(save_version > 0 && save_version < 38)
+	// Validation creates missing entries, so record what the slot actually saved first.
+	var/legacy_wing_accessory
+	if(needs_update > 0 && needs_update < 39 && islist(customizer_entries))
+		if(!get_customizer_entry_for_customizer_type(/datum/customizer/organ/neck_feature/anthro))
+			for(var/datum/customizer_entry/entry in customizer_entries)
+				if(ispath(entry.customizer_type, /datum/customizer/organ/wings) && !entry.disabled)
+					legacy_wing_accessory = entry.accessory_type
+					break
+
+	if(needs_update > 0 && needs_update < 38)
 	// Here's the plan, we save the old type and the old color, then re-apply them after validation. Should be seamless
 		var/old_accessory_type
 		var/old_selected_color
@@ -1139,8 +1171,30 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			new_wing_entry.accessory_type = old_accessory_type
 
 	validate_customizer_entries()
+	if(legacy_wing_accessory)
+		migrate_legacy_wing_fluff(legacy_wing_accessory)
 
 	return TRUE
+
+/datum/preferences/proc/migrate_legacy_wing_fluff(legacy_wing_accessory)
+	var/fluff_sprite
+	switch(legacy_wing_accessory)
+		if(/datum/sprite_accessory/wings/wide/harpywingsalt1, /datum/sprite_accessory/wings/wide/harpywingsalt2)
+			fluff_sprite = /datum/sprite_accessory/neck_feature/mammal_fluff/fluff
+		if(/datum/sprite_accessory/wings/wide/harpywingsalt1_top, /datum/sprite_accessory/wings/wide/harpywingsalt2_top)
+			fluff_sprite = /datum/sprite_accessory/neck_feature/mammal_fluff/fluff_front
+		else
+			return
+
+	var/datum/customizer_entry/fluff = get_customizer_entry_for_customizer_type(/datum/customizer/organ/neck_feature/anthro)
+	var/datum/customizer_entry/organ/wings/wings = locate(/datum/customizer_entry/organ/wings) in customizer_entries
+	if(!fluff || !wings || wings.disabled || wings.accessory_type != legacy_wing_accessory)
+		return
+
+	fluff.customizer_choice_type = /datum/customizer_choice/organ/neck_feature/anthro_fluff
+	fluff.accessory_type = fluff_sprite
+	fluff.accessory_colors = wings.wings_color
+	fluff.disabled = FALSE
 
 /datum/preferences/proc/save_character()
 	if(!path)
@@ -1225,7 +1279,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["all_quirks"]			, all_quirks)
 
 	//Patron
-	WRITE_FILE(S["selected_patron"]		, preferences_typepath_or_null(selected_patron))
+	WRITE_FILE(S["selected_patron"], preferences_typepath_or_null(selected_patron))
+	WRITE_FILE(S["polytheist_patron"], preferences_typepath_or_null(polytheist_patron))
 
 	// Organs
 	var/list/packed_hair = list()
@@ -1282,8 +1337,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		background_typepath = /datum/virtue/background/none
 	WRITE_FILE(S["virtue_background"], background_typepath)
 	WRITE_FILE(S["quirks"], get_quirk_typepaths())
+	WRITE_FILE(S["virgin_attraction"], sanitize_virgin_attraction(virgin_attraction))
 	WRITE_FILE(S["race_bonus"], race_bonus)
 	WRITE_FILE(S["combat_music"], preferences_typepath_or_null(combat_music))
+	WRITE_FILE(S["body_center_offset"], features["body_center_offset"])
 	WRITE_FILE(S["body_size"] , features["body_size"])
 	WRITE_FILE(S["nsfwflavortext"] , html_decode(nsfwflavortext))
 	WRITE_FILE(S["nsfw_ooc_extra_img"] , nsfw_ooc_extra_img)

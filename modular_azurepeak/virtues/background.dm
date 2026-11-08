@@ -78,9 +78,8 @@
 	handle_stashed_items(recipient)
 	handle_added_languages(recipient)
 	handle_stats(recipient)
-	if(name && !unlisted && !retired && !istype(src, /datum/virtue/background/none))
-		record_featured_object_stat(FEATURED_STATS_BACKGROUNDS, name)
-		record_featured_object_stat(FEATURED_STATS_BACKGROUNDS_LEAST, name)
+	if(!istype(src, /datum/virtue/background/none))
+		record_background_pick(recipient, src)
 	INVOKE_ASYNC(src, TYPE_PROC_REF(/datum/customization_trait, apply_to_human), recipient)
 	return TRUE
 

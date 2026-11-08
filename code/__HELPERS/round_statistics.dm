@@ -517,6 +517,9 @@ GLOBAL_LIST_EMPTY(patron_follower_counts)
 #define FEATURED_STATS_BACKGROUNDS "backgrounds"
 #define FEATURED_STATS_BACKGROUNDS_LEAST "backgrounds_least"
 
+/// Round-scoped character/background pairs; survives fartravel without retaining deleted mobs.
+GLOBAL_LIST_EMPTY(recorded_background_picks)
+
 // Featured objects stats
 #define FEATURED_STATS_CRAFTED_ITEMS "crafted_items"
 #define FEATURED_STATS_SPELLS "spells"
@@ -772,6 +775,33 @@ GLOBAL_LIST_EMPTY(chronicle_stats)
 		stat_data["entries"] = list()
 
 	stat_data["entries"][key] = (stat_data["entries"][key] || 0) + increment
+
+/mob/living/carbon/human/proc/set_background_stat_identity(account_key, character_name)
+	if(background_stat_identity || !account_key)
+		return
+	var/identity_name = character_name || real_name
+	if(!identity_name)
+		return
+	background_stat_identity = json_encode(list(ckey(account_key), identity_name))
+
+/// Only deduplicate the statistic: background effects must still apply on every spawn.
+/proc/record_background_pick(mob/living/carbon/human/character, datum/virtue/background/background)
+	if(SSticker.current_state == GAME_STATE_FINISHED || !character)
+		return FALSE
+	if(background && (!background.name || background.unlisted || background.retired))
+		return FALSE
+	character.set_background_stat_identity(character.ckey || character.mind?.key)
+	if(!character.background_stat_identity)
+		return FALSE
+	var/background_type = background?.type || /datum/virtue/background/none
+	var/pick_key = json_encode(list(character.background_stat_identity, background_type))
+	if(GLOB.recorded_background_picks[pick_key])
+		return FALSE
+	GLOB.recorded_background_picks[pick_key] = TRUE
+	var/background_name = background?.name || "None"
+	record_featured_object_stat(FEATURED_STATS_BACKGROUNDS, background_name)
+	record_featured_object_stat(FEATURED_STATS_BACKGROUNDS_LEAST, background_name)
+	return TRUE
 
 /proc/record_featured_object_stat(stat_category, object_name, increment = 1)
 	if(SSticker.current_state == GAME_STATE_FINISHED)

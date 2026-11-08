@@ -1,4 +1,5 @@
 /obj/item/reagent_containers/powder
+	possible_item_intents = list(INTENT_GENERIC, /datum/intent/sprinkle)
 	name = "default powder"
 	desc = ""
 	icon = 'icons/roguetown/items/produce.dmi'
@@ -222,8 +223,8 @@
 	desc = ""
 	gender = PLURAL
 	icon_state = "salt"
-	list_reagents = list(/datum/reagent/consumable/sodiumchloride = 15)
-	grind_results = list(/datum/reagent/consumable/sodiumchloride = 15)
+	list_reagents = list(/datum/reagent/consumable/sodiumchloride = 1)
+	grind_results = list(/datum/reagent/consumable/sodiumchloride = 1)
 	volume = 1
 
 /obj/item/reagent_containers/powder/salt/throw_impact(atom/hit_atom, datum/thrownthing/thrownthing)

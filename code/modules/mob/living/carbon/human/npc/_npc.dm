@@ -63,7 +63,7 @@
 
 /mob/living/carbon/human/Initialize(mapload)
 	. = ..()
-	our_cells = new(interesting_dist, interesting_dist, 1)
+	our_cells = new(interesting_dist, interesting_dist, 1, mode != NPC_AI_OFF)
 	set_new_cells()
 
 /mob/living/carbon/human/Destroy()
@@ -73,11 +73,19 @@
 /mob/living/carbon/human/proc/IsStandingStill()
 	return doing || resisting || pickpocketing
 
+/mob/living/carbon/human/proc/npc_ai_active()
+	return !QDELETED(src) && mode != NPC_AI_OFF && mode != NPC_AI_SLEEP && (!client || ai_when_client) && !isnull(get_turf(src))
+
 /mob/living/carbon/human/proc/handle_ai()
-	if(client)
-		if(!ai_when_client)
-			return
+	if(!npc_ai_active())
+		return FALSE
+	if(our_cells && !our_cells.vertical_range) // Converted player bodies can acquire NPC AI later.
+		our_cells.vertical_range = 1
+		set_new_cells()
+		if(!npc_ai_active())
+			return FALSE
 	START_PROCESSING(SShumannpc,src)
+	return TRUE
 
 /mob/living/carbon/human/proc/check_mouth_grabbed()
 	var/obj/item/bodypart/head/head = get_bodypart(BODY_ZONE_HEAD)
@@ -97,6 +105,9 @@
 	return FALSE
 
 /mob/living/carbon/human/proc/process_ai()
+	if(!npc_ai_active())
+		walk_to(src, 0)
+		return TRUE
 	if(IsDeadOrIncap())
 		walk_to(src,0)
 		return stat == DEAD // only stop processing if we're dead-dead
@@ -128,6 +139,8 @@
 	if(length(myPath))
 		steps_moved_this_turn += move_along_path()
 		// We could return here if we wanted to make moving use your turn.
+	if(!npc_ai_active()) // Movement may yield while the last nearby client leaves.
+		return TRUE
 	// Special case: Taunt people hiding in trees directly above us.
 	var/turf/my_turf = get_turf(src)
 	var/turf/their_turf = get_turf(target)
@@ -279,7 +292,7 @@
 			mmb_intent = new INTENT_JUMP(src) // switch to jump intent
 		used_intent = mmb_intent
 		. = jump_action(jump_destination) // return whether the jump succeeded or failed
-		used_intent = null
+		used_intent = a_intent
 		QDEL_NULL(mmb_intent) // unset our intent after
 		m_intent = old_m_intent
 		if(.)
@@ -307,7 +320,7 @@
 			mmb_intent = new INTENT_JUMP(src) // switch to jump intent
 		used_intent = mmb_intent
 		. = jump_action(jump_destination) // return whether the jump succeeded or failed
-		used_intent = null
+		used_intent = a_intent
 		QDEL_NULL(mmb_intent) // unset our intent after
 		m_intent = old_m_intent
 		return
@@ -349,6 +362,8 @@
 	var/old_pathfinding_target = pathfinding_target
 	var/steps_to_take = maxStepsTick - steps_moved_this_turn // if this isn't our first movement step, limit how many we can take
 	for(var/movement_turn in 1 to steps_to_take)
+		if(QDELETED(src) || !npc_ai_active())
+			return
 		if(!length(myPath))
 			NPC_THINK("MOVEMENT TURN [movement_turn]: Path complete!")
 			return
@@ -461,8 +476,13 @@
 		var/const/MAX_RANGE_FIND = 32
 		NPC_THINK("Pathfinding to [pathfinding_target]...")
 		is_currently_pathing = TRUE
-		myPath = get_path_to(src, turf_of_target, TYPE_PROC_REF(/turf, Heuristic_cardinal_3d), MAX_RANGE_FIND + 1, 250, 1, adjacent = TYPE_PROC_REF(/turf, reachableTurftest3d))
+		var/list/new_path = get_path_to(src, turf_of_target, TYPE_PROC_REF(/turf, Heuristic_cardinal_3d), MAX_RANGE_FIND + 1, 250, 1, adjacent = TYPE_PROC_REF(/turf, reachableTurftest3d))
+		if(QDELETED(src))
+			return FALSE
 		is_currently_pathing = FALSE
+		if(!npc_ai_active() || pathfinding_target != new_target)
+			return FALSE
+		myPath = new_path
 		if(length(myPath))
 			myPath -= get_turf(src) // remove the turf we start on
 			pathing_frustration = 0
@@ -672,6 +692,8 @@
 				if(my_turf.Distance_cardinal_3d(target_turf, src) > 1)
 					if(!length(myPath)) // create a new path to the target
 						start_pathing_to(target)
+			if(!npc_ai_active()) // Pathfinding may yield while nearby clients leave.
+				return TRUE
 			// Flee before trying to pick up a weapon.
 			if(flee_in_pain && target && (target.stat == CONSCIOUS))
 				var/paine = get_complex_pain()
@@ -821,6 +843,19 @@
 	swap_hand() // switch back to mainhand
 	return TRUE // end your turn
 
+/// Only use an available intent, and preserve the current stance if dispatch fails.
+/mob/living/carbon/human/proc/npc_try_rmb_attack(intent_type, mob/living/victim)
+	if(!(intent_type in possible_rmb_intents))
+		return FALSE
+	var/datum/rmb_intent/previous_intent = rmb_intent
+	swap_rmb_intent(intent_type)
+	if(try_special_attack(victim))
+		return TRUE
+	rmb_intent = previous_intent
+	if(hud_used?.rmb_intent)
+		hud_used.rmb_intent.update_icon()
+	return FALSE
+
 /// A proc used in monkey_attack. Selects and performs our preferred attack.
 /// Returns TRUE if our turn has been used.
 /mob/living/carbon/human/proc/do_best_melee_attack(mob/living/victim)
@@ -840,14 +875,12 @@
 	Weapon = get_active_held_item()
 	OffWeapon = get_inactive_held_item()
 
-	//Feint Riposte check before we do any further attacks to teach our enemy a lesson.
-	if(smart_combatant && istype(Weapon, /obj/item/rogueweapon)) //Make sure we have a proper weapon in hand. No feinting with a stick or some shit.
-		if(!has_status_effect(/datum/status_effect/debuff/feintcd) && target.has_status_effect(/datum/status_effect/buff/clash))
-			if(possible_rmb_intents & /datum/rmb_intent/feint)
-				swap_rmb_intent(/datum/rmb_intent/feint)
-				if(Adjacent(target))
-					try_special_attack(target)
-					return TRUE //Attempt to feint and ruin their clash...
+	var/datum/status_effect/buff/clash/guard = victim.has_status_effect(/datum/status_effect/buff/clash)
+	var/waiting_for_guard_reaction = guard && world.time < guard.npc_reaction_time
+	if(smart_combatant && istype(Weapon, /obj/item/rogueweapon) && guard && !waiting_for_guard_reaction)
+		if(!has_status_effect(/datum/status_effect/debuff/feintcd) && Adjacent(victim))
+			if(npc_try_rmb_attack(/datum/rmb_intent/feint, victim))
+				return TRUE
 
 	// What is the chance we try to grab with our offhand?
 	var/make_grab_chance = Weapon ? 5 : 20 // If unarmed, 20% chance; otherwise 5%
@@ -893,28 +926,23 @@
 
 			if(special_attacker && prob(50) && !has_status_effect(/datum/status_effect/debuff/specialcd)) //Only if we use specials...
 				if(weapon_special_intents)
-					if(possible_rmb_intents & /datum/rmb_intent/strong)
-						swap_rmb_intent(/datum/rmb_intent/strong)
-						try_special_attack(target)
-						return TRUE //We used our special intent on the target as soon as we could.
+					if(npc_try_rmb_attack(/datum/rmb_intent/strong, victim))
+						return TRUE
 
 			if(smart_combatant && prob(50)) // Only if we use rmb intents...
-				if(possible_rmb_intents)
+				if(length(possible_rmb_intents))
 					if(!has_status_effect(/datum/status_effect/debuff/feintcd))
-						if(possible_rmb_intents & /datum/rmb_intent/feint && rmb_intent != /datum/rmb_intent/feint && prob(50))
-							swap_rmb_intent(/datum/rmb_intent/feint)
-							try_special_attack(target)
-							return TRUE
+						if(!waiting_for_guard_reaction && !istype(rmb_intent, /datum/rmb_intent/feint) && prob(50))
+							if(npc_try_rmb_attack(/datum/rmb_intent/feint, victim))
+								return TRUE
 					else if(!has_status_effect(/datum/status_effect/debuff/clashcd))
-						if(possible_rmb_intents & /datum/rmb_intent/riposte && rmb_intent != /datum/rmb_intent/riposte && prob(50))
-							swap_rmb_intent(/datum/rmb_intent/riposte)
-							try_special_attack(target)
-							return TRUE
+						if(!istype(rmb_intent, /datum/rmb_intent/riposte) && prob(50))
+							if(npc_try_rmb_attack(/datum/rmb_intent/riposte, victim))
+								return TRUE
 					else if(!has_status_effect(/datum/status_effect/debuff/baitcd)) //May work sometimes; more than likely it wont however.
-						if(possible_rmb_intents & /datum/rmb_intent/aimed && rmb_intent != /datum/rmb_intent/aimed) //Default to aimed as the final choice to attempt baiting.
-							swap_rmb_intent(/datum/rmb_intent/aimed)
-							try_special_attack(target)
-							return TRUE
+						if(!istype(rmb_intent, /datum/rmb_intent/aimed)) //Default to aimed as the final choice to attempt baiting.
+							if(npc_try_rmb_attack(/datum/rmb_intent/aimed, victim))
+								return TRUE
 
 		if(!did_we_change_intent) //Always default regardless.
 			rog_intent_change(1)
@@ -986,7 +1014,7 @@
 			// we just got hit by something hidden so try and find them
 			if (prob(5))
 				visible_message(span_notice("[src] begins searching around frantically..."))
-			var/extra_chance = (health <= maxHealth * 50) ? 30 : 0 // if we're below half health, we're way more alert
+			var/extra_chance = (health <= maxHealth * 0.5) ? 30 : 0 // if we're below half health, we're way more alert
 			if (!npc_detect_sneak(L, extra_chance))
 				return
 		NPC_THINK("Hunting [L]!")
@@ -1055,6 +1083,7 @@
 
 	if(mode == NPC_AI_SLEEP)
 		mode = NPC_AI_IDLE
+		handle_ai()
 
 /mob/living/carbon/human/proc/on_client_exit(datum/source, datum/exited)
 	SIGNAL_HANDLER
@@ -1064,7 +1093,7 @@
 	consider_wakeup()
 
 /mob/living/carbon/human/proc/set_new_cells()
-	if(QDELETED(src)) // Move to nullspace causes move and causes this.
+	if(QDELETED(src) || !our_cells) // Movement can occur during initialization or deletion.
 		return
 	var/turf/our_turf = get_turf(src)
 	if(isnull(our_turf))
@@ -1086,16 +1115,20 @@
 
 /mob/living/carbon/human/proc/consider_wakeup()
 	if(mode == NPC_AI_OFF)
-		return
+		return FALSE
+	if(client || !our_cells)
+		return TRUE
 
 	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
 		if(length(grid.client_contents))
-			if(mode != NPC_AI_SLEEP && mode != NPC_AI_IDLE)
-				return TRUE
-			mode = NPC_AI_IDLE
+			if(mode == NPC_AI_SLEEP)
+				mode = NPC_AI_IDLE
+				handle_ai()
 			return TRUE
 
 	mode = NPC_AI_SLEEP
+	walk_to(src, 0)
+	STOP_PROCESSING(SShumannpc, src)
 	return FALSE
 
 /mob/living/carbon/human/Moved()

@@ -42,6 +42,8 @@
 	)
 
 	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
 		/obj/item/bodypart/taur/otie,
 		/obj/item/bodypart/taur/canine,
 		/obj/item/bodypart/taur/venard,

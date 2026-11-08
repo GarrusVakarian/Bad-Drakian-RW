@@ -82,3 +82,8 @@
 /datum/sprite_accessory/antenna/moth/mothra
 	name = "Mothra"
 	icon_state = "mothra"
+
+/datum/sprite_accessory/antenna/moth/mothra_colorable
+	name = "Mothra (colorable)"
+	icon = 'icons/mob/sprite_accessory/antenna/moth_antenna_colorable.dmi'
+	icon_state = "mothra_color"

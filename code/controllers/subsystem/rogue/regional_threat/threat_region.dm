@@ -105,6 +105,8 @@
 
 /datum/threat_region/proc/get_ic_description()
 	var/list/result = list()
+	if(banditry_hoard > 0)
+		result += "a hoard of around [banditry_hoard] mammons"
 	if(!length(faction_weights) || latent_ambush <= 0)
 		return result
 	var/total_bands = round(latent_ambush / THREAT_POINTS_PER_BAND)

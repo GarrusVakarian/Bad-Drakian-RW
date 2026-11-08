@@ -107,6 +107,8 @@
 				used = list('sound/vo/female/gen/se/sex (1).ogg','sound/vo/female/gen/se/sex (2).ogg','sound/vo/female/gen/se/sex (3).ogg','sound/vo/female/gen/se/sex (4).ogg','sound/vo/female/gen/se/sex (5).ogg','sound/vo/female/gen/se/sex (6).ogg','sound/vo/female/gen/se/sex (7).ogg','sound/vo/female/gen/se/sex (8).ogg')
 			if("meow")
 				used = list('sound/vo/mobs/cat/cat_meow1.ogg', 'sound/vo/mobs/cat/cat_meow2.ogg', 'sound/vo/mobs/cat/cat_meow3.ogg', 'sound/vo/mobs/cat/cat_meow4.ogg')
+			if("mrrp")
+				used = list('sound/vo/mobs/cat/mrrp.ogg')
 			if("caw")
 				used = list('sound/vo/mobs/bird/CROW_01.ogg', 'sound/vo/mobs/bird/CROW_03.ogg',)
 			if("peep")
@@ -153,12 +155,16 @@
 				used = 'sound/vo/moth/mothchitter.ogg'
 			if("flutter")
 				used = 'sound/vo/moth/moth_flutter.ogg'
+			if("msqueak")
+				used = 'sound/vo/moth/moth_squeak.ogg'
 			if("strain")
 				used = 'sound/vo/female/gen/strain.ogg'
 			if("moan")
 				used = list('sound/vo/female/gen/sound_vo_female_gen_moan (1).ogg','sound/vo/female/gen/sound_vo_female_gen_moan (2).ogg','sound/vo/female/gen/sound_vo_female_gen_moan (3).ogg')
 			if("yip")
 				used = list('sound/vo/yip.ogg', 'sound/vo/yip2.ogg', 'sound/vo/yip3.ogg')
+			if("foxyip", "foxwhine")
+				used = get_fox_sound(soundin)
 			if("yap")
 				used = list('sound/vo/yap.ogg')
 			if("salute")
@@ -188,4 +194,10 @@
 			//jokes on YOU, I'm adding the yeen cackle!
 			if("ycackle")
 				used = list('sound/vo/mobs/hyena/cackle.ogg')
+			if("tick")
+				used = list('sound/misc/clockloop.ogg')
+			if("creak")
+				used = list('sound/foley/trap.ogg')
+			if("spark")
+				used = list('sound/foley/machinebreak.ogg')
 	return used

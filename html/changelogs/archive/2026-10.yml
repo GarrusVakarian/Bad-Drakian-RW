@@ -705,6 +705,13 @@
   - config: Added optional autostart and minimum flavor-text/OOC-note settings, preserving
       BD's current defaults.
 2026-10-26:
+  GarrusVakarian:
+  - map: Fixes random map generation
+  - map: Removes one of the two soilson spots
+  - map: Moves slaughterhouse and the chicken coop to the removed soilson spot
+  - map: Moves the shop, stockpile and shipping thing to the main square
+  - map: Adds a guard tower where the shop used to be
+  - map: Adds hermes and jawbank to the church
   Lamasmaster, port by mypingishuge:
   - rscadd: Characters now have guts, which spill alongside the stomach during disembowelment
       instead of ejecting the liver.
@@ -715,10 +722,308 @@
   _Rarity:
   - bugfix: Delivery quests and recovery rumors now only select destinations present
       on the current map.
+  - qol: Port AP's Food examine text to include clickable recipe suggestions and clearer
+      preparation instructions.
+  - qol: Recipe pages link ingredients to their known cooking, slicing, drying, or
+      assembly instructions.
+  - bugfix: Fixed saved customization presets incorrectly restoring selected languages
+      and causing language runtime errors.
+  - bugfix: Background rankings no longer count the same character's background repeatedly
+      after fartravel and respawning.
+  kittysmooch, KatTheFox, Ryan180602, ToasterStrudes, zeskorion, port by mypingishuge:
+  - rscadd: More weapons and tools can be twirled, with skill requirements, visible
+      in-hand animations, and fumbles.
+  - rscadd: Added a configurable Alt-grip / Twirl hotkey, defaulting to Alt+G, for
+      the active held item's right-click action.
+  - rscadd: Weapon twirls display correctly in both hands and while facing east or
+      west.
   mypingishuge:
   - rscadd: Added Folding Table for 2 points and Mess Kit for 3 points to the loadout
       menu.
+  - bugfix: Grabs no longer break when dragging someone from a diagonal position.
+  - bugfix: Repeated clicks no longer bypass the wait between hammer repairs.
+  - balance: Hammer repair steps now use a 0.6-second base interval.
   tatsu:
   - rscadd: Added optional taur genital sprites and a taur vagina visibility toggle.
   - image: Added Ant, Wasp, and Spider ovipositors and Bee tail butt genital sprites.
   - rscadd: Added Oviduct alongside existing vagina appearances.
+2026-10-27:
+  GarrusVakarian & Silvertail:
+  - map: Added inquisition shack
+  - map: Added heartblood for the apothecary
+  - map: 'Silvertail: Remodeled the ground floor of the baron''s house to include
+      a throne'
+  - map: 'Silvertail: Added a nervmaster and contract ledger to the second story of
+      the baron''s house - Extended some roof tiles up there as well to accommodate
+      lower floor changes'
+  - map: 'Silvertail: Changed the area of the baron''s house from "Interior" to "Manor"'
+  _Rarity:
+  - qol: Clients now keep trying to reconnect for up to 10 minutes during announced
+      server restarts.
+  - qol: Brooms now clean blood and additional types of debris, sweet faster based
+      on Cooking skill, have some defense stats.
+  - bugfix: Scabbards, dagger sheaths, and greatweapon straps no longer remain occupied
+      after their stored weapon disappears or is moved elsewhere.
+  anconfuzedrock:
+  - rscadd: 'two new vanguard classes: One that''s a muscular brute, and one that
+      has a GUN!! that they barely know how to use'
+  mypingishuge:
+  - rscadd: Added a craftable iron gloryhole costing one iron bar, with the durability
+      of regular iron bars.
+  - rscadd: Living, connected gnolls are notified when a character with the Hunted
+      quirk latejoins and becomes available to track.
+  - qol: Becoming stuffed or fully hydrated now displays the corresponding mood message
+      in chat.
+  - balance: Leather, hide, studded leather, chainmail, and plate corslets gain missing
+      coverage compared with equivalent armor, including the harness and full-plate
+      corsets.
+2026-10-28:
+  CentralSmith:
+  - balance: Sojourners receive a gilded silver psycross for prayer, Inquisition rituals
+      and silver protections, retaining its golden appearance.
+  - balance: Sojourners start with psydonic leather gloves.
+  - balance: Sojourner staff integrity increased from 150 to 200.
+  - balance: Sojourners start with Journeyman Polearms instead of Apprentice.
+  GarrusVakarian:
+  - map: added a far travel box for duke / duchess unintended spawn on Smollhill
+  - map: added one servant spawn to Smollhill
+  - map: added hermes to blacksmith and inn on Smollhill
+  - map: renamed hermes and keys for a few places to remove the "lowtown" branding
+      on Smollhill
+  - map: added mail master so people can actually send mail on Smollhill
+  - map: various fixes and improvements on Smollhill
+  - map: added Onyx Khan's royal loadout to the testing room
+  - map: added three underground rooms to Smollhill
+  - map: made Smollhill votable
+  - sound: changed the voting bell sound
+  Guidesu:
+  - rscadd: Scrap slag. Cook 3 rocks and 1 ore, coal or salt in any furnace with 4
+      or more slots.
+  - rscadd: Slag kiln, for turning rocks and coal into scrap slag in bulk. Break the
+      slag out with a hammer.
+  - rscadd: Scrap versions of all decrepit gear, forged from scrap slag with no skill
+      needed. They can't be repaired.
+  - rscadd: Bars ruined on the anvil now turn into scrap slag instead of vanishing.
+  - image: Rusted iron sprites for all scrap gear, scrap slag and the slag kiln.
+  Yaki (code edit suggestion) & GarrusVakarian (execution):
+  - balance: defiled keyholder now works for any faith, not just inhumen ones (there
+      are heretic tennites after all)
+  _Rarity:
+  - bugfix: Hemophages can no longer sustain themselves with ordinary food and drinks
+      or restore blood through healing foods.
+  - bugfix: Bodily fluids no longer provide nutrition or hydration to Hemophages but
+      remain safe for them to consume.
+  - bugfix: Fixed holy-water metabolism runtimes that prevented its timed effects.
+  mypingishuge:
+  - qol: Renamed the pintle exposure control to Crotch Exposed/Concealed and added
+      explanatory tooltips distinguishing it from Genitals Visible/Hidden.
+  - bugfix: Explicitly exposed crotch sprites now render above clothing such as capes
+      and tabards, and exposure/visibility toggles refresh correctly without reusing
+      stale cached appearances.
+  - bugfix: Exposed testicles no longer show through covering clothing in the rear-facing
+      view.
+  - qol: Reduced the volume of gnoll speech sounds.
+  - qol: Garrison roles now pay 10 mammon instead of 50 to print a bounty list at
+      the Excidium.
+  - rscadd: The Rosewall now has a Slaves tab, automatically listing Slaves and Enslaved
+      Adventurers with a spawn link to edit status and advertisement for the round.
+  - qol: Crude branding sticks no longer require the target to enable Compliance Mode.
+  - balance: Crude branding takes 50% longer than a proper branding iron.
+  - spellcheck: Updated the crude branding stick description in-game and in the loadout
+      menu.
+  - rscadd: Slavers receive a one-time chat notification when a Slave or Enslaved
+      Adventurer latejoins and finishes class setup.
+  - rscadd: Added Dream Dust, a 3-point quirk that provides a stashed bag containing
+      three portions of Zizo's Bane powder.
+  - rscadd: Added Heightened Sensitivity and Dulled Sensitivity, two free quirks that
+      quadruple or halve received arousal gains, excluding standard masturbation and
+      solo toy actions.
+  - bugfix: Temporary mass and self-transformation hallucinations now clean up their
+      appearance overrides reliably, including when the affected player ghosts or
+      changes bodies.
+  - balance: The Noble quirk now costs 1 quirk point and grants minor nobility without
+      estate income or a starting coinpurse.
+  - balance: The Nobility virtue now grants at least Noble social rank, retaining
+      its estate income.
+  - balance: Otherwise eligible DNR characters can now rise as deadites. DNR still
+      prevents normal revival.
+  - qol: Eligible characters receive a death message explaining the deadite wait and
+      how to seek recovery in town, with separate instructions for DNR characters.
+  mypingishuge (port), 7erracotta:
+  - image: Updated loincloth sprites, including female and dwarf variants.
+  - rscadd: Added belt shawls, available through sewing and the loadout menu for 0
+      points. Loincloths remain available for 0 points.
+  mypingishuge (port), KatTheFox:
+  - rscadd: Guard can now deflect animal and monster melee attacks, briefly leaving
+      the attacker exposed.
+  mypingishuge (port), WeNeedMorePhoron:
+  - bugfix: Weapon hits against simple animals now consume Exposed or Vulnerable,
+      applying the appropriate damage bonus and feedback.
+  - bugfix: Critical wounds and resisted criticals on carbon mobs now consume Exposed
+      or Vulnerable instead of leaving the opening active.
+  mypingishuge (port), Yuckuza (original):
+  - balance: Dying inside town no longer prevents otherwise eligible characters from
+      becoming deadites. Only the physician's clinic and town church areas protect
+      eligible corpses from rising, instead of every indoor town building.
+  mypingishuge (port), borneblood (original):
+  - balance: Newly risen deadites receive 3 minutes of damage protection and movement/grabbing
+      bonuses, ending early when attacking characters with a mind or receiving a surgical
+      incision.
+  - balance: Player weapon attacks, punches, kicks, bites, damaging projectiles and
+      thrown items now end a deadite's rising protection before damage is applied;
+      NPC attacks do not.
+2026-10-29:
+  CentralSmith:
+  - bugfix: Pots and teapots can receive liquid poured from other containers.
+  - bugfix: Carved teapots now hold 120 units, matching ceramic teapots and stone
+      pots.
+  GarrusVakarian:
+  - map: 'Smollhill: Brassface for slaver.'
+  - map: 'Smollhill: Purity right outside of slaver.'
+  - map: 'Smollhill: Xylix''s fortune at the tavern/inn.'
+  - map: 'Smollhill: Sack, cloth, soap, bucket in the baron''s kitchen.'
+  - map: 'Smollhill: Statue in the mercenary spawn spot.'
+  - map: 'Smollhill: Church service bell at the chapel.'
+  - map: 'Smollhill: Removed travel spot to Whitevein (since there is no Whitevein).'
+  - map: Smollhill has a councillor now, with their own bedroom
+  PPooch, annikaRU, port by mypingishuge:
+  - rscadd: Councillors may establish ministries with important town roles at the
+      Ministry bureau in Neuhill, improving their skills.
+  - code_imp: Added support for Ratwood maple trees.
+  - bugfix: Seated ministers can use the bureau to clear an office whose sponsor was
+      deleted and petition again.
+  _Rarity:
+  - bugfix: Ported AP's Mechanized ore bags handling. Will automatically collect matching
+      materials while worn or held.
+  - rscadd: Enabled the Verevolf event for normal selection and added one Verevolf
+      selection attempt to Chaos rounds.
+  - rscadd: Transformed Verevolfs can offer eligible nearby players conversion through
+      Voluntary Bite.
+  - rscdel: Removed Verevolf infection through bites, chewing, wound licking, and
+      ERP.
+  - spellcheck: Updated Verevolf greeting and objective wording.
+  - spellcheck: Expert Homesteader's description correctly lists its Mining limit
+      as Expert instead of Legendary.
+  - bugfix: Moved new rolling verbs into Emotes tab were they should be.
+  - bugfix: Automatic spell invocations and generated spell lines no longer count
+      toward Top Speakers.
+  bearrrrrrrr:
+  - rscadd: tithebound mercenaries
+  mypingishuge:
+  - balance: Bodies containing player minds are protected from further ordinary corpse
+      decay without preventing deadite rising.
+  - rscadd: Deadites gain clearer infection warnings, a reanimation sequence, improved
+      recognition and a Seek the Lyving action.
+  - balance: Deadites retain their existing stats, can run and reattach limbs, and
+      regenerate while conscious without fire stacks. Weapons and advanced techniques
+      are restricted.
+  - balance: The deadite grace period lasts two minutes.
+  - bugfix: Rising as a deadite clears lingering blood-loss penalties.
+  - bugfix: Rot-removal and black-rot surgery can only be performed on the chest.
+  - bugfix: Damaging grab actions cancel deadite grace, and wetness cannot bypass
+      fire restrictions on regeneration.
+  - bugfix: Deadite regeneration no longer repeats normal wound processing.
+  - bugfix: Deadite recognition clears after curing a character whose mind has moved,
+      and black blood retains its tint when pooling.
+  - rscadd: Gnoll Berserkers, Knights, Templars and Shamans now start with the Message
+      spell.
+  - qol: Soup and stew taste messages now include all their cooked flavours, even
+      when diluted by other ingredients.
+  - rscadd: All pot types can be placed on campfires to heat liquids and cook food.
+      Left-click with an empty hand removes the pot.
+  - balance: Adventurer and Refugee now require at least 1 PQ on Neuhill and Smolhill.
+  - rscadd: Added colorable Monarch wings and Mothra antennae alongside the existing
+      Fluvian customization options.
+  - bugfix: Deathless and deadite-immune characters can slowly recover from severe
+      wounds while sleeping, including wounds whose bleeding previously blocked recovery.
+  mypingishuge (oops i broke the server teehee):
+  - bugfix: Character examines no longer fail for viewers without a deadite antagonist
+      datum, restoring recognition of people whose faces they examine.
+  - bugfix: Speech language icons no longer cause null-client runtimes and link to
+      the receiving player's client.
+  tatsu:
+  - rscadd: Insect tails can now use the existing tail ovipositor artwork.
+  - qol: Renamed the Bee tail penis option to Ovipositor.
+  - bugfix: Regular vagina selections no longer automatically display Oviduct artwork.
+  - image: Corrected the hard state Oviduct sprite placement.
+  - bugfix: South facing Oviduct sprites was offset and showing. Now it is not.
+2026-10-30:
+  GarrusVakarian:
+  - map: Added a warehouse to Smollhill
+  - map: Fixed a strip of empty turfs floating in the air near low-town on both maps
+  _Rarity:
+  - qol: Improved contract ledgers, quest scrolls, scout reports, and treasury documentation
+      for notorious bounties and hoard recovery.
+  - bugfix: Notorious hunts now detect a defeated hunting party.
+  - balance: Increased blockade wave timers from 10 to 15 minutes.
+  - qol: Towners can open delivery parcels at their addressed destination.
+  - rscadd: Frying pans can now be used on campfires. Empty-hand clicking removes
+      the food first, then the pan.
+  - rscadd: Added craftable hotrocks, stone frying pans usable on hearths and campfires.
+      Ported from Azure Peak.
+  - bugfix: NPC screams no longer count toward Top Screamers.
+  - bugfix: Taur characters no longer mutate everyone after them  in the credit portraits.
+  - qol: Dildos can now be equipped in mouth sluuut
+  - bugfix: Fixed runtime errors for the Lizard accent.
+  - bugfix: NPCs now restore their attack intent after jumping. Prevents damage-calculation
+      runtimes during followup spear/lance charges.
+  - rscadd: Right-drag yourself onto someone to request a piggyback ride, or drag
+      them onto yourself to offer one.
+  - bugfix: Food preparation recipes such as raisins and smothered fruit now use Cooking
+      instead of Crafting.
+  - rscadd: Quarterstaffs now have a two-handed Smash intent and Quarterstaff Sweep,
+      a special that knocks nearby foes back and leaves them Vulnerable.
+  _Rarity (port), WeNeedMorePhoron, crekulon:
+  - rscadd: Added an OOC Encyclopedia for browsing recipes and guides.
+  - qol: Recipe books now have search and category filters in a TGUI interface.
+  mypingishuge:
+  - code_imp: Stop processing sleeping human NPCs and wake them through nearby-client
+      grid events, including connected levels above and below.
+  - bugfix: Sleeping NPC deadites no longer generate automatic idle noises.
+  - bugfix: Ordinary animals wake again when players approach, and inactive animals
+      no longer finish stale movement or speech turns.
+  - bugfix: Two-handed weapons can switch to their alternate grip outside combat mode
+      again; one-handed twirlable weapons still require combat mode to select alternate
+      grip. Alternate-grip actions no longer fall through into twirling.
+  - balance: Wolkenmaw Illumination flares now light a 24-tile outer range for 3 minutes.
+      Coloured signal flares are unchanged.
+  - rscadd: Added an Offset button beside Sprite Scale that cycles through Default,
+      Down, Up, Right and Left alignments, updating the preview immediately and saving
+      the choice per character.
+  - bugfix: Preview Size updates in place and repeated clicks no longer reverse the
+      requested size during a refresh.
+  - bugfix: Restored the Hefty Swing axe special to iron and steel greataxes and their
+      related variants.
+  - balance: Large Frame now costs 0 quirk points instead of 3.
+  - bugfix: Steel masks and other masks with alternate belt, hip or back slots now
+      show their equipment tooltips when examining a character.
+  - bugfix: Multi-ingredient drinks, soups and stews are tasted after the complete
+      gulp transfers, rather than after only the first ingredient arrives.
+  - qol: Bandage rolls can apply a bandage directly to yourself or another character,
+      consuming one piece only when treatment succeeds.
+  - bugfix: Bandaging rechecks the limb and existing dressing after treatment so interrupted
+      or competing attempts cannot overwrite a bandage.
+2026-10-31:
+  _Rarity:
+  - qol: "Wretches now choose whether to join the mercenary statue\u2019s roster through\
+      \ their spawn chat link instead of being listed automatically."
+  - qol: Sleeping characters can receive subtle LOOC and subtle emotes, hear normal
+      local speech, and reliably hear whispers from the same or adjacent tiles.
+  - sound: "Port Ochre Valley\u2019s notification sound for regular LOOC messages."
+  _Rarity (port), anything86:
+  - qol: Kicks aimed at an unreachable head now hit the chest instead of canceling.
+  mypingishuge:
+  - qol: Added a Personal Ads tab to the Rosewall for browsing ads and setting temporary
+      or renewing advertisements.
+  - bugfix: Combat Aware now reveals attack-location and fatigue feedback from humanoid
+      NPCs without a mind datum.
+  - rscadd: Adds a free Virgin quirk with saved attraction choices, mild nervousness,
+      flavor text for kisses and partnered panel reactions, occasional blushing and
+      preference-dependent normal/anal first-experience messages and stress outcomes.
+  - rscadd: 'Adds an After Impregnation lactation option to character customization,
+      ported from Ratwood #3224 by IronDragoon.'
+  - bugfix: Combat status icons now disappear when their effects are removed.
+  - bugfix: Hefty Swing now checks living targets directly on the tiles it hits.
+  - bugfix: Fixed humanoid NPCs wasting turns on unavailable combat intents.
+  - balance: Humanoid NPCs now take two seconds to react to a newly raised guard with
+      a feint.

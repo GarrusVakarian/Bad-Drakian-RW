@@ -1,4 +1,5 @@
 /datum/sex_action/manticore_tailjob_receive
+	handles_user_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Use their tail maw on my cock"
 	check_same_tile = FALSE

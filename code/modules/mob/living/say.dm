@@ -81,7 +81,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	return new_msg
 
-/mob/living/say(message, bubble_type,list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, message_mode = null)
+/mob/living/say(message, bubble_type,list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, message_mode = null, count_for_stats = TRUE)
 	var/static/list/crit_allowed_modes = list(MODE_WHISPER = TRUE, MODE_CHANGELING = TRUE, MODE_ALIEN = TRUE)
 	var/static/list/unconscious_allowed_modes = list(MODE_CHANGELING = TRUE, MODE_ALIEN = TRUE)
 	var/talk_key = get_key(message)
@@ -222,7 +222,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	if(client)
 		last_words = message
-		record_featured_stat(FEATURED_STATS_SPEAKERS, src)	//Yappin'
+		if(count_for_stats)
+			record_featured_stat(FEATURED_STATS_SPEAKERS, src)	//Yappin'
 	if(findtext(message, "Abyssor"))	//funni
 		record_round_statistic(STATS_ABYSSOR_REMEMBERED)
 
@@ -415,7 +416,10 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	last_heard_raw_message = raw_message
 	// Recompose message for AI hrefs, language incomprehension.
 	message = compose_message(speaker, message_language, raw_message, radio_freq, spans, message_mode)
-	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type)
+	// Local speech remains intelligible while sleeping; whispers still require adjacency.
+	var/is_whisper = message_mode == MODE_WHISPER || message_mode == MODE_WHISPER_CRIT
+	var/allow_sleeping = !radio_freq && (!is_whisper || (speaker && speaker.z == z && (get_dist(src, speaker) in 0 to 1)))
+	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type, allow_sleeping = allow_sleeping)
 	return message
 
 /mob/living/send_speech(message, message_range = 6, obj/source = src, bubble_type = bubble_icon, list/spans, datum/language/message_language=null, message_mode, original_message)
@@ -573,7 +577,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			var/mob/living/carbon/human/target = AM
 			var/name_to_highlight = target.nickname
 			if(name_to_highlight && name_to_highlight != "" && name_to_highlight != "Please Change Me")	//We don't need to highlight an unset or blank one.
-				highlighted_message = replacetext_char(message, name_to_highlight, "<b><font color = #[target.highlight_color]>[name_to_highlight]</font></b>")
+				highlighted_message = replacetext_char(message, name_to_highlight, "<b><font color = [target.highlight_color]>[name_to_highlight]</font></b>")
 			var/datum/species/dullahan/target_species = target.dna?.species
 			if(istype(target_species) && target_species.headless)
 				tocheck = target_species.my_head
@@ -663,7 +667,12 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 /mob/living/proc/treat_message(message, language)
 	if(HAS_TRAIT(src, TRAIT_ZOMBIE_SPEECH) && !ispath(language, /datum/language/undead))
-		message = "[repeat_string(rand(1, 3), "U")][repeat_string(rand(1, 6), "H")]..."
+		message = pick(
+		"[repeat_string(rand(1, 3), "U")][repeat_string(rand(1, 6), "H")]...",
+		"[repeat_string(rand(1, 3), "R")][repeat_string(rand(1, 2), "U")][repeat_string(rand(1, 3), "G")][repeat_string(rand(1, 2), "H")]...",
+		"G[repeat_string(rand(1, 4), "R")]G[repeat_string(rand(1, 2), "H")]...",
+		"[repeat_string(rand(1, 2), "U")][repeat_string(rand(1, 3), "R")][repeat_string(rand(1, 5), "H")]...",
+		"[repeat_string(rand(1, 3), "R")][repeat_string(rand(1, 2), "G")][repeat_string(rand(1, 4), "H")]...")
 	else if(HAS_TRAIT(src, TRAIT_GARGLE_SPEECH))
 		message = vocal_cord_torn(message)
 
@@ -722,9 +731,16 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		. = verb_sing
 	else
 		. = ..()
+	. = apply_sore_jaw_speech_modifier(.)
 
-/mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
-	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced)
+/// Keep the selected whisper/sing/species verb and the original words readable.
+/mob/living/proc/apply_sore_jaw_speech_modifier(speech_verb)
+	if(HAS_TRAIT(src, TRAIT_SORE_JAW))
+		return "[speech_verb] through a sore jaw"
+	return speech_verb
+
+/mob/living/whisper(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null, count_for_stats = TRUE)
+	say("#[message]", bubble_type, spans, sanitize, language, ignore_spam, forced, count_for_stats = count_for_stats)
 
 /mob/living/get_language_holder(shadow=TRUE)
 	if(mind && shadow)

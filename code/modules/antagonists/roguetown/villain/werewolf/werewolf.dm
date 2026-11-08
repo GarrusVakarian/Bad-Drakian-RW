@@ -64,7 +64,7 @@
 		return
 
 /datum/antagonist/werewolf/greet()
-	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has welled within me. Before the Moonlight, I will sate my hallowed Hunger."))
+	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust.<br>(This guidance is to help guide the mindset of playing verewolf, rather than hard rules limiting your roleplay. Be tactful and have fun!:<br>While verevolfs are still quite powerful, the goal is for them to be ERP antags. Your focus should be on scenes or enabling them, rather than PvP. The curse running through your veins has turned you into an intelligent beast of lust and desire. The only method of infection is your \"Voluntary Bite\" ability. After you transform you'll remain a verevolf until using the \"Give In To Daylight\" ability and the dae star shining.<br>Don't blatantly go around in high-town. You can do things there but it needs to be kept subtle. If you're pinning someone down in public in the middle of low-town and people try to drive you away, you should likely flee to continue the story instead of kill them or stand and fight in town. Ideally such a creature would keep more to the bog instead of town.)"))
 	return ..()
 
 /datum/antagonist/werewolf/lesser/greet()
@@ -108,6 +108,55 @@
 	vomit(1, blood = TRUE, stun = FALSE)
 	return wolfy
 
+/mob/living/carbon/human
+	var/tmp/werewolf_bite_pending = FALSE
+
+// Adapted from Rivermist Hollow's Voluntary Bite (AGPL-3.0), revision 8dba961e768e:
+// https://github.com/sheetofseaweed/Rivermist-Hollow-Vanderlin/blob/8dba961e768ecf8b9cbbc7b8199372f6a9fead96/modular_rmh/code/modules/antagonists/werewolf/werewolf_objectives.dm
+/mob/living/carbon/human/proc/can_receive_werewolf_bite(mob/living/carbon/human/source)
+	if(QDELETED(source) || source == src || source.stat != CONSCIOUS || stat != CONSCIOUS)
+		return FALSE
+	if(!source.Adjacent(src) || !client || !mind || mind.current != src || !can_werewolf())
+		return FALSE
+	if(is_banned_from(ckey, list(ROLE_SYNDICATE, ROLE_WEREWOLF)))
+		return FALSE
+	var/datum/antagonist/werewolf/source_werewolf = source.mind?.has_antag_datum(/datum/antagonist/werewolf)
+	return source_werewolf?.transformed && source.mind.current == source
+
+/mob/living/carbon/human/proc/offer_werewolf_bite(mob/living/carbon/human/source)
+	set waitfor = FALSE
+
+	if(werewolf_bite_pending || !can_receive_werewolf_bite(source))
+		return
+	werewolf_bite_pending = TRUE
+	var/datum/mind/recipient_mind = mind
+	var/client/recipient_client = client
+	var/datum/antagonist/werewolf/source_werewolf = source.mind.has_antag_datum(/datum/antagonist/werewolf)
+	// Use the timed TGUI modal even when native inputs are preferred; native alerts have no timeout.
+	var/datum/tgui_alert/offer = new(src, "[source] offers to turn me into a verevolf with a deliberate bite. Do I accept the curse?", "Voluntary Bite", list("Accept", "Reject"), 20 SECONDS, TRUE, GLOB.tgui_always_state)
+	offer.ui_interact(src)
+	offer.wait()
+	var/answer
+	if(!QDELETED(offer))
+		answer = offer.choice
+		qdel(offer)
+	if(QDELETED(src))
+		return
+	werewolf_bite_pending = FALSE
+	if(answer != "Accept")
+		to_chat(src, span_notice("I refuse the verevolf's curse."))
+		if(!QDELETED(source))
+			to_chat(source, span_notice("[src] refuses the verevolf's curse."))
+		return
+	if(!can_receive_werewolf_bite(source) || mind != recipient_mind || client != recipient_client || source.mind.has_antag_datum(/datum/antagonist/werewolf) != source_werewolf)
+		to_chat(src, span_warning("The moment to accept the curse has passed."))
+		return
+	if(!werewolf_check())
+		return
+	to_chat(src, span_userdanger("The verevolf's curse takes root within me!"))
+	to_chat(source, span_notice("[src] accepts the verevolf's curse."))
+	log_combat(source, src, "converted into a verevolf through a voluntary bite")
+
 /mob/living/carbon/human/proc/werewolf_feed(mob/living/carbon/human/target, healing_amount = 10)
 	if(!istype(target))
 		return
@@ -129,6 +178,7 @@
 	return src.reagents.add_reagent(/datum/reagent/medicine/healthpot, healing_amount)
 
 /obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin
+	parent_type = /obj/item/clothing/suit/roguetown/armor/regenerating
 	slot_flags = null
 	name = "verevolf's skin"
 	desc = ""
@@ -142,10 +192,52 @@
 	sewrepair = FALSE
 	max_integrity = 550
 	item_flags = DROPDEL
+	repair_time = 20 SECONDS
+	var/is_disrupted = FALSE
+	repairmsg_begin = "My skin begins to slowly mend its abuse.."
+	repairmsg_continue = "My skin mends some of its abuse.."
+	repairmsg_stop = "My skin stops mending from the onslaught!"
+	repairmsg_end = "My skin has become taut with newfound vigor!"
 
 /obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/Initialize(mapload)///makes blessed silver do extra damage
 	. = ..()
+	// Skin armor is assigned directly rather than equipped into a clothing slot.
+	if(isliving(loc))
+		RegisterSignal(loc, list(COMSIG_MOB_ITEM_BEING_ATTACKED, COMSIG_MOB_ATTACKED_BY_HAND), TYPE_PROC_REF(/obj/item/clothing/suit/roguetown/armor/regenerating, on_attacked_by))
 	AddComponent(/datum/component/cursed_item, TRAIT_GRABIMMUNE, "HIDE", "#VOLFED")/// no one should ever see this unless they spawn in werewolf skin via the game panel. TRAIT_GRABIMMUNE is only on werewolves and the matyr during their super saiyan, should be fine.
+
+/obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/on_attacked_by(datum/source)
+	is_disrupted = TRUE
+	deltimer(reptimer)
+	reptimer = null
+	combat_timer = addtimer(CALLBACK(src, TYPE_PROC_REF(/obj/item/clothing/suit/roguetown/armor/regenerating, begin_repair)), 60 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_STOPPABLE)
+
+/obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/begin_repair()
+	is_disrupted = FALSE
+	return ..()
+
+/obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/take_damage(damage_amount, damage_type, damage_flag, sound_effect, attack_dir, armor_penetration)
+	. = ..()
+	if(QDELETED(src))
+		return
+	// Match Azure Peak: smaller hits do not reset an existing repair tick.
+	if(reptimer)
+		if(damage_amount < 35)
+			return
+		to_chat(loc, span_notice(repairmsg_stop))
+		deltimer(reptimer)
+		reptimer = null
+	if(is_disrupted || obj_integrity >= max_integrity)
+		return
+	reptimer = addtimer(CALLBACK(src, TYPE_PROC_REF(/obj/item/clothing/suit/roguetown/armor/regenerating, begin_repair)), repair_time, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_STOPPABLE)
+
+/obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/armour_regen(repair_percent = 0.2 * max_integrity, skip_message = FALSE)
+	return ..(obj_integrity == 0 ? 5 : repair_percent, skip_message)
+
+/obj/item/clothing/suit/roguetown/armor/skin_armor/werewolf_skin/Destroy()
+	deltimer(combat_timer)
+	deltimer(reptimer)
+	return ..()
 
 /datum/intent/simple/werewolf
 	name = "claw"

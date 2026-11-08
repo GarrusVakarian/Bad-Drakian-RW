@@ -74,32 +74,10 @@
 	smeltresult = /obj/item/rogueore/coal
 	sellprice = 1
 
-//Dolls/Constructs eating coal for fuel.
-/obj/item/rogueore/coal/attack(mob/living/M, mob/user)
-	testing("attack")
-	if(!user.cmode)
-
-		if(M.construct)//This is slop. Why do we use this?
-			if(M == user)
-				user.visible_message(span_notice("[user] puts [src] against [user.p_their()] frame and absorbs it."), span_notice("I absorb [src], feeling my energy return."))
-			else
-				user.visible_message(span_notice("[user] attempts to press [src] to [M]."), span_notice("I attempt to press [src] to [M]."))
-				if(!do_mob(user, M, 30))
-					return
-				user.visible_message(span_notice("[user] presses [src] against [M]."), span_notice("I press [src] against [M]."))
-				to_chat(M, span_notice("I absorb [src], feeling my energy return."))
-			M.energy_add(250)
-			playsound(M.loc,'sound/items/flint.ogg', rand(30,60), TRUE)
-			qdel(src)
-
-		else
-			return ..()
-	else
-		return ..()
-
 /obj/item/rogueore/coal/Initialize(mapload)
 	icon_state = "orecoal[rand(1,3)]"
-	return ..()
+	. = ..()
+	AddComponent(/datum/component/construct_refueling)
 
 /obj/item/rogueore/coal/charcoal
 	name = "charcoal"
@@ -297,6 +275,13 @@
 	desc = "A mass of wrought bronze, rendered lame from the forge's heat. Sometimes, dead is better."
 	icon_state = "ancientslag"
 	smeltresult = /obj/item/ingot/aaslag
+	sellprice = 1
+
+/obj/item/ingot/scrap
+	name = "scrap slag"
+	desc = "A pitted, rust-flecked lump of slag-iron, cooked out of common rock. Worthless for anything fine, but it takes a hammer well enough; a fine thing for an apprentice to ruin."
+	icon_state = "scrapslag"
+	smeltresult = /obj/item/ingot/scrap
 	sellprice = 1
 
 //Anomalous Smeltings

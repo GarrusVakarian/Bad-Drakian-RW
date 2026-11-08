@@ -1,4 +1,5 @@
 /datum/sex_action/cunnilingus
+	handles_target_climax = TRUE
 	name = "Suck their cunt off"
 	user_sex_part = SEX_PART_JAWS
 	target_sex_part = SEX_PART_CUNT

@@ -27,3 +27,23 @@
 /obj/item/natural/bundle/cloth/bandage/full
 	icon_state = "bandageroll2"
 	amount = 4
+
+/obj/item/natural/bundle/cloth/bandage/attack(mob/living/M, mob/user)
+	if(QDELETED(src) || !user || loc != user || user.get_active_held_item() != src || amount < 1)
+		return
+	var/obj/item/natural/cloth/bandage/piece = new stacktype(src)
+	piece.bandage(M, user, src)
+	if(!QDELETED(piece) && piece.loc == src)
+		qdel(piece)
+
+/// Called after the piece has moved onto the limb, so deleting the roll cannot delete the dressing.
+/obj/item/natural/bundle/cloth/bandage/proc/consume_bandage(mob/user)
+	amount--
+	if(amount == 1)
+		var/obj/item/remaining = new stacktype(drop_location())
+		qdel(src)
+		user.put_in_hands(remaining)
+	else if(amount <= 0)
+		qdel(src)
+	else
+		update_bundle()

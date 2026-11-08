@@ -199,6 +199,7 @@
 	sprite_accessories = list(
 		/datum/sprite_accessory/wings/moth/plain,
 		/datum/sprite_accessory/wings/moth/monarch,
+		/datum/sprite_accessory/wings/moth/monarch_colorable,
 		/datum/sprite_accessory/wings/moth/luna,
 		/datum/sprite_accessory/wings/moth/atlas,
 		/datum/sprite_accessory/wings/moth/reddish,

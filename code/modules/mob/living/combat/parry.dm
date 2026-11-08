@@ -151,10 +151,10 @@
 
 	var/parry_status = FALSE
 	if(defender_dualw)
-		if(prob(prob2defend) && extradefroll)
+		if((prob(prob2defend) || ancestor_reroll(prob2defend)) && extradefroll)
 			parry_status = TRUE
 	else
-		if(prob(prob2defend))
+		if((prob(prob2defend) || ancestor_reroll(prob2defend)))
 			parry_status = TRUE
 
 	if(parry_status)
@@ -249,7 +249,7 @@
 			used_weapon.take_damage(intdam, BRUTE, used_weapon.d_type)
 			used_weapon.remove_bintegrity(sharp_loss, attacker)
 
-		if(mind && attacker.mind && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
+		if(client && (ishuman(attacker) || attacker.mind) && HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
 			var/text = "[bodyzone2readablezone(attacker.zone_selected)]..."
 			if(HAS_TRAIT(attacker, TRAIT_DECEIVING_MEEKNESS))
 				if(prob(10))

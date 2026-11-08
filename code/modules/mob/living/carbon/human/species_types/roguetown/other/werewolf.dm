@@ -91,9 +91,9 @@
 		if(!H.sexcon)
 			H.icon_state = "wwolf_m"
 		else if(H.sexcon.arousal >= 20 && H.sexcon.manual_arousal == 1 || H.sexcon.manual_arousal == 4)
-			H.icon_state = "wwolf_m-e"
+			H.icon_state = "wwolf_m"
 		else if(H.sexcon.arousal >= 10 && H.sexcon.manual_arousal == 1 || H.sexcon.manual_arousal == 3)
-			H.icon_state = "wwolf_m-p"
+			H.icon_state = "wwolf_m"
 		else
 			H.icon_state = "wwolf_m"
 	else
@@ -108,7 +108,7 @@
 /datum/species/werewolf/update_damage_overlays(mob/living/carbon/human/H)
 	H.remove_overlay(DAMAGE_LAYER)
 	var/list/hands = list()
-	var/mutable_appearance/inhand_overlay = mutable_appearance("[H.icon_state]-dam", layer=-DAMAGE_LAYER)
+	var/mutable_appearance/inhand_overlay = mutable_appearance(H.icon, "wwolf-dam", layer=-DAMAGE_LAYER)
 	var/burnhead = 0
 	var/brutehead = 0
 	var/burnch = 0

@@ -18,7 +18,7 @@
 	if(!do_subtle)
 		user.sexcon.generic_sex_noise()
 
-	user.sexcon.perform_sex_action(user, 2, 6, TRUE)
+	user.sexcon.perform_sex_action(user, 2, 6, TRUE, apply_sensitivity = FALSE)
 	user.sexcon.handle_passive_ejaculation()
 
 	user.sexcon.suppress_moan = FALSE

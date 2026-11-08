@@ -97,18 +97,18 @@
 		if(target.mind && target.mind.current)
 			if (faction_tag in target.mind.current.faction)
 				target.mind.current.faction -= faction_tag
-				user.say("Hostis declaratus es.")
+				user.say("Hostis declaratus es.", count_for_stats = FALSE)
 			else
 				target.mind.current.faction += faction_tag
-				user.say("Amicus declaratus es.")
+				user.say("Amicus declaratus es.", count_for_stats = FALSE)
 				target.notify_faction_change()
 		else if(istype(target, /mob/living/simple_animal))
 			if (faction_tag in target.faction)
 				target.faction -= faction_tag
-				user.say("Hostis declaratus es.")
+				user.say("Hostis declaratus es.", count_for_stats = FALSE)
 			else
 				target.faction |= faction_tag
-				user.say("Amicus declaratus es.")
+				user.say("Amicus declaratus es.", count_for_stats = FALSE)
 				target.notify_faction_change()
 		return TRUE
 	else if(isturf(targets[1]))

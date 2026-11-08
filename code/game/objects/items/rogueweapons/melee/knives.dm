@@ -129,8 +129,8 @@
 	edelay_type = 1
 	is_tool = TRUE
 
-	//flipping knives has a cooldown on to_chat to reduce chatspam
-	COOLDOWN_DECLARE(flip_cooldown)
+	twirly = SKILL_LEVEL_JOURNEYMAN
+	twirl_verb = "flip"
 
 /obj/item/rogueweapon/huntingknife/getonmobprop(tag)
 	. = ..()
@@ -141,39 +141,9 @@
 			if("onbelt")
 				return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
-/obj/item/rogueweapon/huntingknife/rmb_self(mob/user)
-	. = ..()
-	if(.)
-		return
-
-	SpinAnimation(4, 2) // The spin happens regardless of the cooldown
-
-	if(!COOLDOWN_FINISHED(src, flip_cooldown))
-		return
-
-	COOLDOWN_START(src, flip_cooldown, 3 SECONDS)
-	if((user.get_skill_level(/datum/skill/combat/knives) < 3) && prob(40))
-		user.visible_message(
-			span_danger("While trying to flip [src] [user] drops it instead!"),
-			span_userdanger("While trying to flip [src] you drop it instead!"),
-		)
-		var/mob/living/carbon/human/unfortunate_idiot = user
-		var/dropped_knife_target = pick(
-			BODY_ZONE_PRECISE_L_FOOT,
-			BODY_ZONE_PRECISE_R_FOOT,
-			)
-		unfortunate_idiot.apply_damage(src.force, BRUTE, dropped_knife_target)
-		user.dropItemToGround(src, TRUE)
-	else
-		user.visible_message(
-			span_notice("[user] spins [src] around [user.p_their()] finger"),
-			span_notice("You spin [src] around your finger"),
-		)
-		playsound(src, 'sound/foley/equip/swordsmall1.ogg', 20, FALSE)
-
-	return
-
-
+/obj/item/rogueweapon/huntingknife/twirl_success(mob/living/user)
+	user.visible_message(span_notice("[user] spins [src] around [user.p_their()] finger."), span_notice("You spin [src] around your finger."))
+	playsound(src, twirl_sound, 20, FALSE)
 
 /obj/item/rogueweapon/huntingknife/copper
 	name = "copper knife"
@@ -829,6 +799,7 @@
 	desc = "This beautiful dagger is of intricate, elvish design. Sharper, too."
 	force = 22
 	icon_state = "elfdagger"
+	sheathe_icon = "elfdagger"
 	item_state = "elfdag"
 	last_used = 0
 	is_silver = FALSE
@@ -1304,32 +1275,9 @@
 	return ..()
 
 /obj/item/rogueweapon/huntingknife/attack_obj(obj/O, mob/living/user)
-	if(user.used_intent.type == /datum/intent/snip && istype(O, /obj/item))
+	if(user.used_intent.type == /datum/intent/snip && isitem(O))
 		var/obj/item/item = O
-		if(item.sewrepair && item.salvage_result) // We can only salvage objects which can be sewn!
-			var/salvage_time = 70
-			salvage_time = (70 - ((user.get_skill_level(/datum/skill/craft/sewing)) * 10))
-			if(!do_after(user, salvage_time, target = user))
-				return
-
-			if(item.fiber_salvage) //We're getting fiber as base if fiber is present on the item
-				new /obj/item/natural/fibers(get_turf(item))
-			if(istype(item, /obj/item/storage))
-				var/obj/item/storage/bag = item
-				bag.emptyStorage()
-			var/skill_level = user.get_skill_level(/datum/skill/craft/sewing)
-			if(prob(50 - (skill_level * 10))) // We are dumb and we failed!
-				to_chat(user, span_info("I ruined some of the materials due to my lack of skill..."))
-				playsound(item, 'sound/foley/cloth_rip.ogg', 50, TRUE)
-				qdel(item)
-				user.mind.add_sleep_experience(/datum/skill/craft/sewing, (user.STAINT)) //Getting exp for failing
-				return //We are returning early if the skill check fails!
-			item.salvage_amount -= item.torn_sleeve_number
-			for(var/i = 1; i <= item.salvage_amount; i++) // We are spawning salvage result for the salvage amount minus the torn sleves!
-				var/obj/item/Sr = new item.salvage_result(get_turf(item))
-				Sr.color = item.color
-			user.visible_message(span_notice("[user] salvages [item] into usable materials."))
-			playsound(item, 'sound/items/flint.ogg', 100, TRUE)
-			qdel(item)
-			user.mind.add_sleep_experience(/datum/skill/craft/sewing, (user.STAINT))
+		var/skill = user.get_skill_level(/datum/skill/craft/sewing)
+		if(item.try_salvage(user, skill, skill))
+			return
 	return ..()

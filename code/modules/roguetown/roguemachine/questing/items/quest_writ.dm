@@ -215,6 +215,7 @@ GLOBAL_LIST_EMPTY(quest_scrolls)
 	data["is_rumor"] = Q.source == QUEST_SOURCE_RUMOR
 	data["is_defense"] = Q.source == QUEST_SOURCE_DEFENSE
 	data["is_towner"] = Q.source == QUEST_SOURCE_TOWNER
+	data["is_notorious"] = istype(Q, /datum/quest/kill/notorious_bounty)
 	data["guild_cut_exempt"] = Q.guild_cut_exempt
 	Q.populate_scroll_ui_static_data(data)
 	return data

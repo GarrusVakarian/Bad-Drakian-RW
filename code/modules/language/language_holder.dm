@@ -31,15 +31,22 @@
 		copied[language_path] = sources.Copy()
 	return copied
 
-/// Languages may be passed as a name string rather than a path. Normalise to a path.
+/// Accept language paths, instances, text paths, or names. Reject invalid inputs.
 /datum/language_holder/proc/resolve_language(datum/language/dt)
-	if(!length(GLOB.all_languages) || !isnull(GLOB.language_datum_instances[dt]))
+	if(ispath(dt, /datum/language))
 		return dt
-	var/language_name = replacetext("[dt]", "/datum/language/", "")
+	if(istype(dt, /datum/language))
+		return dt.type
+	if(!istext(dt))
+		return null
+	var/language_path = text2path(dt)
+	if(ispath(language_path, /datum/language))
+		return language_path
+	var/language_name = LOWER_TEXT(replacetext(dt, "/datum/language/", ""))
 	for(var/datum/language/candidate as anything in GLOB.all_languages)
 		if(language_name == LOWER_TEXT(initial(candidate.name)))
 			return candidate
-	return dt
+	return null
 
 /datum/language_holder/Destroy()
 	owner = null
@@ -116,6 +123,9 @@
 		remove_language(language_path, shadow, source)
 
 /datum/language_holder/proc/has_language(datum/language/dt)
+	dt = resolve_language(dt)
+	if(!dt)
+		return FALSE
 	if(is_type_in_typecache(dt, languages))
 		return LANGUAGE_KNOWN
 	else

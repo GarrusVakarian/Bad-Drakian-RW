@@ -159,6 +159,7 @@
 		/datum/element/slapcrafting,\
 		slapcraft_recipes = slapcraft_recipe_list,\
 		)
+	AddComponent(/datum/component/construct_refueling, 50)
 
 /obj/item/grown/log/tree/small/attackby(obj/item/I, mob/living/user, params)
 	if(item_flags & IN_STORAGE)
@@ -272,6 +273,8 @@
 	metalizer_result = /obj/item/needle
 
 /obj/item/grown/log/tree/stick/Crossed(mob/living/L)
+	if(istype(L) && L.is_airborne_over_vegetation())
+		return
 	. = ..()
 	if(istype(L))
 		var/prob2break = 33

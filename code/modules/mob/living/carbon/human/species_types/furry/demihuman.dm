@@ -40,6 +40,8 @@
 
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,STUBBLE,OLDGREY,MUTCOLORS_PARTSONLY)
 	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
 		/obj/item/bodypart/taur/otie,
 		/obj/item/bodypart/taur/canine,
 		/obj/item/bodypart/taur/venard,
@@ -128,6 +130,7 @@
 		/datum/customizer/bodypart_feature/pubes/furry,
 		/datum/customizer/bodypart_feature/pits/furry,
 		/datum/customizer/organ/tusks/humanoid,
+		/datum/customizer/organ/neck_feature/anthro,
 		)
 	body_marking_sets = list(
 		/datum/body_marking_set/none,

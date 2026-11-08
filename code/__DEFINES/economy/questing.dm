@@ -162,7 +162,8 @@ GLOBAL_LIST_INIT(defense_quest_tier_costs, list(
 
 #define NOTORIOUS_BOUNTY_CONTROL_TIME (15 MINUTES)
 #define NOTORIOUS_BOUNTY_LEASH_RANGE 40
-#define NOTORIOUS_BOUNTY_LEASH_INTERVAL (10 SECONDS)
+#define NOTORIOUS_BOUNTY_HUNT_TICK (10 SECONDS)
+#define NOTORIOUS_BOUNTY_PARTY_DOWN_GRACE (20 SECONDS)
 #define NOTORIOUS_BOUNTY_GOON_CAP 3
 // Extra goons compensate when no ghost answers the poll and the boss stays an NPC.
 #define NOTORIOUS_BOUNTY_REINFORCE_TP 140
@@ -206,6 +207,8 @@ GLOBAL_LIST_INIT(defense_quest_tier_costs, list(
 // Blockade wave scaling (July blockade rescale): base wave budget plus per-defender scaling.
 #define BLOCKADE_WAVE_BASE_TP 180
 #define BLOCKADE_DEFENDER_SCAN_RANGE 7
+#define BLOCKADE_CLEAR_TRIUMPHS 1
+#define BLOCKADE_TRIUMPH_HELPER_RANGE 15
 #define BLOCKADE_DEFENDER_SCALE_MIN 3
 #define BLOCKADE_DEFENDER_SCALE_MAX FELLOWSHIP_MAX_MEMBERS
 #define BLOCKADE_TP_PER_EXTRA_DEFENDER 0.20

@@ -18,7 +18,7 @@
 
 	user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective(is_stealth = do_subtle)] fondles [user.p_their()] [user.get_chest_word()]..."), vision_distance = (do_subtle ? 1 : DEFAULT_MESSAGE_RANGE))
 
-	user.sexcon.perform_sex_action(user, 1, 4, TRUE)
+	user.sexcon.perform_sex_action(user, 1, 4, TRUE, apply_sensitivity = FALSE)
 	user.sexcon.handle_passive_ejaculation()
 
 	user.sexcon.suppress_moan = FALSE

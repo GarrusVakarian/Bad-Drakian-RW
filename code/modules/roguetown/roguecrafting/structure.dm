@@ -111,6 +111,13 @@
 	skillcraft = /datum/skill/craft/carpentry
 	craftdiff = 0
 
+/datum/crafting_recipe/roguetown/structure/gloryhole/iron
+	name = "iron gloryhole"
+	result = /obj/structure/bondage/gloryhole/iron
+	reqs = list(/obj/item/ingot/iron = 1)
+	skillcraft = /datum/skill/craft/engineering
+	craftdiff = 1
+
 /datum/crafting_recipe/roguetown/structure/chains
 	name = "chains"
 	result = /obj/structure/bondage/chains
@@ -377,6 +384,15 @@
 	reqs = list(/obj/item/natural/stone = 6,
 			/obj/item/rogueore/coal = 1,
 			/obj/item/rogueore/iron = 1)
+	verbage_simple = "build"
+	verbage = "builds"
+	craftsound = null
+
+/datum/crafting_recipe/roguetown/structure/slagkiln
+	name = "slag kiln"
+	result = /obj/machinery/light/rogue/smelter/slag_kiln
+	reqs = list(/obj/item/natural/stone = 8,
+			/obj/item/rogueore/coal = 1)
 	verbage_simple = "build"
 	verbage = "builds"
 	craftsound = null

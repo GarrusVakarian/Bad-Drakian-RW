@@ -1,4 +1,6 @@
 /datum/sex_action/manticore_frot_engulf
+	handles_user_climax = TRUE
+	handles_target_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Frot then engulf both cocks with tail"
 	check_same_tile = FALSE

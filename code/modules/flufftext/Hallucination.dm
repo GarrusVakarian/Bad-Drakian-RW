@@ -61,8 +61,11 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	target.set_screwyhud(SCREWYHUD_NONE)
 	target.SetSleeping(0)
 
+/datum/hallucination/proc/expire()
+	qdel(src)
+
 /datum/hallucination/Destroy()
-	target.investigate_log("was afflicted with a hallucination of type [type] by [natural?"hallucination status":"an external source"]. [feedback_details]", INVESTIGATE_HALLUCINATIONS)
+	target?.investigate_log("was afflicted with a hallucination of type [type] by [natural?"hallucination status":"an external source"]. [feedback_details]", INVESTIGATE_HALLUCINATIONS)
 	target = null
 	return ..()
 
@@ -332,10 +335,18 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 */
 /datum/hallucination/delusion
 	var/list/image/delusions = list()
+	var/client/affected_client
 
 /datum/hallucination/delusion/New(mob/living/carbon/C, forced, force_kind = null , duration = 300,skip_nearby = FALSE, custom_icon = null, custom_icon_file = null, custom_name = null)
 	set waitfor = FALSE
 	. = ..()
+	affected_client = target?.client
+	if(!affected_client)
+		qdel(src)
+		return
+	if(duration)
+		// The callback owns src until cleanup; QDEL_IN only retains a weak reference.
+		addtimer(CALLBACK(src, PROC_REF(expire)), duration)
 	var/image/A = null
 	var/kind = force_kind ? force_kind : pick("shadow","monster","ww","skeleton","spider","demon","maneater")
 	feedback_details += "Type: [kind]"
@@ -384,24 +395,29 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 				A = image(custom_icon_file, H, custom_icon)
 				A.name = custom_name*/
 		A.override = 1
-		if(target.client)
+		if(affected_client)
 			delusions |= A
-			target.client.images |= A
-	if(duration)
-		QDEL_IN(src, duration)
+			affected_client.images |= A
 
 /datum/hallucination/delusion/Destroy()
-	for(var/image/I in delusions)
-		if(target.client)
-			target.client.images.Remove(I)
+	if(affected_client)
+		affected_client.images -= delusions
+	delusions.Cut()
+	affected_client = null
 	return ..()
 
 /datum/hallucination/self_delusion
 	var/image/delusion
+	var/client/affected_client
 
 /datum/hallucination/self_delusion/New(mob/living/carbon/C, forced, force_kind = null , duration = 300, custom_icon = null, custom_icon_file = null, wabbajack = TRUE) //set wabbajack to false if you want to use another fake source
 	set waitfor = FALSE
 	..()
+	affected_client = target?.client
+	if(!affected_client)
+		qdel(src)
+		return
+	addtimer(CALLBACK(src, PROC_REF(expire)), duration)
 	var/image/A = null
 	var/kind = force_kind ? force_kind : pick("shadow","monster","ww","skeleton","spider","demon","maneater")
 	feedback_details += "Type: [kind]"
@@ -471,17 +487,18 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 		/*if("custom")
 			A = image(custom_icon_file, target, custom_icon)*/
 	A.override = 1
-	if(target.client)
+	if(affected_client)
 		if(wabbajack)
 			to_chat(target, pick("<span class='hear'>...they are coming...</span>","<span class='holoparasite'>THEY ARE WATCHING ME</span>","<span class='userdanger'>I don't feel very good...</span>","<span class='artery'>...please...help...me...</span>"))
 			target.playsound_local(target,'sound/misc/dun.ogg', 40, 1)
 		delusion = A
-		target.client.images |= A
-	QDEL_IN(src, duration)
+		affected_client.images |= A
 
 /datum/hallucination/self_delusion/Destroy()
-	if(target.client)
-		target.client.images.Remove(delusion)
+	if(affected_client)
+		affected_client.images -= delusion
+	delusion = null
+	affected_client = null
 	return ..()
 
 /datum/hallucination/chat

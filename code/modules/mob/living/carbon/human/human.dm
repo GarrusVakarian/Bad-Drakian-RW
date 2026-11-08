@@ -647,7 +647,7 @@
 
 	var/toxloss = getToxLoss()
 	var/oxyloss = getOxyLoss()
-	var/painpercent = get_complex_pain() / pain_threshold
+	var/painpercent = get_complex_pain() / get_pain_threshold()
 	painpercent = painpercent * 100
 
 	var/usedloss = 0
@@ -691,17 +691,16 @@
 		else
 			hud_used.bloods.icon_state = "damelse"
 	if(painpercent > 0)
-		switch(painpercent)
-			if(1 to 29)
-				painoverlay = "painloss20"
-			if(30 to 59)
-				painoverlay = "painloss40"
-			if(60 to 79)
-				painoverlay = "painloss60"
-			if(80 to 99)
-				painoverlay = "painloss80"
-			if(100 to 999)
-				painoverlay = "painloss100"
+		if(painpercent < 30)
+			painoverlay = "painloss20"
+		else if(painpercent < 60)
+			painoverlay = "painloss40"
+		else if(painpercent < 80)
+			painoverlay = "painloss60"
+		else if(painpercent < 100)
+			painoverlay = "painloss80"
+		else
+			painoverlay = "painloss100"
 	var/atom/movable/screen/healths/blood/blood_hud = hud_used.bloods
 	if(istype(blood_hud))
 		blood_hud.update_indicator_states(toxoverlay, oxyoverlay, painoverlay)
@@ -894,9 +893,38 @@
 		item_head.show_inv(user)
 	. = ..()
 
+// Ported from Ochre-Valley/Ochre-Valley, commit 51a4619418957b818b2b64dd3f7cf63a0f2778e8.
+/mob/living/carbon/human/RightMouseDrop_T(atom/dragged, mob/living/user)
+	var/mob/living/carbon/target = dragged
+	if(!istype(target) || target == src || !isliving(user) || (user != src && user != target))
+		return ..()
+	if(user.get_active_held_item() || stat != CONSCIOUS || !can_piggyback(target))
+		return ..()
+	if(!Adjacent(target) || incapacitated(FALSE, TRUE) || target.incapacitated(FALSE, TRUE))
+		return TRUE
+
+	if(user == target)
+		to_chat(user, span_notice("You request a piggyback ride from [src]..."))
+		if(tgui_alert(src, "[user.name] is requesting a piggyback ride.", "Piggyback Ride", list("Yes, let them on", "No")) != "Yes, let them on")
+			to_chat(user, span_warning("[src] has denied you a piggyback ride!"))
+			return TRUE
+	else
+		to_chat(src, span_notice("You offer a piggyback ride to [target]..."))
+		if(tgui_alert(target, "[src.name] is offering to give you a piggyback ride.", "Piggyback Ride", list("Yes, get on", "No")) != "Yes, get on")
+			to_chat(src, span_warning("[target] has denied your piggyback ride!"))
+			return TRUE
+
+	// The other player may have moved or changed state while the prompt was open.
+	if(QDELETED(src) || QDELETED(target) || !Adjacent(target) || stat != CONSCIOUS || !can_piggyback(target))
+		return TRUE
+	if(user.get_active_held_item() || incapacitated(FALSE, TRUE) || target.incapacitated(FALSE, TRUE))
+		return TRUE
+	piggyback(target)
+	return TRUE
+
 //src is the user that will be carrying, target is the mob to be carried
 /mob/living/carbon/human/proc/can_piggyback(mob/living/carbon/target)
-	return (istype(target) && target.stat == CONSCIOUS)
+	return (istype(target) && target.stat == CONSCIOUS && !cmode && !target.cmode && Adjacent(target))
 
 /mob/living/carbon/human/proc/can_be_firemanned(mob/living/carbon/target)
 	return (ishuman(target) && !(target.mobility_flags & MOBILITY_STAND))
@@ -1057,9 +1085,11 @@
 	faction = target.faction
 	deathsound = target.deathsound
 	gender = target.gender
+	pronouns = target.pronouns
 	real_name = target.real_name
 	voice_color = target.voice_color
 	voice_pitch = target.voice_pitch
+	voice_type = target.voice_type
 	detail_color = target.detail_color
 	skin_tone = target.skin_tone
 	lip_style = target.lip_style
@@ -1279,6 +1309,11 @@
 	var/three_quarter_delta = (base_delta * 0.75)
 	if(protection > 0)
 		(final_delta -= (three_quarter_delta * protection))
+
+	if(base_delta < 0 && HAS_TRAIT(src, TRAIT_COLD_RESISTANCE))
+		final_delta *= 0.75
+	else if(base_delta > 0 && HAS_TRAIT(src, TRAIT_HEAT_RESISTANCE))
+		final_delta *= 0.5
 
 	adjust_bodytemperature(final_delta)
 

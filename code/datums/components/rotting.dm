@@ -56,7 +56,7 @@
 
 	var/mob/living/carbon/C = parent
 	var/is_zombie
-	if(HAS_TRAIT(C, TRAIT_DNR) || isconstruct(C))
+	if(isconstruct(C))
 		return
 	if(C.mind)
 		if(C.mind.has_antag_datum(/datum/antagonist/zombie))
@@ -67,7 +67,15 @@
 			return
 
 	var/area/A = get_area(C)
-	if (istype(A, /area/rogue/indoors/town))	//Stops rotting inside town buildings; will stop your zombification such as at church or appothocary.
+	var/static/list/rot_protected_areas = typecacheof(list(
+		/area/rogue/indoors/town/physician,
+		/area/rogue/indoors/town/church,
+		/area/rogue/outdoors/exposed/church,
+		/area/rogue/outdoors/town/church,
+		/area/rogue/outdoors/town/graveyard,
+		/area/rogue/outdoors/town/roofs/church,
+	))
+	if(is_type_in_typecache(A, rot_protected_areas))
 		return
 	if (istype(A, /area/rogue/indoors/deathsedge))	//Stops rotting inside Death's Edge (Death's Door spell area)
 		return
@@ -84,6 +92,8 @@
 			if(Z && !Z.has_turned && !Z.revived && C.stat == DEAD)
 				C.infected = TRUE
 				wake_zombie(C, infected_wake = TRUE, converted = FALSE)
+	if(HAS_TRAIT(C, TRAIT_DNR) || C.mind?.key)
+		return
 
 	var/findonerotten = FALSE
 	var/shouldupdate = FALSE

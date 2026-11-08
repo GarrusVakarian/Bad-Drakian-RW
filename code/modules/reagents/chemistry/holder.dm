@@ -241,6 +241,9 @@
 
 	update_total()
 	R.update_total()
+	if(method == INGEST && amount > 0 && multiplier > 0 && length(transfer_log) && isliving(target_atom))
+		var/mob/living/recipient = target_atom
+		recipient.taste(R)
 	if(!no_react)
 		R.handle_reactions()
 		src.handle_reactions()
@@ -528,6 +531,7 @@
 	var/list/cached_reagents = reagent_list
 	for(var/_reagent in cached_reagents)
 		var/datum/reagent/R = _reagent
+		var/temp_pain = 0
 		if(R.type == reagent)
 			if(my_atom && isliving(my_atom))
 				var/mob/living/M = my_atom
@@ -535,22 +539,28 @@
 					R.metabolizing = FALSE
 					R.on_mob_end_metabolize(M)
 				R.on_mob_delete(M)
+				temp_pain = R.pain
 			qdel(R)
 			reagent_list -= R
 			update_total()
 			if(my_atom)
 				my_atom.on_reagent_change(DEL_REAGENT)
+				if(temp_pain && iscarbon(my_atom))
+					var/mob/living/carbon/C = my_atom
+					C.update_chem_pain()
 	return 1
 
 /datum/reagents/proc/update_total()
 	var/list/cached_reagents = reagent_list
-	total_volume = 0
+	// del_reagent() can recalculate totals recursively; keep this pass's sum local.
+	var/new_total = 0
 	for(var/reagent in cached_reagents)
 		var/datum/reagent/R = reagent
 		if(R.volume < 0.1)
 			del_reagent(R.type)
 		else
-			total_volume += R.volume
+			new_total += R.volume
+	total_volume = new_total
 
 	return 0
 
@@ -596,9 +606,6 @@
 	var/react_type
 	if(isliving(A))
 		react_type = "LIVING"
-		if(method == INGEST)
-			var/mob/living/L = A
-			L.taste(src)
 	else if(isturf(A))
 		react_type = "TURF"
 	else if(isobj(A))
@@ -708,7 +715,19 @@
 		var/amt = list_reagents[r_id]
 		add_reagent(r_id, amt, data)
 
-/datum/reagents/proc/remove_reagent(reagent, amount, safety)//Added a safety check for the trans_id_to
+/**
+ * Removes a specific reagent. can supress reactions if needed
+ * Arguments
+ *
+ * * [reagent_type][datum/reagent] - the type of reagent
+ * * amount - the volume to remove
+ * * include_subtypes - if TRUE will remove the specified amount from all subtypes of reagent_type as well
+ */
+/datum/reagents/proc/remove_reagent(datum/reagent/reagent_type, amount, safety)//Added a safety check for the trans_id_to
+	if(!ispath(reagent_type))
+		stack_trace("invalid reagent passed to remove reagent [reagent_type]")
+		return FALSE
+
 	if(isnull(amount))
 		amount = 0
 		. = FALSE
@@ -717,26 +736,28 @@
 	if(!isnum(amount))
 		return FALSE
 
-	if(amount < 0)
+	if(amount <= 0)
 		return FALSE
 
+	var/total_removed_amount = 0
+	var/remove_amount = 0
 	var/list/cached_reagents = reagent_list
+	for(var/datum/reagent/cached_reagent in cached_reagents)
+		if(cached_reagent.type != reagent_type)
+			continue
 
-	for(var/A in cached_reagents)
-		var/datum/reagent/R = A
-		if (R.type == reagent)
-			//clamp the removal amount to be between current reagent amount
-			//and zero, to prevent removing more than the holder has stored
-			amount = CLAMP(amount, 0, R.volume)
-			R.volume -= amount
-			update_total()
-			if(!safety)//So it does not handle reactions when it need not to
-				handle_reactions()
-			if(my_atom)
-				my_atom.on_reagent_change(REM_REAGENT)
-			return TRUE
+		//reduce the volume
+		remove_amount = min(cached_reagent.volume, amount)
+		cached_reagent.volume -= remove_amount
 
-	return FALSE
+		total_removed_amount += remove_amount
+		update_total()
+		if(!safety)//So it does not handle reactions when it need not to
+			handle_reactions()
+		if(my_atom)
+			my_atom.on_reagent_change(REM_REAGENT)
+
+	return total_removed_amount
 
 /datum/reagents/proc/has_reagent(reagent, amount = -1, needs_metabolizing = FALSE)
 	var/list/cached_reagents = reagent_list
@@ -877,6 +898,7 @@
 	// the lower the minimum percent, the more sensitive the message is.
 	var/list/out = list()
 	var/list/tastes = list() //descriptor = strength
+	var/list/soup_tastes
 	if(minimum_percent <= 100)
 		for(var/datum/reagent/R in reagent_list)
 			if(!R.taste_mult)
@@ -893,6 +915,8 @@
 						tastes[taste] = amount
 			else
 				var/taste_desc = R.taste_description
+				if(istype(R, /datum/reagent/consumable/soup))
+					LAZYADD(soup_tastes, taste_desc)
 				var/taste_amount = R.volume * R.taste_mult
 				if(taste_desc in tastes)
 					tastes[taste_desc] += taste_amount
@@ -904,7 +928,7 @@
 		if(total_taste > 0)
 			for(var/taste_desc in tastes)
 				var/percent = tastes[taste_desc]/total_taste * 100
-				if(percent < minimum_percent)
+				if(percent < minimum_percent && !(taste_desc in soup_tastes))
 					continue
 				var/intensity_desc = ""
 				if(percent > minimum_percent * 2 || percent == 100)

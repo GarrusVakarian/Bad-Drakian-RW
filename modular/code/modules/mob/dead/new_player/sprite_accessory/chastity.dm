@@ -23,9 +23,18 @@
 	if(!ishuman(owner))
 		return FALSE
 	var/mob/living/carbon/human/H = owner
+	if(H.sexcon?.bottom_exposed)
+		return TRUE
 	if(H.underwear)
 		return FALSE
 	return is_human_part_visible(owner, HIDECROTCH)
+
+/datum/sprite_accessory/chastity/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
+	if(!owner?.sexcon?.bottom_exposed)
+		return
+	// Above exposed testicles (-6.1), without changing concealed device layering.
+	for(var/mutable_appearance/appearance as anything in appearance_list)
+		appearance.layer = max(appearance.layer, -BODY_FRONT_LAYER - 0.05)
 
 /datum/sprite_accessory/chastity/full
 	name = "Full Belt"

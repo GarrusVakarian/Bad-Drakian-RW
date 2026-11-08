@@ -199,7 +199,7 @@
 
 /obj/item/rogueweapon/surgery/cautery/branding/crude
 	name = "crude branding stick"
-	desc = "It's made of coal, string and a stick. Looks like I can brand myself with it at least two times before it snaps. Heat it up before use."
+	desc = "A makeshift tool of coal, string and a stick for branding yourself or others. It lasts two uses and is slower than a proper branding iron. Heat it up before use."
 	icon_state = "brandingiron_crude"
 	branding_damage = 10
 	branding_low_quality = TRUE
@@ -496,7 +496,7 @@
 	for(var/obj/item/organ/organ as anything in target.internal_organs)
 		if(organ.enslavement_mark)
 			return TRUE
-		if("branded_writing" in organ.vars && length(organ.vars["branded_writing"]))
+		if(("branded_writing" in organ.vars) && length(organ.vars["branded_writing"]))
 			return TRUE
 	return FALSE
 
@@ -560,7 +560,7 @@
 		return TRUE
 	var/mob/living/carbon/human/target = A
 	var/precise_zone = user.zone_selected // We need this up here to stay consistent past the do_after.
-	var/body_zone = check_zone(precise_zone) 
+	var/body_zone = check_zone(precise_zone)
 	var/obj/item/bodypart/branding_part = target.get_bodypart(body_zone)
 	var/branding_self = user == target
 	if(!get_location_accessible(target, user.zone_selected))
@@ -637,15 +637,10 @@
 
 	// A part has been selected, now we start printing messages to chat and showing the do_after
 	var/branding_delay = HAS_TRAIT(user, TRAIT_DUNGEONMASTER) ? 7 SECONDS : (HAS_TRAIT(user, TRAIT_KNOWNCRIMINAL) ? 9 SECONDS : 14 SECONDS) // criminals/dungeoneer burn faster, while non-criminals and towners take the longest time
-	if(!branding_self) 
-		if(branding_low_quality)
-			if(!target.compliance)  // we can only brand ourselves OR the other character must be compliant
-				to_chat(user, span_warning("[target]'s moving too much to let me [remove_existing_brand ? "burn away old marks from" : "brand"] [target.p_them()]!"))
-				return TRUE
-			branding_delay += 3 SECONDS // if they are compliant then there will still be an added delay
-	else
-		if(!branding_low_quality)
-			branding_delay -= 4 SECONDS // quicker to brand yourself using a good tool
+	if(branding_self)
+		branding_delay -= 4 SECONDS
+	if(branding_low_quality)
+		branding_delay *= 1.5
 	send_branding_attempt_messages(user, target, final_answer, branding_self)
 
 	var/ownership_state_before = target_has_active_ownership_mark(target) ? "owned" : "not owned"
@@ -715,7 +710,7 @@
 		target.Knockdown(1 SECONDS)
 	if(apply_message)
 		send_branding_result_messages(user, target, description_recoil, final_answer, branding_text)
-	
+
 	target.emote(prob(50) ? "painscream" : "scream", forced = TRUE)
 	target.Stun(40)
 	target.fullscreen_redflash("redflash2")

@@ -280,6 +280,7 @@
 	key = "flap"
 	key_third_person = "flaps"
 	message = "flaps their wings."
+	sound = 'sound/foley/footsteps/flight_sounds/wingflap1.ogg'
 	restraint_check = TRUE
 	var/wing_time = 20
 
@@ -290,6 +291,7 @@
 	key = "aflap"
 	key_third_person = "aflaps"
 	message = "flaps their wings ANGRILY!"
+	sound = 'sound/foley/footsteps/flight_sounds/wingflap2.ogg'
 	restraint_check = TRUE
 	wing_time = 10
 
@@ -512,6 +514,11 @@
 			else
 				message_param = "kisses %t on \the [parse_zone(H.zone_selected)]."
 	playsound(target.loc, pick('sound/vo/kiss (1).ogg','sound/vo/kiss (2).ogg'), 100, FALSE, -1)
+	if(ishuman(user) && ishuman(target))
+		var/mob/living/carbon/human/kisser = user
+		var/mob/living/carbon/human/recipient = target
+		kisser.react_to_virgin_affection(recipient)
+		recipient.react_to_virgin_affection(kisser)
 	if(user.mind)
 		record_round_statistic(STATS_KISSES_MADE)
 		if(target.mind)
@@ -886,7 +893,7 @@
 
 /datum/emote/living/scream/run_emote(mob/user, params, type_override, intentional, targetted)
 	. = ..()
-	if(. && user.mind)
+	if(. && user.mind && user.client)
 		record_featured_stat(FEATURED_STATS_SCREAMERS, user)
 
 /datum/emote/living/scream/painscream
@@ -1365,6 +1372,11 @@
 	message_muffled = "makes a muffled shout!"
 	show_runechat = FALSE
 
+/datum/emote/living/warcry/run_emote(mob/living/user, params, type_override, intentional)
+	. = ..()
+	if(. && HAS_TRAIT(user, TRAIT_BATTLE_CRY))
+		user.apply_status_effect(/datum/status_effect/buff/battle_cry)
+
 /mob/living/carbon/human/verb/emote_warcry()
 	set name = "Warcry"
 	set category = "Noises"
@@ -1573,7 +1585,11 @@
 
 /mob/living/carbon/human/proc/update_tongue_noise_verbs()
 	var/static/list/all_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1589,6 +1605,8 @@
 		/mob/living/carbon/human/verb/emote_howl,
 		/mob/living/carbon/human/verb/emote_cackle,
 		/mob/living/carbon/human/verb/emote_whine,
+		/mob/living/carbon/human/verb/emote_foxyip,
+		/mob/living/carbon/human/verb/emote_foxwhine,
 		/mob/living/carbon/human/verb/emote_trill,
 		/mob/living/carbon/human/verb/emote_purr,
 		/mob/living/carbon/human/verb/emote_moo,
@@ -1596,6 +1614,7 @@
 		/mob/living/carbon/human/verb/emote_growl,
 		/mob/living/carbon/human/verb/emote_bleat,
 		/mob/living/carbon/human/verb/emote_chitter,
+		/mob/living/carbon/human/verb/emote_msqueak,
 		/mob/living/carbon/human/verb/emote_arf,
 		/mob/living/carbon/human/verb/emote_awuff,
 		/mob/living/carbon/human/verb/emote_dcomplain,
@@ -1606,6 +1625,7 @@
 	)
 	var/static/list/wild_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_meow,
+		/mob/living/carbon/human/verb/emote_mrrp,
 		/mob/living/carbon/human/verb/emote_caw,
 		/mob/living/carbon/human/verb/emote_peep,
 		/mob/living/carbon/human/verb/emote_hoot,
@@ -1621,6 +1641,8 @@
 		/mob/living/carbon/human/verb/emote_howl,
 		/mob/living/carbon/human/verb/emote_cackle,
 		/mob/living/carbon/human/verb/emote_whine,
+		/mob/living/carbon/human/verb/emote_foxyip,
+		/mob/living/carbon/human/verb/emote_foxwhine,
 		/mob/living/carbon/human/verb/emote_trill,
 		/mob/living/carbon/human/verb/emote_purr,
 		/mob/living/carbon/human/verb/emote_moo,
@@ -1659,8 +1681,14 @@
 		/mob/living/carbon/human/verb/emote_hiss,
 		/mob/living/carbon/human/verb/emote_phiss,
 	)
+	var/static/list/construct_tongue_noise_verbs = list(
+		/mob/living/carbon/human/verb/emote_construct_tick,
+		/mob/living/carbon/human/verb/emote_construct_creak,
+		/mob/living/carbon/human/verb/emote_construct_spark,
+	)
 	var/static/list/moth_tongue_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_chitter,
+		/mob/living/carbon/human/verb/emote_msqueak,
 	)
 	var/static/list/moth_wing_noise_verbs = list(
 		/mob/living/carbon/human/verb/emote_flutter,
@@ -1681,6 +1709,8 @@
 		allowed_verbs += harpy_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/lizard))
 		allowed_verbs += lizard_tongue_noise_verbs
+	if(istype(tongue, /obj/item/organ/tongue/construct))
+		allowed_verbs += construct_tongue_noise_verbs
 	if(istype(tongue, /obj/item/organ/tongue/moth))
 		allowed_verbs += moth_tongue_noise_verbs
 	if(istype(wings, /obj/item/organ/wings/moth))
@@ -1701,6 +1731,25 @@
 	else
 		show_tongue_noise_warning()
 		return
+
+/datum/emote/living/mrrp
+	key = "mrrp"
+	key_third_person = "mrrps!"
+	message = "mrrps!"
+	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
+	message_muffled = "makes a muffled sound!"
+	vary = TRUE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_mrrp()
+	set name = "Mrrp"
+	set category = "Noises"
+
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("mrrp", intentional = TRUE, animal = TRUE)
 
 /datum/emote/living/caw
 	key = "caw"
@@ -1967,6 +2016,19 @@
 	show_runechat = FALSE
 	is_animal = TRUE
 
+/datum/emote/living/cackle/run_emote(mob/living/user, params, type_override, intentional = FALSE, targetted = FALSE, animal = FALSE)
+	. = ..()
+	if(. && !QDELETED(user))
+		// Apply Xylix buff to those with the trait who hear the cackling
+		// Only apply if the hearer is not the one cackling
+		for(var/mob/living/carbon/human/H in hearers(7, user))
+			if(H == user || !H.client)
+				continue
+			if(HAS_TRAIT(H, TRAIT_XYLIX) && !H.has_status_effect(/datum/status_effect/buff/xylix_joy))
+				H.apply_status_effect(/datum/status_effect/buff/xylix_joy)
+				to_chat(H, span_info("The cackling brings a smile to my face, and fortune to my steps!"))
+
+
 /mob/living/carbon/human/verb/emote_cackle()
 	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
 		set name = "Cackle"
@@ -2197,6 +2259,25 @@
 		show_tongue_noise_warning()
 		return
 
+/datum/emote/living/msqueak
+	key = "msqueak"
+	key_third_person = "squeaks!"
+	message = "squeaks!"
+	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
+	message_muffled = "makes a muffled squeak!"
+	vary = TRUE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_msqueak()
+	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/moth))
+		set name = "Moth Squeak"
+		set category = "Noises"
+		emote("msqueak", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
 /datum/emote/living/flutter
 	key = "flutter"
 	key_third_person = "flutters!"
@@ -2248,6 +2329,32 @@
 
 	emote("ffsalute", intentional =  TRUE)
 
+/datum/emote/living/fsalute_alt
+	key = "fsalute_alt"
+	key_third_person = "salutes their faith."
+	message = "salutes their faith."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = TRUE
+
+/datum/emote/living/fsalute_alt/run_emote(mob/living/user, params, type_override, intentional, targetted, animal)
+	. = ..()
+	if(!. || isnull(user?.client?.prefs?.polytheist_patron) || user.client.prefs.polytheist_patron == "NONE")
+		return
+	user.play_overhead_indicator('icons/mob/overhead_effects.dmi', "stress", 15, MUTATIONS_LAYER, private = user.client.prefs.polytheist_patron.type, soundin = 'sound/magic/holyshield.ogg', y_offset = 32)
+
+/datum/emote/living/fsalute_alt/can_run_emote(mob/user, status_check, intentional)
+	if(!user?.client?.prefs?.polytheist_patron)
+		return FALSE
+	if(user.client.prefs.polytheist_patron == "NONE")
+		return FALSE
+	return ..()
+
+/mob/living/carbon/human/verb/emote_fsalute_alt()
+	set name = "Faith Salute Alternate"
+	set category = "Emotes"
+
+	emote("fsalute_alt", intentional =  TRUE)
+
 /datum/emote/living/yip
 	key = "yip"
 	key_third_person = "yips"
@@ -2262,6 +2369,46 @@
 	set category = "Noises"
 
 	emote("yip", intentional = TRUE)
+
+/datum/emote/living/foxyip
+	key = "foxyip"
+	key_third_person = "foxyips"
+	message = "yips like a fox!"
+	emote_type = EMOTE_AUDIBLE
+	message_muffled = "makes a muffled yip!"
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/datum/emote/living/foxyip/can_run_emote(mob/user, status_check = TRUE, intentional = FALSE)
+	if(!..())
+		return FALSE
+	if(!ishuman(user))
+		return FALSE
+	var/mob/living/carbon/human/H = user
+	return istype(H.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue)
+
+/mob/living/carbon/human/verb/emote_foxyip()
+	set name = "Fox Yip"
+	set category = "Noises"
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("foxyip", intentional = TRUE)
+
+/datum/emote/living/foxwhine
+	parent_type = /datum/emote/living/foxyip
+	key = "foxwhine"
+	key_third_person = "foxwhines"
+	message = "whines like a fox."
+	message_muffled = "makes a muffled whine!"
+
+/mob/living/carbon/human/verb/emote_foxwhine()
+	set name = "Fox Whine"
+	set category = "Noises"
+	if(!istype(getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
+		show_tongue_noise_warning()
+		return
+	emote("foxwhine", intentional = TRUE)
 
 /datum/emote/living/yap
 	key = "yap"
@@ -2387,6 +2534,63 @@
 
 	emote("eflick", intentional = TRUE)
 
+/mob/living/carbon/human/proc/get_hikeable_garments()
+	var/list/found = list()
+	for(var/obj/item/clothing/worn in get_equipped_items())
+		if(worn.hiked || worn.is_hikeable())
+			found += worn
+	return found
+
+/mob/living/carbon/human/proc/has_hiked_hem()
+	for(var/obj/item/clothing/worn in get_equipped_items())
+		if(worn.hiked)
+			return TRUE
+	return FALSE
+
+/datum/emote/living/carbon/human/hike
+	key = "hike"
+	key_third_person = "hikes"
+	message = "gathers up their hem in both hands."
+	var/message_lowered = "lets their hem fall."
+	emote_type = EMOTE_VISIBLE
+	show_runechat = TRUE
+
+/datum/emote/living/carbon/human/hike/run_emote(mob/user, params, type_override, intentional = FALSE, targetted = FALSE, animal = FALSE)
+	var/mob/living/carbon/human/H = user
+	if(!istype(H) || !can_run_emote(user, TRUE, intentional))
+		return FALSE
+	var/list/garments = H.get_hikeable_garments()
+	if(!length(garments))
+		return FALSE
+	var/obj/item/clothing/first = garments[1]
+	if(first.hiked)
+		H.drop_hiked_hem()
+	else
+		if(!first.toggle_hike(H))
+			return FALSE
+		for(var/i in 2 to length(garments))
+			var/obj/item/clothing/extra = garments[i]
+			extra.toggle_hike(H, TRUE)
+	return ..()
+
+///Runs after the hem changed, so the text follows what actually happened instead of always announcing a lift.
+/datum/emote/living/carbon/human/hike/select_message_type(mob/user, intentional)
+	. = ..()
+	var/mob/living/carbon/human/H = user
+	if(istype(H) && !H.has_hiked_hem())
+		. = message_lowered
+
+/datum/emote/living/carbon/human/hike/can_run_emote(mob/user, status_check = TRUE , intentional)
+	if(!..())
+		return FALSE
+	var/mob/living/carbon/human/H = user
+	return length(H.get_hikeable_garments())
+
+/mob/living/carbon/human/verb/emote_hike()
+	set name = "Hike Hem"
+	set category = "Emotes"
+
+	emote("hike", intentional = TRUE)
 /datum/emote/living/carbon/human/bjiggle
 	key = "bjiggle"
 	key_third_person = "jiggles"
@@ -2697,3 +2901,59 @@
 	set category = "Emotes"
 
 	emote("quest", intentional = TRUE)
+
+
+// counting construct emotes as "animal" for the same reason all of the above are (preferences)
+/datum/emote/living/emote_construct_tick
+	key = "tick"
+	key_third_person = "ticks"
+	message = "emits a mechanical ticking."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_tick()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Tick"
+		set category = "Noises"
+		emote("tick", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_creak
+	key = "creak"
+	key_third_person = "creaks"
+	message = "creaks."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_creak()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Creak"
+		set category = "Noises"
+		emote("creak", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return
+
+/datum/emote/living/emote_construct_spark
+	key = "spark"
+	key_third_person = "sparks"
+	message = "twitches and emits a small arcyne spark."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+	is_animal = TRUE
+	snd_vol = 25
+	vary = TRUE
+
+/mob/living/carbon/human/verb/emote_construct_spark()
+	if(istype(src.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Spark"
+		set category = "Noises"
+		emote("spark", intentional = TRUE, animal = TRUE)
+	else
+		show_tongue_noise_warning()
+		return

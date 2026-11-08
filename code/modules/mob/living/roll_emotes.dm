@@ -181,7 +181,7 @@ GLOBAL_LIST_INIT(rollable_stats, list(
 /mob/living/carbon/human/verb/roll_dice(expression as text|null)
 	set name = "Roll Dice"
 	set desc = "Throw dice, optionally against a difficulty and with modifiers."
-	set category = "Emotes.Rolling"
+	set category = "Emotes"
 
 	if(!can_roll_dice())
 		return
@@ -373,7 +373,7 @@ GLOBAL_LIST_INIT(rollable_stats, list(
 /mob/living/carbon/human/verb/emote_stat_roll()
 	set name = "Roll Stat"
 	set desc = "Roll one of your stats with traits taken into account."
-	set category = "Emotes.Rolling"
+	set category = "Emotes"
 
 	if(!can_roll_dice())
 		return
@@ -790,7 +790,7 @@ GLOBAL_LIST_INIT(rollable_stats, list(
 /mob/living/carbon/human/verb/contested_roll()
 	set name = "Contested Roll"
 	set desc = "Pit one of your stats against another's."
-	set category = "Emotes.Rolling"
+	set category = "Emotes"
 
 	if(!can_roll_dice())
 		return

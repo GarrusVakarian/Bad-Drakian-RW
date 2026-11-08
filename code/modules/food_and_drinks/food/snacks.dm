@@ -267,6 +267,7 @@ All foods are distributed among various categories. Use common sense.
 
 	if(HAS_TRAIT(eater, TRAIT_HEMOPHAGE)) //trait desc states that normal food would make them ill, adjusted accordingly
 		eater.adjustToxLoss(2)
+		to_chat(eater, span_warning("This food makes me feel ill. Only blood can sustain me!"))
 
 	var/apply_effect = TRUE
 	// check to see if what we're eating is appropriate fare for our "social class" (aka nobles shouldn't be eating sticks of butter you troglodytes)

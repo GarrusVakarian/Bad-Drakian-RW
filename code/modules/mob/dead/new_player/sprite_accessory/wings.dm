@@ -68,6 +68,11 @@
 	name = "Monarch"
 	icon_state = "monarch"
 
+/datum/sprite_accessory/wings/moth/monarch_colorable
+	name = "Monarch (colorable)"
+	icon = 'icons/mob/sprite_accessory/wings/moth_wings_colorable.dmi'
+	icon_state = "monarch_color"
+
 /datum/sprite_accessory/wings/moth/luna
 	name = "Luna"
 	icon_state = "luna"

@@ -160,13 +160,16 @@ Hotkey-Mode: (hotkey-mode must be on)
 		if(prefs.crt == TRUE)
 			to_chat(src, "CRT mode is on.")
 			winset(src, "mapwindow.map", "zoom-mode=blur")
+			sync_character_preview_sampling()
 			return
 	if(winget(src, "mapwindow.map", "zoom-mode") == "normal")
 		to_chat(src, "Pixel-perfect... OK")
 		winset(src, "mapwindow.map", "zoom-mode=distort")
+		sync_character_preview_sampling()
 	else
 		to_chat(src, "Anti-aliased... OK")
 		winset(src, "mapwindow.map", "zoom-mode=normal")
+		sync_character_preview_sampling()
 
 /client/verb/crtmode()
 	set category = "Options"
@@ -176,6 +179,7 @@ Hotkey-Mode: (hotkey-mode must be on)
 		return
 	if(prefs.crt == TRUE)
 		winset(src, "mapwindow.map", "zoom-mode=normal")
+		sync_character_preview_sampling()
 		prefs.crt = FALSE
 		prefs.save_preferences()
 		to_chat(src, "CRT... OFF")
@@ -183,6 +187,7 @@ Hotkey-Mode: (hotkey-mode must be on)
 			S.alpha = 0
 	else
 		winset(src, "mapwindow.map", "zoom-mode=blur")
+		sync_character_preview_sampling()
 		prefs.crt = TRUE
 		prefs.save_preferences()
 		to_chat(src, "CRT... ON")

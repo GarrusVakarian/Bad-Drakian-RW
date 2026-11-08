@@ -1,3 +1,10 @@
+/// Lift explicitly exposed anatomy above clothing, keeping rear pieces below front pieces.
+/datum/sprite_accessory/proc/adjust_exposed_genital_layers(list/appearance_list, mob/living/carbon/owner)
+	if(!owner?.sexcon?.bottom_exposed || owner.sexcon.hide_pintle_visuals)
+		return
+	for(var/mutable_appearance/appearance as anything in appearance_list)
+		appearance.layer = max(appearance.layer, -BODY_FRONT_LAYER - 0.1)
+
 /// Hides the penis sprite while a chastity device is blocking front access.
 /// Covers all penis morphologies — normal cock, sheaths (SHEATH_TYPE_NORMAL), and genital slits
 /// (SHEATH_TYPE_SLIT) — all blocked by the same cage/full/penis-blocked traits since they are all
@@ -24,17 +31,39 @@
 		return FALSE
 	return is_human_part_visible(owner, HIDEJUMPSUIT|HIDECROTCH)
 
+/datum/sprite_accessory/testicles
+	var/static/list/clothed_icon_cache = list()
+
+/// Cache a copy with an empty rear view; turning needs no extra processing.
+/datum/sprite_accessory/testicles/proc/hide_clothed_rear_view(list/appearance_list)
+	for(var/mutable_appearance/appearance as anything in appearance_list)
+		var/cache_key = "[REF(appearance.icon)]-[appearance.icon_state]"
+		if(!clothed_icon_cache[cache_key])
+			var/icon/clothed_icon = icon(appearance.icon, appearance.icon_state)
+			var/icon/rear_view = icon(clothed_icon, "", NORTH)
+			rear_view.Blend("#ffffff00", ICON_MULTIPLY)
+			clothed_icon.Insert(rear_view, "", NORTH)
+			// Retain the source so its reference cannot be reused for another icon.
+			clothed_icon_cache[cache_key] = list(appearance.icon, clothed_icon)
+			trim_cache(clothed_icon_cache, SPRITE_ACCESSORY_ICON_CACHE_LEN)
+		var/list/cache_entry = clothed_icon_cache[cache_key]
+		appearance.icon = cache_entry[2]
+		appearance.icon_state = ""
+
 /// Reorders testicle layers when a cage-type device is worn so they sit beneath the cage overlay.
 /// Upstream adjust_appearance_list handles the generic offset; this fires after and only adjusts layers
 /// when the wearer's device has a cage sprite that intentionally shows the sack through the bars.
 /datum/sprite_accessory/testicles/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	generic_gender_feature_adjust(appearance_list, organ, bodypart, owner, OFFSET_BELT, OFFSET_BELT_F)
+	adjust_exposed_genital_layers(appearance_list, owner)
+	if(owner?.sexcon?.bottom_exposed && (owner.underwear || !is_human_part_visible(owner, HIDEJUMPSUIT|HIDECROTCH)))
+		hide_clothed_rear_view(appearance_list)
 	if(!chastity_shows_testicles(owner))
 		return
 
 	// Keep exposed testicles under cage/flat-cage overlays while still above body base.
 	for(var/mutable_appearance/appearance as anything in appearance_list)
-		appearance.layer = min(appearance.layer, -44.6)
+		appearance.layer = min(appearance.layer, owner?.sexcon?.bottom_exposed ? -BODY_FRONT_LAYER - 0.1 : -44.6)
 
 /// Returns TRUE if the wearer's chastity device has a cage or flat-cage sprite that renders the sack visible.
 /// Used to gate both layer reordering in adjust_appearance_list and the is_visible cage-blocked exception.
@@ -66,6 +95,8 @@
 /datum/sprite_accessory/vagina/is_visible(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	if(owner?.sexcon?.hide_pintle_visuals)
 		return FALSE
+	if(!organ.is_visible_on_owner())
+		return FALSE
 	var/obj/item/chastity/device = owner?.chastity_device
 	if(device)
 		if(device.chastity_cursed)
@@ -78,6 +109,8 @@
 	else
 		if(HAS_TRAIT(owner, TRAIT_CHASTITY_FULL) || HAS_TRAIT(owner, TRAIT_CHASTITY_VAGINA_BLOCKED))
 			return FALSE
+	if(owner.sexcon && owner.sexcon.bottom_exposed)
+		return TRUE
 	if(owner.underwear)
 		return FALSE
 	return is_human_part_visible(owner, HIDECROTCH|HIDEJUMPSUIT)

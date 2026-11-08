@@ -244,6 +244,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo,
 		"virtue_background" = virtue_background,
 		"quirks" = quirks.Copy(),
+		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1,
 		"vice2" = vice2,
 		"vice3" = vice3,
@@ -298,7 +299,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	)
 	
 	// Add to history
-	customization_history.Insert(1, snapshot)
+	customization_history.Insert(1, list(snapshot))
 	
 	// Keep only last 10 entries
 	if(customization_history.len > 10)
@@ -318,6 +319,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	virtue_background = snapshot["virtue_background"]
 	var/list/quirks_snapshot = snapshot["quirks"]
 	quirks = quirks_snapshot ? quirks_snapshot.Copy() : list()
+	virgin_attraction = sanitize_virgin_attraction(snapshot["virgin_attraction"])
 	vice1 = snapshot["vice1"]
 	vice2 = snapshot["vice2"]
 	vice3 = snapshot["vice3"]
@@ -385,6 +387,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtuetwo" = virtuetwo?.type,
 		"virtue_background" = virtue_background?.type,
 		"quirks" = get_quirk_typepaths(),
+		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1?.type,
 		"vice2" = vice2?.type,
 		"vice3" = vice3?.type,
@@ -481,6 +484,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		virtue_background = new /datum/virtue/background/none()
 
 	quirks = list()
+	virgin_attraction = sanitize_virgin_attraction(preset["virgin_attraction"])
 	var/quirks_preset = preset["quirks"]
 	if(islist(quirks_preset))
 		for(var/quirk_type in quirks_preset)
@@ -620,10 +624,10 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_9_hex = preset["loadout_9_hex"]
 	loadout_10_hex = preset["loadout_10_hex"]
 	
-	// Always set languages from preset (including null/empty values)
-	extra_language = preset["extra_language"]
-	extra_language_1 = preset["extra_language_1"]
-	extra_language_2 = preset["extra_language_2"]
+	// JSON turns type paths into strings; restore and validate every language slot.
+	for(var/language_slot in list("extra_language", "extra_language_1", "extra_language_2"))
+		var/language_path = string_to_typepath(preset[language_slot])
+		vars[language_slot] = ispath(language_path, /datum/language) ? language_path : "None"
 	
 	return TRUE
 
@@ -703,6 +707,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	
 	// Clean up duplicate vices/virtues (one-time fix for existing characters)
 	fix_duplicate_vices()
+	refresh_customization_size_preview()
 	
 	var/html_content = generate_vices_html(user)
 	user << browse(html_content, "window=character_custom;size=750x500")
@@ -1210,6 +1215,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/scent_display = redolent_scent || get_default_redolent_scent(redolent_type)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
 
+		if(istype(current_quirk, /datum/quirk/virgin))
+			html += "<div class='statpack-stats'><b>Attracted to pronouns:</b> [english_list(sanitize_virgin_attraction(virgin_attraction))]</div>"
+
 		if(current_quirk.custom_text)
 			html += "<div class='statpack-stats' style='margin-top: 4px;'>" + current_quirk.custom_text + "</div>"
 
@@ -1219,7 +1227,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(LAZYLEN(current_quirk.added_traits))
 			html += "<div class='statpack-stats' style='margin-top: 8px;'><strong>Traits granted:</strong><br>"
 			for(var/trait in current_quirk.added_traits)
-				html += "• [trait == TRAIT_ORGASM_DENIER ? "Orgasm Denier" : trait == TRAIT_RESILIENT_LOVER ? "Resilient Lover" : trait]<br>"
+				html += "• [trait == TRAIT_ORGASM_DENIER ? "Orgasm Denier" : trait == TRAIT_RESILIENT_LOVER ? "Resilient Lover" : trait == TRAIT_HEIGHTENED_SENSITIVITY ? "Heightened Sensitivity" : trait == TRAIT_DULLED_SENSITIVITY ? "Dulled Sensitivity" : trait]<br>"
 			html += "</div>"
 
 		if(LAZYLEN(current_quirk.added_skills))
@@ -1245,6 +1253,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		html += "<div class='actions'>"
 		if(istype(current_quirk, /datum/quirk/redolent))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];redolent_action=configure'>Configure Scent</a>"
+		if(istype(current_quirk, /datum/quirk/virgin))
+			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];quirk_action=remove;index=[i]'>Remove</a>"
 		html += "</div>"
 		html += "</div>"
@@ -1692,7 +1702,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available)
+			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1739,7 +1749,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available)
+			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1788,7 +1798,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				return
 
 			backgrounds_available = sort_list(backgrounds_available)
-			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available)
+			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, option_details = get_customization_picker_details(backgrounds_available))
 
 			if(choice)
 				var/datum/virtue/background/selected = backgrounds_available[choice]
@@ -1849,11 +1859,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/triumph_collateral = get_triumph_collateral()
 			if(triumph_collateral)
 				prompt_text += "\n(Costs [triumph_collateral] TRIUMPHS)"
-			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available)
+			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
 
 			if(choice)
 				var/datum/quirk/selected = quirks_available[choice]
 				quirks += new selected.type()
+				if(istype(selected, /datum/quirk/virgin))
+					configure_virgin_attraction(usr)
 				to_chat(usr, span_notice("Added [choice] as a quirk."))
 				if(selected.desc)
 					to_chat(usr, "<span class='info'>[selected.desc]</span>")
@@ -1888,7 +1900,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				statpacks_available[display_name] = SP
 			
 			statpacks_available = sort_list(statpacks_available)
-			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available)
+			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, large_window = TRUE)
 			
 			if(choice)
 				var/datum/statpack/selected = statpacks_available[choice]
@@ -1905,6 +1917,12 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				open_vices_menu(usr)
 			return
 	
+	if(href_list["virgin_action"])
+		if(href_list["virgin_action"] == "configure")
+			configure_virgin_attraction(usr)
+			open_vices_menu(usr)
+		return
+
 	if(href_list["redolent_action"])
 		if(href_list["redolent_action"] != "configure")
 			return
@@ -1989,7 +2007,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					vices_available[vice_name] = vice_type
 				
 				vices_available = sort_list(vices_available)
-				var/choice = tgui_input_list(usr, "Select a vice for slot [slot]:", "Vice Selection", vices_available)
+				var/choice = tgui_input_list(usr, "Select a vice for slot [slot]:", "Vice Selection", vices_available, option_details = get_customization_picker_details(vices_available, slot))
 			
 				if(choice)
 					var/datum/charflaw/selected = vices_available[choice]
@@ -2059,7 +2077,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				if(!current)
 					return
 				
-				var/new_name = tgui_input_text(usr, "Enter a custom name for this item (leave blank to use default):", "Rename Item", vars["loadout_[slot]_name"], MAX_NAME_LEN)
+				var/new_name = tgui_input_text(usr, "Enter a custom name for this item (leave blank to use default):", "Rename Item", html_decode(vars["loadout_[slot]_name"]), MAX_NAME_LEN)
 				
 				if(new_name != null) // Allow empty string to clear
 					vars["loadout_[slot]_name"] = new_name
@@ -2071,7 +2089,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				if(!current)
 					return
 				
-				var/new_desc = tgui_input_text(usr, "Enter a custom description for this item (leave blank to use default):", "Describe Item", vars["loadout_[slot]_desc"], max_length = 500, multiline = TRUE)
+				var/new_desc = tgui_input_text(usr, "Enter a custom description for this item (leave blank to use default):", "Describe Item", html_decode(vars["loadout_[slot]_desc"]), max_length = 500, multiline = TRUE)
 				
 				if(new_desc != null) // Allow empty string to clear
 					vars["loadout_[slot]_desc"] = new_desc
@@ -2219,3 +2237,57 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 						vars[slot_var] = language_path
 						to_chat(usr, span_notice("Selected [chosen_language] for language slot [slot] ([slot_cost] Triumphs)."))
 				open_vices_menu(usr)
+
+/datum/preferences/proc/configure_virgin_attraction(mob/user)
+	if(!has_quirk(/datum/quirk/virgin))
+		return
+	var/slot = default_slot
+	var/list/choice = tgui_input_checkboxes(user, "Select one or more pronoun groups. Any includes everyone and overrides individual choices. Clothing variants count under the same pronouns.", "Virgin: Attraction", virgin_attraction_options(), min_checked = 1, max_checked = 5, default_checked = sanitize_virgin_attraction(virgin_attraction), strict_modern = TRUE)
+	if(!islist(choice) || !length(choice) || QDELETED(user) || user.client != parent || slot != default_slot || !has_quirk(/datum/quirk/virgin))
+		return
+	save_to_history()
+	virgin_attraction = sanitize_virgin_attraction(choice)
+
+/// Display metadata only; original names remain the authoritative return values.
+/datum/preferences/proc/get_customization_picker_details(list/options, vice_slot = 0)
+	var/list/details = list()
+	for(var/option in options)
+		var/value = options[option]
+		var/label = option
+		var/description = ""
+		var/cost = ""
+		if(ispath(value, /datum/charflaw))
+			var/datum/charflaw/vice = GLOB.charflaw_singletons[value]
+			if(!istype(vice))
+				continue
+			description = vice.desc
+			label = replacetext(label, " (+[vice.point_value] Q-Points)", "")
+			var/points = vice_slot == 1 ? 0 : vice.point_value
+			cost = vice_slot == 1 ? "0 Q-Points (first vice)" : "+[points] Q-Point[points == 1 ? "" : "s"]"
+		else if(istype(value, /datum/customization_trait))
+			var/datum/customization_trait/pick = value
+			description = pick.desc
+			if(istype(pick, /datum/quirk))
+				var/datum/quirk/quirk = pick
+				var/suffix = " ([quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"])"
+				if(copytext(label, -length(suffix)) == suffix)
+					label = copytext(label, 1, -length(suffix))
+				cost = "[quirk.point_cost] Q-Point[quirk.point_cost == 1 ? "" : "s"]"
+			if(pick.triumph_cost)
+				var/static/regex/triumph_suffix = regex(@"\s*\(-[0-9]+(?:\.[0-9]+)?\s*(?:TRI|TRIUMPHS?)\)\s*$", "i")
+				label = triumph_suffix.Replace(label, "")
+				cost += "[cost ? "; " : ""][pick.triumph_cost] TRIUMPHS"
+				// New() already appends this sentence to desc; show it once in the cost column.
+				description = replacetext(description, "Costs [pick.triumph_cost] TRIUMPHS.", "")
+		else
+			continue
+		details[option] = list("label" = label, "description" = customization_picker_plain_text(description), "cost" = cost)
+	return details
+
+/// Render existing description formatting as plain text, never executable HTML.
+/proc/customization_picker_plain_text(text)
+	if(!istext(text))
+		return ""
+	var/static/regex/breaks = regex(@"<br\s*/?>|</p>|</li>", "gi")
+	var/static/regex/tags = regex(@"<[^>]*>", "g")
+	return trim(html_decode(tags.Replace(breaks.Replace(text, "\n"), "")))

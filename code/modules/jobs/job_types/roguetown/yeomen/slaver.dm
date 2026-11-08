@@ -83,3 +83,19 @@
 	else if(should_wear_masc_clothes(H))
 		shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/zyb
 		armor = /obj/item/clothing/suit/roguetown/shirt/undershirt/formal
+
+/mob/living/carbon/human
+	/// Per body: reapplying class equipment must not repeat the latejoin notice.
+	var/slave_latejoin_announced = FALSE
+
+/mob/living/carbon/human/proc/announce_slave_latejoin()
+	if(QDELETED(src) || slave_latejoin_announced || !islatejoin || !client || !mind || stat == DEAD)
+		return
+	if(istype(src, /mob/living/carbon/human/dummy) || advsetup || !class_equip_finished || !(job in list("Slave", "Enslaved Adventurer")))
+		return
+
+	slave_latejoin_announced = TRUE
+	for(var/mob/living/carbon/human/slaver in GLOB.player_list)
+		if(QDELETED(slaver) || slaver == src || slaver.job != "Slaver" || slaver.stat == DEAD || !slaver.client)
+			continue
+		to_chat(slaver, span_boldnotice("A new [job] has arrived: <b>[real_name]</b>. Check the Slaves roster at the Rosewall."))

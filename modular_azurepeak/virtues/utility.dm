@@ -1,15 +1,16 @@
 /datum/virtue/utility/noble
-	name = "Nobility (-1 Triumph)"
-	desc = "By birth, blade or brain, I am noble known to the royalty of these lands, and have all the benefits associated with it. \
+	name = "Nobility (-4 TRI)"
+	desc = "By birth, blade or brain, I am a titled noble known to the royalty of these lands, supported by an estate and enjoying the standing of my peers. \
 			I've cleverly stashed away a healthy amount of coinage, alongside a familial heirloom."
 	added_traits = list(TRAIT_NOBLE)
 	added_skills = list(list(/datum/skill/misc/reading, 1, 6))
 	added_stashed_items = list("Heirloom Amulet" = /obj/item/clothing/neck/roguetown/ornateamulet/noble,
 								"Hefty Coinpurse" = /obj/item/storage/belt/rogue/pouch/coins/virtuepouch)
-	triumph_cost = 1 //BD Cost dropped to 1
+	triumph_cost = 4
 
 /datum/virtue/utility/noble/apply_to_human(mob/living/carbon/human/recipient)
 	SStreasury.noble_incomes[recipient] += 15
+	recipient.social_rank = max(recipient.social_rank, SOCIAL_RANK_NOBLE)
 
 /datum/virtue/utility/socialite
 	name = "Socialite"
@@ -140,10 +141,10 @@
 //that keep old saves resolving.
 
 /datum/virtue/utility/homesteader
-	name = "Pilgrim (-3 TRI)"
+	name = "Pilgrim (-2 TRI)"
 	added_traits = list(TRAIT_HOMESTEAD_EXPERT)
 	desc= "As they say, 'hearth is where the heart is'. You are intimately familiar with the labors of lyfe, and have stowed away everything necessary to start anew: a hunting dagger, your trusty hoe, and a sack of assorted supplies."
-	triumph_cost = 3
+	triumph_cost = 2
 	added_stashed_items = list(
 		"Hoe" = /obj/item/rogueweapon/hoe,
 		"Bag of Food" = /obj/item/storage/roguebag/food,
@@ -245,7 +246,7 @@
 	desc = "After years of training in the wilds, I've learned to traverse the woods confidently, without breaking any twigs. I can even step lightly on leaves without falling, and I can gather twice as many things from bushes. I can also sleep comfortably on a tree branch."
 	added_traits = list(TRAIT_WOODWALKER, TRAIT_OUTDOORSMAN)
 
-/datum/virtue/heretic/zchurch_keyholder
+/datum/virtue/utility/zchurch_keyholder
 	name = "Defiled Keyholder"
 	desc = "The 'Holy' See has their blood-stained grounds, and so do we. Underneath their noses, we pray to the true gods - I know the location of the local heretic conclave. Secrecy is paramount. If found out, I will surely be killed."
 	added_traits = list(TRAIT_ZURCH)
@@ -327,3 +328,5 @@
 		list(/datum/skill/craft/cooking, 1, 2),
 		list(/datum/skill/combat/knives, 1, 2)
 	)
+
+/datum/virtue/heretic

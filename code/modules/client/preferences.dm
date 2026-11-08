@@ -94,6 +94,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	// See modular_azurepeak/virtues/background.dm.
 	var/datum/virtue/background/virtue_background = new /datum/virtue/background/none
 	var/list/quirks = list()
+	var/virgin_attraction = list("Any")
 	var/selected_title = "None"
 	var/age = AGE_ADULT						//age of character
 	var/datum/origin/origin
@@ -118,6 +119,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/const/datum/species/default_species = /datum/species/human/northern
 	var/datum/patron/selected_patron
 	var/static/datum/patron/default_patron = /datum/patron/divine/astrata
+	// 2nd patron that your character may worship, provides no mechanics benefit other than being able to do/see 2 faith salutes
+	var/datum/patron/polytheist_patron
 	var/list/features = MANDATORY_FEATURE_LIST
 	var/list/randomise = list(RANDOM_UNDERWEAR = TRUE, RANDOM_UNDERWEAR_COLOR = TRUE, RANDOM_UNDERSHIRT = TRUE, RANDOM_SOCKS = TRUE, RANDOM_BACKPACK = TRUE, RANDOM_JUMPSUIT_STYLE = FALSE, RANDOM_SKIN_TONE = TRUE, RANDOM_EYE_COLOR = TRUE)
 	var/list/friendlyGenders = list("male" = "masculine", "female" = "feminine")
@@ -141,6 +144,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/descriptor_color = FALSE
 	/// If a cursed collar can be equipped to them at all
 	var/cursed_collarable = FALSE
+	/// If we are lactating, can others milk us via reagent containers (not for sex actions, but the stuff in milking.dm)
+	var/milkable = FALSE
+	/// If manticore tail flavor messages are on by default
+	var/manticore_tail_messages = FALSE
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
@@ -421,6 +428,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 	var/ooc_notes
 	var/roleplay_ad
+	/// Account-wide discovery state; separate from each character's saved ad.
+	var/list/seen_character_sheet_features = list()
+	var/tmp/character_sheet_notice_generation = 0
 
 	var/rumour
 
@@ -540,9 +550,204 @@ GLOBAL_LIST_EMPTY(chosen_names)
 #define APPEARANCE_CATEGORY_COLUMN "<td valign='top' width='14%'>"
 #define MAX_MUTANT_ROWS 4
 
+/datum/preferences/proc/has_customized_content_toggles()
+	// Match the account preferences exposed by the toggles menu, ignoring unrelated character choices.
+	var/static/list/boolean_settings = list(
+		"accept_oviposition",
+		"autoconsume",
+		"autopicking",
+		"autowoodcut",
+		"chastenable",
+		"chatheadshot",
+		"compliance_notifs",
+		"crt",
+		"cursed_collarable",
+		"descriptor_color",
+		"edging",
+		"erp_visuals",
+		"extreme_erp",
+		"facial_brands",
+		"free_use_default",
+		"grain",
+		"hear_barks",
+		"hide_unavailable_emotes",
+		"masked_examine",
+		"mute_animal_emotes",
+		"no_autopunctuate",
+		"no_examine_blocks",
+		"no_language_fonts",
+		"no_language_icon",
+		"no_redflash",
+		"nsfw_examine_always",
+		"pits",
+		"pubes",
+		"quiet_chastity",
+		"sensitive_brands",
+		"sexable",
+		"shake",
+		"show_mouseover_role",
+		"showrolls",
+		"skillcap_notifs",
+		"top_examine",
+		"voting_popup",
+		"wildshape_name",
+	)
+	for(var/setting as anything in boolean_settings)
+		if(!!vars[setting] != !!initial(vars[setting]))
+			return TRUE
+	if(toggles != initial(toggles) || chat_toggles != initial(chat_toggles) || floating_text_toggles != initial(floating_text_toggles))
+		return TRUE
+	if(hud_colorblind_palette != initial(hud_colorblind_palette) || chastity_hardmode != initial(chastity_hardmode))
+		return TRUE
+	if(parent && parent.legacycraft != initial(parent.legacycraft))
+		return TRUE
+	if(parent?.mob && parent.mob.tgui_multiline != initial(parent.mob.tgui_multiline))
+		return TRUE
+	return FALSE
+
+/// Feature definitions are shared and immutable; per-account state belongs to preferences.
+/datum/character_sheet_feature
+	var/id
+	var/label
+	var/explanation
+	var/location
+
+/datum/character_sheet_feature/proc/is_eligible(datum/preferences/preferences)
+	return TRUE
+
+/datum/character_sheet_feature/content_toggles
+	id = "content_toggles"
+	label = "Content Toggles"
+	explanation = "It contains gameplay, display, sound and content preferences."
+	location = "in the character sheet's upper-right corner, below Keybinds"
+
+/datum/character_sheet_feature/content_toggles/is_eligible(datum/preferences/preferences)
+	return !preferences.has_customized_content_toggles()
+
+/datum/character_sheet_feature/roleplay_ad
+	id = "roleplay_ad"
+	label = "Set Roleplay Ad"
+	explanation = "Save an advertisement for this character to post automatically when you spawn."
+	location = "in the character sheet's upper-right corner, below Content Toggles"
+
+/datum/character_sheet_feature/roleplay_ad/is_eligible(datum/preferences/preferences)
+	return !length(trim(preferences.roleplay_ad))
+
+/datum/character_sheet_feature/sprite_offset
+	id = "sprite_offset"
+	label = "Sprite Offset"
+	explanation = "Cycle Default, Down, Up, Right and Left to adjust your sprite's pixel alignment."
+	location = "beside Sprite Scale in the character sheet's Body section"
+
+/datum/character_sheet_feature/sprite_offset/is_eligible(datum/preferences/preferences)
+	return !preferences.features["body_center_offset"]
+
+/proc/get_character_sheet_features()
+	var/static/list/features
+	if(isnull(features))
+		features = list()
+		for(var/feature_type in subtypesof(/datum/character_sheet_feature))
+			var/datum/character_sheet_feature/feature = new feature_type()
+			if(!istext(feature.id) || !length(feature.id))
+				qdel(feature)
+				continue
+			if(features[feature.id])
+				CRASH("Duplicate character-sheet feature ID: [feature.id]")
+			features[feature.id] = feature
+	return features
+
+/datum/preferences/proc/character_sheet_feature_is_new(feature_id)
+	if(!istext(feature_id))
+		return FALSE
+	var/list/features = get_character_sheet_features()
+	var/datum/character_sheet_feature/feature = features[feature_id]
+	if(!istype(feature) || seen_character_sheet_features[feature_id])
+		return FALSE
+	if(!feature.is_eligible(src))
+		mark_character_sheet_feature_seen(feature_id)
+		return FALSE
+	return TRUE
+
+/datum/preferences/proc/content_toggles_are_new()
+	return character_sheet_feature_is_new("content_toggles")
+
+/datum/preferences/proc/roleplay_ad_is_new()
+	return character_sheet_feature_is_new("roleplay_ad")
+
+/datum/preferences/proc/character_sheet_feature_link(feature_id, href, tooltip, label_override, element_id)
+	var/list/features = get_character_sheet_features()
+	var/datum/character_sheet_feature/feature = features[feature_id]
+	if(!istype(feature))
+		return ""
+	var/is_new = character_sheet_feature_is_new(feature_id)
+	var/badge = is_new ? " <small style='margin-left:6px;border:1px solid currentColor;padding:0 3px;'>NEW</small>" : ""
+	var/label = isnull(label_override) ? feature.label : label_override
+	var/id_attribute = isnull(element_id) ? "" : " id='[html_encode(element_id)]'"
+	return "<a[id_attribute] style='white-space:nowrap;[is_new ? "color:#f1d669;font-weight:bold;" : "font-weight:normal;"]' title='[html_encode(tooltip)]' href='[html_encode(href)]'>[html_encode(label)][badge]</a>"
+
+/datum/preferences/proc/sprite_offset_feature_link()
+	return character_sheet_feature_link("sprite_offset", "?_src_=prefs;preference=body_center_offset;task=input", "Cycle Default, Down, Up, Right and Left pixel alignment", "Offset: [sprite_center_mode_name(features["body_center_offset"])]", "body-center-offset")
+
+/// Keep unknown IDs as tombstones: removing and later reintroducing a feature must not restore NEW.
+/datum/preferences/proc/load_character_sheet_feature_state(savefile/S)
+	var/previous_directory = S.cd
+	S.cd = "/"
+	var/saved_state
+	if("feature_discovery" in S.dir)
+		S.cd = "/feature_discovery"
+		S["seen_features"] >> saved_state
+	S.cd = previous_directory
+	seen_character_sheet_features = list()
+	if(islist(saved_state))
+		for(var/feature_id in saved_state)
+			if(istext(feature_id) && saved_state[feature_id] == TRUE)
+				seen_character_sheet_features[feature_id] = TRUE
+
+/datum/preferences/proc/dismiss_character_sheet_feature(mob/user, feature)
+	if(!parent || user?.client != parent)
+		return FALSE
+	if(!mark_character_sheet_feature_seen(feature))
+		return FALSE
+	refresh_character_sheet_if_open(user)
+	return TRUE
+
+/datum/preferences/proc/mark_character_sheet_feature_seen(feature)
+	if(!istext(feature))
+		return FALSE
+	var/list/features = get_character_sheet_features()
+	if(!istype(features[feature], /datum/character_sheet_feature) || seen_character_sheet_features[feature])
+		return FALSE
+	seen_character_sheet_features[feature] = TRUE
+	save_preferences()
+	return TRUE
+
+/datum/preferences/proc/notify_character_sheet_updates(mob/user, sheet_was_visible)
+	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
+		return
+	// Coalesce reopenings and let the normal login notices finish first.
+	var/generation = ++character_sheet_notice_generation
+	spawn(3 SECONDS)
+		if(character_sheet_notice_generation == generation)
+			send_character_sheet_updates(user, FALSE)
+
+/datum/preferences/proc/send_character_sheet_updates(mob/user, sheet_was_visible)
+	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
+		return
+	var/list/features = get_character_sheet_features()
+	for(var/feature_id in features)
+		if(!character_sheet_feature_is_new(feature_id))
+			continue
+		var/datum/character_sheet_feature/feature = features[feature_id]
+		to_chat(user, span_notice("<b>[html_encode(feature.label)]</b> is [html_encode(feature.location)]. [html_encode(feature.explanation)] Open the button to dismiss its NEW badge, or <a href='?_src_=prefs;preference=dismiss_sheet_feature;feature=[url_encode(feature_id)]'>dismiss this reminder</a>."))
+
+/datum/preferences/proc/refresh_character_sheet_if_open(mob/user)
+	if(parent && user?.client == parent && current_tab == 0 && winget(user, "preferencess_window", "is-visible") == "true")
+		ShowChoices(user)
+
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
 	if(!user || !user.client)
 		return
+	var/sheet_was_visible = winget(user, "preferencess_window", "is-visible") == "true"
 	if(slot_randomized)
 		load_character(default_slot) // Reloads the character slot. Prevents random features from overwriting the slot if saved.
 		slot_randomized = FALSE
@@ -568,17 +773,16 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<table style='width: 100%; line-height: 20px;'>"
 			// NEXT ROW
 			dat += "<tr>"
-			dat += "<td style='width:33%;text-align:left'>"
+			dat += "<td style='width:33%;text-align:left;vertical-align:baseline'>"
 			dat += "<a style='white-space:nowrap;' href='?_src_=prefs;preference=changeslot;'>Change Character</a>"
 			dat += "</td>"
 
-			dat += "<td style='width:33%;text-align:center'>"
+			dat += "<td style='width:33%;text-align:center;vertical-align:baseline'>"
 			dat += "<a href='?_src_=prefs;preference=job;task=menu'>Class Selection</a>"
 			dat += "</td>"
 
-			dat += "<td style='width:33%;text-align:right'>"
+			dat += "<td style='width:33%;text-align:right;vertical-align:baseline'>"
 			dat += "<a href='?_src_=prefs;preference=keybinds;task=menu'>Keybinds</a>"
-			dat += "<br><a href='?_src_=prefs;preference=toggles'>Toggles</a>"
 			dat += "</td>"
 			dat += "</tr>"
 
@@ -596,7 +800,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<a href='?_src_=prefs;preference=antag;task=menu'>Villain Selection</a>"
 			dat += "</td>"
 
-			dat += "<td style='width:33%;text-align:right'>"
+			dat += "<td style='width:33%;text-align:right;vertical-align:top'>"
+			dat += character_sheet_feature_link("content_toggles", "?_src_=prefs;preference=toggles", "Gameplay, display, sound and content preferences.")
+			dat += "<br>"
+			dat += character_sheet_feature_link("roleplay_ad", "?_src_=prefs;preference=roleplay_ad;task=input", "Save an advertisement for this character to post automatically when you spawn.")
 			dat += "</td>"
 			dat += "</tr>"
 
@@ -622,19 +829,23 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			var/preview_column_width = preview_enlarged ? 544 : 204
 			dat += "<table style='width:100%;table-layout:fixed'>"
 			dat += "<colgroup><col><col id='character-preview-column' style='width:[preview_column_width]px'><col></colgroup>"
-			if(preview_enlarged)
-				// Native map sizes use display pixels; HTML uses CSS pixels.
-				// Avoid widening the gap again when Windows/browser scaling is on.
-				dat += {"<script>
-					(function () {
-						function fitPreviewColumn() {
-							var column = document.getElementById('character-preview-column');
-							column.style.width = (544 / (window.devicePixelRatio || 1)) + 'px';
-						}
-						fitPreviewColumn();
-						window.addEventListener('resize', fitPreviewColumn);
-					})();
-				</script>"}
+			dat += {"<script>
+				var previewSizeEnlarged = [preview_enlarged ? "true" : "false"];
+				function updatePreviewSize(value) {
+					previewSizeEnlarged = value === '1';
+					var column = document.getElementById('character-preview-column');
+					var spacer = document.getElementById('character-preview-space');
+					var button = document.getElementById('character-preview-size');
+					if (column) column.style.width = (previewSizeEnlarged ? 544 / (window.devicePixelRatio || 1) : 204) + 'px';
+					if (spacer) spacer.style.height = (previewSizeEnlarged ? 580 : 260) + 'px';
+					if (button) {
+						button.innerHTML = previewSizeEnlarged ? '3x' : 'Default';
+						button.href = '?_src_=prefs;preference=preview_size;enlarged=' + (previewSizeEnlarged ? '0' : '1');
+					}
+				}
+				window.addEventListener('load', function () { updatePreviewSize(previewSizeEnlarged ? '1' : '0'); });
+				window.addEventListener('resize', function () { updatePreviewSize(previewSizeEnlarged ? '1' : '0'); });
+			</script>"}
 			// Only one Row
 			dat += "<tr>"
 			// The identity and body columns share the remaining width.
@@ -748,6 +959,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			var/datum/faith/selected_faith = GLOB.faithlist[selected_patron?.associated_faith]
 			dat += "<b>Faith:</b> <a href='?_src_=prefs;preference=faith;task=input'>[selected_faith?.name || "FUCK!"]</a><BR>"
 			dat += "<b>Patron:</b> <a href='?_src_=prefs;preference=patron;task=input'>[selected_patron?.name || "FUCK!"]</a><BR>"
+			if(polytheist_patron == "NONE" || isnull(polytheist_patron))
+				dat += "<b>Polytheism:</b><a href='?_src_=prefs;preference=polytheism;task=input'>["None"]</a><BR>"
+			else
+				dat += "<b>Polytheism:</b><a href='?_src_=prefs;preference=polytheism;task=input'>[polytheist_patron.name]</a><BR>"
 			dat += "<b>Dominance:</b> <a href='?_src_=prefs;preference=domhand'>[domhand == 1 ? "Left-handed" : "Right-handed"]</a><BR>"
 			dat += "<b>Food Preferences:</b> <a href='?_src_=prefs;preference=culinary;task=menu'>Change</a><BR>"
 
@@ -798,7 +1013,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			// The native map overlays this browser; reserve space for it above
 			// the preview controls so those links remain visible and clickable.
 			var/preview_space = preview_enlarged ? 580 : 260
-			dat += "<div style='height:[preview_space]px'></div>"
+			dat += "<div id='character-preview-space' style='height:[preview_space]px'></div>"
 			var/datum/job/highest_pref
 			for(var/job in job_preferences)
 				if(job_preferences[job] > highest_pref)
@@ -815,7 +1030,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 					arousal_preview_label = "Hard"
 				else
 					arousal_preview_label = "None"
-			dat += "<div style='text-align: center'><br>Arousal Preview:<br><a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a><br><br>Preview Size:<br><a href='?_src_=prefs;preference=preview_size'>[preview_enlarged ? "3x" : "Default"]</a></div>"
+			dat += "<div style='text-align: center'><br>Arousal Preview:<br><a href='?_src_=prefs;preference=preview_erect_state'>[arousal_preview_label]</a><br><br>Preview Size:<br><a id='character-preview-size' href='?_src_=prefs;preference=preview_size;enlarged=[preview_enlarged ? "0" : "1"]'>[preview_enlarged ? "3x" : "Default"]</a></div>"
 			// Rightmost body column.
 			dat += "</td><td valign='top'>"
 			dat += "<h2>Body</h2>"
@@ -844,7 +1059,18 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
 			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
-			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a>"
+			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> "
+			dat += sprite_offset_feature_link()
+			dat += {"<script>
+				function updateBodyCenterOffset(label) {
+					var button = document.getElementById('body-center-offset');
+					if (button) {
+						button.innerHTML = 'Offset: ' + label;
+						button.style.color = '';
+						button.style.fontWeight = 'normal';
+					}
+				}
+			</script>"}
 			dat += "<br><b>Markings:</b> <a href='?_src_=prefs;preference=markings;task=menu'>Change</a>"
 			dat += "<br><b>Descriptors:</b> <a href='?_src_=prefs;preference=descriptors;task=menu'>Change</a>"
 
@@ -863,7 +1089,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Song:</b> <a href='?_src_=prefs;preference=ooc_extra;task=input'>Change URL</a>"
 			dat += "<a href='?_src_=prefs;preference=change_title;task=input'>Change Title</a>"
 			dat += "<a href='?_src_=prefs;preference=change_artist;task=input'>Change Artist</a>"
-			dat += "<br><b>Set a Roleplay Ad:</b> <a href='?_src_=prefs;preference=roleplay_ad;task=input'>Change</a>"
 			dat += "<br><b>OOC Extra Image/Video/Gif (Flavor Text):</b> <a href='?_src_=prefs;preference=ooc_extra_img;task=input'>Change</a>"
 			if(ooc_extra_img_link != null)
 				dat += "<br><img src='[ooc_extra_img_link]' width='100px' height='100px'>"
@@ -1163,6 +1388,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	popup.set_window_options("can_close=0")
 	popup.set_content(dat.Join())
 	popup.open(FALSE)
+	notify_character_sheet_updates(user, sheet_was_visible)
 	update_preview_icon()
 //	onclose(user, "preferencess_window", src)
 
@@ -1632,16 +1858,67 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		if(C)
 			C.clear_character_previews()
 	if(href_list["preference"] == "origin_select")
-		var/mob/user = usr
-		var/chosen_type = text2path(href_list["type"])
-		if(chosen_type && (chosen_type in GLOB.origins))
-			origin = GLOB.origins[chosen_type]
-			save_character()
-			user << browse(null, "window=origin_map")
-			ShowChoices(user)
-			return
+		select_origin(usr, href_list["type"])
+		return
+
+/// Both the origin map's direct links and preference links use the same checked selection path.
+/datum/preferences/proc/select_origin(mob/user, type_text)
+	if(!ismob(user) || QDELETED(user) || !user.client || user.client != parent || parent.prefs != src || parent.mob != user)
+		return FALSE
+	if(!istext(type_text))
+		return FALSE
+	var/chosen_type = text2path(type_text)
+	if(!ispath(chosen_type, /datum/origin) || !(chosen_type in GLOB.origins))
+		return FALSE
+	var/datum/origin/chosen_origin = GLOB.origins[chosen_type]
+	if(!istype(chosen_origin))
+		return FALSE
+	origin = chosen_origin
+	save_character()
+	to_chat(user, "<b>Origin: [html_encode(chosen_origin.name)]</b><br><b>Region Traits</b>[chosen_origin.get_traits_html()]", type = MESSAGE_TYPE_INFO)
+	user << browse(null, "window=origin_map")
+	ShowChoices(user)
+	return TRUE
+
+/datum/preferences/proc/edit_roleplay_ad(mob/user)
+	if(!ismob(user) || !user.client || user.client != parent)
+		return FALSE
+	if(mark_character_sheet_feature_seen("roleplay_ad"))
+		refresh_character_sheet_if_open(user)
+	var/client/ad_client = user.client
+	to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved ad for future rounds, use this character customization menu. Leave this field empty to disable automatic posting."))
+	var/ad_slot = default_slot
+	var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for. Leave empty to remove your saved ad.", "Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
+	if(isnull(new_ad))
+		return FALSE
+	if(!ad_client || QDELETED(user) || user.client != ad_client || ad_client.mob != user || ad_client.prefs != src)
+		return FALSE
+	if(default_slot != ad_slot)
+		to_chat(user, span_warning("Your character slot changed. Reopen the roleplay ad editor for the character you want to edit."))
+		return FALSE
+	new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
+	roleplay_ad = length(trim(new_ad)) ? new_ad : null
+	save_character()
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(!H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == parent?.ckey)
+			H.roleplay_ad = roleplay_ad
+			H.publish_roleplay_ad()
+	to_chat(user, span_notice(roleplay_ad ? "Roleplay ad saved." : "Saved roleplay ad cleared."))
+	return TRUE
 
 /datum/preferences/proc/process_link(mob/user, list/href_list)
+	if(href_list["preference"] == "dismiss_sheet_feature")
+		dismiss_character_sheet_feature(user, href_list["feature"])
+		return
+	if(href_list["preference"] == "preview_size")
+		if(!user?.client || user.client != parent || !(href_list["enlarged"] in list("0", "1")))
+			return
+		preview_enlarged = href_list["enlarged"] == "1"
+		if(!parent.resize_character_previews(preview_enlarged))
+			update_preview_icon()
+		user << output(preview_enlarged ? "1" : "0", "preferences_browser:updatePreviewSize")
+		return
 	if(href_list["bancheck"])
 		var/list/ban_details = is_banned_from_with_details(user.ckey, user.client.address, user.client.computer_id, href_list["bancheck"])
 		var/admin = FALSE
@@ -1745,13 +2022,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		ShowCustomizers(user)
 		return
 	else if(href_list["preference"] == "origin_select")
-		var/chosen_type = text2path(href_list["type"])
-		if(chosen_type && (chosen_type in GLOB.origins))
-			origin = GLOB.origins[chosen_type]
-			save_character()
-			user << browse(null, "window=origin_map")
-			ShowChoices(user)
-			return
+		select_origin(user, href_list["type"])
 		return
 	else if(href_list["preference"] == "triumph_buy_menu")
 		SStriumphs.startup_triumphs_menu(user.client)
@@ -1975,9 +2246,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 							if (AGE_ADULT)
 								to_chat(user, "You preside in your 'prime', whatever this may be, and gain no bonus nor endure any penalty for your time spent alive.")
 							if (AGE_MIDDLEAGED)
-								to_chat(user, "Muscles ache and joints begin to slow as Aeon's grasp begins to settle upon your shoulders. (-1 SPD, +1 WIL)")
+								to_chat(user, "Muscles ache and joints begin to slow as Aeon's grasp begins to settle upon your shoulders. (-1 SPD, +1 WIL, +1 FOR)")
 							if (AGE_OLD)
-								to_chat(user, "In a place as lethal as PSYDONIA, the elderly are all but marvels... or beneficiaries of the habitually privileged. (-1 STR, -2 SPE, -1 PER, -2 CON, +2 INT, +1 FOR)")
+								to_chat(user, "In a place as lethal as PSYDONIA, the elderly are all but marvels... or beneficiaries of the habitually privileged. (-1 STR, -2 SPE, -1 PER, -2 CON, +3 INT, +1 FOR)")
 						// LETHALSTONE EDIT END
 						ResetJobs()
 						family = FAMILY_NONE
@@ -2071,7 +2342,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						if(length(pref_species.restricted_virtues) && (B.type in pref_species.restricted_virtues))
 							continue
 						background_choices[B.name] = B
-					var/background_choice = tgui_input_list(user, "What was my lyfe before?", "BACKGROUND (LOADOUTS PLACED WITHIN THY STASH)", background_choices)
+					var/background_choice = tgui_input_list(user, "What was my lyfe before?", "BACKGROUND (LOADOUTS PLACED WITHIN THY STASH)", background_choices, option_details = get_customization_picker_details(background_choices))
 					if(background_choice)
 						virtue_background = background_choices[background_choice]
 						to_chat(user, process_virtue_text(virtue_background))
@@ -2110,6 +2381,22 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						to_chat(user, "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font>")
 						to_chat(user, "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font>")
 						to_chat(user, "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>")
+
+				if("polytheism")
+					var/list/polytheism_deities = list("NONE")
+					for(var/datum/patron/patron as anything in GLOB.patronlist)
+						if(!patron.name)
+							continue
+						if(patron.disabled_patron)
+							continue
+						if(patron.type == /datum/patron/godless) // lol
+							continue
+						polytheism_deities[patron.name] = patron
+					var/polytheist = tgui_input_list(user, "Some will worship more than one. Will you?", "FAITH", polytheism_deities)
+					if(polytheist == "NONE")
+						polytheist_patron = null
+					else if(polytheist)
+						polytheist_patron = polytheism_deities[polytheist]
 
 				if("combat_music") // if u change shit here look at /client/verb/combat_music() too
 					if(!combat_music_helptext_shown)
@@ -2320,23 +2607,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					popup.set_content(dat.Join())
 					popup.open(FALSE)
 				if("roleplay_ad")
-					to_chat(user, span_notice("Your roleplay ad is saved for this character and posted automatically when you spawn. In-game, open OOC > Roleplay Ad (View) to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved ad for future rounds, use this character customization menu. Leave this field empty to disable automatic posting."))
-					var/ad_slot = default_slot
-					var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for. Leave empty to remove your saved ad.", "Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
-					if(isnull(new_ad))
+					if(!edit_roleplay_ad(user))
 						return
-					if(default_slot != ad_slot)
-						to_chat(user, span_warning("Your character slot changed. Reopen the roleplay ad editor for the character you want to edit."))
-						return
-					new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
-					roleplay_ad = length(trim(new_ad)) ? new_ad : null
-					save_character()
-					if(ishuman(user))
-						var/mob/living/carbon/human/H = user
-						if(!H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == parent?.ckey)
-							H.roleplay_ad = roleplay_ad
-							H.publish_roleplay_ad()
-					to_chat(user, span_notice(roleplay_ad ? "Roleplay ad saved." : "Saved roleplay ad cleared."))
 				if("flavortext")
 					to_chat(user, "<span class='notice'>["<span class='bold'>Flavortext should not include nonphysical nonsensory attributes such as backstory or the character's internal thoughts.</span>"]</span>")
 					var/new_flavortext = tgui_input_text(user, "Input your character description:", "Flavortext", flavortext, multiline = TRUE,  encode = FALSE, bigmodal = TRUE)
@@ -2712,6 +2984,16 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						var/choice = tgui_input_list(user, "What has fate blessed your race with?", "BONUS", pref_species.custom_selection)
 						if(choice)
 							race_bonus = pref_species.custom_selection[choice]
+
+				if("body_center_offset")
+					if(!user?.client || user.client != parent)
+						return
+					mark_character_sheet_feature_seen("sprite_offset")
+					features["body_center_offset"] = next_sprite_center_mode(features["body_center_offset"])
+					if(!parent.update_character_preview_center(features["body_center_offset"]))
+						update_preview_icon()
+					user << output(sprite_center_mode_name(features["body_center_offset"]), "preferences_browser:updateBodyCenterOffset")
+					return
 
 				if("body_size")
 					var/new_body_size = tgui_input_number(user, "Choose your desired sprite size:\n([BODY_SIZE_MIN*100]%-[BODY_SIZE_MAX*100]%), Warning: May make your character look distorted", "Character Preference", features["body_size"]*100)
@@ -3221,9 +3503,6 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					user << browse(null, "window=lobby_window")
 					return
 
-				if("preview_size")
-					preview_enlarged = !preview_enlarged
-
 				if("preview_erect_state")
 					switch(preview_erect_state)
 						if(ERECT_STATE_NONE)
@@ -3416,6 +3695,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	else
 		character.real_name = real_name
 	character.name = character.real_name
+	if(!character_setup)
+		character.set_background_stat_identity(parent?.ckey, real_name)
 
 	if((selected_title != "None" && pref_species.use_titles) && selected_title != null)
 		character.dna.species.name = selected_title
@@ -3486,6 +3767,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.headshot_link = headshot_link
 
 	character.origin = origin ? origin.name : "Unknown"
+	for(var/trait in origin?.origin_traits)
+		ADD_TRAIT(character, trait, ORIGIN_TRAIT)
 
 	character.statpack = statpack
 

@@ -21,15 +21,18 @@ SUBSYSTEM_DEF(npcpool)
 		var/mob/living/simple_animal/SA = currentrun[currentrun.len]
 		--currentrun.len
 
-		if(QDELETED(SA) || SA.ckey || SA.notransform || SA.stat == DEAD)
+		if(!can_process_npc(SA))
 			continue
 		SA.handle_automated_action()
-		if(SA.stat != DEAD)
+		if(can_process_npc(SA))
 			SA.handle_automated_movement()
-		if(SA.stat != DEAD)
-			SA.handle_automated_speech()
+			if(can_process_npc(SA))
+				SA.handle_automated_speech()
 		if (MC_TICK_CHECK)
 			return
+
+/datum/controller/subsystem/npcpool/proc/can_process_npc(mob/living/simple_animal/animal)
+	return !QDELETED(animal) && !animal.ckey && !animal.notransform && animal.stat != DEAD && animal.AIStatus == AI_ON
 
 /datum/controller/subsystem/npcpool/proc/handle_automated_action(mob/living/simple_animal/mobinput)
 	if(!mobinput)

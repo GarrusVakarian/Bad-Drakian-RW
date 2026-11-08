@@ -537,14 +537,14 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	switch(invocation_type)
 		if("shout")
 			if(prob(50))//Auto-mute? Fuck that noise
-				user.say(chosen_invocation, forced = "spell")
+				user.say(chosen_invocation, forced = "spell", count_for_stats = FALSE)
 			else
-				user.say(chosen_invocation, forced = "spell")
+				user.say(chosen_invocation, forced = "spell", count_for_stats = FALSE)
 		if("whisper")
 			if(prob(50))
-				user.whisper(chosen_invocation)
+				user.whisper(chosen_invocation, count_for_stats = FALSE)
 			else
-				user.whisper(chosen_invocation)
+				user.whisper(chosen_invocation, count_for_stats = FALSE)
 		if("emote")
 			var/emote_incantation = "<b>[usr.real_name]</b> [chosen_invocation]"
 			user.visible_message(emote_incantation, emote_incantation) //this is stupid, but it works.
@@ -1019,3 +1019,35 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 #undef MEDIUM_ARMOR_STAM_PENALTY
 #undef HEAVY_ARMOR_STAM_PENALTY
 #undef UNTRAINED_ARMOR_STAM_PENALTY
+
+/obj/effect/proc_holder/spell/proc/generate_wiki_html(mob/user)
+	var/s_range
+	switch(range)
+		if(-1)
+			s_range = "Touch"
+		if(0)
+			s_range = "Self"
+		else
+			s_range = "[range] tiles"
+
+	var/s_invocation_type = invocation_type || "none"
+	s_invocation_type = uppertext(copytext(s_invocation_type, 1, 2)) + copytext(s_invocation_type, 2)
+
+	var/s_invocations = "None"
+	if(length(invocations))
+		s_invocations = invocations.Join(", ")
+
+	var/html = {"
+		<h2 style='border-bottom: 1px solid currentColor; padding-bottom: 4px;'>[name]</h2>
+		[desc ? "<p><em>[desc]</em></p><hr>" : ""]
+		<table>
+			<tr><th>Tier</th><td>[spell_tier]</td></tr>
+			<tr><th>Spell Points</th><td>[cost]</td></tr>
+			<tr><th>Stamina Cost</th><td>[releasedrain]</td></tr>
+			<tr><th>Range</th><td>[s_range]</td></tr>
+			<tr><th>Cooldown</th><td>[recharge_time / 10]s</td></tr>
+			<tr><th>Invocations</th><td>[s_invocations]</td></tr>
+			<tr><th>Invocation Type</th><td>[s_invocation_type]</td></tr>
+		</table>
+	"}
+	return html

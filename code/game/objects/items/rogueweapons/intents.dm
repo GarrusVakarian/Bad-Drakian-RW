@@ -62,6 +62,8 @@
 	var/penfactor = 0
 	/// Whether the intent itself has integrity damage modifier. Used for rend.
 	var/intent_intdamage_factor = 1
+	/// Null retains BD's item modifier; selected tool intents override it.
+	var/demolition_mod = null
 	/// Changes the item's attack type ("blunt" - area-pressure attack, "slash" - line-pressure attack, "stab" - point-pressure attack)
 	var/item_d_type = "blunt"
 	var/charging_slowdown = 0
@@ -457,6 +459,12 @@
 	reach = 2
 	no_early_release = TRUE
 	blade_class = BCLASS_PICK
+
+/datum/intent/pick/ranged/dolabra
+	demolition_mod = 3
+
+/datum/intent/pick/ranged/dolabra/pioneer
+	demolition_mod = 4.5
 
 /datum/intent/shoot //shooting crossbows or other guns, no parrydrain
 	name = "shoot"

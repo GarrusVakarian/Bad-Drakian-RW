@@ -36,6 +36,9 @@
 	var/mob/living/carbon/human/panel_triumph_target
 	/// Other controllers currently performing partnered actions on us.
 	var/list/panel_triumph_actions
+	/// Identity and progress deadline of the current action loop.
+	var/panel_action_session = 0
+	var/panel_action_deadline = 0
 	/// Invalidates oxygen-healing callbacks when a make-out action stops or restarts.
 	var/kissing_oxygen_session = 0
 	/// Recipient-side cooldown shared by every initiator; base recovery cannot stack.
@@ -511,7 +514,6 @@
 	if((source_part & SEX_PART_TAIL_MAW) && !get_manticore_tail(user))
 		return
 	log_combat(user, effective_target, "Came inside the target")
-	werewolf_sex_infect_attempt(user, effective_target)
 	deadite_sex_infect_attempt(user, effective_target)
 	if(oral)
 		playsound(user, pick(list('sound/misc/mat/mouthend (1).ogg','sound/misc/mat/mouthend (2).ogg')), 100, FALSE, ignore_walls = FALSE)
@@ -534,11 +536,13 @@
 				splashed_user.visible_message(span_love("[splashed_user] takes a load inside them!"), span_love("I take a load inside me!"))
 		else
 			splashed_type.refresh_cum()
+			if(oral)
+				to_chat(splashed_user, span_love("I take another load down my throat..."))
 		if(oral && splashed_user.reagents) //cum fills hunger if taking it orally
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
-				splashed_user.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume())
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume(), repeat_intake = !!splashed_type)
 			else
-				splashed_user.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/femcum, 2)
 			apply_cum_consumed_buff(splashed_user)
 		if(!oral && user?.dna?.species?.id == "gnoll")
 			splashed_user.has_gnoll_scent_this_round = TRUE
@@ -577,6 +581,41 @@
 		target.apply_status_effect(/datum/status_effect/creampie_leak/long, orifice)
 	else
 		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
+
+/// Announce the incoming flavor directly so every successful intake has feedback.
+/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)
+	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
+		return FALSE
+	if(!isnum(amount) || amount <= 0)
+		return FALSE
+	if(reagent_type == /datum/reagent/erpjuice/cum)
+		amount += get_oral_intake_extra_volume(repeat_intake)
+	if(!consumer.reagents.add_reagent(reagent_type, amount))
+		return FALSE
+	if(consumer.get_taste_sensitivity() <= 100)
+		var/datum/reagent/fluid = reagent_type
+		to_chat(consumer, span_info("I can taste [initial(fluid.taste_description)]."))
+	return TRUE
+
+/// Extra volume for oral intake only; repeated intake grants half the amount.
+/datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
+	if(!ishuman(user) || QDELETED(user))
+		return 0
+	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
+	if(!istype(testes) || !isnum(testes.ball_size))
+		return 0
+	var/extra_volume = 10
+	switch(clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
+		if(MIN_TESTICLES_SIZE)
+			extra_volume = 5
+		if(MAX_TESTICLES_SIZE)
+			extra_volume = 30
+	var/obj/item/bodypart/taur/taur_parts = user.get_taur_tail()
+	if(istype(taur_parts))
+		extra_volume *= 1.5
+	if(repeat_intake)
+		extra_volume *= 0.5
+	return extra_volume
 
 /datum/sex_controller/proc/apply_cum_consumed_buff(mob/living/carbon/human/consumer)
 	if(!consumer)
@@ -857,7 +896,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 
 /// Stop tracking immediately on cancellation, completion or controller deletion.
 /datum/sex_controller/proc/clear_panel_triumph_action()
-	if(panel_triumph_target?.sexcon)
+	if(ishuman(panel_triumph_target) && !QDELETED(panel_triumph_target) && panel_triumph_target.sexcon)
 		LAZYREMOVE(panel_triumph_target.sexcon.panel_triumph_actions, src)
 	panel_triumph_target = null
 
@@ -1029,13 +1068,18 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	tail?.update_maw_state()
 	// The oviduct reads arousal directly; the body cache detects sprite changes.
 	var/obj/item/organ/vagina/vagina = user.getorganslot(ORGAN_SLOT_VAGINA)
-	if(vagina && (vagina.accessory_type == /datum/sprite_accessory/vagina/bee_tail || vagina.has_bee_tail_oviduct()))
+	if(vagina?.accessory_type == /datum/sprite_accessory/vagina/bee_tail)
 		user.update_body_parts()
 
 /datum/sex_controller/proc/update_exposure()
 	user.regenerate_icons()
 
-/datum/sex_controller/proc/adjust_arousal(amount)
+/datum/sex_controller/proc/adjust_arousal(amount, apply_sensitivity = TRUE)
+	if(amount > 0 && apply_sensitivity)
+		if(HAS_TRAIT(user, TRAIT_HEIGHTENED_SENSITIVITY))
+			amount *= 4
+		else if(HAS_TRAIT(user, TRAIT_DULLED_SENSITIVITY))
+			amount *= 0.5
 	if(aphrodisiac > 1 && amount > 0)
 		set_arousal(arousal + (amount * aphrodisiac))
 	else set_arousal(arousal + amount)
@@ -1120,12 +1164,25 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			multiplier *= target_penis.get_size_arousal_multiplier(action_target)
 	return multiplier
 
-/datum/sex_controller/proc/perform_sex_action(mob/living/carbon/human/action_target, arousal_amt, pain_amt, giving, obj/item/organ/penis/involved_penis = null)
+/datum/sex_controller/proc/perform_sex_action(mob/living/carbon/human/action_target, arousal_amt, pain_amt, giving, obj/item/organ/penis/involved_penis = null, apply_sensitivity = TRUE)
 	if(HAS_TRAIT(user, TRAIT_GOODLOVER))
-		arousal_amt *=1.5
+		arousal_amt *= 1.5
 		if(prob(10))
-			var/lovermessage = pick("This feels so good!","I am in heaven!","This is too good to be possible!","By the ten!","I can't stop, too good!")
-			to_chat(action_target, span_love(lovermessage))
+			var/list/lover_list = list("This feels so good!","I am in heaven!","This is too good to be possible!","I can't stop, too good!")
+			switch(action_target.patron?.type)
+				if(/datum/patron/old_god)
+					lover_list += "By PSYDON!"
+				if(/datum/patron/inhumen/zizo)
+					lover_list += "By ZIZO!"
+				if(/datum/patron/inhumen/graggar)
+					lover_list += "By GRAGGAR!"
+				if(/datum/patron/inhumen/matthios)
+					lover_list += "By MATTHIOS!"
+				if(/datum/patron/inhumen/baotha)
+					lover_list += "By BAOTHA!"
+				else
+					lover_list += "By the ten!"
+			to_chat(action_target, span_love(pick(lover_list)))
 	if(HAS_TRAIT(user, TRAIT_DEATHBYSNUSNU) || (user.STASTR > 12))
 		if(istype(user.rmb_intent, /datum/rmb_intent/strong))
 			pain_amt *= 2
@@ -1133,18 +1190,18 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(islist(modular_adjustments) && modular_adjustments.len >= 2)
 		arousal_amt = modular_adjustments[1]
 		pain_amt = modular_adjustments[2]
-	if(arousal_amt > 0)
+	if(arousal_amt > 0 && !(apply_sensitivity && (HAS_TRAIT(action_target, TRAIT_HEIGHTENED_SENSITIVITY) || HAS_TRAIT(action_target, TRAIT_DULLED_SENSITIVITY))))
 		if(involved_penis)
 			arousal_amt *= involved_penis.get_size_arousal_multiplier(action_target)
 		else
 			arousal_amt *= get_penis_size_arousal_multiplier(action_target)
-	action_target.sexcon.receive_sex_action(arousal_amt, pain_amt, giving, force, speed)
+	action_target.sexcon.receive_sex_action(arousal_amt, pain_amt, giving, force, speed, apply_sensitivity)
 	/// modular signal to let other systems know about the sex action, currently used for chastity course to track arousal and apply pain, but can be used for other things in the future
 	modular_emit_received_sex_action_signal(action_target, arousal_amt, pain_amt, giving)
 	if(modular_should_play_chastitycourse_noise(action_target))
 		chastitycourse_noise(action_target)
 
-/datum/sex_controller/proc/receive_sex_action(arousal_amt, pain_amt, giving, applied_force, applied_speed)
+/datum/sex_controller/proc/receive_sex_action(arousal_amt, pain_amt, giving, applied_force, applied_speed, apply_sensitivity = TRUE)
 	arousal_amt *= get_force_pleasure_multiplier(applied_force, giving)
 	pain_amt *= get_force_pain_multiplier(applied_force)
 	pain_amt *= get_speed_pain_multiplier(applied_speed)
@@ -1154,7 +1211,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		pain_amt = 0
 
 	if(!arousal_frozen)
-		adjust_arousal(arousal_amt)
+		adjust_arousal(arousal_amt, apply_sensitivity)
 
 	damage_from_pain(pain_amt)
 	try_do_moan(arousal_amt, pain_amt, applied_force, giving)
@@ -1332,6 +1389,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				if(prob(3))
 					if(try_deny_panel_climax())
 						return
+					if(has_pending_panel_climax())
+						return
 					ejaculate(climax_part)
 					if(splashed_user)
 						var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1348,6 +1407,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return FALSE
 	if(try_deny_panel_climax())
 		return
+	if(has_pending_panel_climax())
+		return
 	ejaculate(climax_part)
 	if(splashed_user)
 		var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -1356,6 +1417,41 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		else
 			facial.refresh_cum()
 		modular_record_collar_receive_event(splashed_user, user)
+
+/// Let the scheduled action perform its own completion without replaying an
+/// action tick here. The donor may be receiving an action, not initiating one.
+/datum/sex_controller/proc/has_pending_panel_climax()
+	if(!ishuman(user) || QDELETED(user) || is_spent() || !can_ejaculate())
+		return FALSE
+	var/list/active_actions = list(src)
+	if(panel_triumph_actions)
+		active_actions |= panel_triumph_actions
+	for(var/datum/sex_controller/action_controller in active_actions)
+		if(QDELETED(action_controller))
+			continue
+		action_controller.expire_panel_action()
+		if(!action_controller.current_action || action_controller.desire_stop)
+			continue
+		var/mob/living/carbon/human/actor = action_controller.user
+		var/mob/living/carbon/human/recipient = action_controller.target
+		if(!ishuman(actor) || QDELETED(actor) || !ishuman(recipient) || QDELETED(recipient) || actor.sexcon != action_controller)
+			continue
+		if(!actor.client?.prefs?.sexable || !recipient.client?.prefs?.sexable)
+			continue
+		var/datum/sex_action/action = SEX_ACTION(action_controller.current_action)
+		if(!istype(action) || arousal < action.climax_arousal_threshold)
+			continue
+		if(!((user == actor && action.handles_user_climax) || (user == recipient && action.handles_target_climax)))
+			continue
+		// Retargeting clears this captured partner before the old loop exits.
+		if(!action.solo && action_controller.panel_triumph_target != recipient)
+			continue
+		if(!action_controller.can_perform_action(action_controller.current_action, actor.incapacitated()))
+			continue
+		// on_perform may still be delivering another participant's bursts even
+		// after is_finished becomes true. Let loop cleanup release this priority.
+		return TRUE
+	return FALSE
 
 /datum/sex_controller/proc/handle_container_ejaculation()
 	if(arousal < PASSIVE_EJAC_THRESHOLD)
@@ -1436,6 +1532,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return TRUE
 
 /datum/sex_controller/proc/process_sexcon(dt)
+	expire_panel_action()
 	handle_arousal_unhorny(dt)
 	handle_charge(dt)
 	handle_passive_ejaculation()
@@ -1488,17 +1585,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_subtle'>[do_subtle_action ? "DOING SUBTLY" : "DOING VISIBLY"]</a></td>"
 	dat += "<td class='sexcon-control'>"
 	if(got_cock || got_pussy || user.getorganslot(ORGAN_SLOT_TESTICLES))
-		dat += "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_hide_pintle_visuals'>[hide_pintle_visuals ? "GENITALS HIDDEN" : "GENITALS VISIBLE"]</a>"
+		dat += "<a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_hide_pintle_visuals' title='Show or hide genital sprites. This does not change physical access or examine descriptions.'>GENITALS [hide_pintle_visuals ? "HIDDEN" : "VISIBLE"]</a>"
 	dat += "</td></tr></table>"
 	dat += "<table class='sexcon-settings'><tr>"
 	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_finished'>[do_until_finished ? "UNTIL IM FINISHED" : "UNTIL I STOP"]</a></td>"
 	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=set_arousal'>SET AROUSAL</a></td></tr><tr>"
-	var/exposure_name = "CROTCH"
-	if(got_cock && !got_pussy)
-		exposure_name = "PINTLE"
-	else if(!got_cock && got_pussy)
-		exposure_name = "PUSSY"
-	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_bottom_exposed'>[exposure_name] [bottom_exposed ? "EXPOSED" : "CONCEALED"]</a></td>"
+	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=toggle_bottom_exposed' title='Expose the crotch through clothing for access, examine descriptions, and permitted sprites.'>CROTCH [bottom_exposed ? "EXPOSED" : "CONCEALED"]</a></td>"
 	dat += "<td class='sexcon-control'><a class='sexcon-toggle' href='?src=[REF(src)];task=freeze_arousal'>[arousal_frozen ? "UNFREEZE AROUSAL" : "FREEZE AROUSAL"]</a></td></tr></table>"
 	var/knot_control = "<span class='sexcon-toggle sexcon-placeholder'></span>"
 	if(current_action && !desire_stop)
@@ -1639,15 +1731,24 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	desire_stop = TRUE
 	user.doing = FALSE
 
-/datum/sex_controller/proc/stop_current_action()
+/// Recover abandoned loops even when no completion is currently pending.
+/datum/sex_controller/proc/expire_panel_action()
+	if(current_action && world.time >= panel_action_deadline)
+		stop_current_action()
+
+/datum/sex_controller/proc/stop_current_action(session = null)
+	if(!isnull(session) && session != panel_action_session)
+		return
 	clear_panel_triumph_action()
 	if(!current_action)
 		return
 	var/datum/sex_action/action = SEX_ACTION(current_action)
-	if(!user.sexcon.knotted_status) // never show the remove message, unless unknotted
-		action.on_finish(user, target)
+	panel_action_session++
+	panel_action_deadline = 0
+	suppress_action_messages = FALSE
 	desire_stop = FALSE
-	user.doing = FALSE
+	if(ishuman(user) && !QDELETED(user))
+		user.doing = FALSE
 	orison_indulgence_notice_shown = FALSE
 	current_action = null
 	bed = null
@@ -1658,6 +1759,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	collar_bell_target = FALSE
 	popwarning = FALSE
 	using_zones = list()
+	// Clear state first: a failed finish callback must not strand this session.
+	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(target) && !QDELETED(target))
+		action.on_finish(user, target)
 
 /datum/sex_controller/proc/try_start_action(action_type)
 	if(action_type == current_action)
@@ -1686,9 +1790,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		panel_triumph_target = target
 		LAZYOR(target.sexcon.panel_triumph_actions, src)
 	log_combat(user, target, "Started sex action: [action.name]")
-	INVOKE_ASYNC(src, PROC_REF(sex_action_loop))
+	panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
+	INVOKE_ASYNC(src, PROC_REF(sex_action_loop), ++panel_action_session)
 
-/datum/sex_controller/proc/sex_action_loop()
+/datum/sex_controller/proc/sex_action_loop(session)
+	if(session != panel_action_session)
+		return
 	// Do action loop
 	var/performed_action_type = current_action
 	var/datum/sex_action/action = SEX_ACTION(current_action)
@@ -1697,12 +1804,13 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/base_knot_mode = FALSE
 	var/subtle_message_tick_counter = 0
 	var/was_subtle_mode = do_subtle_action // By default, we set it to the same value as the panel toggle
+	var/virgin_reaction_checked = FALSE
 	show_progress = 1
 	suppress_moan = FALSE
 	action.on_start(user, target)
 	find_occupying_furniture()
 	find_occupying_grass()
-	while(TRUE)
+	while(session == panel_action_session)
 		if(!target?.client?.prefs?.sexable) // no prefs/sexability means we should safely stop the loop
 			break
 		var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
@@ -1714,8 +1822,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		// Bad Drakian adjustment: halve panel stamina costs.
 		if(!user.stamina_add(stamina_cost * 0.5, show_xp_popup = FALSE))
 			break
-		if(!do_after(user, (action.do_time / get_speed_multiplier()), target = target, progress = show_progress))
+		var/action_delay = action.do_time / get_speed_multiplier()
+		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
+		if(!do_after(user, action_delay, target = target, progress = show_progress))
 			break
+		if(session != panel_action_session)
+			return
 		if(current_action == null || performed_action_type != current_action)
 			break
 		if(!can_perform_action(current_action, user.incapacitated()))
@@ -1754,7 +1866,15 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		if(!action.solo && target != user)
 			user.adjust_bodytemperature(3, max_temp = BODYTEMP_NORMAL_MIN + 5)
 			target.adjust_bodytemperature(3, max_temp = BODYTEMP_NORMAL_MIN + 5)
+			if(!virgin_reaction_checked)
+				virgin_reaction_checked = TRUE
+				user.react_to_virgin_affection(target)
+				target.react_to_virgin_affection(user)
+		// Existing delivery routines can sleep for up to ten one-second bursts.
+		panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
 		action.on_perform(user, target)
+		if(session != panel_action_session)
+			return
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
 		// It could want to finish afterwards the performed action
@@ -1762,7 +1882,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			break
 		if(!action.continous)
 			break
-	stop_current_action()
+	stop_current_action(session)
 
 /datum/sex_controller/proc/can_perform_action(action_type, incapacitated)
 	if(!action_type)
@@ -2068,42 +2188,6 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	name = "Quivering"
 	desc = "I can barely walk..."
 	icon_state = "quivering"
-
-/datum/proc/werewolf_sex_infect_attempt(mob/living/carbon/human/top, mob/living/carbon/human/bottom)
-
-	if(!top || !bottom || !top.mind || !bottom.mind)
-		return
-
-	var/datum/antagonist/werewolf/WWtop
-	var/datum/antagonist/werewolf/WWbottom
-	var/infection_probability = 40
-	if(top.mind.has_antag_datum(/datum/antagonist/werewolf))
-		WWtop = top.mind.has_antag_datum(/datum/antagonist/werewolf/)
-
-	if(bottom.mind.has_antag_datum(/datum/antagonist/werewolf))
-		WWbottom = bottom.mind.has_antag_datum(/datum/antagonist/werewolf/)
-
-	if(WWtop && WWbottom)
-		return
-
-	if(WWtop && WWtop.transformed && !WWbottom)
-		if(prob(infection_probability))
-			var/answer = tgui_alert(top, "Infect your mate?", "Please answer in [DisplayTimeText(200)]!", list("Yae","Nae"),200)
-			if(!answer || answer == "Nae")
-				return
-			if(answer == "Yae")
-				bottom.werewolf_infect_attempt()
-		return
-
-
-	if(WWbottom && WWbottom.transformed && !WWtop)
-		if(prob(infection_probability))
-			var/answer = tgui_alert(bottom, "Infect your mate?", "Please answer in [DisplayTimeText(200)]!", list("Yae","Nae"),200)
-			if(!answer || answer == "Nae")
-				return
-			if(answer == "Yae")
-				top.werewolf_infect_attempt()
-		return
 
 /datum/proc/deadite_sex_infect_attempt(mob/living/carbon/human/top, mob/living/carbon/human/bottom)
 

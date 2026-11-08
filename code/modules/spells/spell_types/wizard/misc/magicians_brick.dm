@@ -39,6 +39,8 @@
 
 
 /obj/item/rogueweapon/magicbrick
+	twirly = SKILL_LEVEL_JOURNEYMAN
+	twirl_speed = 6
 	name = "magician's brick"
 	desc = "A brick formed out of arcane energy. Not a actual brick and cannot be used for construction. Makes for a very deadly melee and throwing weapon."
 	icon = 'icons/roguetown/items/cooking.dmi'
@@ -57,3 +59,12 @@
 	possible_item_intents = list(/datum/intent/mace/strike) // Not giving it smash so it don't become competetive with conjure weapon (as a melee weapon)
 	associated_skill = /datum/skill/combat/maces // If it was tied to Arcyne it'd be too strong
 	hitsound = list('sound/combat/hits/blunt/brick.ogg')
+
+/obj/item/rogueweapon/magicbrick/twirl_fumble(mob/living/user)
+	return twirl_fumble_bonk(user, 'sound/combat/hits/blunt/brick.ogg')
+
+/obj/item/rogueweapon/magicbrick/twirl_skill_needed()
+	return SKILL_LEVEL_APPRENTICE
+
+/obj/item/rogueweapon/magicbrick/twirl_user_skill(mob/living/user)
+	return user.get_skill_level(/datum/skill/magic/arcane)

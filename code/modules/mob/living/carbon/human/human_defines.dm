@@ -120,6 +120,8 @@
 	var/has_stubble = TRUE
 
 	var/original_name = null
+	/// Account and original character name, captured before job titles or later renames.
+	var/background_stat_identity
 
 	var/buried = FALSE // Whether the body is buried or not.
 	var/funeral = FALSE // Whether the body has received rites or not.
@@ -137,6 +139,8 @@
 	var/roleplay_ad_slot
 	var/roleplay_ad_owner
 	var/roleplay_ad_is_gnoll = FALSE
+	/// Do not renew the optional Wretch statue invitation when class equipment is reapplied.
+	var/wretch_statue_invited = FALSE
 	var/ooc_extra
 	var/ooc_extra_img
 	var/ooc_extra_img_link
@@ -218,6 +222,7 @@
 	var/hypothermia_timer_id
 
 	var/branded = FALSE // Saves time during examine if character hasn't been branded at all
+	var/bodywritten = FALSE // Saves time during examine if character hasn't been bodywritten at all
 
 	//For tracking how long a player hasn't moved
 	var/time_of_last_move = 0

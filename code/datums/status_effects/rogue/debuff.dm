@@ -420,6 +420,7 @@
 //For de-rot - your body ROTTED. Harsher penalty for longer, can be fully off-set with a cure-rot potion.
 /datum/status_effect/debuff/rotted
 	id = "rotted_body"
+	examine_text = "<font color='#2c8b00'>SUBJECTPRONOUN is frail and unnaturally pale, moving with the hesitant stiffness of one whose body has only recently remembered how to live.</font>"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/rotted
 	effectedstats = list(STATKEY_STR = -2, STATKEY_PER = -2, STATKEY_INT = -2, STATKEY_WIL = -2, STATKEY_CON = -2, STATKEY_SPD = -2, STATKEY_LCK = -2)
 	duration = 30 MINUTES	//Back to a temporary 30 min duration. It hurts.
@@ -432,6 +433,7 @@
 //Replaces the flat-stat change, this should ONLY apply to zombies who have been dead for some time. Makes them easier to kill.
 /datum/status_effect/debuff/rotted_zombie
 	id = "rotted_zombie"
+	examine_text = "<font color='#2c8b00'>SUBJECTPRONOUN is marked by unmistakable signs of unnatural decay. An ill omen whispers that this corpse may yet walk again.</font>"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/rotted_zombie
 	effectedstats = list(STATKEY_CON = -8)
 	//No duration = infinate in time - this is removed on de-rot miricle OR de-rot surgery. Won't be applied unless you've been a zombie for ~20 min.
@@ -1317,7 +1319,7 @@
 
 /datum/status_effect/debuff/stinky_contact
 	id = "stinky_contact"
-	duration = 15 MINUTES
+	duration = -1 // Remains until washed off.
 	tick_interval = 5 SECONDS
 	status_type = STATUS_EFFECT_REFRESH
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/stinky_contact
@@ -1382,7 +1384,7 @@
 
 /atom/movable/screen/alert/status_effect/debuff/stinky_contact
 	name = "Musked"
-	desc = "Someone's stench rubbed off on me. I should be able to wash it off, or wait it out."
+	desc = "Someone's scent rubbed off on me. It will stay until I wash it off with soap and water"
 	icon_state = "debuff"
 
 /datum/status_effect/debuff/enchantmenttriggered
@@ -1429,3 +1431,23 @@
 	if(iscarbon(owner))
 		var/mob/living/carbon/C = owner
 		C.remove_movespeed_modifier(MOVESPEED_ID_DAMAGE_SLOWDOWN)
+
+/datum/status_effect/debuff/sun_blinded
+	id = "sun_blinded"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/sun_blinded
+	effectedstats = list(STATKEY_PER = -5)
+
+/atom/movable/screen/alert/status_effect/debuff/sun_blinded
+	name = "Sun Blinded"
+	desc = "The light smites my eyes!"
+	icon_state = "debuff"
+
+/datum/status_effect/debuff/sun_blinded/on_apply()
+	. = ..()
+	owner.overlay_fullscreen("sunlight", /atom/movable/screen/fullscreen/dustoverlay_light)
+	owner.update_fov_angles()
+
+/datum/status_effect/debuff/sun_blinded/on_remove()
+	. = ..()
+	owner.clear_fullscreen("sunlight")
+	owner.update_fov_angles()

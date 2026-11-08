@@ -579,3 +579,11 @@
 	boozepwr = 60 // ancient lichebrau...
 	taste_description = "bitterness, pain, iron, and ancient mistakes" // what did you expect [2]
 	color = "#553837"
+
+/datum/reagent/consumable/ethanol/rosegoldgin
+	name = "Rose Gold Gin"
+	description = "The rosa pink hue of such a delectable beverage sooths the soul when one looks deep into the opened bottle. Rich in sweetness and citrus, lemons and limes creating a pleasant balance to the sweet, soothing honey. A hint of a floral undertone thanks to the rosa that not only brings an subtle earthy, rich flavour to the brew, but also its signature rose gold hue."
+	boozepwr = 65
+	taste_description = "rich sweetness, subtle citrus, and a delectable floral undertone"
+	color = "#F1BFBA"
+	quality = DRINK_VERYGOOD

@@ -415,7 +415,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 
 
 /obj/item/natural/rock/Crossed(mob/living/L)
-	if(istype(L) && !L.throwing)
+	if(istype(L) && !L.is_airborne_over_vegetation())
 		if(L.m_intent == MOVE_INTENT_RUN)
 			L.visible_message(span_warning("[L] trips over the boulder!"),span_warning("I trip over the boulder!"))
 			L.Knockdown(10)

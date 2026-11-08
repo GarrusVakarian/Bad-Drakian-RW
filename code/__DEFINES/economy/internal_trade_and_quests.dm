@@ -114,8 +114,7 @@
 
 // Blockade-defense wave quest (Chunk 6): fellowship gate, three-wave TP budgets, and timers.
 #define BLOCKADE_FELLOWSHIP_REQUIREMENT 3
-#define BLOCKADE_WAVE_TIMER_DS (10 MINUTES)
-#define BLOCKADE_ARM_TIMEOUT_DS (30 MINUTES)
+#define BLOCKADE_WAVE_TIMER_DS (15 MINUTES)
 #define BLOCKADE_RECALL_WINDOW_DS (15 MINUTES)
 #define BLOCKADE_TOTAL_WAVES 3
 

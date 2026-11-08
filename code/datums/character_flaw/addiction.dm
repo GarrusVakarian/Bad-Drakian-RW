@@ -36,9 +36,14 @@
 	A.sated = TRUE
 	A.time = initial(A.time) //reset roundstart sate offset to standard
 	A.next_sate = world.time + A.time
-	remove_stress(A.stress_event)  // Remove vice-specific stress event
+	if(A.stress_event)
+		remove_stress(A.stress_event)  // Remove vice-specific stress event
 	if(A.debuff)
 		remove_status_effect(A.debuff)
+	A.on_sated(src)
+
+/datum/charflaw/addiction/proc/on_sated(mob/living/carbon/human/user)
+	return
 
 /datum/charflaw/addiction
 	var/next_sate = 0
@@ -218,6 +223,12 @@
 	needsate_text = "I need to hear someone whimper."
 	stress_event = /datum/stressevent/vice/sadist
 	debuff = /datum/status_effect/debuff/addiction/sadist
+
+/datum/charflaw/addiction/sadist/on_mob_creation(mob/user)
+	. = ..()
+	if(ishuman(user) && !istype(src, /datum/charflaw/addiction/sadist/gnoll))
+		var/mob/living/carbon/human/H = user
+		H.remove_gnoll_sadism()
 
 /datum/status_effect/debuff/addiction/sadist
 	id = "addiction_sadist"

@@ -55,6 +55,32 @@
 			highest_priority = job_preferences[job]
 	return preview_job
 
+/datum/preferences
+	/// Visual customization multiplier used for the last prepared character preview.
+	var/last_preview_customization_scale = 1
+
+/datum/preferences/proc/get_preview_customization_scale()
+	if(istype(virtue, /datum/virtue/size/giant) || (istype(statpack, /datum/statpack/wildcard/virtuous) && istype(virtuetwo, /datum/virtue/size/giant)) || has_quirk(/datum/quirk/largeframe))
+		return 1.25
+	return 1
+
+/// Selection changes, presets and undo/redo all return through the customization menu.
+/datum/preferences/proc/refresh_customization_size_preview()
+	if(get_preview_customization_scale() == last_preview_customization_scale)
+		return FALSE
+	update_preview_icon()
+	return TRUE
+
+/// Apply the same visual transform as Giant/Large Frame to a fresh appearance only.
+/// Do not modify the shared mannequin or run customization gameplay effects here.
+/datum/preferences/proc/apply_preview_customization_size(mutable_appearance/preview_appearance, multiplier)
+	if(!preview_appearance || multiplier == 1)
+		return
+	var/matrix/sized_transform = matrix(preview_appearance.transform)
+	sized_transform.Scale(multiplier, multiplier)
+	sized_transform.Translate(0, (multiplier - 1) * 16)
+	preview_appearance.transform = sized_transform
+
 /datum/preferences/proc/update_preview_icon(jobOnly = FALSE)
 	set waitfor = 0
 	clear_hair_preview_cache()
@@ -67,6 +93,9 @@
 	var/datum/job/previewJob = get_preview_job()
 	var/mob/living/carbon/human/dummy/mannequin = generate_or_wait_for_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	var/mutable_appearance/preview_appearance
+	var/preview_applied_center_offset = 0
+	var/preview_applied_center_offset_y = 0
+	var/preview_body_size = BODY_SIZE_NORMAL
 	try
 		copy_to(mannequin, 1, TRUE, TRUE)
 
@@ -86,12 +115,18 @@
 		mannequin.update_hair()
 		mannequin.rebuild_obscured_flags()
 		preview_appearance = new /mutable_appearance(mannequin)
+		var/customization_scale = get_preview_customization_scale()
+		apply_preview_customization_size(preview_appearance, customization_scale)
+		last_preview_customization_scale = customization_scale
+		preview_applied_center_offset = mannequin.dna.current_body_center_offset
+		preview_applied_center_offset_y = mannequin.dna.current_body_center_offset_y
+		preview_body_size = mannequin.dna.current_body_size
 	catch(var/exception/error)
 		unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 		throw error
 	unset_busy_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	// Release the shared mannequin before touching a client that may have disconnected.
-	parent?.show_character_previews(preview_appearance)
+	parent?.show_character_previews(preview_appearance, preview_applied_center_offset, preview_applied_center_offset_y, preview_body_size)
 
 /datum/preferences/proc/apply_preview_erect_state_to_mannequin(mob/living/carbon/human/mannequin)
 	if(!mannequin)

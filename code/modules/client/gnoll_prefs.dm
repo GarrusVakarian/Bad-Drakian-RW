@@ -341,6 +341,34 @@
 	popup.set_content(dat.Join())
 	popup.open()
 
+/datum/gnoll_prefs/proc/edit_roleplay_ad(mob/user)
+	if(!ismob(user) || !user.client)
+		return FALSE
+	var/client/ad_client = user.client
+	var/datum/preferences/P = ad_client.prefs
+	if(!P || P.gnoll_prefs != src)
+		return FALSE
+	to_chat(user, span_notice("Your gnoll roleplay ad is saved separately from your normal character's ad and posted automatically when you spawn as a gnoll. Open OOC > Roleplay Ad (View) in-game to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved gnoll ad for future rounds, use this Gnoll Customization menu. Leave empty to disable automatic posting."))
+	var/ad_slot = P.default_slot
+	var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for as your gnoll. Leave empty to remove the saved ad.", "Gnoll Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
+	if(isnull(new_ad))
+		return FALSE
+	if(!ad_client || QDELETED(user) || user.client != ad_client || ad_client.mob != user || ad_client.prefs != P)
+		return FALSE
+	if(P.default_slot != ad_slot || P.gnoll_prefs != src)
+		to_chat(user, span_warning("Your character slot changed. Reopen Gnoll Customization to edit its ad."))
+		return FALSE
+	new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
+	roleplay_ad = length(trim(new_ad)) ? new_ad : null
+	P.save_character()
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == P.parent?.ckey)
+			H.roleplay_ad = roleplay_ad
+			H.publish_roleplay_ad()
+	to_chat(user, span_notice(roleplay_ad ? "Gnoll roleplay ad saved." : "Saved gnoll roleplay ad cleared."))
+	return TRUE
+
 /datum/gnoll_prefs/proc/gnoll_process_link(mob/user, list/href_list)
 	if(!user || !user.client)
 		return
@@ -541,25 +569,8 @@
 			popup.set_content(dat.Join())
 			popup.open(FALSE)
 		if("roleplay_ad")
-			to_chat(user, span_notice("Your gnoll roleplay ad is saved separately from your normal character's ad and posted automatically when you spawn as a gnoll. Open OOC > Roleplay Ad (View) in-game to browse ads, or Roleplay Ad (Set) to edit or remove yours for the current round only. To change your saved gnoll ad for future rounds, use this Gnoll Customization menu. Leave empty to disable automatic posting."))
-			var/datum/preferences/P = user.client.prefs
-			var/ad_slot = P.default_slot
-			var/new_ad = tgui_input_text(user, "Describe the roleplay you are looking for as your gnoll. Leave empty to remove the saved ad.", "Gnoll Roleplay Ad", roleplay_ad, max_length = MAX_MESSAGE_LEN, multiline = TRUE, encode = FALSE, bigmodal = TRUE)
-			if(isnull(new_ad))
-				return
-			if(P.default_slot != ad_slot || P.gnoll_prefs != src)
-				to_chat(user, span_warning("Your character slot changed. Reopen Gnoll Customization to edit its ad."))
-				return
-			new_ad = copytext(new_ad, 1, MAX_MESSAGE_LEN + 1)
-			roleplay_ad = length(trim(new_ad)) ? new_ad : null
-			P.save_character()
-			if(ishuman(user))
-				var/mob/living/carbon/human/H = user
-				if(H.roleplay_ad_is_gnoll && H.roleplay_ad_slot == ad_slot && H.roleplay_ad_owner == P.parent?.ckey)
-					H.roleplay_ad = roleplay_ad
-					H.publish_roleplay_ad()
-			to_chat(user, span_notice(roleplay_ad ? "Gnoll roleplay ad saved." : "Saved gnoll roleplay ad cleared."))
-			gnoll_show_ui(user)
+			if(edit_roleplay_ad(user))
+				gnoll_show_ui(user)
 		if("flavortext")
 			to_chat(user, "<span class='notice'>["<span class='bold'>Flavortext should not include nonphysical nonsensory attributes such as backstory or the character's internal thoughts.</span>"]</span>")
 			var/new_flavortext = tgui_input_text(user, "Input your gnoll character description:", "Flavortext", flavortext, multiline = TRUE,  encode = FALSE, bigmodal = TRUE)

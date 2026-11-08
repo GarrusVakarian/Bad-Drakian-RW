@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Dropdown } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
@@ -20,19 +21,26 @@ import {
   sectionHeaderStyle,
   SERIF,
   subtitleStyle,
+  tabBarStyle,
+  tabStyle,
   titleStyle,
 } from './common/parchment';
+
+type Roster = 'Bathhouse' | 'Slaves';
+type Tab = Roster | 'Personal Ads';
 
 type AdvertEntry = {
   key: string;
   name: string;
+  roster: Roster;
   status: string;
   message: string;
   advjob: string;
 };
 
 type Data = {
-  is_bathhouse: BooleanLike;
+  can_advertise: BooleanLike;
+  my_roster: Roster;
   my_key: string;
   message_char_limit: number;
   status_options: string[];
@@ -117,9 +125,10 @@ const AdvertRow = (props: {
 const OwnControls = (props: {
   myEntry: AdvertEntry | undefined;
   statusOptions: string[];
+  roster: Roster;
   act: ActFn;
 }) => {
-  const { myEntry, statusOptions, act } = props;
+  const { myEntry, statusOptions, roster, act } = props;
   return (
     <div
       style={{
@@ -133,7 +142,7 @@ const OwnControls = (props: {
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: FONT_BODY, color: SEAL_AMBER }}>
-          Bathhouse registry
+          {roster} registry
         </div>
         <div style={{ fontSize: FONT_BODY, color: INK }}>
           Status:{' '}
@@ -181,10 +190,59 @@ const OwnControls = (props: {
   );
 };
 
+const PERSONAL_AD_ACTIONS = [
+  [
+    'View Personal Ads',
+    'Browse the current personal ads.',
+    'view_personal_ads',
+  ],
+  ['Set Temporary Ad', 'For the current week.', 'set_temporary_ad'],
+  ['Set Renewing Ad', 'Constantly renewed every week.', 'set_renewing_ad'],
+] as const;
+
+const PersonalAds = ({ act }: { act: ActFn }) => (
+  <>
+    <div style={sectionHeaderStyle}>Personal Ads</div>
+    {PERSONAL_AD_ACTIONS.map(([label, description, action]) => (
+      <div
+        key={action}
+        style={{
+          ...cardStyle,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          marginBottom: '8px',
+          fontFamily: SERIF,
+        }}
+      >
+        <button
+          type="button"
+          style={{
+            ...inkButtonStyle(),
+            flex: '0 0 180px',
+            width: '180px',
+            height: '32px',
+            boxSizing: 'border-box',
+            whiteSpace: 'nowrap',
+          }}
+          onClick={() => act(action)}
+        >
+          {label}
+        </button>
+        <span style={{ color: INK_SOFT, fontSize: FONT_BODY }}>
+          {description}
+        </span>
+      </div>
+    ))}
+  </>
+);
+
 export const Rosewall = () => {
   const { act, data } = useBackend<Data>();
-  const myEntry = data.adverts.find((e) => e.key === data.my_key);
-  const sortedAdverts = [...data.adverts].sort(
+  const [activeTab, setActiveTab] = useState<Tab>(data.my_roster);
+  const adverts = data.adverts.filter((entry) => entry.roster === activeTab);
+  const myEntry = adverts.find((e) => e.key === data.my_key);
+  const sortedAdverts = [...adverts].sort(
     (a, b) =>
       statusSortWeight(a.status) - statusSortWeight(b.status) ||
       a.name.localeCompare(b.name),
@@ -195,41 +253,69 @@ export const Rosewall = () => {
         <div style={pageStyle}>
           <div style={titleStyle}>The Rosewall</div>
           <div style={subtitleStyle}>
-            Perfumed slips pinned by the bathhouse&apos;s workers. Peruse, and
-            send an offer.
+            {activeTab === 'Personal Ads'
+              ? 'Browse personal notices and share what you are looking for.'
+              : 'Perfumed slips pinned by bathhouse workers and slaves. Peruse, and send an offer.'}
           </div>
           <div style={rulerStyle} />
 
-          {!!data.is_bathhouse && (
-            <OwnControls
-              myEntry={myEntry}
-              statusOptions={data.status_options}
-              act={act}
-            />
-          )}
-
-          <div style={sectionHeaderStyle}>
-            Pinned Adverts ({data.adverts.length})
-          </div>
-          {data.adverts.length === 0 ? (
+          <div style={tabBarStyle}>
+            {(['Bathhouse', 'Slaves'] as const).map((roster) => (
+              <div
+                key={roster}
+                style={tabStyle(activeTab === roster)}
+                onClick={() => setActiveTab(roster)}
+              >
+                {roster} (
+                {data.adverts.filter((entry) => entry.roster === roster).length}
+                )
+              </div>
+            ))}
             <div
-              style={{
-                ...cardStyle,
-                textAlign: 'center',
-                color: INK_SOFT,
-              }}
+              style={tabStyle(activeTab === 'Personal Ads')}
+              onClick={() => setActiveTab('Personal Ads')}
             >
-              No adverts have been pinned.
+              Personal Ads
             </div>
+          </div>
+
+          {activeTab === 'Personal Ads' ? (
+            <PersonalAds act={act} />
           ) : (
-            sortedAdverts.map((entry) => (
-              <AdvertRow
-                key={entry.key}
-                entry={entry}
-                isOwn={entry.key === data.my_key}
-                act={act}
-              />
-            ))
+            <>
+              {!!data.can_advertise && activeTab === data.my_roster && (
+                <OwnControls
+                  myEntry={myEntry}
+                  roster={data.my_roster}
+                  statusOptions={data.status_options}
+                  act={act}
+                />
+              )}
+
+              <div style={sectionHeaderStyle}>
+                Pinned Adverts ({adverts.length})
+              </div>
+              {adverts.length === 0 ? (
+                <div
+                  style={{
+                    ...cardStyle,
+                    textAlign: 'center',
+                    color: INK_SOFT,
+                  }}
+                >
+                  No adverts have been pinned.
+                </div>
+              ) : (
+                sortedAdverts.map((entry) => (
+                  <AdvertRow
+                    key={entry.key}
+                    entry={entry}
+                    isOwn={entry.key === data.my_key}
+                    act={act}
+                  />
+                ))
+              )}
+            </>
           )}
         </div>
       </Window.Content>

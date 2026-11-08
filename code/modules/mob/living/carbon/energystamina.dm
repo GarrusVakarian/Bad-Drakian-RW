@@ -65,6 +65,12 @@
 	if(m_intent == MOVE_INTENT_RUN && (mobility_flags & MOBILITY_STAND))
 		if(isnull(buckled))
 			mind && mind.add_sleep_experience(/datum/skill/misc/athletics, (STAINT*0.02), show_xp_popup = show_xp_popup)
+	if(added < 0 && HAS_TRAIT(src, TRAIT_GOLD_AFFINITY))
+		var/gold = 0
+		for(var/obj/item/I in get_equipped_items())
+			if(I.is_gold)
+				gold++
+		added *= 1 - (min(gold, 5) * 0.02)
 	energy += added
 	if(energy > max_energy)
 		energy = max_energy
@@ -135,7 +141,7 @@
 							C.heart_attack()
 							return FALSE
 
-	if(ishuman(src) && mind && added > 0)
+	if(ishuman(src) && added > 0)
 		var/mob/living/carbon/human/H = src
 		var/text
 		var/x_offset = 20

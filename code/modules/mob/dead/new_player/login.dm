@@ -54,6 +54,7 @@
 	client.changelog()
 
 	to_chat(src, "<a href='?src=[REF(src)];open_changelog=1' style='color:#638500;text-decoration:underline;'><b>Open Changelog</b></a>")
+	to_chat(src, span_notice("Check out the <a href='byond://winset?command=Encyclopedia'><b>Encyclopedia</b></a> under the OOC tab. It contains useful recipes and guides in-game."))
 
 	if(GLOB.admin_notice)
 		to_chat(src, span_notice("<b>Admin Notice:</b>\n \t [GLOB.admin_notice]"))

@@ -8,6 +8,8 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item
 	name = "item"
 	var/original_name = null // Stores the original name if item was renamed
+	/// Escaped description applied by the loadout claim. Later changes to desc use normal hover escaping.
+	var/loadout_desc_html
 	icon = 'icons/obj/items_and_weapons.dmi'
 	///icon state name for inhanf overlays
 	var/item_state = null
@@ -750,6 +752,8 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/get_hover_examine_description()
 	if(!desc)
 		return null
+	if(desc == loadout_desc_html)
+		return loadout_desc_html
 	return html_encode(desc)
 
 /obj/item/proc/get_hover_examine_condition_text()
@@ -946,6 +950,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 
 /obj/item/proc/dropped(mob/user, silent = FALSE)
 	SHOULD_CALL_PARENT(TRUE)
+	end_spin()
 	for(var/X in actions)
 		var/datum/action/A = X
 		A.Remove(user)
@@ -2086,3 +2091,42 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	if(desc != initial(desc))
 		return TRUE
 	return FALSE
+
+// The mob carrying this, through any depth of containers. Returns the innermost carrier if nested in more than one.
+/obj/item/proc/find_items_mob_carrier()
+	if(ismob(loc))
+		return loc
+	for(var/atom/nested_loc in get_nested_locs(src))
+		if(ismob(nested_loc))
+			return nested_loc
+	return null
+
+/// Salvages this item into salvage_result. Returns TRUE once salvage was attempted
+/obj/item/proc/try_salvage(mob/living/user, time_skill, fail_skill)
+	if(!sewrepair || !salvage_result)
+		return FALSE
+	if(!user || QDELETED(user))
+		return FALSE
+	if(!do_after(user, max(1, 70 - time_skill * 10), target = src))
+		return TRUE
+	if(QDELETED(src) || QDELETED(user) || !user.Adjacent(src) || !sewrepair || !salvage_result)
+		return TRUE
+	var/turf/T = get_turf(src)
+	if(fiber_salvage)
+		new /obj/item/natural/fibers(T)
+	if(istype(src, /obj/item/storage))
+		var/obj/item/storage/bag = src
+		bag.emptyStorage()
+	user.mind?.add_sleep_experience(/datum/skill/craft/sewing, user.STAINT)
+	if(prob(50 - fail_skill * 10))
+		to_chat(user, span_info("I ruined some of the materials due to my lack of skill..."))
+		playsound(T, 'sound/foley/cloth_rip.ogg', 50, TRUE)
+		qdel(src)
+		return TRUE
+	for(var/i in 1 to salvage_amount - torn_sleeve_number)
+		var/obj/item/salvaged = new salvage_result(T)
+		salvaged.color = color
+	user.visible_message(span_notice("[user] salvages [src] into usable materials."))
+	playsound(T, 'sound/items/flint.ogg', 100, TRUE)
+	qdel(src)
+	return TRUE

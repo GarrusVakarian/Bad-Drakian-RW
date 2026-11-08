@@ -270,6 +270,10 @@
 /obj/item/reagent_containers/glass/bottle/rogue/wine/sourwine,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/outdoors/wretch)
+"cJ" = (
+/obj/structure/roguemachine/rosewall,
+/turf/open/floor/rogue/cobble,
+/area/rogue/outdoors/wretch)
 "cK" = (
 /obj/item/storage/belt/rogue/surgery_bag/full,
 /obj/structure/table/wood/poor,
@@ -3301,6 +3305,7 @@
 /obj/structure/stairs/stone{
 	dir = 4
 	},
+/obj/structure/roguemachine/rosewall,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/wretch/cavern)
 "GN" = (
@@ -18307,7 +18312,7 @@ LZ
 ue
 xk
 YF
-nS
+cJ
 UT
 nS
 YF

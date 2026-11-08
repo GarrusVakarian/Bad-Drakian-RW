@@ -1,4 +1,5 @@
 /datum/sex_action/manticore_tail_oral_receive
+	handles_target_climax = TRUE
 	parent_type = /datum/sex_action/tailmaw
 	name = "Eat out their tail maw"
 	check_same_tile = FALSE

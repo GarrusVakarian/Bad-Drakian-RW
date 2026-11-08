@@ -2,7 +2,7 @@
 	name = "Giant"
 	desc = "I've always been larger, stronger and hardier than the average person. I tend to lumber around a lot, and my immense size can break down frail, wooden doors."
 	added_traits = list(TRAIT_BIGGUY, TRAIT_DEATHBYSNUSNU)
-	custom_text = "Increases your sprite size."
+	custom_text = "Grants +1 CON and increases your sprite size. Lets you throw non-Giant characters without an aggressive grab."
 
 /datum/virtue/size/giant/apply_to_human(mob/living/carbon/human/recipient)
 	recipient.transform = recipient.transform.Scale(1.25, 1.25)

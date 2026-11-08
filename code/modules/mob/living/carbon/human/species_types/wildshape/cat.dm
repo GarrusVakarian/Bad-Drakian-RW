@@ -216,17 +216,13 @@
 		var/ramount = 20
 		var/rid = /datum/reagent/medicine/healthpot
 		target.reagents.add_reagent(rid, ramount)
-		if(target.mind.has_antag_datum(/datum/antagonist/werewolf))
+		if(target == user)
+			target.visible_message(span_green("[user] licks their own wounds."), span_notice("I lick my own wounds."))
+		else if(target.mind.has_antag_datum(/datum/antagonist/werewolf))
 			target.visible_message(span_green("[user] is licking [target]'s wounds with its tongue!"), span_notice("My kin has covered my wounds..."))
-			rid = /datum/reagent/water
-			target.reagents.add_reagent(rid, ramount)
 		else
 			target.visible_message(span_green("[user] is licking [target]'s wounds with its tongue!"), span_notice("That thing... Did it lick my wounds?"))
-			rid = /datum/reagent/water
-			target.reagents.add_reagent(rid, ramount)
-			if(prob(10))
-				for(var/obj/item/bodypart/BP in target.bodyparts)
-					if(!BP?.wounds)
-						continue
-					for(var/datum/wound/W in BP.wounds)
-						W.werewolf_infect_attempt()
+		target.reagents.add_reagent(/datum/reagent/water, ramount)
+
+/obj/effect/proc_holder/spell/targeted/woundlick/werewolf
+	include_user = TRUE

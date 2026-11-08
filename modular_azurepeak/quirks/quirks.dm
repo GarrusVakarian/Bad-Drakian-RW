@@ -29,6 +29,13 @@
 	added_stashed_items = list("Bag of Cursed Fetish Gear" = /obj/item/storage/roguebag/cursed_keepsakes)
 	incompatible_quirks = list(/datum/quirk/acquiredtastes)
 
+/datum/quirk/dream_dust
+	name = "Dream Dust"
+	point_cost = 2
+	desc = "I keep a little dream dust tucked away for when the occasion calls for it."
+	custom_text = "Adds a bag containing three portions of Zizo's Bane powder to your stash."
+	added_stashed_items = list("Bag of Zizo's Bane Powder" = /obj/item/storage/roguebag/zizobane_stash)
+
 /datum/quirk/overly_fertile
 	name = "Overly Fertile"
 	point_cost = 0
@@ -51,6 +58,24 @@
 	custom_text = "Adds an Orgasm Denial toggle to your ERP panel, off by default. During paired panel actions, it can prevent your partner's climax and reset their arousal to 30, if they have Enable Edging Content turned on. Denial adds 6 stress for 5 minutes without stacking; a successful climax clears it."
 	added_traits = list(TRAIT_ORGASM_DENIER)
 
+/datum/quirk/heightened_sensitivity
+	name = "Heightened Sensitivity"
+	point_cost = 0
+	desc = "Even the slightest stimulation sends a shiver through me."
+	custom_text = "Receive four times the usual arousal from arousal gains, excluding standard solo panel actions."
+	added_traits = list(TRAIT_HEIGHTENED_SENSITIVITY)
+	incompatible_quirks = list(/datum/quirk/dulled_sensitivity)
+	incompatible_traits = list(TRAIT_DULLED_SENSITIVITY)
+
+/datum/quirk/dulled_sensitivity
+	name = "Dulled Sensitivity"
+	point_cost = 0
+	desc = "It takes more stimulation to stir my senses."
+	custom_text = "Receive half the usual arousal from arousal gains, excluding standard solo panel actions."
+	added_traits = list(TRAIT_DULLED_SENSITIVITY)
+	incompatible_quirks = list(/datum/quirk/heightened_sensitivity)
+	incompatible_traits = list(TRAIT_HEIGHTENED_SENSITIVITY)
+
 /datum/quirk/annoyingface
 	name = "Annoying Face"
 	desc = "I am cursed with an odd voice and appearance."
@@ -65,6 +90,7 @@
 	incompatible_traits = list(TRAIT_NOSTINK)
 
 /datum/quirk/disgracednoble
+	point_cost = 0
 	name = "Disgraced Noble"
 	desc = "I was a scion of a noble house... long ago. Now I am a commoner, and my family name is a source of shame."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
@@ -100,7 +126,7 @@
 	desc = "Despite my lowborn blood, I've made a habit out of brushing shoulders with the nobility and learning their secrets."
 	custom_text = "Lets you view noble gossip."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_GOSSIPER)
 	incompatible_virtues = list(/datum/virtue/background/tracker)
 	incompatible_traits = list(TRAIT_NOBLE)
@@ -118,7 +144,7 @@
 	name = "Large Frame"
 	desc = "I'm simply built bigger than most. My strength and hardiness has nothing to show for my size, though."
 	custom_text = "This quirk increases your sprite size. Incompatible with the Giant virtue."
-	point_cost = 3
+	point_cost = 0
 	incompatible_virtues = list(/datum/virtue/size/giant)
 
 /datum/quirk/largeframe/apply_to_human(mob/living/carbon/human/recipient)
@@ -195,6 +221,26 @@
 	redolent_visual_effect(src, redolent_scent_type)
 	redolent_stink_aura(src, redolent_scent_type)
 
+/// Scent immunity prevents discomfort, not recognition of a smell.
+/mob/living/carbon/human/proc/get_redolent_examine_lines(mob/user)
+	var/list/lines = list()
+	if(!user || user == src)
+		return lines
+	var/turf/scent_turf = get_turf(src)
+	var/turf/viewer_turf = get_turf(user)
+	if(!scent_turf || !viewer_turf || scent_turf.z != viewer_turf.z || get_dist(viewer_turf, scent_turf) > 3)
+		return lines
+	if(isliving(user))
+		var/mob/living/living_user = user
+		if(!living_user.can_smell())
+			return lines
+	if(is_redolent_reeking())
+		lines += redolent_examine_text(redolent_scent_type, redolent_scent)
+	var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
+	if(contact_stink)
+		lines |= contact_stink.get_examine_text()
+	return lines
+
 /proc/redolent_aura_tick_delay(scent_type)
 	return 30 SECONDS
 
@@ -254,6 +300,12 @@
 /datum/quirk/hunted/apply_to_human(mob/living/carbon/human/recipient)
 	log_hunted_pick(recipient)
 
+/datum/quirk/hunted/handle_traits(mob/living/carbon/human/recipient)
+	. = ..()
+	if(recipient.islatejoin && !recipient.hunted_latejoin_announced)
+		// Finish applying the quirk and class setup before advertising a trackable target.
+		addtimer(CALLBACK(recipient, TYPE_PROC_REF(/mob/living/carbon/human, announce_hunted_latejoin)), 0)
+
 /datum/quirk/hunted/proc/log_hunted_pick(mob/living/carbon/human/H)
 	if(!H.name) // The vice version of hunted used Life() for its timing, so deleted mobs would automatically stop timing.
 		if(attempts_left <= 0) // We're not riding off of that anymore, so let's have it give up after ten attemps a la Lawless.
@@ -282,22 +334,20 @@
 // Who fucking cares, bro.
 /datum/quirk/noble
 	name = "Noble"
-	desc = "By birth, blade or brain, I carry noble blood, if only a minor and untitled line of it. I've cleverly stashed away a healthy amount of coinage, alongside a familial heirloom."
-	custom_text = "This quirk grants you MINOR nobility, meaning you are still subjected to the Great Writ and poll tax."
+	desc = "By birth, blade or brain, I carry noble blood, if only a minor and untitled line of it, with no estate to support me. I've kept a familial heirloom as a reminder of my lineage."
+	custom_text = "This quirk grants only MINOR nobility, without estate income or the Great Writ's tax exemption."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a noble!"
-	point_cost = 4
+	point_cost = 1
 	added_traits = list(TRAIT_NOBLE)
 	added_skills = list(list(/datum/skill/misc/reading, 1, 6))
 	added_stashed_items = list(
-	"Heirloom Amulet" = /obj/item/clothing/neck/roguetown/ornateamulet/noble,
-	"Hefty Coinpurse" = /obj/item/storage/belt/rogue/pouch/coins/virtuepouch
+	"Heirloom Amulet" = /obj/item/clothing/neck/roguetown/ornateamulet/noble
 	)
 	incompatible_vices = list(/datum/charflaw/lawless)
 	incompatible_quirks = list(/datum/quirk/disgracednoble, /datum/quirk/gossiper)
 	incompatible_traits = list(TRAIT_NOBLE)
 
 /datum/quirk/noble/apply_to_human(mob/living/carbon/human/recipient)
-	SStreasury.noble_incomes[recipient] += 15
 	recipient.social_rank = max(recipient.social_rank, SOCIAL_RANK_MINOR_NOBLE)
 
 /datum/quirk/outdoorsy
@@ -311,7 +361,7 @@
 	name = "Pretty"
 	desc = "I'm no great beauty, but people seem to like looking at my face well enough."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already beautiful!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_PRETTY)
 	incompatible_virtues = list(/datum/virtue/utility/socialite)
 	incompatible_quirks = list(/datum/quirk/ugly)
@@ -322,7 +372,7 @@
 	desc = "Be it from unnatural anatomy or simply a bizarre tolerance, I can eat raw meat and uncooked food as if it were natural."
 	custom_text = "Lets you eat raw meat and uncooked food without getting poisoned. Rotten food, organs, and dirty water will still poison you."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already possesses an unnatural metabolism!"
-	point_cost = 2
+	point_cost = 1
 	added_traits = list(TRAIT_RAW_EATER)
 	incompatible_virtues = list(/datum/virtue/utility/feral_appetite)
 	incompatible_traits = list(TRAIT_NASTY_EATER, TRAIT_ORGAN_EATER, TRAIT_WILD_EATER)
@@ -331,7 +381,7 @@
 	name = "Rough Lover"
 	desc = "With strong intent, I am a violent partner in bed. Breaking pelvis and spirit alike."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already a bedbreaker!"
-	point_cost = 2
+	point_cost = 0
 	added_traits = list(TRAIT_DEATHBYSNUSNU)
 	incompatible_traits = list(TRAIT_DEATHBYSNUSNU)
 
@@ -379,3 +429,16 @@
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already has self aware!"
 	added_traits = list(TRAIT_SELF_AWARE)
 	incompatible_traits = list(TRAIT_SELF_AWARE)
+
+/datum/quirk/virgin
+	name = "Virgin"
+	point_cost = 0
+	desc = "I am inexperienced with intimacy, and attractive people leave me flustered."
+	custom_text = "Starts you as a virgin. Choose who attracts you. Their company and touch can leave you flustered; unwanted attention feels uncomfortable. Your first experience replaces these nerves with brief confidence or unease. Anal first experiences are tracked separately."
+	added_traits = list(TRAIT_VIRGIN_NERVES)
+
+/datum/quirk/virgin/apply_to_human(mob/living/carbon/human/recipient)
+	recipient.virginity = TRUE
+	recipient.anal_virginity = TRUE
+	recipient.AddComponent(/datum/component/virgin_nerves)
+	recipient.AddComponent(/datum/component/anal_inexperience)

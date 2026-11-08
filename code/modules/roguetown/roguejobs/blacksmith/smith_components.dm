@@ -162,8 +162,14 @@
 						bar_health -= current_recipe.craftdiff
 
 			if(bar_health <= 0)
-				user.visible_message(span_danger("[user] destroys the bar!"))
-				qdel(parent)
+				var/obj/item/workpiece = parent
+				var/obj/machinery/anvil/anvil = workpiece.loc
+				if(istype(anvil) && anvil.current_workpiece == workpiece && anvil.can_scrap_workpiece())
+					user.visible_message(span_danger("[user] batters the bar into a misshapen lump of scrap!"))
+					anvil.scrap_workpiece() // Deletes parent, and us with it
+				else
+					user.visible_message(span_danger("[user] destroys the bar!"))
+					qdel(parent)
 			return FALSE
 		else
 			user.visible_message(span_warning("[user] fumbles the bar!"))

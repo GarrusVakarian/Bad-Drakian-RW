@@ -70,6 +70,8 @@
 		charflaw = null
 		headshot_link = null
 
+	ensure_gnoll_sadism()
+
 	// Gnolls should not inherit player-authored social metadata from their base slot.
 	headshot_link = null
 	flavortext = null
@@ -206,6 +208,7 @@
 		H.regenerate_icons()
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/claws/gnoll)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/howl/gnoll)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/message/gnoll)
 		H.AddComponent(/datum/component/gnoll_combat_tracker)
 
 		var/obj/effect/proc_holder/spell/invoked/gnoll_sniff/F = new()

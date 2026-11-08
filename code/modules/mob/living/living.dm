@@ -97,9 +97,9 @@
 	enemies = list()
 
 /mob/living/onZImpact(turf/T, levels)
-	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE2))
+	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE2) && !HAS_TRAIT(src, TRAIT_DEADITE))
 		return
-	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE1))
+	if(HAS_TRAIT(src, TRAIT_NOFALLDAMAGE1) && !HAS_TRAIT(src, TRAIT_DEADITE))
 		if(levels <= 2)
 			Immobilize(10)
 			if(m_intent == MOVE_INTENT_RUN)
@@ -831,10 +831,9 @@
 	if(!(src.mobility_flags & MOBILITY_STAND))
 		return TRUE
 	var/list/acceptable = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH)
-	if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) || HAS_TRAIT(L, TRAIT_TALONKICKS))
+	if((HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) || HAS_TRAIT(L, TRAIT_TALONKICKS)) && !HAS_TRAIT(L, TRAIT_DEADITE))
 		acceptable.Add(BODY_ZONE_HEAD)
 	if( !(check_zone(L.zone_selected) in acceptable) )
-		to_chat(L, span_warning("I can't reach that."))
 		return FALSE
 	return TRUE
 
@@ -852,7 +851,7 @@
 		else
 			if(!CZ)
 				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
-				if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN))
+				if(HAS_TRAIT(L, TRAIT_CIVILIZEDBARBARIAN) && !HAS_TRAIT(L, TRAIT_DEADITE)) //Non-deadite monks can hit more like feet.
 					acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH, BODY_ZONE_PRECISE_R_FOOT, BODY_ZONE_PRECISE_L_FOOT)
 	else if(!(L.mobility_flags & MOBILITY_STAND) && (mobility_flags & MOBILITY_STAND)) //we are prone, victim is standing
 		if(I)
@@ -1664,7 +1663,10 @@
 
 	//unbuckling yourself
 	if(buckled && last_special <= world.time)
+		var/was_piggyback = ishuman(buckled) && !buckled.buckle_lying
 		resist_buckle()
+		if(was_piggyback && !buckled)
+			Knockdown(1 SECONDS)
 		return
 
 	//Breaking out of a container (Locker, sleeper, cryo...)
@@ -1686,9 +1688,13 @@
 			if(restrained() && !prob(5))
 				return
 			var/datum/component/riding/human/riding_datum = GetComponent(/datum/component/riding/human)
-			if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE) && riding_datum)
-				for(var/mob/M in buckled_mobs)
-					riding_datum.force_dismount(M)
+			if(riding_datum && has_buckled_mobs())
+				for(var/mob/living/M in buckled_mobs.Copy())
+					if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE))
+						riding_datum.force_dismount(M)
+					else if(!buckle_lying)
+						if(user_unbuckle_mob(M, src))
+							M.Knockdown(1 SECONDS)
 			return
 
 /mob/living/proc/submit(instant = FALSE)
@@ -2196,7 +2202,7 @@
 /mob/living/proc/check_weakness(obj/item/weapon, mob/living/attacker)
 	return 1 //This is not a boolean, it's the multiplier for the damage the weapon does.
 
-/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force)
+/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force, extra = FALSE, jumping = FALSE)
 	stop_pulling()
 	. = ..()
 
@@ -2556,6 +2562,8 @@
 
 /mob/living/MouseDrop(mob/over)
 	. = ..()
+	if(.)
+		return
 	var/mob/living/user = usr
 	if(!istype(over) || !istype(user))
 		return

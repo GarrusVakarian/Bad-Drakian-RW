@@ -33,6 +33,7 @@ export const gameReducer = (state = initialState, action) => {
     return {
       ...state,
       connectionLostAt: null,
+      roundRestartedAt: null,
     };
   }
   return state;

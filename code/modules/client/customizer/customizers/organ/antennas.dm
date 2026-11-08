@@ -32,6 +32,7 @@
 		/datum/sprite_accessory/antenna/moth/witchwing,
 		/datum/sprite_accessory/antenna/moth/regal,
 		/datum/sprite_accessory/antenna/moth/mothra,
+		/datum/sprite_accessory/antenna/moth/mothra_colorable,
 		)
 
 /datum/customizer/organ/antennas/anthro
@@ -60,4 +61,5 @@
 		/datum/sprite_accessory/antenna/moth/witchwing,
 		/datum/sprite_accessory/antenna/moth/regal,
 		/datum/sprite_accessory/antenna/moth/mothra,
+		/datum/sprite_accessory/antenna/moth/mothra_colorable,
 		)

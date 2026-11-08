@@ -1,0 +1,13 @@
+File: big_legs.dmi
+License: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)
+Source: Ochre-Valley/Ochre-Valley
+Original contributor: SomeDeviant
+Introduction: https://github.com/Ochre-Valley/Ochre-Valley/commit/bf7ad24875f5865d282fa44d1481cdb4c23da3c7
+Source revision: 192b1531543d4ba306b7b9f078d37c2607c5ec8d
+Source files:
+  modular_causticcove/icons/mob/taurs/taurs.dmi (biglegs_s, biglegsstanced_s)
+  modular_causticcove/icons/mob/taurs/biglegs_markings.dmi (biglegs_norm)
+  modular_causticcove/icons/mob/taurs/biglegsstanced_markings.dmi (biglegs_stanced)
+License declaration: https://github.com/Ochre-Valley/Ochre-Valley/blob/192b1531543d4ba306b7b9f078d37c2607c5ec8d/README.md#license
+Changes: Four states repacked into one DMI for Bad Drakian's existing taur-color system.
+All source-frame pixels are unchanged.

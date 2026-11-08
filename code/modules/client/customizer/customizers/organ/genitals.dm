@@ -13,7 +13,7 @@
 	if(!istype(penis_entry) || !penis_entry.penis_taur_mode)
 		var/list/normal_choices = ..()
 		normal_choices = normal_choices.Copy()
-		if(prefs?.has_selected_bee_tail())
+		if(prefs?.has_selected_insect_tail())
 			normal_choices += /datum/customizer_choice/organ/penis/bee_tail
 		return normal_choices
 	// Taur mode has its own artwork-backed list, including for species whose normal choice is plain.
@@ -365,7 +365,7 @@
 
 /datum/customizer_choice/organ/penis/bee_tail
 	min_penis_size = SMALL_PENIS_SIZE
-	name = "Penis (Bee Tail)"
+	name = "Ovipositor"
 	organ_type = /obj/item/organ/penis/bee_tail
 	sprite_accessories = list(/datum/sprite_accessory/penis/bee_tail)
 	allows_sheath_customization = FALSE
@@ -396,6 +396,7 @@
 	customizer_entry_type = /datum/customizer_entry/organ/testicles
 	organ_slot = ORGAN_SLOT_TESTICLES
 	var/can_customize_size = TRUE
+	var/size_label = "Ball size"
 
 /datum/customizer_choice/organ/testicles/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
 	..()
@@ -414,7 +415,7 @@
 	..()
 	var/datum/customizer_entry/organ/testicles/testicles_entry = entry
 	if(can_customize_size)
-		dat += "<br>Ball size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ball_size''>[find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)]</a>"
+		dat += "<br>[size_label]: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ball_size''>[find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)]</a>"
 	dat += "<br>Virile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=virile''>[testicles_entry.virility ? "Virile" : "Sterile"]</a>"
 
 /datum/customizer_choice/organ/testicles/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
@@ -422,7 +423,7 @@
 	var/datum/customizer_entry/organ/testicles/testicles_entry = entry
 	switch(href_list["customizer_task"])
 		if("ball_size")
-			var/named_size = input(user, "Choose your ball size:", "Character Preference", find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)) as anything in GLOB.named_ball_sizes
+			var/named_size = input(user, "Choose your [LOWER_TEXT(size_label)]:", "Character Preference", find_key_by_value(GLOB.named_ball_sizes, testicles_entry.ball_size)) as anything in GLOB.named_ball_sizes
 			if(isnull(named_size))
 				return
 			var/new_size = GLOB.named_ball_sizes[named_size]
@@ -456,9 +457,9 @@
 
 /datum/customizer_choice/organ/testicles/internal
 	name = "Internal testicles"
+	size_label = "Size"
 	organ_type = /obj/item/organ/testicles/internal
 	sprite_accessories = null
-	can_customize_size = FALSE
 
 /datum/customizer_entry/organ/testicles
 	var/ball_size = DEFAULT_TESTICLES_SIZE
@@ -486,19 +487,26 @@
 	..()
 	var/datum/customizer_entry/organ/breasts/breasts_entry = entry
 	breasts_entry.breast_size = sanitize_integer(breasts_entry.breast_size, MIN_BREASTS_SIZE, MAX_BREASTS_SIZE, DEFAULT_BREASTS_SIZE)
+	breasts_entry.lactating = sanitize_integer(breasts_entry.lactating, LACTATION_DISABLED, LACTATION_AFTER_IMPREGNATION, LACTATION_DISABLED)
 
 /datum/customizer_choice/organ/breasts/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
 	var/datum/organ_dna/breasts/breasts_dna = organ_dna
 	var/datum/customizer_entry/organ/breasts/breasts_entry = entry
 	breasts_dna.breast_size = breasts_entry.breast_size
-	breasts_dna.lactating = breasts_entry.lactating
+	breasts_dna.lactation_mode = breasts_entry.lactating
 
 /datum/customizer_choice/organ/breasts/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
 	var/datum/customizer_entry/organ/breasts/breasts_entry = entry
+	var/lactation_label = "Disabled"
+	switch(breasts_entry.lactating)
+		if(LACTATION_ENABLED)
+			lactation_label = "Enabled"
+		if(LACTATION_AFTER_IMPREGNATION)
+			lactation_label = "After Impregnation"
 	dat += "<br>Breast size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=breast_size''>[find_key_by_value(GLOB.named_breast_sizes, breasts_entry.breast_size)]</a>"
-	dat += "<br>Lactation: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=lactating''>[breasts_entry.lactating ? "Enabled" : "Disabled"]</a>"
+	dat += "<br>Lactation: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=lactating''>[lactation_label]</a>"
 
 /datum/customizer_choice/organ/breasts/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
@@ -511,11 +519,18 @@
 			var/new_size = GLOB.named_breast_sizes[named_size]
 			breasts_entry.breast_size = sanitize_integer(new_size, MIN_BREASTS_SIZE, MAX_BREASTS_SIZE, DEFAULT_BREASTS_SIZE)
 		if("lactating")
-			breasts_entry.lactating = !breasts_entry.lactating
+			switch(breasts_entry.lactating)
+				if(LACTATION_DISABLED)
+					breasts_entry.lactating = LACTATION_ENABLED
+				if(LACTATION_ENABLED)
+					breasts_entry.lactating = LACTATION_AFTER_IMPREGNATION
+				else
+					breasts_entry.lactating = LACTATION_DISABLED
 
 /datum/customizer_entry/organ/breasts
 	var/breast_size = DEFAULT_BREASTS_SIZE
-	var/lactating = FALSE
+	/// LACTATION_* mode. Keeps this name because savefiles store it by name.
+	var/lactating = LACTATION_DISABLED
 
 /datum/customizer/organ/breasts/human
 	customizer_choices = list(/datum/customizer_choice/organ/breasts/human)

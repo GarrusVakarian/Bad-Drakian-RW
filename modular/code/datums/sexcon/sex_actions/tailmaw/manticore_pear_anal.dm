@@ -17,6 +17,7 @@
 /datum/sex_action/manticore_pear_anal/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(!..())
 		return
+	target.lose_anal_virginity(user)
 	var/list/excluded = get_extreme_content_excluded_mobs(target)
 	user.sexcon_action_message(span_userdanger("[user]'s tail bud begins to flower open inside [target]'s ass, the bonelike plates spreading apart with a grinding creak, stretching [target]'s insides far beyond what flesh was meant to accommodate. [target]'s screams are accompanied by the wet crack of something giving way deep inside."), ignored_mobs = excluded)
 	playsound(target, 'sound/combat/fracture/fracturewet (1).ogg', 40, TRUE, ignore_walls = FALSE)

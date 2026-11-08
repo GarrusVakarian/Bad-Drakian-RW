@@ -117,7 +117,7 @@
 
 	var/list/trackable_corpses = list()
 	for (var/mob/living/corpse in GLOB.dead_mob_list)
-		if(corpse && get_dist(corpse, user) < CORPSE_SCENT_RANGE)
+		if(can_track_player_corpse(corpse, user))
 			trackable_corpses += corpse
 
 	if(!trackable_corpses.len)
@@ -127,8 +127,10 @@
 	var/mob/living/selected_corpse = input(user, "Select a corpse to track", "Nearby corpses") as null|anything in trackable_corpses
 	if(!selected_corpse)
 		return FALSE
-	if(QDELETED(selected_corpse))
-		to_chat(user, span_notice("the scent dissipated."))
+	if(QDELETED(src) || QDELETED(user))
+		return FALSE
+	if(!can_track_player_corpse(selected_corpse, user))
+		to_chat(user, span_notice("The scent dissipated."))
 		return FALSE
 	var/direction_text = dir2text(get_dir(user.loc, selected_corpse.loc))
 
@@ -137,6 +139,14 @@
 		span_notice("The scent of the grave draws you to the [direction_text].")
 	)
 	return TRUE
+
+/// A mind's persistent key identifies player characters even after ghosting/disconnecting.
+/obj/effect/proc_holder/spell/self/scent_of_the_grave/proc/can_track_player_corpse(mob/living/corpse, mob/living/user)
+	if(QDELETED(corpse) || QDELETED(user) || corpse.stat != DEAD)
+		return FALSE
+	if(!corpse.mind || !corpse.mind.key)
+		return FALSE
+	return get_dist(corpse, user) < CORPSE_SCENT_RANGE
 
 /obj/effect/proc_holder/spell/invoked/blink/glimmer_hare
 	invocations = list("") //"Natural" abilty, no incantation.

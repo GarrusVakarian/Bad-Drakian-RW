@@ -3,6 +3,8 @@
 GLOBAL_LIST_EMPTY(roundstart_races)
 
 /datum/species
+	/// Optional tint for blood spilled by this species; null preserves the normal blood sprites.
+	var/blood_color = null
 	/// if the game needs to manually check my race to do something not included in a proc here, it will use this
 	var/id
 	///this is used if you want to use a different species limb sprites. Mainly used for angels as they look like humans.
@@ -689,6 +691,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 /datum/species/proc/spec_death(gibbed, mob/living/carbon/human/H)
 	return
 
+/datum/species/proc/intercept_death(mob/living/carbon/human/H, gibbed)
+	return FALSE
+
 /datum/species/proc/auto_equip(mob/living/carbon/human/H)
 	// handles the equipping of species-specific gear
 	return
@@ -1051,6 +1056,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		var/hunger_rate = HUNGER_FACTOR
 		if(HAS_TRAIT(H, TRAIT_HEMOPHAGE))
 			hunger_rate *= 0.7 // QOL for hemophages, from number of complaints.
+		if(HAS_TRAIT(H, TRAIT_SLOW_METABOLISM))
+			hunger_rate *= 0.9
 		if (H.bodytemperature < BODYTEMP_NORMAL_MIN)	//Hunger increased by 50% when cold
 			hunger_rate *= 1.5
 /*		if(H.satiety > MAX_SATIETY)
@@ -1270,6 +1277,11 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(HAS_TRAIT(user, TRAIT_PACIFISM))
 		to_chat(user, span_warning("I don't want to harm [target]!"))
 		return FALSE
+	if(target.mind && user.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		to_chat(user, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
+		user.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
+	if(user != target && user.client && target.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		target.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	if(target.check_block())
 		target.visible_message(span_warning("[target] blocks [user]'s attack!"), \
 						span_danger("I block [user]'s attack!"), span_hear("I hear a swoosh!"), COMBAT_MESSAGE_RANGE, user)
@@ -1381,7 +1393,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			if(affecting.body_zone == BODY_ZONE_HEAD)
 				SEND_SIGNAL(user, COMSIG_HEAD_PUNCHED, target)
 		log_combat(user, target, "punched", null, "(AIMED: [uppertext(parse_zone(user.zone_selected))])")
-		if(ishuman(user) && user.mind)
+		if(ishuman(user))
 			var/text = "[bodyzone2readablezone(selzone)]..."
 			user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text)
 
@@ -1582,7 +1594,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 					append_message = "loosening their grip on [target_held_item]"
 
 			if(target.pulling)
-				var/painpercent = (target.get_complex_pain() / target.pain_threshold) * 100
+				var/painpercent = (target.get_complex_pain() / target.get_pain_threshold()) * 100
 				var/painchance = painpercent < 30 ? FALSE : prob(painpercent)
 
 				if(target.grab_state > GRAB_PASSIVE && painchance)
@@ -1614,10 +1626,15 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(HAS_TRAIT(user, TRAIT_PACIFISM))
 		to_chat(user, span_warning("I don't want to harm [target]!"))
 		return FALSE
+	if(target.mind && user.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		to_chat(user, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
+		user.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	if(user.IsKnockdown())
 		return FALSE
 	if(user == target)
 		return FALSE
+	if(user != target && user.client && target.has_status_effect(/datum/status_effect/debuff/deadite_grace))
+		target.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 	SEND_SIGNAL(user, COMSIG_MOB_KICKED, target)
 	if(!HAS_TRAIT(user, TRAIT_GARROTED))
 		if(user.check_leg_grabbed(1) || user.check_leg_grabbed(2))
@@ -1626,6 +1643,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(user.stamina >= user.max_stamina)
 		return FALSE
 	var/stander = TRUE
+	var/kickchest = FALSE
 	if(!(target.mobility_flags & MOBILITY_STAND))
 		stander = FALSE
 	if(!get_dist(user, target))
@@ -1663,7 +1681,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			target.next_attack_msg.Cut()
 			log_combat(user, target, "kicked", null, "(AIMED: [uppertext(parse_zone(user.zone_selected))])")
 
-			if(ishuman(user) && user.mind)
+			if(ishuman(user))
 				var/text = "[bodyzone2readablezone(selzone)]..."
 				user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text)
 
@@ -1677,7 +1695,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			return FALSE
 	else
 		if(!target.kick_attack_check(user))
-			return 0
+			kickchest = TRUE
 		user.do_attack_animation_simple(target, ATTACK_EFFECT_KICK, TRUE)
 		playsound(target, 'sound/combat/hits/kick/kick.ogg', 100, TRUE, -1)
 
@@ -1798,6 +1816,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 
 		var/selzone = melee_accuracy_check(user.zone_selected, user, target, /datum/skill/combat/unarmed, user.used_intent)
+		if(kickchest)
+			selzone = BODY_ZONE_CHEST
 		var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 		if(!affecting)
 			affecting = target.get_bodypart(BODY_ZONE_CHEST)
@@ -1937,7 +1957,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(higher_intfactor > 1)	//Make sure to keep your weapon and intent intfactors consistent to avoid problems here!
 		used_intfactor = higher_intfactor
 
-	if(ishuman(user) && user.mind && user.used_intent.blade_class != BCLASS_PEEL)
+	if(ishuman(user) && user.used_intent.blade_class != BCLASS_PEEL)
 		var/text = "[bodyzone2readablezone(selzone)]..."
 		if(HAS_TRAIT(user, TRAIT_DECEIVING_MEEKNESS))
 			if(prob(10))
@@ -2218,6 +2238,14 @@ GLOBAL_VAR_INIT(cold_breath_overlay, mutable_appearance(
 	var/turf/cur_turf = get_turf(H)
 	if(!cur_turf)
 		return
+	if(HAS_TRAIT(H, TRAIT_LIGHT_SENSITIVITY))
+		var/sunlit = GLOB.tod == "day" && cur_turf.outdoor_effect?.state
+		if(sunlit)
+			H.add_stress(/datum/stressevent/sunlit)
+		if(sunlit && !(H.head?.block2add & FOV_BEHIND))
+			H.apply_status_effect(/datum/status_effect/debuff/sun_blinded)
+		else
+			H.remove_status_effect(/datum/status_effect/debuff/sun_blinded)
 	var/loc_temp = cur_turf.temperature
 
 	if(cur_turf.outdoor_effect)	//We check if our turf is outdoors before applying map/ToD modifiers
@@ -2330,7 +2358,7 @@ GLOBAL_VAR_INIT(cold_breath_overlay, mutable_appearance(
 				H.update_health_hud()
 			return
 		if(H.bodytemperature < BODYTEMP_COLD_LEVEL_ONE_MAX && !HAS_TRAIT(H, TRAIT_EXTREME_TEMPERATURE_IMMUNE))	//Level 2 cold - con punishment, frostbite, speed reduction
-			if(prob(15) && !(H.m_intent == MOVE_INTENT_SNEAK || H.alpha <= 120)) //if we're sneaking or invisible, no shivering
+			if(prob(15) && !HAS_TRAIT(H, TRAIT_COLD_RESISTANCE) && !(H.m_intent == MOVE_INTENT_SNEAK || H.alpha <= 120)) //if we're sneaking or invisible, no shivering
 				addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, emote), "shiver"), (rand(2,6)SECONDS),TIMER_UNIQUE | TIMER_STOPPABLE)
 			addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, cold_warn)),20 SECONDS,TIMER_UNIQUE)
 			if(!H.hypothermia_timer_id)
@@ -2340,7 +2368,7 @@ GLOBAL_VAR_INIT(cold_breath_overlay, mutable_appearance(
 			H.relieve_heatstroke_from_cold()	//if you somehow bypass level 1, straight to level 2, still fix heatstroke
 		else	//level 1 cold
 			H.remove_movespeed_modifier(MOVESPEED_ID_COLD)
-			if(prob(5) && !(H.m_intent == MOVE_INTENT_SNEAK || H.alpha <= 120)) //if we're sneaking or invisible, no shivering
+			if(prob(5) && !HAS_TRAIT(H, TRAIT_COLD_RESISTANCE) && !(H.m_intent == MOVE_INTENT_SNEAK || H.alpha <= 120)) //if we're sneaking or invisible, no shivering
 				addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, emote), "shiver"), (rand(2,6)SECONDS),TIMER_UNIQUE | TIMER_STOPPABLE)
 			H.relieve_heatstroke_from_cold()	//if has heatstroke, body chill fixes it
 			addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, cold_warn)),20 SECONDS,TIMER_UNIQUE)

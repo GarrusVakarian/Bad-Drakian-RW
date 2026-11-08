@@ -461,11 +461,12 @@
 				btm.visible_message(span_love("[btm] takes a load down their throat!"), span_love("I take a load down my throat!"))
 			else
 				facial.refresh_cum()
+				to_chat(btm, span_love("I take another load down my throat..."))
 			if(btm.reagents)
 				if(top.getorganslot(ORGAN_SLOT_PENIS))
-					btm.reagents.add_reagent(/datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume())
+					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume(), repeat_intake = !!facial)
 				else
-					btm.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
+					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/femcum, 2)
 			top.sexcon.apply_cum_consumed_buff(btm)
 			modular_record_collar_receive_event(btm, top)
 	knot_exit(keep_top_status, keep_btm_status)
@@ -637,11 +638,11 @@
 	alert_type = null
 
 /datum/status_effect/jaw_gaped/on_apply()
-	ADD_TRAIT(owner, TRAIT_GARGLE_SPEECH, TRAIT_STATUS_EFFECT(id))
+	ADD_TRAIT(owner, TRAIT_SORE_JAW, TRAIT_STATUS_EFFECT(id))
 	to_chat(owner, span_warning("My jaw... It stings!"))
 	return ..()
 
 /datum/status_effect/jaw_gaped/on_remove()
-	REMOVE_TRAIT(owner, TRAIT_GARGLE_SPEECH, TRAIT_STATUS_EFFECT(id))
+	REMOVE_TRAIT(owner, TRAIT_SORE_JAW, TRAIT_STATUS_EFFECT(id))
 	if(owner.stat == CONSCIOUS)
 		to_chat(owner, span_warning("I finally feel my jaw again."))

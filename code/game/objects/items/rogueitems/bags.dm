@@ -128,6 +128,15 @@
 	/obj/item/ash
 	)
 
+/obj/item/storage/roguebag/zizobane_stash
+	name = "bag of Zizo's Bane powder"
+	desc = "A sack holding a carefully saved supply of ground Zizo's Bane."
+	populate_contents = list(
+		/obj/item/reagent_containers/powder/sleep_powder,
+		/obj/item/reagent_containers/powder/sleep_powder,
+		/obj/item/reagent_containers/powder/sleep_powder
+	)
+
 /obj/item/storage/roguebag/fetish
 	name = "bag of fetish gear"
 	desc = "A discreet sack of assorted gear and emberwine, kept ready to handle guests."

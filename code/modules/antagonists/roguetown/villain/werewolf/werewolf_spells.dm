@@ -141,6 +141,36 @@
 	if(claw_index)
 		extended_claw_record[claw_index] = FALSE
 
+/obj/effect/proc_holder/spell/invoked/voluntary_bite
+	name = "Voluntary Bite"
+	desc = "Offer the verevolf's curse to a willing person beside me. They must accept the bite to become a verevolf."
+	overlay_state = "tamebeast"
+	range = 1
+	clothes_req = FALSE
+	invocation_type = "none"
+	antimagic_allowed = TRUE
+	ignore_cockblock = TRUE
+	associated_skill = null
+	recharge_time = 6 MINUTES
+	is_cdr_exempt = TRUE
+
+/obj/effect/proc_holder/spell/invoked/voluntary_bite/cast(list/targets, mob/living/user)
+	if(!user)
+		return FALSE
+	var/mob/living/carbon/human/target = LAZYACCESS(targets, 1)
+	if(!ishuman(user) || !istype(target) || !target.can_receive_werewolf_bite(user))
+		to_chat(user, span_warning("I must be in beast form beside an awake, willing soul who can receive the curse."))
+		revert_cast(user)
+		return FALSE
+	if(target.werewolf_bite_pending)
+		to_chat(user, span_warning("They are already deciding whether to accept the curse."))
+		revert_cast(user)
+		return FALSE
+	user.visible_message(span_warning("[user] offers [target] the verevolf's curse through a deliberate bite."), span_notice("I offer [target] the verevolf's curse."))
+	log_combat(user, target, "offered a voluntary werewolf bite")
+	target.offer_werewolf_bite(user)
+	return TRUE
+
 /obj/effect/proc_holder/spell/invoked/shiftback
 	name = "Give In To Daylight"
 	desc = "Allows daylight to revert my verevolf form to normal."

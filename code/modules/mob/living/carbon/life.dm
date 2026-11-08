@@ -11,6 +11,7 @@
 		return
 
 	. = ..()
+	refresh_pain_threshold_hud()
 
 	if(times_fired % 2 == 0) // every 2nd (other) tick, update damage hud.
 		if(damageoverlaytemp)
@@ -61,6 +62,7 @@
 	. = ..()
 	if (QDELETED(src))
 		return
+	refresh_pain_threshold_hud()
 	handle_wounds()
 	handle_embedded_objects()
 	handle_blood()
@@ -71,15 +73,16 @@
 	if(HAS_TRAIT(src, TRAIT_NOPAIN))
 		return
 	if(!stat)
-		var/pain_threshold = HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH) ? ((STAWIL + 5) * 10) : (STAWIL * 10)
-		if(has_flaw(/datum/charflaw/addiction/masochist)) // Masochists handle pain better by about 1 endurance point
-			pain_threshold += 10
+		var/pain_willpower = STAWIL
+		var/pain_threshold = get_pain_threshold()
+		if(has_status_effect(/datum/status_effect/buff/battle_cry))
+			pain_willpower += 1
 		var/painpercent = get_complex_pain() / pain_threshold
 		painpercent = painpercent * 100
 
 		if(world.time > mob_timers["painstun"])
 			mob_timers["painstun"] = world.time + 100
-			var/probby = 40 - (STAWIL * 2)
+			var/probby = 40 - (pain_willpower * 2)
 			probby = max(probby, 10)
 			if(lying || IsKnockdown())
 				if(prob(3) && (painpercent >= 80) )
@@ -87,12 +90,12 @@
 			else
 				if(painpercent >= 100)
 					if(HAS_TRAIT(src, TRAIT_PSYDONIAN_GRIT) || STAWIL >= 15)
-						if(prob(25)) // PSYDONIC WEIGHTED COINFLIP. TWEAK THIS AS THOU WILT. DON'T LET THEM BE BROKEN, PSYDON WILLING. THROW CON-MAXXERS A BONE, TOO.
+						if(prob(25)) // PSYDONIC WEIGHTED COINFLIP. TWEAK THIS AS THOU WILT. DON'T LET THEM BE BROKEN, PSYDON WILLING. THROW WILL-MAXXERS A BONE, TOO.
 							Immobilize(15) // EAT A MICROSTUN. YOU'RE AVOIDING A PAINCRIT.
 							if(HAS_TRAIT(src, TRAIT_PSYDONIAN_GRIT))
 								visible_message(span_info("[src] audibly grits their teeth. ENDURING through their pain."), span_info("Through my faith in HIM, I ENDURE."))
 							else
-								visible_message(span_info("[src] trembled for a moment, but they remain stood."), span_info("My strong constitution keeps me upright."))
+								visible_message(span_info("[src] trembled for a moment, but they remain stood."), span_info("My strong will keeps me upright."))
 							stuttering += 5
 							emote("painmoan")
 							return
@@ -227,6 +230,7 @@
 		if(has_adrenaline)
 			bodypart_pain *= 0.5
 		. += bodypart_pain
+	. += chem_pain
 
 /mob/living/carbon/human/get_complex_pain()
 	. = ..()
@@ -623,6 +627,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 	//Healing while sleeping in a bed
 	if(IsSleeping())
 		SEND_SIGNAL(src, COMSIG_CARBON_HANDLE_SLEEP)
+		var/can_heal_critical_wounds = HAS_TRAIT(src, TRAIT_NOBREATH) || HAS_TRAIT(src, TRAIT_DEATHLESS) || HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE)
 		var/sleepy_mod = 0.5
 		var/doesnt_hunger = HAS_TRAIT(src, TRAIT_NOHUNGER)
 		if(HAS_TRAIT(src, TRAIT_BETTER_SLEEP))
@@ -660,7 +665,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 				if (!affecting)
 					continue
 
-				if (affecting.get_bleed_rate() >= 1)
+				if (!can_heal_critical_wounds && affecting.get_bleed_rate() >= 1)
 					continue
 
 				if (affecting.heal_damage(sleepy_mod, sleepy_mod, required_status = BODYPART_ORGANIC))
@@ -670,6 +675,8 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 				if (islist(wlist))
 					for (var/datum/wound/W in wlist)
 						var/sh = W?.sleep_healing
+						if(W && !sh && can_heal_critical_wounds)
+							sh = 0.5
 						if (sh)
 							W.heal_wound(sh * sleepy_mod)
 			adjustToxLoss(-sleepy_mod)

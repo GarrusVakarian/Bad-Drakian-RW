@@ -49,17 +49,14 @@ const RevenueColumn = (props: { t: TreasurySnapshot }) => {
       <Breakdown>
         Contract Levy {t.royal.contract_levy} &bull; Headeater Levy{' '}
         {t.royal.headeater_levy} &bull; Import Tariff {t.royal.import_tariff}{' '}
-        &bull; Export Duty {t.royal.export_duty} &bull; Other{' '}
-        {t.royal.other_fees}
+        &bull; Export Duty {t.royal.export_duty} &bull; Recovered Spoils{' '}
+        {t.royal.recovered_spoils} &bull; Other {t.royal.other_fees}
       </Breakdown>
       <table style={twoColTable}>
         <tbody>
           <Row label="Stockpile Exports" value={t.stockpile_exports} />
           <Row label="Bought from Stockpile" value={t.stockpile_revenue} />
-          <Row
-            label="Direct Imports"
-            value={t.stockpile_direct_imports}
-          />
+          <Row label="Direct Imports" value={t.stockpile_direct_imports} />
           <Row label="Standing Order Revenue" value={t.standing.revenue} />
         </tbody>
       </table>
@@ -76,7 +73,11 @@ const RevenueColumn = (props: { t: TreasurySnapshot }) => {
       <div style={dividerStyle} />
       <table style={twoColTable}>
         <tbody>
-          <Row label="Total Revenue" value={t.total_revenue} color={SEAL_GREEN} />
+          <Row
+            label="Total Revenue"
+            value={t.total_revenue}
+            color={SEAL_GREEN}
+          />
         </tbody>
       </table>
     </div>
@@ -115,6 +116,9 @@ const ExpensesColumn = (props: { t: TreasurySnapshot }) => {
       {t.banditry_owed > 0 && (
         <Breakdown>{t.banditry_owed} still owed</Breakdown>
       )}
+      {t.banditry_hoard > 0 && (
+        <Breakdown>{t.banditry_hoard} held in bandit hoards</Breakdown>
+      )}
       {showDebtRow && (
         <table style={twoColTable}>
           <tbody>
@@ -151,13 +155,17 @@ const ExpensesColumn = (props: { t: TreasurySnapshot }) => {
       </table>
       <Breakdown>
         Contract {t.exempt.contract} &bull; Headeater {t.exempt.headeater}{' '}
-        &bull; Import {t.exempt.import} &bull; Export {t.exempt.export}{' '}
-        &bull; Fines {t.exempt.fines} &bull; Poll Tax {t.exempt.poll_tax}
+        &bull; Import {t.exempt.import} &bull; Export {t.exempt.export} &bull;
+        Fines {t.exempt.fines} &bull; Poll Tax {t.exempt.poll_tax}
       </Breakdown>
       <div style={dividerStyle} />
       <table style={twoColTable}>
         <tbody>
-          <Row label="Total Expenses" value={t.total_expenses} color={SEAL_RED} />
+          <Row
+            label="Total Expenses"
+            value={t.total_expenses}
+            color={SEAL_RED}
+          />
         </tbody>
       </table>
     </div>

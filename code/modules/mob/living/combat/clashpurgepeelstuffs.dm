@@ -40,6 +40,20 @@
 		apply_status_effect(/datum/status_effect/buff/adrenaline_rush)
 		purge_peel(GUARD_PEEL_REDUCTION)
 
+/mob/living/carbon/human/proc/simple_clash(mob/living/simple_animal/attacker, obj/item/weapon)
+	if(weapon)
+		visible_message(span_suicide("[src] ripostes [attacker] with \the [weapon]!"))
+	else
+		visible_message(span_warning("[src] deflects [attacker]'s strike with [p_their()] bare hands!"))
+	playsound(src, 'sound/combat/clash_struck.ogg', 100)
+	attacker.apply_status_effect(/datum/status_effect/debuff/exposed, 3 SECONDS)
+	attacker.apply_status_effect(/datum/status_effect/debuff/clickcd, 3 SECONDS)
+	attacker.Slowdown(3)
+	to_chat(src, span_notice("[capitalize(attacker.p_theyre())] exposed!"))
+	remove_status_effect(/datum/status_effect/buff/clash)
+	apply_status_effect(/datum/status_effect/buff/adrenaline_rush)
+	purge_peel(GUARD_PEEL_REDUCTION)
+
 //This is a gargantuan, clunky proc that is meant to tally stats and weapon properties for the potential disarm.
 //For future coders: Feel free to change this, just make sure someone like Struggler statpack doesn't get 3-fold advantage.
 /mob/living/carbon/human/proc/clash(mob/user, obj/item/IM, obj/item/IU)

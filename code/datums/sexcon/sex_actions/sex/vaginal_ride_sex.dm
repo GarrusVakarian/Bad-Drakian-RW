@@ -1,4 +1,5 @@
 /datum/sex_action/vaginal_ride_sex
+	handles_target_climax = TRUE
 	name = "Ride them"
 	stamina_cost = 1.0
 	aggro_grab_instead_same_tile = FALSE
@@ -27,11 +28,11 @@
 	if(target.sexcon.check_active_ejaculation())
 		target.visible_message(span_love("[target] cums into [user]'s cunt!"))
 		for(var/i = 1; i <= target.sexcon.get_load_bursts(); i++)
-			sleep(10)
 			target.sexcon.cum_into(splashed_user = user, knot_action = src, knot_swap_roles = TRUE, knot_btm = user, orifice = SEX_PART_CUNT, consume_charge = i == 1 ? TRUE : FALSE)
 			target.try_impregnate(user)
-		target.virginity = FALSE
-		user.virginity = FALSE
+			sleep(10)
+		target.lose_virginity(user)
+		user.lose_virginity(target)
 
 	if(target.sexcon.considered_limp())
 		target.sexcon.perform_sex_action(user, 1.2, 3, FALSE, involved_penis = target.getorganslot(ORGAN_SLOT_PENIS))

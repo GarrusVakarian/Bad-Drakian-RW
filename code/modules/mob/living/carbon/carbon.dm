@@ -1,12 +1,6 @@
 /mob/living/carbon/Initialize(mapload)
 	. = ..()
 
-	pain_threshold = HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH) ? ((STAWIL + 5) * 10) : (STAWIL * 10)
-	if(has_flaw(/datum/charflaw/addiction/masochist)) // Masochists handle pain better by about 1 endurance point
-		pain_threshold += 10
-	if(HAS_TRAIT(src, TRAIT_NOPAIN))
-		pain_threshold = 250
-
 	create_reagents(1000)
 	update_body_parts() //to update the carbon's new bodyparts appearance
 	GLOB.carbon_list += src
@@ -223,6 +217,9 @@
 	return
 
 /mob/living/carbon/throw_item(atom/target, offhand = FALSE)
+	if(HAS_TRAIT(src, TRAIT_DEADITE))
+		to_chat(src, span_warning("...What?"))
+		return
 	. = ..()
 	throw_mode_off()
 	if(!target || !isturf(loc))
@@ -252,16 +249,17 @@
 							thrown_range = 4
 						else
 							thrown_range = 1
+						var/turf/start_T = get_turf(loc) //Get the start and target tile for the descriptors
+						var/turf/end_T = get_turf(target)
+						if(start_T && end_T && start_T.z != end_T.z && throwable_mob.cmode && (throwable_mob.mobility_flags & MOBILITY_STAND))
+							to_chat(src, span_warning("They're too tense from combat and standing upright! Tackle them down first!"))
+							stop_looking()
+							return
 						stop_pulling()
 						if(G.grab_state < GRAB_AGGRESSIVE)		//If we have the Giant Virtue, and aren't throwing another Giant, we can do it w/o aggro grab
 							if(HAS_TRAIT(throwable_mob, TRAIT_BIGGUY))
 								return
 							if(!HAS_TRAIT(src,TRAIT_BIGGUY))
-								return
-						var/turf/start_T = get_turf(loc) //Get the start and target tile for the descriptors
-						var/turf/end_T = get_turf(target)
-						if(throwable_mob.cmode)
-							if(start_T.z != end_T.z && throwable_mob.mobility_flags & MOBILITY_STAND)
 								return
 						if(start_T && end_T)
 							log_combat(src, throwable_mob, "thrown", addition="grab from tile in [AREACOORD(start_T)] towards tile at [AREACOORD(end_T)]")
@@ -646,8 +644,17 @@
 
 /mob/living/carbon
 	var/nausea = 0
-	var/pain_threshold = 0
+	/// Last threshold observed for the pain HUD; detects stat/trait changes even without new damage.
+	var/last_pain_hud_threshold = null
 	var/bleeding_tier = 0
+	var/chem_pain = 0
+
+/mob/living/carbon/proc/update_chem_pain()
+	chem_pain = 0
+	for(var/datum/reagent/r in reagents?.reagent_list)
+		if(r.pain && r.metabolizing)
+			chem_pain += r.pain
+	mark_pain_hud_dirty()
 
 /mob/living/carbon/proc/add_nausea(amt)
 	nausea = clamp(nausea + amt, 0, 300)
@@ -891,6 +898,12 @@
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_DARKVISION)
 		see_in_dark = max(see_in_dark, 12)
 
+	if(HAS_TRAIT(src, TRAIT_LIGHT_SENSITIVITY))
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_DARKVISION)
+		see_in_dark = max(see_in_dark, 12)
+		if(HAS_TRAIT(src, TRAIT_DARKVISION))
+			lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_SENSITIVE_DARKVISION)
+
 	if(HAS_TRAIT(src, TRAIT_NOCSHADES))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_NOCSHADES)
 		see_in_dark = max(see_in_dark, 12)
@@ -1062,7 +1075,7 @@
 		clear_fullscreen("oxy")
 
 	var/flash_pain = FALSE
-	var/hurtdamage = ((get_complex_pain() / (STAWIL * 10)) * 100) //what percent out of 100 to max pain
+	var/hurtdamage = ((get_complex_pain() / get_pain_threshold()) * 100) //what percent out of 100 to max pain
 	var/severity = 0
 	switch(hurtdamage)
 		if(-INFINITY to 5)
@@ -1520,3 +1533,26 @@
 	if((cmode) && (mind) && (!handcuffed) && (stat == CONSCIOUS))
 		return 0
 	. = ..()
+
+/// Current tolerance used by periodic pain checks and the heart's pain indicator.
+/mob/living/carbon/proc/get_pain_threshold()
+	if(HAS_TRAIT(src, TRAIT_NOPAIN))
+		return 250
+	var/threshold = STAWIL * 10
+	if(HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH))
+		threshold += 50
+	if(has_flaw(/datum/charflaw/addiction/masochist))
+		threshold += 10
+	if(has_status_effect(/datum/status_effect/buff/battle_cry))
+		threshold += 10
+	return max(threshold, 1)
+
+/// Catch direct stat assignments as well as status/trait changes on the normal life update.
+/mob/living/carbon/proc/refresh_pain_threshold_hud()
+	if(!hud_used)
+		return
+	var/threshold = get_pain_threshold()
+	if(threshold == last_pain_hud_threshold)
+		return
+	last_pain_hud_threshold = threshold
+	mark_pain_hud_dirty()

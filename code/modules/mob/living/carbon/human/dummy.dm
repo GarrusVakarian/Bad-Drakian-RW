@@ -18,6 +18,9 @@ INITIALIZE_IMMEDIATE(/mob/living/carbon/human/dummy)
 	return FALSE
 
 /mob/living/carbon/human/dummy/proc/wipe_state()
+	// Shared portrait mannequins must not pass taur anatomy to the next character.
+	if(get_taur_tail())
+		ensure_not_taur()
 	delete_equipment()
 	cut_overlays(TRUE)
 

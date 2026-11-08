@@ -23,6 +23,10 @@
 	if(ishuman(targets[1]))
 		var/mob/living/carbon/human/human_target = targets[1]
 		human_target.check_for_injuries(user)
+		if(HAS_TRAIT(human_target, TRAIT_DEADITE))
+			to_chat(user, span_necrosis("They are infected and have already turned into a DEADITE!"))
+			to_chat(user, span_infection("Their rot must be cured to prevent them from spreading the infection!"))
+			to_chat(user, span_infection("==="))
 
 		if (human_target.reagents.has_reagent(/datum/reagent/infection/major))
 			to_chat(user, span_boldwarning("Streaks of black and yellow doubtlessly indicate an excess of melancholic humour."))

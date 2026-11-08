@@ -1828,6 +1828,8 @@
 /datum/status_effect/buff/clash
 	id = "clash"
 	duration = 4 SECONDS
+	/// NPCs keep acting normally before they can react to this guard.
+	var/npc_reaction_time
 	var/expired_naturally = FALSE
 	var/sfx_on_apply = 'sound/combat/clash_initiate.ogg'
 	var/swingdelay_mod = 5
@@ -1839,6 +1841,7 @@
 
 //We have a lot of signals as the ability is meant to be interrupted by or interact with a lot of mechanics.
 /datum/status_effect/buff/clash/on_creation(mob/living/new_owner, ...)
+	npc_reaction_time = world.time + 2 SECONDS
 	//!Danger! Zone!
 	//These signals use OVERRIDES and can OVERLAP with anything else using them.
 	//At the moment we have no way of prioritising one signal over the other, it's first-come first-serve. Keep this in mind.
@@ -2425,3 +2428,26 @@
 /atom/movable/screen/alert/status_effect/buff/oath_ring
 	name = "Oathmarked"
 	desc = "The oath drives me forward, so long as the reminder is kept near."
+
+/atom/movable/screen/alert/status_effect/buff/hearty_drinker
+	name = "Hearty Drinker"
+	desc = "Dwarven blood pumps through the veins of all true Hammerholdians!"
+	icon_state = "drunk"
+
+/datum/status_effect/buff/hearty_drinker
+	id = "hearty_drinker"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/hearty_drinker
+	effectedstats = list(STATKEY_LCK = 1)
+	duration = 5 MINUTES
+	status_type = STATUS_EFFECT_REFRESH
+
+/atom/movable/screen/alert/status_effect/buff/battle_cry
+	name = "Battle Cry"
+	desc = "THE MEN OF GRONN NEVER FALTER!"
+	icon_state = "buff"
+
+/datum/status_effect/buff/battle_cry
+	id = "battle_cry"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/battle_cry
+	duration = 1 MINUTES
+	status_type = STATUS_EFFECT_REFRESH

@@ -83,7 +83,7 @@
 
 	// L.client, so NPCs and disconnected bodies stay out of the picker
 	for(var/mob/living/L in hearers)
-		if(L.client && L.stat == CONSCIOUS && L != S)
+		if(L.client && (L.stat == CONSCIOUS || (L.stat == UNCONSCIOUS && L.IsSleeping())) && L != S)
 			if(!L.rogue_sneaking && L.name != "Unknown")
 				recipient_choices += L
 
@@ -116,7 +116,7 @@
 	var/prefix_text = span_prefix("[pfx]:")
 
 	var/msg_reg = "<font color='#9DCCFF'><b>[prefix_text] <EM>[s_name] → [recipient_label]:</EM> <span class='message'>[msg]</span></b></font>"
-	var/msg_adm = "<font color='#9DCCFF'><b>[prefix_text] <EM>[s_name][admin_info] → [recipient_admin_label]:</EM> <span class='message'>[msg]</span></b></font>"
+	var/msg_adm = "<font color='#2F74A8'><b>[prefix_text] <EM>[s_name][admin_info] → [recipient_admin_label]:</EM> <span class='message'>[msg]</span></b></font>"
 	var/msg_rem = "<font color='#2F74A8'><b>(R) [prefix_text] <EM>[s_name][admin_info] → [recipient_admin_label]:</EM> <span class='message'>[msg]</span></b></font>"
 
 	var/list/seen = list()
@@ -237,6 +237,7 @@
 		seen[C] = TRUE
 		var/outgoing_msg = ((C in GLOB.admins) && (C.prefs.admin_chat_toggles & CHAT_ADMINLOOC)) ? msg_adm : msg_reg
 		to_chat(C, outgoing_msg)
+		M.playsound_local(get_turf(M), 'sound/misc/looc_smol.ogg', 30, TRUE)
 
 	for(var/client/C in GLOB.admins)
 		if(seen[C] || !(C.prefs.admin_chat_toggles & CHAT_ADMINLOOC) || !(C.prefs.chat_toggles & CHAT_OOC))

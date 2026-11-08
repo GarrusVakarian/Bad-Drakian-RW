@@ -18,6 +18,9 @@
 /datum/sprite_accessory/pubes/get_icon_state(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	return "[icon_state]_[get_pubes_suffix(owner)]"
 
+/datum/sprite_accessory/pubes/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
+	adjust_exposed_genital_layers(appearance_list, owner)
+
 /datum/sprite_accessory/pubes/is_visible(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	if(owner.sexcon && owner.sexcon.bottom_exposed == TRUE)
 		return TRUE
