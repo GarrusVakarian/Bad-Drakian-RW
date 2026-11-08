@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - sound: "Regular/hurricane tornadoes get quieter the farther away they are."
