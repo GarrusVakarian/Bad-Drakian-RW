@@ -249,6 +249,9 @@
   - bugfix: Fixed missing porcelain teapot sprites and liquid visuals for ceramic
       and porcelain teacups.
   - sound: Regular/hurricane tornadoes get quieter the farther away they are.
+  - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by\
+      \ Astrata\u2019s curse."
+  - bugfix: Oozes now use their selected accent and speech mannerism in spoken chat.
   mypingishuge:
   - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
       35 minutes before its first increase."

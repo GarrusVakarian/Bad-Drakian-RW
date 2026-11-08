@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by Astrata’s curse."
