@@ -248,6 +248,7 @@
   _Rarity:
   - bugfix: Fixed missing porcelain teapot sprites and liquid visuals for ceramic
       and porcelain teacups.
+  - sound: Regular/hurricane tornadoes get quieter the farther away they are.
   mypingishuge:
   - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
       35 minutes before its first increase."
