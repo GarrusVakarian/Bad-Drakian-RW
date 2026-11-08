@@ -389,7 +389,9 @@
 		/datum/sprite_accessory/snout/front/drama1,
 		/datum/sprite_accessory/snout/front/drama2,
 		/datum/sprite_accessory/snout/front/noccite,
-		)
+		/datum/sprite_accessory/snout/orca,
+		/datum/sprite_accessory/snout/owl,
+	)
 
 /datum/customizer/organ/snout/akula
 	customizer_choices = list(/datum/customizer_choice/organ/snout/akula)
