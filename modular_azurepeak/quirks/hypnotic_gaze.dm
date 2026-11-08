@@ -125,6 +125,7 @@
 	action_icon = 'icons/mob/actions/hypnotic_gaze.dmi'
 	action_icon_state = "hypnosis"
 	overlay_state = "hypnosis"
+	hide_charge_effect = TRUE
 	desc = "Hold another's gaze for ten seconds. Your next words they hear become a lasting suggestion. Cast again to release an existing suggestion."
 	range = 2
 	chargetime = 1 SECONDS

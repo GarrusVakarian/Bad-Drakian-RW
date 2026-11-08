@@ -158,7 +158,7 @@
 		list("id" = "cursed_collars", "label" = "Enable Cursed Collars", "enabled" = !!owner.prefs.cursed_collarable, "desc" = "Allow others to equip a cursed collar on you."),
 		list("id" = "milkable", "label" = "Enable Breast Milking", "enabled" = !!owner.prefs.milkable, "desc" = "Allow other players to milk your breasts if lactating. You can still milk yourself when disabled. Only applies to clicking chest with a reagent container, NOT lactation during sex actions."),
 		list("id" = "manticore_tail_messages", "label" = "Tailmaws", "enabled" = !!owner.prefs.manticore_tail_messages, "desc" = "Show flavor messages from your manticore tail when moving or during intimate actions, and see tail maw descriptions when examining others."),
-		list("id" = "hypnosis_content", "label" = "Enable Hypnosis Content", "enabled" = !!owner.prefs.hypnosis_content, "desc" = "Show hypnosis examine text and allow casting and receiving Hypnotic Gaze. Disabling clears your current hypnosis effect."),
+		list("id" = "hypnosis_content", "label" = "Enable Hypnosis Content", "enabled" = !!owner.prefs.hypnosis_content, "desc" = "Show hypnosis examine text and allow casting and receiving hypnotic spells. Disabling clears your current hypnosis effect."),
 	)
 
 	data["categories"] = list(
