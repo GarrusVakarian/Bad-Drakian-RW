@@ -337,7 +337,7 @@
 	target_mind_ref = WEAKREF(target_mind)
 	caster_mind_ref = WEAKREF(caster_mind)
 	target_mind.hypnotic_suggestion = src
-	RegisterSignal(target_mind, COMSIG_QDELETING, PROC_REF(owner_deleted))
+	RegisterSignal(target_mind, list(COMSIG_QDELETING, COMSIG_MIND_PERMANENT_DEPARTURE), PROC_REF(clear_suggestion))
 	RegisterSignal(caster_mind, COMSIG_QDELETING, PROC_REF(caster_deleted))
 	bind_body(target_mind.current)
 	pending_timer = addtimer(CALLBACK(src, PROC_REF(expire_pending)), HYPNOTIC_GAZE_PENDING_TIME, TIMER_STOPPABLE)
@@ -389,7 +389,7 @@
 	SIGNAL_HANDLER
 	unbind_body()
 
-/datum/hypnotic_suggestion/proc/owner_deleted()
+/datum/hypnotic_suggestion/proc/clear_suggestion()
 	SIGNAL_HANDLER
 	qdel(src)
 
@@ -465,7 +465,7 @@
 	var/datum/mind/target_mind = target_mind_ref?.resolve()
 	var/datum/mind/caster_mind = caster_mind_ref?.resolve()
 	if(target_mind)
-		UnregisterSignal(target_mind, COMSIG_QDELETING)
+		UnregisterSignal(target_mind, list(COMSIG_QDELETING, COMSIG_MIND_PERMANENT_DEPARTURE))
 		if(target_mind.hypnotic_suggestion == src)
 			target_mind.hypnotic_suggestion = null
 	if(caster_mind)
