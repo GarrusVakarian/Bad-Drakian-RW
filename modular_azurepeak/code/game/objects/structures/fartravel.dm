@@ -90,6 +90,8 @@
 		var/list/embeds = departing_mob.get_embedded_objects()
 		for(var/thing in embeds)
 			QDEL_NULL(thing)
+	if(departing_mob.mind)
+		SEND_SIGNAL(departing_mob.mind, COMSIG_MIND_PERMANENT_DEPARTURE)
 	if(departing_mob.client)
 		// Move players to lobby/new_player so they can choose if they want to spectate. For potential latency reduction
 		departing_mob.returntolobby()

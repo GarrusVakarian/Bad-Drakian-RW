@@ -245,3 +245,24 @@
   _Rairty:
   - bugfix: Fellowship members now keep their Blockade Defense and Hoard Recovery
       Triumph eligibility after wildshaping.
+  _Rarity:
+  - bugfix: Fixed missing porcelain teapot sprites and liquid visuals for ceramic
+      and porcelain teacups.
+  - sound: Regular/hurricane tornadoes get quieter the farther away they are.
+  - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by\
+      \ Astrata\u2019s curse."
+  - bugfix: Oozes now use their selected accent and speech mannerism in spoken chat.
+  - bugfix: "Viciously mocking a Baron or Baroness now counts toward Xylix\u2019s\
+      \ Mock Monarch objective."
+  mypingishuge:
+  - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
+      35 minutes before its first increase."
+  - bugfix: "Using the knuckles\u2019 Upper Cut no longer resets your sprite size\
+      \ or vertical offset."
+  - bugfix: Sleepless characters retain Fatal Insomnia after shapeshifting or having
+      Astrata's curse removed.
+  - rscadd: Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and
+      a spell that plants lasting suggestions. Enable Hypnosis Content in Content
+      Toggles to participate.
+  - rscadd: Added Hypnotic Presence, a consent-based alternative to Hypnotic Gaze
+      that does not require exposed eyes. The quirks are mutually exclusive.

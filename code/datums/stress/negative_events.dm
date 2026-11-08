@@ -17,6 +17,7 @@
 	desc = list(span_boldred("I need someone to HURT me."),span_boldred("I crave the sensation of pain."))
 
 /datum/stressevent/vice/greedy
+	stressadd = 4
 	desc = list(span_boldred("I need more mammons..."),span_boldred("What I have is not enough!"))
 
 /datum/stressevent/vice/alcoholic

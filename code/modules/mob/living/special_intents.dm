@@ -946,26 +946,32 @@ SPECIALS START HERE
 	var/KD_dur = 1 SECONDS
 	var/self_immob_dur = 1.5 SECONDS
 	var/dam = 50
-	var/pixel_z
-	var/prev_pixel_z
-	var/prev_transform
-	var/transform
 
 
 /datum/special_intent/upper_cut/on_create()
 	. = ..()
-	
+	if(QDELETED(howner))
+		return
+
 	howner.OffBalance(self_immob_dur)
 	howner.Immobilize(self_immob_dur)
-	animate(howner, pixel_z = pixel_z - 4, time = 3) // windup
+	// Keep the windup self-contained so a missed/cancelled attack cannot leave us crouched.
+	var/start_pixel_z = howner.pixel_z
+	animate(howner, pixel_z = start_pixel_z - 4, time = 3)
+	animate(pixel_z = start_pixel_z, time = 3)
 	dam = initial(dam)
 	playsound(howner, 'sound/combat/ground_smash_start.ogg', 100, TRUE)
 
 /datum/special_intent/upper_cut/apply_hit(turf/T)
+	if(QDELETED(howner))
+		return
 
-	animate(howner, pixel_z = pixel_z + 12, time = 2) //shoryuken
-	animate(pixel_z = prev_pixel_z, transform = turn(transform, pick(-12, 0, 12)), time=2)
-	animate(transform = prev_transform, time = 0)
+	// Snapshot this attacker's appearance when the hit begins, not on the shared intent.
+	var/start_pixel_z = howner.pixel_z
+	var/matrix/start_transform = matrix(howner.transform)
+	animate(howner, pixel_z = start_pixel_z + 12, time = 2) //shoryuken
+	animate(pixel_z = start_pixel_z, transform = turn(start_transform, pick(-12, 0, 12)), time = 2)
+	animate(transform = start_transform, time = 0)
 
 	for(var/mob/living/L in get_hearers_in_view(0, T))
 		if(L != howner)
