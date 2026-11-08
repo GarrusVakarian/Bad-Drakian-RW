@@ -24,7 +24,8 @@
 
 /datum/objective/mock/monarch/on_mock_used(datum/source, mob/living/victim)
 	. = ..()
-	if((istype(victim.mind?.assigned_role, /datum/job/roguetown/lord) || victim.job == "Grand Duke") && (source == owner.current))
+	var/datum/job/victim_role = victim.mind?.assigned_role
+	if((istype(victim_role, /datum/job/roguetown/lord) || istype(victim_role, /datum/job/roguetown/baron) || victim.job == "Grand Duke") && (source == owner.current))
 		to_chat(owner.current, span_greentext("You have mocked the monarch and completed the objective!"))
 		owner.current.adjust_triumphs(1)
 		completed = TRUE
