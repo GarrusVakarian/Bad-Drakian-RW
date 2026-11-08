@@ -492,7 +492,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/greedy
 	name = "Greedy"
-	desc = "I can't get enough of mammons, I need more and more! I've also become good at knowing how much things are worth"
+	desc = "I need more and more mammons, whether carried or saved in the bank! I've also become good at knowing how much things are worth."
 	var/last_checked_mammons = 0
 	var/required_mammons = 0
 	var/next_mammon_increase = 0
@@ -501,7 +501,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	var/extra_increment_value = 0
 
 /datum/charflaw/greedy/on_mob_creation(mob/user)
-	next_mammon_increase = world.time + rand(15 MINUTES, 25 MINUTES)
+	next_mammon_increase = world.time + rand(25 MINUTES, 35 MINUTES)
 	last_passed_check = world.time
 	ADD_TRAIT(user, TRAIT_SEEPRICES_SHITTY, "[type]")
 
@@ -514,8 +514,14 @@ GLOBAL_LIST_INIT(character_flaws, list(
 		mammon_increase(user)
 	mammon_check(user)
 
+/// Count personal wealth consistently so deposits and withdrawals do not change satisfaction.
+/datum/charflaw/greedy/proc/get_total_mammons(mob/living/carbon/human/user)
+	if(!user)
+		return 0
+	return get_mammons_in_atom(user) + SStreasury.get_balance(user)
+
 /datum/charflaw/greedy/proc/determine_starting_mammons(mob/living/carbon/human/user)
-	var/starting_mammons = get_mammons_in_atom(user)
+	var/starting_mammons = get_total_mammons(user)
 	required_mammons = round(starting_mammons * 0.7)
 	extra_increment_value = round(starting_mammons * 0.15)
 
@@ -527,7 +533,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 		required_mammons += rand(25, 35) + extra_increment_value
 	required_mammons = min(required_mammons, 250) //Cap at 250 coins maximum
 	next_mammon_increase = world.time + rand(35 MINUTES, 40 MINUTES)
-	var/current_mammons = get_mammons_in_atom(user)
+	var/current_mammons = get_total_mammons(user)
 	if(current_mammons >= required_mammons)
 		to_chat(user, span_blue("I'm quite happy with the amount of mammons I have..."))
 	else
@@ -536,7 +542,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	last_checked_mammons = current_mammons
 
 /datum/charflaw/greedy/proc/mammon_check(mob/living/carbon/human/user)
-	var/new_mammon_amount = get_mammons_in_atom(user)
+	var/new_mammon_amount = get_total_mammons(user)
 	var/ascending = (new_mammon_amount > last_checked_mammons)
 
 	var/do_update_msg = TRUE
@@ -571,7 +577,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /atom/movable/screen/alert/status_effect/debuff/addiction/greedy
 	name = "Greed"
-	desc = "My coinpurse doesn't jingle. Why even lyve?"
+	desc = "My coins and savings aren't enough. Why even lyve?"
 	icon_state = "greedy"
 
 /datum/charflaw/narcoleptic
