@@ -261,3 +261,6 @@
       \ or vertical offset."
   - bugfix: Sleepless characters retain Fatal Insomnia after shapeshifting or having
       Astrata's curse removed.
+  - rscadd: Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and
+      a spell that plants lasting suggestions. Enable Hypnosis Content in Content
+      Toggles to participate.
