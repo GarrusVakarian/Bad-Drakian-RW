@@ -430,6 +430,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/roleplay_ad
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
+	/// Null for existing accounts, otherwise "pending" or "shown" for the first-login tip.
+	var/content_toggles_intro
 	var/tmp/character_sheet_notice_generation = 0
 
 	var/rumour
@@ -489,6 +491,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/is_new_preferences_account = istype(C) && (!path || !fexists(path))
 	var/loaded_preferences_successfully = load_preferences()
 	if(is_new_preferences_account && !loaded_preferences_successfully)
+		if(path)
+			content_toggles_intro = "pending"
 		acknowledge_current_character_sheet_features()
 	if(loaded_preferences_successfully)
 		if(load_character())
@@ -665,7 +669,16 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /// The constructor's existing save_preferences() call persists this in one write.
 /datum/preferences/proc/acknowledge_current_character_sheet_features()
 	for(var/feature_id in get_character_sheet_features())
+		if(feature_id == "content_toggles" && content_toggles_intro == "pending")
+			continue
 		seen_character_sheet_features[feature_id] = TRUE
+
+/datum/preferences/proc/show_content_toggles_intro()
+	if(content_toggles_intro != "pending")
+		return
+	content_toggles_intro = "shown"
+	to_chat(parent, span_notice("Open <a href='byond://winset?command=Toggles'><b>Content Toggles</b></a> below Keybinds in the upper-right corner of the character sheet to adjust your gameplay, display, sound, and content/consent preferences. The <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> guide in the Encyclopedia covers choosing your first role, essential controls, some basic lore, and more!"))
+	save_preferences()
 
 /datum/preferences/proc/character_sheet_feature_is_new(feature_id)
 	if(!istext(feature_id))
@@ -746,6 +759,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		return
 	var/list/features = get_character_sheet_features()
 	for(var/feature_id in features)
+		if(feature_id == "content_toggles" && content_toggles_intro)
+			continue
 		if(!character_sheet_feature_is_new(feature_id))
 			continue
 		var/datum/character_sheet_feature/feature = features[feature_id]
