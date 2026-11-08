@@ -268,6 +268,8 @@
       that does not require exposed eyes. The quirks are mutually exclusive.
   - rscadd: Revenants can choose the missing Wild-Kin customization options, including
       taur bodies, antennae, neck fluff, additional animal features and markings.
+  - rscadd: Tailed species can enable optional Tailmaw customization, including a
+      no-sprite option that keeps their existing tail appearance.
   mypingishuge <3 _Rarity:
   - qol: Fresh accounts don't get spammed with NEW badges and reminders for features
       that already exist when they first join.
