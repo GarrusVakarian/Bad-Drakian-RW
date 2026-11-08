@@ -264,3 +264,5 @@
   - rscadd: Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and
       a spell that plants lasting suggestions. Enable Hypnosis Content in Content
       Toggles to participate.
+  - rscadd: Added Hypnotic Presence, a consent-based alternative to Hypnotic Gaze
+      that does not require exposed eyes. The quirks are mutually exclusive.
