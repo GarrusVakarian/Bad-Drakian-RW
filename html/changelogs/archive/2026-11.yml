@@ -241,3 +241,7 @@
   - rscadd: (WeNeedMorePhoron) Clearing a blockade or completing hoard recovery grants
       1 Triumph to its fellowship and living players within 15 tiles of the coin recipient,
       with an explanatory chat message. Each account is rewarded once per writ.
+2026-11-08:
+  _Rairty:
+  - bugfix: Fellowship members now keep their Blockade Defense and Hoard Recovery
+      Triumph eligibility after wildshaping.
