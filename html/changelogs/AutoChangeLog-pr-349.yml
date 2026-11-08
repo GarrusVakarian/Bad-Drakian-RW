@@ -1,0 +1,4 @@
+author: "_Rairty"
+delete-after: True
+changes:
+  - bugfix: "Fellowship members now keep their Blockade Defense and Hoard Recovery Triumph eligibility after wildshaping."
