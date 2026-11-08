@@ -818,7 +818,6 @@
 	pottery_fragile = TRUE
 	obj_flags = CAN_BE_HIT|UNIQUE_RENAME
 	sellprice = 25
-	var/porcelain_fill_icon_state = "cup_porcelainfilling"
 
 /obj/item/reagent_containers/glass/cup/porcelain/update_icon(dont_fill=FALSE)
 	testing("cupupdate")
@@ -826,7 +825,7 @@
 	cut_overlays()
 
 	if(reagents.total_volume)
-		var/mutable_appearance/filling = mutable_appearance(icon, porcelain_fill_icon_state)
+		var/mutable_appearance/filling = mutable_appearance(icon, "[icon_state]_filling")
 
 		filling.color = mix_color_from_reagents(reagents.reagent_list)
 		filling.alpha = mix_alpha_from_reagents(reagents.reagent_list)
