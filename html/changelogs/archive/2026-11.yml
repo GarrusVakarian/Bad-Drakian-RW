@@ -253,3 +253,5 @@
       35 minutes before its first increase."
   - bugfix: "Using the knuckles\u2019 Upper Cut no longer resets your sprite size\
       \ or vertical offset."
+  - bugfix: Sleepless characters retain Fatal Insomnia after shapeshifting or having
+      Astrata's curse removed.

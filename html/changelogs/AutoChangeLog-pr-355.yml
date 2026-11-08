@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Sleepless characters retain Fatal Insomnia after shapeshifting or having Astrata's curse removed."
