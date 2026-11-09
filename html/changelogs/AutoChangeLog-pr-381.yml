@@ -1,0 +1,5 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Shift-click the eye HUD to close your eyes and stay awake."
+  - qol: "Automatic snores during sleep no longer appear in chat."
