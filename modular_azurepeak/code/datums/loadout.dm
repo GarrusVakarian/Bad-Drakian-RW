@@ -179,6 +179,11 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/storage/roguebag
 	triumph_cost = 1
 
+/datum/loadout_item/polishing_brush
+	name = "Polishing Brush"
+	path = /obj/item/armor_brush
+	triumph_cost = 1
+
 /datum/loadout_item/mallet
 	name = "Wooden Mallet"
 	path = /obj/item/rogueweapon/hammer/wood
