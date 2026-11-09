@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Removed the empty Parent loadout datum entry from loadout selection."
