@@ -71,22 +71,23 @@
 		return
 	if(recipient.mind?.has_spell(/obj/effect/proc_holder/spell/invoked/hypnotic_gaze))
 		return
-	recipient.hypnotic_presence = is_presence
+	var/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/spell = new hypnotic_spell_type
 	if(is_presence)
-		recipient.hypnotic_gaze_text = sanitize_hypnotic_presence_text(recipient.client?.prefs?.hypnotic_presence_text)
-		recipient.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_presence_style)
+		spell.presentation_text = sanitize_hypnotic_presence_text(recipient.client?.prefs?.hypnotic_presence_text)
+		spell.presentation_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_presence_style)
 	else
-		recipient.hypnotic_gaze_text = sanitize_hypnotic_gaze_text(recipient.client?.prefs?.hypnotic_gaze_text)
-		recipient.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_gaze_style)
+		spell.presentation_text = sanitize_hypnotic_gaze_text(recipient.client?.prefs?.hypnotic_gaze_text)
+		spell.presentation_style = sanitize_hypnotic_gaze_style(recipient.client?.prefs?.hypnotic_gaze_style)
 	if(recipient.mind)
-		recipient.mind.AddSpell(new hypnotic_spell_type)
+		recipient.mind.AddSpell(spell)
 	else
-		recipient.AddSpell(new hypnotic_spell_type)
+		recipient.AddSpell(spell)
 
 /mob/living/carbon/human
 	var/hypnotic_gaze_text
 	var/hypnotic_gaze_style = "Hypnotext"
 	var/hypnotic_presence = FALSE
+	var/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/hypnotic_presentation_source
 	var/datum/hypnotic_gaze_channel/hypnotic_gaze_channel
 
 // Use current eye-cover flags, not identity hiding or merely occupying the mask slot.
@@ -120,6 +121,9 @@
 
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze
 	name = "Hypnotic Gaze"
+	base_action = /datum/action/spell_action/spell/hypnosis
+	var/presentation_text
+	var/presentation_style = "Hypnotext"
 	// Spiral: tgstation/tgstation, icons/hud/screen_alert.dmi, state "hypnosis".
 	// Scaled down and clipped to a transparent 20px circle within the 32px HUD tile.
 	action_icon = 'icons/mob/actions/hypnotic_gaze.dmi'
@@ -163,6 +167,31 @@
 // Keep the preparatory mouse charge at exactly one second.
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/get_chargetime()
 	return chargetime
+
+// The spell follows the mind; body-local examine fields must follow its action owner too.
+/datum/action/spell_action/spell/hypnosis/Grant(mob/M)
+	. = ..()
+	if(owner != M || !ishuman(M) || QDELETED(target))
+		return
+	var/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/spell = target
+	if(!istype(spell) || isnull(spell.presentation_text))
+		return
+	var/mob/living/carbon/human/H = M
+	H.hypnotic_presentation_source = spell
+	H.hypnotic_presence = !spell.requires_eye_contact
+	H.hypnotic_gaze_text = H.hypnotic_presence ? sanitize_hypnotic_presence_text(spell.presentation_text) : sanitize_hypnotic_gaze_text(spell.presentation_text)
+	H.hypnotic_gaze_style = sanitize_hypnotic_gaze_style(spell.presentation_style)
+
+/datum/action/spell_action/spell/hypnosis/Remove(mob/M)
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		// Do not erase another hypnosis spell's presentation during replacement/cleanup.
+		if(H.hypnotic_presentation_source == target)
+			H.hypnotic_presentation_source = null
+			H.hypnotic_gaze_text = null
+			H.hypnotic_gaze_style = "Hypnotext"
+			H.hypnotic_presence = FALSE
+	return ..()
 
 // A channel is not a cooldown, and neither stats nor Leyline Haste alter these times.
 /obj/effect/proc_holder/spell/invoked/hypnotic_gaze/process()
