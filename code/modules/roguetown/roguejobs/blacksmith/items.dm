@@ -109,7 +109,8 @@
 		if(2, 3)
 			. += span_info("It's been thoroughly brushed.")
 		if(4)
-			. += span_green("It's been nicely polished.")
+			if(polish_bonus > 0)
+				. += span_green("It's been nicely polished.")
 	if(shoddy_repair)
 		. += span_warning("This item has been field-repaired and needs to be fixed by a proper craftsman.")
 
