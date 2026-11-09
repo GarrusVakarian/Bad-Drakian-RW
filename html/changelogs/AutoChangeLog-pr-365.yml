@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Werewolf transformation creates properly registered organs instead of invalid organ entries."
+  - bugfix: "Examine descriptions omit empty fragments and punctuate standalone descriptions."
