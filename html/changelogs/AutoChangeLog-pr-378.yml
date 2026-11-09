@@ -1,0 +1,5 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - rscadd: "you can now make grenzelhoftian gloves"
+  - balance: "it now takes one extra fiber to craft fingerless leather gloves, diminishing the returns from infinitely crafting and snipping them"
