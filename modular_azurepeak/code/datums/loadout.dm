@@ -13,6 +13,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	var/name = "Parent loadout datum"
 	var/desc
 	var/path
+	/// Optional menu category override for items whose type does not describe their purpose.
+	var/sort_category
 	var/donoritem			//autoset on new if null
 	var/list/ckeywhitelist
 	var/triumph_cost
@@ -101,6 +103,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/custom_book
 	name = "Custom Book"
 	path = /obj/item/paper/scroll/custom
+	sort_category = "Books & Music"
 
 /datum/loadout_item/hand_mirror
 	name = "Hand Mirror"
@@ -1443,6 +1446,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/decorative_captain_robe
 	name = "Decorative Flowery Robe"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast/captainrobe/decorative
+	sort_category = "Clothing"
 
 /datum/loadout_item/mentor_suit
 	name = "Eastern Mentor Suit"
@@ -1451,6 +1455,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/decorative_mentor_suit
 	name = "Decorative Mentor Robe"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast/mentorsuit/decorative
+	sort_category = "Clothing"
 
 /datum/loadout_item/crafteast
 	name = "Eastern Craft Robe"
@@ -2193,6 +2198,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/tri_naledi_staff
 	name = "Naledi Staff (Decorative)"
 	path = /obj/item/rogueweapon/woodstaff/decorative
+	sort_category = "Accessories"
 	triumph_cost = 3
 
 
@@ -2478,6 +2484,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/parasol
 	name = "Paper Parasol"
 	path = /obj/item/rogueweapon/mace/parasol
+	sort_category = "Accessories"
 	triumph_cost = 3
 
 /datum/loadout_item/scabbard
