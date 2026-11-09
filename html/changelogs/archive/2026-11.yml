@@ -278,6 +278,9 @@
   - rscadd: you can now make grenzelhoftian gloves
   - balance: it now takes one extra fiber to craft fingerless leather gloves, diminishing
       the returns from infinitely crafting and snipping them
+  _Rarity:
+  - rscadd: Shift-click the eye HUD to close your eyes and stay awake.
+  - qol: Automatic snores during sleep no longer appear in chat.
   mypingishuge:
   - bugfix: Hypnosis consent toggle messages now match the style of other consent
       toggles.
