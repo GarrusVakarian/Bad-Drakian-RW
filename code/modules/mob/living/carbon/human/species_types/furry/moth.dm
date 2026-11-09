@@ -2,6 +2,10 @@
 	race = /datum/species/moth
 
 /datum/species/moth
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Fluvian"
 	id = "moth"
 	desc = "<b>Fluvian</b><br> \

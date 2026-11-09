@@ -435,6 +435,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/roleplay_ad
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
+	/// Cached account-wide discovery eligibility, persisted after the first saved-character scan.
+	var/digitigrade_big_legs_notice_eligible = null
+
 	/// Null for existing accounts, otherwise "pending" or "shown" for the first-login tip.
 	var/content_toggles_intro
 	var/tmp/character_sheet_notice_generation = 0
@@ -664,6 +667,39 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/character_sheet_feature/sprite_offset/is_eligible(datum/preferences/preferences)
 	return !preferences.features["body_center_offset"]
 
+/datum/character_sheet_feature/digitigrade_big_legs
+	id = "digitigrade_big_legs"
+	label = "Taur Body Type"
+	explanation = "You have a character that can now choose Digitigrade Big Legs or Digitigrade Big Legs, Stanced. Select a compatible character to view the options."
+	location = "below Body Type in character setup for compatible races"
+
+/datum/character_sheet_feature/digitigrade_big_legs/is_eligible(datum/preferences/preferences)
+	return preferences.has_saved_digitigrade_big_legs_character()
+
+/// Evaluate the account's existing characters once, without loading or changing the active slot.
+/datum/preferences/proc/has_saved_digitigrade_big_legs_character()
+	if(!isnull(digitigrade_big_legs_notice_eligible))
+		return digitigrade_big_legs_notice_eligible
+	var/static/list/affected_species = list("Axian", "Drakian", "Harpy", "Sissean", "Lupian", "Fluvian", "Tabaxi", "Venardine", "Aasimar", "Tiefling")
+	digitigrade_big_legs_notice_eligible = FALSE
+	if(path && fexists(path))
+		var/savefile/S = new /savefile(path)
+		S.cd = "/"
+		var/list/directories = S.dir.Copy()
+		for(var/directory in directories)
+			if(copytext(directory, 1, 10) != "character" || text2num(copytext(directory, 10)) < 1)
+				continue
+			S.cd = "/[directory]"
+			var/character_name
+			var/species_name
+			S["real_name"] >> character_name
+			S["species"] >> species_name
+			if(istext(character_name) && length(trim(character_name)) && istext(species_name) && (species_name in affected_species))
+				digitigrade_big_legs_notice_eligible = TRUE
+				break
+	save_preferences()
+	return digitigrade_big_legs_notice_eligible
+
 /datum/character_sheet_feature/revenant_customization
 	id = "revenant_customization"
 	label = "Revenant Customization"
@@ -766,12 +802,15 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/previous_directory = S.cd
 	S.cd = "/"
 	var/saved_state
+	var/saved_digitigrade_eligibility
 	var/saved_revenant_eligibility
 	if("feature_discovery" in S.dir)
 		S.cd = "/feature_discovery"
 		S["seen_features"] >> saved_state
+		S["digitigrade_big_legs_eligible"] >> saved_digitigrade_eligibility
 		S["revenant_customization_eligible"] >> saved_revenant_eligibility
 	S.cd = previous_directory
+	digitigrade_big_legs_notice_eligible = isnum(saved_digitigrade_eligibility) && (saved_digitigrade_eligibility == TRUE || saved_digitigrade_eligibility == FALSE) ? saved_digitigrade_eligibility : null
 	revenant_customization_eligible = isnum(saved_revenant_eligibility) ? !!saved_revenant_eligibility : null
 	seen_character_sheet_features = list()
 	if(islist(saved_state))
@@ -1011,7 +1050,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			if(LAZYLEN(pref_species.allowed_taur_types))
 				var/obj/item/bodypart/taur/T = taur_type
 				var/name = ispath(T) ? T::name : "None"
-				dat += "<b>Taur Body Type:</b> " + character_sheet_feature_link("revenant_customization", "?_src_=prefs;preference=taur_type;task=input", "Choose your taur body. Revenants now have Wild-Kin taur options.", name) + "<BR>"
+				var/taur_feature_id = character_sheet_feature_is_new("digitigrade_big_legs") ? "digitigrade_big_legs" : "revenant_customization"
+				dat += "<b>Taur Body Type:</b> [character_sheet_feature_link(taur_feature_id, "?_src_=prefs;preference=taur_type;task=input", "Choose a lower-body appearance", name)]<BR>"
 				dat += "<b>Taur Color:</b> <span style='border: 1px solid #161616; background-color: #[taur_color];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_color;task=input'>Change</a><BR>"
 				dat += "<b>Taur Markings:</b> <span style='border: 1px solid #161616; background-color: #[taur_markings];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_markings;task=input'>Change</a><BR>"
 				dat += "<b>Taur Tertiary:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
@@ -2388,8 +2428,14 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						to_chat(user, span_bad("There are no available taur bodies for this species."))
 						return
 
+					var/taur_notice_dismissed = FALSE
+					if(character_sheet_feature_is_new("digitigrade_big_legs"))
+						taur_notice_dismissed = mark_character_sheet_feature_seen("digitigrade_big_legs")
 					if(mark_character_sheet_feature_seen("revenant_customization"))
+						taur_notice_dismissed = TRUE
+					if(taur_notice_dismissed)
 						refresh_character_sheet_if_open(user)
+
 					var/list/taur_selection
 					if(pref_species.forced_taur)
 						taur_selection = list()
