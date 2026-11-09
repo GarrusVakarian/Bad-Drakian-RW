@@ -277,3 +277,4 @@
   mypingishuge:
   - bugfix: Hypnosis consent toggle messages now match the style of other consent
       toggles.
+  - rscadd: Adds Chisel to the loadout menu for 2 loadout points.
