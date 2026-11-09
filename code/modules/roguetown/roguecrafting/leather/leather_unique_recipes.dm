@@ -45,6 +45,18 @@
 	sellprice = 15
 	display_category = ITEM_CAT_ARMOR_BOOTS
 
+/datum/crafting_recipe/roguetown/leather/unique/grenzelgloves
+	name = "grenzelhoftian gloves"
+	result = list(/obj/item/clothing/gloves/roguetown/angle/grenzelgloves)
+	reqs = list(/obj/item/natural/hide/cured = 1,
+				/obj/item/reagent_containers/food/snacks/tallow = 1,
+				/obj/item/natural/fur = 1,
+				/obj/item/natural/fibers = 1)
+	tools = list(/obj/item/needle)
+	craftdiff = 6
+	sellprice = 15
+	display_category = ITEM_CAT_ARMOR_GLOVES
+
 /datum/crafting_recipe/roguetown/leather/unique/otavanleatherpants
 	name = "otavan leather trousers"
 	result = list(/obj/item/clothing/under/roguetown/heavy_leather_pants/otavan)
