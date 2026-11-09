@@ -273,3 +273,7 @@
   mypingishuge <3 _Rarity:
   - qol: Fresh accounts don't get spammed with NEW badges and reminders for features
       that already exist when they first join.
+2026-11-09:
+  mypingishuge:
+  - bugfix: Hypnosis consent toggle messages now match the style of other consent
+      toggles.

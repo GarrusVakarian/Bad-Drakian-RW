@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Hypnosis consent toggle messages now match the style of other consent toggles."
