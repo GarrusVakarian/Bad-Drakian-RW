@@ -47,10 +47,18 @@
 	return TRUE
 
 /datum/mob_descriptor/proc/get_standalone_text(mob/living/described, mob/watcher)
-	return "%THEY% [get_coalesce_text(described, null, watcher)]"
+	var/text = get_coalesce_text(described, null, watcher)
+	var/visible_text = mob_descriptor_visible_text(text)
+	if(!length(visible_text))
+		return
+	var/last_character = copytext_char(visible_text, -1)
+	return "%THEY% [text][findtext(".!?", last_character) ? "" : "."]"
 
 /datum/mob_descriptor/proc/get_coalesce_text(mob/living/described, list/used_verbage, mob/watcher)
-	var/descriptor_text = "[should_add_verbage(described, used_verbage) ? "[get_verbage(described)] " : ""][get_pre_string(described)][get_description_for_watcher(described, watcher)][post_string]"
+	var/description = get_description_for_watcher(described, watcher)
+	if(!length(mob_descriptor_visible_text(description)))
+		return
+	var/descriptor_text = "[should_add_verbage(described, used_verbage) ? "[get_verbage(described)] " : ""][get_pre_string(described)][description][post_string]"
 	var/color = get_descriptor_color(described, watcher)
 	if(color)
 		return "<span style='color:[color]'>[descriptor_text]</span>"
@@ -78,3 +86,12 @@
 /datum/mob_descriptor/proc/user_allows_descriptor_color(mob/user)
 	var/datum/preferences/viewer_preferences = user?.client?.prefs
 	return !viewer_preferences || viewer_preferences.descriptor_color
+
+/// Inspect visible content without changing descriptor markup or viewer-specific colors.
+/proc/mob_descriptor_visible_text(text)
+	if(!istext(text))
+		return ""
+	if(findtext(text, "<"))
+		var/static/regex/html_tags = regex("<\[^>\]*>", "g")
+		text = html_tags.Replace(text, "")
+	return trim(html_decode(text))
