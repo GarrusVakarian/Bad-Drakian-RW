@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Masterwork items no longer claim to be nicely polished unless their polishing bonus has actually been applied."
