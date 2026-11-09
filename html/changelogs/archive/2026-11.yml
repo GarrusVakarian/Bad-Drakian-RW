@@ -296,6 +296,11 @@
   - rscadd: Lamias can now choose from 50 horn styles and the same ear and snout choices
       as Wild-Kin.
   - bugfix: Removed the empty Parent loadout datum entry from loadout selection.
+  - bugfix: Hypnotic Gaze and Hypnotic Presence keep their custom examine text and
+      color when transforming and reverting.
+  - bugfix: Werewolf transformation creates properly registered organs instead of
+      invalid organ entries.
+  - bugfix: Examine descriptions omit empty fragments and punctuate standalone descriptions.
   mypingishuge <3 _Rarity:
   - bugfix: Equipment tooltips now preserve line breaks, bold text, and italics in
       item descriptions.
