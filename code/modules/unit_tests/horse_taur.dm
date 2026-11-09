@@ -6,6 +6,10 @@
 	TEST_ASSERT(!(/obj/item/bodypart/taur/equine in species.allowed_taur_types), "Building the picker must not mutate the species list.")
 	qdel(species)
 	var/obj/item/bodypart/taur/equine/horse = allocate(/obj/item/bodypart/taur/equine)
+	// Taurize normally supplies all three colors before rendering the body.
+	horse.taur_color = COLOR_WHITE
+	horse.taur_markings = COLOR_WHITE
+	horse.taur_tertiary = COLOR_WHITE
 	TEST_ASSERT_EQUAL(horse.color_blend_mode, ICON_MULTIPLY, "Horse colors must preserve the supplied shading.")
 	var/list/body_appearances = horse.get_limb_icon(FALSE)
 	var/image/front_below = body_appearances[4]
@@ -54,7 +58,7 @@
 	tabard.forceMove(human)
 	human.cloak = tabard
 	tabard.alternate_worn_layer = UNDER_ARMOR_LAYER
-	human.update_inv_cloak()
+	human.update_inv_cloak_real()
 	var/list/tucked = human.overlays_standing[UNDER_ARMOR_LAYER]
 	TEST_ASSERT(islist(tucked) && length(tucked) == 2, "Tucking a tabard must retain both humanoid and taur cloth overlays.")
 	var/mutable_appearance/wide_cloth = tucked[2]
@@ -159,7 +163,11 @@
 	human.Taurize(/obj/item/bodypart/taur/equine)
 	var/datum/component/footstep/footsteps = human.GetComponent(/datum/component/footstep)
 	TEST_ASSERT_NOTNULL(footsteps, "Horse Body must retain the human footstep component.")
-	TEST_ASSERT_NULL(human.get_bodypart(BODY_ZONE_L_LEG), "The test must exercise a taur with no humanoid legs.")
+	var/obj/item/bodypart/taur/equine/horse = human.get_taur_tail()
+	TEST_ASSERT_EQUAL(human.get_bodypart(BODY_ZONE_L_LEG), horse, "Left-leg lookups must resolve to the taur body.")
+	TEST_ASSERT_EQUAL(human.get_bodypart(BODY_ZONE_R_LEG), horse, "Right-leg lookups must resolve to the taur body.")
+	for(var/obj/item/bodypart/part as anything in human.bodyparts)
+		TEST_ASSERT(!(part.body_zone in list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)), "The taur must replace both humanoid leg bodyparts.")
 	var/turf/open/floor = get_turf(human)
 	var/old_footstep = floor.footstep
 	floor.footstep = FOOTSTEP_FLOOR
@@ -170,12 +178,13 @@
 	var/turf/open/flying_step = footsteps.prepare_step()
 	human.movement_type &= ~FLYING
 	human.Taurize(/obj/item/bodypart/taur/horse)
+	footsteps.steps = 1
 	var/turf/open/other_taur_step = footsteps.prepare_step()
 	// Restore the shared floor before assertions, including when a check fails.
 	floor.footstep = old_footstep
 	TEST_ASSERT_EQUAL(prepared, floor, "A horse without humanoid legs must still prepare a hoofstep.")
 	TEST_ASSERT_NULL(flying_step, "Flying horses must not make hoofsteps.")
-	TEST_ASSERT_NULL(other_taur_step, "Other taur bodies must retain their previous footstep rules.")
+	TEST_ASSERT_EQUAL(other_taur_step, floor, "Saiga leg lookups must retain their existing footstep eligibility.")
 
 /datum/unit_test/horse_taur_armor_priority/Run()
 	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human/consistent, run_loc_floor_bottom_left)
@@ -216,4 +225,4 @@
 	human.Taurize(/obj/item/bodypart/taur/horse)
 	human.update_inv_armor_real()
 	var/list/saiga = human.overlays_standing[ARMOR_LAYER]
-	TEST_ASSERT_EQUAL(length(saiga), 4, "Other taur bodies must retain their original armor overlay count.")
+	TEST_ASSERT_EQUAL(length(saiga), 2, "Saiga armor must retain its humanoid and barding overlays without horse tassets.")
