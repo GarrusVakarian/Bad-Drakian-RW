@@ -99,6 +99,7 @@
 		/datum/customizer/organ/ears/harpy,
 		/datum/customizer/organ/horns/anthro,
 		/datum/customizer/organ/tail/harpy,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/wings/harpy,
 		/datum/customizer/organ/testicles/anthro,
 		/datum/customizer/organ/penis/anthro,
