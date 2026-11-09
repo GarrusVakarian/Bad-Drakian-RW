@@ -123,7 +123,9 @@
 	/// Print the remaining ones in seperate lines
 	for(var/descriptor_type in desc_copy)
 		var/datum/mob_descriptor/descriptor = MOB_DESCRIPTOR(descriptor_type)
-		lines += treat_mob_descriptor_string(descriptor.get_standalone_text(described, watcher), described)
+		var/text = descriptor.get_standalone_text(described, watcher)
+		if(length(text))
+			lines += treat_mob_descriptor_string(text, described)
 
 	return lines
 
@@ -163,7 +165,9 @@
 	for(var/descriptor_type in desc_copy)
 		var/datum/mob_descriptor/descriptor = MOB_DESCRIPTOR(descriptor_type)
 		if(descriptor.show_obscured)
-			lines += treat_mob_descriptor_string(descriptor.get_standalone_text(described, watcher), described)
+			var/text = descriptor.get_standalone_text(described, watcher)
+			if(length(text))
+				lines += treat_mob_descriptor_string(text, described)
 
 	return lines
 
@@ -172,14 +176,17 @@
 	if(!descs)
 		return
 	var/list/used_verbage = list()
-	descriptors -= descs
 	for(var/i in 1 to descs.len)
 		var/desc_type = descs[i]
 		var/datum/mob_descriptor/descriptor = MOB_DESCRIPTOR(desc_type)
-		string = replacetext(string, "%DESC[i]%", descriptor.get_coalesce_text(described, used_verbage, watcher))
+		var/text = descriptor.get_coalesce_text(described, used_verbage, watcher)
+		if(!length(text))
+			return
+		string = replacetext(string, "%DESC[i]%", text)
 		var/used_verb = descriptor.get_verbage(described)
 		if(used_verb)
 			used_verbage |= used_verb
+	descriptors -= descs
 	string = treat_mob_descriptor_string(string, described)
 	return string
 

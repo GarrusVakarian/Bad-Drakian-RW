@@ -220,13 +220,17 @@
 	W.emote("rage")
 
 	if(getorganslot(ORGAN_SLOT_PENIS))
-		W.internal_organs_slot[ORGAN_SLOT_PENIS] = /obj/item/organ/penis/knotted/big
+		var/obj/item/organ/penis/new_penis = new /obj/item/organ/penis/knotted/big()
+		new_penis.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 	if(getorganslot(ORGAN_SLOT_TESTICLES))
-		W.internal_organs_slot[ORGAN_SLOT_TESTICLES] = /obj/item/organ/testicles
+		var/obj/item/organ/testicles/new_testicles = new /obj/item/organ/testicles()
+		new_testicles.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 	if(getorganslot(ORGAN_SLOT_BREASTS))
-		W.internal_organs_slot[ORGAN_SLOT_BREASTS] = /obj/item/organ/breasts
+		var/obj/item/organ/breasts/new_breasts = new /obj/item/organ/breasts()
+		new_breasts.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 	if(getorganslot(ORGAN_SLOT_VAGINA))
-		W.internal_organs_slot[ORGAN_SLOT_VAGINA] = /obj/item/organ/vagina
+		var/obj/item/organ/vagina/new_vagina = new /obj/item/organ/vagina()
+		new_vagina.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 
 	W.adjust_skillrank(/datum/skill/combat/wrestling, 5, TRUE)
 	W.adjust_skillrank(/datum/skill/combat/unarmed, 5, TRUE)
