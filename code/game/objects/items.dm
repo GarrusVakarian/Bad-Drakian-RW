@@ -754,7 +754,9 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 		return null
 	if(desc == loadout_desc_html)
 		return loadout_desc_html
-	return html_encode(desc)
+	// Allow only simple line breaks, including the legacy </br> spelling in item descriptions.
+	var/static/regex/line_breaks = regex("&lt;/?br\\s*/?&gt;", "gi")
+	return line_breaks.Replace(html_encode(desc), "<br>")
 
 /obj/item/proc/get_hover_examine_condition_text()
 	return null
