@@ -130,7 +130,7 @@
 		if(carbon_owner)
 			carbon_owner.handle_dreams()
 			if(prob(10) && owner.health > owner.crit_threshold)
-				owner.emote("snore")
+				owner.emote("snore", suppress_chat = TRUE)
 	if(isharpy(owner))
 		var/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin = human_owner.skin_armor
 		if(harpy_skin.obj_integrity < harpy_skin.max_integrity)
@@ -889,6 +889,7 @@
 
 /datum/status_effect/debuff/mishap_sleepy/on_apply()
 	. = ..()
+	owner.stay_awake = FALSE
 	owner.eyesclosed = TRUE
 	for(var/atom/movable/screen/eye_intent/eyet in owner.hud_used.static_inventory)
 		eyet.update_icon(owner)

@@ -112,6 +112,7 @@
 				if(91 to INFINITY)
 					to_chat(target, span_userdanger("You can't take it anymore. Your legs give out as you collapse into a long slumber."))
 					to_chat(user, "[target] is mine now.")
+					target.stay_awake = FALSE
 					target.eyesclosed = TRUE //You're pretty much FUCKED at this point, we make it obvious
 					target.become_blind("eyelids")
 					if(target.hud_used)

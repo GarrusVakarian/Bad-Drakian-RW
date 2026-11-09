@@ -162,6 +162,7 @@
 	var/encumbrance = 0
 
 	var/eyesclosed = 0
+	var/stay_awake = FALSE // Voluntarily closed eyes without trying to fall asleep.
 	var/fallingas = 0
 
 	var/bleed_rate = 0 //how much are we bleeding
