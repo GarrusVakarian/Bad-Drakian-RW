@@ -109,6 +109,16 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/broom
 	triumph_cost = 1
 
+/datum/loadout_item/dye_brush
+	name = "Dye Brush"
+	path = /obj/item/dye_brush
+	triumph_cost = 1
+
+/datum/loadout_item/paint_brush
+	name = "Paint Brush"
+	path = /obj/item/paint_brush
+	triumph_cost = 1
+
 /datum/loadout_item/soap
 	name = "soap"
 	path = /obj/item/soap
@@ -182,6 +192,11 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/mallet
 	name = "Wooden Mallet"
 	path = /obj/item/rogueweapon/hammer/wood
+	triumph_cost = 2
+
+/datum/loadout_item/chisel
+	name = "Chisel"
+	path = /obj/item/rogueweapon/chisel
 	triumph_cost = 2
 
 /datum/loadout_item/folding_table

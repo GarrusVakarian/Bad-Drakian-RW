@@ -44,14 +44,14 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	return GLOB.recipe_wiki
 
 /// Open the recipe viewer for a specific book's types. Used by physical recipe book items.
-/datum/recipe_wiki/proc/show_to_user(mob/user, list/type_filter, title = "Recipe Book", book_type_path)
+/datum/recipe_wiki/proc/show_to_user(mob/user, list/type_filter, title = "Recipe Book", book_type_path, initial_entry)
 	if(!user?.client)
 		return
 	var/ckey = user.client.ckey
 	if(!user_states[ckey])
 		user_states[ckey] = list()
 	var/list/state = user_states[ckey]
-	state["recipe"] = null
+	state["recipe"] = initial_entry
 	state["category"] = "All"
 	state["filter"] = type_filter
 	state["title"] = title
@@ -286,7 +286,7 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 	set hidden = TRUE
 
 	var/datum/recipe_wiki/wiki = get_recipe_wiki()
-	wiki.show_to_user(mob, list(/datum/book_entry/getting_started), "Getting Started", /obj/item/recipe_book/getting_started)
+	wiki.show_to_user(mob, list(/datum/book_entry/getting_started), "Getting Started", /obj/item/recipe_book/getting_started, /datum/book_entry/getting_started/character)
 
 /mob/living/carbon/human
 	var/getting_started_reminder_scheduled = FALSE

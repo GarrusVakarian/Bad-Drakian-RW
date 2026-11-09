@@ -6,6 +6,7 @@
 
 GLOBAL_LIST_INIT(manticore_plain_tailmaw_accessories, list(
 	/datum/sprite_accessory/tail/tailmaw,
+	/datum/sprite_accessory/tail/tailmaw/spriteless,
 	/datum/sprite_accessory/tail/tailmaw2,
 	/datum/sprite_accessory/tail/tailmaw2_head,
 	/datum/sprite_accessory/tail/tailmaw2_stripes,
@@ -152,3 +153,10 @@ GLOBAL_LIST_INIT(manticore_plain_tailmaw_accessories, list(
 
 /datum/mob_descriptor/manticore_tail/get_standalone_text(mob/living/described, mob/watcher)
 	return get_coalesce_text(described, null, watcher)
+
+/// Retain normal tail artwork without using manticore-specific animation or descriptors.
+/obj/item/organ/tail/manticore/spriteless
+	accessory_type = /datum/sprite_accessory/tail/tailmaw/spriteless
+
+/obj/item/organ/tail/manticore/spriteless/is_plain_tailmaw()
+	return TRUE

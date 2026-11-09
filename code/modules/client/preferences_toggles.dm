@@ -72,7 +72,10 @@
 		ui.set_state(GLOB.always_state)
 		if(!ui.open())
 			return
-	if(owner?.prefs && user?.client == owner && owner.prefs.mark_character_sheet_feature_seen("content_toggles"))
+	if(!owner?.prefs || user?.client != owner)
+		return
+	// Marking Hypnosis Consent also marks Content Toggles. Fall back when consent is already seen.
+	if(owner.prefs.mark_character_sheet_feature_seen("hypnosis_consent") || owner.prefs.mark_character_sheet_feature_seen("content_toggles"))
 		owner.prefs.refresh_character_sheet_if_open(user)
 
 /datum/toggle_options_menu/ui_data(mob/user)
@@ -158,6 +161,7 @@
 		list("id" = "cursed_collars", "label" = "Enable Cursed Collars", "enabled" = !!owner.prefs.cursed_collarable, "desc" = "Allow others to equip a cursed collar on you."),
 		list("id" = "milkable", "label" = "Enable Breast Milking", "enabled" = !!owner.prefs.milkable, "desc" = "Allow other players to milk your breasts if lactating. You can still milk yourself when disabled. Only applies to clicking chest with a reagent container, NOT lactation during sex actions."),
 		list("id" = "manticore_tail_messages", "label" = "Tailmaws", "enabled" = !!owner.prefs.manticore_tail_messages, "desc" = "Show flavor messages from your manticore tail when moving or during intimate actions, and see tail maw descriptions when examining others."),
+		list("id" = "hypnosis_content", "label" = "Enable Hypnosis Content", "enabled" = !!owner.prefs.hypnosis_content, "desc" = "Show hypnosis examine text and allow casting and receiving hypnotic spells. Disabling clears your current hypnosis effect."),
 	)
 
 	data["categories"] = list(
@@ -283,6 +287,8 @@
 				owner.toggle_cursed_collars()
 			if("milkable")
 				owner.toggle_milkable()
+			if("hypnosis_content")
+				owner.toggle_hypnosis_content()
 			if("manticore_tail_messages")
 				owner.toggle_manticore_tail_messages_pref()
 			if("voting_popup")
@@ -1423,3 +1429,20 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 	prefs.admin_chat_toggles ^= CHAT_ADMINSPAWN
 	prefs.save_preferences()
 	to_chat(src, "You will [prefs.admin_chat_toggles & CHAT_ADMINSPAWN ? "see" : "not see any"] spawn logs.")
+
+/client/verb/toggle_hypnosis_content()
+	set category = "Options"
+	set name = "Toggle Hypnosis Content"
+	set hidden = 1
+	if(!prefs)
+		return
+	prefs.hypnosis_content = !prefs.hypnosis_content
+	prefs.save_preferences()
+	if(!prefs.hypnosis_content)
+		if(ishuman(mob))
+			var/mob/living/carbon/human/H = mob
+			H.hypnotic_gaze_channel?.interrupt()
+		var/datum/hypnotic_suggestion/S = mob?.mind?.hypnotic_suggestion
+		if(S)
+			qdel(S)
+	to_chat(src, "Hypnosis content is now [prefs.hypnosis_content ? "enabled" : "disabled"].")

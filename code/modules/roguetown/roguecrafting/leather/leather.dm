@@ -66,7 +66,8 @@
 	name = "fingerless leather gloves"
 	result = /obj/item/clothing/gloves/roguetown/fingerless_leather
 	reqs = list(
-		/obj/item/natural/hide/cured = 1
+		/obj/item/natural/hide/cured = 1,
+		/obj/item/natural/fibers = 1
 		)
 	sellprice = 20
 	craftdiff = 2

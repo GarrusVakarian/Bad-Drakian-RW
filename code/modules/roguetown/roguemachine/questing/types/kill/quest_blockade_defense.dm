@@ -28,7 +28,7 @@
 	var/datum/fund/funding_fund
 	var/funding_cost = 0
 	var/warrant_consumed = 0
-	/// First-wave fellowship snapshot; weakrefs do not keep departed bodies alive.
+	/// Weakrefs to first-wave fellowship minds, which follow players through body changes.
 	var/list/fellowship_roster = list()
 	var/triumph_roster_recorded = FALSE
 	var/triumphs_awarded = FALSE
@@ -174,8 +174,8 @@
 	if(!QDELETED(F))
 		members |= F.get_members()
 	for(var/mob/living/member in members)
-		if(!QDELETED(member))
-			fellowship_roster += WEAKREF(member)
+		if(!QDELETED(member) && !QDELETED(member.mind))
+			fellowship_roster |= WEAKREF(member.mind)
 
 /// Single completion-time player scan, centered on the actual coin recipient.
 /datum/quest/kill/blockade_defense/proc/award_defender_triumphs(mob/coin_recipient)
@@ -184,27 +184,27 @@
 	triumphs_awarded = TRUE
 	var/list/candidates = list()
 	for(var/datum/weakref/W as anything in fellowship_roster)
-		var/mob/living/member = W.resolve()
-		if(!QDELETED(member))
-			candidates |= member
+		var/datum/mind/member_mind = W.resolve()
+		if(!QDELETED(member_mind))
+			candidates |= member_mind
 	var/turf/center = QDELETED(coin_recipient) ? null : get_turf(coin_recipient)
 	if(center)
 		for(var/mob/living/helper in GLOB.player_list)
-			if(QDELETED(helper) || !helper.client || helper.stat == DEAD)
+			if(QDELETED(helper) || !helper.client || helper.stat == DEAD || QDELETED(helper.mind))
 				continue
 			var/turf/helper_turf = get_turf(helper)
 			if(helper_turf && helper_turf.z == center.z && get_dist(helper_turf, center) <= BLOCKADE_TRIUMPH_HELPER_RANGE)
-				candidates |= helper
+				candidates |= helper.mind
 	var/list/rewarded_accounts = list()
 	var/reward_reason = quest_type == QUEST_HOARD_RECOVERY ? "You helped recover a bandit hoard, making the realm safer." : "You helped clear a blockade, making the realm safer."
-	for(var/mob/living/recipient in candidates)
-		if(QDELETED(recipient) || !recipient.mind)
+	for(var/datum/mind/recipient in candidates)
+		if(QDELETED(recipient))
 			continue
-		var/account_key = ckey(recipient.mind.key)
+		var/account_key = ckey(recipient.key)
 		if(!account_key || rewarded_accounts[account_key])
 			continue
 		rewarded_accounts[account_key] = TRUE
-		recipient.mind.adjust_triumphs(BLOCKADE_CLEAR_TRIUMPHS, TRUE, reward_reason)
+		recipient.adjust_triumphs(BLOCKADE_CLEAR_TRIUMPHS, TRUE, reward_reason)
 
 /datum/quest/kill/blockade_defense/proc/spawn_wave(wave_num)
 	if(failed || complete)

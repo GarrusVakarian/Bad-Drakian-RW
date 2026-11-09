@@ -2,6 +2,10 @@
 	race = /datum/species/lupian
 
 /datum/species/lupian
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Lupian"
 	id = "lupian"
 	desc = "<b>Lupian</b><br>\
@@ -93,6 +97,7 @@
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/tail/lupian, 
 		/datum/customizer/organ/tail/anthro,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/snout/lupian,
 		/datum/customizer/organ/snout/anthro,
 		/datum/customizer/organ/ears/lupian,

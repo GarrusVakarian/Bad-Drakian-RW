@@ -148,6 +148,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/milkable = FALSE
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
+	var/hypnosis_content = FALSE
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
@@ -330,6 +331,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/charflaw/vice6
 	var/redolent_type = "Neutral"
 	var/redolent_scent = ""
+	var/hypnotic_gaze_text = "Their eyes are enticing to gaze into."
+	var/hypnotic_gaze_style = "Hypnotext"
+	var/hypnotic_presence_text = "There is something strangely compelling about their presence."
+	var/hypnotic_presence_style = "Hypnotext"
 
 	var/setspouse = ""
 	var/gender_choice = ANY_GENDER
@@ -430,7 +435,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/roleplay_ad
 	/// Account-wide discovery state; separate from each character's saved ad.
 	var/list/seen_character_sheet_features = list()
+	/// Cached account-wide discovery eligibility, persisted after the first saved-character scan.
+	var/digitigrade_big_legs_notice_eligible = null
+
+	/// Null for existing accounts, otherwise "pending" or "shown" for the first-login tip.
+	var/content_toggles_intro
 	var/tmp/character_sheet_notice_generation = 0
+	var/revenant_customization_eligible
 
 	var/rumour
 
@@ -484,7 +495,14 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			unlock_content = C.IsByondMember()
 			if(unlock_content)
 				max_save_slots = 100
+	// Detect a fresh account before loading/migrating can replace a rejected save.
+	// An existing file without discovery metadata is still an existing account.
+	var/is_new_preferences_account = istype(C) && (!path || !fexists(path))
 	var/loaded_preferences_successfully = load_preferences()
+	if(is_new_preferences_account && !loaded_preferences_successfully)
+		if(path)
+			content_toggles_intro = "pending"
+		acknowledge_current_character_sheet_features()
 	if(loaded_preferences_successfully)
 		if(load_character())
 			if(check_nameban(C.ckey) || (C.blacklisted() == 1))
@@ -571,6 +589,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		"grain",
 		"hear_barks",
 		"hide_unavailable_emotes",
+		"hypnosis_content",
 		"masked_examine",
 		"mute_animal_emotes",
 		"no_autopunctuate",
@@ -624,6 +643,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/character_sheet_feature/content_toggles/is_eligible(datum/preferences/preferences)
 	return !preferences.has_customized_content_toggles()
 
+/datum/character_sheet_feature/hypnosis_consent
+	id = "hypnosis_consent"
+	label = "Content Toggles"
+	explanation = "New consent toggles are available, including Enable Hypnosis Content, which is off by default."
+	location = "in the character sheet's upper-right corner, below Keybinds"
+
 /datum/character_sheet_feature/roleplay_ad
 	id = "roleplay_ad"
 	label = "Set Roleplay Ad"
@@ -642,6 +667,72 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/character_sheet_feature/sprite_offset/is_eligible(datum/preferences/preferences)
 	return !preferences.features["body_center_offset"]
 
+/datum/character_sheet_feature/digitigrade_big_legs
+	id = "digitigrade_big_legs"
+	label = "Taur Body Type"
+	explanation = "You have a character that can now choose Digitigrade Big Legs or Digitigrade Big Legs, Stanced. Select a compatible character to view the options."
+	location = "below Body Type in character setup for compatible races"
+
+/datum/character_sheet_feature/digitigrade_big_legs/is_eligible(datum/preferences/preferences)
+	return preferences.has_saved_digitigrade_big_legs_character()
+
+/// Evaluate the account's existing characters once, without loading or changing the active slot.
+/datum/preferences/proc/has_saved_digitigrade_big_legs_character()
+	if(!isnull(digitigrade_big_legs_notice_eligible))
+		return digitigrade_big_legs_notice_eligible
+	var/static/list/affected_species = list("Axian", "Drakian", "Harpy", "Sissean", "Lupian", "Fluvian", "Tabaxi", "Venardine", "Aasimar", "Tiefling")
+	digitigrade_big_legs_notice_eligible = FALSE
+	if(path && fexists(path))
+		var/savefile/S = new /savefile(path)
+		S.cd = "/"
+		var/list/directories = S.dir.Copy()
+		for(var/directory in directories)
+			if(copytext(directory, 1, 10) != "character" || text2num(copytext(directory, 10)) < 1)
+				continue
+			S.cd = "/[directory]"
+			var/character_name
+			var/species_name
+			S["real_name"] >> character_name
+			S["species"] >> species_name
+			if(istext(character_name) && length(trim(character_name)) && istext(species_name) && (species_name in affected_species))
+				digitigrade_big_legs_notice_eligible = TRUE
+				break
+	save_preferences()
+	return digitigrade_big_legs_notice_eligible
+
+/datum/character_sheet_feature/revenant_customization
+	id = "revenant_customization"
+	label = "Revenant Customization"
+	explanation = "Revenants now have additional Wild-Kin features. Select your revenant to customize them; taur bodies are in the Body section and additional markings are under Markings."
+	location = "under Features -> Change, with a shared reminder on Taur Body Type when available"
+
+/datum/character_sheet_feature/revenant_customization/is_eligible(datum/preferences/preferences)
+	return preferences.has_revenant_customization_character()
+
+/// Persist the first eligibility result account-wide, including before the reminder is dismissed.
+/datum/preferences/proc/has_revenant_customization_character()
+	if(!isnull(revenant_customization_eligible))
+		return revenant_customization_eligible
+	revenant_customization_eligible = istype(pref_species, /datum/species/dullahan)
+	if(!revenant_customization_eligible && parent && ishuman(parent.mob))
+		var/mob/living/carbon/human/H = parent.mob
+		revenant_customization_eligible = H.dna && istype(H.dna.species, /datum/species/dullahan)
+	if(!revenant_customization_eligible && path && fexists(path))
+		var/savefile/S = new(path)
+		S.cd = "/"
+		var/list/slots = S.dir.Copy()
+		for(var/slot in slots)
+			if(!istext(slot) || findtext(slot, "character") != 1 || text2num(copytext(slot, 10)) <= 0)
+				continue
+			S.cd = "/[slot]"
+			var/saved_species
+			S["species"] >> saved_species
+			if(saved_species == /datum/species/dullahan::name)
+				revenant_customization_eligible = TRUE
+				break
+	save_preferences()
+	return revenant_customization_eligible
+
 /proc/get_character_sheet_features()
 	var/static/list/features
 	if(isnull(features))
@@ -656,6 +747,21 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			features[feature.id] = feature
 	return features
 
+/// First-time setup only: snapshot today's registered IDs, not future additions.
+/// The constructor's existing save_preferences() call persists this in one write.
+/datum/preferences/proc/acknowledge_current_character_sheet_features()
+	for(var/feature_id in get_character_sheet_features())
+		if(feature_id == "content_toggles" && content_toggles_intro == "pending")
+			continue
+		seen_character_sheet_features[feature_id] = TRUE
+
+/datum/preferences/proc/show_content_toggles_intro()
+	if(content_toggles_intro != "pending")
+		return
+	content_toggles_intro = "shown"
+	to_chat(parent, span_notice("Open <a href='byond://winset?command=Toggles'><b>Content Toggles</b></a> below Keybinds in the upper-right corner of the character sheet to adjust your gameplay, display, sound, and content/consent preferences. The <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> guide in the Encyclopedia covers choosing your first role, essential controls, some basic lore, and more!"))
+	save_preferences()
+
 /datum/preferences/proc/character_sheet_feature_is_new(feature_id)
 	if(!istext(feature_id))
 		return FALSE
@@ -669,7 +775,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/content_toggles_are_new()
-	return character_sheet_feature_is_new("content_toggles")
+	return character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles")
+
+/datum/preferences/proc/content_toggles_feature_id()
+	return character_sheet_feature_is_new("hypnosis_consent") ? "hypnosis_consent" : "content_toggles"
 
 /datum/preferences/proc/roleplay_ad_is_new()
 	return character_sheet_feature_is_new("roleplay_ad")
@@ -693,10 +802,16 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/previous_directory = S.cd
 	S.cd = "/"
 	var/saved_state
+	var/saved_digitigrade_eligibility
+	var/saved_revenant_eligibility
 	if("feature_discovery" in S.dir)
 		S.cd = "/feature_discovery"
 		S["seen_features"] >> saved_state
+		S["digitigrade_big_legs_eligible"] >> saved_digitigrade_eligibility
+		S["revenant_customization_eligible"] >> saved_revenant_eligibility
 	S.cd = previous_directory
+	digitigrade_big_legs_notice_eligible = isnum(saved_digitigrade_eligibility) && (saved_digitigrade_eligibility == TRUE || saved_digitigrade_eligibility == FALSE) ? saved_digitigrade_eligibility : null
+	revenant_customization_eligible = isnum(saved_revenant_eligibility) ? !!saved_revenant_eligibility : null
 	seen_character_sheet_features = list()
 	if(islist(saved_state))
 		for(var/feature_id in saved_state)
@@ -706,6 +821,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/dismiss_character_sheet_feature(mob/user, feature)
 	if(!parent || user?.client != parent)
 		return FALSE
+	if(feature == "content_toggles")
+		feature = "hypnosis_consent"
 	if(!mark_character_sheet_feature_seen(feature))
 		return FALSE
 	refresh_character_sheet_if_open(user)
@@ -718,6 +835,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	if(!istype(features[feature], /datum/character_sheet_feature) || seen_character_sheet_features[feature])
 		return FALSE
 	seen_character_sheet_features[feature] = TRUE
+	if(feature == "hypnosis_consent")
+		seen_character_sheet_features["content_toggles"] = TRUE
 	save_preferences()
 	return TRUE
 
@@ -735,6 +854,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		return
 	var/list/features = get_character_sheet_features()
 	for(var/feature_id in features)
+		// The new consent announcement supersedes the introductory toggles reminder.
+		if(feature_id == "content_toggles" && (content_toggles_intro || character_sheet_feature_is_new("hypnosis_consent")))
+			continue
 		if(!character_sheet_feature_is_new(feature_id))
 			continue
 		var/datum/character_sheet_feature/feature = features[feature_id]
@@ -801,7 +923,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "</td>"
 
 			dat += "<td style='width:33%;text-align:right;vertical-align:top'>"
-			dat += character_sheet_feature_link("content_toggles", "?_src_=prefs;preference=toggles", "Gameplay, display, sound and content preferences.")
+			dat += character_sheet_feature_link(content_toggles_feature_id(), "?_src_=prefs;preference=toggles", "Gameplay, display, sound and content preferences.")
 			dat += "<br>"
 			dat += character_sheet_feature_link("roleplay_ad", "?_src_=prefs;preference=roleplay_ad;task=input", "Save an advertisement for this character to post automatically when you spawn.")
 			dat += "</td>"
@@ -928,7 +1050,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			if(LAZYLEN(pref_species.allowed_taur_types))
 				var/obj/item/bodypart/taur/T = taur_type
 				var/name = ispath(T) ? T::name : "None"
-				dat += "<b>Taur Body Type:</b> <a href='?_src_=prefs;preference=taur_type;task=input'>[name]</a><BR>"
+				var/taur_feature_id = character_sheet_feature_is_new("digitigrade_big_legs") ? "digitigrade_big_legs" : "revenant_customization"
+				dat += "<b>Taur Body Type:</b> [character_sheet_feature_link(taur_feature_id, "?_src_=prefs;preference=taur_type;task=input", "Choose a lower-body appearance", name)]<BR>"
 				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Coat" : "Taur Color"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_color];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_color;task=input'>Change</a><BR>"
 				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Underbelly" : "Taur Markings"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_markings];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_markings;task=input'>Change</a><BR>"
 				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Tail" : "Taur Tertiary"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
@@ -1058,7 +1181,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Voice Pitch: </b><a href='?_src_=prefs;preference=voice_pitch;task=input'>[voice_pitch]</a>"
 			dat += "<br><b>Accent:</b> <a href='?_src_=prefs;preference=char_accent;task=input'>[char_accent]</a>"
 			dat += "<br><b>Speech Mannerism:</b> <a href='?_src_=prefs;preference=char_mannerism;task=input'>[char_mannerism]</a>"
-			dat += "<br><b>Features:</b> <a href='?_src_=prefs;preference=customizers;task=menu'>Change</a>"
+			dat += "<br><b>Features:</b> " + character_sheet_feature_link("revenant_customization", "?_src_=prefs;preference=customizers;task=menu", "Customize your features. Revenants now have additional Wild-Kin options.", "Change")
 			dat += "<br><b>Sprite Scale:</b><a href='?_src_=prefs;preference=body_size;task=input'>[(features["body_size"] * 100)]%</a> "
 			dat += sprite_offset_feature_link()
 			dat += {"<script>
@@ -2019,6 +2142,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		return
 
 	else if(href_list["preference"] == "customizers")
+		if(mark_character_sheet_feature_seen("revenant_customization"))
+			refresh_character_sheet_if_open(user)
 		ShowCustomizers(user)
 		return
 	else if(href_list["preference"] == "origin_select")
@@ -2302,6 +2427,14 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						taur_type = null
 						to_chat(user, span_bad("There are no available taur bodies for this species."))
 						return
+
+					var/taur_notice_dismissed = FALSE
+					if(character_sheet_feature_is_new("digitigrade_big_legs"))
+						taur_notice_dismissed = mark_character_sheet_feature_seen("digitigrade_big_legs")
+					if(mark_character_sheet_feature_seen("revenant_customization"))
+						taur_notice_dismissed = TRUE
+					if(taur_notice_dismissed)
+						refresh_character_sheet_if_open(user)
 
 					var/list/taur_selection
 					if(pref_species.forced_taur)

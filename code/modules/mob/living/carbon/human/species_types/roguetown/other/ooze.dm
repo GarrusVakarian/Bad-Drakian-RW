@@ -75,6 +75,7 @@
 		/datum/customizer/bodypart_feature/pubes,
 		/datum/customizer/bodypart_feature/pits,
 		/datum/customizer/organ/tail/anthro,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/tail_feature/anthro,
 		/datum/customizer/organ/snout/anthro,
 		/datum/customizer/organ/ears/anthro,
@@ -193,6 +194,14 @@
 	new /obj/shapeshift_holder/ooze_death(shape, human)
 	shape.name = "[human]"
 	return TRUE
+
+/datum/species/ooze/on_species_gain(mob/living/carbon/C, datum/species/old_species, datum/preferences/pref_load)
+	. = ..()
+	RegisterSignal(C, COMSIG_MOB_SAY, PROC_REF(handle_speech))
+
+/datum/species/ooze/on_species_loss(mob/living/carbon/human/C, datum/species/new_species, pref_load)
+	. = ..()
+	UnregisterSignal(C, COMSIG_MOB_SAY)
 
 //SLIME FORM WOOO
 
