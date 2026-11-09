@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Hypnotic Gaze and Hypnotic Presence keep their custom examine text and color when transforming and reverting."
