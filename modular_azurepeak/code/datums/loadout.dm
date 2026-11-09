@@ -1,4 +1,13 @@
-GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
+GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
+
+/// Implicit grouping parents (such as /horsey) are not selectable equipment.
+/proc/init_loadout_items()
+	var/list/items = list()
+	for(var/datum/loadout_item/item_type as anything in subtypesof(/datum/loadout_item))
+		if(!ispath(initial(item_type.path), /obj/item))
+			continue
+		items += new item_type()
+	return items
 
 /datum/loadout_item
 	var/name = "Parent loadout datum"
