@@ -222,14 +222,18 @@
 	if(getorganslot(ORGAN_SLOT_PENIS))
 		var/obj/item/organ/penis/new_penis = new /obj/item/organ/penis/knotted/big()
 		new_penis.Insert(W, special = TRUE, drop_if_replaced = FALSE)
-	if(getorganslot(ORGAN_SLOT_TESTICLES))
+	var/obj/item/organ/testicles/original_testicles = getorganslot(ORGAN_SLOT_TESTICLES)
+	if(original_testicles)
 		var/obj/item/organ/testicles/new_testicles = new /obj/item/organ/testicles()
+		new_testicles.virility = original_testicles.virility
 		new_testicles.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 	if(getorganslot(ORGAN_SLOT_BREASTS))
 		var/obj/item/organ/breasts/new_breasts = new /obj/item/organ/breasts()
 		new_breasts.Insert(W, special = TRUE, drop_if_replaced = FALSE)
-	if(getorganslot(ORGAN_SLOT_VAGINA))
+	var/obj/item/organ/vagina/original_vagina = getorganslot(ORGAN_SLOT_VAGINA)
+	if(original_vagina)
 		var/obj/item/organ/vagina/new_vagina = new /obj/item/organ/vagina()
+		new_vagina.fertility = original_vagina.fertility
 		new_vagina.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 
 	W.adjust_skillrank(/datum/skill/combat/wrestling, 5, TRUE)
