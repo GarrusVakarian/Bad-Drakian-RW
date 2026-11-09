@@ -295,3 +295,6 @@
   - spellcheck: Renamed both Big Legs options to identify them as digitigrade.
   - rscadd: Lamias can now choose from 50 horn styles and the same ear and snout choices
       as Wild-Kin.
+  mypingishuge <3 _Rarity:
+  - bugfix: Equipment tooltips now preserve line breaks, bold text, and italics in
+      item descriptions.

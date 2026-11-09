@@ -1,4 +1,0 @@
-author: "mypingishuge <3 _Rarity"
-delete-after: True
-changes:
-  - bugfix: "Equipment tooltips now preserve line breaks, bold text, and italics in item descriptions."
