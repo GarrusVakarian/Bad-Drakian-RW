@@ -36,12 +36,20 @@
 	AddComponent(/datum/component/adjustable_clothing, NECK, null, null, 'sound/foley/equip/cloak (3).ogg', null, (UPD_HEAD|UPD_MASK))	//Standard hood
 
 /obj/item/clothing/head/roguetown/roguehood/MiddleClick(mob/user)
-	overarmor = !overarmor
+	if(!ishuman(user))
+		return
+	// Only persist revealing hair; hiding it restores the hood's current raised/lowered state.
+	overarmor = !(adjusted_inv_mask & HIDE_HEADTOP)
 	to_chat(user, span_info("I [overarmor ? "wear \the [src] under my hair" : "wear \the [src] over my hair"]."))
 	if(overarmor)
 		alternate_worn_layer = HOOD_LAYER //Below Hair Layer
+		flags_inv &= ~HIDE_HEADTOP
+		persist_inv_flags(HIDE_HEADTOP)
 	else
 		alternate_worn_layer = BACK_LAYER //Above Hair Layer
+		adjusted_inv_mask &= ~HIDE_HEADTOP
+		var/datum/component/adjustable_clothing/hood_adjustment = GetComponent(/datum/component/adjustable_clothing)
+		flags_inv = adjust_inv_flags((hood_adjustment && hood_adjustment.toggled_open) ? hood_adjustment.flags_inv_open : initial(flags_inv))
 	user.update_inv_wear_mask()
 	user.update_inv_head()
 
