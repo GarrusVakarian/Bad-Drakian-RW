@@ -170,7 +170,7 @@
 /datum/customizer/organ/snout/lamia
 	allows_disabling = TRUE
 	default_disabled = TRUE
-	customizer_choices = list(/datum/customizer_choice/organ/snout/lamia)
+	customizer_choices = list(/datum/customizer_choice/organ/snout/lamia, /datum/customizer_choice/organ/snout/anthro)
 
 /datum/customizer/organ/snout/anthro/dullahan
 	allows_disabling = TRUE
