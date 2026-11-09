@@ -283,3 +283,6 @@
       loadout point each.
   - bugfix: Masterwork items no longer claim to be nicely polished unless their polishing
       bonus has actually been applied.
+  - rscadd: Eligible races without taur options can choose Digitigrade Big Legs or
+      Digitigrade Big Legs, Stanced.
+  - spellcheck: Renamed both Big Legs options to identify them as digitigrade.
