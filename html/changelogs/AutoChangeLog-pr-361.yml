@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Adds Chisel to the loadout menu for 2 loadout points."
