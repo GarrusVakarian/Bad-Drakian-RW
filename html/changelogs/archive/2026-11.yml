@@ -274,6 +274,10 @@
   - qol: Fresh accounts don't get spammed with NEW badges and reminders for features
       that already exist when they first join.
 2026-11-09:
+  GarrusVakarian:
+  - rscadd: you can now make grenzelhoftian gloves
+  - balance: it now takes one extra fiber to craft fingerless leather gloves, diminishing
+      the returns from infinitely crafting and snipping them
   mypingishuge:
   - bugfix: Hypnosis consent toggle messages now match the style of other consent
       toggles.
