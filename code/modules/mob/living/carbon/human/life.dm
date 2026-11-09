@@ -403,7 +403,7 @@
 		return
 	if(!has_status_effect(/datum/status_effect/debuff/vamp_dreams))
 		return
-	if(!eyesclosed)
+	if(!eyesclosed || stay_awake)
 		return
 	if(mobility_flags & MOBILITY_STAND)
 		return
