@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Dye brushes and paint brushes are available in the loadout menu for 1 loadout point each."
