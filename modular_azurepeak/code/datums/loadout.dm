@@ -184,6 +184,11 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/rogueweapon/hammer/wood
 	triumph_cost = 2
 
+/datum/loadout_item/chisel
+	name = "Chisel"
+	path = /obj/item/rogueweapon/chisel
+	triumph_cost = 2
+
 /datum/loadout_item/folding_table
 	name = "Folding Table"
 	path = /obj/item/folding_table_stored
