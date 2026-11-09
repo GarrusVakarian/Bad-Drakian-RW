@@ -910,6 +910,11 @@ There are several things that need to be remembered:
 						mbeltoverlaydildo.pixel_y = mbeltoverlay.pixel_y
 						standing_front += mbeltoverlaydildo
 
+	var/obj/item/bodypart/taur/equine/horse = get_taur_tail()
+	if(istype(horse))
+		horse.occlude_north_clothing(standing_front)
+		horse.occlude_north_clothing(standing_behind)
+
 	var/mutable_appearance/chastity_overlay = chastity_attached_toy_overlay()
 	if(chastity_overlay)
 		standing_front += chastity_overlay
@@ -1127,14 +1132,14 @@ There are several things that need to be remembered:
 
 	var/obj/item/bodypart/taur/taur_back = get_taur_tail()
 	if(taur_back?.taur_clothing_category && (istype(backr, /obj/item/storage) || istype(backl, /obj/item/storage)))
-		var/mutable_appearance/saddlebag_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "saddlebag_[taur_back.taur_clothing_category]", -BACK_LAYER)
+		var/mutable_appearance/saddlebag_ov = mutable_appearance(taur_back.taur_clothing_icon, "saddlebag_[taur_back.taur_clothing_category]", -BACK_LAYER)
 		saddlebag_ov.pixel_x = taur_back.offset_x
 		overcloaks += saddlebag_ov
 		overlays_standing[BACK_LAYER] = overcloaks
 
-	if(taur_back?.taur_clothing_category == "s" && (istype(backr, /obj/item/natural/saddle) || istype(backl, /obj/item/natural/saddle)))
+	if((taur_back?.taur_clothing_category in list("s", "h")) && (istype(backr, /obj/item/natural/saddle) || istype(backl, /obj/item/natural/saddle)))
 		// Keep the saddle below hair and saddlebags, but above worn clothing.
-		var/mutable_appearance/saddle_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "saddle_s", -(HAIR_LAYER + 0.1))
+		var/mutable_appearance/saddle_ov = mutable_appearance(taur_back.taur_clothing_icon, "saddle_[taur_back.taur_clothing_category]", -(HAIR_LAYER + 0.1))
 		saddle_ov.pixel_x = taur_back.offset_x
 		overcloaks += saddle_ov
 		overlays_standing[BACK_LAYER] = overcloaks
@@ -1196,7 +1201,9 @@ There are several things that need to be remembered:
 				else
 					overlays_standing[TABARD_LAYER] = cloak_overlay
 			if(cloak.alternate_worn_layer == UNDER_ARMOR_LAYER)
-				overlays_standing[UNDER_ARMOR_LAYER] = cloak_overlay	
+				// Keep the wide cloth below both the shirt padding and armor.
+				var/mutable_appearance/tucked_barding = taur?.get_barding_overlay(cloak, SHIRT_LAYER + 0.1)
+				overlays_standing[UNDER_ARMOR_LAYER] = tucked_barding ? list(cloak_overlay, tucked_barding) : cloak_overlay
 			if(cloak.alternate_worn_layer == CLOAK_BEHIND_LAYER)
 				overlays_standing[CLOAK_BEHIND_LAYER] = cloak_overlay
 			if(!cloak.alternate_worn_layer)
@@ -1282,6 +1289,9 @@ There are several things that need to be remembered:
 
 	var/obj/item/bodypart/taur/taur = get_taur_tail()
 	var/icon/c_mask = taur?.clip_mask
+	var/obj/item/bodypart/taur/equine/horse
+	if(istype(taur, /obj/item/bodypart/taur/equine))
+		horse = taur
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[SLOT_SHIRT]
@@ -1312,6 +1322,10 @@ There are several things that need to be remembered:
 				if(OFFSET_SHIRT_F in dna.species.offset_features)
 					shirt_overlay.pixel_x += dna.species.offset_features[OFFSET_SHIRT_F][1]
 					shirt_overlay.pixel_y += dna.species.offset_features[OFFSET_SHIRT_F][2]
+			if(horse)
+				var/list/human_clothing = list(shirt_overlay)
+				horse.occlude_north_clothing(human_clothing)
+				shirt_overlay = human_clothing[1]
 			// Taur barding overlay for shirt slot
 			if(taur?.taur_clothing_category)
 				var/mutable_appearance/taur_ov = taur.get_barding_overlay(wear_shirt, SHIRT_LAYER)
@@ -1319,13 +1333,13 @@ There are several things that need to be remembered:
 					var/list/all_shirt = list(shirt_overlay, taur_ov)
 					// Colorable tasset overlays for heavy armor
 					if(wear_shirt.armor_class == ARMOR_CLASS_HEAVY && taur.has_barding_tassets)
-						var/mutable_appearance/tasset1_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "plate-tasset1_[taur.taur_clothing_category]", -SHIRT_LAYER)
+						var/mutable_appearance/tasset1_ov = mutable_appearance(taur.taur_clothing_icon, taur.get_tasset_state(1), -SHIRT_LAYER)
 						tasset1_ov.pixel_x = taur.offset_x
 						tasset1_ov.appearance_flags = RESET_COLOR
 						if(taur.tasset1_color)
 							tasset1_ov.color = taur.tasset1_color
 						all_shirt += tasset1_ov
-						var/mutable_appearance/tasset2_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "plate-tasset2_[taur.taur_clothing_category]", -SHIRT_LAYER)
+						var/mutable_appearance/tasset2_ov = mutable_appearance(taur.taur_clothing_icon, taur.get_tasset_state(2), -SHIRT_LAYER)
 						tasset2_ov.pixel_x = taur.offset_x
 						tasset2_ov.appearance_flags = RESET_COLOR
 						if(taur.tasset2_color)
@@ -1352,6 +1366,7 @@ There are several things that need to be remembered:
 						if(OFFSET_SHIRT_F in dna.species.offset_features)
 							S.pixel_x += dna.species.offset_features[OFFSET_SHIRT_F][1]
 							S.pixel_y += dna.species.offset_features[OFFSET_SHIRT_F][2]
+				horse?.occlude_north_clothing(sleeves)
 				overlays_standing[SHIRTSLEEVE_LAYER] = sleeves
 
 	rebuild_obscured_flags()
@@ -1373,6 +1388,9 @@ There are several things that need to be remembered:
 
 	var/obj/item/bodypart/taur/taur = get_taur_tail()
 	var/icon/c_mask = taur?.clip_mask
+	var/obj/item/bodypart/taur/equine/horse
+	if(istype(taur, /obj/item/bodypart/taur/equine))
+		horse = taur
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[SLOT_ARMOR]
@@ -1408,6 +1426,10 @@ There are several things that need to be remembered:
 				if(OFFSET_ARMOR_F in dna.species.offset_features)
 					armor_overlay.pixel_x += dna.species.offset_features[OFFSET_ARMOR_F][1]
 					armor_overlay.pixel_y += dna.species.offset_features[OFFSET_ARMOR_F][2]
+			if(horse)
+				var/list/human_clothing = list(armor_overlay)
+				horse.occlude_north_clothing(human_clothing)
+				armor_overlay = human_clothing[1]
 			// Taur barding overlay for armor slot
 			if(taur?.taur_clothing_category)
 				var/mutable_appearance/taur_ov = taur.get_barding_overlay(wear_armor, ARMOR_LAYER)
@@ -1415,13 +1437,13 @@ There are several things that need to be remembered:
 					var/list/all_armor = list(armor_overlay, taur_ov)
 					// Colorable tasset overlays for heavy armor
 					if(wear_armor.armor_class == ARMOR_CLASS_HEAVY && taur.has_barding_tassets)
-						var/mutable_appearance/tasset1_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "plate-tasset1_[taur.taur_clothing_category]", -ARMOR_LAYER)
+						var/mutable_appearance/tasset1_ov = mutable_appearance(taur.taur_clothing_icon, taur.get_tasset_state(1), -ARMOR_LAYER)
 						tasset1_ov.pixel_x = taur.offset_x
 						tasset1_ov.appearance_flags = RESET_COLOR
 						if(taur.tasset1_color)
 							tasset1_ov.color = taur.tasset1_color
 						all_armor += tasset1_ov
-						var/mutable_appearance/tasset2_ov = mutable_appearance('icons/roguetown/clothing/special/onmob/taur_clothing.dmi', "plate-tasset2_[taur.taur_clothing_category]", -ARMOR_LAYER)
+						var/mutable_appearance/tasset2_ov = mutable_appearance(taur.taur_clothing_icon, taur.get_tasset_state(2), -ARMOR_LAYER)
 						tasset2_ov.pixel_x = taur.offset_x
 						tasset2_ov.appearance_flags = RESET_COLOR
 						if(taur.tasset2_color)
@@ -1448,6 +1470,7 @@ There are several things that need to be remembered:
 						if(OFFSET_ARMOR_F in dna.species.offset_features)
 							S.pixel_x += dna.species.offset_features[OFFSET_ARMOR_F][1]
 							S.pixel_y += dna.species.offset_features[OFFSET_ARMOR_F][2]
+				horse?.occlude_north_clothing(sleeves)
 				overlays_standing[ARMORSLEEVE_LAYER] = sleeves
 
 	rebuild_obscured_flags()
