@@ -64,14 +64,7 @@
 		return
 
 /datum/antagonist/werewolf/greet()
-	to_chat(owner.current, span_userdanger(
-		"Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust." + \
-		"<br><br>(This guidance is to help guide the mindset of playing werewolf, rather than hard rules limiting your roleplay:" + \
-		"<br><br>The curse running through your veins has turned you into an intelligent beast of lust and desire." + \
-		"<br><br>While werewolves are quite powerful, the goal is for them to be lustful beasts. Your intent should be to fuck, although violence is a valid path to accomplish this: avoid finishing off opponents, give them room to retreat and repair, check their ERP notes and capture the wounded. Give them a tactful fight, and wrap it up with a scene when possible." + \
-		"<br><br>Ideally, keep more to the Terrorbog and the outskirts or flanks of Lowtown. Be subtle in highly populated areas, especially Hightown. When pursued by a large group, fight with the intent to scare them off, to retreat to a secluded area and to stay alive. But avoid always running away without a fight: combat is fun, after all." + \
-		"<br><br>The only method of infection is your \"<b>Voluntary Bite</b>\" ability. After you transform you'll remain a werewolf until using the \"<b>Give In To Daylight</b>\" ability, to detransform during daytime.)"
-	))
+	to_chat(owner.current, span_userdanger("Since a bite long, long ago, Dendor's Madness has swelled within me. Before the Moonlight, I will sate my hallowed Lust." + "<br><br>(This guidance is to help guide the mindset of playing werewolf, rather than hard rules limiting your roleplay:" + "<br><br>The curse running through your veins has turned you into an intelligent beast of lust and desire." + "<br><br>While werewolves are quite powerful, the goal is for them to be lustful beasts. Your intent should be to fuck, although violence is a valid path to accomplish this: avoid finishing off opponents, give them room to retreat and repair, check their ERP notes and capture the wounded. Give them a tactful fight, and wrap it up with a scene when possible." + "<br><br>Ideally, keep more to the Terrorbog and the outskirts or flanks of Lowtown. Be subtle in highly populated areas, especially Hightown. When pursued by a large group, fight with the intent to scare them off, to retreat to a secluded area and to stay alive. But avoid always running away without a fight: combat is fun, after all." + "<br><br>The only method of infection is your \"<b>Voluntary Bite</b>\" ability. After you transform you'll remain a werewolf until using the \"<b>Give In To Daylight</b>\" ability, to detransform during daytime.)"))
 	return ..()
 
 /datum/antagonist/werewolf/lesser/greet()
