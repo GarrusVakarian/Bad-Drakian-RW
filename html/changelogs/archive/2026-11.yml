@@ -281,3 +281,5 @@
   - qol: Noticeboard posts now last five hours instead of three.
   - rscadd: Dye brushes and paint brushes are available in the loadout menu for 1
       loadout point each.
+  - bugfix: Masterwork items no longer claim to be nicely polished unless their polishing
+      bonus has actually been applied.
