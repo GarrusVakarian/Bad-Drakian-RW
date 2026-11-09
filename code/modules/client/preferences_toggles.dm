@@ -1445,4 +1445,4 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 		var/datum/hypnotic_suggestion/S = mob?.mind?.hypnotic_suggestion
 		if(S)
 			qdel(S)
-	to_chat(src, span_notice("Hypnosis content is now [prefs.hypnosis_content ? "enabled" : "disabled"]."))
+	to_chat(src, "Hypnosis content is now [prefs.hypnosis_content ? "enabled" : "disabled"].")
