@@ -174,7 +174,7 @@
 	if(owner != M || !ishuman(M) || QDELETED(target))
 		return
 	var/obj/effect/proc_holder/spell/invoked/hypnotic_gaze/spell = target
-	if(!istype(spell))
+	if(!istype(spell) || isnull(spell.presentation_text))
 		return
 	var/mob/living/carbon/human/H = M
 	H.hypnotic_presentation_source = spell
