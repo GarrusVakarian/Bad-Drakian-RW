@@ -304,3 +304,6 @@
   mypingishuge <3 _Rarity:
   - bugfix: Equipment tooltips now preserve line breaks, bold text, and italics in
       item descriptions.
+2026-11-10:
+  _Rarity:
+  - rscadd: Restored Xylix Pink as a delectable dye color.
