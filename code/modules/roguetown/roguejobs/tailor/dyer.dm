@@ -8,6 +8,7 @@ GLOBAL_LIST_INIT(colorlist, list(
 	"Sow's skin"="#CE929F",
 	"Salmon Pink"="#FF91A4",
 	"Cherry Blossom"="#FF6699",
+	"Xylix Pink"="#FF3399",
 	"Knight's Red"="#933030",
 	"Royal Red"="#8b2323",
 	"Red Ochre" = "#913831",
