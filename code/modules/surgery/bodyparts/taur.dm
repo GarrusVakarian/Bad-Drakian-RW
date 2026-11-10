@@ -90,10 +90,10 @@
 			return "psydon"
 		if(istype(clothing, /obj/item/clothing/cloak/templar/astrata) || istype(clothing, /obj/item/clothing/cloak/tabard/crusader/astrata))
 			return "astrata"
-	if(istype(clothing, /obj/item/clothing/cloak/tabard))
-		return (taur_clothing_category in list("s", "h")) ? "caparison" : "caparison-tabard"
 	if(istype(clothing, /obj/item/clothing/cloak/stabard))
 		return "caparison"
+	if(istype(clothing, /obj/item/clothing/cloak))
+		return (taur_clothing_category in list("s", "h")) ? "caparison" : "caparison-tabard"
 	switch(clothing.armor_class)
 		if(ARMOR_CLASS_LIGHT)
 			if(istype(clothing, /obj/item/clothing/suit/roguetown/armor/chainmail))

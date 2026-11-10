@@ -32,6 +32,106 @@
 	for(var/state in list("horse_ADJ_1", "horse_ADJ_2", "horse_FRONT_1", "horse_FRONT_2"))
 		TEST_ASSERT(state in ear_states, "Missing horse ear state: [state]")
 
+/datum/unit_test/horse_taur_cape_controls/Run()
+	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human/consistent, run_loc_floor_bottom_left)
+	human.Taurize(/obj/item/bodypart/taur/equine)
+	var/datum/intent/kick/kick = allocate(/datum/intent/kick, human)
+	human.mmb_intent = kick
+	var/list/cape_types = typesof(/obj/item/clothing/cloak/cape)
+	cape_types |= typesof(/obj/item/clothing/cloak/citywatch)
+	cape_types += list(
+		/obj/item/clothing/cloak/ordinatorcape,
+		/obj/item/clothing/cloak/captain,
+		/obj/item/clothing/cloak/duelistcape,
+		/obj/item/clothing/cloak/psydonicironcape,
+	)
+	for(var/cape_type in cape_types)
+		var/obj/item/clothing/cloak/cape = allocate(cape_type)
+		cape.forceMove(human)
+		human.cloak = cape
+		var/normal_layer = cape.alternate_worn_layer
+		cape.MiddleClick(human)
+		TEST_ASSERT_EQUAL(cape.alternate_worn_layer, UNDER_ARMOR_LAYER, "[cape_type] must tuck when its MMB handler is invoked.")
+		human.update_inv_cloak_real()
+		TEST_ASSERT_NOTNULL(human.overlays_standing[UNDER_ARMOR_LAYER], "[cape_type] must retain its tucked appearance.")
+		cape.MiddleClick(human)
+		TEST_ASSERT(cape.wear_over_taur, "[cape_type] must offer a separate taur-draped position.")
+		human.update_inv_cloak_real()
+		TEST_ASSERT_NOTNULL(human.overlays_standing[TABARD_LAYER], "[cape_type] must show fitted cloth over the taur body.")
+		cape.MiddleClick(human)
+		TEST_ASSERT(!cape.wear_over_taur, "[cape_type] must leave the taur-draped position when the third MMB restores normal wear.")
+		TEST_ASSERT_EQUAL(cape.alternate_worn_layer, normal_layer, "[cape_type] must restore its original position.")
+		TEST_ASSERT_EQUAL(human.mmb_intent, kick, "Adjusting clothing must preserve the selected combat intent.")
+		human.cloak = null
+		cape.forceMove(run_loc_floor_bottom_left)
+
+/datum/unit_test/horse_taur_cape_layers/Run()
+	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human/consistent, run_loc_floor_bottom_left)
+	human.Taurize(/obj/item/bodypart/taur/equine)
+	var/obj/item/bodypart/taur/equine/horse = human.get_taur_tail()
+	var/obj/item/clothing/cloak/cape/puritan/cape = allocate(/obj/item/clothing/cloak/cape/puritan)
+	cape.forceMove(human)
+	human.cloak = cape
+	var/list/original_panels = human.get_sleeves_layer(cape, 0, CLOAK_LAYER)
+	human.update_inv_cloak_real()
+	var/list/panels = human.overlays_standing[CLOAK_LAYER]
+	TEST_ASSERT(length(panels) && length(panels) == length(original_panels), "The Exorcist cape must retain its front panels.")
+	var/occluded_pixels = 0
+	for(var/index in 1 to length(panels))
+		var/mutable_appearance/original = original_panels[index]
+		var/mutable_appearance/clipped = panels[index]
+		var/icon/mask = horse.get_north_clothing_mask(32, 32, clipped.pixel_x, clipped.pixel_y)
+		var/icon/north_mask = icon(mask, "", NORTH)
+		for(var/direction in list(SOUTH, NORTH, EAST, WEST))
+			var/icon/expected = icon(original.icon, original.icon_state, direction)
+			var/icon/actual = icon(clipped.icon, clipped.icon_state, direction)
+			for(var/x in 1 to 32)
+				for(var/y in 1 to 32)
+					var/expected_pixel = expected.GetPixel(x, y)
+					if(direction == NORTH && isnull(north_mask.GetPixel(x, y)))
+						if(expected_pixel)
+							occluded_pixels++
+						expected_pixel = null
+					TEST_ASSERT_EQUAL(actual.GetPixel(x, y), expected_pixel, "Cape panels must hide behind the horse silhouette only in North.")
+	TEST_ASSERT(occluded_pixels, "The test must exercise cape pixels that would otherwise overlap the horse body.")
+	cape.MiddleClick(human)
+	human.update_inv_cloak_real()
+	TEST_ASSERT_EQUAL(cape.alternate_worn_layer, UNDER_ARMOR_LAYER, "The selected position must tuck the worn cape beneath armor.")
+	var/list/tucked = human.overlays_standing[UNDER_ARMOR_LAYER]
+	TEST_ASSERT(islist(tucked) && length(tucked) == 2, "Tucking must retain the cape body and fitted taur cloth.")
+	var/mutable_appearance/tucked_body = tucked[1]
+	var/mutable_appearance/tucked_cloth = tucked[2]
+	TEST_ASSERT_EQUAL(tucked_cloth.layer, -(SHIRT_LAYER + 0.1), "Tucked cloth must remain below padding and armor.")
+	TEST_ASSERT_EQUAL(tucked_body.layer, -UNDER_ARMOR_LAYER, "The cape body must use the tucked layer.")
+	panels = human.overlays_standing[CLOAK_LAYER]
+	for(var/mutable_appearance/panel as anything in panels)
+		TEST_ASSERT_EQUAL(panel.layer, -UNDER_ARMOR_LAYER, "Cape front panels must tuck under armor with the body.")
+	cape.MiddleClick(human)
+	human.update_inv_cloak_real()
+	TEST_ASSERT(cape.wear_over_taur, "The selected position must drape the cape over the taur body.")
+	var/mutable_appearance/draped_cloth = human.overlays_standing[TABARD_LAYER]
+	TEST_ASSERT_NOTNULL(draped_cloth, "The draped cape must have a fitted taur overlay.")
+	TEST_ASSERT_EQUAL(draped_cloth.icon_state, "caparison_h", "Horse drapes must use the fitted horse cloth artwork.")
+	TEST_ASSERT_EQUAL(draped_cloth.layer, -TABARD_LAYER, "Draped cloth must sit above taur armor.")
+	panels = human.overlays_standing[CLOAK_LAYER]
+	for(var/index in 1 to length(panels))
+		var/mutable_appearance/original = original_panels[index]
+		var/mutable_appearance/draped = panels[index]
+		var/icon/expected = icon(original.icon, original.icon_state, NORTH)
+		var/icon/actual = icon(draped.icon, draped.icon_state, NORTH)
+		for(var/x in 1 to 32)
+			for(var/y in 1 to 32)
+				TEST_ASSERT_EQUAL(actual.GetPixel(x, y), expected.GetPixel(x, y), "Draped front panels must remain visible over the taur in North.")
+	cape.MiddleClick(human)
+	human.update_inv_cloak_real()
+	TEST_ASSERT(!cape.wear_over_taur, "Normal wear must restore normal shoulder wear.")
+	TEST_ASSERT_NULL(human.overlays_standing[TABARD_LAYER], "Normal shoulder wear must remove the fitted body drape.")
+	TEST_ASSERT_EQUAL(cape.alternate_worn_layer, initial(cape.alternate_worn_layer), "Normal wear must restore the normal cape position.")
+	TEST_ASSERT_NULL(human.overlays_standing[UNDER_ARMOR_LAYER], "Untucking must remove the previous tucked overlay.")
+	panels = human.overlays_standing[CLOAK_LAYER]
+	for(var/mutable_appearance/panel as anything in panels)
+		TEST_ASSERT_EQUAL(panel.layer, -CLOAK_LAYER, "Untucking must restore front-panel priority.")
+
 /datum/unit_test/horse_taur_markings/Run()
 	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human/consistent, run_loc_floor_bottom_left)
 	human.Taurize(/obj/item/bodypart/taur/equine)
@@ -75,6 +175,13 @@
 	TEST_ASSERT_NULL(horse.applied_caparison, "Removing cloth must clear its body reference.")
 	TEST_ASSERT_NULL(caparison.taur_wearer, "Removing cloth must clear its item reference.")
 	TEST_ASSERT_EQUAL(get_turf(caparison), get_turf(human), "Removed cloth must return to the floor.")
+	tabard.MiddleClick(human)
+	TEST_ASSERT(tabard.wear_over_taur, "Tabard MMB must advance from tucked cloth to the body drape.")
+	tabard.MiddleClick(human)
+	TEST_ASSERT(!tabard.wear_over_taur, "The next tabard MMB must restore normal wear.")
+	TEST_ASSERT_EQUAL(tabard.alternate_worn_layer, initial(tabard.alternate_worn_layer), "Normal tabard wear must retain its original layer.")
+	tabard.MiddleClick(human)
+	TEST_ASSERT_EQUAL(tabard.alternate_worn_layer, UNDER_ARMOR_LAYER, "The next tabard MMB must tuck under armor again.")
 
 /datum/unit_test/horse_taur_underwear/Run()
 	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human/consistent, run_loc_floor_bottom_left)

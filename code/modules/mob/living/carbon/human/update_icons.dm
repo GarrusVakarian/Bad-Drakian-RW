@@ -1160,6 +1160,12 @@ There are several things that need to be remembered:
 
 	var/obj/item/bodypart/taur/taur = get_taur_tail()
 	var/icon/c_mask = taur?.clip_mask
+	var/obj/item/clothing/cloak/worn_cloak = istype(cloak, /obj/item/clothing/cloak) ? cloak : null
+	var/draped_over_taur = taur && worn_cloak?.wear_over_taur
+	var/icon/worn_cloak_mask = draped_over_taur ? null : c_mask
+	var/obj/item/bodypart/taur/equine/horse
+	if(istype(taur, /obj/item/bodypart/taur/equine))
+		horse = taur
 
 	if(client && hud_used)
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[SLOT_CLOAK]
@@ -1179,12 +1185,12 @@ There are several things that need to be remembered:
 			if(dna.species.custom_clothes)
 				racecustom = dna.species.clothes_id
 			if(gender == FEMALE && !dna.species.use_m)
-				cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
+				cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = worn_cloak_mask)
 			else
 				if(dna.species.use_f)
-					cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
+					cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = worn_cloak_mask)
 				else
-					cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, clip_mask = c_mask)
+					cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, clip_mask = worn_cloak_mask)
 
 			if(gender == MALE)
 				if(OFFSET_CLOAK in dna.species.offset_features)
@@ -1194,6 +1200,10 @@ There are several things that need to be remembered:
 				if(OFFSET_CLOAK_F in dna.species.offset_features)
 					cloak_overlay.pixel_x += dna.species.offset_features[OFFSET_CLOAK_F][1]
 					cloak_overlay.pixel_y += dna.species.offset_features[OFFSET_CLOAK_F][2]
+			if(horse && !draped_over_taur)
+				var/list/humanoid_cloak = list(cloak_overlay)
+				horse.occlude_north_clothing(humanoid_cloak)
+				cloak_overlay = humanoid_cloak[1]
 			if(cloak.alternate_worn_layer == TABARD_LAYER)
 				var/mutable_appearance/taur_tabard_ov = taur?.get_barding_overlay(cloak, TABARD_LAYER)
 				if(taur_tabard_ov)
@@ -1208,11 +1218,16 @@ There are several things that need to be remembered:
 				overlays_standing[CLOAK_BEHIND_LAYER] = cloak_overlay
 			if(!cloak.alternate_worn_layer)
 				cloaklays += cloak_overlay
+			if(draped_over_taur && cloak.alternate_worn_layer != TABARD_LAYER)
+				var/mutable_appearance/draped_cloth = taur.get_barding_overlay(cloak, TABARD_LAYER)
+				if(draped_cloth)
+					overlays_standing[TABARD_LAYER] = draped_cloth
 
 			//add sleeve overlays, then offset
 			var/list/cloaksleeves = list()
 			if(cloak.sleeved)
-				cloaksleeves = get_sleeves_layer(cloak,0,CLOAK_LAYER)
+				var/sleeve_layer = (taur && cloak.alternate_worn_layer == UNDER_ARMOR_LAYER) ? UNDER_ARMOR_LAYER : CLOAK_LAYER
+				cloaksleeves = get_sleeves_layer(cloak, 0, sleeve_layer)
 
 			if(length(cloaksleeves))
 				for(var/mutable_appearance/S as anything in cloaksleeves)
@@ -1224,7 +1239,9 @@ There are several things that need to be remembered:
 						if(OFFSET_SHIRT_F in dna.species.offset_features)
 							S.pixel_x += dna.species.offset_features[OFFSET_CLOAK_F][1]
 							S.pixel_y += dna.species.offset_features[OFFSET_CLOAK_F][2]
-					cloaklays += S
+				if(horse && !draped_over_taur)
+					horse.occlude_north_clothing(cloaksleeves)
+				cloaklays += cloaksleeves
 	if(backr && backr.alternate_worn_layer == CLOAK_BEHIND_LAYER)
 		update_hud_backr(backr)
 		if(dna && dna.species.sexes)
@@ -1270,7 +1287,9 @@ There are several things that need to be remembered:
 						if(OFFSET_SHIRT_F in dna.species.offset_features)
 							S.pixel_x += dna.species.offset_features[OFFSET_CLOAK_F][1]
 							S.pixel_y += dna.species.offset_features[OFFSET_CLOAK_F][2]
-					cloaklays += S
+				if(horse)
+					horse.occlude_north_clothing(cloaksleeves)
+				cloaklays += cloaksleeves
 
 	overlays_standing[CLOAK_LAYER] = cloaklays
 	rebuild_obscured_flags()
