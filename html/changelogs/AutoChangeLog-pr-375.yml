@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Middle-clicking hoods correctly toggles hair and related features without unexpectedly concealing your identity."

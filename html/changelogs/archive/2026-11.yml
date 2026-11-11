@@ -328,3 +328,21 @@
       their firing delay.
   - bugfix: Delayed firearms no longer duplicate firing effects and accident checks,
       and safely cancel pending shots if the shooter is deleted.
+  - bugfix: The ztratocaster now shows its heretical warning, red highlight and tooltip
+      explanation.
+  - qol: Getting Started now explains how to light torches and lampterns and clarifies
+      how to access backpacks.
+  - qol: Familiars can adjust their darkness visibility with Nighteyes.
+  - qol: Javelins can now be twirled using Polearms skill.
+  - qol: Hypnotic Gaze and Presence descriptions explain where to customize their
+      examine text.
+  - rscadd: Added Amphibious, a 1-QP quirk that allows breathing underwater.
+  - qol: Pouches can be equipped in either back slot or the bracer slot.
+  - qol: Metal armor movement clanging now plays every twelve steps instead of four.
+  - bugfix: Hear Instruments now blocks initial instrument and music-box playback
+      before sending it to players who disabled it.
+  - bugfix: Enchanted bounty scrolls refresh their listings every time they are read.
+  - bugfix: Middle-clicking hoods correctly toggles hair and related features without
+      unexpectedly concealing your identity.
+  - qol: Darkness is now slightly transparent while remaining almost completely black.
+  - qol: Your personal visibility in darkness reaches 50% farther, with the same brightness.

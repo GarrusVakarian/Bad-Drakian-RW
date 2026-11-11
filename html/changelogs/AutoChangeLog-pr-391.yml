@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "The ztratocaster now shows its heretical warning, red highlight and tooltip explanation."
