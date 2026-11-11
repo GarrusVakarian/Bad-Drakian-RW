@@ -1052,9 +1052,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				var/name = ispath(T) ? T::name : "None"
 				var/taur_feature_id = character_sheet_feature_is_new("digitigrade_big_legs") ? "digitigrade_big_legs" : "revenant_customization"
 				dat += "<b>Taur Body Type:</b> [character_sheet_feature_link(taur_feature_id, "?_src_=prefs;preference=taur_type;task=input", "Choose a lower-body appearance", name)]<BR>"
-				dat += "<b>Taur Color:</b> <span style='border: 1px solid #161616; background-color: #[taur_color];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_color;task=input'>Change</a><BR>"
-				dat += "<b>Taur Markings:</b> <span style='border: 1px solid #161616; background-color: #[taur_markings];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_markings;task=input'>Change</a><BR>"
-				dat += "<b>Taur Tertiary:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
+				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Coat" : "Taur Color"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_color];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_color;task=input'>Change</a><BR>"
+				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Underbelly" : "Taur Markings"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_markings];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_markings;task=input'>Change</a><BR>"
+				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Tail" : "Taur Tertiary"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
 
 			dat += "<b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a><BR>"
 			dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>[origin ? origin.name : "None"]</a><BR>"
@@ -3959,6 +3959,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 	if(taur_type)
 		character.Taurize(taur_type, "#[taur_color]", "#[taur_markings]", "#[taur_tertiary]")
+		var/obj/item/bodypart/taur/horse_body = character.get_taur_tail()
+		if(istype(horse_body, /obj/item/bodypart/taur/equine))
+			horse_body.markings = body_markings[BODY_ZONE_L_LEG] ? body_markings[BODY_ZONE_L_LEG].Copy() : null
 	else if(character_setup)
 		// This should only ever ~do~ anything for previews
 		character.ensure_not_taur()
