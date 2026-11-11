@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Handgonnes, flintgonnes and fusils retain their aimed accuracy through their firing delay."
-  - bugfix: "Delayed firearms no longer duplicate firing effects and accident checks, and safely cancel pending shots if the shooter is deleted."

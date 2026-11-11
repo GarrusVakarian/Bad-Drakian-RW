@@ -323,3 +323,8 @@
       active admins are online.
   - qol: Added configurable keybindings for closing your eyes to fall asleep or closing
       them while staying awake.
+  mypingishuge:
+  - bugfix: Handgonnes, flintgonnes and fusils retain their aimed accuracy through
+      their firing delay.
+  - bugfix: Delayed firearms no longer duplicate firing effects and accident checks,
+      and safely cancel pending shots if the shooter is deleted.
