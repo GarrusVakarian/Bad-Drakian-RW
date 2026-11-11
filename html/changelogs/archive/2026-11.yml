@@ -333,6 +333,9 @@
       active admins are online.
   - qol: Added configurable keybindings for closing your eyes to fall asleep or closing
       them while staying awake.
+  - config: Dun World is now a map vote option.
+  - map: (Port) Updated Dun World's garrison entrance, Eoran shrine locks, ministry
+      bureau, keep tea supplies, and dungeon loot.
   mypingishuge:
   - bugfix: Handgonnes, flintgonnes and fusils retain their aimed accuracy through
       their firing delay.
