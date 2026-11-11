@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Credits portraits consistently show headshots with masks, headgear and neck items hidden."
