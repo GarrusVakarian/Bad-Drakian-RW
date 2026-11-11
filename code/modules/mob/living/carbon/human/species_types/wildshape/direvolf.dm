@@ -33,6 +33,7 @@
 /datum/species/shapedirewolf
 	name = "direwolf"
 	id = "shapedirewolf"
+	changesource_flags = MIRROR_BADMIN
 	species_traits = list(NO_UNDERWEAR, NO_ORGAN_FEATURES, NO_BODYPART_FEATURES)
 	inherent_traits = list(
 		TRAIT_KNEESTINGER_IMMUNITY,
