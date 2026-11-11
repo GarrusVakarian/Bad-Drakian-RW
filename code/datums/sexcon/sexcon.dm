@@ -900,6 +900,39 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		LAZYREMOVE(panel_triumph_target.sexcon.panel_triumph_actions, src)
 	panel_triumph_target = null
 
+/// A selected target alone does not qualify; require a live partnered action.
+/datum/sex_controller/proc/has_partnered_vice_action()
+	if(!ishuman(user) || QDELETED(user))
+		return FALSE
+	if(current_action)
+		var/datum/sex_action/own_action = SEX_ACTION(current_action)
+		if(istype(own_action) && own_action.solo)
+			return FALSE
+	var/list/active_actions = panel_triumph_actions ? panel_triumph_actions.Copy() : list()
+	if(panel_triumph_target)
+		active_actions |= src
+	for(var/datum/sex_controller/action_controller in active_actions)
+		if(QDELETED(action_controller))
+			continue
+		action_controller.expire_panel_action()
+		if(!action_controller.current_action || action_controller.desire_stop)
+			continue
+		var/mob/living/carbon/human/actor = action_controller.user
+		var/mob/living/carbon/human/recipient = action_controller.panel_triumph_target
+		if(!ishuman(actor) || QDELETED(actor) || !ishuman(recipient) || QDELETED(recipient) || actor == recipient || actor.sexcon != action_controller || action_controller.target != recipient)
+			continue
+		if(user != actor && user != recipient)
+			continue
+		var/mob/living/carbon/human/partner = user == actor ? recipient : actor
+		if(!partner.client)
+			continue
+		var/datum/sex_action/action = SEX_ACTION(action_controller.current_action)
+		if(!istype(action) || action.solo)
+			continue
+		if(action_controller.can_perform_action(action_controller.current_action, actor.incapacitated()))
+			return TRUE
+	return FALSE
+
 /// A climax qualifies while participating in a valid partnered panel action, regardless of its cause.
 /datum/sex_controller/proc/reward_active_panel_climax()
 	var/list/active_actions = panel_triumph_actions ? panel_triumph_actions.Copy() : list()
