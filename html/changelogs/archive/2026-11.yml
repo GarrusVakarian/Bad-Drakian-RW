@@ -241,3 +241,69 @@
   - rscadd: (WeNeedMorePhoron) Clearing a blockade or completing hoard recovery grants
       1 Triumph to its fellowship and living players within 15 tiles of the coin recipient,
       with an explanatory chat message. Each account is rewarded once per writ.
+2026-11-08:
+  _Rairty:
+  - bugfix: Fellowship members now keep their Blockade Defense and Hoard Recovery
+      Triumph eligibility after wildshaping.
+  _Rarity:
+  - bugfix: Fixed missing porcelain teapot sprites and liquid visuals for ceramic
+      and porcelain teacups.
+  - sound: Regular/hurricane tornadoes get quieter the farther away they are.
+  - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by\
+      \ Astrata\u2019s curse."
+  - bugfix: Oozes now use their selected accent and speech mannerism in spoken chat.
+  - bugfix: "Viciously mocking a Baron or Baroness now counts toward Xylix\u2019s\
+      \ Mock Monarch objective."
+  mypingishuge:
+  - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
+      35 minutes before its first increase."
+  - bugfix: "Using the knuckles\u2019 Upper Cut no longer resets your sprite size\
+      \ or vertical offset."
+  - bugfix: Sleepless characters retain Fatal Insomnia after shapeshifting or having
+      Astrata's curse removed.
+  - rscadd: Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and
+      a spell that plants lasting suggestions. Enable Hypnosis Content in Content
+      Toggles to participate.
+  - rscadd: Added Hypnotic Presence, a consent-based alternative to Hypnotic Gaze
+      that does not require exposed eyes. The quirks are mutually exclusive.
+  - rscadd: Revenants can choose the missing Wild-Kin customization options, including
+      taur bodies, antennae, neck fluff, additional animal features and markings.
+  - rscadd: Tailed species can enable optional Tailmaw customization, including a
+      no-sprite option that keeps their existing tail appearance.
+  mypingishuge <3 _Rarity:
+  - qol: Fresh accounts don't get spammed with NEW badges and reminders for features
+      that already exist when they first join.
+2026-11-09:
+  GarrusVakarian:
+  - rscadd: you can now make grenzelhoftian gloves
+  - balance: it now takes one extra fiber to craft fingerless leather gloves, diminishing
+      the returns from infinitely crafting and snipping them
+  _Rarity:
+  - rscadd: Shift-click the eye HUD to close your eyes and stay awake.
+  - qol: Automatic snores during sleep no longer appear in chat.
+  mypingishuge:
+  - bugfix: Hypnosis consent toggle messages now match the style of other consent
+      toggles.
+  - rscadd: Adds Chisel to the loadout menu for 2 loadout points.
+  - qol: Noticeboard posts now last five hours instead of three.
+  - rscadd: Dye brushes and paint brushes are available in the loadout menu for 1
+      loadout point each.
+  - bugfix: Masterwork items no longer claim to be nicely polished unless their polishing
+      bonus has actually been applied.
+  - rscadd: Eligible races without taur options can choose Digitigrade Big Legs or
+      Digitigrade Big Legs, Stanced.
+  - spellcheck: Renamed both Big Legs options to identify them as digitigrade.
+  - rscadd: Lamias can now choose from 50 horn styles and the same ear and snout choices
+      as Wild-Kin.
+  - bugfix: Removed the empty Parent loadout datum entry from loadout selection.
+  - bugfix: Hypnotic Gaze and Hypnotic Presence keep their custom examine text and
+      color when transforming and reverting.
+  - bugfix: Werewolf transformation creates properly registered organs instead of
+      invalid organ entries.
+  - bugfix: Examine descriptions omit empty fragments and punctuate standalone descriptions.
+  mypingishuge <3 _Rarity:
+  - bugfix: Equipment tooltips now preserve line breaks, bold text, and italics in
+      item descriptions.
+2026-11-10:
+  _Rarity:
+  - rscadd: Restored Xylix Pink as a delectable dye color.

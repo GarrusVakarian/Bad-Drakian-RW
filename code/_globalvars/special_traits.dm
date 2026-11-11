@@ -134,6 +134,8 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		return
 
 	var/datum/job/job = SSjob.GetJob(character.job)
+	// Reject impossible saved combinations before charging either QP or Triumphs.
+	player.prefs.normalize_hypnotic_quirks()
 	var/available_points = player.prefs.get_quirk_points_earned()
 	var/triumphs_spent = 0
 	for(var/datum/quirk/Q in player.prefs.quirks)

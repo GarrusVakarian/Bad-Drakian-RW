@@ -67,7 +67,7 @@
 	switch(action)
 		if("choose_item")
 			var/datum/loadout_item/item = locate(params["ref"])
-			if(!istype(item))
+			if(!istype(item) || !ispath(item.path, /obj/item))
 				ui.close()
 				prefs.open_vices_menu(user)
 				return TRUE

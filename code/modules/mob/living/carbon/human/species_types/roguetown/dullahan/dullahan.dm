@@ -16,6 +16,33 @@
 
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,STUBBLE,OLDGREY,MUTCOLORS)
 	default_features = MANDATORY_FEATURE_LIST
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+		/obj/item/bodypart/taur/otie,
+		/obj/item/bodypart/taur/canine,
+		/obj/item/bodypart/taur/venard,
+		/obj/item/bodypart/taur/drake,
+		/obj/item/bodypart/taur/dragon,
+		/obj/item/bodypart/taur/noodle,
+		/obj/item/bodypart/taur/horse,
+		/obj/item/bodypart/taur/goat,
+		/obj/item/bodypart/taur/deer,
+		/obj/item/bodypart/taur/redpanda,
+		/obj/item/bodypart/taur/rat,
+		/obj/item/bodypart/taur/skunk,
+		/obj/item/bodypart/taur/kitsune,
+		/obj/item/bodypart/taur/feline,
+		/obj/item/bodypart/taur/snep,
+		/obj/item/bodypart/taur/tiger,
+		/obj/item/bodypart/taur/spider,
+		/obj/item/bodypart/taur/centipede,
+		/obj/item/bodypart/taur/sloog,
+		/obj/item/bodypart/taur/ant,
+		/obj/item/bodypart/taur/wasp,
+		/obj/item/bodypart/taur/insect,
+	)
+
 	inherent_traits = list(TRAIT_EASYDECAPITATION, TRAIT_NOHUNGER, TRAIT_NOBREATH, TRAIT_ZOMBIE_IMMUNE) //Given the deathless traits inherently as part of their nature as pseudo-undead.
 	use_skintones = 1
 	disliked_food = NONE
@@ -86,11 +113,12 @@
 		/datum/customizer/organ/testicles/anthro,
 		/datum/customizer/organ/penis/anthro,
 		/datum/customizer/organ/breasts/animal,
-		/datum/customizer/organ/vagina/animal,
+		/datum/customizer/organ/vagina/anthro,
 		/datum/customizer/bodypart_feature/pubes,
 		/datum/customizer/bodypart_feature/pits,
-
-		)
+		/datum/customizer/organ/antennas/anthro,
+		/datum/customizer/organ/neck_feature/anthro,
+	)
 	body_marking_sets = list(
 		/datum/body_marking_set/none,
 		/datum/body_marking_set/belly,
@@ -99,6 +127,7 @@
 		/datum/body_marking_set/tiger,
 		/datum/body_marking_set/tiger_dark,
 		/datum/body_marking_set/gradient,
+		/datum/body_marking_set/bellysocks,
 	)
 	body_markings = list(
 		/datum/body_marking/flushed_cheeks,
@@ -128,6 +157,19 @@
 		/datum/body_marking/diagonal_eyes,
 		/datum/body_marking/wide_eyes,
 		/datum/body_marking/stripes,
+		/datum/body_marking/face_paint,
+		/datum/body_marking/wolf,
+		/datum/body_marking/tiger,
+		/datum/body_marking/tiger/dark,
+		/datum/body_marking/sock,
+		/datum/body_marking/tie,
+		/datum/body_marking/tiesmall,
+		/datum/body_marking/backspots,
+		/datum/body_marking/front,
+		/datum/body_marking/spotted,
+		/datum/body_marking/harlequin,
+		/datum/body_marking/harlequinreversed,
+		/datum/body_marking/gradient,
 	)
 	descriptor_choices = list(
 		/datum/descriptor_choice/trait,

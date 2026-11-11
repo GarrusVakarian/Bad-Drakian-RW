@@ -754,7 +754,12 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 		return null
 	if(desc == loadout_desc_html)
 		return loadout_desc_html
-	return html_encode(desc)
+	// Restore only attribute-free formatting after escaping the description.
+	var/static/regex/line_breaks = regex("&lt;/?br\\s*/?&gt;", "gi")
+	var/static/regex/emphasis = regex("&lt;(/?(?:b|i))&gt;", "gi")
+	var/description_html = line_breaks.Replace(html_encode(desc), "<br>")
+	description_html = emphasis.Replace(description_html, "<$1>")
+	return replacetext(description_html, "\n", "<br>")
 
 /obj/item/proc/get_hover_examine_condition_text()
 	return null

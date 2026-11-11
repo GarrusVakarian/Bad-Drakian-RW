@@ -1,4 +1,13 @@
-GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
+GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
+
+/// Implicit grouping parents (such as /horsey) are not selectable equipment.
+/proc/init_loadout_items()
+	var/list/items = list()
+	for(var/datum/loadout_item/item_type as anything in subtypesof(/datum/loadout_item))
+		if(!ispath(initial(item_type.path), /obj/item))
+			continue
+		items += new item_type()
+	return items
 
 /datum/loadout_item
 	var/name = "Parent loadout datum"
@@ -109,6 +118,16 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 	path = /obj/item/broom
 	triumph_cost = 1
 
+/datum/loadout_item/dye_brush
+	name = "Dye Brush"
+	path = /obj/item/dye_brush
+	triumph_cost = 1
+
+/datum/loadout_item/paint_brush
+	name = "Paint Brush"
+	path = /obj/item/paint_brush
+	triumph_cost = 1
+
 /datum/loadout_item/soap
 	name = "soap"
 	path = /obj/item/soap
@@ -182,6 +201,11 @@ GLOBAL_LIST_INIT(loadout_items, init_subtypes(/datum/loadout_item))
 /datum/loadout_item/mallet
 	name = "Wooden Mallet"
 	path = /obj/item/rogueweapon/hammer/wood
+	triumph_cost = 2
+
+/datum/loadout_item/chisel
+	name = "Chisel"
+	path = /obj/item/rogueweapon/chisel
 	triumph_cost = 2
 
 /datum/loadout_item/folding_table

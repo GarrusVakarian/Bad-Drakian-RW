@@ -2,6 +2,10 @@
 	race = /datum/species/aasimar
 
 /datum/species/aasimar
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Aasimar"
 	id = "aasimar"
 	desc = "<b>Aasimar</b><br>\

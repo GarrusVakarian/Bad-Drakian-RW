@@ -943,34 +943,49 @@
 
 /atom/movable/screen/eye_intent/handle_click(location,control,params)
 	var/list/modifiers = params2list(params)
-	var/_y = text2num(params2list(params)["icon-y"])
+	var/_y = text2num(modifiers["icon-y"])
+	var/clicked_eyelid = modifiers["left"] && (_y >= 29 || _y <= 4)
+	var/mob/living/L = hud?.mymob
+	if(!istype(L))
+		return
 
-	hud.mymob.playsound_local(hud.mymob, 'sound/misc/click.ogg', 100)
-	if(isliving(hud?.mymob))
-		var/mob/living/L = hud.mymob
-		if(L.eyesclosed)
-			L.eyesclosed = 0
+	L.playsound_local(L, 'sound/misc/click.ogg', 100)
+	if(modifiers["shift"] && modifiers["left"])
+		if(L.stat != CONSCIOUS || L.IsSleeping())
+			return
+		L.stay_awake = !L.stay_awake
+		L.fallingas = 0
+		L.eyesclosed = L.stay_awake
+		if(L.stay_awake)
+			L.become_blind("eyelids")
+			to_chat(L, span_notice("I close my eyes and stay awake."))
+		else
 			L.cure_blind("eyelids")
+			to_chat(L, span_notice("I open my eyes."))
+		update_icon()
+		return
+
+	if(L.eyesclosed)
+		L.eyesclosed = FALSE
+		L.stay_awake = FALSE
+		L.cure_blind("eyelids")
+		// Clicking the eyelid again keeps the normal sleep countdown running.
+		if(!clicked_eyelid)
+			L.fallingas = 0
 
 	if(modifiers["left"])
-		if(_y>=29 || _y<=4)
-			if(isliving(hud.mymob))
-				var/mob/living/L = hud.mymob
-				L.eyesclosed = 1
-				L.become_blind("eyelids")
+		if(clicked_eyelid)
+			L.eyesclosed = TRUE
+			L.become_blind("eyelids")
 		else
 			toggle(usr)
 
 	if(modifiers["middle"])
-		if(isliving(hud.mymob))
-			var/mob/living/L = hud.mymob
-			L.look_up()
+		L.look_up()
 	update_icon()
 
 	if(modifiers["right"])
-		if(isliving(hud.mymob))
-			var/mob/living/L = hud.mymob
-			L.look_around()
+		L.look_around()
 
 /atom/movable/screen/eye_intent/update_icon_state()
 	. = ..()

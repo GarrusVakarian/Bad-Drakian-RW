@@ -267,15 +267,17 @@
 /datum/status_effect/debuff/breedable
 	id = "breedable"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/breedable
-	duration = 30 SECONDS
+	duration = 60 SECONDS
 
 /datum/status_effect/debuff/breedable/on_apply()
 	. = ..()
 	ADD_TRAIT(owner, TRAIT_CRITICAL_RESISTANCE, TRAIT_STATUS_EFFECT(id))
+	ADD_TRAIT(owner, TRAIT_BLOOD_RESISTANCE, TRAIT_STATUS_EFFECT(id))
 
 /datum/status_effect/debuff/breedable/on_remove()
 	. = ..()
 	REMOVE_TRAIT(owner, TRAIT_CRITICAL_RESISTANCE, TRAIT_STATUS_EFFECT(id))
+	REMOVE_TRAIT(owner, TRAIT_BLOOD_RESISTANCE, TRAIT_STATUS_EFFECT(id))
 
 /atom/movable/screen/alert/status_effect/debuff/breedable
 	name = "Obedient"
@@ -288,7 +290,7 @@
 
 /datum/status_effect/debuff/submissive/on_apply()
 	. = ..()
-	owner.add_movespeed_modifier("SUBMISSIVE", multiplicative_slowdown = 4)
+	owner.add_movespeed_modifier("SUBMISSIVE", multiplicative_slowdown = 6)
 
 /datum/status_effect/debuff/submissive/on_remove()
 	. = ..()

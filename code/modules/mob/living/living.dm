@@ -1712,8 +1712,8 @@
 	changeNext_move(CLICK_CD_EXHAUSTED)
 	var/obj/effect/temp_visual/surrender/flaggy = new(src)
 	vis_contents += flaggy
-	Stun(300)
-	Knockdown(300)
+	Stun(20 SECONDS)
+	Knockdown(20 SECONDS)
 	drop_all_held_items()
 	apply_status_effect(/datum/status_effect/debuff/breedable)
 	apply_status_effect(/datum/status_effect/debuff/submissive)
