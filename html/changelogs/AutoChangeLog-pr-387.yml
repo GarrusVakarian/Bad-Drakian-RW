@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "See nearby characters tense or relax while in combat mode without Combat Aware, and see your own cues when switching combat mode on or off."
