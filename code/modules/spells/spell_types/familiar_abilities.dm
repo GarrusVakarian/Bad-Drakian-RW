@@ -14,7 +14,9 @@
 
 /obj/effect/proc_holder/spell/self/familiar_nighteyes/cast(list/targets, mob/living/user)
 	if(!istype(user, /mob/living/simple_animal/pet/familiar))
-		revert_cast()
+		// revert_cast requires a real actor; never fall back to usr here.
+		if(isliving(user))
+			revert_cast(user)
 		return FALSE
 	switch(user.lighting_alpha)
 		if(LIGHTING_PLANE_ALPHA_VISIBLE)
