@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Fully charged Wolkenmaw shots now follow the ranged mouse-release path, preventing valid shots from losing their charge before firing."
