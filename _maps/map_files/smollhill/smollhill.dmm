@@ -76,9 +76,51 @@
 /obj/effect/landmark/start/villager,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/outdoors/rtfield/rockhill)
+"aao" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/obj/structure/flora/roguegrass,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bogsafe)
+"aap" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/west)
 "aaq" = (
 /turf/open/floor/rogue/churchmarble,
 /area/rogue/indoors/town/physician)
+"aar" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/west)
+"aas" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/west)
+"aat" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/west)
+"aau" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/west)
+"aav" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/west)
+"aaw" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/west)
 "aax" = (
 /obj/effect/landmark/start/villager{
 	dir = 8
@@ -96,6 +138,21 @@
 /obj/machinery/light/rogue/firebowl/standing/blue,
 /turf/open/floor/rogue/hexstone,
 /area/rogue/under/cave/goblinfort)
+"aaz" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/bograt/north)
+"aaA" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/outdoors/bograt/north)
+"aaB" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass,
+/area/rogue/outdoors/bograt/north)
 "aaD" = (
 /obj/structure/fluff/railing/border{
 	dir = 9
@@ -176,20 +233,6 @@
 	},
 /turf/open/floor/rogue/dirt/nospawn,
 /area/rogue/outdoors/bogsafe)
-"aaP" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/dirt,
-/area/rogue/outdoors/bograt/west)
-"aaQ" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/west)
 "aaR" = (
 /obj/structure/fluff/customsign/arrow{
 	dir = 4;
@@ -15054,10 +15097,6 @@
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/outdoors/rtfield/eora)
-"haL" = (
-/obj/structure/fluff/railing/wood,
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/west)
 "hbd" = (
 /obj/structure/chair/stool/rogue,
 /turf/open/floor/rogue/dirt/road,
@@ -26870,10 +26909,6 @@
 	},
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/under/dungeon/sunkenchurch)
-"mJk" = (
-/obj/structure/fluff/railing/wood,
-/turf/open/floor/rogue/dirt,
-/area/rogue/outdoors/bograt/west)
 "mJE" = (
 /turf/closed/mineral/random/rogue,
 /area/rogue/under/underdarker/rockhill)
@@ -42179,12 +42214,11 @@
 /turf/open/floor/rogue/grassyel,
 /area/rogue/outdoors/woodsafe)
 "tYg" = (
-/obj/structure/fluff/railing/wood{
-	dir = 4;
-	pixel_x = 9
+/obj/structure/bondage/gloryhole/iron{
+	dir = 8
 	},
-/turf/open/floor/rogue/grass/nospawn,
-/area/rogue/outdoors/bogsafe)
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/town/warden)
 "tYh" = (
 /obj/structure/bars,
 /turf/open/floor/rogue/dirt,
@@ -129556,16 +129590,16 @@ voc
 cYc
 oUd
 jFa
-cYc
-gUR
+fIz
+aao
 fIz
 fIz
 fIz
 cYc
-cYc
-cYc
+fIz
+fIz
 nsy
-jFa
+fIz
 uUU
 cYc
 jFa
@@ -129861,8 +129895,8 @@ fIz
 fIz
 fIz
 aaN
-tYg
-cYc
+aaN
+fIz
 fIz
 aaN
 aaN
@@ -130154,12 +130188,12 @@ aad
 aad
 aad
 jue
-tYg
-cmx
-jFa
-tYg
-tYg
-cYc
+aaN
+aaN
+fIz
+aaN
+aaN
+fIz
 sJZ
 ffX
 kst
@@ -130169,14 +130203,14 @@ oUd
 kst
 kst
 pac
-cYc
+fIz
 fIz
 fIz
 fIz
 psr
-cYc
+fIz
 voc
-pac
+nsy
 aad
 aad
 aad
@@ -130472,9 +130506,9 @@ uUU
 kst
 rpL
 pac
-cYc
-cYc
-cYc
+fIz
+fIz
+fIz
 fIz
 fIz
 fIz
@@ -131989,7 +132023,7 @@ oqo
 smf
 ujL
 sUQ
-rfA
+tqU
 qBR
 lxs
 rfA
@@ -132290,8 +132324,8 @@ smf
 grB
 oqo
 ujL
-ujL
-rfA
+lNa
+tqU
 qBR
 lxs
 rfA
@@ -132592,10 +132626,10 @@ smf
 smf
 oqo
 ujL
-rfA
+tqU
 smf
 lxs
-ujL
+lNa
 rfA
 smf
 smf
@@ -132894,11 +132928,11 @@ smf
 smf
 smf
 oqo
-rfA
-rfA
+tqU
+tqU
 qBR
-rfA
-rfA
+tqU
+jdv
 smf
 smf
 smf
@@ -133197,7 +133231,7 @@ smf
 smf
 smf
 oqo
-rfA
+tqU
 qBR
 qBR
 sUQ
@@ -133499,10 +133533,10 @@ smf
 smf
 smf
 oqo
-rfA
-rfA
+tqU
+tqU
 qBR
-ujL
+lNa
 lxs
 rfA
 rfA
@@ -133802,9 +133836,9 @@ smf
 smf
 smf
 oqo
-rfA
+tqU
 qBR
-rfA
+tqU
 rfA
 waO
 waO
@@ -134104,9 +134138,9 @@ smf
 smf
 smf
 oqo
-haL
-rfA
-rfA
+aap
+tqU
+tqU
 ujL
 ujL
 ujL
@@ -134406,9 +134440,9 @@ smf
 smf
 grB
 oqo
-haL
+aap
 qBR
-ujL
+lNa
 ujL
 ujL
 uRH
@@ -134708,9 +134742,9 @@ smf
 smf
 smf
 oqo
-nKS
+aar
 qBR
-rfA
+tqU
 ujL
 ujL
 rfA
@@ -135010,7 +135044,7 @@ smf
 smf
 smf
 oqo
-rri
+aas
 qBR
 uRH
 ujL
@@ -135312,9 +135346,9 @@ smf
 smf
 oqo
 uRH
-ujL
+lNa
 qBR
-ujL
+tqU
 oqo
 smf
 smf
@@ -135613,8 +135647,8 @@ smf
 oqo
 oqo
 oqo
-mJk
-ujL
+aat
+lNa
 qBR
 oqo
 smf
@@ -135915,9 +135949,9 @@ oqo
 oqo
 ujL
 ujL
-haL
+aap
 qBR
-rfA
+tqU
 oqo
 smf
 smf
@@ -136216,8 +136250,8 @@ rfA
 ujL
 ujL
 rfA
-ujL
-ujL
+lNa
+lNa
 qBR
 smf
 rfA
@@ -136819,11 +136853,11 @@ lxs
 lxs
 ujL
 qYw
-rfA
-rfA
+jdv
+tqU
 qBR
 smf
-rfA
+tqU
 ujL
 rfA
 xHK
@@ -137124,8 +137158,8 @@ lxs
 lxs
 lxs
 lxs
-rfA
-rfA
+tqU
+tqU
 rfA
 ujL
 ujL
@@ -137423,11 +137457,11 @@ lxs
 ujL
 rfA
 ujL
-jdv
+rfA
 lxs
 qBR
 oXL
-rfA
+tqU
 rfA
 ujL
 rfA
@@ -137728,7 +137762,7 @@ rfA
 rfA
 lxs
 qBR
-ujL
+lNa
 smf
 smf
 rfA
@@ -138331,8 +138365,8 @@ rfA
 rfA
 qYw
 lxs
-ujL
-ujL
+lNa
+lNa
 rfA
 rfA
 oXL
@@ -138634,7 +138668,7 @@ smf
 smf
 lxs
 qBR
-rfA
+tqU
 rfA
 rfA
 ujL
@@ -138933,10 +138967,10 @@ rRw
 rfA
 smf
 ujL
-rfA
+jdv
 lxs
 qBR
-rfA
+tqU
 rfA
 ujL
 rfA
@@ -139237,8 +139271,8 @@ ujL
 ujL
 oXL
 lxs
-ujL
-ujL
+lNa
+lNa
 ujL
 ujL
 smf
@@ -139540,7 +139574,7 @@ ujL
 lxs
 lxs
 qBR
-rfA
+tqU
 oXL
 smf
 oXL
@@ -139840,10 +139874,10 @@ smf
 oXL
 lxs
 gbp
-rfA
+tqU
 qBR
-rfA
-jdv
+tqU
+aau
 smf
 smf
 rfA
@@ -140142,11 +140176,11 @@ smf
 lxs
 lxs
 ujL
-rfA
+tqU
 qBR
 qBR
-aaP
-ujL
+aav
+lNa
 oXL
 qYw
 rfA
@@ -140444,12 +140478,12 @@ lxs
 qYw
 rfA
 ujL
-rfA
-rfA
+tqU
+tqU
 qBR
-rfA
-ujL
-rfA
+tqU
+lNa
+tqU
 rfA
 lxs
 ujL
@@ -140747,13 +140781,13 @@ rfA
 rfA
 oqo
 oqo
-rfA
+tqU
 lxs
 lxs
+tqU
+tqU
 rfA
-rfA
-rfA
-rri
+ujL
 rfA
 rfA
 ujL
@@ -141053,7 +141087,7 @@ oqo
 qBR
 qBR
 qYw
-ujL
+lNa
 rfA
 rfA
 ujL
@@ -141352,7 +141386,7 @@ smf
 smf
 smf
 oqo
-rfA
+tqU
 qBR
 qBR
 lxs
@@ -141655,10 +141689,10 @@ smf
 smf
 oqo
 lxs
-rfA
+tqU
 qBR
-rfA
-rfA
+tqU
+jdv
 ujL
 ujL
 uRH
@@ -141959,8 +141993,8 @@ oqo
 smf
 qYw
 qBR
-rfA
-ujL
+tqU
+lNa
 ujL
 ujL
 ujL
@@ -142260,9 +142294,9 @@ smf
 oqo
 ujL
 rfA
-ujL
+lxs
 uRH
-ujL
+lNa
 ujL
 ujL
 xHK
@@ -142562,9 +142596,9 @@ smf
 oqo
 rfA
 rfA
-ujL
+lxs
 qBR
-ujL
+lNa
 ujL
 ujL
 whb
@@ -142864,10 +142898,10 @@ smf
 ujL
 rfA
 rfA
-jdv
+tqU
 qBR
 oXL
-ujL
+lNa
 whb
 whb
 whb
@@ -143169,7 +143203,7 @@ ujL
 smf
 qBR
 qBR
-ujL
+lNa
 whb
 whb
 whb
@@ -143469,9 +143503,9 @@ rfA
 rfA
 ujL
 smf
-rfA
+tqU
 qBR
-ujL
+lNa
 ujL
 aae
 whb
@@ -143770,10 +143804,10 @@ ujL
 rfA
 ujL
 rfA
-rfA
-rfA
+aau
+tqU
 qBR
-rfA
+tqU
 rfA
 rfA
 ujL
@@ -144072,10 +144106,10 @@ rfA
 rfA
 rfA
 ujL
-rfA
+tqU
 qBR
 qBR
-rfA
+tqU
 rfA
 rfA
 ujL
@@ -144374,10 +144408,10 @@ rfA
 ujL
 ujL
 rfA
-ujL
+lNa
 qBR
 oXL
-ujL
+lNa
 rfA
 oXL
 rfA
@@ -145279,9 +145313,9 @@ rfA
 smf
 smf
 ujL
-rfA
+tqU
 qBR
-rfA
+tqU
 rfA
 rfA
 rfA
@@ -145580,10 +145614,10 @@ ujL
 qYw
 rfA
 qYw
-ujL
-rfA
+aar
+tqU
 qBR
-rfA
+tqU
 rfA
 rfA
 rfA
@@ -145881,10 +145915,10 @@ rfA
 rfA
 ujL
 rfA
-ujL
-ujL
+lNa
+aaw
 qBR
-ujL
+lNa
 ujL
 rfA
 ujL
@@ -146182,11 +146216,11 @@ ujL
 ujL
 ujL
 uRH
-ujL
-rfA
+lNa
+tqU
 qBR
-aaQ
-jdv
+lNa
+tqU
 rfA
 rfA
 smf
@@ -146484,9 +146518,9 @@ ujL
 rfA
 ujL
 ujL
-rfA
+tqU
 qBR
-ujL
+lNa
 rfA
 ujL
 ujL
@@ -146784,11 +146818,11 @@ smf
 rfA
 lxs
 smf
-ujL
-ujL
+aar
+lNa
 qBR
 qBR
-ujL
+lNa
 ujL
 oqo
 oqo
@@ -147084,10 +147118,10 @@ xQk
 qCt
 aOf
 smf
-rfA
-ujL
+tqU
+lNa
 qBR
-ujL
+lNa
 qBR
 ujL
 qNe
@@ -147386,11 +147420,11 @@ smf
 smf
 smf
 smf
-rri
+lNa
 qBR
-ujL
-ujL
-ujL
+lNa
+lNa
+lNa
 smf
 oqo
 smf
@@ -147688,9 +147722,9 @@ smf
 smf
 qYw
 oqo
-rfA
+tqU
 qux
-ujL
+lNa
 ujL
 ujL
 oqo
@@ -147989,10 +148023,10 @@ ujL
 ujL
 uRH
 uRH
-ujL
-rfA
+lNa
+tqU
 qBR
-ujL
+lNa
 ujL
 rfA
 oqo
@@ -148291,10 +148325,10 @@ rfA
 rfA
 ujL
 ujL
-ujL
+lNa
 lxs
 qBR
-ujL
+lNa
 ujL
 oqo
 smf
@@ -148591,8 +148625,8 @@ lxs
 ujL
 ujL
 ujL
-ujL
-ujL
+lNa
+lNa
 lxs
 qBR
 qBR
@@ -148889,16 +148923,16 @@ uRH
 ujL
 ujL
 ujL
-lxs
+kiI
 ujL
-rfA
-ujL
+tqU
+lNa
 lxs
 lxs
 lxs
 qBR
-rfA
-rfA
+lxs
+jdv
 smf
 smf
 smf
@@ -149186,11 +149220,11 @@ lxs
 lxs
 lxs
 ujL
-rfA
+aau
 smf
-rfA
-ujL
-rri
+tqU
+lNa
+lNa
 aaR
 lxs
 qux
@@ -149199,7 +149233,7 @@ qBR
 qBR
 qBR
 lxs
-rfA
+lxs
 rfA
 smf
 smf
@@ -149488,8 +149522,8 @@ ujL
 lxs
 lxs
 lxs
-rfA
-ujL
+qux
+qux
 qBR
 qBR
 qBR
@@ -149497,12 +149531,12 @@ qBR
 lxs
 qBR
 qBR
-rfA
+lxs
 qYw
-rfA
+tqU
 lxs
 lxs
-rfA
+lxs
 rfA
 smf
 smf
@@ -149790,22 +149824,22 @@ ujL
 rfA
 lxs
 lxs
-rfA
-rfA
 lxs
 lxs
-ujL
-ujL
-ujL
-rfA
-rfA
+lxs
+lxs
+tqU
+tqU
+tqU
+lxs
+lxs
 rfA
 rfA
 rri
-ujL
+lNa
 lxs
 lxs
-lxs
+sKX
 lxs
 sKX
 sKX
@@ -150090,12 +150124,12 @@ smf
 smf
 oqo
 rfA
-rfA
+aau
 lxs
-ujL
+qux
 qBR
 qBR
-rfA
+tqU
 smf
 ujL
 ujL
@@ -150105,9 +150139,9 @@ ujL
 rfA
 ujL
 ujL
-ujL
+lNa
 qYw
-lxs
+sKX
 lxs
 sKX
 sKX
@@ -150392,11 +150426,11 @@ smf
 smf
 oqo
 uRH
-rfA
+tqU
 lxs
 qBR
 qux
-rfA
+tqU
 ujL
 rfA
 rfA
@@ -150694,10 +150728,10 @@ aOf
 oqo
 rfA
 rfA
-ujL
+lNa
 lxs
 qBR
-rfA
+tqU
 ujL
 smf
 ujL
@@ -150996,7 +151030,7 @@ smf
 ujL
 ujL
 ujL
-ujL
+qux
 qBR
 qBR
 ujL
@@ -151297,10 +151331,10 @@ smf
 oqo
 ujL
 rfA
+tqU
 qBR
 qBR
-qBR
-rfA
+tqU
 ujL
 ujL
 smf
@@ -151601,7 +151635,7 @@ ujL
 gbp
 qBR
 qux
-rfA
+lxs
 smf
 qYw
 ujL
@@ -151902,9 +151936,9 @@ ujL
 ujL
 ujL
 qBR
-qux
-rfA
-ujL
+qBR
+lxs
+rri
 rfA
 rfA
 ujL
@@ -152204,7 +152238,7 @@ uRH
 ujL
 ujL
 qux
-qux
+qBR
 lxs
 rfA
 qYw
@@ -152505,9 +152539,9 @@ rfA
 ujL
 ujL
 qBR
-qux
-ujL
-ujL
+qBR
+lxs
+lxs
 rfA
 rfA
 aOf
@@ -152808,8 +152842,8 @@ ujL
 qBR
 qux
 qux
+qux
 ujL
-lxs
 rfA
 rfA
 smf
@@ -153107,10 +153141,10 @@ ujL
 rfA
 nKS
 qBR
+qBR
 qux
-qux
-ujL
 lxs
+ujL
 rfA
 rfA
 smf
@@ -155522,7 +155556,7 @@ xAB
 xAB
 wQd
 asE
-qiq
+eFc
 eFc
 tNC
 wQd
@@ -157031,7 +157065,7 @@ sYx
 fcx
 sYx
 sYx
-sYx
+aaU
 ljM
 lOV
 sYx
@@ -158843,9 +158877,9 @@ fPd
 fPd
 sYx
 fPd
-fPd
+idS
 lOV
-azy
+lOV
 fPd
 ubD
 cuM
@@ -159147,7 +159181,7 @@ fPd
 fPd
 fPd
 lOV
-azy
+lOV
 fPd
 fPd
 cuM
@@ -159449,7 +159483,7 @@ sYx
 fPd
 fPd
 lOV
-azy
+ljM
 fPd
 ubD
 cuM
@@ -159749,9 +159783,9 @@ fPd
 fPd
 sYx
 fPd
-idS
+fPd
 lOV
-azy
+ljM
 fPd
 ubD
 cuM
@@ -160051,9 +160085,9 @@ fPd
 fPd
 fPd
 fPd
-aaS
+idS
 azy
-azy
+lOV
 fPd
 fPd
 cuM
@@ -160353,9 +160387,9 @@ cuM
 fPd
 sYx
 sYx
-fPd
+aaS
 lOV
-azy
+lOV
 fPd
 fPd
 cuM
@@ -160959,7 +160993,7 @@ fPd
 fcx
 lOV
 lOV
-fPd
+lOV
 sYx
 sYx
 fPd
@@ -161560,10 +161594,10 @@ fPd
 fPd
 fPd
 azy
-sYx
 azy
+ljM
 lOV
-fPd
+idS
 sYx
 sYx
 fPd
@@ -161862,7 +161896,7 @@ fPd
 fPd
 cuM
 fPd
-azy
+ljM
 lOV
 sqd
 sYx
@@ -162164,9 +162198,9 @@ fPd
 fPd
 fPd
 fPd
-fPd
-lOV
 ljM
+lOV
+lOV
 lOV
 djA
 rJN
@@ -162468,7 +162502,7 @@ fGG
 fPd
 fGG
 lOV
-ljM
+lOV
 ljM
 djA
 rJN
@@ -162768,7 +162802,7 @@ sYx
 fPd
 fPd
 fPd
-fPd
+lOV
 lOV
 azy
 azy
@@ -163070,7 +163104,7 @@ fPd
 fPd
 fPd
 fPd
-sYx
+lOV
 lOV
 fPd
 idS
@@ -163674,7 +163708,7 @@ fPd
 fPd
 fPd
 fGG
-ljM
+lOV
 lOV
 fPd
 fPd
@@ -163977,7 +164011,7 @@ cuM
 fPd
 fGG
 lOV
-sYx
+lOV
 sYx
 sYx
 fPd
@@ -164278,7 +164312,7 @@ fPd
 fPd
 fPd
 fGG
-fPd
+lOV
 azy
 fPd
 sYx
@@ -164581,7 +164615,7 @@ fPd
 fPd
 fPd
 lOV
-fPd
+lOV
 fPd
 fPd
 cuM
@@ -164881,9 +164915,9 @@ fPd
 fGG
 fPd
 qMq
-fPd
+ljM
 lOV
-azy
+aaz
 fPd
 fPd
 fGG
@@ -165183,10 +165217,10 @@ fPd
 fPd
 fPd
 cuM
-fPd
+lOV
 lOV
 aaT
-idS
+fPd
 fPd
 fPd
 fPd
@@ -165485,7 +165519,7 @@ fPd
 fPd
 fPd
 qMq
-fPd
+lOV
 lOV
 azy
 fPd
@@ -165787,7 +165821,7 @@ fGG
 fPd
 fPd
 fPd
-fPd
+lOV
 azy
 fPd
 fPd
@@ -166086,10 +166120,10 @@ azy
 fPd
 fPd
 fPd
-sYx
+aaU
 lOV
 fPd
-azy
+ljM
 lOV
 fPd
 fGG
@@ -166392,7 +166426,7 @@ fPd
 sYx
 azy
 lOV
-azy
+ljM
 fGG
 fcx
 fcx
@@ -166692,7 +166726,7 @@ fGG
 fPd
 sYx
 sYx
-azy
+ljM
 lOV
 lOV
 lOV
@@ -166993,15 +167027,15 @@ azy
 fPd
 sYx
 sYx
+lOV
+lOV
+lOV
+ljM
+azy
+azy
 azy
 lOV
 lOV
-azy
-azy
-azy
-azy
-azy
-fPd
 azy
 azy
 azy
@@ -167293,11 +167327,11 @@ fPd
 rKh
 fPd
 fPd
-aaU
+sYx
 azy
 azy
 lOV
-fPd
+azy
 fPd
 fPd
 sYx
@@ -167598,7 +167632,7 @@ fPd
 vwC
 lOV
 lOV
-azy
+ljM
 fcx
 fcx
 fPd
@@ -167896,10 +167930,10 @@ riL
 riL
 miu
 fPd
-fPd
+idS
 azy
-lOV
-azy
+ljM
+ljM
 azy
 sYx
 fPd
@@ -168199,7 +168233,7 @@ mIM
 kGu
 fPd
 azy
-sYx
+lOV
 lOV
 azy
 sYx
@@ -168500,7 +168534,7 @@ tuU
 tuU
 miu
 azy
-sYx
+lOV
 azy
 lOV
 azy
@@ -168801,8 +168835,8 @@ fPd
 seY
 fPd
 sYx
-sYx
-lOV
+ljM
+ljM
 lOV
 azy
 fPd
@@ -169099,10 +169133,10 @@ miu
 azy
 azy
 azy
-sYx
-fPd
-fPd
-sYx
+azy
+azy
+azy
+azy
 lOV
 lOV
 azy
@@ -169402,11 +169436,11 @@ azy
 sYx
 azy
 sAu
-fPd
+idS
 qMq
 azy
-azy
-azy
+ljM
+lOV
 fPd
 fPd
 sYx
@@ -169704,11 +169738,11 @@ azy
 azy
 fPd
 sAu
-fPd
+aaB
 etL
 azy
 lOV
-vwC
+aaA
 fPd
 sYx
 cuM
@@ -170008,9 +170042,9 @@ azy
 fPd
 fPd
 azy
-azy
 lOV
-fPd
+lOV
+lOV
 fPd
 sYx
 fPd
@@ -170310,9 +170344,9 @@ sYx
 sAu
 sYx
 azy
-azy
 lOV
-qMq
+ljM
+xdm
 sYx
 sYx
 fPd
@@ -170613,8 +170647,8 @@ fPd
 sYx
 fPd
 lOV
-azy
-azy
+ljM
+lOV
 fPd
 sYx
 fPd
@@ -170915,7 +170949,7 @@ fPd
 fcx
 lOV
 lOV
-azy
+lOV
 fPd
 fPd
 fPd
@@ -171216,7 +171250,7 @@ sYx
 qMq
 lOV
 lOV
-azy
+lOV
 fPd
 cuM
 fPd
@@ -171518,7 +171552,7 @@ fPd
 azy
 lOV
 aaU
-azy
+lOV
 sYx
 fPd
 fPd
@@ -171819,8 +171853,8 @@ fPd
 qMq
 lOV
 lOV
-sYx
-azy
+lOV
+lOV
 sYx
 sYx
 fGG
@@ -172121,7 +172155,7 @@ azy
 lOV
 ljM
 lOV
-azy
+ljM
 fPd
 cuM
 sYx
@@ -178101,7 +178135,7 @@ ooW
 qvR
 wSn
 efu
-xSv
+tYg
 xSv
 wMB
 rBC
