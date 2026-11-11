@@ -443,6 +443,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S.cd = "/feature_discovery"
 	WRITE_FILE(S["seen_features"], seen_character_sheet_features)
 	WRITE_FILE(S["digitigrade_big_legs_eligible"], digitigrade_big_legs_notice_eligible)
+	WRITE_FILE(S["ooze_digitigrade_big_legs_eligible"], ooze_digitigrade_big_legs_notice_eligible)
 	WRITE_FILE(S["revenant_customization_eligible"], revenant_customization_eligible)
 	S.cd = "/"
 	WRITE_FILE(S["content_toggles_intro"], content_toggles_intro)
