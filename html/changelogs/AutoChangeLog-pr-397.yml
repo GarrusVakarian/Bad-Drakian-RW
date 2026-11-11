@@ -1,0 +1,5 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - config: "Dun World is now a map vote option."
+  - map: "(Port) Updated Dun World's garrison entrance, Eoran shrine locks, ministry bureau, keep tea supplies, and dungeon loot."
