@@ -381,3 +381,8 @@
       \ central skull shows instructions instead."
   - bugfix: Fully charged Wolkenmaw shots now follow the ranged mouse-release path,
       preventing valid shots from losing their charge before firing.
+  - code_imp: Remove examine item icons from saved chat history and exported logs
+      while keeping live icons visible.
+  - code_imp: Avoid duplicate AI tracking-window queries when their bounds match;
+      local gameplay testing required.
+  - code_imp: Skip unnecessary regeneration work for healthy, unwounded deadites.
