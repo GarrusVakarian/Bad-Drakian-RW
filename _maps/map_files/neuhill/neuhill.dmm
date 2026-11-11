@@ -11205,7 +11205,6 @@
 "cnn" = (
 /obj/structure/fluff/railing/wood,
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/wood,
 /area/rogue/outdoors/town/rockhill)
 "cnp" = (
 /obj/structure/roguewindow/openclose{
@@ -18242,7 +18241,6 @@
 /area/rogue/outdoors/town/grove)
 "dIQ" = (
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/wood,
 /area/rogue/outdoors/town/rockhill)
 "dIY" = (
 /obj/structure/fluff/walldeco/church/line,
@@ -55323,7 +55321,6 @@
 	dir = 10
 	},
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/wood,
 /area/rogue/outdoors/town/rockhill)
 "lwF" = (
 /obj/item/natural/worms/leech,
@@ -64243,7 +64240,6 @@
 "nlU" = (
 /obj/structure/fluff/railing/border,
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/concrete,
 /area/rogue/outdoors/town/rockhill)
 "nlX" = (
 /obj/structure/chair/wood/rogue/fancy,
@@ -75360,7 +75356,6 @@
 	dir = 6
 	},
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/wood,
 /area/rogue/outdoors/town/rockhill)
 "pCW" = (
 /obj/structure/chair/wood/rogue/fancy{
@@ -107028,7 +107023,6 @@
 "wpw" = (
 /obj/structure/fluff/railing/border,
 /turf/open/floor/rogue/cobblerock,
-/turf/open/floor/rogue/blocks,
 /area/rogue/outdoors/town/rockhill)
 "wpx" = (
 /obj/machinery/light/roguestreet/orange/walllamp,
