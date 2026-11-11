@@ -354,3 +354,15 @@
       mask cosmetic slots.
   - qol: See nearby characters tense or relax while in combat mode without Combat
       Aware, and see your own cues when switching combat mode on or off.
+  - rscadd: A polishing brush is available in the loadout menu for 1 point.
+  - rscadd: Polishing brushes can brush exposed body parts in Use intent.
+  - bugfix: Green tracking highlights now follow your selected target correctly, without
+      showing unrelated or outdated footprints.
+  - balance: 'Transformed werewolves have Verevolf Nymphomaniac: 15 minutes before
+      the first penalty and 30 minutes of relief after satisfaction. Solo actions
+      cannot satisfy it.'
+  - qol: Transformed werewolves understand Imperial without being able to speak it.
+  - bugfix: Credits portraits consistently show headshots with masks, headgear and
+      neck items hidden.
+  - qol: "Giving up while dying is now under IC \u2192 Embrace Necra. Clicking the\
+      \ central skull shows instructions instead."
