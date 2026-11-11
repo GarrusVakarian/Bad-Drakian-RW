@@ -1028,8 +1028,10 @@ GLOBAL_LIST_EMPTY(friendly_animal_types)
 	return 0
 
 //For creating consistent icons for human looking simple animals
-/proc/get_flat_human_icon(icon_id, datum/job/J, datum/preferences/prefs, dummy_key, showDirs = GLOB.cardinals, outfit_override = null, mob/living/carbon/human/human_gear_override, copy_appearance = FALSE)
+/proc/get_flat_human_icon(icon_id, datum/job/J, datum/preferences/prefs, dummy_key, showDirs = GLOB.cardinals, outfit_override = null, mob/living/carbon/human/human_gear_override, copy_appearance = FALSE, hide_portrait_headgear = FALSE)
 	var/static/list/humanoid_icon_cache = list()
+	if(icon_id && hide_portrait_headgear)
+		icon_id = "[icon_id]-portrait-headgear-hidden"
 	if(!icon_id || !humanoid_icon_cache[icon_id])
 		var/mob/living/carbon/human/dummy/body = generate_or_wait_for_human_dummy(dummy_key)
 
@@ -1059,6 +1061,15 @@ GLOBAL_LIST_EMPTY(friendly_animal_types)
 			J.equip(body, TRUE, FALSE, outfit_override = outfit_override)
 		else if (outfit_override)
 			body.equipOutfit(outfit_override,visualsOnly = TRUE)
+
+		if(hide_portrait_headgear)
+			// Remove only the mannequin's copies, never equipment on the real character.
+			for(var/slot in list(SLOT_HEAD, SLOT_WEAR_MASK, SLOT_NECK))
+				var/obj/item/covering = body.get_item_by_slot(slot)
+				if(covering)
+					qdel(covering)
+			body.regenerate_clothes()
+			body.update_hair()
 
 		body.update_inv_hands(hide_experimental = TRUE)
 		body.update_inv_belt(hide_experimental = TRUE)
