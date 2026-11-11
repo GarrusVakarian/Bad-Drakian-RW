@@ -49,7 +49,9 @@
 		alternate_worn_layer = BACK_LAYER //Above Hair Layer
 		adjusted_inv_mask &= ~HIDE_HEADTOP
 		var/datum/component/adjustable_clothing/hood_adjustment = GetComponent(/datum/component/adjustable_clothing)
-		flags_inv = adjust_inv_flags((hood_adjustment && hood_adjustment.toggled_open) ? hood_adjustment.flags_inv_open : initial(flags_inv))
+		var/base_flags = (hood_adjustment && hood_adjustment.toggled_open) ? hood_adjustment.flags_inv_open : initial(flags_inv)
+		// A hair toggle must never restore HIDEFACE or alter other visibility flags.
+		flags_inv = (flags_inv & ~HIDE_HEADTOP) | (base_flags & HIDE_HEADTOP)
 	user.update_inv_wear_mask()
 	user.update_inv_head()
 
