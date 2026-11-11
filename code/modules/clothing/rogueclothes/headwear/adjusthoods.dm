@@ -54,6 +54,9 @@
 		flags_inv = (flags_inv & ~HIDE_HEADTOP) | (base_flags & HIDE_HEADTOP)
 	user.update_inv_wear_mask()
 	user.update_inv_head()
+	var/mob/living/carbon/human/wearer = user
+	if(wearer.wear_neck == src)
+		wearer.update_inv_neck()
 
 /obj/item/clothing/head/roguetown/roguehood/red
 	color = CLOTHING_RED
