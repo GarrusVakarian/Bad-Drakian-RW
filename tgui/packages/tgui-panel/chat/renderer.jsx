@@ -26,6 +26,7 @@ import {
 } from './constants';
 import { canPageAcceptType, createMessage, isSameMessage } from './model';
 import { highlightNode, linkifyNode } from './replaceInTextNode';
+import { withoutExamineIcons } from './savedHtml';
 
 const logger = createLogger('chatRenderer');
 
@@ -830,7 +831,7 @@ export class ChatRenderer {
     let messagesHtml = '';
     for (const message of this.visibleMessages) {
       if (message.node) {
-        messagesHtml += `${message.node.outerHTML}\n`;
+        messagesHtml += `${withoutExamineIcons(message.node.outerHTML)}\n`;
       }
     }
     // Create a page
