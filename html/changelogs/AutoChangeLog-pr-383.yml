@@ -1,7 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - rscadd: "Added Direvolfs to Rotwood Coast and Mount Decapitation ambushes."
-  - rscadd: "(zydras) Dendor’s Beast Form miracle now lets you turn into a Direvolf."
-  - rscadd: "(zydras) Bloodbait has a rare chance to attract Direvolfs."
-  - balance: "(zydras) Wild Beast contracts now spawn Volfs and Direvolfs."

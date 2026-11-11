@@ -307,3 +307,19 @@
 2026-11-10:
   _Rarity:
   - rscadd: Restored Xylix Pink as a delectable dye color.
+2026-11-11:
+  _Rarity:
+  - qol: Chat now saves up to 2,500 vs 1,000 messages across round restarts/reconnects.
+  - rscadd: Added Direvolfs to Rotwood Coast and Mount Decapitation ambushes.
+  - rscadd: "(zydras) Dendor\u2019s Beast Form miracle now lets you turn into a Direvolf."
+  - rscadd: (zydras) Bloodbait has a rare chance to attract Direvolfs.
+  - balance: (zydras) Wild Beast contracts now spawn Volfs and Direvolfs.
+  - bugfix: Leash chains reappear when both characters are back on the same floor.
+  - bugfix: Character customization arrows now cycle through every style in the affected
+      ear, snout, and hair pickers.
+  - bugfix: Loadout items with the same name can now be claimed separately from the
+      stash.
+  - qol: The ahelp notice now directs players to open a ticket in discord when no
+      active admins are online.
+  - qol: Added configurable keybindings for closing your eyes to fall asleep or closing
+      them while staying awake.
