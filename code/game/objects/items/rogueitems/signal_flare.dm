@@ -88,6 +88,7 @@ GLOBAL_LIST_EMPTY(signal_flare_codebook)
 // Held to full charge like shooting a crossbow, so a stray click can't loose a signal.
 /datum/intent/use/flaregun
 	name = "aim"
+	tranged = TRUE
 	chargetime = 8
 	no_early_release = TRUE
 	charging_slowdown = 1
