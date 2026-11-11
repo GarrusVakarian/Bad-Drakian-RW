@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Shapeshifting preserves role identity and Rosewall listings, and roleplay ad edits update the original character's advertisement."

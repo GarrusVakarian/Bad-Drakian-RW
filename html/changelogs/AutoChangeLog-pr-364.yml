@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Hover labels, including debuff names, stay within the game viewport near screen edges."

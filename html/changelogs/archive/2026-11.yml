@@ -346,3 +346,11 @@
       unexpectedly concealing your identity.
   - qol: Darkness is now slightly transparent while remaining almost completely black.
   - qol: Your personal visibility in darkness reaches 50% farther, with the same brightness.
+  - bugfix: Shapeshifting preserves role identity and Rosewall listings, and roleplay
+      ad edits update the original character's advertisement.
+  - bugfix: Hover labels, including debuff names, stay within the game viewport near
+      screen edges.
+  - rscadd: Glut can now be worn around the neck or displayed in existing helmet and
+      mask cosmetic slots.
+  - qol: See nearby characters tense or relax while in combat mode without Combat
+      Aware, and see your own cues when switching combat mode on or off.
