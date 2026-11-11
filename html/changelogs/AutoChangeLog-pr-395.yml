@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Darkness is now slightly transparent while remaining almost completely black."
+  - qol: "Your personal visibility in darkness reaches 50% farther, with the same brightness."
