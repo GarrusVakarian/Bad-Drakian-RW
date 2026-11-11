@@ -340,6 +340,11 @@
 	blend_mode = BLEND_ADD
 	show_when_dead = TRUE
 
+/atom/movable/screen/fullscreen/see_through_darkness/update_for_view(client_view)
+	..()
+	var/list/actualview = getviewsize(client_view)
+	transform = matrix(1.5 * actualview[1]/FULLSCREEN_OVERLAY_RESOLUTION_X, 0, 0, 0, 1.5 * actualview[2]/FULLSCREEN_OVERLAY_RESOLUTION_Y, 0)
+
 /atom/movable/screen/fullscreen/dreaming
 	icon = 'icons/roguetown/maniac/fullscreen_wakeup_lossy_compression.dmi'
 	icon_state = "dream"
