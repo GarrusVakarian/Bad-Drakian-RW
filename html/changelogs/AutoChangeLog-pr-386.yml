@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Chat now saves up to 2,500 vs 1,000 messages across round restarts/reconnects."
