@@ -1178,7 +1178,7 @@
 	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE)
 
 /mob/living/verb/welcome_necras_embrace()
-	set name = "Welcome Necra's Embrace"
+	set name = "Embrace Necra"
 	set category = "IC"
 	set desc = "Give up and die while in critical condition."
 	if(!client || client.mob != src || necra_embrace_pending)
@@ -1189,7 +1189,7 @@
 	var/client/requester = client
 	var/datum/mind/original_mind = mind
 	necra_embrace_pending = TRUE
-	var/confirmation = alert(src, "Give up and die?", "Welcome Necra's Embrace", "No", "Yes")
+	var/confirmation = alert(src, "Give up and die?", "Embrace Necra", "No", "Yes")
 	if(QDELETED(src))
 		return
 	if(confirmation == "Yes" && requester && client == requester && requester.mob == src && mind == original_mind && can_succumb())

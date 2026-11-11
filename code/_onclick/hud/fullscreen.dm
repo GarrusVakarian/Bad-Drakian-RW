@@ -185,7 +185,7 @@
 	var/mob/living/L = usr
 	if(L.stat == DEAD)
 		return
-	to_chat(L, span_notice("To give up and die, select <b>Welcome Necra's Embrace</b> in the <b>IC</b> tab."))
+	to_chat(L, span_notice("To give up and die, select <b>Embrace Necra</b> in the <b>IC</b> tab."))
 
 /atom/movable/screen/fullscreen/crit/death
 	icon_state = "DD"
