@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Green tracking highlights now follow your selected target correctly, without showing unrelated or outdated footprints."
