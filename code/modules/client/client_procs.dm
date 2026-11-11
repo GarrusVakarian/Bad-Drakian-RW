@@ -555,6 +555,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	add_patreon_verbs()
 	is_donator = is_donator(ckey)
 	to_chat(src, get_message_output("message", ckey))
+	prefs.show_content_toggles_intro()
 
 	if(!winexists(src, "asset_cache_browser")) // The client is using a custom skin, tell them.
 		to_chat(src, span_warning("Unable to access asset cache browser, if you are using a custom skin file, please allow DS to download the updated version, if you are not, then make a bug report. This is not a critical issue but can cause issues with resource downloading, as it is impossible to know when extra resources arrived to you."))

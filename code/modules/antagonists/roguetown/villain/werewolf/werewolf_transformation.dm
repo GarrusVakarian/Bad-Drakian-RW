@@ -184,6 +184,7 @@
 	W.gender = gender
 	W.regenerate_icons()
 	W.stored_mob = src
+	W.vices += new /datum/charflaw/addiction/lovefiend/werewolf()
 
 	//Set the werewolf's name from the antagonist datum
 	var/datum/antagonist/werewolf/Were = mind.has_antag_datum(/datum/antagonist/werewolf/)
@@ -212,6 +213,7 @@
 	skills?.skill_experience = list()
 	W.remove_all_languages()
 	W.grant_language(/datum/language/beast)
+	W.grant_language(/datum/language/common)
 
 	W.base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB)
 	W.update_a_intents()
@@ -220,13 +222,21 @@
 	W.emote("rage")
 
 	if(getorganslot(ORGAN_SLOT_PENIS))
-		W.internal_organs_slot[ORGAN_SLOT_PENIS] = /obj/item/organ/penis/knotted/big
-	if(getorganslot(ORGAN_SLOT_TESTICLES))
-		W.internal_organs_slot[ORGAN_SLOT_TESTICLES] = /obj/item/organ/testicles
+		var/obj/item/organ/penis/new_penis = new /obj/item/organ/penis/knotted/big()
+		new_penis.Insert(W, special = TRUE, drop_if_replaced = FALSE)
+	var/obj/item/organ/testicles/original_testicles = getorganslot(ORGAN_SLOT_TESTICLES)
+	if(original_testicles)
+		var/obj/item/organ/testicles/new_testicles = new /obj/item/organ/testicles()
+		new_testicles.virility = original_testicles.virility
+		new_testicles.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 	if(getorganslot(ORGAN_SLOT_BREASTS))
-		W.internal_organs_slot[ORGAN_SLOT_BREASTS] = /obj/item/organ/breasts
-	if(getorganslot(ORGAN_SLOT_VAGINA))
-		W.internal_organs_slot[ORGAN_SLOT_VAGINA] = /obj/item/organ/vagina
+		var/obj/item/organ/breasts/new_breasts = new /obj/item/organ/breasts()
+		new_breasts.Insert(W, special = TRUE, drop_if_replaced = FALSE)
+	var/obj/item/organ/vagina/original_vagina = getorganslot(ORGAN_SLOT_VAGINA)
+	if(original_vagina)
+		var/obj/item/organ/vagina/new_vagina = new /obj/item/organ/vagina()
+		new_vagina.fertility = original_vagina.fertility
+		new_vagina.Insert(W, special = TRUE, drop_if_replaced = FALSE)
 
 	W.adjust_skillrank(/datum/skill/combat/wrestling, 5, TRUE)
 	W.adjust_skillrank(/datum/skill/combat/unarmed, 5, TRUE)
@@ -272,9 +282,18 @@
 
 	invisibility = oldinv
 
+/mob/living/carbon/human/species/werewolf/could_speak_in_language(datum/language/dt)
+	if(dt == /datum/language/common)
+		return FALSE
+	return ..()
+
 /mob/living/carbon/human/proc/werewolf_untransform(dead,gibbed)
 	if(!stored_mob)
 		return
+	for(var/datum/charflaw/addiction/lovefiend/werewolf/vice in vices.Copy())
+		vice.on_removal(src)
+		vices -= vice
+		qdel(vice)
 	if(!mind)
 		log_runtime("NO MIND ON [src.name] WHEN UNTRANSFORMING")
 	Paralyze(1, ignore_canstun = TRUE)

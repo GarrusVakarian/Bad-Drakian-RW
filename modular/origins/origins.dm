@@ -8,6 +8,59 @@
 	var/origin_language = null
 	var/list/origin_traits
 
+/// Read-only shared presentation for origin-selection chat and the Lands guide.
+/datum/origin/proc/get_traits_html()
+	if(!length(origin_traits))
+		return "<p>No regional traits.</p>"
+	. = "<ul>"
+	for(var/trait in origin_traits)
+		var/description = GLOB.roguetraits[trait]
+		if(description)
+			description = html_encode(GLOB.html_tags.Replace(description, ""))
+		var/mechanics = get_trait_mechanics(trait)
+		. += "<li><strong>[html_encode(trait)]</strong>[description ? ": [description]" : ""]"
+		if(mechanics)
+			. += "<br><strong>Effect:</strong> [html_encode(mechanics)]"
+		. += "</li>"
+	. += "</ul>"
+
+/// Display-only explanations verified against the trait's consumers; never grant bonuses here.
+/datum/origin/proc/get_trait_mechanics(trait)
+	switch(trait)
+		if(TRAIT_LOCAL_KNOWLEDGE)
+			return "Reduces random ambush chance by 25%. Walking over a maneater does not trigger it; running still can."
+		if(TRAIT_WATERLOVING)
+			return "Very cold water's direct cooling effect cannot lower your body temperature below normal."
+		if(TRAIT_COLD_RESISTANCE)
+			return "Reduces body cooling from weather by 25% and prevents cold-triggered shivering."
+		if(TRAIT_HEAT_RESISTANCE)
+			return "Reduces body heating from weather by 50%."
+		if(TRAIT_DEADITE_RESISTANCE)
+			return "Doubles the time before a deadite infection transforms you."
+		if(TRAIT_STEPPE_RIDER)
+			return "Improves mounted movement speed, halves the delay when urging a mount into a run, and makes it less likely that thorns will throw you from your mount."
+		if(TRAIT_HEARTY_DRINKER)
+			return "Strong alcohol grants +1 Luck. The five-minute buff refreshes while the alcohol is being metabolized."
+		if(TRAIT_BATTLE_CRY)
+			return "Using Warcry grants the Battle Cry buff for one minute, increasing your pain threshold by 10."
+		if(TRAIT_METICULOUS)
+			return "When Intelligence is above 10, adds another 2 percentage points of success chance per point above 10 to qualifying crafting checks. Skill requirements and the normal chance cap still apply."
+		if(TRAIT_SLOW_METABOLISM)
+			return "Reduces passive hunger drain by 10%."
+		if(TRAIT_GOLD_AFFINITY)
+			return "Reduces energy expenditure by 2% per equipped gold item, up to 10% with five items."
+		if(TRAIT_WATCHFUL)
+			return "Counts as having +1 Perception when another character attempts to pickpocket you."
+		if(TRAIT_SOFT_FOOTED)
+			return "Reduces footstep volume by 30% and reduces the sound's extra range by one tile."
+		if(TRAIT_ANCESTOR_GUARDIAN)
+			return "Gives one additional chance to pass a failed parry or dodge roll per in-game day. The opportunity is spent even if the extra roll fails."
+		if(TRAIT_LIGHT_SENSITIVITY)
+			return "Improves dark vision, but sunlight causes stress. Without suitable protective headgear, sunlight also applies Sun Blinded (-5 Perception). Certain flashes also stun you for two seconds."
+		if(TRAIT_BLACKLEG)
+			return "Allows you to rig coin flips and dice rolls in your favour."
+	return null
+
 GLOBAL_LIST_INIT(origins, build_origins())
 
 /proc/build_origins()

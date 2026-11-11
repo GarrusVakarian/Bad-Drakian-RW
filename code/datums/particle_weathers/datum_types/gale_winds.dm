@@ -56,7 +56,10 @@ GLOBAL_LIST_EMPTY(active_abyssors_rage)
 		return
 
 	for(var/mob/M in hearers(sound_range, src))
-		M.playsound_local(src, tornado_loop, sound_volume, FALSE)
+		var/distance = get_dist(src, M)
+		var/volume = sound_volume * (1 - distance / sound_range)
+		if(volume > 0)
+			M.playsound_local(src, tornado_loop, volume, FALSE)
 
 	addtimer(CALLBACK(src, PROC_REF(loop_tornado_sound)), sound_loop_delay)
 

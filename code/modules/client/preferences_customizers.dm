@@ -14,6 +14,11 @@
 	var/list/customizers = species.customizers
 	/// Check if we have any customizer entries that don't match.
 	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+		// Keep existing revenant appearances/settings when adding the Wild-Kin cloaca option.
+		if(istype(species, /datum/species/dullahan) && entry.customizer_type == /datum/customizer/organ/vagina/animal)
+			entry.customizer_type = /datum/customizer/organ/vagina/anthro
+			if(entry.customizer_choice_type == /datum/customizer_choice/organ/vagina/animal)
+				entry.customizer_choice_type = /datum/customizer_choice/organ/vagina/anthro
 		// Preserve saved tail choices and colors when adding the fertility setting.
 		if(entry.type == /datum/customizer_entry && ispath(entry.customizer_choice_type, /datum/customizer_choice/organ/tail))
 			var/datum/customizer_entry/organ/tail/tail_entry = new
@@ -135,7 +140,12 @@
 		var/datum/organ_dna/dna = customizer_choice.create_organ_dna(entry, src)
 		if(!dna)
 			continue
-		organ_list[customizer_choice.get_organ_slot()] = dna
+		var/slot = customizer_choice.get_organ_slot()
+		var/datum/organ_dna/existing_dna = organ_list[slot]
+		if(slot == ORGAN_SLOT_TAIL && existing_dna && ispath(existing_dna.organ_type, /obj/item/organ/tail/manticore) && !ispath(dna.organ_type, /obj/item/organ/tail/manticore))
+			qdel(dna)
+			continue
+		organ_list[slot] = dna
 
 	return organ_list
 

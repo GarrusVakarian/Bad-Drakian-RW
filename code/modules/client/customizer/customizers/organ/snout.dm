@@ -51,8 +51,6 @@
 		/datum/sprite_accessory/snout/lcanidstripedalt,
 		/datum/sprite_accessory/snout/vulp,
 		/datum/sprite_accessory/snout/husky,
-		/datum/sprite_accessory/snout/lcanid,
-		/datum/sprite_accessory/snout/lcanidalt,
 		/datum/sprite_accessory/snout/scanid,
 		/datum/sprite_accessory/snout/scanidalt,
 		/datum/sprite_accessory/snout/scanidalt2,
@@ -76,10 +74,6 @@
 		/datum/sprite_accessory/snout/hpanda,
 		/datum/sprite_accessory/snout/skulldog,
 	    /datum/sprite_accessory/snout/cat,
-		/datum/sprite_accessory/snout/scanid,
-		/datum/sprite_accessory/snout/scanidalt,
-		/datum/sprite_accessory/snout/scanidalt2,
-		/datum/sprite_accessory/snout/scanidalt3,
 		/datum/sprite_accessory/snout/sharp,
 		/datum/sprite_accessory/snout/round,
 		/datum/sprite_accessory/snout/sharplight,
@@ -170,7 +164,7 @@
 /datum/customizer/organ/snout/lamia
 	allows_disabling = TRUE
 	default_disabled = TRUE
-	customizer_choices = list(/datum/customizer_choice/organ/snout/lamia)
+	customizer_choices = list(/datum/customizer_choice/organ/snout/lamia, /datum/customizer_choice/organ/snout/anthro)
 
 /datum/customizer/organ/snout/anthro/dullahan
 	allows_disabling = TRUE
@@ -217,7 +211,6 @@
 		/datum/sprite_accessory/snout/redpandaalt,
 		/datum/sprite_accessory/snout/sbeak,
 		/datum/sprite_accessory/snout/rat,
-		/datum/sprite_accessory/snout/stubby,
 		/datum/sprite_accessory/snout/alienlizard,
 		/datum/sprite_accessory/snout/alienlizardteeth,
 		/datum/sprite_accessory/snout/hanubus,
@@ -323,7 +316,6 @@
 		/datum/sprite_accessory/snout/redpandaalt,
 		/datum/sprite_accessory/snout/sbeak,
 		/datum/sprite_accessory/snout/rat,
-		/datum/sprite_accessory/snout/stubby,
 		/datum/sprite_accessory/snout/alienlizard,
 		/datum/sprite_accessory/snout/alienlizardteeth,
 		/datum/sprite_accessory/snout/skulldog,
@@ -359,7 +351,6 @@
 		/datum/sprite_accessory/snout/front/toucan,
 		/datum/sprite_accessory/snout/front/redpanda,
 		/datum/sprite_accessory/snout/front/redpandaalt,
-		/datum/sprite_accessory/snout/front/skulldog,
 		/datum/sprite_accessory/snout/sharp,
 		/datum/sprite_accessory/snout/sharpdualcolor,
 		/datum/sprite_accessory/snout/round,
@@ -389,7 +380,9 @@
 		/datum/sprite_accessory/snout/front/drama1,
 		/datum/sprite_accessory/snout/front/drama2,
 		/datum/sprite_accessory/snout/front/noccite,
-		)
+		/datum/sprite_accessory/snout/orca,
+		/datum/sprite_accessory/snout/owl,
+	)
 
 /datum/customizer/organ/snout/akula
 	customizer_choices = list(/datum/customizer_choice/organ/snout/akula)

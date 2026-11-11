@@ -249,16 +249,17 @@
 							thrown_range = 4
 						else
 							thrown_range = 1
+						var/turf/start_T = get_turf(loc) //Get the start and target tile for the descriptors
+						var/turf/end_T = get_turf(target)
+						if(start_T && end_T && start_T.z != end_T.z && throwable_mob.cmode && (throwable_mob.mobility_flags & MOBILITY_STAND))
+							to_chat(src, span_warning("They're too tense from combat and standing upright! Tackle them down first!"))
+							stop_looking()
+							return
 						stop_pulling()
 						if(G.grab_state < GRAB_AGGRESSIVE)		//If we have the Giant Virtue, and aren't throwing another Giant, we can do it w/o aggro grab
 							if(HAS_TRAIT(throwable_mob, TRAIT_BIGGUY))
 								return
 							if(!HAS_TRAIT(src,TRAIT_BIGGUY))
-								return
-						var/turf/start_T = get_turf(loc) //Get the start and target tile for the descriptors
-						var/turf/end_T = get_turf(target)
-						if(throwable_mob.cmode)
-							if(start_T.z != end_T.z && throwable_mob.mobility_flags & MOBILITY_STAND)
 								return
 						if(start_T && end_T)
 							log_combat(src, throwable_mob, "thrown", addition="grab from tile in [AREACOORD(start_T)] towards tile at [AREACOORD(end_T)]")
@@ -875,6 +876,8 @@
 
 	if(lightning_flashing)
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_INVISIBLE)
+
+	lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_BASELINE)
 
 	if(client.eye != src)
 		var/atom/A = client.eye

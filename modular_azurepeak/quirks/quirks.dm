@@ -16,6 +16,13 @@
 		return "Licker"
 	return ..()
 
+/datum/quirk/amphibious
+	name = "Amphibious"
+	point_cost = 1
+	desc = "Through some quirk of my heritage, I can breathe in water just as readily as in air."
+	custom_text = "Allows breathing underwater."
+	added_traits = list(TRAIT_WATERBREATHING)
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."

@@ -2,6 +2,10 @@
 	race = /datum/species/tabaxi
 
 /datum/species/tabaxi
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Tabaxi"
 	id = "tabaxi"
 
@@ -81,6 +85,7 @@
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/snout/tabaxi,
 		/datum/customizer/organ/tail/tabaxi,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/neck_feature/anthro,
 		/datum/customizer/organ/testicles/anthro,
 		/datum/customizer/organ/penis/anthro,

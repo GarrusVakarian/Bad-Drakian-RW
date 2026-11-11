@@ -24,12 +24,14 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if(!job)
 		// Apply the stuff if we dont have a job for some reason
 		apply_character_post_equipment(character, player)
+		character.schedule_getting_started_reminder()
 		return
 	if(length(job.advclass_cat_rolls))
 		// Dont apply the stuff, let adv class handler do it later
 		return
 	// Apply the stuff if we have a job that has no adv classes
 	apply_character_post_equipment(character, player)
+	character.schedule_getting_started_reminder()
 
 /proc/apply_character_post_equipment(mob/living/carbon/human/character, client/player)
 	if(!player)
@@ -46,36 +48,17 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		apply_voicepacks(character, player)
 	if(player.prefs.dnr_pref)
 		apply_dnr_trait(character, player)
-	if(player.prefs.loadout)
-		var/display_name = player.prefs.loadout_1_name ? player.prefs.loadout_1_name : player.prefs.loadout.name
-		character.mind.special_items[display_name] = player.prefs.loadout.path
-	if(player.prefs.loadout2)
-		var/display_name = player.prefs.loadout_2_name ? player.prefs.loadout_2_name : player.prefs.loadout2.name
-		character.mind.special_items[display_name] = player.prefs.loadout2.path
-	if(player.prefs.loadout3)
-		var/display_name = player.prefs.loadout_3_name ? player.prefs.loadout_3_name : player.prefs.loadout3.name
-		character.mind.special_items[display_name] = player.prefs.loadout3.path
-	if(player.prefs.loadout4)
-		var/display_name = player.prefs.loadout_4_name ? player.prefs.loadout_4_name : player.prefs.loadout4.name
-		character.mind.special_items[display_name] = player.prefs.loadout4.path
-	if(player.prefs.loadout5)
-		var/display_name = player.prefs.loadout_5_name ? player.prefs.loadout_5_name : player.prefs.loadout5.name
-		character.mind.special_items[display_name] = player.prefs.loadout5.path
-	if(player.prefs.loadout6)
-		var/display_name = player.prefs.loadout_6_name ? player.prefs.loadout_6_name : player.prefs.loadout6.name
-		character.mind.special_items[display_name] = player.prefs.loadout6.path
-	if(player.prefs.loadout7)
-		var/display_name = player.prefs.loadout_7_name ? player.prefs.loadout_7_name : player.prefs.loadout7.name
-		character.mind.special_items[display_name] = player.prefs.loadout7.path
-	if(player.prefs.loadout8)
-		var/display_name = player.prefs.loadout_8_name ? player.prefs.loadout_8_name : player.prefs.loadout8.name
-		character.mind.special_items[display_name] = player.prefs.loadout8.path
-	if(player.prefs.loadout9)
-		var/display_name = player.prefs.loadout_9_name ? player.prefs.loadout_9_name : player.prefs.loadout9.name
-		character.mind.special_items[display_name] = player.prefs.loadout9.path
-	if(player.prefs.loadout10)
-		var/display_name = player.prefs.loadout_10_name ? player.prefs.loadout_10_name : player.prefs.loadout10.name
-		character.mind.special_items[display_name] = player.prefs.loadout10.path
+	for(var/slot in 1 to 10)
+		var/datum/loadout_item/item = player.prefs.vars[slot == 1 ? "loadout" : "loadout[slot]"]
+		if(!item)
+			continue
+		var/custom_name = player.prefs.vars["loadout_[slot]_name"]
+		var/display_name = custom_name ? custom_name : item.name
+		var/stash_key = display_name
+		var/suffix = 2
+		while(character.mind.special_items[stash_key])
+			stash_key = "[display_name] ([suffix++])"
+		character.mind.special_items[stash_key] = item.path
 	var/datum/job/assigned_job = SSjob.GetJob(character.mind?.assigned_role)
 	if(assigned_job)
 		assigned_job.clamp_stats(character)
@@ -151,6 +134,8 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		return
 
 	var/datum/job/job = SSjob.GetJob(character.job)
+	// Reject impossible saved combinations before charging either QP or Triumphs.
+	player.prefs.normalize_hypnotic_quirks()
 	var/available_points = player.prefs.get_quirk_points_earned()
 	var/triumphs_spent = 0
 	for(var/datum/quirk/Q in player.prefs.quirks)

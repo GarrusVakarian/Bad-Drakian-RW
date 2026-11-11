@@ -149,6 +149,9 @@
 		if(H.islatejoin && (H.job in list("Slave", "Enslaved Adventurer")))
 			addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, announce_slave_latejoin)), 0)
 
+	if(!dummy)
+		H.schedule_getting_started_reminder()
+
 /datum/advclass/proc/post_equip(mob/living/carbon/human/H)
 	addtimer(CALLBACK(H,TYPE_PROC_REF(/mob/living/carbon/human, add_credit), TRUE), 20)
 	if(cmode_music)

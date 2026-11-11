@@ -394,6 +394,10 @@
 	if(open)
 		update_bounty_text()
 
+/obj/item/paper/scroll/bounty/read(mob/user)
+	update_bounty_text()
+	return ..()
+
 /obj/item/paper/scroll/bounty/proc/update_bounty_text()
 	var/scroll_text = "<center>WANTED BY THE EXCIDIUM</center><br><br>"
 

@@ -21,8 +21,8 @@
 		/datum/sprite_accessory/ears/big/sandfox_large,
 		/datum/sprite_accessory/ears/bigwolf,
 		/datum/sprite_accessory/ears/bigwolf_inner,
-		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/husky,
+		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/otie,
 		/datum/sprite_accessory/ears/wolf,
 		/datum/sprite_accessory/ears/lab,
@@ -42,6 +42,7 @@
 		/datum/sprite_accessory/ears/bigwolf_inner,
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/husky,
+		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/otie,
 		/datum/sprite_accessory/ears/wolf,
 		/datum/sprite_accessory/ears/lab
@@ -147,12 +148,12 @@
 		/datum/sprite_accessory/ears/elf,
 		/datum/sprite_accessory/ears/elfw,
 		/datum/sprite_accessory/ears/elephant,
-		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/fish,
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/husky,
+		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
 		/datum/sprite_accessory/ears/kangaroo,
 		/datum/sprite_accessory/ears/lab,
@@ -214,12 +215,12 @@
 		/datum/sprite_accessory/ears/elf,
 		/datum/sprite_accessory/ears/elfw,
 		/datum/sprite_accessory/ears/elephant,
-		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/fish,
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/husky,
+		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
 		/datum/sprite_accessory/ears/kangaroo,
 		/datum/sprite_accessory/ears/lab,
@@ -274,7 +275,7 @@
 		)
 
 /datum/customizer/organ/ears/lamia
-	customizer_choices = list(/datum/customizer_choice/organ/ears/lizard, /datum/customizer_choice/organ/ears/elf)
+	customizer_choices = list(/datum/customizer_choice/organ/ears/lizard, /datum/customizer_choice/organ/ears/elf, /datum/customizer_choice/organ/ears/anthro)
 	allows_disabling = TRUE
 	default_disabled = TRUE
 
@@ -318,12 +319,12 @@
 		/datum/sprite_accessory/ears/elf,
 		/datum/sprite_accessory/ears/elfw,
 		/datum/sprite_accessory/ears/elephant,
-		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/fish,
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
 		/datum/sprite_accessory/ears/husky,
+		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
 		/datum/sprite_accessory/ears/kangaroo,
 		/datum/sprite_accessory/ears/lab,
@@ -350,8 +351,20 @@
 		/datum/sprite_accessory/ears/dendorite,
 		/datum/sprite_accessory/ears/eoran,
 		/datum/sprite_accessory/ears/pestran,
-		/datum/sprite_accessory/ears/zorzor
-		)
+		/datum/sprite_accessory/ears/zorzor,
+		/datum/sprite_accessory/ears/antenna_simple1,
+		/datum/sprite_accessory/ears/antenna_simple2,
+		/datum/sprite_accessory/ears/antenna_simple3,
+		/datum/sprite_accessory/ears/antenna_fuzzball1,
+		/datum/sprite_accessory/ears/antenna_fuzzball2,
+		/datum/sprite_accessory/ears/cobrahood,
+		/datum/sprite_accessory/ears/cobrahoodears,
+		/datum/sprite_accessory/ears/shadekin,
+		/datum/sprite_accessory/ears/shadekin/band_left,
+		/datum/sprite_accessory/ears/shadekin/band_right,
+		/datum/sprite_accessory/ears/shadekin/fluffy,
+		/datum/sprite_accessory/ears/shadekin/smooth,
+	)
 
 /datum/customizer/organ/ears/harpy
 	name = "Harpy Ears"

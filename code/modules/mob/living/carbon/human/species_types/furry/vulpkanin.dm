@@ -2,6 +2,10 @@
 	race = /datum/species/vulpkanin
 
 /datum/species/vulpkanin
+	allowed_taur_types = list(
+		/obj/item/bodypart/taur/biglegs,
+		/obj/item/bodypart/taur/biglegsstanced,
+	)
 	name = "Venardine"
 	id = "vulpkanin"
 	desc = "<b>Venardine</b> <br>\
@@ -96,6 +100,7 @@
 		/datum/customizer/bodypart_feature/underwear,
 		/datum/customizer/bodypart_feature/legwear,
 		/datum/customizer/organ/tail/vulpkanin,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/snout/vulpkanin,
 		/datum/customizer/organ/ears/vulpkanin,
 		/datum/customizer/organ/horns/anthro,

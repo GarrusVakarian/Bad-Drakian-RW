@@ -696,7 +696,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 					skin.obj_broken = FALSE
 		// handle_dreams() // this has no functionality currently
 		if(prob(10) && health > crit_threshold)
-			emote("snore")
+			emote("snore", suppress_chat = TRUE)
 	else if(!IsSleeping() && !HAS_TRAIT(src, TRAIT_NOSLEEP))
 		// Resting on a bed or something
 		var/sleepy_mod = 0
@@ -712,7 +712,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 					if(branch)
 						sleepy_mod = 0.8 // better than leaning against a wall, since you get this while NOT asleep
 		if(sleepy_mod > 0)
-			if(eyesclosed)
+			if(eyesclosed && !stay_awake)
 				var/armor_blocked = FALSE
 				if(ishuman(src) && stat == CONSCIOUS)
 					var/mob/living/carbon/human/H = src
@@ -766,7 +766,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 				energy_add(sleepy_mod * 10)
 		// Resting on the ground (not sleeping or with eyes closed and about to fall asleep)
 		else if(!(mobility_flags & MOBILITY_STAND))
-			if(eyesclosed)
+			if(eyesclosed && !stay_awake)
 				var/armor_blocked = FALSE
 				var/trait_blocked = FALSE
 				if(ishuman(src) && stat == CONSCIOUS)

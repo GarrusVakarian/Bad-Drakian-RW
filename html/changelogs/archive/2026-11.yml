@@ -218,3 +218,163 @@
   - rscadd: Added Gods and Lands encyclopedia guides with religious lore, regional
       lore, origin traits and language bonuses.
   - spellcheck: Corrected Ascendants in the faith selection menu.
+2026-11-07:
+  Chlorotrifluoride:
+  - image: Removed the built in fluff of harpy(alt1) and harpy(bat) wings.
+  GarrusVakarian:
+  - map: fixes the Smollhill chapel to allow sermons to be held inside.
+  mypingishuge:
+  - rscadd: Players with 5 PQ or below receive a Getting Started encyclopedia link
+      10 seconds after character setup, with a LOOC notification sound.
+  - rscadd: Selecting a character origin now explains its regional traits and their
+      effects in chat.
+  - rscadd: Adventurer and refugee spawn routes warn players below 5 PQ, except northwest.
+      Try the same portal again to proceed anyway; pulled companions can travel with
+      their escort.
+  - balance: Druid requires 1 PQ on Neuhill and Smollhill.
+  - spellcheck: Renamed the North-Western path to Rockhill to Northwestern path to
+      Rockhill.
+  - bugfix: Blocked throws between z-levels now explain that the target must be tackled
+      down first, preserve the grab and cancel throw mode and looking upstairs.
+  - spellcheck: Giant's effects explanation now mentions that it can throw non-Giant
+      characters without an aggressive grab.
+  - rscadd: (WeNeedMorePhoron) Clearing a blockade or completing hoard recovery grants
+      1 Triumph to its fellowship and living players within 15 tiles of the coin recipient,
+      with an explanatory chat message. Each account is rewarded once per writ.
+2026-11-08:
+  _Rairty:
+  - bugfix: Fellowship members now keep their Blockade Defense and Hoard Recovery
+      Triumph eligibility after wildshaping.
+  _Rarity:
+  - bugfix: Fixed missing porcelain teapot sprites and liquid visuals for ceramic
+      and porcelain teacups.
+  - sound: Regular/hurricane tornadoes get quieter the farther away they are.
+  - bugfix: "Reverting from a shapeshift no longer removes the insomnia caused by\
+      \ Astrata\u2019s curse."
+  - bugfix: Oozes now use their selected accent and speech mannerism in spoken chat.
+  - bugfix: "Viciously mocking a Baron or Baroness now counts toward Xylix\u2019s\
+      \ Mock Monarch objective."
+  mypingishuge:
+  - balance: "Greedy counts personal bank savings, causes 4 stress, and waits 25\u2013\
+      35 minutes before its first increase."
+  - bugfix: "Using the knuckles\u2019 Upper Cut no longer resets your sprite size\
+      \ or vertical offset."
+  - bugfix: Sleepless characters retain Fatal Insomnia after shapeshifting or having
+      Astrata's curse removed.
+  - rscadd: Added Hypnotic Gaze, a 1-QP quirk with customizable eye descriptions and
+      a spell that plants lasting suggestions. Enable Hypnosis Content in Content
+      Toggles to participate.
+  - rscadd: Added Hypnotic Presence, a consent-based alternative to Hypnotic Gaze
+      that does not require exposed eyes. The quirks are mutually exclusive.
+  - rscadd: Revenants can choose the missing Wild-Kin customization options, including
+      taur bodies, antennae, neck fluff, additional animal features and markings.
+  - rscadd: Tailed species can enable optional Tailmaw customization, including a
+      no-sprite option that keeps their existing tail appearance.
+  mypingishuge <3 _Rarity:
+  - qol: Fresh accounts don't get spammed with NEW badges and reminders for features
+      that already exist when they first join.
+2026-11-09:
+  GarrusVakarian:
+  - rscadd: you can now make grenzelhoftian gloves
+  - balance: it now takes one extra fiber to craft fingerless leather gloves, diminishing
+      the returns from infinitely crafting and snipping them
+  _Rarity:
+  - rscadd: Shift-click the eye HUD to close your eyes and stay awake.
+  - qol: Automatic snores during sleep no longer appear in chat.
+  mypingishuge:
+  - bugfix: Hypnosis consent toggle messages now match the style of other consent
+      toggles.
+  - rscadd: Adds Chisel to the loadout menu for 2 loadout points.
+  - qol: Noticeboard posts now last five hours instead of three.
+  - rscadd: Dye brushes and paint brushes are available in the loadout menu for 1
+      loadout point each.
+  - bugfix: Masterwork items no longer claim to be nicely polished unless their polishing
+      bonus has actually been applied.
+  - rscadd: Eligible races without taur options can choose Digitigrade Big Legs or
+      Digitigrade Big Legs, Stanced.
+  - spellcheck: Renamed both Big Legs options to identify them as digitigrade.
+  - rscadd: Lamias can now choose from 50 horn styles and the same ear and snout choices
+      as Wild-Kin.
+  - bugfix: Removed the empty Parent loadout datum entry from loadout selection.
+  - bugfix: Hypnotic Gaze and Hypnotic Presence keep their custom examine text and
+      color when transforming and reverting.
+  - bugfix: Werewolf transformation creates properly registered organs instead of
+      invalid organ entries.
+  - bugfix: Examine descriptions omit empty fragments and punctuate standalone descriptions.
+  mypingishuge <3 _Rarity:
+  - bugfix: Equipment tooltips now preserve line breaks, bold text, and italics in
+      item descriptions.
+2026-11-10:
+  _Rarity:
+  - rscadd: Restored Xylix Pink as a delectable dye color.
+2026-11-11:
+  Khanivore:
+  - rscadd: Added a separate Horse Body and Horse ears with customizable colors.
+  - rscadd: Added optional Horse Socks and Horse Hooves markings.
+  - rscadd: Added removable caparisons for compatible taur bodies.
+  - image: Added original horse body and ear sprites, plus fitted horse clothing and
+      equipment sprites.
+  - bugfix: Taur cloth remains visible beneath armor when tucked under.
+  - bugfix: Corrected horse directional layering for underwear, anatomy, tails, and
+      humanoid chest and belt equipment.
+  - sound: Horse Body now uses hoofbeats when walking and galloping sounds when running.
+  _Rarity:
+  - qol: Chat now saves up to 2,500 vs 1,000 messages across round restarts/reconnects.
+  - rscadd: Added Direvolfs to Rotwood Coast and Mount Decapitation ambushes.
+  - rscadd: "(zydras) Dendor\u2019s Beast Form miracle now lets you turn into a Direvolf."
+  - rscadd: (zydras) Bloodbait has a rare chance to attract Direvolfs.
+  - balance: (zydras) Wild Beast contracts now spawn Volfs and Direvolfs.
+  - bugfix: Leash chains reappear when both characters are back on the same floor.
+  - bugfix: Character customization arrows now cycle through every style in the affected
+      ear, snout, and hair pickers.
+  - bugfix: Loadout items with the same name can now be claimed separately from the
+      stash.
+  - qol: The ahelp notice now directs players to open a ticket in discord when no
+      active admins are online.
+  - qol: Added configurable keybindings for closing your eyes to fall asleep or closing
+      them while staying awake.
+  mypingishuge:
+  - bugfix: Handgonnes, flintgonnes and fusils retain their aimed accuracy through
+      their firing delay.
+  - bugfix: Delayed firearms no longer duplicate firing effects and accident checks,
+      and safely cancel pending shots if the shooter is deleted.
+  - bugfix: The ztratocaster now shows its heretical warning, red highlight and tooltip
+      explanation.
+  - qol: Getting Started now explains how to light torches and lampterns and clarifies
+      how to access backpacks.
+  - qol: Familiars can adjust their darkness visibility with Nighteyes.
+  - qol: Javelins can now be twirled using Polearms skill.
+  - qol: Hypnotic Gaze and Presence descriptions explain where to customize their
+      examine text.
+  - rscadd: Added Amphibious, a 1-QP quirk that allows breathing underwater.
+  - qol: Pouches can be equipped in either back slot or the bracer slot.
+  - qol: Metal armor movement clanging now plays every twelve steps instead of four.
+  - bugfix: Hear Instruments now blocks initial instrument and music-box playback
+      before sending it to players who disabled it.
+  - bugfix: Enchanted bounty scrolls refresh their listings every time they are read.
+  - bugfix: Middle-clicking hoods correctly toggles hair and related features without
+      unexpectedly concealing your identity.
+  - qol: Darkness is now slightly transparent while remaining almost completely black.
+  - qol: Your personal visibility in darkness reaches 50% farther, with the same brightness.
+  - bugfix: Shapeshifting preserves role identity and Rosewall listings, and roleplay
+      ad edits update the original character's advertisement.
+  - bugfix: Hover labels, including debuff names, stay within the game viewport near
+      screen edges.
+  - rscadd: Glut can now be worn around the neck or displayed in existing helmet and
+      mask cosmetic slots.
+  - qol: See nearby characters tense or relax while in combat mode without Combat
+      Aware, and see your own cues when switching combat mode on or off.
+  - rscadd: A polishing brush is available in the loadout menu for 1 point.
+  - rscadd: Polishing brushes can brush exposed body parts in Use intent.
+  - bugfix: Green tracking highlights now follow your selected target correctly, without
+      showing unrelated or outdated footprints.
+  - balance: 'Transformed werewolves have Verevolf Nymphomaniac: 15 minutes before
+      the first penalty and 30 minutes of relief after satisfaction. Solo actions
+      cannot satisfy it.'
+  - qol: Transformed werewolves understand Imperial without being able to speak it.
+  - bugfix: Credits portraits consistently show headshots with masks, headgear and
+      neck items hidden.
+  - qol: "Giving up while dying is now under IC \u2192 Embrace Necra. Clicking the\
+      \ central skull shows instructions instead."
+  - bugfix: Fully charged Wolkenmaw shots now follow the ranged mouse-release path,
+      preventing valid shots from losing their charge before firing.
