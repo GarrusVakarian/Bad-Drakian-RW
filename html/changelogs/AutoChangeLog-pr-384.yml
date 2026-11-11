@@ -1,0 +1,8 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Leash chains reappear when both characters are back on the same floor."
+  - bugfix: "Character customization arrows now cycle through every style in the affected ear, snout, and hair pickers."
+  - bugfix: "Loadout items with the same name can now be claimed separately from the stash."
+  - qol: "The ahelp notice now directs players to open a ticket in discord when no active admins are online."
+  - qol: "Added configurable keybindings for closing your eyes to fall asleep or closing them while staying awake."
