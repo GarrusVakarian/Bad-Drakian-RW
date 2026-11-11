@@ -1,0 +1,10 @@
+author: "Khanivore"
+delete-after: True
+changes:
+  - rscadd: "Added a separate Horse Body and Horse ears with customizable colors."
+  - rscadd: "Added optional Horse Socks and Horse Hooves markings."
+  - rscadd: "Added removable caparisons for compatible taur bodies."
+  - image: "Added original horse body and ear sprites, plus fitted horse clothing and equipment sprites."
+  - bugfix: "Taur cloth remains visible beneath armor when tucked under."
+  - bugfix: "Corrected horse directional layering for underwear, anatomy, tails, and humanoid chest and belt equipment."
+  - sound: "Horse Body now uses hoofbeats when walking and galloping sounds when running."
