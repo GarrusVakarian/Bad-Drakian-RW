@@ -109,6 +109,9 @@
 	pillory = support
 	original_plane = container.plane
 	original_layer = container.layer
+
+/datum/component/pillory_container_placement/RegisterWithParent()
+	var/obj/item/container = parent
 	RegisterSignal(container, list(COMSIG_MOVABLE_MOVED, COMSIG_ITEM_PICKUP), PROC_REF(clear_placement))
 	RegisterSignal(pillory, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING), PROC_REF(clear_placement))
 	// Cancel the ordinary drop bounce before applying a fixed position.
@@ -123,6 +126,16 @@
 	qdel(src)
 
 /datum/component/pillory_container_placement/Destroy(force, silent)
+	restore_placement()
+	return ..()
+
+/datum/component/pillory_container_placement/UnregisterFromParent()
+	restore_placement()
+	return ..()
+
+/datum/component/pillory_container_placement/proc/restore_placement()
+	if(!pillory)
+		return
 	var/obj/item/container = parent
 	if(container)
 		UnregisterSignal(container, list(COMSIG_MOVABLE_MOVED, COMSIG_ITEM_PICKUP))
@@ -134,7 +147,6 @@
 	if(pillory)
 		UnregisterSignal(pillory, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING))
 	pillory = null
-	return ..()
 
 /obj/structure/pillory/proc/togglelatch(mob/living/user, silent)
 	user.changeNext_move(CLICK_CD_MELEE)
