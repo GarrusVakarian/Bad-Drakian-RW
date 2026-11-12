@@ -387,6 +387,12 @@
       local gameplay testing required.
   - code_imp: Skip unnecessary regeneration work for healthy, unwounded deadites.
 2026-11-12:
+  GarrusVakarian:
+  - rscdel: Removed the bandit mid-round event, admins can still trigger the migrant
+      wave if needed.
+  - balance: Wretches now have access to the bandit camp.
+  - balance: The dragon hoard in the bandit camp now has 99999 integrity walls, effectively
+      making them unbreakable (up from 1000 integrity).
   mypingishuge:
   - rscadd: Oozes can choose Digitigrade Big Legs and Digitigrade Big Legs, Stanced.
   - qol: Liquid containers can be set at the base of a pillory, visibly in front of
