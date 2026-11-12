@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Unconscious and dying players can follow nearby speech, whispers, emotes and subtles."
+  - bugfix: "Unconscious and dying players can be selected as named SLOOC targets."
