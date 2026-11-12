@@ -66,7 +66,7 @@
 /// The normal route for first use of this list. Returns TRUE if there is more than one advclass (need user input), FALSE - if just one (no need for select menu)
 /datum/class_select_handler/proc/initial_setup()
 	if(linked_client && class_cat_alloc_attempts?[CTAG_WRETCH])
-		to_chat(linked_client, span_danger("You are an outlaw, heretic or other troublemaker whose actions give others a story to take part in. Pursue your ambitions, make enemies and stir up trouble. Your goal is to create engaging conflict. Give others reasons to fear, pursue, bargain with or oppose you.<br><br>Combat is welcome, but try to give opponents room to retreat, recover or surrender, and use threats, demands, bargains and captures to carry encounters into scenes.<br><br>Be a memorable villain people enjoy opposing.<br><br>Heretic, Heretical Spy, Necromancer and Mistwalker are heavily tied to the setting's lore and religion."))
+		to_chat(linked_client, span_danger("You are an outlaw, heretic or other troublemaker whose actions give others a story to take part in. Pursue your ambitions, make enemies and stir up trouble. Your goal is to create engaging conflict. Give others reasons to fear, pursue, bargain with or oppose you.<br><br>Combat is welcome, but try to give opponents room to retreat, recover or surrender, and use threats, demands, bargains and captures to carry encounters into scenes.<br><br>Be a memorable villain people enjoy opposing."))
 	if(register_id)
 		SSrole_class_handler.add_class_register_listener(register_id, linked_client.mob)
 	if(!assemble_the_CLASSES())
