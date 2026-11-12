@@ -20762,6 +20762,7 @@
 /turf/closed/wall/mineral/rogue/wooddark,
 /area/rogue/under/town/basement)
 "jMr" = (
+/obj/item/storage/keyring/baronmaster,
 /turf/open/floor/rogue/ruinedwood/herringbone,
 /area/rogue/indoors/town/manor/rockhill)
 "jMz" = (
