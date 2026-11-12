@@ -834,7 +834,7 @@
 	var/obj/item/reagent_containers/glass/cum_chalice = locate() in cur_loc
 	if(!cum_chalice?.spillable) // leak contents underneath the first found open container
 		return
-	if(from_tailmaw || user.getorganslot(ORGAN_SLOT_VAGINA))
+	if(from_tailmaw || (!user.getorganslot(ORGAN_SLOT_PENIS) && user.getorganslot(ORGAN_SLOT_VAGINA)))
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/femcum,1)
 	else
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()))
