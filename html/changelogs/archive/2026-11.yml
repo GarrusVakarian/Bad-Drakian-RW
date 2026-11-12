@@ -393,6 +393,12 @@
   - balance: Wretches now have access to the bandit camp.
   - balance: The dragon hoard in the bandit camp now has 99999 integrity walls, effectively
       making them unbreakable (up from 1000 integrity).
+  - map: ' The baron on Smollhill is now a duke in disguise.'
+  - map: All of the banners on Smollhill are now duchy banners, allowing the duke-baron
+      to set their color.
+  - map: Added a few RCOMs to Smollhill.
+  - map: Fixed a door with invalid key ID on Smollhill.
+  - map: Added a head physician to Smollhill.
   mypingishuge:
   - rscadd: Oozes can choose Digitigrade Big Legs and Digitigrade Big Legs, Stanced.
   - qol: Liquid containers can be set at the base of a pillory, visibly in front of

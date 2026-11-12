@@ -1,8 +1,0 @@
-author: "GarrusVakarian"
-delete-after: True
-changes:
-  - map: " The baron on Smollhill is now a duke in disguise."
-  - map: "All of the banners on Smollhill are now duchy banners, allowing the duke-baron to set their color."
-  - map: "Added a few RCOMs to Smollhill."
-  - map: "Fixed a door with invalid key ID on Smollhill."
-  - map: "Added a head physician to Smollhill."
