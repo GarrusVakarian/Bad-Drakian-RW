@@ -694,6 +694,8 @@
 	var/contents_to_drip = /datum/reagent/erpjuice/cum
 	var/orifice = SEX_PART_NULL
 	var/last_leak_clock
+	var/next_clothing_check = 0
+	var/clothing_allows_dripping = FALSE
 
 /datum/status_effect/creampie_leak/on_creation(mob/living/new_owner, orifice_in = SEX_PART_NULL, added_duration = null)
 	orifice = orifice_in
@@ -717,11 +719,17 @@
 	sync_leak_clock()
 	return ..()
 
-/datum/status_effect/creampie_leak/proc/can_drip()
+/datum/status_effect/creampie_leak/proc/can_drip(force_clothing_check = FALSE)
 	if(QDELETED(owner) || !isturf(get_turf(owner)))
 		return FALSE
 	var/tailmaw_leaking = (orifice & SEX_PART_TAIL_MAW) && get_manticore_tail(owner)
-	return !!(tailmaw_leaking || owner.sexcon?.bottom_exposed || get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE))
+	if(tailmaw_leaking || owner.sexcon?.bottom_exposed)
+		return TRUE
+	// Limit routine equipment scans; a real drip always requests a fresh check.
+	if(force_clothing_check || world.time >= next_clothing_check)
+		clothing_allows_dripping = get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE)
+		next_clothing_check = world.time + 1 SECONDS
+	return !!clothing_allows_dripping
 
 /datum/status_effect/creampie_leak/long
 	id = "creampie_leak_long"
@@ -768,7 +776,7 @@
 		owner.remove_status_effect(src)
 
 /datum/status_effect/creampie_leak/tick()
-	if(!can_drip())
+	if(!can_drip(TRUE))
 		return
 	var/cur_loc = get_turf(owner)
 	if(!cur_loc || !isturf(cur_loc))
@@ -822,7 +830,7 @@
 	var/obj/item/reagent_containers/glass/cum_chalice = locate() in cur_loc
 	if(!cum_chalice?.spillable) // leak contents underneath the first found open container
 		return
-	if(from_tailmaw || user.getorganslot(ORGAN_SLOT_VAGINA))
+	if(from_tailmaw || (!user.getorganslot(ORGAN_SLOT_PENIS) && user.getorganslot(ORGAN_SLOT_VAGINA)))
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/femcum,1)
 	else
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()))
