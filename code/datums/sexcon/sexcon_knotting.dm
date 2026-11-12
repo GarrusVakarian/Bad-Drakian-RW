@@ -453,7 +453,7 @@
 			modular_record_collar_receive_event(btm, top)
 			var/obj/item/organ/testicles/testes = top.getorganslot(ORGAN_SLOT_TESTICLES)
 			var/knot_orifice = top.sexcon.knotted_part_partner & (SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)
-			apply_creampie_drip(btm, knot_orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+			apply_creampie_drip(btm, knot_orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE, added_duration = top.sexcon.get_leakage_duration())
 		if(top.sexcon.knotted_part_partner&SEX_PART_JAWS)
 			var/datum/status_effect/facial/facial = btm.has_status_effect(/datum/status_effect/facial)
 			if(!facial)
