@@ -597,7 +597,7 @@
 		to_chat(consumer, span_info("I can taste [initial(fluid.taste_description)]."))
 	return TRUE
 
-/// Extra volume for oral intake only; repeated intake grants half the amount.
+/// Size-based bonus shared with container collection; oral repeats grant half the amount.
 /datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
 	if(!ishuman(user) || QDELETED(user))
 		return 0
@@ -793,7 +793,7 @@
 	if(from_tailmaw || user.getorganslot(ORGAN_SLOT_VAGINA))
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/femcum,1)
 	else
-		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol)
+		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()))
 
 /datum/sex_controller/proc/ejaculate_container(obj/item/reagent_containers/glass/C)
 	if(try_resist_orgasm())
@@ -803,7 +803,7 @@
 		user.visible_message(span_love("[user] spills into [C]!"))
 		playsound(user, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
 		if(user.getorganslot(ORGAN_SLOT_PENIS))
-			C.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume())
+			C.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume() + floor(get_oral_intake_extra_volume()))
 		else
 			C.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
 	after_ejaculation()
