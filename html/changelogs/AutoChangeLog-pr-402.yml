@@ -1,0 +1,6 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - rscdel: "Removed the bandit mid-round event, admins can still trigger the migrant wave if needed."
+  - balance: "Wretches now have access to the bandit camp."
+  - balance: "The dragon hoard in the bandit camp now has 99999 integrity walls, effectively making them unbreakable (up from 1000 integrity)."
