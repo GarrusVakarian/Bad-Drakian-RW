@@ -132,3 +132,7 @@
 		TRADE_REGION_DAFTSMARCH = THREAT_REGION_ROCKHILL_BOG_SUNKMIRE,
 	)
 
+/datum/map_adjustment/template/smollhill/job_change()
+	. = ..()
+	var/datum/job/baron = SSjob.GetJobType(/datum/job/roguetown/baron)
+	baron.always_show_on_latechoices = FALSE
