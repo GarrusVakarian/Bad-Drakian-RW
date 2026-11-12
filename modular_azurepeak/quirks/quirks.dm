@@ -23,6 +23,20 @@
 	custom_text = "Allows breathing underwater."
 	added_traits = list(TRAIT_WATERBREATHING)
 
+/datum/quirk/fat_knot
+	name = "Fat Knot"
+	point_cost = 0
+	desc = "An existing attachment uses Large-category retention rules."
+	custom_text = "Counts as Large for movement retention and manual release checks, without changing visible size. Appropriate anatomy is still required."
+	added_traits = list(TRAIT_FAT_KNOT)
+
+/datum/quirk/high_production
+	name = "High Production"
+	point_cost = 0
+	desc = "My production uses the Large size category."
+	custom_text = "Uses Large-category base volume, intake bonuses, leakage and stored capacity. Keeps your chosen visible size and existing modifiers. Appropriate anatomy is still required."
+	added_traits = list(TRAIT_HIGH_PRODUCTION)
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."
