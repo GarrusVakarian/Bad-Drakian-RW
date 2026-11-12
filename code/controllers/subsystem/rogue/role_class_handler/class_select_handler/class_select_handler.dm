@@ -65,6 +65,8 @@
 
 /// The normal route for first use of this list. Returns TRUE if there is more than one advclass (need user input), FALSE - if just one (no need for select menu)
 /datum/class_select_handler/proc/initial_setup()
+	if(linked_client && class_cat_alloc_attempts?[CTAG_WRETCH])
+		to_chat(linked_client, span_danger("You are playing an Antagonist role. By choosing to spawn as a Wretch, you are expected to actively create conflict with other players. Failing to play this role with the appropriate gravitas may result in punishment for Low Roleplay standards.<br><br>Heretic, Heretical Spy, Necromancer and Mistwalker are heavily tied to the setting's lore and religion."))
 	if(register_id)
 		SSrole_class_handler.add_class_register_listener(register_id, linked_client.mob)
 	if(!assemble_the_CLASSES())
