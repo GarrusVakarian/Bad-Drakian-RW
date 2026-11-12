@@ -456,6 +456,19 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	build_inhumen_patrons_index()
 	return (n in inhumen_patrons_index)
 
+/// Keep shared miracles available through the Ten without offering their Inhumen sources.
+/proc/_get_learnable_spell_patron_names(mob/living/carbon/human/H, spell_type)
+	if(!istype(H))
+		return list()
+	var/list/owners = get_spell_patron_names(spell_type)
+	if(!istype(H.patron, /datum/patron/divine))
+		return owners
+	var/list/allowed_owners = list()
+	for(var/owner_name in owners)
+		if(!_is_inhumen_patron_name(owner_name))
+			allowed_owners += owner_name
+	return allowed_owners
+
 /proc/_shunned_relations_unlocked(mob/living/carbon/human/H)
 	if(!H)
 		return FALSE
@@ -607,7 +620,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			continue
 
 		var/tier = get_spell_tier(S)
-		var/list/owners = get_spell_patron_names(st)
+		var/list/owners = _get_learnable_spell_patron_names(H, st)
 		if(!islist(owners) || !owners.len)
 			qdel(S)
 			continue
@@ -1370,7 +1383,12 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 		var/my_patron = _get_human_patron_name(H)
 		var/tier = get_spell_tier(Snew)
-		var/list/owners = get_spell_patron_names(typepath)
+		var/list/owners = _get_learnable_spell_patron_names(H, typepath)
+		if(!length(owners))
+			qdel(Snew)
+			to_chat(H, span_warning("My faith does not permit me to learn this miracle."))
+			open_learn_ui(H)
+			return
 		var/real_owner = ""
 
 		if(length(my_patron) && islist(owners) && (my_patron in owners))
