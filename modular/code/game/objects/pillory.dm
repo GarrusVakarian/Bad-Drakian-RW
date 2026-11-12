@@ -37,6 +37,7 @@
 
 	var/msg = "It is [latched ? "latched" : "unlatched"] and [locked ? "locked." : "unlocked."]<br/>"
 	. += msg
+	. += span_info("Click with a held liquid container outside combat mode to set it at the base.")
 
 /obj/structure/pillory/attack_right(mob/living/user)
 	. = ..()
@@ -52,6 +53,10 @@
 	togglelatch(user)
 
 /obj/structure/pillory/attackby(obj/item/P, mob/user, params)
+	if(istype(P, /obj/item/reagent_containers/glass) && isliving(user) && !user.cmode)
+		place_liquid_container(P, user)
+		// Consume failed placements too: do not follow up by pouring or attacking.
+		return TRUE
 	if(user in buckled_mobs)
 		to_chat(user, span_warning("I can't reach the lock!"))
 		return
@@ -73,6 +78,75 @@
 			if(KE.lockid in lockid)
 				togglelock(user)
 				return
+
+/obj/structure/pillory/proc/place_liquid_container(obj/item/reagent_containers/glass/container, mob/user)
+	if(!isliving(user) || QDELETED(user) || !istype(container) || QDELETED(container) || user.get_active_held_item() != container || !Adjacent(user))
+		return FALSE
+	var/turf/placement_turf = loc
+	if(!istype(placement_turf))
+		return FALSE
+	if(!user.transferItemToLoc(container, placement_turf, silent = FALSE))
+		return FALSE
+	// Dropping can trigger deletion or relocation through inventory/turf callbacks.
+	if(QDELETED(container) || QDELETED(src) || container.loc != placement_turf || loc != placement_turf)
+		return FALSE
+	container.AddComponent(/datum/component/pillory_container_placement, src)
+	return TRUE
+
+/// Temporary floor positioning; no processing or timer is needed.
+/datum/component/pillory_container_placement
+	dupe_mode = COMPONENT_DUPE_UNIQUE_PASSARGS
+	var/obj/structure/pillory/pillory
+	var/original_plane
+	var/original_layer
+
+/datum/component/pillory_container_placement/Initialize(obj/structure/pillory/support)
+	if(!istype(parent, /obj/item/reagent_containers/glass) || !istype(support) || QDELETED(support) || !isturf(support.loc))
+		return COMPONENT_INCOMPATIBLE
+	var/obj/item/container = parent
+	if(container.loc != support.loc)
+		return COMPONENT_INCOMPATIBLE
+	pillory = support
+	original_plane = container.plane
+	original_layer = container.layer
+
+/datum/component/pillory_container_placement/RegisterWithParent()
+	var/obj/item/container = parent
+	RegisterSignal(container, list(COMSIG_MOVABLE_MOVED, COMSIG_ITEM_PICKUP), PROC_REF(clear_placement))
+	RegisterSignal(pillory, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING), PROC_REF(clear_placement))
+	// Cancel the ordinary drop bounce before applying a fixed position.
+	animate(container)
+	container.pixel_x = initial(container.pixel_x)
+	container.pixel_y = initial(container.pixel_y) - world.icon_size / 2
+	container.plane = pillory.plane
+	container.layer = pillory.layer + 0.1
+
+/datum/component/pillory_container_placement/proc/clear_placement()
+	SIGNAL_HANDLER
+	qdel(src)
+
+/datum/component/pillory_container_placement/Destroy(force, silent)
+	restore_placement()
+	return ..()
+
+/datum/component/pillory_container_placement/UnregisterFromParent()
+	restore_placement()
+	return ..()
+
+/datum/component/pillory_container_placement/proc/restore_placement()
+	if(!pillory)
+		return
+	var/obj/item/container = parent
+	if(container)
+		UnregisterSignal(container, list(COMSIG_MOVABLE_MOVED, COMSIG_ITEM_PICKUP))
+		if(!QDELETED(container) && pillory)
+			container.pixel_x = initial(container.pixel_x)
+			container.pixel_y = initial(container.pixel_y)
+			container.plane = original_plane
+			container.layer = original_layer
+	if(pillory)
+		UnregisterSignal(pillory, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING))
+	pillory = null
 
 /obj/structure/pillory/proc/togglelatch(mob/living/user, silent)
 	user.changeNext_move(CLICK_CD_MELEE)
