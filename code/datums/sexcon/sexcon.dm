@@ -555,8 +555,8 @@
 		modular_record_collar_receive_event(splashed_user, user)
 		if(!oral)
 			var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-			if((orifice & SEX_PART_TAIL_MAW) || !is_receiver_actively_knotted_to_user)
-				apply_creampie_drip(splashed_user, orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+			if(consume_charge && ((orifice & SEX_PART_TAIL_MAW) || !is_receiver_actively_knotted_to_user))
+				apply_creampie_drip(splashed_user, orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE, added_duration = get_leakage_duration())
 	if(consume_charge)
 		modular_try_oviposit(splashed_user, oral, orifice)
 	if(effective_target?.has_flaw(/datum/charflaw/addiction/lovefiend))
@@ -570,17 +570,20 @@
 		after_intimate_climax(oral, splashed_user)
 
 /// Applies or accumulates a creampie drip status effect, correctly ORing new orifice flags onto an existing drip rather than silently dropping the second application.
-/proc/apply_creampie_drip(mob/living/carbon/human/target, orifice, use_long = FALSE)
-	var/datum/status_effect/creampie_leak/existing = target.has_status_effect(/datum/status_effect/creampie_leak/long) || target.has_status_effect(/datum/status_effect/creampie_leak)
-	if(existing)
+/proc/apply_creampie_drip(mob/living/carbon/human/target, orifice, use_long = FALSE, added_duration = 60 SECONDS)
+	if(!ishuman(target) || QDELETED(target) || !isnum(added_duration) || added_duration <= 0)
+		return FALSE
+	var/datum/status_effect/creampie_leak/existing = target.has_status_effect(/datum/status_effect/creampie_leak/long)
+	if(!istype(existing))
+		existing = target.has_status_effect(/datum/status_effect/creampie_leak)
+	if(istype(existing))
+		existing.sync_leak_clock()
 		existing.orifice |= orifice
 		to_chat(target, span_love("I feel another warmth beginning to leak out of me."))
-		existing.duration = world.time + initial(existing.duration) // refresh timer
-		return
-	if(use_long)
-		target.apply_status_effect(/datum/status_effect/creampie_leak/long, orifice)
-	else
-		target.apply_status_effect(/datum/status_effect/creampie_leak, orifice)
+		existing.duration = world.time + min(max(existing.duration - world.time, 0) + added_duration, 60 MINUTES)
+		return existing
+	var/leak_type = use_long ? /datum/status_effect/creampie_leak/long : /datum/status_effect/creampie_leak
+	return target.apply_status_effect(leak_type, orifice, min(added_duration, 60 MINUTES))
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
 /datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)
@@ -597,7 +600,11 @@
 		to_chat(consumer, span_info("I can taste [initial(fluid.taste_description)]."))
 	return TRUE
 
-/// Extra volume for oral intake only; repeated intake grants half the amount.
+/// Match the container bonus at one unit per twelve seconds; missing donor organs retain the old minimum.
+/datum/sex_controller/proc/get_leakage_duration()
+	return max(60 SECONDS, floor(get_oral_intake_extra_volume()) * (12 SECONDS))
+
+/// Size-based bonus shared with container collection; oral repeats grant half the amount.
 /datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
 	if(!ishuman(user) || QDELETED(user))
 		return 0
@@ -633,6 +640,7 @@
 	if(!drip)
 		return FALSE
 
+	drip.sync_leak_clock()
 	if(last_oral_drip_consume_time + 3 SECONDS > world.time)
 		return FALSE
 	last_oral_drip_consume_time = world.time
@@ -685,10 +693,43 @@
 	duration = 60 SECONDS
 	var/contents_to_drip = /datum/reagent/erpjuice/cum
 	var/orifice = SEX_PART_NULL
+	var/last_leak_clock
+	var/next_clothing_check = 0
+	var/clothing_allows_dripping = FALSE
 
-/datum/status_effect/creampie_leak/on_creation(mob/living/new_owner, orifice_in = SEX_PART_NULL)
+/datum/status_effect/creampie_leak/on_creation(mob/living/new_owner, orifice_in = SEX_PART_NULL, added_duration = null)
 	orifice = orifice_in
+	if(isnum(added_duration))
+		duration = clamp(added_duration, 1, 60 MINUTES)
+	last_leak_clock = world.time
 	return ..(new_owner)
+
+/// Advance the absolute expiry and next-drip clocks only while actual leakage is blocked.
+/datum/status_effect/creampie_leak/proc/sync_leak_clock()
+	var/elapsed = max(world.time - last_leak_clock, 0)
+	last_leak_clock = world.time
+	if(elapsed && !can_drip())
+		duration += elapsed
+		tick_interval += elapsed
+
+/datum/status_effect/creampie_leak/process(wait)
+	if(QDELETED(owner))
+		qdel(src)
+		return
+	sync_leak_clock()
+	return ..()
+
+/datum/status_effect/creampie_leak/proc/can_drip(force_clothing_check = FALSE)
+	if(QDELETED(owner) || !isturf(get_turf(owner)))
+		return FALSE
+	var/tailmaw_leaking = (orifice & SEX_PART_TAIL_MAW) && get_manticore_tail(owner)
+	if(tailmaw_leaking || owner.sexcon?.bottom_exposed)
+		return TRUE
+	// Limit routine equipment scans; a real drip always requests a fresh check.
+	if(force_clothing_check || world.time >= next_clothing_check)
+		clothing_allows_dripping = get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE)
+		next_clothing_check = world.time + 1 SECONDS
+	return !!clothing_allows_dripping
 
 /datum/status_effect/creampie_leak/long
 	id = "creampie_leak_long"
@@ -735,8 +776,7 @@
 		owner.remove_status_effect(src)
 
 /datum/status_effect/creampie_leak/tick()
-	var/tailmaw_leaking = (orifice & SEX_PART_TAIL_MAW) && get_manticore_tail(owner)
-	if(!tailmaw_leaking && !owner?.sexcon?.bottom_exposed && !get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE))
+	if(!can_drip(TRUE))
 		return
 	var/cur_loc = get_turf(owner)
 	if(!cur_loc || !isturf(cur_loc))
@@ -790,10 +830,10 @@
 	var/obj/item/reagent_containers/glass/cum_chalice = locate() in cur_loc
 	if(!cum_chalice?.spillable) // leak contents underneath the first found open container
 		return
-	if(from_tailmaw || user.getorganslot(ORGAN_SLOT_VAGINA))
+	if(from_tailmaw || (!user.getorganslot(ORGAN_SLOT_PENIS) && user.getorganslot(ORGAN_SLOT_VAGINA)))
 		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/femcum,1)
 	else
-		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol)
+		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()))
 
 /datum/sex_controller/proc/ejaculate_container(obj/item/reagent_containers/glass/C)
 	if(try_resist_orgasm())
@@ -803,7 +843,7 @@
 		user.visible_message(span_love("[user] spills into [C]!"))
 		playsound(user, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
 		if(user.getorganslot(ORGAN_SLOT_PENIS))
-			C.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume())
+			C.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume() + floor(get_oral_intake_extra_volume()))
 		else
 			C.reagents.add_reagent(/datum/reagent/erpjuice/femcum, 2)
 	after_ejaculation()
