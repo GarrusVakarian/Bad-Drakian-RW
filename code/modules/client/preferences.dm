@@ -149,6 +149,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE
+	var/cumflation_content = FALSE
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
@@ -590,6 +591,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		"hear_barks",
 		"hide_unavailable_emotes",
 		"hypnosis_content",
+		"cumflation_content",
 		"masked_examine",
 		"mute_animal_emotes",
 		"no_autopunctuate",

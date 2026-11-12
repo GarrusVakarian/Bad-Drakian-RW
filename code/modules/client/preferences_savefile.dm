@@ -287,6 +287,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["manticore_tail_messages"]	>> manticore_tail_messages
 	S["hypnosis_content"] >> hypnosis_content
 	hypnosis_content = sanitize_integer(hypnosis_content, 0, 1, FALSE)
+	S["cumflation_content"] >> cumflation_content
+	cumflation_content = sanitize_integer(cumflation_content, 0, 1, FALSE)
 	S["shake"]				>> shake
 	S["no_redflash"] 		>> no_redflash
 	S["mastervol"]			>> mastervol
@@ -487,6 +489,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["milkable"], milkable)
 	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
 	WRITE_FILE(S["hypnosis_content"], hypnosis_content)
+	WRITE_FILE(S["cumflation_content"], cumflation_content)
 	WRITE_FILE(S["shake"], shake)
 	WRITE_FILE(S["no_redflash"], no_redflash)
 	WRITE_FILE(S["lastclass"], lastclass)

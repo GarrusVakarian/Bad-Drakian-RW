@@ -581,9 +581,13 @@
 		existing.orifice |= orifice
 		to_chat(target, span_love("I feel another warmth beginning to leak out of me."))
 		existing.duration = world.time + min(max(existing.duration - world.time, 0) + added_duration, 60 MINUTES)
+		target.check_stuffed_input(TRUE)
 		return existing
 	var/leak_type = use_long ? /datum/status_effect/creampie_leak/long : /datum/status_effect/creampie_leak
-	return target.apply_status_effect(leak_type, orifice, min(added_duration, 60 MINUTES))
+	var/datum/status_effect/creampie_leak/created = target.apply_status_effect(leak_type, orifice, min(added_duration, 60 MINUTES))
+	if(istype(created))
+		target.check_stuffed_input(TRUE)
+	return created
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
 /datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)
@@ -694,6 +698,8 @@
 	var/contents_to_drip = /datum/reagent/erpjuice/cum
 	var/orifice = SEX_PART_NULL
 	var/last_leak_clock
+	var/next_clothing_check = 0
+	var/clothing_allows_dripping = FALSE
 
 /datum/status_effect/creampie_leak/on_creation(mob/living/new_owner, orifice_in = SEX_PART_NULL, added_duration = null)
 	orifice = orifice_in
@@ -717,11 +723,17 @@
 	sync_leak_clock()
 	return ..()
 
-/datum/status_effect/creampie_leak/proc/can_drip()
+/datum/status_effect/creampie_leak/proc/can_drip(force_clothing_check = FALSE)
 	if(QDELETED(owner) || !isturf(get_turf(owner)))
 		return FALSE
 	var/tailmaw_leaking = (orifice & SEX_PART_TAIL_MAW) && get_manticore_tail(owner)
-	return !!(tailmaw_leaking || owner.sexcon?.bottom_exposed || get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE))
+	if(tailmaw_leaking || owner.sexcon?.bottom_exposed)
+		return TRUE
+	// Limit routine equipment scans; a real drip always requests a fresh check.
+	if(force_clothing_check || world.time >= next_clothing_check)
+		clothing_allows_dripping = get_location_accessible(owner, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE)
+		next_clothing_check = world.time + 1 SECONDS
+	return !!clothing_allows_dripping
 
 /datum/status_effect/creampie_leak/long
 	id = "creampie_leak_long"
@@ -768,7 +780,7 @@
 		owner.remove_status_effect(src)
 
 /datum/status_effect/creampie_leak/tick()
-	if(!can_drip())
+	if(!can_drip(TRUE))
 		return
 	var/cur_loc = get_turf(owner)
 	if(!cur_loc || !isturf(cur_loc))

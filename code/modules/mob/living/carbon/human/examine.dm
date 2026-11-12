@@ -119,6 +119,7 @@
 			. += span_notice("You get the feeling [m2] most valuable possession is \a [item].")
 
 	. += get_redolent_examine_lines(user)
+	. += stuffed_examine_line(user)
 	var/gaze_examine = hypnotic_gaze_examine(user)
 	if(gaze_examine)
 		. += gaze_examine
