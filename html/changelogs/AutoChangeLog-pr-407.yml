@@ -1,6 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - qol: "Erotic Fluid collected in containers gains 5/10/30 extra units by donor size, or 7/15/45 for taur donors."
-  - qol: "Erotic FLuid leakage duration scales with donor size, stacks up to one hour, and pauses while clothing blocks dripping."
-  - bugfix: "Collection by containers on the floor now use the size-scaled amount for donors with both anatomy options, matching held collection."

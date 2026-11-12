@@ -411,3 +411,14 @@
   - qol: "PQ-blocked late-join roles remain visible in darker red, while roles disabled\
       \ on the current map stay hidden. PQ errors explain how to earn PQ, with a Towner\
       \ suggestion whenever a player at 0 PQ falls below a role\u2019s minimum."
+  - rscadd: Added optional Cumflation Content, with intake tracking, a washable Stuffed
+      debuff and consent-gated examine text.
+  - bugfix: Unconscious and dying players can follow nearby speech, whispers, emotes
+      and subtles.
+  - bugfix: Unconscious and dying players can be selected as named SLOOC targets.
+  - qol: Erotic Fluid collected in containers gains 5/10/30 extra units by donor size,
+      or 7/15/45 for taur donors.
+  - qol: Erotic FLuid leakage duration scales with donor size, stacks up to one hour,
+      and pauses while clothing blocks dripping.
+  - bugfix: Collection by containers on the floor now use the size-scaled amount for
+      donors with both anatomy options, matching held collection.
