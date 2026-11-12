@@ -404,3 +404,7 @@
   - qol: Liquid containers can be set at the base of a pillory, visibly in front of
       its occupant.
   - qol: Wretches receive a new role guidance message before choosing their class.
+  - balance: Rebalanced role PQ requirements.
+  - qol: "PQ-blocked late-join roles remain visible in darker red, while roles disabled\
+      \ on the current map stay hidden. PQ errors explain how to earn PQ, with a Towner\
+      \ suggestion whenever a player at 0 PQ falls below a role\u2019s minimum."
