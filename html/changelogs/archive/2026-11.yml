@@ -399,6 +399,9 @@
   - map: Added a few RCOMs to Smollhill.
   - map: Fixed a door with invalid key ID on Smollhill.
   - map: Added a head physician to Smollhill.
+  Khanivore.:
+  - sound: Added LizBellow, LizHiss, LizSqueal, LizThump, and Gnash for all species
+      through chat and the Noises menu.
   mypingishuge:
   - rscadd: Oozes can choose Digitigrade Big Legs and Digitigrade Big Legs, Stanced.
   - qol: Liquid containers can be set at the base of a pillory, visibly in front of
