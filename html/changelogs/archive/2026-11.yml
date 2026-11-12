@@ -389,3 +389,5 @@
 2026-11-12:
   mypingishuge:
   - rscadd: Oozes can choose Digitigrade Big Legs and Digitigrade Big Legs, Stanced.
+  - qol: Liquid containers can be set at the base of a pillory, visibly in front of
+      its occupant.
