@@ -12209,10 +12209,6 @@
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cave)
-"fKC" = (
-/obj/structure/chair/bench/couchablack/r,
-/turf/open/floor/carpet/royalblack,
-/area/rogue/indoors)
 "fKE" = (
 /obj/structure/closet/crate/roguecloset/inn,
 /obj/machinery/light/rogue/candle/r,
@@ -13297,6 +13293,18 @@
 	},
 /turf/open/floor/rogue/grass,
 /area/rogue/outdoors/rtfield/rockhill)
+"glF" = (
+/obj/structure/chair/bench/church/r{
+	dir = 8
+	},
+/obj/effect/landmark/start/monk{
+	dir = 8
+	},
+/obj/structure/roguemachine/scomm/receive_only{
+	scom_tag = "Church"
+	},
+/turf/open/floor/rogue/church,
+/area/rogue/indoors/town/church/chapel)
 "glQ" = (
 /obj/structure/closet/crate/coffin,
 /obj/effect/spawner/lootdrop/general_loot_mid,
@@ -18955,7 +18963,7 @@
 /obj/structure/mineral_door/wood/deadbolt{
 	dir = 4;
 	locked = 1;
-	keylock = 1
+	keylock = 0
 	},
 /turf/open/floor/rogue/twig,
 /area/rogue/indoors)
@@ -25573,6 +25581,13 @@
 /obj/structure/fluff/walldeco/chains,
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/dungeon/sunkenchurch)
+"mdr" = (
+/obj/structure/fluff/walldeco/bsmith,
+/obj/structure/roguemachine/scomm/receive_only/l{
+	scom_tag = "Blacksmith"
+	},
+/turf/open/floor/rogue/metal/barograte,
+/area/rogue/outdoors/rtfield/rockhill)
 "mdu" = (
 /obj/structure/flora/roguetree,
 /turf/open/floor/rogue/grass,
@@ -27581,9 +27596,9 @@
 /turf/open/floor/rogue/grass,
 /area/rogue/outdoors/town/grove)
 "mZa" = (
-/obj/structure/chair/bench/couchablack,
 /obj/structure/rogue/trophy/deer,
-/turf/open/floor/carpet/royalblack,
+/obj/structure/roguemachine/bounty,
+/turf/open/floor/rogue/metal/barograte,
 /area/rogue/indoors)
 "mZb" = (
 /obj/structure/table/church/m,
@@ -31268,6 +31283,12 @@
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/town/tavern)
+"oPq" = (
+/obj/structure/roguemachine/scomm/receive_only/l{
+	scom_tag = "Inquisition"
+	},
+/turf/open/floor/rogue/hexstone,
+/area/rogue/indoors/inq/basement)
 "oPt" = (
 /obj/structure/fluff/railing/wood{
 	dir = 1;
@@ -43506,10 +43527,6 @@
 /obj/structure/fluff/railing/fence,
 /turf/open/floor/rogue/cobblerock,
 /area/rogue/outdoors/bograt/south)
-"uEh" = (
-/obj/structure/mineral_door/swing_door,
-/turf/open/floor/rogue/ruinedwood/spiral,
-/area/rogue/indoors)
 "uEy" = (
 /obj/structure/flora/roguetree/evil,
 /turf/open/floor/rogue/dirt/road,
@@ -47702,6 +47719,12 @@
 	},
 /turf/open/floor/rogue/dirt,
 /area/rogue/outdoors/rtfield/rockhill)
+"wFn" = (
+/obj/structure/roguemachine/scomm/receive_only{
+	scom_tag = "Guard Tower"
+	},
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/outdoors/rtfield/rockhill)
 "wFq" = (
 /obj/structure/chair/smallbench{
 	dir = 1
@@ -48053,10 +48076,6 @@
 /mob/living/simple_animal/hostile/retaliate/rogue/swine,
 /turf/open/floor/rogue/grass,
 /area/rogue/outdoors/rtfield/rockhill)
-"wNk" = (
-/obj/structure/roguemachine/bounty,
-/turf/open/floor/rogue/metal/barograte,
-/area/rogue/indoors)
 "wNm" = (
 /obj/machinery/light/rogue/firebowl/standing/blue,
 /turf/open/floor/rogue/dirt/road,
@@ -162419,7 +162438,7 @@ maw
 uaL
 fZk
 teW
-ryi
+glF
 bFU
 oHo
 bDj
@@ -167265,7 +167284,7 @@ eXH
 pAV
 wKu
 xou
-wNk
+xou
 pPM
 xvN
 fxx
@@ -167567,7 +167586,7 @@ qhH
 dhq
 xou
 xou
-yiu
+xou
 pAV
 ltI
 fxx
@@ -168466,9 +168485,9 @@ uaL
 fxx
 fxx
 fxx
-uEh
-htF
-htF
+hRa
+vGc
+vGc
 wIl
 gDi
 eVG
@@ -168770,7 +168789,7 @@ fxx
 xvN
 pAV
 mZa
-htF
+vGc
 vGc
 dHS
 vVQ
@@ -169071,8 +169090,8 @@ fxx
 sjP
 qvR
 eox
-fKC
-htF
+yiu
+vGc
 bxW
 hHI
 hHI
@@ -170833,7 +170852,7 @@ hln
 vaf
 nQO
 dVj
-pMR
+oPq
 wIb
 dmF
 wIb
@@ -172403,7 +172422,7 @@ xvN
 pzO
 fxx
 fxx
-hoA
+mdr
 sjP
 iAV
 kzy
@@ -178441,7 +178460,7 @@ mno
 kEw
 wMB
 lFM
-sjP
+wFn
 sjP
 wSn
 qvR
