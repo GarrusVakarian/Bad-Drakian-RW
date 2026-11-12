@@ -116650,6 +116650,36 @@
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
+"aaw" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aax" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaz" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaA" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaB" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaC" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
 
 (1,1,1) = {"
 fyc
@@ -230141,7 +230171,7 @@ fIz
 fIz
 nsy
 aak
-rri
+suI
 lxs
 lxs
 lxs
@@ -232731,7 +232761,7 @@ smf
 oqo
 ujL
 tqU
-smf
+tqU
 lxs
 lNa
 rfA
@@ -233166,7 +233196,7 @@ tqU
 tqU
 qBR
 tqU
-jdv
+tYg
 smf
 smf
 smf
@@ -237917,7 +237947,7 @@ rfA
 lNa
 lNa
 qBR
-smf
+tqU
 rfA
 oqo
 smf
@@ -238349,7 +238379,7 @@ rfA
 qYw
 qBR
 qBR
-smf
+tqU
 ujL
 ujL
 oqo
@@ -238777,10 +238807,10 @@ lxs
 lxs
 ujL
 qYw
-jdv
+tYg
 tqU
 qBR
-smf
+tqU
 tqU
 ujL
 rfA
@@ -240508,7 +240538,7 @@ rfA
 rfA
 lxs
 qBR
-smf
+tqU
 khC
 smf
 rfA
@@ -241801,7 +241831,7 @@ rRw
 rfA
 smf
 ujL
-jdv
+tYg
 lxs
 qBR
 tqU
@@ -245696,7 +245726,7 @@ lxs
 tqU
 qBR
 tqU
-jdv
+tYg
 ujL
 ujL
 uRH
@@ -247854,7 +247884,7 @@ smf
 rfA
 rfA
 ujL
-smf
+tqU
 qBR
 qBR
 lNa
@@ -248286,7 +248316,7 @@ oqo
 rfA
 rfA
 ujL
-smf
+tqU
 tqU
 qBR
 lNa
@@ -253899,7 +253929,7 @@ qBR
 lNa
 lNa
 lNa
-smf
+lNa
 oqo
 smf
 smf
@@ -256056,7 +256086,7 @@ lxs
 lxs
 qBR
 lxs
-jdv
+tYg
 smf
 smf
 smf
@@ -257349,7 +257379,7 @@ lxs
 lxs
 rfA
 rfA
-rri
+suI
 lNa
 lxs
 lxs
@@ -257774,11 +257804,11 @@ qux
 qBR
 qBR
 tqU
-smf
+tqU
 ujL
 ujL
 rfA
-smf
+lxs
 ujL
 rfA
 ujL
@@ -259930,7 +259960,7 @@ gbp
 qBR
 qux
 lxs
-smf
+lxs
 qYw
 ujL
 rfA
@@ -260362,7 +260392,7 @@ ujL
 qBR
 qBR
 lxs
-rri
+suI
 rfA
 rfA
 ujL
@@ -262083,7 +262113,7 @@ lxs
 ujL
 ujL
 rfA
-nKS
+wwK
 qBR
 qBR
 qux
@@ -267699,7 +267729,7 @@ sYx
 fcx
 sYx
 sYx
-aav
+aaw
 ljM
 lOV
 sYx
@@ -270291,7 +270321,7 @@ fPd
 fPd
 sYx
 fPd
-idS
+aax
 lOV
 lOV
 fPd
@@ -272019,7 +272049,7 @@ fPd
 fPd
 fPd
 fPd
-idS
+aax
 azy
 lOV
 fPd
@@ -272451,7 +272481,7 @@ cuM
 fPd
 sYx
 sYx
-aat
+aaz
 lOV
 lOV
 fPd
@@ -274181,7 +274211,7 @@ azy
 azy
 ljM
 lOV
-idS
+aax
 sYx
 sYx
 fPd
@@ -276341,7 +276371,7 @@ fPd
 lOV
 lOV
 fPd
-idS
+aax
 fPd
 sYx
 sYx
@@ -280654,7 +280684,7 @@ azy
 fPd
 fPd
 fPd
-aav
+aaw
 lOV
 fPd
 ljM
@@ -283244,7 +283274,7 @@ riL
 riL
 miu
 fPd
-idS
+aax
 azy
 ljM
 ljM
@@ -285400,8 +285430,8 @@ azy
 sYx
 azy
 sAu
-idS
-qMq
+aax
+aaA
 azy
 ljM
 lOV
@@ -285832,8 +285862,8 @@ azy
 azy
 fPd
 sAu
-xMG
-etL
+aaC
+aaB
 azy
 lOV
 aam
