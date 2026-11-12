@@ -149,6 +149,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE
+	var/cumflation_content = FALSE
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
@@ -590,6 +591,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		"hear_barks",
 		"hide_unavailable_emotes",
 		"hypnosis_content",
+		"cumflation_content",
 		"masked_examine",
 		"mute_animal_emotes",
 		"no_autopunctuate",
@@ -627,6 +629,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /// Feature definitions are shared and immutable; per-account state belongs to preferences.
 /datum/character_sheet_feature
 	var/id
+	/// The saved acknowledgement uses this existing entry's revision, not a new flag.
+	var/revision = 1
 	var/label
 	var/explanation
 	var/location
@@ -645,8 +649,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /datum/character_sheet_feature/hypnosis_consent
 	id = "hypnosis_consent"
+	revision = 2
 	label = "Content Toggles"
-	explanation = "New consent toggles are available, including Enable Hypnosis Content, which is off by default."
+	explanation = "New consent toggles are available. Open Content Toggles to review your content preferences."
 	location = "in the character sheet's upper-right corner, below Keybinds"
 
 /datum/character_sheet_feature/roleplay_ad
@@ -750,10 +755,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /// First-time setup only: snapshot today's registered IDs, not future additions.
 /// The constructor's existing save_preferences() call persists this in one write.
 /datum/preferences/proc/acknowledge_current_character_sheet_features()
-	for(var/feature_id in get_character_sheet_features())
+	var/list/features = get_character_sheet_features()
+	for(var/feature_id in features)
 		if(feature_id == "content_toggles" && content_toggles_intro == "pending")
 			continue
-		seen_character_sheet_features[feature_id] = TRUE
+		var/datum/character_sheet_feature/feature = features[feature_id]
+		seen_character_sheet_features[feature_id] = feature.revision
 
 /datum/preferences/proc/show_content_toggles_intro()
 	if(content_toggles_intro != "pending")
@@ -767,7 +774,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		return FALSE
 	var/list/features = get_character_sheet_features()
 	var/datum/character_sheet_feature/feature = features[feature_id]
-	if(!istype(feature) || seen_character_sheet_features[feature_id])
+	if(!istype(feature) || seen_character_sheet_features[feature_id] >= feature.revision)
 		return FALSE
 	if(!feature.is_eligible(src))
 		mark_character_sheet_feature_seen(feature_id)
@@ -815,13 +822,15 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	seen_character_sheet_features = list()
 	if(islist(saved_state))
 		for(var/feature_id in saved_state)
-			if(istext(feature_id) && saved_state[feature_id] == TRUE)
-				seen_character_sheet_features[feature_id] = TRUE
+			var/seen_revision = saved_state[feature_id]
+			// Legacy TRUE is revision 1. Keep higher revisions and retired IDs intact.
+			if(istext(feature_id) && isnum(seen_revision) && seen_revision >= 1 && seen_revision == round(seen_revision))
+				seen_character_sheet_features[feature_id] = seen_revision
 
 /datum/preferences/proc/dismiss_character_sheet_feature(mob/user, feature)
 	if(!parent || user?.client != parent)
 		return FALSE
-	if(feature == "content_toggles")
+	if(feature == "content_toggles" && character_sheet_feature_is_new("hypnosis_consent"))
 		feature = "hypnosis_consent"
 	if(!mark_character_sheet_feature_seen(feature))
 		return FALSE
@@ -832,11 +841,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	if(!istext(feature))
 		return FALSE
 	var/list/features = get_character_sheet_features()
-	if(!istype(features[feature], /datum/character_sheet_feature) || seen_character_sheet_features[feature])
+	var/datum/character_sheet_feature/definition = features[feature]
+	if(!istype(definition) || seen_character_sheet_features[feature] >= definition.revision)
 		return FALSE
-	seen_character_sheet_features[feature] = TRUE
+	seen_character_sheet_features[feature] = definition.revision
 	if(feature == "hypnosis_consent")
-		seen_character_sheet_features["content_toggles"] = TRUE
+		var/datum/character_sheet_feature/content_definition = features["content_toggles"]
+		seen_character_sheet_features["content_toggles"] = max(seen_character_sheet_features["content_toggles"], content_definition.revision)
 	save_preferences()
 	return TRUE
 

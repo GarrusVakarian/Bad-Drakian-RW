@@ -581,9 +581,13 @@
 		existing.orifice |= orifice
 		to_chat(target, span_love("I feel another warmth beginning to leak out of me."))
 		existing.duration = world.time + min(max(existing.duration - world.time, 0) + added_duration, 60 MINUTES)
+		target.check_stuffed_input(TRUE)
 		return existing
 	var/leak_type = use_long ? /datum/status_effect/creampie_leak/long : /datum/status_effect/creampie_leak
-	return target.apply_status_effect(leak_type, orifice, min(added_duration, 60 MINUTES))
+	var/datum/status_effect/creampie_leak/created = target.apply_status_effect(leak_type, orifice, min(added_duration, 60 MINUTES))
+	if(istype(created))
+		target.check_stuffed_input(TRUE)
+	return created
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
 /datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)

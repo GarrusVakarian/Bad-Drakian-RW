@@ -148,6 +148,7 @@
 	addtimer(CALLBACK(src, TYPE_PROC_REF(/datum/customization_trait, pick_stashed_instrument), recipient), 50)
 
 /datum/quirk/largeframe
+	added_traits = list(TRAIT_LARGE_FRAME)
 	name = "Large Frame"
 	desc = "I'm simply built bigger than most. My strength and hardiness has nothing to show for my size, though."
 	custom_text = "This quirk increases your sprite size. Incompatible with the Giant virtue."
