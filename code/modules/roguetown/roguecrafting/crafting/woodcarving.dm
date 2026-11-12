@@ -1,5 +1,5 @@
 /datum/crafting_recipe/roguetown/woodcarving
-	abstract_type = /datum/crafting_recipe/roguetown/survival/peasantry
+	abstract_type = /datum/crafting_recipe/roguetown/woodcarving
 	display_category = ITEM_CAT_DECORATION
 	skillcraft = /datum/skill/craft/crafting
 	category = "Crafting"
@@ -23,7 +23,7 @@
 /datum/crafting_recipe/roguetown/woodcarving/spire
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden spire"
-	result = /obj/item/carvedwood/cameo
+	result = /obj/item/carvedwood/spire
 	reqs = list(/obj/item/grown/log/tree/stick = 1)
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_NOVICE
@@ -68,6 +68,14 @@
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_APPRENTICE
 
+/datum/crafting_recipe/roguetown/woodcarving/frog
+	display_category = ITEM_CAT_DECORATION
+	name = "wooden frog figurine"
+	result = /obj/item/carvedwood/frog
+	reqs = list(/obj/item/grown/log/tree/stick = 1)
+	tools = list(/obj/item/rogueweapon/huntingknife)
+	craftdiff = SKILL_LEVEL_APPRENTICE
+
 /datum/crafting_recipe/roguetown/woodcarving/figurineelf
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden elf figurine"
@@ -99,7 +107,6 @@
 	reqs = list(/obj/item/grown/log/tree/small = 1)
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_APPRENTICE
-
 
 /datum/crafting_recipe/roguetown/woodcarving/vase
 	display_category = ITEM_CAT_DECORATION
@@ -141,7 +148,6 @@
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_APPRENTICE
 
-
 /datum/crafting_recipe/roguetown/woodcarving/plinth
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden plinth"
@@ -162,14 +168,6 @@
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden moon"
 	result = /obj/item/carvedwood/moon
-	reqs = list(/obj/item/grown/log/tree/stick = 1)
-	tools = list(/obj/item/rogueweapon/huntingknife)
-	craftdiff = SKILL_LEVEL_JOURNEYMAN
-
-/datum/crafting_recipe/roguetown/woodcarving/sun
-	display_category = ITEM_CAT_DECORATION
-	name = "wooden sun"
-	result = /obj/item/carvedwood/sun
 	reqs = list(/obj/item/grown/log/tree/stick = 1)
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_JOURNEYMAN
@@ -209,15 +207,7 @@
 /datum/crafting_recipe/roguetown/woodcarving/shrine
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden shrine"
-	result = /obj/item/carvedwood/bust
-	reqs = list(/obj/item/grown/log/tree/small = 1)
-	tools = list(/obj/item/rogueweapon/huntingknife)
-	craftdiff = SKILL_LEVEL_EXPERT
-
-/datum/crafting_recipe/roguetown/woodcarving/bust
-	display_category = ITEM_CAT_DECORATION
-	name = "wooden bust"
-	result = /obj/item/carvedwood/bust
+	result = /obj/item/carvedwood/shrine
 	reqs = list(/obj/item/grown/log/tree/small = 1)
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_EXPERT
@@ -233,25 +223,7 @@
 /datum/crafting_recipe/roguetown/woodcarving/bottle
 	display_category = ITEM_CAT_DECORATION
 	name = "wooden bottle"
-	result = /obj/item/reagant_container/glass/bottle/wood
+	result = /obj/item/reagent_containers/glass/bottle/wood
 	reqs = list(/obj/item/grown/log/tree/small = 1)
 	tools = list(/obj/item/rogueweapon/huntingknife)
 	craftdiff = SKILL_LEVEL_EXPERT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

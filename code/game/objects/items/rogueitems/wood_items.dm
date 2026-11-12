@@ -33,7 +33,7 @@
 
 /obj/item/carvedwood/cameo
 	name = "wooden cameo"
-	desc = "A cameo carved out of wood depicting depicting someone's grandest features in greater detail; a memoir, perhaps."
+	desc = "A cameo carved out of wood depicting someone's grandest features in greater detail; a memoir, perhaps."
 	icon_state = "cameo_wood"
 
 /obj/item/carvedwood/plinth
@@ -53,7 +53,7 @@
 /obj/item/carvedwood/shrine
 	name = "wooden shrine"
 	desc = "A humble, portable shrine carved out of wood. It is dedicated to no deity in particular. Could also be used to keep one's books upright on a shelf."
-	icon_state = "shrine_wood"
+	icon_state = "wood_shrine"
 	grid_height = 64
 	grid_width = 32
 
@@ -64,7 +64,7 @@
 
 /obj/item/carvedwood/figurineelf
 	name = "wooden elf figurine"
-	desc = "An figurine carved out of wood that depicts an elf."
+	desc = "A figurine carved out of wood that depicts an elf."
 	icon_state = "figurine_wood_elf"
 
 /obj/item/carvedwood/figurineanthro
@@ -77,7 +77,7 @@
 	desc = "A quaint fish figurine carved out of wood."
 	icon_state = "fish_wood"
 
-/obj/item/carvedwood/figurine
+/obj/item/carvedwood/frog
 	name = "wooden frog figurine"
 	desc = "A humorous frog figurine carved out of wood."
 	icon_state = "frog_wood"
@@ -94,14 +94,14 @@
 
 /obj/item/carvedwood/box
 	name = "wooden box"
-	desc = "An ornate box carved out of wood, It can be used to store various sorts of trinkets and baubles."
+	desc = "A decorative box carved out of wood."
 	icon_state = "box_wood"
 	grid_height = 64
 	grid_width = 32
 
 /obj/item/carvedwood/vessel
 	name = "large wooden vessel"
-	desc = "A large vessel painstakingly carved out a large chunk of wood, It can be used to store an assortment of larger items"
+	desc = "A large decorative vessel painstakingly carved from a single piece of wood."
 	icon_state = "vessel_wood"
 	grid_height = 64
 	grid_width = 64
@@ -128,17 +128,17 @@
 
 /obj/item/carvedwood/moon
 	name = "wooden moon"
-	desc = "An medium sized moon statue carved out of wood."
+	desc = "A medium sized moon statue carved out of wood."
 	icon_state = "moon_wood"
 
 /obj/item/carvedwood/sun
 	name = "wooden sun"
-	desc = "An medium sized sun statue carved out of wood."
+	desc = "A medium sized sun statue carved out of wood."
 	icon_state = "sun_wood"
 
 /obj/item/carvedwood/heart
 	name = "wooden heart"
-	desc = "An medium sized heart statue carved out of wood."
+	desc = "A medium sized heart statue carved out of wood."
 	icon_state = "heart_wood"
 
 /obj/item/carvedwood/bust
@@ -150,14 +150,14 @@
 
 /obj/item/carvedwood/vase
 	name = "wooden vase"
-	desc = "An medium sized vase carved out of wood."
+	desc = "A medium sized vase carved out of wood."
 	icon_state = "vase_wood"
 	grid_height = 64
 	grid_width = 32
 
 /obj/item/carvedwood/fancyvase
 	name = "fancy wooden vase"
-	desc = "An medium sized fancy vase carved out of wood."
+	desc = "A medium sized fancy vase carved out of wood."
 	icon_state = "fancyvase_wood"
 	grid_height = 64
 	grid_width = 32
