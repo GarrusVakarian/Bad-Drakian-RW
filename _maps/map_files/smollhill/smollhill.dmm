@@ -5553,7 +5553,7 @@
 /obj/machinery/light/rogue/candle/r,
 /obj/structure/fluff/customsign{
 	icon_state = "signwrote";
-	wrotesign = "This map is not supposed to have a duke/duchess. Please far travel and pick a different role."
+	wrotesign = "This map is not supposed to have your chosen role. Please far travel and pick a different one."
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cave)
@@ -23374,14 +23374,6 @@
 	},
 /turf/open/floor/rogue/greenstone/runed,
 /area/rogue/under/dungeon/wizarddungeon)
-"lcQ" = (
-/obj/effect/landmark/start/lord,
-/obj/machinery/light/rogue/candle/l,
-/obj/machinery/light/rogue/candle/r,
-/obj/effect/landmark/start/lady,
-/obj/effect/landmark/start/suitor,
-/turf/open/floor/rogue/naturalstone,
-/area/rogue/under/cave)
 "lcR" = (
 /obj/structure/chair/wood/rogue{
 	dir = 8
@@ -131600,7 +131592,7 @@ lhT
 lhT
 sYw
 cBq
-lcQ
+ioP
 ioP
 eJd
 sYw
