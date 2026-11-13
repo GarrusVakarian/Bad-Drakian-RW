@@ -50,6 +50,13 @@
 	added_stashed_items = list("Bag of Cursed Fetish Gear" = /obj/item/storage/roguebag/cursed_keepsakes)
 	incompatible_quirks = list(/datum/quirk/acquiredtastes)
 
+/datum/quirk/saccharine_keepsake
+	name = "Saccharine Keepsake"
+	point_cost = 1
+	desc = "I keep a pink crayon imbued with Baotha's saccharine blessing."
+	custom_text = "Adds a reusable magical crayon to your stash. Any holder can use it to draw Baotha's fertility mark on a willing character's exposed lower abdomen. Does not add an addiction."
+	added_stashed_items = list("Saccharine Crayon" = /obj/item/baotha_crayon)
+
 /datum/quirk/dream_dust
 	name = "Dream Dust"
 	point_cost = 2
