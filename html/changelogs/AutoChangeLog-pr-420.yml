@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Flail Sweep now applies its crowd effects reliably at high target counts, counts each target once and uses the correct throw distance."
