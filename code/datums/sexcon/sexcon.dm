@@ -502,7 +502,7 @@
 		effective_target.sate_addiction(/datum/charflaw/addiction/baothamarked)
 	after_ejaculation()
 
-/datum/sex_controller/proc/cum_into(oral = FALSE, mob/living/carbon/human/splashed_user = null, datum/sex_action/knot_action = null, knot_swap_roles = FALSE, mob/living/carbon/human/knot_btm = null, orifice = SEX_PART_NULL, skip_knot_try = FALSE, consume_charge = TRUE, source_part = SEX_PART_NULL)
+/datum/sex_controller/proc/cum_into(oral = FALSE, mob/living/carbon/human/splashed_user = null, datum/sex_action/knot_action = null, knot_swap_roles = FALSE, mob/living/carbon/human/knot_btm = null, orifice = SEX_PART_NULL, skip_knot_try = FALSE, consume_charge = TRUE, source_part = SEX_PART_NULL, oral_extra_volume = null)
 	// Later bursts belong to an already completed climax.
 	if(consume_charge && try_deny_panel_climax())
 		return
@@ -539,7 +539,7 @@
 				to_chat(splashed_user, span_love("I take another load down my throat..."))
 		if(oral && splashed_user.reagents) //cum fills hunger if taking it orally
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
-				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume(), repeat_intake = !!splashed_type)
+				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume(), repeat_intake = !!splashed_type, extra_volume = oral_extra_volume)
 			else
 				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/femcum, 2)
 			apply_cum_consumed_buff(splashed_user)
@@ -588,13 +588,18 @@
 	return created
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
-/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE)
+/datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE, extra_volume = null)
 	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
 		return FALSE
 	if(!isnum(amount) || amount <= 0)
 		return FALSE
 	if(reagent_type == /datum/reagent/erpjuice/cum)
-		amount += get_oral_intake_extra_volume(repeat_intake)
+		// Burst callers divide one climax's allowance before the first delivery.
+		if(isnull(extra_volume))
+			extra_volume = get_oral_intake_extra_volume(repeat_intake)
+		if(!isnum(extra_volume) || extra_volume < 0)
+			return FALSE
+		amount += extra_volume
 	if(!consumer.reagents.add_reagent(reagent_type, amount))
 		return FALSE
 	if(consumer.get_taste_sensitivity() <= 100)
