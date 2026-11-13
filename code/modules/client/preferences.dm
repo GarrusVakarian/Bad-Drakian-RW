@@ -144,7 +144,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/descriptor_color = FALSE
 	/// If a cursed collar can be equipped to them at all
 	var/cursed_collarable = FALSE
-	/// If we are lactating, can others milk us via reagent containers (not for sex actions, but the stuff in milking.dm)
+	/// Allow container milking by others and lactation from the two hand-panel breast-rubbing actions.
 	var/milkable = FALSE
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE

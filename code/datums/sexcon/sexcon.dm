@@ -785,12 +785,8 @@
 	var/cur_loc = get_turf(owner)
 	if(!cur_loc || !isturf(cur_loc))
 		return
-	add_cum_floor(cur_loc)
 	playsound(owner, pick('sound/misc/bleed (1).ogg', 'sound/misc/bleed (2).ogg', 'sound/misc/bleed (3).ogg'), 20, TRUE, -2, ignore_walls = FALSE)
-	var/obj/item/reagent_containers/glass/cum_chalice = locate() in cur_loc
-	if(!cum_chalice?.spillable) // leak contents underneath the first found open container
-		return
-	cum_chalice.reagents.add_reagent(contents_to_drip,1)
+	spill_floor_fluid(cur_loc, contents_to_drip, 1)
 
 /datum/sex_controller/proc/ejaculate(climax_part = SEX_PART_NULL)
 	var/from_tailmaw = get_manticore_tail(user) && ((climax_part & SEX_PART_TAIL_MAW) || (!user.getorganslot(ORGAN_SLOT_TESTICLES) && !user.getorganslot(ORGAN_SLOT_VAGINA)))
@@ -824,20 +820,17 @@
 	playsound(user, 'sound/misc/mat/endout.ogg', suppress_moan ? 12 : 50, TRUE, ignore_walls = FALSE)
 	var/semen_vol = get_semen_volume()
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-	add_cum_floor(get_turf(user), do_big_puddle = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+	var/do_big_puddle = istype(testes) && testes.ball_size > DEFAULT_TESTICLES_SIZE
 	modular_lay_eggs_on_climax()
 	after_ejaculation()
 
 	var/cur_loc = get_turf(user)
 	if(!cur_loc || !isturf(cur_loc))
 		return
-	var/obj/item/reagent_containers/glass/cum_chalice = locate() in cur_loc
-	if(!cum_chalice?.spillable) // leak contents underneath the first found open container
-		return
 	if(from_tailmaw || (!user.getorganslot(ORGAN_SLOT_PENIS) && user.getorganslot(ORGAN_SLOT_VAGINA)))
-		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/femcum,1)
+		spill_floor_fluid(cur_loc, /datum/reagent/erpjuice/femcum, 1, do_big_puddle)
 	else
-		cum_chalice.reagents.add_reagent(/datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()))
+		spill_floor_fluid(cur_loc, /datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()), do_big_puddle)
 
 /datum/sex_controller/proc/ejaculate_container(obj/item/reagent_containers/glass/C)
 	if(try_resist_orgasm())
