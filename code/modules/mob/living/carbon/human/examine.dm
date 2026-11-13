@@ -63,7 +63,7 @@
 		return null
 	// Match explicit crotch exposure, but otherwise check visual coverage, not surgical access.
 	if(!sexcon?.bottom_exposed)
-		if(underwear)
+		if(underwear || !is_human_part_visible(src, HIDECROTCH))
 			return null
 		for(var/obj/item/covering in get_equipped_items(include_pockets = FALSE, include_beltslots = FALSE))
 			if(!istype(covering) || (covering in held_items))
