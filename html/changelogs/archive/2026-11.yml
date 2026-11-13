@@ -423,5 +423,7 @@
   - bugfix: Collection by containers on the floor now use the size-scaled amount for
       donors with both anatomy options, matching held collection.
 2026-11-13:
+  GarrusVakarian:
+  - map: Smollhill now has a single public SCOM.
   _Rarity:
   - map: fix stage after some monster left holes in it
