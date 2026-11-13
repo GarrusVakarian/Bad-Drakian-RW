@@ -628,7 +628,7 @@ SPECIALS START HERE
 	delay = 0.7 SECONDS
 	commit_duration = 0.7 SECONDS
 	cooldown = 25 SECONDS
-	var/victim_count = 0
+	var/list/victims
 	var/slow_init = 2
 	var/exposed_init = 3 SECONDS
 	var/offbalanced_init = 1.5 SECONDS
@@ -636,23 +636,28 @@ SPECIALS START HERE
 	var/immobilize_init = 1 SECONDS
 	var/dam = 20
 
-/datum/special_intent/flail_sweep/on_create()
+/datum/special_intent/flail_sweep/post_delay(list/turfs)
+	victims = list()
+	// Keep ownership locked until the collected victims have all been processed.
+	pending_callbacks++
 	. = ..()
-	victim_count = initial(victim_count)
+	for(var/mob/living/victim as anything in victims)
+		apply_effect(victim)
+	victims = null
+	pending_callbacks = max(pending_callbacks - 1, 0)
 
 /datum/special_intent/flail_sweep/apply_hit(turf/T)
-	for(var/mob/living/L in get_hearers_in_view(0, T))
-		if(L != howner)
-			if(L.mobility_flags & MOBILITY_STAND)
-				victim_count++
-				pending_callbacks++
-				addtimer(CALLBACK(src, PROC_REF(apply_effect), L), 0.1 SECONDS)	//We need to count them all up first so this is an unfortunate (& janky) requirement.
-	..()																		//An alternative could be a spatial grid count from howner called once.
+	for(var/mob/living/L in T)
+		if(L != howner && (L.mobility_flags & MOBILITY_STAND))
+			victims |= L
+	..()
 
 ///This will apply the actual effect, as we need some way to count all the mobs in the zone first.
 /datum/special_intent/flail_sweep/proc/apply_effect(mob/living/victim)
-	pending_callbacks = max(pending_callbacks - 1, 0)
 	if(QDELETED(howner) || QDELETED(iparent) || QDELETED(victim) || howner.stat == DEAD)
+		return
+	var/victim_count = length(victims)
+	if(!victim_count)
 		return
 	var/newslow = slow_init + victim_count	//Slows take an int and applies its own logic in the Slowdown proc itself. Do NOT use SECONDS for slows.
 	var/newexposed = exposed_init + (victim_count SECONDS)
@@ -662,32 +667,23 @@ SPECIALS START HERE
 	var/throwtarget = get_edge_target_turf(howner, get_dir(howner, get_step_away(victim, howner)))
 
 	apply_generic_weapon_damage(victim, dam * victim_count, "blunt", BODY_ZONE_CHEST, bclass = BCLASS_BLUNT, no_pen = TRUE)
-	switch(victim_count)
-		if(1)
-			victim.Slowdown(newslow)
-		if(2)
-			victim.Slowdown(newslow)
-			victim.Immobilize(newimmob)
-			victim.apply_status_effect(/datum/status_effect/debuff/exposed, newexposed)
-		if(3 to 5)
-			victim.Slowdown(newslow)
-			victim.Immobilize(newimmob)
-			victim.apply_status_effect(/datum/status_effect/debuff/exposed, newexposed)
-			victim.Knockdown(knockdown)
-			victim.drop_all_held_items()
-		if(5 to 9)
-			victim.Slowdown(newslow)
-			victim.Immobilize(newimmob)
-			victim.apply_status_effect(/datum/status_effect/debuff/exposed, newexposed)
-			victim.Knockdown(knockdown)
-			victim.drop_all_held_items()
-			victim.OffBalance(newoffb)
-			victim.Stun(5 SECONDS)
+	if(QDELETED(victim)) // Some NPCs delete themselves when the damage kills them.
+		return
+	victim.Slowdown(newslow)
+	if(victim_count >= 2)
+		victim.Immobilize(newimmob)
+		victim.apply_status_effect(/datum/status_effect/debuff/exposed, newexposed)
+	if(victim_count >= 3)
+		victim.Knockdown(knockdown)
+		victim.drop_all_held_items()
+	if(victim_count >= 6)
+		victim.OffBalance(newoffb)
+		victim.Stun(5 SECONDS)
 	if(victim_count < 3)
 		playsound(howner, 'sound/combat/flail_sweep_hit_minor.ogg', 100, TRUE)
 	else
 		playsound(howner, 'sound/combat/flail_sweep_hit_major.ogg', 100, TRUE)
-	victim.safe_throw_at(throwtarget, CLAMP(1, 5, victim_count), 1, howner, force = MOVE_FORCE_EXTREMELY_STRONG)
+	victim.safe_throw_at(throwtarget, CLAMP(victim_count, 1, 5), 1, howner, force = MOVE_FORCE_EXTREMELY_STRONG)
 
 #define AXE_SWING_GRID_DEFAULT 	list(list(-1,0), list(0,0, 0.2 SECONDS), list(1,0, 0.4 SECONDS))
 #define AXE_SWING_GRID_MIRROR	list(list(-1,0, 0.4 SECONDS), list(0,0, 0.2 SECONDS), list(1,0))
