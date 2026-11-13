@@ -26,15 +26,15 @@
 /datum/quirk/fat_knot
 	name = "Fat Knot"
 	point_cost = 0
-	desc = "An existing attachment uses Large-category retention rules."
-	custom_text = "Counts as Large for movement retention and manual release checks, without changing visible size. Appropriate anatomy is still required."
+	desc = "My knot is thick enough to always keep partners stuck on it."
+	custom_text = "Counts as Large cock size for movement retention. This lets you always drag knotted people behind you hands-free."
 	added_traits = list(TRAIT_FAT_KNOT)
 
 /datum/quirk/high_production
 	name = "High Production"
 	point_cost = 0
-	desc = "My production uses the Large size category."
-	custom_text = "Uses Large-category base volume, intake bonuses, leakage and stored capacity. Keeps your chosen visible size and existing modifiers. Appropriate anatomy is still required."
+	desc = "My body produces a larger volume of seed than average."
+	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
 	added_traits = list(TRAIT_HIGH_PRODUCTION)
 
 /datum/quirk/acquiredtastes
