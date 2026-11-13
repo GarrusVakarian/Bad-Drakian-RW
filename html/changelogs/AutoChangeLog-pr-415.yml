@@ -1,0 +1,7 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Breast-rubbing panel actions can release milk when lactating, if Enable Breast Milking is enabled."
+  - bugfix: "Open liquid containers can collect floor fluids regardless of their container subtype; closed or full containers no longer block collection."
+  - bugfix: "Fully collected floor fluids no longer leave a floor decal, and direct milking rechecks the available milk and container space after its delay."
+  - qol: "The Enable Breast Milking tooltip explains its effect on both breast-rubbing panel actions."
