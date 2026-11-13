@@ -435,6 +435,8 @@
   - bugfix: Fixed how pillories, attached buckets, and nearby characters draw over
       each other when players pixel-shift.
   - bugfix: "The Artificer\u2019s Apprentice Mason loadout now includes a chisel."
+  - balance: Weak stance now deals 20% of calculated weapon damage instead of only
+      -1 STR
   mypingishuge:
   - bugfix: Tennite Radical clergy, including Churchlings, can no longer access Inhumen
       miracle research, relations or their trait bonuses.
