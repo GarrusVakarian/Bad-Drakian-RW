@@ -437,3 +437,5 @@
   mypingishuge:
   - bugfix: Tennite Radical clergy, including Churchlings, can no longer access Inhumen
       miracle research, relations or their trait bonuses.
+  - bugfix: Lupians now have one snout selector containing all their previous snout
+      styles.
