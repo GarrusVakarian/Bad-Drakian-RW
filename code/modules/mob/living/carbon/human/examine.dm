@@ -72,8 +72,7 @@
 				return null
 	var/mark_label = "<font color='[COLOR_HERESYSEVERITY_SUSPICIOUS]'>[EXAMINEHIGHLIGHT_SYMBOL_HERESYSEVERITY_SUSPICIOUS] mark of Baotha [EXAMINEHIGHLIGHT_SYMBOL_HERESYSEVERITY_SUSPICIOUS]</font>"
 	var/mark_tooltip = "<font color='[COLOR_HERESYSEVERITY_SUSPICIOUS]'><b>HERETICAL: IT BEARS THE MARK OF BAOTHA.</b></font><br>A supernatural brand associated with Baotha's fertility blessing. Its presence does not reveal whether the bearer accepted it willingly."
-	var/possessive = user == src ? "my" : p_their()
-	return span_info("A [SPAN_TOOLTIP_DANGEROUS_HTML(mark_tooltip, mark_label)] adorns [possessive] lower abdomen.")
+	return span_info("[p_they(TRUE)] [p_have()] a [SPAN_TOOLTIP_DANGEROUS_HTML(mark_tooltip, mark_label)] adorning [p_their()] lower abdomen.")
 
 /mob/living/carbon/human/examine(mob/user)
 	. = list()
