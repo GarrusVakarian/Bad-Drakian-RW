@@ -57,6 +57,23 @@
 		label = "<u><font color='#add8e6'>[display_name]</font></u>"
 	return "<span data-component=\"TooltipHTML\" data-position=\"bottom-start\" data-html=\"[html_encode(tooltip_html)]\">[label]</span>"
 
+/// A visible bodily mark, independent of genital anatomy or recognition of the bearer.
+/mob/living/carbon/human/proc/get_baotha_mark_examine_line(mob/user)
+	if(!HAS_TRAIT(src, TRAIT_BAOTHA_FERTILITY_BOON) && !has_flaw(/datum/charflaw/marked_by_baotha))
+		return null
+	// Match explicit crotch exposure, but otherwise check visual coverage, not surgical access.
+	if(!sexcon?.bottom_exposed)
+		if(underwear || !is_human_part_visible(src, HIDECROTCH))
+			return null
+		for(var/obj/item/covering in get_equipped_items(include_pockets = FALSE, include_beltslots = FALSE))
+			if(!istype(covering) || (covering in held_items))
+				continue
+			if(covering.body_parts_covered_dynamic & GROIN)
+				return null
+	var/mark_label = "<font color='[COLOR_HERESYSEVERITY_SUSPICIOUS]'>[EXAMINEHIGHLIGHT_SYMBOL_HERESYSEVERITY_SUSPICIOUS] mark of Baotha [EXAMINEHIGHLIGHT_SYMBOL_HERESYSEVERITY_SUSPICIOUS]</font>"
+	var/mark_tooltip = "<font color='[COLOR_HERESYSEVERITY_SUSPICIOUS]'><b>HERETICAL: IT BEARS THE MARK OF BAOTHA.</b></font><br>A supernatural brand associated with Baotha's fertility blessing. Its presence does not reveal whether the bearer accepted it willingly."
+	return span_info("[p_they(TRUE)] [p_have()] a [SPAN_TOOLTIP_DANGEROUS_HTML(mark_tooltip, mark_label)] adorning [p_their()] lower abdomen.")
+
 /mob/living/carbon/human/examine(mob/user)
 	. = list()
 	var/observer_privilege = isobserver(user)
@@ -799,6 +816,10 @@
 
 	for(var/line in lines)
 		. += span_info(line)
+
+	var/baotha_mark_line = get_baotha_mark_examine_line(user)
+	if(baotha_mark_line)
+		. += baotha_mark_line
 
 	// Keep covered self-examine feedback, and describe exposed devices without an inline genital note.
 	var/chastity_exposed = modular_chastity_exposed(src)
