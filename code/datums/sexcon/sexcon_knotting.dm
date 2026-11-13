@@ -234,7 +234,7 @@
 	var/large_knot = knot_requires_manual_release()
 	if(prob(10) && top.m_intent == MOVE_INTENT_WALK && (btm in top.buckled_mobs)) // if the two characters are being held in a fireman carry, let them muturally get pleasure from it
 		var/obj/item/organ/penis/penis = top.getorganslot(ORGAN_SLOT_PENIS)
-		top.sexcon.perform_sex_action(btm, large_knot ? 6.0 : 3.0, 2, FALSE, involved_penis = penis)
+		top.sexcon.perform_sex_action(btm, penis?.penis_size > DEFAULT_PENIS_SIZE ? 6.0 : 3.0, 2, FALSE, involved_penis = penis)
 		btm.sexcon.handle_passive_ejaculation()
 		if(prob(50))
 			to_chat(top, span_love("I feel [btm] tightening over my [top.sexcon.get_knot_synonym()]."))
