@@ -434,6 +434,7 @@
       with an uncorking hint when a nearby corked bottle contains a missing reagent.
   - bugfix: Fixed how pillories, attached buckets, and nearby characters draw over
       each other when players pixel-shift.
+  - bugfix: "The Artificer\u2019s Apprentice Mason loadout now includes a chisel."
   mypingishuge:
   - bugfix: Tennite Radical clergy, including Churchlings, can no longer access Inhumen
       miracle research, relations or their trait bonuses.
