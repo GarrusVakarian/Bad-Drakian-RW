@@ -422,3 +422,35 @@
       and pauses while clothing blocks dripping.
   - bugfix: Collection by containers on the floor now use the size-scaled amount for
       donors with both anatomy options, matching held collection.
+2026-11-13:
+  GarrusVakarian:
+  - map: Smollhill now has a single public SCOM.
+  _Rarity:
+  - map: fix stage after some monster left holes in it
+  - qol: Dried swampweed now has a distinct name from the raw item
+  - admin: "The Spawn\u2026 type picker is now searchable and resizable, and opens\
+      \ 500 pixels wide."
+  - qol: Failed crafting attempts now list missing ingredients and quantities in chat,
+      with an uncorking hint when a nearby corked bottle contains a missing reagent.
+  - bugfix: Fixed how pillories, attached buckets, and nearby characters draw over
+      each other when players pixel-shift.
+  - bugfix: "The Artificer\u2019s Apprentice Mason loadout now includes a chisel."
+  mypingishuge:
+  - bugfix: Tennite Radical clergy, including Churchlings, can no longer access Inhumen
+      miracle research, relations or their trait bonuses.
+  - bugfix: Lupians now have one snout selector containing all their previous snout
+      styles.
+  - rscadd: 'Added free Fat Knot and High Production quirks. Fat Knot: counts as Large
+      cock size for movement retention. This lets you always drag knotted people behind
+      you hands-free. High Production: counts as having Large testicle size for how
+      much cum you can store and release.'
+  - bugfix: Wolkenmaw can once again be put into pouches and other storage by clicking
+      them while holding it.
+  - rscadd: Exposed Baotha marks appear in character examine text with a heretical
+      highlight and tooltip.
+  - balance: "Extra oral nutrition is now shared across a climax\u2019s bursts instead\
+      \ of being added again for every burst."
+  - balance: Raised the base oral intake threshold for Stuffed from over 45 to over
+      60 units.
+  - bugfix: Flail Sweep now applies its crowd effects reliably at high target counts,
+      counts each target once and uses the correct throw distance.
