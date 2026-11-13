@@ -430,3 +430,7 @@
   - qol: Dried swampweed now has a distinct name from the raw item
   - admin: "The Spawn\u2026 type picker is now searchable and resizable, and opens\
       \ 500 pixels wide."
+  - qol: Failed crafting attempts now list missing ingredients and quantities in chat,
+      with an uncorking hint when a nearby corked bottle contains a missing reagent.
+  - bugfix: Fixed how pillories, attached buckets, and nearby characters draw over
+      each other when players pixel-shift.
