@@ -146,12 +146,9 @@
 /obj/structure/fluff/railing/wood,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/outdoors/bograt/north)
-"aaB" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/grass,
+"aaC" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt/nospawn,
 /area/rogue/outdoors/bograt/north)
 "aaD" = (
 /obj/structure/fluff/railing/border{
@@ -233,6 +230,17 @@
 	},
 /turf/open/floor/rogue/dirt/nospawn,
 /area/rogue/outdoors/bogsafe)
+"aaP" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaQ" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - East"
+	},
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
 "aaR" = (
 /obj/structure/fluff/customsign/arrow{
 	dir = 4;
@@ -240,13 +248,6 @@
 	},
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/outdoors/bograt/west)
-"aaS" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/north)
 "aaT" = (
 /obj/structure/fluff/customsign/arrow{
 	dir = 4;
@@ -257,6 +258,21 @@
 "aaU" = (
 /obj/machinery/light/rogue/firebowl/stump,
 /turf/open/floor/rogue/dirt,
+/area/rogue/outdoors/bograt/north)
+"aaV" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/grass/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaW" = (
+/obj/structure/fluff/railing/wood,
+/turf/open/floor/rogue/dirt/nospawn,
+/area/rogue/outdoors/bograt/north)
+"aaX" = (
+/obj/structure/fluff/customsign/arrow{
+	dir = 4;
+	wrotesign = "Rockhill - Northeast"
+	},
+/turf/open/floor/rogue/grass/nospawn,
 /area/rogue/outdoors/bograt/north)
 "aaY" = (
 /obj/structure/flora/hotspring_rocks/grassy,
@@ -29014,13 +29030,6 @@
 /obj/machinery/light/rogue/torchholder,
 /turf/closed/mineral/random/rogue/med,
 /area/rogue/under/cavewet)
-"nKS" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/grass,
-/area/rogue/outdoors/bograt/west)
 "nKX" = (
 /obj/structure/flora/roguegrass/water/reeds,
 /turf/open/floor/rogue/cobble/mossy,
@@ -31750,6 +31759,9 @@
 /area/rogue/outdoors/rtfield/rockhill/above)
 "pbg" = (
 /obj/structure/fluff/railing/border/east,
+/obj/structure/roguemachine/scomm{
+	scom_tag = "Outside Slaver"
+	},
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/outdoors/rtfield/rockhill)
 "pbj" = (
@@ -51542,36 +51554,6 @@
 	},
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
-"aaC" = (
-/obj/machinery/light/rogue/firebowl/stump,
-/turf/open/floor/rogue/dirt/nospawn,
-/area/rogue/outdoors/bograt/north)
-"aaP" = (
-/obj/machinery/light/rogue/firebowl/stump,
-/turf/open/floor/rogue/grass/nospawn,
-/area/rogue/outdoors/bograt/north)
-"aaQ" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - East"
-	},
-/turf/open/floor/rogue/grass/nospawn,
-/area/rogue/outdoors/bograt/north)
-"aaV" = (
-/obj/structure/fluff/railing/wood,
-/turf/open/floor/rogue/grass/nospawn,
-/area/rogue/outdoors/bograt/north)
-"aaW" = (
-/obj/structure/fluff/railing/wood,
-/turf/open/floor/rogue/dirt/nospawn,
-/area/rogue/outdoors/bograt/north)
-"aaX" = (
-/obj/structure/fluff/customsign/arrow{
-	dir = 4;
-	wrotesign = "Rockhill - Northeast"
-	},
-/turf/open/floor/rogue/grass/nospawn,
-/area/rogue/outdoors/bograt/north)
 
 (1,1,1) = {"
 pMX
