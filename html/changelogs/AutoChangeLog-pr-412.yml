@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - admin: "The Spawn… type picker is now searchable and resizable, and opens 500 pixels wide."
