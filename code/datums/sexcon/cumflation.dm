@@ -55,7 +55,7 @@
 		leak.sync_leak_clock()
 		qualifies = leak.duration - world.time >= (540 SECONDS) * multiplier
 	if(!qualifies && sexcon && !isnull(sexcon.stuffed_last_intake) && world.time - sexcon.stuffed_last_intake < 15 MINUTES)
-		qualifies = sexcon.stuffed_intake_total > 135 * multiplier
+		qualifies = sexcon.stuffed_intake_total > 90 * multiplier
 	if(!qualifies)
 		return FALSE
 	return !!apply_status_effect(/datum/status_effect/debuff/stuffed)
