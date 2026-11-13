@@ -427,3 +427,6 @@
   - map: Smollhill now has a single public SCOM.
   _Rarity:
   - map: fix stage after some monster left holes in it
+  - qol: Dried swampweed now has a distinct name from the raw item
+  - admin: "The Spawn\u2026 type picker is now searchable and resizable, and opens\
+      \ 500 pixels wide."
