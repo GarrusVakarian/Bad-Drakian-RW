@@ -519,11 +519,14 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	if(islist(P.mob_traits) && P.mob_traits.len)
 		var/source = "relation_t4_[ckey(patron_name)]"
 		var/blocked = istype(H.patron, /datum/patron/divine) && _is_inhumen_patron_name(patron_name)
+		var/had_zizo_sight = HAS_TRAIT(H, TRAIT_ZIZOSIGHT)
 		for(var/trait in P.mob_traits)
 			if(blocked)
 				REMOVE_TRAIT(H, trait, source)
 			else
 				ADD_TRAIT(H, trait, source)
+		if(blocked && had_zizo_sight && !HAS_TRAIT(H, TRAIT_ZIZOSIGHT))
+			H.update_sight()
 
 	qdel(P)
 
