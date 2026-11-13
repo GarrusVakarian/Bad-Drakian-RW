@@ -447,3 +447,7 @@
       them while holding it.
   - rscadd: Exposed Baotha marks appear in character examine text with a heretical
       highlight and tooltip.
+  - balance: "Extra oral nutrition is now shared across a climax\u2019s bursts instead\
+      \ of being added again for every burst."
+  - balance: Raised the base oral intake threshold for Stuffed from over 45 to over
+      60 units.
