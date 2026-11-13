@@ -475,8 +475,7 @@
 	log_combat(user, effective_target, "Came onto the target")
 	if(effective_target)
 		playsound(effective_target, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
-	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-	add_cum_floor(get_turf(effective_target || user), do_big_puddle = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+	add_cum_floor(get_turf(effective_target || user), do_big_puddle = get_production_testicle_size() > DEFAULT_TESTICLES_SIZE)
 	if(splashed_user)
 		if(cum_on_face)
 			var/datum/status_effect/facial/facial = splashed_user.has_status_effect(/datum/status_effect/facial)
@@ -554,9 +553,8 @@
 			splashed_user.redolent_apply_contact_stink(user)
 		modular_record_collar_receive_event(splashed_user, user)
 		if(!oral)
-			var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 			if(consume_charge && ((orifice & SEX_PART_TAIL_MAW) || !is_receiver_actively_knotted_to_user))
-				apply_creampie_drip(splashed_user, orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE, added_duration = get_leakage_duration())
+				apply_creampie_drip(splashed_user, orifice, use_long = get_production_testicle_size() > DEFAULT_TESTICLES_SIZE, added_duration = get_leakage_duration())
 	if(consume_charge)
 		modular_try_oviposit(splashed_user, oral, orifice)
 	if(effective_target?.has_flaw(/datum/charflaw/addiction/lovefiend))
@@ -608,15 +606,22 @@
 /datum/sex_controller/proc/get_leakage_duration()
 	return max(60 SECONDS, floor(get_oral_intake_extra_volume()) * (12 SECONDS))
 
-/// Size-based bonus shared with container collection; oral repeats grant half the amount.
-/datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
+/// Calculation-only size override; visible anatomy remains untouched.
+/datum/sex_controller/proc/get_production_testicle_size()
 	if(!ishuman(user) || QDELETED(user))
-		return 0
+		return null
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	if(!istype(testes) || !isnum(testes.ball_size))
+		return null
+	return HAS_TRAIT(user, TRAIT_HIGH_PRODUCTION) ? MAX_TESTICLES_SIZE : testes.ball_size
+
+/// Size-based bonus shared with container collection; oral repeats grant half the amount.
+/datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
+	var/production_size = get_production_testicle_size()
+	if(!isnum(production_size))
 		return 0
 	var/extra_volume = 10
-	switch(clamp(testes.ball_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
+	switch(clamp(production_size, MIN_TESTICLES_SIZE, MAX_TESTICLES_SIZE))
 		if(MIN_TESTICLES_SIZE)
 			extra_volume = 5
 		if(MAX_TESTICLES_SIZE)
@@ -823,8 +828,7 @@
 		user.visible_message(span_love(climax_msg), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
 	playsound(user, 'sound/misc/mat/endout.ogg', suppress_moan ? 12 : 50, TRUE, ignore_walls = FALSE)
 	var/semen_vol = get_semen_volume()
-	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-	add_cum_floor(get_turf(user), do_big_puddle = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+	add_cum_floor(get_turf(user), do_big_puddle = get_production_testicle_size() > DEFAULT_TESTICLES_SIZE)
 	modular_lay_eggs_on_climax()
 	after_ejaculation()
 
@@ -853,11 +857,11 @@
 	after_ejaculation()
 
 /datum/sex_controller/proc/get_semen_volume()
-	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-	if(!testes)
+	var/production_size = get_production_testicle_size()
+	if(!isnum(production_size))
 		return 0
 	var/volume
-	switch(testes.ball_size)
+	switch(production_size)
 		if(MIN_TESTICLES_SIZE)
 			volume = 2
 		if(MAX_TESTICLES_SIZE)
@@ -891,11 +895,13 @@
 			return 1
 
 /datum/sex_controller/proc/get_max_loads()
+	if(!ishuman(user) || QDELETED(user))
+		return 0
 	var/con = user.STACON
 	var/minimum_loads = 3
-	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
-	if(testes)
-		switch(testes.ball_size)
+	var/production_size = get_production_testicle_size()
+	if(isnum(production_size))
+		switch(production_size)
 			if(MIN_TESTICLES_SIZE)
 				minimum_loads = 2
 			if(MAX_TESTICLES_SIZE)

@@ -287,6 +287,8 @@
 #define TRAIT_KNOWNCRIMINAL "Known Criminal"
 #define TRAIT_BIGGUY "Big Guy"
 #define TRAIT_LARGE_FRAME "Large Frame"
+#define TRAIT_FAT_KNOT "Fat Knot"
+#define TRAIT_HIGH_PRODUCTION "High Production"
 #define TRAIT_RESIDENT "Resident"
 #define TRAIT_COUNTERCOUNTERSPELL "Counter Counterspell"
 #define TRAIT_UNSEEMLY "Ugly"

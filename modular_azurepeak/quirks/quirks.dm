@@ -23,6 +23,20 @@
 	custom_text = "Allows breathing underwater."
 	added_traits = list(TRAIT_WATERBREATHING)
 
+/datum/quirk/fat_knot
+	name = "Fat Knot"
+	point_cost = 0
+	desc = "My knot is thick enough to always keep partners stuck on it."
+	custom_text = "Counts as Large cock size for movement retention. This lets you always drag knotted people behind you hands-free."
+	added_traits = list(TRAIT_FAT_KNOT)
+
+/datum/quirk/high_production
+	name = "High Production"
+	point_cost = 0
+	desc = "My body produces a larger volume of seed than average."
+	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
+	added_traits = list(TRAIT_HIGH_PRODUCTION)
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."
