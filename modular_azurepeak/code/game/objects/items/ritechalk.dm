@@ -70,8 +70,11 @@
 		return
 	target.add_baotha_fertility_mark()
 	target.grant_baotha_fertility_boon()
-	user.visible_message(span_info("[user] finishes the sigil, and its pink strokes settle into [target]'s skin."), span_info("I finish drawing Baotha's mark."))
-	to_chat(target, span_purple("A gentle warmth settles beneath the mark. Baotha's blessing is yours."))
+	if(target.sexcon)
+		target.sexcon.set_arousal(max(target.sexcon.arousal, 50))
+	target.visible_message(span_purple("Faint purple flames flicker across [target]'s lower abdomen, tracing the freshly drawn sigil before fading."), span_purple("A pleasant warmth spreads through my lower abdomen as the mark settles into my skin."))
+	target.emote("groan", forced = TRUE)
+	to_chat(target, span_purple("The warmth softens, leaving a gentle tingle beneath Baotha's mark."))
 
 /// Shared with the rune: use the existing tattoo and short-body offsets.
 /mob/living/carbon/human/proc/add_baotha_fertility_mark()
