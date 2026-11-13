@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Failed crafting attempts now list missing ingredients and quantities in chat, with an uncorking hint when a nearby corked bottle contains a missing reagent."
