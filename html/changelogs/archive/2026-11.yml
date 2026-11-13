@@ -445,3 +445,5 @@
       much cum you can store and release.'
   - bugfix: Wolkenmaw can once again be put into pouches and other storage by clicking
       them while holding it.
+  - rscadd: Exposed Baotha marks appear in character examine text with a heretical
+      highlight and tooltip.
