@@ -581,16 +581,52 @@ SPECIALS START HERE
 		L.apply_status_effect(/datum/status_effect/debuff/vulnerable, vulnerable_dur)
 	..()
 
+// These sweeps commit to timed hits instead of holding a do_after open.
+/datum/special_intent/committed_sweep
+	var/commit_duration
+	var/pending_callbacks = 0
+
+/datum/special_intent/committed_sweep/apply_cost(mob/living/user)
+	if(pending_callbacks)
+		return FALSE
+	return ..()
+
+/datum/special_intent/committed_sweep/deploy(mob/living/user, atom/parent, atom/target)
+	// Cooldowns belong to the actor; also prevent a handed-over weapon from
+	// redirecting pending callbacks to a different actor before the sweep finishes.
+	if(pending_callbacks)
+		return
+	pending_callbacks = 1
+	return ..()
+
+/datum/special_intent/committed_sweep/_manage_grid()
+	// Count callbacks rather than elapsed time so reuse is safe even under timer lag.
+	pending_callbacks = length(affected_turfs)
+	return ..()
+
+/datum/special_intent/committed_sweep/on_create()
+	. = ..()
+	if(QDELETED(howner))
+		return
+	howner.Immobilize(commit_duration)
+	howner.apply_status_effect(/datum/status_effect/debuff/clickcd, commit_duration)
+
+/datum/special_intent/committed_sweep/post_delay(list/turfs)
+	if(!QDELETED(howner) && !QDELETED(iparent) && howner.stat != DEAD)
+		. = ..()
+	pending_callbacks = max(pending_callbacks - 1, 0)
+
 /datum/special_intent/flail_sweep
+	parent_type = /datum/special_intent/committed_sweep
 	name = "Flail Sweep"
 	desc = "Swings in a perfect circle all around you, pushing people aside. The more are struck, the more powerful the effect."
 	tile_coordinates = SPECIAL_AOE_AROUND_ORIGIN
 	post_icon_state = "sweep_fx"
 	pre_icon_state = "trap"
 	sfx_pre_delay = 'sound/combat/flail_sweep.ogg'
-	use_doafter = TRUE
 	respect_adjacency = FALSE
 	delay = 0.7 SECONDS
+	commit_duration = 0.7 SECONDS
 	cooldown = 25 SECONDS
 	var/victim_count = 0
 	var/slow_init = 2
@@ -609,11 +645,15 @@ SPECIALS START HERE
 		if(L != howner)
 			if(L.mobility_flags & MOBILITY_STAND)
 				victim_count++
+				pending_callbacks++
 				addtimer(CALLBACK(src, PROC_REF(apply_effect), L), 0.1 SECONDS)	//We need to count them all up first so this is an unfortunate (& janky) requirement.
 	..()																		//An alternative could be a spatial grid count from howner called once.
 
 ///This will apply the actual effect, as we need some way to count all the mobs in the zone first.
 /datum/special_intent/flail_sweep/proc/apply_effect(mob/living/victim)
+	pending_callbacks = max(pending_callbacks - 1, 0)
+	if(QDELETED(howner) || QDELETED(iparent) || QDELETED(victim) || howner.stat == DEAD)
+		return
 	var/newslow = slow_init + victim_count	//Slows take an int and applies its own logic in the Slowdown proc itself. Do NOT use SECONDS for slows.
 	var/newexposed = exposed_init + (victim_count SECONDS)
 	var/newoffb = offbalanced_init + (victim_count SECONDS)
@@ -653,14 +693,15 @@ SPECIALS START HERE
 #define AXE_SWING_GRID_MIRROR	list(list(-1,0, 0.4 SECONDS), list(0,0, 0.2 SECONDS), list(1,0))
 
 /datum/special_intent/axe_swing
+	parent_type = /datum/special_intent/committed_sweep
 	name = "Hefty Swing"
 	desc = "Swings from left to right. Anyone caught in the swing get immobilized and exposed."
 	tile_coordinates = AXE_SWING_GRID_DEFAULT
 	post_icon_state = "sweep_fx"
 	pre_icon_state = "trap"
-	use_doafter = TRUE
 	respect_adjacency = FALSE
 	delay = 0.5 SECONDS
+	commit_duration = 0.9 SECONDS
 	cooldown = 25 SECONDS
 	stamcost = 15
 	var/immob_dur = 3.5 SECONDS
