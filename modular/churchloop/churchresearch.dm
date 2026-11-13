@@ -678,7 +678,9 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 	var/list/buckets = _build_learn_buckets(H)
 	var/my_patron = _get_human_patron_name(H)
-	var/show_shunned_tabs = (_shunned_relations_unlocked(H) || _is_inhumen_patron_name(my_patron))
+	var/show_shunned_tabs = !istype(H.patron, /datum/patron/divine) && (_shunned_relations_unlocked(H) || _is_inhumen_patron_name(my_patron))
+	if(!show_shunned_tabs && _is_inhumen_patron_name(src.current_learn_tab))
+		src.current_learn_tab = "none"
 
 	var/list/nav = list()
 	var/list/nav_shunned = list()
@@ -1225,7 +1227,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			if(tb2 in divine_patrons_index)
 				allowed_tab = TRUE
 			else if(tb2 in inhumen_patrons_index)
-				if(_shunned_relations_unlocked(H) || tb2 == my_patron2)
+				if(!istype(H.patron, /datum/patron/divine) && (_shunned_relations_unlocked(H) || tb2 == my_patron2))
 					allowed_tab = TRUE
 
 			if(allowed_tab)
