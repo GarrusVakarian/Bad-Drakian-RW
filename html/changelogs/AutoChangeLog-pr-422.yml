@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Exposed Baotha marks appear in character examine text with a heretical highlight and tooltip."
