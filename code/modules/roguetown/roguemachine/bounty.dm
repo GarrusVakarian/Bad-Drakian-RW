@@ -434,7 +434,7 @@
 	if(!ishuman(A) || QDELETED(A) || !A.Adjacent(src) || A.incapacitated())
 		return
 	if(processing)
-		to_chat(A, span_notice("The machine is already working."))
+		to_chat(A, span_notice("A RECKONING IS ALREADY UNDERWAY. WAIT YOUR TURN."))
 		return
 	processing = TRUE
 	remove_collar(A)
@@ -445,11 +445,11 @@
 /obj/structure/chair/freedomchair/proc/remove_collar(mob/living/carbon/human/A)
 	var/mob/living/carbon/human/M = LAZYLEN(buckled_mobs) ? buckled_mobs[1] : null
 	if(!ishuman(M) || QDELETED(M) || M.buckled != src)
-		say("Seat someone wearing a Castifico collar to begin removal.")
+		say("CANNOT BEGIN WITHOUT SUBJECT BUCKLED.")
 		return
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = M.get_item_by_slot(SLOT_NECK)
 	if(!istype(collar))
-		say("No Castifico collar found. No action required.")
+		say("NO CURSED COLLAR FOUND. ABORT.")
 		return
 	processing_subject = M
 	if(!do_after(A, 3 SECONDS, TRUE, M))
@@ -459,10 +459,10 @@
 	if(processing_subject != M || M.buckled != src || !A.Adjacent(src) || A.incapacitated() || M.get_item_by_slot(SLOT_NECK) != collar)
 		return
 	if(!M.dropItemToGround(collar, TRUE))
-		say("Unable to remove the collar. Please try again.")
+		say("COLLAR REMOVAL FAILED. TRY AGAIN.")
 		return
 	playsound(src, 'sound/items/pickgood1.ogg', 50, TRUE, -1)
-	say("Collar removed. You are free to go.")
+	say("COLLAR DISCARDED. FREEDOM, AT LAST...")
 	unbuckle_mob(M, TRUE)
 
 /obj/structure/chair/arrestchair
@@ -490,10 +490,10 @@
 	if(!ishuman(A) || QDELETED(A) || !A.Adjacent(src) || A.incapacitated())
 		return
 	if(processing)
-		to_chat(A, span_notice("The machine is already working."))
+		to_chat(A, span_notice("A RECKONING IS ALREADY UNDERWAY. WAIT YOUR TURN."))
 		return
 	if(HAS_TRAIT(A, TRAIT_OUTLAW))
-		to_chat(A, span_warning("The Castifico refuses to accept an outlaw as its operator."))
+		to_chat(A, span_warning("THE MACHINE WANTS YOU."))
 		return
 	processing = TRUE
 	fit_collar(A)
@@ -519,60 +519,60 @@
 /obj/structure/chair/arrestchair/proc/fit_collar(mob/living/carbon/human/A)
 	var/mob/living/carbon/human/M = LAZYLEN(buckled_mobs) ? buckled_mobs[1] : null
 	if(!ishuman(M) || QDELETED(M) || M.buckled != src)
-		say("Seat someone with an outstanding bounty to begin collaring.")
+		say(ismob(M) ? "SUBJECT UNRECOGNIZED. RECKONING ABORTED." : "NO SUBJECT SEATED. NOTHING TO RECKON.")
 		return
 	var/list/bounties = get_subject_bounties(M)
 	if(!length(bounties))
-		say("No outstanding bounty found. No collar required.")
+		say("NO BOUNTY UPON THIS ONE. RELEASED.")
 		unbuckle_mob(M, TRUE)
 		return
 	if(!M.get_bodypart(BODY_ZONE_HEAD))
-		say("Unable to fit a collar to this occupant.")
+		say("COLLAR CANNOT BE FITTED. RECKONING ABORTED.")
 		return
 	if(istype(M.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/collar/prisoner))
-		say("A Castifico collar is already fitted.")
+		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
 		return
-	var/reward = get_subject_reward(M, bounties)
-	var/sentence_minutes = get_castifico_sentence_duration(reward) / (1 MINUTES)
-	say("Preparing a pacification collar for [sentence_minutes] minutes. It prevents harmful attacks and blocks most spellcasting.")
-	to_chat(M, span_notice("The Castifico begins fitting a pacification collar. It will prevent harmful attacks and block most spellcasting for [sentence_minutes] minutes."))
 	processing_subject = M
-	if(!do_after(A, 5 SECONDS, TRUE, M))
-		return
-	if(QDELETED(src) || QDELETED(A) || QDELETED(M))
-		return
-	if(processing_subject != M || M.buckled != src || !A.Adjacent(src) || A.incapacitated() || HAS_TRAIT(A, TRAIT_OUTLAW) || !M.get_bodypart(BODY_ZONE_HEAD))
-		return
+	var/list/stage_messages = list("COMMENCING RECKONING...", "ASSESSING VALUE OF LYFE...", "PENANCE DECREED. PREPARING THE COLLAR...")
+	var/list/stage_delays = list(5 SECONDS, 10 SECONDS, 5 SECONDS)
+	for(var/stage in 1 to length(stage_messages))
+		say(stage_messages[stage])
+		if(!do_after(A, stage_delays[stage], TRUE, M))
+			return
+		if(QDELETED(src) || QDELETED(A) || QDELETED(M))
+			return
+		if(processing_subject != M || M.buckled != src || !A.Adjacent(src) || A.incapacitated() || HAS_TRAIT(A, TRAIT_OUTLAW) || !M.get_bodypart(BODY_ZONE_HEAD))
+			return
 	// Bounties may have been cleared or changed during preparation.
 	bounties = get_subject_bounties(M)
 	if(!length(bounties))
-		say("No outstanding bounty found. No collar required.")
+		say("NO BOUNTY UPON THIS ONE. RELEASED.")
 		unbuckle_mob(M, TRUE)
 		return
-	reward = get_subject_reward(M, bounties)
+	var/reward = get_subject_reward(M, bounties)
 	var/obj/item/old_neck_item = M.get_item_by_slot(SLOT_NECK)
 	if(istype(old_neck_item, /obj/item/clothing/neck/roguetown/collar/prisoner))
-		say("A Castifico collar is already fitted.")
+		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
 		return
 	if(old_neck_item && !M.dropItemToGround(old_neck_item, TRUE))
-		say("Unable to clear the neck slot. The bounty remains outstanding.")
+		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = new(get_turf(M))
 	collar.bounty_amount = reward
 	if(!M.equip_to_slot_or_del(collar, SLOT_NECK, TRUE))
-		say("Unable to fit the collar. The bounty remains outstanding.")
+		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
 	if(QDELETED(collar) || M.get_item_by_slot(SLOT_NECK) != collar)
 		if(!QDELETED(collar))
 			qdel(collar)
-		say("Unable to fit the collar. The bounty remains outstanding.")
+		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
 	// There are no delays between fitting, clearing these bounties and paying once.
 	GLOB.head_bounties -= bounties
 	budget2change(reward)
 	playsound(src, 'sound/items/pickgood1.ogg', 50, TRUE, -1)
-	M.visible_message(span_notice("The Castifico gently fastens a collar around [M]'s neck."))
-	say("Bounty processed. The collar will release in [get_castifico_sentence_duration(reward) / (1 MINUTES)] minutes.")
+	M.visible_message(span_notice("The Castifico fastens a collar around [M]'s neck."))
+	say("A BOUNTY HAS BEEN SATED.")
 	unbuckle_mob(M, TRUE)
 
 /obj/structure/chair/arrestchair/proc/budget2change(budget, mob/user, specify)

@@ -1062,7 +1062,7 @@
 	name = "castifico collar"
 	icon_state = "castifico_collar"
 	item_state = "castifico_collar"
-	desc = "An enchanted pacification collar that prevents harmful attacks and blocks most spellcasting. It opens automatically when its sentence ends, or can be removed with LIBERTAS."
+	desc = "A metal collar that seals around the neck, making it impossible to remove. It seems to be enchanted with some kind of vile magic..."
 	var/active_item
 	var/bounty_amount
 	var/mob/living/collar_wearer
@@ -1076,7 +1076,7 @@
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
 
-// Shared by the chair's advance notice and the collar's actual release timer.
+// The sentence announcement and release timer use the same duration.
 /proc/get_castifico_sentence_duration(bounty_amount)
 	var/duration = 5 MINUTES
 	if(bounty_amount >= 10)
@@ -1102,8 +1102,10 @@
 	if(QDELETED(user) || user != collar_wearer || user.get_item_by_slot(SLOT_NECK) != src)
 		qdel(src)
 		return
-	visible_message(span_notice("The Castifico collar opens with a click, releasing [user]."))
-	say("Your sentence is complete.")
+	visible_message(span_notice("The Castifico collar opens with a click, falling from [user]'s neck as their penance ends."))
+	say("YOUR PENANCE IS COMPLETE.")
+	REMOVE_TRAIT(user, TRAIT_OUTLAW, TRAIT_GENERIC)
+	REMOVE_TRAIT(user, TRAIT_OUTLAW, JOB_TRAIT)
 	if(user.real_name in GLOB.outlawed_players)
 		GLOB.outlawed_players -= user.real_name
 		priority_announce("[user.real_name] has completed their penance. Justice has been served in the eyes of Ravox.", "PENANCE", 'sound/misc/bell.ogg')
@@ -1121,7 +1123,8 @@
 	if(HAS_TRAIT(user, TRAIT_RITUALIST))
 		user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
 	var/duration = get_castifico_sentence_duration(bounty_amount)
-	to_chat(user, span_notice("The collar clicks shut. It prevents harmful attacks and blocks most spellcasting. Your sentence will end in [duration / (1 MINUTES)] minutes."))
+	to_chat(user, span_notice("The collar clicks shut around my neck."))
+	say("YOUR PENANCE WILL BE COMPLETE IN [duration / (1 MINUTES)] MINUTES.")
 	sentence_timer = addtimer(CALLBACK(src, PROC_REF(timerup), user), duration, TIMER_STOPPABLE)
 
 /obj/item/clothing/neck/roguetown/collar/woolen
