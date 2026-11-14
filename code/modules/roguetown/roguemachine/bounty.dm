@@ -418,9 +418,11 @@
 	anchored = TRUE
 	var/processing = FALSE
 	var/mob/living/processing_subject
+	var/break_after_use = FALSE
 
 /obj/structure/chair/freedomchair/crafted
-	desc = "A crafted collar-removal machine. Right-click it with someone seated to safely remove their Castifico collar."
+	desc = "A crafted collar-removal machine. It removes one Castifico collar before falling apart."
+	break_after_use = TRUE
 
 /obj/structure/chair/freedomchair/post_unbuckle_mob(mob/living/M)
 	. = ..()
@@ -464,6 +466,9 @@
 	playsound(src, 'sound/items/pickgood1.ogg', 50, TRUE, -1)
 	say("COLLAR DISCARDED. FREEDOM, AT LAST...")
 	unbuckle_mob(M, TRUE)
+	if(!QDELETED(src) && break_after_use)
+		visible_message(span_notice("[src] shudders and falls apart, its work complete."))
+		qdel(src)
 
 /obj/structure/chair/arrestchair
 	name = "CASTIFICO"
