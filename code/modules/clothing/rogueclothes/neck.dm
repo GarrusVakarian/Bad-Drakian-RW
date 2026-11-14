@@ -1067,6 +1067,9 @@
 	var/bounty_amount
 	var/mob/living/collar_wearer
 	var/sentence_timer
+	var/sentence_duration
+	var/sentence_end_time
+	var/datum/castifico_penance_record/penance_record
 	resistance_flags = FIRE_PROOF
 	slot_flags = ITEM_SLOT_NECK
 	body_parts_covered = NONE //it's not armor
@@ -1086,6 +1089,10 @@
 /obj/item/clothing/neck/roguetown/collar/prisoner/Destroy()
 	if(sentence_timer)
 		deltimer(sentence_timer)
+	if(!QDELETED(penance_record) && penance_record.active_collar == src)
+		penance_record.remaining_duration = max(1, sentence_end_time - world.time)
+		penance_record.active_collar = null
+	penance_record = null
 	if(!QDELETED(collar_wearer))
 		REMOVE_TRAIT(collar_wearer, TRAIT_PACIFISM, "castificocollar")
 		REMOVE_TRAIT(collar_wearer, TRAIT_SPELLCOCKBLOCK, "castificocollar")
@@ -1102,13 +1109,21 @@
 	if(QDELETED(user) || user != collar_wearer || user.get_item_by_slot(SLOT_NECK) != src)
 		qdel(src)
 		return
+	if(penance_record)
+		if(QDELETED(penance_record) || penance_record.active_collar != src || GLOB.castifico_penance_records[penance_record.subject_name] != penance_record)
+			qdel(src)
+			return
+		qdel(penance_record)
+		penance_record = null
 	visible_message(span_notice("The Castifico collar opens with a click, falling from [user]'s neck as their penance ends."))
 	say("YOUR PENANCE IS COMPLETE.")
-	REMOVE_TRAIT(user, TRAIT_OUTLAW, TRAIT_GENERIC)
-	REMOVE_TRAIT(user, TRAIT_OUTLAW, JOB_TRAIT)
-	if(user.real_name in GLOB.outlawed_players)
-		GLOB.outlawed_players -= user.real_name
-		priority_announce("[user.real_name] has completed their penance. Justice has been served in the eyes of Ravox.", "PENANCE", 'sound/misc/bell.ogg')
+	// Finishing an older sentence does not pardon a newly posted crime.
+	if(!user.has_current_bounty())
+		REMOVE_TRAIT(user, TRAIT_OUTLAW, TRAIT_GENERIC)
+		REMOVE_TRAIT(user, TRAIT_OUTLAW, JOB_TRAIT)
+		if(user.real_name in GLOB.outlawed_players)
+			GLOB.outlawed_players -= user.real_name
+			priority_announce("[user.real_name] has completed their penance. Justice has been served in the eyes of Ravox.", "PENANCE", 'sound/misc/bell.ogg')
 	playsound(src, pick('sound/items/pickgood1.ogg','sound/items/pickgood2.ogg'), 5, TRUE)
 	qdel(src)
 
@@ -1122,9 +1137,10 @@
 	ADD_TRAIT(user, TRAIT_SPELLCOCKBLOCK, "castificocollar")
 	if(HAS_TRAIT(user, TRAIT_RITUALIST))
 		user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
-	var/duration = get_castifico_sentence_duration(bounty_amount)
+	var/duration = isnum(sentence_duration) ? max(1, sentence_duration) : get_castifico_sentence_duration(bounty_amount)
+	sentence_end_time = world.time + duration
 	to_chat(user, span_notice("The collar clicks shut around my neck."))
-	say("YOUR PENANCE WILL BE COMPLETE IN [duration / (1 MINUTES)] MINUTES.")
+	say("YOUR PENANCE WILL BE COMPLETE IN [CEILING(duration, 1 MINUTES) / (1 MINUTES)] MINUTES.")
 	sentence_timer = addtimer(CALLBACK(src, PROC_REF(timerup), user), duration, TIMER_STOPPABLE)
 
 /obj/item/clothing/neck/roguetown/collar/woolen

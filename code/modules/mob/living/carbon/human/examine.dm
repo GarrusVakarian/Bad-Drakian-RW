@@ -1461,12 +1461,16 @@
 /mob/living/proc/get_outlaw_status_text()
 	var/status_text
 	if(name in GLOB.outlawed_players)
-		status_text = span_userdanger("OUTLAW!")
+		status_text = get_outlaw_label()
 	if(is_serving_penance())
 		if(status_text)
 			status_text += "<br>"
 		status_text += span_notice("SERVING PENANCE")
 	return status_text
+
+/mob/living/proc/get_outlaw_label()
+	var/datum/castifico_penance_record/record = get_castifico_penance_record()
+	return span_userdanger(record && record.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!")
 
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)
@@ -1477,7 +1481,7 @@
 				villain_text = span_notice("Free man!")
 			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW))
 				// The public outlaw list already supplies this label when listed.
-				villain_text = (name in GLOB.outlawed_players) ? null : span_userdanger("OUTLAW!")
+				villain_text = (name in GLOB.outlawed_players) ? null : get_outlaw_label()
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))

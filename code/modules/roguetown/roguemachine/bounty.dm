@@ -1,3 +1,46 @@
+/// Paid crime records are never part of the payable head_bounties list.
+GLOBAL_LIST_EMPTY(castifico_penance_records)
+
+/datum/castifico_penance_record
+	var/subject_name
+	var/list/crime_banners = list()
+	var/paid_amount = 0
+	var/remaining_duration = 0
+	var/escaped = FALSE
+	var/obj/item/clothing/neck/roguetown/collar/prisoner/active_collar
+
+/datum/castifico_penance_record/Destroy()
+	if(subject_name && GLOB.castifico_penance_records[subject_name] == src)
+		GLOB.castifico_penance_records -= subject_name
+	crime_banners = null
+	active_collar = null
+	return ..()
+
+/proc/get_incomplete_penance_listings()
+	var/list/entries = list()
+	for(var/subject_name in GLOB.castifico_penance_records)
+		var/datum/castifico_penance_record/record = GLOB.castifico_penance_records[subject_name]
+		if(!istype(record) || QDELETED(record))
+			continue
+		for(var/banner in record.crime_banners)
+			entries += "<b>REWARD CLAIMED &mdash; PENANCE INCOMPLETE</b><br>[banner]<br>"
+	return jointext(entries, "")
+
+/mob/living/proc/get_castifico_penance_record()
+	if(!real_name)
+		return
+	var/datum/castifico_penance_record/record = GLOB.castifico_penance_records[real_name]
+	if(istype(record) && !QDELETED(record))
+		return record
+
+/mob/living/proc/has_current_bounty()
+	if(!real_name)
+		return FALSE
+	for(var/datum/bounty/bounty as anything in GLOB.head_bounties)
+		if(!QDELETED(bounty) && (bounty.target == real_name || bounty.target_hidden == real_name))
+			return TRUE
+	return FALSE
+
 /obj/structure/roguemachine/bounty
 	name = "EXCIDIUM"
 	desc = "Created by a fanatical sect of devout followers of Ravox, this machine sets bounties."
@@ -75,6 +118,10 @@
 	consult_menu += "--------------<BR>"
 	for(var/datum/bounty/saved_bounty in GLOB.head_bounties)
 		consult_menu += saved_bounty.banner
+		bounty_found = TRUE
+	var/incomplete_penance = get_incomplete_penance_listings()
+	if(length(incomplete_penance))
+		consult_menu += incomplete_penance
 		bounty_found = TRUE
 
 	if(bounty_found)
@@ -358,12 +405,12 @@
 	new_bounty_obscure.banner += "--------------<BR>"
 
 /obj/structure/roguemachine/bounty/proc/print_bounty_scroll(mob/living/carbon/human/user)
-	if(!GLOB.head_bounties.len)
+	if(!length(GLOB.head_bounties) && !length(GLOB.castifico_penance_records))
 		say("No bounties are currently active.")
 		return
 
 	var/cost = (user.job in GLOB.garrison_positions) ? 10 : 50
-	var/choice = alert(user, "Print a continously updated list of active bounties for [cost] mammons?", "Print Bounty Scroll", "Yes", "No")
+	var/choice = alert(user, "Print an enchanted list of bounties and incomplete penances for [cost] mammons?", "Print Bounty Scroll", "Yes", "No")
 	if(choice != "Yes")
 		return
 
@@ -404,6 +451,7 @@
 	for(var/datum/bounty/saved_bounty in GLOB.head_bounties)
 		scroll_text += saved_bounty.banner
 		scroll_text += "<br>"
+	scroll_text += get_incomplete_penance_listings()
 
 	info = scroll_text
 
@@ -460,9 +508,12 @@
 		return
 	if(processing_subject != M || M.buckled != src || !A.Adjacent(src) || A.incapacitated() || M.get_item_by_slot(SLOT_NECK) != collar)
 		return
+	var/datum/castifico_penance_record/record = collar.penance_record
 	if(!M.dropItemToGround(collar, TRUE))
 		say("COLLAR REMOVAL FAILED. TRY AGAIN.")
 		return
+	if(!QDELETED(record))
+		record.escaped = TRUE
 	playsound(src, 'sound/items/pickgood1.ogg', 50, TRUE, -1)
 	say("COLLAR DISCARDED. FREEDOM, AT LAST...")
 	unbuckle_mob(M, TRUE)
@@ -508,6 +559,8 @@
 
 /obj/structure/chair/arrestchair/proc/get_subject_bounties(mob/living/carbon/human/M)
 	var/list/matching_bounties = list()
+	if(!M.real_name)
+		return matching_bounties
 	for(var/datum/bounty/bounty as anything in GLOB.head_bounties)
 		if(!QDELETED(bounty) && (bounty.target == M.real_name || bounty.target_hidden == M.real_name))
 			matching_bounties += bounty
@@ -527,7 +580,8 @@
 		say(ismob(M) ? "SUBJECT UNRECOGNIZED. RECKONING ABORTED." : "NO SUBJECT SEATED. NOTHING TO RECKON.")
 		return
 	var/list/bounties = get_subject_bounties(M)
-	if(!length(bounties))
+	var/datum/castifico_penance_record/record = M.get_castifico_penance_record()
+	if(!length(bounties) && !record)
 		say("NO BOUNTY UPON THIS ONE. RELEASED.")
 		unbuckle_mob(M, TRUE)
 		return
@@ -535,6 +589,9 @@
 		say("COLLAR CANNOT BE FITTED. RECKONING ABORTED.")
 		return
 	if(istype(M.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/collar/prisoner))
+		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
+		return
+	if(record && !QDELETED(record.active_collar))
 		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
 		return
 	processing_subject = M
@@ -550,11 +607,15 @@
 			return
 	// Bounties may have been cleared or changed during preparation.
 	bounties = get_subject_bounties(M)
-	if(!length(bounties))
+	record = M.get_castifico_penance_record()
+	if(!length(bounties) && !record)
 		say("NO BOUNTY UPON THIS ONE. RELEASED.")
 		unbuckle_mob(M, TRUE)
 		return
 	var/reward = get_subject_reward(M, bounties)
+	if(record && !QDELETED(record.active_collar))
+		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
+		return
 	var/obj/item/old_neck_item = M.get_item_by_slot(SLOT_NECK)
 	if(istype(old_neck_item, /obj/item/clothing/neck/roguetown/collar/prisoner))
 		say("THIS ONE ALREADY BEARS THEIR PENANCE.")
@@ -562,8 +623,22 @@
 	if(old_neck_item && !M.dropItemToGround(old_neck_item, TRUE))
 		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
+	// Inventory callbacks may have moved the occupant or changed their sentence.
+	if(QDELETED(src) || QDELETED(A) || QDELETED(M) || processing_subject != M || M.buckled != src || !A.Adjacent(src) || A.incapacitated() || M.get_castifico_penance_record() != record)
+		return
+	bounties = get_subject_bounties(M)
+	if(!length(bounties) && !record)
+		say("NO BOUNTY UPON THIS ONE. RELEASED.")
+		unbuckle_mob(M, TRUE)
+		return
+	if(record && !QDELETED(record.active_collar))
+		return
+	reward = get_subject_reward(M, bounties)
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = new(get_turf(M))
 	collar.bounty_amount = reward
+	if(record)
+		// Resume unserved time. Only newly claimed crimes can add to the sentence.
+		collar.sentence_duration = record.remaining_duration + max(0, get_castifico_sentence_duration(record.paid_amount + reward) - get_castifico_sentence_duration(record.paid_amount))
 	if(!M.equip_to_slot_or_del(collar, SLOT_NECK, TRUE))
 		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
@@ -572,12 +647,23 @@
 			qdel(collar)
 		say("COLLARING FAILED. THE BOUNTY REMAINS.")
 		return
-	// There are no delays between fitting, clearing these bounties and paying once.
+	// Commit the paid archive only after successful fitting; no delays precede payment.
+	if(!record)
+		record = new
+		record.subject_name = M.real_name
+	for(var/datum/bounty/claimed_bounty as anything in bounties)
+		record.crime_banners += claimed_bounty.banner
+	record.paid_amount += reward
+	record.remaining_duration = max(1, collar.sentence_end_time - world.time)
+	record.escaped = FALSE
+	record.active_collar = collar
+	collar.penance_record = record
+	GLOB.castifico_penance_records[record.subject_name] = record
 	GLOB.head_bounties -= bounties
 	budget2change(reward)
 	playsound(src, 'sound/items/pickgood1.ogg', 50, TRUE, -1)
 	M.visible_message(span_notice("The Castifico fastens a collar around [M]'s neck."))
-	say("A BOUNTY HAS BEEN SATED.")
+	say(length(bounties) ? "A BOUNTY HAS BEEN SATED." : "PENANCE RESUMED.")
 	unbuckle_mob(M, TRUE)
 
 /obj/structure/chair/arrestchair/proc/budget2change(budget, mob/user, specify)
