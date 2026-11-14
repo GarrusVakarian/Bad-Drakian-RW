@@ -10,36 +10,53 @@
 	user.get_looc()
 	return TRUE
 
+/client/var/looc_input_generation = 0
+
+/client/proc/get_looc_input(title = "looc")
+	var/generation = ++looc_input_generation
+	var/mob/typing_mob = mob
+	var/mutable_appearance/indicator = typing_mob?.display_looc_typing_indicator()
+	var/msg = input(src, "", title) as text|null
+	if(generation == looc_input_generation && !QDELETED(typing_mob) && indicator && typing_mob.typing_indicator_current == indicator)
+		typing_mob.clear_typing_indicator(length(msg) ? "sent" : "closed input")
+	return msg
+
 /client/proc/get_looc()
-	var/msg = input(src, "", "looc") as text|null
-	do_looc(msg, FALSE)
+	do_looc(get_looc_input(), FALSE)
 
 
-/client/verb/looc(msg as text)
+/client/verb/looc(msg = null as text|null)
 	set name = "LOOC"
 	set desc = "Local OOC, seen only by those in view."
 	set category = "OOC"
 
+	if(isnull(msg))
+		msg = get_looc_input("looc")
 	do_looc(msg, FALSE)
 
-/client/verb/loocwp(msg as text)
+/client/verb/loocwp(msg = null as text|null)
 	set name = "LOOC (Wall Pierce)"
 	set desc = "Local OOC, seen by all in range."
 	set category = "OOC"
 
+	if(isnull(msg))
+		msg = get_looc_input("looc (wall pierce)")
 	do_looc(msg, TRUE)
 
 // Subtle LOOC verb
-/client/verb/subtlelooc(msg as text)
+/client/verb/subtlelooc(msg = null as text|null)
 	set name = "LOOC (Subtle)"
 	set desc = "Local OOC only for a specific target or 1 tile range."
 	set category = "OOC"
+	if(isnull(msg))
+		msg = get_looc_input("looc (subtle)")
 	do_subtlelooc(msg)
 
 /// Takes raw text and sanitizes it on the first line, before anything else in here can read it.
 /// Callers must pass the message unsanitized, encoding it twice turns apostrophes into a
 /// literal &#39; in chat.
 /client/proc/do_subtlelooc(msg as text)
+	mob?.clear_looc_typing_indicator("submitted LOOC")
 
 	// Sanitizes here. IDK why it was just randomly all the way down there.
 	msg = copytext_char(sanitize(msg), 1, MAX_MESSAGE_LEN)
@@ -162,6 +179,7 @@
 		to_chat(C, msg_rem)
 
 /client/proc/do_looc(msg as text, wp)
+	mob?.clear_looc_typing_indicator("submitted LOOC")
 	if(!msg)
 		return
 
