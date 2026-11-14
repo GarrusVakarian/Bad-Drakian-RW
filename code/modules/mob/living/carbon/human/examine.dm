@@ -1459,10 +1459,14 @@
 	return istype(collar) && !QDELETED(collar) && collar.active_item && collar.collar_wearer == src
 
 /mob/living/proc/get_outlaw_status_text()
-	if(is_serving_penance())
-		return span_notice("SERVING PENANCE")
+	var/status_text
 	if(name in GLOB.outlawed_players)
-		return span_userdanger("OUTLAW!")
+		status_text = span_userdanger("OUTLAW!")
+	if(is_serving_penance())
+		if(status_text)
+			status_text += "<br>"
+		status_text += span_notice("SERVING PENANCE")
+	return status_text
 
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)
@@ -1471,8 +1475,9 @@
 		if(mind.special_role == "Bandit")
 			if(HAS_TRAIT(examiner, TRAIT_COMMIE))
 				villain_text = span_notice("Free man!")
-			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW) && !is_serving_penance())
-				villain_text = span_userdanger("OUTLAW!")
+			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW))
+				// The public outlaw list already supplies this label when listed.
+				villain_text = (name in GLOB.outlawed_players) ? null : span_userdanger("OUTLAW!")
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))
