@@ -596,7 +596,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		return
 	processing_subject = M
 	var/list/stage_messages = list("COMMENCING RECKONING...", "ASSESSING VALUE OF LYFE...", "PENANCE DECREED. PREPARING THE COLLAR...")
-	var/list/stage_delays = list(5 SECONDS, 10 SECONDS, 5 SECONDS)
+	var/list/stage_delays = list(4 SECONDS, 4 SECONDS, 4 SECONDS)
 	for(var/stage in 1 to length(stage_messages))
 		say(stage_messages[stage])
 		if(!do_after(A, stage_delays[stage], TRUE, M))
