@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Fixed a roundstart stall caused by an unresponsive client during a lobby-panel refresh."
