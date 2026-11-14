@@ -1459,14 +1459,10 @@
 	return istype(collar) && !QDELETED(collar) && collar.active_item && collar.collar_wearer == src
 
 /mob/living/proc/get_outlaw_status_text()
-	var/status_text
-	if(name in GLOB.outlawed_players)
-		status_text = get_outlaw_label()
 	if(is_serving_penance())
-		if(status_text)
-			status_text += "<br>"
-		status_text += span_notice("SERVING PENANCE")
-	return status_text
+		return span_notice("SERVING PENANCE")
+	if(name in GLOB.outlawed_players)
+		return get_outlaw_label()
 
 /mob/living/proc/get_outlaw_label()
 	var/datum/castifico_penance_record/record = get_castifico_penance_record()
@@ -1480,8 +1476,8 @@
 			if(HAS_TRAIT(examiner, TRAIT_COMMIE))
 				villain_text = span_notice("Free man!")
 			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW))
-				// The public outlaw list already supplies this label when listed.
-				villain_text = (name in GLOB.outlawed_players) ? null : get_outlaw_label()
+				// Penance replaces the label; the public list supplies it otherwise.
+				villain_text = (is_serving_penance() || (name in GLOB.outlawed_players)) ? null : get_outlaw_label()
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))
