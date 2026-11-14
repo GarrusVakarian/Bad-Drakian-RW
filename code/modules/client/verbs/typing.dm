@@ -6,7 +6,7 @@
 	src << output('html/typing_indicator.html', "commandbar_spy")
 
 /client/proc/handle_commandbar_typing(href_list)
-	var/is_looc = (lowertext(href_list["verb"]) in list("looc", "loocwp", "subtlelooc"))
+	var/is_looc = (LOWER_TEXT(href_list["verb"]) in list("looc", "loocwp", "subtlelooc"))
 	if(is_looc)
 		if(commandbar_thinking)
 			commandbar_thinking = FALSE
