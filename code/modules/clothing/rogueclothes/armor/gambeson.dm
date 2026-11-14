@@ -196,6 +196,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_CHOP)
 	sellprice = 25
 	blocksound = SOFTUNDERHIT
+	boobed = FALSE
 	blade_dulling = DULLING_BASHCHOP
 	pickup_sound = 'sound/foley/equip/equip_armor.ogg'
 	equip_sound = 'sound/foley/equip/equip_armor.ogg'
