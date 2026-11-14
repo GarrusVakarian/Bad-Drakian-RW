@@ -149,7 +149,7 @@
 		list("id" = "chastity", "label" = "Enable Chastity Content", "enabled" = !!owner.prefs.chastenable, "desc" = "Show and allow chastity-related content."),
 		list("id" = "quiet_chastity", "label" = "Enable Quiet Chastity", "enabled" = !!owner.prefs.quiet_chastity, "disabled" = !owner.prefs.chastenable, "desc" = "Requires Enabled Chastity Content. Mutes automatic device sounds and notifications, including to yourself."),
 		list("id" = "permanent_binding", "label" = "Enable Permanent Binding", "enabled" = (owner.prefs.chastity_hardmode == CHASTITY_HARDMODE_ENABLED), "desc" = "Enable irreversible key-only chastity lock behavior."),
-		list("id" = "extreme_erp", "label" = "Enable Extreme ERP Content", "enabled" = !!owner.prefs.extreme_erp, "desc" = "Allow extreme ERP content categories."),
+		list("id" = "extreme_erp", "label" = "Enable Extreme ERP Content", "enabled" = !!owner.prefs.extreme_erp, "desc" = "Allows injury-causing ERP effects, extreme tailmaw actions, spiked chastity devices, and viewing nearby related messages."),
 		list("id" = "accept_oviposition", "label" = "Accept Egg Implantation", "enabled" = !!owner.prefs.accept_oviposition, "desc" = "Allow partners with an ovipositor to implant eggs in you."),
 		list("id" = "edging", "label" = "Enable Edging Content", "enabled" = !!owner.prefs.edging, "desc" = "Allow edging-related ERP content."),
 		list("id" = "free_use_default", "label" = "Toggle Free Use Default", "enabled" = !!owner.prefs.free_use_default, "desc" = "Start with Free Use enabled by default. You can manually disable it at any point in the ERP panel."),
