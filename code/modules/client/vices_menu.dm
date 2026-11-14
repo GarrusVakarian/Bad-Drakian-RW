@@ -86,8 +86,6 @@
 	if(!vice_type)
 		return FALSE
 	if(vice_conflicts_with_species(vice_type, pref_species))
-		if(show_message && user)
-			to_chat(user, span_warning("Your race already has Critical Weakness inherently. Choose another vice."))
 		return TRUE
 	var/list/held = list()
 	if(virtue)
@@ -351,6 +349,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	vice4 = snapshot["vice4"]
 	vice5 = snapshot["vice5"]
 	vice6 = snapshot["vice6"]
+	fix_duplicate_vices()
 	redolent_type = snapshot["redolent_type"]
 	redolent_scent = snapshot["redolent_scent"]
 	hypnotic_gaze_text = sanitize_hypnotic_gaze_text(snapshot["hypnotic_gaze_text"])
@@ -561,6 +560,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		vice6 = new vice6_type()
 	else
 		vice6 = null
+	fix_duplicate_vices()
 	redolent_type = preset["redolent_type"] || "Neutral"
 	redolent_scent = preset["redolent_scent"] || ""
 	var/gaze_text = preset["hypnotic_gaze_text"]
@@ -747,7 +747,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	if(!user || !user.client)
 		return
 	
-	// Clean up duplicate vices/virtues (one-time fix for existing characters)
+	// Normalize saved vices before displaying their points.
 	fix_duplicate_vices()
 	refresh_customization_size_preview()
 	
@@ -755,11 +755,17 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	user << browse(html_content, "window=character_custom;size=750x500")
 
 /datum/preferences/proc/fix_duplicate_vices()
-	// Remove duplicate vices across slots
+	// Clear redundant racial flaws as well as duplicate vice slots.
+	var/innate_weakness = istype(pref_species) && (TRAIT_CRITICAL_WEAKNESS in pref_species.inherent_traits)
+	if(innate_weakness && istype(charflaw, /datum/charflaw/critweakness))
+		charflaw = null
 	var/list/seen_vices = list()
 	for(var/i = 1 to 6)
 		var/datum/charflaw/vice = vars["vice[i]"]
 		if(vice)
+			if(innate_weakness && istype(vice, /datum/charflaw/critweakness))
+				vars["vice[i]"] = (i == 1) ? new /datum/charflaw/eznoflaw() : null
+				continue
 			if(vice.type in seen_vices)
 				// Duplicate found, clear this slot
 				vars["vice[i]"] = null
@@ -1338,7 +1344,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		else if(is_first_vice)
 			html += "<span class='slot-required'>REQUIRED (0 Q-Pts)</span>"
 		else if(current_vice)
-			var/quirk_points_from_slot = vice_conflicts_with_species(current_vice.type, pref_species) ? 0 : current_vice.point_value
+			var/quirk_points_from_slot = current_vice.point_value
 			html += "<span class='slot-cost'>+[quirk_points_from_slot] Q-Point[quirk_points_from_slot == 1 ? "" : "s"]</span>"
 
 		html += "</div>"
@@ -1351,8 +1357,6 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "<div class='vice-info'>"
 			html += "<div class='vice-name'>[current_vice.name]</div>"
 			html += "<div class='vice-desc'>[current_vice.desc]</div>"
-			if(vice_conflicts_with_species(current_vice.type, pref_species))
-				html += "<div class='vice-desc'>Your race already has this trait. Choose another vice.</div>"
 			html += "</div>"
 			html += "</div>"
 
@@ -2098,7 +2102,6 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 						return
 					var/datum/charflaw/selected = vices_available[choice]
 					if(!ispath(selected, /datum/charflaw) || vice_conflicts_with_species(selected, pref_species))
-						to_chat(editor, span_warning("That vice is no longer available for your race."))
 						return
 					// Create new vice and set in preferences
 					vars[slot_var] = new selected()

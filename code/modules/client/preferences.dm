@@ -194,8 +194,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/get_vice_points()
 	var/points = 0
 	for(var/i = 1 to 6)
-		var/datum/charflaw/vice = vars["vice[i]"]
-		if(vice && !vice_conflicts_with_species(vice.type, pref_species))
+		if(vars["vice[i]"])
 			points++
 	return points
 
@@ -204,7 +203,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/points = 0
 	for(var/i = 2 to 6)
 		var/datum/charflaw/vice = vars["vice[i]"]
-		if(vice && !vice_conflicts_with_species(vice.type, pref_species))
+		if(vice)
 			points += vice.point_value
 	return points
 
@@ -542,6 +541,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /datum/preferences/proc/set_new_race(datum/species/new_race, user)
 	pref_species = new_race
+	fix_duplicate_vices()
 	real_name = pref_species.random_name(gender,1)
 	ResetJobs()
 	if(user)
@@ -3116,9 +3116,14 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 				if("charflaw")
 					var/list/coom = GLOB.character_flaws.Copy()
+					for(var/choice in coom.Copy())
+						if(vice_conflicts_with_species(coom[choice], pref_species))
+							coom -= choice
 					var/result = tgui_input_list(user, "What burden will you bear?", "FLAWS",coom)
 					if(result)
 						result = coom[result]
+						if(vice_conflicts_with_species(result, pref_species))
+							return
 						var/datum/charflaw/C = new result()
 						charflaw = C
 						if(charflaw.desc)
@@ -3219,10 +3224,13 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 				if("charflaw")
 					var/selectedflaw
-					selectedflaw = tgui_input_list(user, "Choose your character's flaw:", "FLAWS", GLOB.character_flaws)
+					var/list/available_flaws = GLOB.character_flaws.Copy()
+					for(var/choice in available_flaws.Copy())
+						if(vice_conflicts_with_species(available_flaws[choice], pref_species))
+							available_flaws -= choice
+					selectedflaw = tgui_input_list(user, "Choose your character's flaw:", "FLAWS", available_flaws)
 					if(selectedflaw)
 						if(vice_conflicts_with_species(GLOB.character_flaws[selectedflaw], pref_species))
-							to_chat(user, span_warning("Your race already has Critical Weakness inherently. Choose another vice."))
 							return
 						charflaw = GLOB.character_flaws[selectedflaw]
 						charflaw = new charflaw()
@@ -3798,6 +3806,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	if((randomise[RANDOM_BODY] || randomise[RANDOM_BODY_ANTAG] && antagonist) && !character_setup)
 		slot_randomized = TRUE
 		random_character(gender, antagonist)
+
+	fix_duplicate_vices()
 
 	// Bandaid to undo no arm flaw prosthesis
 	if(charflaw)
