@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Claimed crimes remain visible as REWARD CLAIMED — PENANCE INCOMPLETE until penance is completed, without paying again on recapture."
+  - bugfix: "Pillories now recognize matching keys inside keyrings for locking and unlocking."
