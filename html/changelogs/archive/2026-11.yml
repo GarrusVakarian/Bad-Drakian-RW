@@ -464,3 +464,7 @@
       milking rechecks the available milk and container space after its delay.
   - qol: The Enable Breast Milking tooltip explains its effect on both breast-rubbing
       panel actions.
+2026-11-14:
+  _Rarity:
+  - bugfix: Fixed a roundstart stall caused by an unresponsive client during a lobby-panel
+      refresh.
