@@ -468,5 +468,7 @@
   _Rarity:
   - bugfix: Fixed a roundstart stall caused by an unresponsive client during a lobby-panel
       refresh.
+  - bugfix: Fixed Gnoll latejoins being sent to town arrival points by Virtues on
+      the player's regular character slot.
   mypingishuge:
   - rscadd: LOOC typing, including Subtle LOOC, displays a blue typing bubble.
