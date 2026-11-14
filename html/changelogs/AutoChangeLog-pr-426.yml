@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "LOOC typing, including Subtle LOOC, displays a blue typing bubble."
