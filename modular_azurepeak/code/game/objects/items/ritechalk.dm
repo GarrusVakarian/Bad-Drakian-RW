@@ -58,7 +58,7 @@
 
 /obj/item/baotha_crayon/proc/mark_person(mob/living/carbon/human/target, mob/living/user)
 	var/client/recipient_client = target.client
-	if(alert(target, "Allow [user] to draw Baotha's permanent fertility mark on your lower abdomen? This grants her fertility blessing, but not an addiction.", "Baotha's Mark", "Accept", "Decline") != "Accept")
+	if(alert(target, "Allow [user] to draw Baotha's permanent fertility mark on your lower abdomen?", "Baotha's Mark", "Accept", "Decline") != "Accept")
 		return
 	if(!can_mark(target, user) || user.doing || target.client != recipient_client)
 		return
