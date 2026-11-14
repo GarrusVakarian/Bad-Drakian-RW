@@ -878,9 +878,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		ShowChoices(user)
 
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
-	if(!user || !user.client)
+	var/client/viewer = user?.client
+	if(!viewer)
 		return
-	var/sheet_was_visible = winget(user, "preferencess_window", "is-visible") == "true"
+	var/sheet_was_visible = winget(viewer, "preferencess_window", "is-visible") == "true"
+	if(!viewer || user?.client != viewer)
+		return
 	if(slot_randomized)
 		load_character(default_slot) // Reloads the character slot. Prevents random features from overwriting the slot if saved.
 		slot_randomized = FALSE
