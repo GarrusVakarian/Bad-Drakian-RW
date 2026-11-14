@@ -85,6 +85,10 @@
 /datum/preferences/proc/check_vice_pick_conflict(vice_type, show_message = FALSE, mob/user = null)
 	if(!vice_type)
 		return FALSE
+	if(vice_conflicts_with_species(vice_type, pref_species))
+		if(show_message && user)
+			to_chat(user, span_warning("Your race already has Critical Weakness inherently. Choose another vice."))
+		return TRUE
 	var/list/held = list()
 	if(virtue)
 		held += virtue
@@ -1334,7 +1338,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		else if(is_first_vice)
 			html += "<span class='slot-required'>REQUIRED (0 Q-Pts)</span>"
 		else if(current_vice)
-			var/quirk_points_from_slot = current_vice.point_value
+			var/quirk_points_from_slot = vice_conflicts_with_species(current_vice.type, pref_species) ? 0 : current_vice.point_value
 			html += "<span class='slot-cost'>+[quirk_points_from_slot] Q-Point[quirk_points_from_slot == 1 ? "" : "s"]</span>"
 
 		html += "</div>"
@@ -1347,6 +1351,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "<div class='vice-info'>"
 			html += "<div class='vice-name'>[current_vice.name]</div>"
 			html += "<div class='vice-desc'>[current_vice.desc]</div>"
+			if(vice_conflicts_with_species(current_vice.type, pref_species))
+				html += "<div class='vice-desc'>Your race already has this trait. Choose another vice.</div>"
 			html += "</div>"
 			html += "</div>"
 
@@ -2083,10 +2089,17 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					vices_available[vice_name] = vice_type
 				
 				vices_available = sort_list(vices_available)
-				var/choice = tgui_input_list(usr, "Select a vice for slot [slot]:", "Vice Selection", vices_available, option_details = get_customization_picker_details(vices_available, slot))
+				var/mob/editor = usr
+				var/editing_slot = default_slot
+				var/choice = tgui_input_list(editor, "Select a vice for slot [slot]:", "Vice Selection", vices_available, option_details = get_customization_picker_details(vices_available, slot))
 			
 				if(choice)
+					if(!editor || editor.client != parent || default_slot != editing_slot)
+						return
 					var/datum/charflaw/selected = vices_available[choice]
+					if(!ispath(selected, /datum/charflaw) || vice_conflicts_with_species(selected, pref_species))
+						to_chat(editor, span_warning("That vice is no longer available for your race."))
+						return
 					// Create new vice and set in preferences
 					vars[slot_var] = new selected()
 					var/datum/charflaw/new_vice = vars[slot_var]

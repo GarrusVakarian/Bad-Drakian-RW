@@ -194,7 +194,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/get_vice_points()
 	var/points = 0
 	for(var/i = 1 to 6)
-		if(vars["vice[i]"])
+		var/datum/charflaw/vice = vars["vice[i]"]
+		if(vice && !vice_conflicts_with_species(vice.type, pref_species))
 			points++
 	return points
 
@@ -203,7 +204,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/points = 0
 	for(var/i = 2 to 6)
 		var/datum/charflaw/vice = vars["vice[i]"]
-		if(vice)
+		if(vice && !vice_conflicts_with_species(vice.type, pref_species))
 			points += vice.point_value
 	return points
 
@@ -3220,6 +3221,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/selectedflaw
 					selectedflaw = tgui_input_list(user, "Choose your character's flaw:", "FLAWS", GLOB.character_flaws)
 					if(selectedflaw)
+						if(vice_conflicts_with_species(GLOB.character_flaws[selectedflaw], pref_species))
+							to_chat(user, span_warning("Your race already has Critical Weakness inherently. Choose another vice."))
+							return
 						charflaw = GLOB.character_flaws[selectedflaw]
 						charflaw = new charflaw()
 						if(charflaw.desc)
@@ -3894,9 +3898,10 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 	// Apply multiple vices system
 	character.vices = list()
+	var/datum/species/vice_species = character.dna ? character.dna.species : null
 	for(var/i = 1 to 6)
 		var/datum/charflaw/vice = vars["vice[i]"]
-		if(vice)
+		if(vice && !vice_conflicts_with_species(vice.type, vice_species))
 			var/datum/charflaw/new_vice = new vice.type()
 			character.vices += new_vice
 			new_vice.on_mob_creation(character)
@@ -3905,7 +3910,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 				character.charflaw = new_vice
 
 	// Legacy single vice support (if new system not used)
-	if(!length(character.vices) && charflaw)
+	if(!length(character.vices) && charflaw && !vice_conflicts_with_species(charflaw.type, vice_species))
 		character.charflaw = new charflaw.type()
 		character.charflaw.on_mob_creation(character)
 		character.vices += character.charflaw
