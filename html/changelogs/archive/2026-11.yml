@@ -477,3 +477,11 @@
       that can grant Baotha's fertility marks.
   - rscadd: Added one saccharine crayon to each gnoll-cave equipment chest in the
       Wretch Grotto on Neuhill and Smollhill.
+  - rscadd: Added a saccharine crayon to each of the two pillows at Baotha's Wretch
+      Grotto shrine on Neuhill and Smollhill.
+  - bugfix: Half-Kin's race description now correctly names its +1 Willpower bonus
+      instead of Endurance.
+  - rscadd: "Claimed crimes remain visible as REWARD CLAIMED \u2014 PENANCE INCOMPLETE\
+      \ until penance is completed, without paying again on recapture."
+  - bugfix: Pillories now recognize matching keys inside keyrings for locking and
+      unlocking.
