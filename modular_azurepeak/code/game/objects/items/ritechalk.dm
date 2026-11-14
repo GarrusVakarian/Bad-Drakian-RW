@@ -8,6 +8,15 @@
 	experimental_inhand = FALSE
 	dropshrink = 0.6
 	var/marking = FALSE
+	var/datum/tgui_alert/marking_offer
+
+/obj/item/baotha_crayon/Destroy()
+	QDEL_NULL(marking_offer)
+	return ..()
+
+/obj/item/baotha_crayon/dropped(mob/user, silent = FALSE)
+	QDEL_NULL(marking_offer)
+	return ..()
 
 /obj/item/baotha_crayon/get_examine_highlight_status()
 	return list(EXAMINEHIGHLIGHT_HERESYSEVERITY_ALARMING, HERESYDESC_BAOTHA_RELIC)
@@ -15,7 +24,7 @@
 /obj/item/baotha_crayon/proc/marking_area_exposed(mob/living/carbon/human/target)
 	if(target.sexcon?.bottom_exposed)
 		return TRUE
-	if(target.underwear)
+	if(target.underwear || !is_human_part_visible(target, HIDECROTCH))
 		return FALSE
 	for(var/obj/item/covering in target.get_equipped_items(include_pockets = FALSE, include_beltslots = FALSE))
 		if(!istype(covering) || (covering in target.held_items))
@@ -28,7 +37,9 @@
 /obj/item/baotha_crayon/proc/can_mark(mob/living/carbon/human/target, mob/living/user)
 	if(QDELETED(src) || !istype(target) || QDELETED(target) || !istype(user) || QDELETED(user))
 		return FALSE
-	if(!target.client || target.stat != CONSCIOUS || target.incapacitated(ignore_restraints = TRUE) || user.incapacitated())
+	if(!user.client || user.incapacitated())
+		return FALSE
+	if(!target.client || target.stat != CONSCIOUS || target.incapacitated(ignore_restraints = TRUE))
 		to_chat(user, span_warning("The recipient must be awake and present to accept the mark."))
 		return FALSE
 	if(user.get_active_held_item() != src || (user != target && !user.Adjacent(target)) || !istype(user.a_intent, /datum/intent/use))
@@ -57,16 +68,26 @@
 	return TRUE
 
 /obj/item/baotha_crayon/proc/mark_person(mob/living/carbon/human/target, mob/living/user)
+	var/client/drawer_client = user.client
 	var/client/recipient_client = target.client
-	if(alert(target, "Allow [user] to draw Baotha's permanent fertility mark on your lower abdomen?", "Baotha's Mark", "Accept", "Decline") != "Accept")
+	// Native alerts have no timeout, so use the timed TGUI modal directly.
+	var/datum/tgui_alert/offer = new(target, "Allow [user] to draw Baotha's permanent fertility mark on your lower abdomen?", "Baotha's Mark", list("Accept", "Decline"), 20 SECONDS, TRUE, GLOB.tgui_always_state)
+	marking_offer = offer
+	offer.ui_interact(target)
+	while(!QDELETED(offer) && !offer.choice && !offer.closed && marking_attempt_active(user, target, drawer_client, recipient_client))
+		stoplag(1)
+	var/accepted = !QDELETED(offer) && offer.choice == "Accept"
+	marking_offer = null
+	qdel(offer)
+	if(!accepted || !marking_attempt_active(user, target, drawer_client, recipient_client))
 		return
-	if(!can_mark(target, user) || user.doing || target.client != recipient_client)
+	if(!can_mark(target, user) || user.doing)
 		return
 	user.visible_message(span_info("[user] begins drawing a pink sigil on [target]'s lower abdomen."), span_info("I begin drawing Baotha's mark..."))
 	playsound(get_turf(target), 'sound/foley/scribble.ogg', 40, TRUE)
-	if(!do_after(user, 10 SECONDS, target = target) || !can_mark(target, user))
+	if(!do_after(user, 10 SECONDS, target = target, extra_checks = CALLBACK(src, PROC_REF(marking_attempt_active), user, target, drawer_client, recipient_client)))
 		return
-	if(target.client != recipient_client)
+	if(!marking_attempt_active(user, target, drawer_client, recipient_client) || !can_mark(target, user))
 		return
 	target.add_baotha_fertility_mark()
 	target.grant_baotha_fertility_boon()
@@ -75,6 +96,13 @@
 	target.visible_message(span_purple("Faint purple flames flicker across [target]'s lower abdomen, tracing the freshly drawn sigil before fading."), span_purple("A pleasant warmth spreads through my lower abdomen as the mark settles into my skin."))
 	target.emote("groan", forced = TRUE)
 	to_chat(target, span_purple("The warmth softens, leaving a gentle tingle beneath Baotha's mark."))
+
+/obj/item/baotha_crayon/proc/marking_attempt_active(mob/living/user, mob/living/carbon/human/target, client/drawer_client, client/recipient_client)
+	if(QDELETED(src) || QDELETED(user) || QDELETED(target))
+		return FALSE
+	if(!drawer_client || !recipient_client || user.client != drawer_client || target.client != recipient_client)
+		return FALSE
+	return user.get_active_held_item() == src && (user == target || user.Adjacent(target))
 
 /// Shared with the rune: use the existing tattoo and short-body offsets.
 /mob/living/carbon/human/proc/add_baotha_fertility_mark()
