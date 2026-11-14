@@ -151,10 +151,13 @@
 			return
 	if(istype(P, /obj/item/storage/keyring))
 		var/obj/item/storage/keyring/K = P
-		for(var/obj/item/roguekey/KE in K.keys)
+		for(var/obj/item/roguekey/KE in K.contents)
 			if(KE.lockid in lockid)
 				togglelock(user)
 				return
+		to_chat(user, span_warning("None of the keys on my keyring fit this lock."))
+		playsound(src, 'sound/foley/doors/lockrattle.ogg', 100)
+		return
 
 /obj/structure/pillory/proc/place_liquid_container(obj/item/reagent_containers/glass/container, mob/user)
 	if(!isliving(user) || QDELETED(user) || !istype(container) || QDELETED(container) || user.get_active_held_item() != container || !Adjacent(user))

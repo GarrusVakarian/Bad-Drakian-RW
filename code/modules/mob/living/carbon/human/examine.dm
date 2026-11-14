@@ -1209,8 +1209,9 @@
 				if (istype(H.patron, /datum/patron/old_god))
 					. += span_userdanger("HEATHEN! SHAME!")
 */
-		if(name in GLOB.outlawed_players)
-			. += span_userdanger("OUTLAW!")
+		var/outlaw_status_text = get_outlaw_status_text()
+		if(outlaw_status_text)
+			. += outlaw_status_text
 
 		if(HAS_TRAIT(user, TRAIT_JUSTICARSIGHT) && !HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS))
 			for(var/datum/bounty/b in GLOB.head_bounties) //I hate this.
@@ -1452,6 +1453,21 @@
 
 	return inquisition_text
 
+/// A worn, active Castifico collar is the authoritative penance state.
+/mob/living/proc/is_serving_penance()
+	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = get_item_by_slot(SLOT_NECK)
+	return istype(collar) && !QDELETED(collar) && collar.active_item && collar.collar_wearer == src
+
+/mob/living/proc/get_outlaw_status_text()
+	if(is_serving_penance())
+		return span_notice("SERVING PENANCE")
+	if(name in GLOB.outlawed_players)
+		return get_outlaw_label()
+
+/mob/living/proc/get_outlaw_label()
+	var/datum/castifico_penance_record/record = get_castifico_penance_record()
+	return span_userdanger(record && record.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!")
+
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)
 	var/villain_text
@@ -1459,8 +1475,9 @@
 		if(mind.special_role == "Bandit")
 			if(HAS_TRAIT(examiner, TRAIT_COMMIE))
 				villain_text = span_notice("Free man!")
-			if(HAS_TRAIT(src,TRAIT_KNOWNCRIMINAL))
-				villain_text = span_userdanger("OUTLAW!")
+			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW))
+				// Penance replaces the label; the public list supplies it otherwise.
+				villain_text = (is_serving_penance() || (name in GLOB.outlawed_players)) ? null : get_outlaw_label()
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))
