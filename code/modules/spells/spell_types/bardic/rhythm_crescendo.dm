@@ -178,6 +178,13 @@
 	var/mob/living/carbon/human/H = user
 	if(istype(H) && H.inspiration?.rhythm_tracker)
 		H.inspiration.rhythm_tracker.on_rhythm_proc(rhythm_type)
+		if(H.inspiration.ap_allegro)
+			H.inspiration.ap_allegro_counter++
+			if(H.inspiration.ap_allegro_counter >= 5)
+				H.inspiration.ap_allegro_counter = 0
+				H.energy_add(25)
+				H.balloon_alert_to_viewers("Allegro!")
+				playsound(H, 'sound/magic/inspire_02.ogg', 50, TRUE)
 		if(H.inspiration.level >= BARD_T3)
 			if(H.inspiration.rhythm_tracker.greater_stacks >= CRESCENDO_STACKS)
 				H.balloon_alert_to_viewers("Crescendo ready!")

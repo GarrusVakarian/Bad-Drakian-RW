@@ -301,6 +301,9 @@
 
 
 /mob/living/carbon/human/attack_animal(mob/living/simple_animal/M)
+	var/datum/status_effect/buff/bulwark_of_oil/shield = has_status_effect(/datum/status_effect/buff/bulwark_of_oil)
+	if(shield?.block_attack(M))
+		return FALSE
 	. = ..()
 	if(.)
 		var/damage = rand(M.melee_damage_lower, M.melee_damage_upper)
@@ -881,6 +884,10 @@
 	return used
 
 /mob/living/carbon/human/on_fire_stack(seconds_per_tick, datum/status_effect/fire_handler/fire_stacks/fire_handler)
+	if(HAS_TRAIT(src, TRAIT_AP_FIRE_IMMUNE))
+		return
+	if(HAS_TRAIT(src, TRAIT_AP_FIRE_RESIST))
+		seconds_per_tick *= 0.5
 	//SEND_SIGNAL(src, COMSIG_HUMAN_BURNING)
 	burn_clothing(seconds_per_tick, fire_handler.stacks)
 	var/no_protection = FALSE

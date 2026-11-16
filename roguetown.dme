@@ -1,4 +1,5 @@
 // This should always be the VERY FIRST THING. No exceptions. Read the file for more info, but basically, this needs to be here so that we can ensure specific code is always the very first thing to execute.
+#include "code\__DEFINES\ap_roles.dm"
 #include "code\genesis_call.dme"
 // Again, DO NOT MOVE IT OR ALLOW ANY OTHER #include TO PRECEDE THE ONE ABOVE.
 // BEGIN_INTERNALS
@@ -3667,4 +3668,5 @@
 #include "modular_twilight_axis\code\game\objects\items\scabbard.dm"
 #include "modular_twilight_axis\code\modules\bildings\blueprint_planner.dm"
 #include "modular_twilight_axis\code\modules\structures\cannon.dm"
+#include "code\modules\jobs\ap_dun_world\_ap_roles.dm"
 // END_INCLUDE

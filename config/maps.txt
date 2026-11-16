@@ -24,6 +24,11 @@ map dun_world
 	votable
 endmap
 
+map ap_dun_world
+	minplayers 0
+	votable
+endmap
+
 map rockhill
 endmap
 

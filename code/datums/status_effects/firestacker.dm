@@ -169,7 +169,9 @@
 
 	var/elapsed = world.time - last_stack_decay_at
 	last_stack_decay_at = world.time
-	var/stack_decay = decay_multiplier * owner.fire_stack_decay_rate * STACK_DECAY_MULTIPLIER * wait * 0.1
+	var/stack_decay = 0
+	if(!HAS_TRAIT(owner, TRAIT_AP_NO_FIRE_DECAY))
+		stack_decay = decay_multiplier * owner.fire_stack_decay_rate * STACK_DECAY_MULTIPLIER * wait * 0.1
 	if(owner.stat == DEAD || owner.incapacitated(ignore_restraints = TRUE, ignore_grab = TRUE, ignore_stasis = TRUE))
 		stack_decay = min(stack_decay, -0.25 * elapsed * 0.1) // At least 0.5 stacks per two seconds.
 	adjust_stacks(stack_decay)

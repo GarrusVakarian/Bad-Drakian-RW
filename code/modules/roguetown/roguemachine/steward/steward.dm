@@ -43,7 +43,7 @@
 //	That lack of means enforce you not to evil:
 /obj/structure/roguemachine/steward/proc/setup_default_payments()
 	daily_payments["Knight Captain"] = 40
-	if(SSmapping.current_map.map_name == "Dun World")
+	if(SSmapping.current_map.map_name in list("Dun World", "AP Dun World"))
 		daily_payments["Sergeant"] = 40 //Garrison
 	if(SSmapping.current_map.map_name == "Desert Town")
 		daily_payments["Slave Master"] = 50

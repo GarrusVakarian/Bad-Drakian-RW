@@ -104,6 +104,8 @@
 /obj/effect/spawner/lootdrop/potion_ingredient/Initialize(mapload)
 	if(!all_potion_ings.len)
 		all_potion_ings = subtypesof(/obj/item/alch)
+		// Wyrd moss is acquired through Hag gameplay, not ordinary ingredient loot.
+		all_potion_ings -= typesof(/obj/item/alch/hag_moss)
 	if(!loot.len)
 		loot = all_potion_ings.Copy()
 	return ..()

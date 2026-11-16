@@ -738,12 +738,22 @@
 		revert_cast()
 		return FALSE
 
+	if(HAS_TRAIT(target, TRAIT_UNCONVERTIBLE))
+		to_chat(user, span_warning("Their soul cannot be converted."))
+		revert_cast(user)
+		return FALSE
+
 	if(alert(target, "[user.real_name] is trying to convert you to their patron, [user.patron.name]. Do you accept?", "Conversion Request", "Yes", "No") != "Yes")
 		to_chat(user, span_warning("[target] refused your offer of conversion."))
 		revert_cast()
 		return FALSE
 
 	var/absolvable = FALSE
+	if(HAS_TRAIT(target, TRAIT_UNCONVERTIBLE))
+		to_chat(user, span_warning("Their soul cannot be converted."))
+		revert_cast(user)
+		return FALSE
+
 	// Check if target qualifies for absolving
 	if(HAS_TRAIT(target, TRAIT_EXCOMMUNICATED))
 		absolvable = TRUE

@@ -73,7 +73,7 @@
 		else if(time_flags & TIME_OF_DAY_BIT_NIGHT)
 			modifier -= 0							//300-0 is 300, in the middle of the 'normal' temperature range
 
-	else if(SSmapping.current_map.map_name == "Dun World")//Dunworld is colder then the other two maps
+	else if(SSmapping.current_map.map_name in list("Dun World", "AP Dun World"))//Dunworld is colder then the other two maps
 		if(time_flags & TIME_OF_DAY_BIT_DAY)
 			modifier += 0							//No bonus for day time temperatures
 		else if(time_flags & TIME_OF_DAY_BIT_NIGHT)

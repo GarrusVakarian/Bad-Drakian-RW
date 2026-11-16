@@ -1221,6 +1221,8 @@ GLOBAL_VAR_INIT(mobids, 1)
 		if(!("[REF(target)]" in faction_src))
 			faction_target -= "[REF(target)]" //same thing here.
 		return faction_check(faction_src, faction_target, TRUE)
+	if(HAS_TRAIT(target, TRAIT_NOPVE))
+		return TRUE
 	var/list/faction2use = target.faction.Copy()
 	faction2use += target.name
 	return faction_check(faction, faction2use, FALSE)

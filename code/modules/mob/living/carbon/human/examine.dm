@@ -8,6 +8,8 @@
 			user.add_stress(/datum/stressevent/parastr)
 	if(HAS_TRAIT(user, TRAIT_JESTERPHOBIA) && job == "Jester")
 		user.add_stress(/datum/stressevent/jesterphobia)
+	if(HAS_TRAIT(src, TRAIT_BEAUTIFUL_UNCANNY) && user != src)
+		user.add_stress(prob(50) ? /datum/stressevent/uncanny : /datum/stressevent/beautiful)
 	if(HAS_TRAIT(src, TRAIT_BEAUTIFUL) && user != src)//it doesn't really make sense that you can examine your own face
 		user.add_stress(/datum/stressevent/beautiful)
 		to_chat(user, span_info("[p_they(TRUE)] [p_are()] strikingly beautiful."))
@@ -1305,7 +1307,7 @@
 				if(family_text)
 					. += family_text
 
-		if (HAS_TRAIT(src, TRAIT_BEAUTIFUL))
+		if (HAS_TRAIT(src, TRAIT_BEAUTIFUL) || HAS_TRAIT(src, TRAIT_BEAUTIFUL_UNCANNY))
 			switch (pronouns)
 				if (HE_HIM, SHE_HER_M)
 					. += span_beautiful_masc("[m1] handsome!")

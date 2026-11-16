@@ -262,6 +262,7 @@
 	var/turf/enchantment_hit_origin = get_turf(M)
 	var/health_before_hit = M.health
 	if(M.attacked_by(src, user))
+		SEND_SIGNAL(user, COMSIG_AP_MOB_MELEE_HIT, M, user, src)
 		if(user.used_intent == cached_intent)
 			var/tempsound = user.used_intent.hitsound
 			if(tempsound)
@@ -421,6 +422,8 @@
 						dullfactor = 1.0 + (lumberskill * 0.25)
 						lumberjacker.mind.add_sleep_experience(/datum/skill/labor/lumberjacking, (lumberjacker.STAINT*0.2))
 					cont = TRUE
+			if(HAS_TRAIT(user, TRAIT_WYRD_LABOURER))
+				dullfactor *= 1.5
 			if(!cont)
 				return 0
 		if(DULLING_BASH) //stone/metal, can't be attacked by cutting
@@ -468,6 +471,8 @@
 			var/mob/living/miner = user
 			var/mineskill = miner.get_skill_level(/datum/skill/labor/mining)
 			newforce = newforce * (8+(mineskill*1.5))
+			if(HAS_TRAIT(user, TRAIT_WYRD_LABOURER))
+				newforce *= 1.5
 			shake_camera(user, 1, 1)
 			miner.mind.add_sleep_experience(/datum/skill/labor/mining, (miner.STAINT*0.2))
 		if(DULLING_SHAFT_CONJURED)

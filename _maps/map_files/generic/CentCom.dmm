@@ -2940,6 +2940,2637 @@
 	},
 /turf/open/floor/rogue/sand,
 /area/rogue/under/wretch/graggarena)
+"ad" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"an" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"aH" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"aP" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"aR" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bc" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bj" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bx" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bA" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bB" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bC" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bD" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bE" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bF" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bG" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bH" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bI" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bK" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bL" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bM" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bN" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bO" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bP" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bQ" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bS" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bT" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bU" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bV" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"bY" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ca" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cb" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cc" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cd" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ce" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cf" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cg" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ch" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ci" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cj" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ck" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cm" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cn" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"co" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cp" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cq" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cr" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cs" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ct" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cu" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cv" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cw" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cy" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cz" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cA" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cB" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cD" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cE" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cF" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cH" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cI" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cJ" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cL" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cM" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cO" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cP" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cR" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cS" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cT" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cU" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cV" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cX" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cY" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"cZ" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"da" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"db" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dc" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dd" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"de" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"df" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dg" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dh" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"di" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dj" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dk" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dl" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dm" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dn" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dp" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dq" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ds" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dt" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"du" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dv" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dw" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dx" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dy" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dz" = (
+/obj/structure/roguemachine/mazeroot,
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dA" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dC" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dD" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dE" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dF" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dH" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dI" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dJ" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dL" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dM" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dN" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dO" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dP" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dQ" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dR" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dS" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dU" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dV" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dX" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"dY" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ea" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eb" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ec" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ed" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ee" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ef" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eg" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eh" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ei" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ej" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ek" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"el" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"en" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eo" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ep" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eq" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"er" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"et" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eu" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ev" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ew" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ex" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ey" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"ez" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eA" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eB" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eC" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eD" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eE" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eF" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eG" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eH" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eI" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eJ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eK" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eL" = (
+/obj/effect/hag_teleport_marker,
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eM" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eN" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eO" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eP" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eQ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eS" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eT" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eU" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eV" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eX" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eY" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"eZ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"fa" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag/root_maze)
+"fb" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fd" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fe" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ff" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fg" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fh" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fj" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fk" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fl" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fm" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fn" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fo" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fp" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fq" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fr" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fs" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ft" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fv" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fw" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fy" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fA" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fB" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fC" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fD" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fE" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"fF" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fG" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fH" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fI" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fJ" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fK" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fM" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"fN" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"fO" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"fP" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"fR" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"fS" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"fT" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"fU" = (
+/obj/effect/spawner/lootdrop/hag/enchanted_moss,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"fW" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fX" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fY" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"fZ" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"ga" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gb" = (
+/obj/item/leechtick,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gd" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gf" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gg" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gh" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gi" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gj" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gk" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"gl" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"gn" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"go" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gp" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gr" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gs" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gv" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gw" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gx" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gy" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gz" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gA" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gB" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gC" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gD" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gE" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gF" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gG" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"gH" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"gI" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"gJ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gK" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gL" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gM" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gN" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gO" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gP" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gQ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gR" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gS" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gT" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gU" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"gV" = (
+/obj/machinery/light/rogue/cauldron,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"gW" = (
+/obj/structure/fluff/alch,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"gY" = (
+/obj/machinery/light/rogue/cauldron,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"gZ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ha" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hb" = (
+/obj/structure/roguemachine/mossmother/travel,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hd" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"he" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hf" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hg" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hh" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hj" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hk" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hl" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hm" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hn" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"ho" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hq" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hr" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hs" = (
+/obj/structure/bed/rogue/shit,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"hu" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"hv" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hw" = (
+/obj/effect/decal/remains/human,
+/obj/structure/fluff/walldeco/chains{
+	pixel_x = 22
+	},
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"hz" = (
+/obj/structure/bed/rogue/shit,
+/mob/living/simple_animal/hostile/retaliate/rogue/mudcrab/cabbit,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"hA" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hB" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hC" = (
+/obj/structure/table/wood/long_table,
+/obj/item/alch/calendula,
+/obj/item/alch/calendula{
+	pixel_x = -1
+	},
+/obj/item/alch/calendula{
+	pixel_x = 7;
+	pixel_y = 5
+	},
+/obj/item/alch/calendula{
+	pixel_x = -5;
+	pixel_y = 7
+	},
+/obj/item/alch/urtica{
+	pixel_x = 2;
+	pixel_y = -5
+	},
+/obj/item/alch/urtica{
+	pixel_x = 9;
+	pixel_y = -6
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"hD" = (
+/obj/effect/decal/remains/human,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"hE" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"hF" = (
+/obj/item/natural/bundle/stick/full{
+	pixel_y = -6
+	},
+/obj/item/natural/bundle/stick/full{
+	pixel_y = 5
+	},
+/obj/item/natural/bundle/stick/full{
+	pixel_y = -1
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"hI" = (
+/obj/item/reagent_containers/glass/bottle/rogue{
+	pixel_x = 12;
+	pixel_y = -1
+	},
+/obj/item/reagent_containers/glass/bottle/rogue{
+	pixel_x = 12
+	},
+/obj/item/reagent_containers/glass/bottle/rogue{
+	pixel_x = 12;
+	pixel_y = -3
+	},
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"hJ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"hL" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hM" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hN" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hO" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hP" = (
+/obj/item/leechtick,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hR" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hS" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hT" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hU" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hV" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hW" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"hY" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"hZ" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"ia" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ib" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ic" = (
+/obj/machinery/light/rogue/candle/weak,
+/obj/effect/decal/remains/human,
+/obj/structure/fluff/walldeco/chains{
+	icon_state = "chains5"
+	},
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ie" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"if" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ig" = (
+/obj/machinery/light/rogue/candle/weak,
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ih" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ii" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ik" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"il" = (
+/obj/structure/table/wood/long_table/mid/alt,
+/obj/item/alch/hypericum{
+	pixel_x = -2;
+	pixel_y = 10
+	},
+/obj/item/alch/hypericum{
+	pixel_x = -10;
+	pixel_y = 12
+	},
+/obj/item/alch/matricaria{
+	pixel_x = 8;
+	pixel_y = -5
+	},
+/obj/item/alch/salvia{
+	pixel_x = -4;
+	pixel_y = -3
+	},
+/obj/item/alch/valeriana{
+	pixel_x = -15;
+	pixel_y = -5
+	},
+/obj/item/alch/atropa{
+	pixel_x = -7
+	},
+/obj/item/alch/mentha{
+	pixel_x = 12;
+	pixel_y = 9
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"in" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"io" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"ip" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"iq" = (
+/obj/structure/rack/rogue/shelf/biggest,
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = 7;
+	pixel_y = 8
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = 7
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = 7;
+	pixel_y = -5
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_y = 8
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical,
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_y = -5
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = -7;
+	pixel_y = 8
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = -7
+	},
+/obj/item/reagent_containers/glass/bottle/alchemical{
+	pixel_x = -7;
+	pixel_y = -5
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"ir" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"is" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"it" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"iu" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"iw" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ix" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iy" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iz" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iA" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iB" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"iC" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"iD" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"iF" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"iG" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"iH" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iI" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iJ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iK" = (
+/obj/structure/mineral_door/bars{
+	lockid = "hag"
+	},
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"iL" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iM" = (
+/obj/structure/mineral_door/bars{
+	lockid = "hag"
+	},
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"iN" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iO" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iP" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iQ" = (
+/obj/structure/table/wood/long_table/mid/alt,
+/obj/item/reagent_containers/glass/mortar,
+/obj/item/pestle,
+/obj/item/recipe_book/hag_grimoire/moss_recipes{
+	pixel_y = 4
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"iR" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"iS" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"iT" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"iU" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iV" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iW" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iX" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"iZ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ja" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jd" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jf" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jg" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jh" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ji" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jj" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"jk" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"jl" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"jm" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"jo" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jp" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jq" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"js" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jt" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"ju" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jv" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"jw" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jx" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jy" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jB" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jD" = (
+/obj/structure/table/wood/long_table/right,
+/obj/item/alch/hag_moss/enchanted/random/low{
+	pixel_x = 6;
+	pixel_y = 3
+	},
+/obj/item/recipe_book/hag_grimoire{
+	pixel_x = -21;
+	pixel_y = 4
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"jE" = (
+/obj/item/storage/roguebag{
+	pixel_y = 44
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"jF" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"jI" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"jJ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jK" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jM" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"jN" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"jO" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jP" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jR" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jS" = (
+/obj/machinery/light/rogue/hearth,
+/obj/item/reagent_containers/glass/bucket/pot,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"jT" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jU" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jV" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"jX" = (
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"jZ" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"ka" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"kb" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"kc" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kd" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ke" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kf" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kg" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"kh" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"kj" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"kl" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"km" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kn" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kq" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kr" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kt" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ku" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kw" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kx" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"ky" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kz" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kA" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kB" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kC" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"kD" = (
+/obj/effect/decal/cobbleedge{
+	dir = 5
+	},
+/obj/machinery/light/rogue/candle,
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"kG" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"kH" = (
+/obj/effect/decal/cobbleedge{
+	dir = 10;
+	pixel_x = 1;
+	pixel_y = 2
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"kJ" = (
+/obj/effect/decal/cleanable/black_rot_vomit,
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"kK" = (
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"kL" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"kM" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"kN" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"kO" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"kP" = (
+/obj/structure/flora/newtree,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"kQ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kR" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kS" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"kT" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"kU" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"kV" = (
+/obj/effect/spawner/lootdrop/hag/enchanted_moss,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"kW" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"kX" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"kY" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"kZ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"la" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lb" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"lc" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ld" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"le" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lf" = (
+/obj/item/hag_catalyst/synth_base,
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lg" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lh" = (
+/obj/structure/table/wood,
+/obj/item/storage/belt/rogue/surgery_bag/full{
+	pixel_y = 10
+	},
+/obj/item/lockpickring/mundane,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"li" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lj" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lk" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ll" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"lm" = (
+/obj/effect/decal/cleanable/black_rot_vomit,
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"ln" = (
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"lo" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 8
+	},
+/obj/structure/chair/wood/rogue/chair3{
+	dir = 4
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"lp" = (
+/obj/effect/decal/edge_corner{
+	color = "#3f3f3f"
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lq" = (
+/obj/effect/decal/cobbleedge{
+	dir = 8
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"lr" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"lt" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"lu" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"lv" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"lx" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"ly" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"lz" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"lA" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lB" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lC" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"lD" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"lE" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"lF" = (
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"lG" = (
+/obj/effect/spawner/lootdrop/hag/mothers_cache,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"lH" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"lI" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lL" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lM" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lN" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"lO" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lP" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lQ" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lR" = (
+/obj/structure/roguemachine/hag_cauldron,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lS" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"lT" = (
+/obj/item/hag_catalyst/varnish_base,
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"lU" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"lV" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"lX" = (
+/obj/effect/decal/cobbleedge{
+	dir = 8
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"lY" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 1
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"lZ" = (
+/obj/structure/table/wood/long_table,
+/obj/item/reagent_containers/glass/cup/wooden{
+	pixel_y = 13
+	},
+/obj/item/cooking/platter,
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"ma" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f"
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"mb" = (
+/obj/effect/decal/cleanable/black_rot_vomit,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"mc" = (
+/obj/structure/mineral_door/wood/red{
+	lockid = "hag"
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"md" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"me" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"mf" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"mh" = (
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"mi" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mj" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mk" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"ml" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/grass,
+/area/rogue/indoors/shelter/bog_hag)
+"mm" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mn" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mo" = (
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"mq" = (
+/obj/structure/roguemachine/hag_heart,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"mr" = (
+/obj/effect/spawner/lootdrop/hag/wyrd_artifacts,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"ms" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mt" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mu" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mv" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"mx" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"my" = (
+/obj/item/natural/bundle/fibers/full{
+	pixel_x = 13
+	},
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"mz" = (
+/obj/item/hag_catalyst/synth_base,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"mA" = (
+/obj/effect/landmark/start/ap_haglate,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"mB" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"mC" = (
+/obj/effect/landmark/start/ap_hag,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"mD" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"mE" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mF" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"mG" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"mH" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 1
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"mI" = (
+/obj/structure/table/wood/long_table/mid/alt,
+/obj/item/storage/roguebag{
+	pixel_x = 14;
+	pixel_y = 7
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"mJ" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f"
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"mK" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"mM" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"mO" = (
+/turf/open/floor/rogue/cobble/mossy,
+/area/rogue/indoors/shelter/bog_hag)
+"mP" = (
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"mR" = (
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"mS" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"mT" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mU" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mV" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"mW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"mX" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mY" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"mZ" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nb" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"nc" = (
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"nd" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"ne" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nf" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"ng" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nh" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nj" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"nk" = (
+/obj/structure/table/wood,
+/obj/item/needle/thorn,
+/obj/item/natural/bundle/cloth/roll,
+/obj/item/natural/bundle/cloth/roll{
+	pixel_y = 6
+	},
+/obj/item/natural/bundle/cloth/roll{
+	pixel_y = 13
+	},
+/obj/item/natural/bundle/cloth/roll{
+	pixel_y = -17
+	},
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nm" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nn" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"no" = (
+/obj/structure/roguemachine/hag_cauldron,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"np" = (
+/obj/item/hag_catalyst/varnish_base,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"nq" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nr" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ns" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"nt" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"nu" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 1
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"nv" = (
+/obj/structure/table/wood/long_table/mid/alt,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"nw" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"nx" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ny" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"nz" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"nA" = (
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"nB" = (
+/obj/structure/flora/roguegrass/herb/random,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"nC" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"nD" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"nE" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"nF" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"nH" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nI" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nJ" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nK" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nL" = (
+/obj/effect/spawner/lootdrop/hag/mothers_cache,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"nM" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nN" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"nP" = (
+/obj/effect/spawner/lootdrop/hag/mothers_cache,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"nR" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nT" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nU" = (
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"nV" = (
+/obj/structure/fluff/pillow/green,
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"nW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nX" = (
+/obj/structure/closet/crate/roguecloset/inn,
+/obj/item/clothing/suit/roguetown/shirt/robe,
+/obj/item/ritechalk,
+/obj/item/ritechalk,
+/obj/item/rogueweapon/woodstaff,
+/obj/item/rogueweapon/scabbard/gwstrap,
+/obj/item/storage/magebag,
+/obj/item/storage/magebag,
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nY" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"nZ" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"oa" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"oc" = (
+/turf/open/floor/rogue/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"od" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"oe" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"of" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"og" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 1
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"oh" = (
+/obj/structure/table/wood/long_table/right,
+/obj/item/cooking/platter,
+/obj/item/reagent_containers/glass/cup/wooden{
+	pixel_y = -3;
+	pixel_x = 7
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"oi" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f"
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"oj" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ok" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"ol" = (
+/obj/effect/spawner/lootdrop/hag/raw_botanicals,
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors/shelter/bog_hag)
+"om" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"op" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"oq" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"or" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"os" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ot" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ov" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"ow" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"ox" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"oz" = (
+/obj/effect/spawner/lootdrop/hag/mothers_cache,
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"oA" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"oB" = (
+/turf/open/water/swamp/deep,
+/area/rogue/indoors/shelter/bog_hag)
+"oD" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"oE" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"oF" = (
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"oG" = (
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"oH" = (
+/obj/structure/fluff/pillow/green,
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"oI" = (
+/obj/structure/bed/rogue/inn/wooldouble,
+/obj/item/bedsheet/rogue/fabric_double,
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"oJ" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"oK" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"oL" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"oM" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"oN" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"oO" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"oP" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"oQ" = (
+/turf/closed/wall/mineral/rogue/stone/moss,
+/area/rogue/indoors/shelter/bog_hag)
+"oR" = (
+/obj/machinery/light/rogue/candle,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"oS" = (
+/obj/effect/decal/edge_corner{
+	color = "#3f3f3f";
+	dir = 1
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"oT" = (
+/obj/effect/decal/edge{
+	color = "#3f3f3f";
+	dir = 4
+	},
+/obj/structure/chair/wood/rogue/chair3{
+	dir = 8
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"oU" = (
+/obj/effect/decal/edge_corner{
+	color = "#3f3f3f";
+	dir = 4
+	},
+/turf/open/floor/rogue/ruinedwood,
+/area/rogue/indoors/shelter/bog_hag)
+"oV" = (
+/obj/effect/decal/cobbleedge{
+	dir = 5
+	},
+/obj/item/storage/roguebag{
+	pixel_x = 10;
+	pixel_y = -4
+	},
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"oW" = (
+/obj/effect/decal/cobbleedge{
+	dir = 5
+	},
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"oX" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"oY" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"oZ" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pa" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pd" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pf" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pg" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ph" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pi" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pj" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pk" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pm" = (
+/obj/item/grown/log/tree/stick,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"pn" = (
+/turf/open/floor/rogue/grassyel,
+/area/rogue/indoors/shelter/bog_hag)
+"po" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pp" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pq" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"ps" = (
+/obj/structure/mirror/fancy/hag,
+/turf/open/floor/rogue/grassred,
+/area/rogue/indoors/shelter/bog_hag)
+"pt" = (
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"pu" = (
+/obj/structure/fluff/pillow/green,
+/turf/open/floor/carpet/royalblack,
+/area/rogue/indoors/shelter/bog_hag)
+"pv" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pw" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"px" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"py" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"pz" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"pA" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"pB" = (
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"pC" = (
+/obj/structure/mineral_door/wood/red{
+	lockid = "hag"
+	},
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/shelter/bog_hag)
+"pD" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"pF" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"pG" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"pH" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"pI" = (
+/obj/effect/decal/cobbleedge{
+	dir = 10;
+	pixel_y = 11
+	},
+/obj/structure/closet/crate/chest/neu,
+/obj/item/rogueweapon/shovel,
+/obj/item/rogueweapon/hoe,
+/turf/open/floor/rogue/cobblerock,
+/area/rogue/indoors/shelter/bog_hag)
+"pJ" = (
+/obj/effect/decal/cobbleedge{
+	dir = 5
+	},
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"pK" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pL" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pO" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pP" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pQ" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"pR" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pS" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pT" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pU" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"pV" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pW" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pX" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"pY" = (
+/turf/closed/wall/shroud/hag,
+/area/rogue/indoors/shelter/bog_hag)
+"qa" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qb" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qc" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qd" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qf" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qg" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qh" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qj" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qk" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ql" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qm" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qn" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qo" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qp" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qq" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qr" = (
+/obj/structure/mineral_door/wood/violet{
+	lockid = "hag"
+	},
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"qs" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qt" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qu" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qv" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"qw" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"qy" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"qz" = (
+/turf/open/water/cleanshallow,
+/area/rogue/indoors/shelter/bog_hag)
+"qA" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qE" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qF" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qH" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qI" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qJ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qK" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qL" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qM" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qN" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qO" = (
+/obj/item/millstone,
+/obj/structure/table/wood/long_table,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"qQ" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"qS" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"qT" = (
+/obj/effect/decal/cleanable/blood/gibs/body,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"qV" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"qW" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qX" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qY" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"qZ" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ra" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rb" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rc" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rd" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"re" = (
+/obj/structure/table/wood/long_table/mid/alt,
+/obj/item/reagent_containers/powder/flour,
+/obj/item/rogueweapon/huntingknife/chefknife,
+/obj/item/kitchen/rollingpin,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rf" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rg" = (
+/obj/item/natural/cloth,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rh" = (
+/obj/item/reagent_containers/glass/bucket,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"ri" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rm" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rn" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ro" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rp" = (
+/obj/item/reagent_containers/powder/flour,
+/obj/item/reagent_containers/food/snacks/butterslice,
+/obj/structure/table/wood/long_table/right,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rq" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rr" = (
+/obj/effect/decal/cleanable/blood/gibs/limb,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rs" = (
+/obj/effect/decal/cleanable/blood/gibs/core,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rt" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"ru" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rx" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"ry" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rz" = (
+/obj/machinery/light/rogue/oven/south,
+/obj/item/flint,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rA" = (
+/obj/effect/decal/cleanable/blood/gibs,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rB" = (
+/obj/effect/decal/cleanable/blood/gibs/down,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rC" = (
+/obj/effect/decal/remains/human,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rE" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rF" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rG" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rI" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rJ" = (
+/obj/item/reagent_containers/food/snacks/grown/berries/rogue/poison,
+/obj/item/reagent_containers/food/snacks/grown/berries/rogue/poison,
+/obj/item/reagent_containers/food/snacks/grown/berries/rogue/poison,
+/obj/structure/closet/crate/chest/crate,
+/obj/machinery/light/rogue/candle,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rL" = (
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rM" = (
+/obj/effect/decal/cleanable/blood/gibs/up,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rN" = (
+/obj/effect/decal/cleanable/blood/gibs,
+/turf/open/floor/rogue/cobble,
+/area/rogue/indoors/shelter/bog_hag)
+"rO" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rP" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rR" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"rS" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rU" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rV" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rW" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"rY" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"sa" = (
+/turf/closed/wall/mineral/rogue/stone,
+/area/rogue/indoors/shelter/bog_hag)
+"sb" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sc" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sd" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"se" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sf" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sg" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sh" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"si" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
+"sj" = (
+/turf/closed/mineral/rogue/bedrock,
+/area/rogue/indoors/shelter/bog_hag)
 
 (1,1,1) = {"
 rQ
@@ -3071,6 +5702,7 @@ rQ
 rQ
 rQ
 "}
+
 (2,1,1) = {"
 rQ
 rQ
@@ -3201,6 +5833,7 @@ rQ
 rQ
 rQ
 "}
+
 (3,1,1) = {"
 rQ
 rQ
@@ -3331,6 +5964,7 @@ rQ
 rQ
 rQ
 "}
+
 (4,1,1) = {"
 rQ
 rQ
@@ -3461,6 +6095,7 @@ rQ
 rQ
 rQ
 "}
+
 (5,1,1) = {"
 rQ
 rQ
@@ -3591,6 +6226,7 @@ rQ
 rQ
 rQ
 "}
+
 (6,1,1) = {"
 rQ
 rQ
@@ -3721,6 +6357,7 @@ rQ
 rQ
 rQ
 "}
+
 (7,1,1) = {"
 rQ
 rQ
@@ -3851,6 +6488,7 @@ rQ
 rQ
 rQ
 "}
+
 (8,1,1) = {"
 rQ
 rQ
@@ -3981,6 +6619,7 @@ rQ
 rQ
 rQ
 "}
+
 (9,1,1) = {"
 rQ
 rQ
@@ -4111,6 +6750,7 @@ rQ
 rQ
 rQ
 "}
+
 (10,1,1) = {"
 rQ
 rQ
@@ -4241,6 +6881,7 @@ rQ
 rQ
 rQ
 "}
+
 (11,1,1) = {"
 rQ
 rQ
@@ -4371,6 +7012,7 @@ rQ
 rQ
 rQ
 "}
+
 (12,1,1) = {"
 rQ
 rQ
@@ -4501,6 +7143,7 @@ rQ
 rQ
 rQ
 "}
+
 (13,1,1) = {"
 rQ
 rQ
@@ -4631,6 +7274,7 @@ rQ
 rQ
 rQ
 "}
+
 (14,1,1) = {"
 rQ
 rQ
@@ -4761,6 +7405,7 @@ rQ
 rQ
 rQ
 "}
+
 (15,1,1) = {"
 rQ
 rQ
@@ -4891,6 +7536,7 @@ rQ
 rQ
 rQ
 "}
+
 (16,1,1) = {"
 rQ
 rQ
@@ -5021,6 +7667,7 @@ rQ
 rQ
 rQ
 "}
+
 (17,1,1) = {"
 rQ
 rQ
@@ -5151,6 +7798,7 @@ rQ
 rQ
 rQ
 "}
+
 (18,1,1) = {"
 rQ
 rQ
@@ -5281,6 +7929,7 @@ rQ
 rQ
 rQ
 "}
+
 (19,1,1) = {"
 rQ
 rQ
@@ -5411,6 +8060,7 @@ rQ
 rQ
 rQ
 "}
+
 (20,1,1) = {"
 rQ
 rQ
@@ -5541,6 +8191,7 @@ rQ
 rQ
 rQ
 "}
+
 (21,1,1) = {"
 rQ
 rQ
@@ -5671,6 +8322,7 @@ rQ
 rQ
 rQ
 "}
+
 (22,1,1) = {"
 rQ
 rQ
@@ -5801,6 +8453,7 @@ rQ
 rQ
 rQ
 "}
+
 (23,1,1) = {"
 rQ
 rQ
@@ -5931,6 +8584,7 @@ rQ
 rQ
 rQ
 "}
+
 (24,1,1) = {"
 rQ
 rQ
@@ -6061,6 +8715,7 @@ rQ
 rQ
 rQ
 "}
+
 (25,1,1) = {"
 rQ
 rQ
@@ -6191,6 +8846,7 @@ rQ
 rQ
 rQ
 "}
+
 (26,1,1) = {"
 rQ
 rQ
@@ -6321,6 +8977,7 @@ rQ
 rQ
 rQ
 "}
+
 (27,1,1) = {"
 rQ
 rQ
@@ -6344,11 +9001,11 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+fb
+fd
+fe
+ff
+fg
 rQ
 rQ
 rQ
@@ -6451,6 +9108,7 @@ rQ
 rQ
 rQ
 "}
+
 (28,1,1) = {"
 rQ
 rQ
@@ -6471,16 +9129,16 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+fh
+fj
+fk
+fl
+fm
+fn
+fo
+fp
+fq
+fr
 rQ
 rQ
 rQ
@@ -6581,6 +9239,7 @@ rQ
 rQ
 rQ
 "}
+
 (29,1,1) = {"
 rQ
 rQ
@@ -6600,18 +9259,18 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+fs
+ft
+fv
+fw
+fy
+fA
+fB
+fC
+fD
+fE
+fF
+fG
 rQ
 rQ
 rQ
@@ -6711,6 +9370,7 @@ rQ
 rQ
 rQ
 "}
+
 (30,1,1) = {"
 rQ
 rQ
@@ -6729,20 +9389,20 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+fH
+fI
+fJ
+fK
+fM
+fN
+fO
+fP
+fR
+fS
+fT
+fU
+fW
+fX
 rQ
 rQ
 rQ
@@ -6841,6 +9501,7 @@ rQ
 rQ
 rQ
 "}
+
 (31,1,1) = {"
 rQ
 rQ
@@ -6859,20 +9520,20 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+fY
+fZ
+ga
+gb
+gd
+gf
+gg
+gh
+gi
+gj
+gk
+gl
+gn
+go
 rQ
 rQ
 rQ
@@ -6971,6 +9632,7 @@ rQ
 rQ
 rQ
 "}
+
 (32,1,1) = {"
 rQ
 rQ
@@ -6985,25 +9647,25 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+gp
+gr
+gs
+gv
+gw
+gx
+gy
+gz
+gA
+gB
+gC
+gD
+gE
+gF
+gG
+gH
+gI
+gJ
+gK
 rQ
 rQ
 rQ
@@ -7101,39 +9763,40 @@ rQ
 rQ
 rQ
 "}
+
 (33,1,1) = {"
 rQ
 rQ
+gL
+gM
+gN
+gO
+gP
+gQ
+gR
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+gS
+gT
+gU
+gV
+gW
+gY
+gZ
+ha
+hb
+hd
+he
+hf
+hg
+hh
+hj
+hk
+hl
+hm
+hn
+ho
+hq
 rQ
 rQ
 rQ
@@ -7231,39 +9894,40 @@ rQ
 rQ
 rQ
 "}
+
 (34,1,1) = {"
 rQ
 rQ
+hr
+hs
+hu
+hv
+hw
+hz
+hA
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+hB
+hC
+hD
+hE
+hF
+hI
+hJ
+hL
+hM
+hN
+hO
+hP
+hR
+hS
+hT
+hU
+hV
+hW
+hY
+hZ
+ia
 rQ
 rQ
 rQ
@@ -7361,39 +10025,40 @@ rQ
 rQ
 rQ
 "}
+
 (35,1,1) = {"
 rQ
 rQ
+ib
+ic
+ie
+if
+ig
+ih
+ii
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+ik
+il
+in
+io
+ip
+iq
+ir
+is
+it
+iu
+iw
+ix
+iy
+iz
+iA
+iB
+iC
+iD
+iF
+iG
+iH
 rQ
 rQ
 rQ
@@ -7491,39 +10156,40 @@ rQ
 rQ
 rQ
 "}
+
 (36,1,1) = {"
 rQ
 rQ
+iI
+iJ
+iK
+iL
+iM
+iN
+iO
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+iP
+iQ
+iR
+iS
+iT
+iU
+iV
+iW
+iX
+iZ
+ja
+jd
+jf
+jg
+jh
+ji
+jj
+jk
+jl
+jm
+jo
 rQ
 rQ
 rQ
@@ -7621,39 +10287,40 @@ rQ
 rQ
 rQ
 "}
+
 (37,1,1) = {"
 rQ
+jp
+jq
+js
+jt
+ju
+jv
+jw
+jx
+jy
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+jB
+jD
+jE
+jF
+jI
+jJ
+jK
+jM
+jN
+jO
+jP
+jR
+jS
+jT
+jU
+jV
+jX
+jZ
+ka
+kb
+kc
 rQ
 rQ
 rQ
@@ -7751,39 +10418,40 @@ rQ
 rQ
 rQ
 "}
+
 (38,1,1) = {"
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+kd
+ke
+kf
+kg
+kh
+kj
+kl
+km
+kn
+kq
+kr
+kt
+ku
+kw
+kx
+ky
+kz
+kA
+kB
+kC
+kD
+kG
+kH
+kJ
+kK
+kL
+kM
+kN
+kO
+kP
+kQ
 rQ
 rQ
 rQ
@@ -7881,39 +10549,40 @@ rQ
 rQ
 rQ
 "}
+
 (39,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+kR
+kS
+kT
+kU
+kV
+kW
+kX
+kY
+kZ
+la
+lb
+lc
+ld
+le
+lf
+lg
+lh
+li
+lj
+lk
+ll
+lm
+ln
+lo
+lp
+lq
+lr
+lt
+lu
+lv
+lx
+ly
 rQ
 rQ
 rQ
@@ -8011,39 +10680,40 @@ qB
 qB
 qB
 "}
+
 (40,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+lz
+lA
+lB
+lC
+lD
+lE
+lF
+lG
+lH
+lI
+lL
+lM
+lN
+lO
+lP
+lQ
+lR
+lS
+lT
+lU
+lV
+lX
+lY
+lZ
+ma
+mb
+mc
+md
+me
+mf
+mh
+mi
 rQ
 rQ
 rQ
@@ -8141,40 +10811,41 @@ kv
 kv
 qB
 "}
+
 (41,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+mj
+mk
+ml
+mm
+mn
+mo
+mq
+mr
+ms
+mt
+mu
+mv
+mx
+my
+mz
+mA
+mB
+mC
+mD
+mE
+mF
+mG
+mH
+mI
+mJ
+mK
+mM
+mO
+mP
+mR
+mS
+mT
+mU
 rQ
 bX
 bX
@@ -8271,40 +10942,41 @@ Of
 kv
 qB
 "}
+
 (42,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+mV
+mW
+mX
+mY
+mZ
+nb
+nc
+nd
+ne
+nf
+ng
+nh
+nj
+nk
+nm
+nn
+no
+np
+nq
+nr
+ns
+nt
+nu
+nv
+nw
+nx
+ny
+nz
+nA
+nB
+nC
+nD
+nE
 rQ
 bX
 bX
@@ -8401,40 +11073,41 @@ kv
 Of
 qB
 "}
+
 (43,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+nF
+nH
+nI
+nJ
+nK
+nL
+nM
+nN
+nP
+nR
+nT
+nU
+nV
+nW
+nX
+nY
+nZ
+oa
+oc
+od
+oe
+of
+og
+oh
+oi
+oj
+ok
+ol
+om
+op
+oq
+or
+os
 rQ
 bX
 jC
@@ -8531,40 +11204,41 @@ kv
 kv
 qB
 "}
+
 (44,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+ot
+ov
+ow
+ox
+oz
+oA
+oB
+oD
+oE
+oF
+oG
+oH
+oI
+oJ
+oK
+oL
+oM
+oN
+oO
+oP
+oQ
+oR
+oS
+oT
+oU
+oV
+oW
+oX
+oY
+oZ
+pa
+pd
+pf
 rQ
 bX
 jC
@@ -8661,40 +11335,41 @@ kv
 kv
 qB
 "}
+
 (45,1,1) = {"
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+pg
+ph
+pi
+pj
+pk
+pm
+pn
+po
+pp
+pq
+ps
+pt
+pu
+pv
+pw
+px
+py
+pz
+pA
+pB
+pC
+pD
+pF
+pG
+pH
+pI
+pJ
+pK
+pL
+pO
+pP
+pQ
+pR
 rQ
 bX
 jC
@@ -8791,40 +11466,41 @@ fV
 fV
 qB
 "}
+
 (46,1,1) = {"
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+pS
+pT
+pU
+pV
+pW
+pX
+pY
+qa
+qb
+qc
+qd
+qf
+qg
+qh
+qj
+qk
+ql
+qm
+qn
+qo
+qp
+qq
+qr
+qs
+qt
+qu
+qv
+qw
+qy
+qz
+qA
+qE
 rQ
 bX
 VU
@@ -8921,10 +11597,17 @@ kv
 kv
 qB
 "}
+
 (47,1,1) = {"
 rQ
 rQ
 rQ
+qF
+qH
+qI
+qJ
+qK
+qL
 rQ
 rQ
 rQ
@@ -8935,25 +11618,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+qM
+qN
+qO
+qQ
+qS
+qT
+qV
+qW
+qX
+qY
+qZ
+ra
+rb
 rQ
 rQ
 bX
@@ -9051,6 +11728,7 @@ kv
 kv
 qB
 "}
+
 (48,1,1) = {"
 rQ
 rQ
@@ -9071,14 +11749,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+rc
+rd
+re
+rf
+rg
+rh
+ri
+rm
 rQ
 rQ
 rQ
@@ -9181,6 +11859,7 @@ kv
 kv
 qB
 "}
+
 (49,1,1) = {"
 rQ
 rQ
@@ -9201,14 +11880,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+rn
+ro
+rp
+rq
+rr
+rs
+rt
+ru
 rQ
 rQ
 rQ
@@ -9311,6 +11990,7 @@ Tv
 fc
 qB
 "}
+
 (50,1,1) = {"
 rQ
 rQ
@@ -9331,14 +12011,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+rx
+ry
+rz
+rA
+rB
+rC
+rE
+rF
 rQ
 rQ
 rQ
@@ -9441,6 +12121,7 @@ fV
 fV
 qB
 "}
+
 (51,1,1) = {"
 rQ
 rQ
@@ -9461,14 +12142,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+rG
+rI
+rJ
+rL
+rM
+rN
+rO
+rP
 rQ
 rQ
 rQ
@@ -9571,6 +12252,7 @@ ko
 kv
 qB
 "}
+
 (52,1,1) = {"
 rQ
 rQ
@@ -9591,14 +12273,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+rR
+rS
+rU
+rV
+rW
+rY
+sa
+sb
 rQ
 rQ
 rQ
@@ -9701,6 +12383,7 @@ ko
 kv
 qB
 "}
+
 (53,1,1) = {"
 rQ
 rQ
@@ -9721,14 +12404,14 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+sc
+sd
+se
+sf
+sg
+sh
+si
+sj
 rQ
 rQ
 rQ
@@ -9831,6 +12514,7 @@ kv
 kv
 qB
 "}
+
 (54,1,1) = {"
 rQ
 rQ
@@ -9961,6 +12645,7 @@ iY
 iY
 qB
 "}
+
 (55,1,1) = {"
 rQ
 rQ
@@ -10091,6 +12776,7 @@ iY
 iY
 qB
 "}
+
 (56,1,1) = {"
 rQ
 rQ
@@ -10221,6 +12907,7 @@ iY
 iY
 qB
 "}
+
 (57,1,1) = {"
 rQ
 rQ
@@ -10351,6 +13038,7 @@ iY
 iY
 qB
 "}
+
 (58,1,1) = {"
 rQ
 rQ
@@ -10481,6 +13169,7 @@ kv
 iY
 qB
 "}
+
 (59,1,1) = {"
 rQ
 rQ
@@ -10611,6 +13300,7 @@ iY
 iY
 qB
 "}
+
 (60,1,1) = {"
 rQ
 rQ
@@ -10741,6 +13431,7 @@ iY
 iY
 qB
 "}
+
 (61,1,1) = {"
 rQ
 rQ
@@ -10871,6 +13562,7 @@ iY
 iY
 qB
 "}
+
 (62,1,1) = {"
 rQ
 rQ
@@ -11001,6 +13693,7 @@ iY
 iY
 qB
 "}
+
 (63,1,1) = {"
 rQ
 rQ
@@ -11131,6 +13824,7 @@ iY
 iY
 qB
 "}
+
 (64,1,1) = {"
 rQ
 rQ
@@ -11261,6 +13955,7 @@ iY
 iY
 qB
 "}
+
 (65,1,1) = {"
 rQ
 rQ
@@ -11391,6 +14086,7 @@ iY
 iY
 qB
 "}
+
 (66,1,1) = {"
 rQ
 rQ
@@ -11408,19 +14104,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+ad
+an
+aH
+aP
+aR
+bc
+bj
+bx
+bA
+bB
+bC
+bD
+bE
 rQ
 rQ
 rQ
@@ -11521,6 +14217,7 @@ iY
 iY
 qB
 "}
+
 (67,1,1) = {"
 rQ
 rQ
@@ -11538,19 +14235,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+bF
+bG
+bH
+bI
+bK
+bL
+bM
+bN
+bO
+bP
+bQ
+bS
+bT
 rQ
 rQ
 rQ
@@ -11651,6 +14348,7 @@ iY
 iY
 qB
 "}
+
 (68,1,1) = {"
 rQ
 rQ
@@ -11668,19 +14366,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+bU
+bV
+bW
+bY
+ca
+cb
+cc
+cd
+ce
+cf
+cg
+ch
+ci
 rQ
 rQ
 rQ
@@ -11781,6 +14479,7 @@ iY
 iY
 qB
 "}
+
 (69,1,1) = {"
 rQ
 rQ
@@ -11798,19 +14497,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+cj
+ck
+cm
+cn
+co
+cp
+cq
+cr
+cs
+ct
+cu
+cv
+cw
 rQ
 rQ
 rQ
@@ -11911,6 +14610,7 @@ iY
 iY
 qB
 "}
+
 (70,1,1) = {"
 rQ
 rQ
@@ -11928,19 +14628,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+cy
+cz
+cA
+cB
+cD
+cE
+cF
+cH
+cI
+cJ
+cL
+cM
+cO
 rQ
 rQ
 rQ
@@ -12041,6 +14741,7 @@ iY
 iY
 qB
 "}
+
 (71,1,1) = {"
 rQ
 rQ
@@ -12058,19 +14759,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+cP
+cR
+cS
+cT
+cU
+cV
+cX
+cY
+cZ
+da
+db
+dc
+dd
 rQ
 rQ
 rQ
@@ -12171,6 +14872,7 @@ iY
 iY
 qB
 "}
+
 (72,1,1) = {"
 rQ
 rQ
@@ -12188,19 +14890,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+de
+df
+dg
+dh
+di
+dj
+dk
+dl
+dm
+dn
+dp
+dq
+ds
 rQ
 rQ
 rQ
@@ -12301,6 +15003,7 @@ iY
 iY
 qB
 "}
+
 (73,1,1) = {"
 rQ
 rQ
@@ -12318,19 +15021,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+dt
+du
+dv
+dw
+dx
+dy
+dz
+dA
+dC
+dD
+dE
+dF
+dH
 rQ
 rQ
 rQ
@@ -12431,6 +15134,7 @@ iY
 iY
 qB
 "}
+
 (74,1,1) = {"
 rQ
 rQ
@@ -12448,19 +15152,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+dI
+dJ
+dL
+dM
+dN
+dO
+dP
+dQ
+dR
+dS
+dU
+dV
+dW
 rQ
 rQ
 rQ
@@ -12561,6 +15265,7 @@ iY
 iY
 qB
 "}
+
 (75,1,1) = {"
 rQ
 rQ
@@ -12578,19 +15283,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+dX
+dY
+ea
+eb
+ec
+ed
+ee
+ef
+eg
+eh
+ei
+ej
+ek
 rQ
 rQ
 rQ
@@ -12691,6 +15396,7 @@ iY
 iY
 qB
 "}
+
 (76,1,1) = {"
 rQ
 rQ
@@ -12708,19 +15414,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+el
+en
+eo
+ep
+eq
+er
+et
+eu
+ev
+ew
+ex
+ey
+ez
 rQ
 rQ
 rQ
@@ -12821,6 +15527,7 @@ iY
 iY
 qB
 "}
+
 (77,1,1) = {"
 rQ
 rQ
@@ -12838,19 +15545,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+eA
+eB
+eC
+eD
+eE
+eF
+eG
+eH
+eI
+eJ
+eK
+eL
+eM
 rQ
 rQ
 rQ
@@ -12951,6 +15658,7 @@ iY
 iY
 qB
 "}
+
 (78,1,1) = {"
 rQ
 rQ
@@ -12968,19 +15676,19 @@ rQ
 rQ
 rQ
 rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
-rQ
+eN
+eO
+eP
+eQ
+eS
+eT
+eU
+eV
+eW
+eX
+eY
+eZ
+fa
 rQ
 rQ
 rQ
@@ -13081,6 +15789,7 @@ iY
 iY
 qB
 "}
+
 (79,1,1) = {"
 rQ
 rQ
@@ -13211,6 +15920,7 @@ iY
 iY
 qB
 "}
+
 (80,1,1) = {"
 rQ
 rQ
@@ -13341,6 +16051,7 @@ iY
 iY
 qB
 "}
+
 (81,1,1) = {"
 rQ
 rQ
@@ -13471,6 +16182,7 @@ iY
 iY
 qB
 "}
+
 (82,1,1) = {"
 rQ
 rQ
@@ -13601,6 +16313,7 @@ iY
 iY
 qB
 "}
+
 (83,1,1) = {"
 rQ
 rQ
@@ -13731,6 +16444,7 @@ iY
 iY
 qB
 "}
+
 (84,1,1) = {"
 rQ
 rQ
@@ -13861,6 +16575,7 @@ qB
 qB
 qB
 "}
+
 (85,1,1) = {"
 rQ
 rQ
@@ -13991,6 +16706,7 @@ rQ
 rQ
 rQ
 "}
+
 (86,1,1) = {"
 rQ
 rQ
@@ -14121,6 +16837,7 @@ rQ
 rQ
 rQ
 "}
+
 (87,1,1) = {"
 rQ
 rQ
@@ -14251,6 +16968,7 @@ rQ
 rQ
 rQ
 "}
+
 (88,1,1) = {"
 rQ
 rQ
@@ -14381,6 +17099,7 @@ rQ
 rQ
 rQ
 "}
+
 (89,1,1) = {"
 rQ
 rQ
@@ -14511,6 +17230,7 @@ rQ
 rQ
 rQ
 "}
+
 (90,1,1) = {"
 rQ
 rQ
@@ -14641,6 +17361,7 @@ rQ
 rQ
 rQ
 "}
+
 (91,1,1) = {"
 rQ
 rQ
@@ -14771,6 +17492,7 @@ rQ
 rQ
 rQ
 "}
+
 (92,1,1) = {"
 rQ
 rQ
@@ -14901,6 +17623,7 @@ rQ
 rQ
 rQ
 "}
+
 (93,1,1) = {"
 rQ
 rQ
@@ -15031,6 +17754,7 @@ rQ
 rQ
 rQ
 "}
+
 (94,1,1) = {"
 rQ
 rQ
@@ -15161,6 +17885,7 @@ rQ
 rQ
 rQ
 "}
+
 (95,1,1) = {"
 rQ
 rQ
@@ -15291,6 +18016,7 @@ rQ
 rQ
 rQ
 "}
+
 (96,1,1) = {"
 rQ
 rQ
@@ -15421,6 +18147,7 @@ rQ
 rQ
 rQ
 "}
+
 (97,1,1) = {"
 rQ
 rQ
@@ -15551,6 +18278,7 @@ rQ
 rQ
 rQ
 "}
+
 (98,1,1) = {"
 rQ
 rQ
@@ -15681,6 +18409,7 @@ rQ
 rQ
 rQ
 "}
+
 (99,1,1) = {"
 rQ
 rQ
@@ -15811,6 +18540,7 @@ rQ
 rQ
 rQ
 "}
+
 (100,1,1) = {"
 rQ
 rQ
@@ -15941,6 +18671,7 @@ rQ
 rQ
 rQ
 "}
+
 (101,1,1) = {"
 rQ
 rQ
@@ -16071,6 +18802,7 @@ rQ
 rQ
 rQ
 "}
+
 (102,1,1) = {"
 rQ
 rQ
@@ -16201,6 +18933,7 @@ rQ
 rQ
 rQ
 "}
+
 (103,1,1) = {"
 rQ
 rQ
@@ -16331,6 +19064,7 @@ rQ
 rQ
 rQ
 "}
+
 (104,1,1) = {"
 rQ
 rQ
@@ -16461,6 +19195,7 @@ rQ
 rQ
 rQ
 "}
+
 (105,1,1) = {"
 rQ
 rQ
@@ -16591,6 +19326,7 @@ rQ
 rQ
 rQ
 "}
+
 (106,1,1) = {"
 rQ
 rQ
@@ -16721,6 +19457,7 @@ rQ
 rQ
 rQ
 "}
+
 (107,1,1) = {"
 rQ
 rQ
@@ -16851,6 +19588,7 @@ rQ
 rQ
 rQ
 "}
+
 (108,1,1) = {"
 rQ
 rQ
@@ -16981,6 +19719,7 @@ rQ
 rQ
 rQ
 "}
+
 (109,1,1) = {"
 rQ
 rQ
@@ -17111,6 +19850,7 @@ rQ
 rQ
 rQ
 "}
+
 (110,1,1) = {"
 rQ
 rQ
@@ -17241,6 +19981,7 @@ rQ
 rQ
 rQ
 "}
+
 (111,1,1) = {"
 rQ
 rQ
@@ -17371,6 +20112,7 @@ rQ
 rQ
 rQ
 "}
+
 (112,1,1) = {"
 rQ
 rQ
@@ -17501,6 +20243,7 @@ rQ
 rQ
 rQ
 "}
+
 (113,1,1) = {"
 rQ
 rQ
@@ -17631,6 +20374,7 @@ rQ
 rQ
 rQ
 "}
+
 (114,1,1) = {"
 rQ
 rQ
@@ -17761,6 +20505,7 @@ rQ
 rQ
 rQ
 "}
+
 (115,1,1) = {"
 rQ
 rQ
@@ -17891,6 +20636,7 @@ rQ
 rQ
 rQ
 "}
+
 (116,1,1) = {"
 rQ
 rQ
@@ -18021,6 +20767,7 @@ rQ
 rQ
 rQ
 "}
+
 (117,1,1) = {"
 rQ
 rQ
@@ -18151,6 +20898,7 @@ rQ
 rQ
 rQ
 "}
+
 (118,1,1) = {"
 rQ
 rQ
@@ -18281,6 +21029,7 @@ rQ
 rQ
 rQ
 "}
+
 (119,1,1) = {"
 rQ
 rQ
@@ -18411,6 +21160,7 @@ rQ
 rQ
 rQ
 "}
+
 (120,1,1) = {"
 rQ
 rQ
@@ -18541,6 +21291,7 @@ rQ
 rQ
 rQ
 "}
+
 (121,1,1) = {"
 rQ
 rQ
@@ -18671,6 +21422,7 @@ rQ
 rQ
 rQ
 "}
+
 (122,1,1) = {"
 rQ
 rQ
@@ -18801,6 +21553,7 @@ rQ
 rQ
 rQ
 "}
+
 (123,1,1) = {"
 rQ
 rQ
@@ -18931,6 +21684,7 @@ rQ
 rQ
 rQ
 "}
+
 (124,1,1) = {"
 rQ
 rQ
@@ -19061,6 +21815,7 @@ rQ
 rQ
 rQ
 "}
+
 (125,1,1) = {"
 rQ
 rQ
@@ -19191,6 +21946,7 @@ rQ
 rQ
 rQ
 "}
+
 (126,1,1) = {"
 tN
 rQ
@@ -19321,6 +22077,7 @@ rQ
 rQ
 rQ
 "}
+
 (127,1,1) = {"
 wO
 rQ
@@ -19451,6 +22208,7 @@ rQ
 rQ
 rQ
 "}
+
 (128,1,1) = {"
 yK
 rQ

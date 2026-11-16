@@ -16,7 +16,7 @@
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/H = user
-	if(HAS_TRAIT(user, TRAIT_OUTLAW))
+	if(HAS_TRAIT(user, TRAIT_OUTLAW) || HAS_TRAIT(user, TRAIT_TECHNOPHOBE))
 		to_chat(H, span_warning("The machine rejects you, sensing your status as an outlaw in these lands."))
 		return
 //Remove the comment on the below block to re-enable outsiders and such not having access.

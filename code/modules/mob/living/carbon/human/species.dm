@@ -721,6 +721,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		if(!I.species_exception || !is_type_in_list(src, I.species_exception))
 			return FALSE
 
+	if(HAS_TRAIT(H, TRAIT_AP_SHIRTLESS) && (slot in list(SLOT_HEAD, SLOT_SHIRT, SLOT_ARMOR)))
+		return FALSE
 	var/is_nudist = HAS_TRAIT(H, TRAIT_NUDIST)
 	var/is_inhumen = HAS_TRAIT(H, TRAIT_INHUMEN_ANATOMY)
 	var/num_arms = H.get_num_arms(FALSE)
@@ -1406,6 +1408,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		else
 			affecting.bodypart_attacked_by(user.used_intent.blade_class, damage, user, selzone, crit_message = TRUE)
 			SEND_SIGNAL(target, COMSIG_ATOM_ATTACK_HAND, user)
+			SEND_SIGNAL(user, COMSIG_AP_MOB_MELEE_HIT, target, user, null)
 			if(affecting.body_zone == BODY_ZONE_HEAD)
 				SEND_SIGNAL(user, COMSIG_HEAD_PUNCHED, target)
 		log_combat(user, target, "punched", null, "(AIMED: [uppertext(parse_zone(user.zone_selected))])")
@@ -2418,9 +2421,9 @@ GLOBAL_VAR_INIT(cold_breath_overlay, mutable_appearance(
 	if(thermal_protection >= FIRE_IMMUNITY_MAX_TEMP_PROTECT && !no_protection)
 		return
 	if(thermal_protection >= FIRE_SUIT_MAX_TEMP_PROTECT && !no_protection)
-		H.adjust_bodytemperature(1)
+		H.adjust_bodytemperature(HAS_TRAIT(H, TRAIT_AP_FIRE_RESIST) ? 0.5 : 1)
 	else
-		H.adjust_bodytemperature(2)	//arbitrary value, but our temp scale runs from 0 to 600 behind the scenes- 455 to heat level 2. standard is 300, thats 50 seconds of being on fire to top out at lvl 2
+		H.adjust_bodytemperature(HAS_TRAIT(H, TRAIT_AP_FIRE_RESIST) ? 1 : 2)	//arbitrary value, but our temp scale runs from 0 to 600 behind the scenes- 455 to heat level 2. standard is 300, thats 50 seconds of being on fire to top out at lvl 2
 
 /datum/species/proc/Canignite_mob(mob/living/carbon/human/H)
 	if(HAS_TRAIT(H, TRAIT_NOFIRE))

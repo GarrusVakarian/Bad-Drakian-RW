@@ -372,6 +372,11 @@
 //Damage will not exceed max_damage using this proc
 //Cannot apply negative damage
 /obj/item/bodypart/proc/receive_damage(brute = 0, burn = 0, stamina = 0, blocked = 0, updating_health = TRUE, required_status = null)
+	if(burn > 0 && owner)
+		if(HAS_TRAIT(owner, TRAIT_AP_FIRE_IMMUNE))
+			burn = 0
+		else if(HAS_TRAIT(owner, TRAIT_AP_FIRE_RESIST))
+			burn *= 0.5
 	update_HP()
 	var/old_brute_dam = brute_dam
 	var/old_burn_dam = burn_dam
