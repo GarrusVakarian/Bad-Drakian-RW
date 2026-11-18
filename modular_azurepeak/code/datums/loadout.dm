@@ -2374,6 +2374,11 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Slitted dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/slit
 
+/datum/loadout_item/spellsinger_robe
+	name = "Spellsinger Robe"
+	path = /obj/item/clothing/suit/roguetown/shirt/robe/spellcasterrobe
+	triumph_cost = 2
+
 // POLEARMS & STAVES
 /datum/loadout_item/tri_naledi_staff
 	name = "Naledi Staff (Decorative)"
