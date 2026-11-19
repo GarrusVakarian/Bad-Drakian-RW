@@ -53,6 +53,7 @@
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.update_tongue_noise_verbs()
+		H.update_seelie_wings()
 
 /obj/item/organ/wings/Remove(mob/living/carbon/M, special = FALSE, drop_if_replaced = TRUE)
 	if(ishuman(M))
@@ -63,6 +64,7 @@
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.update_tongue_noise_verbs()
+		H.update_seelie_wings()
 
 //TODO: Well you know what this flight stuff is a bit complicated and hardcoded, this is enough for now
 

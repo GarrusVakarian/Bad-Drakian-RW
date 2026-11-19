@@ -79,7 +79,7 @@
 
 /obj/effect/proc_holder/spell/invoked/summon_rat
 	name = "Call Beast"
-	desc = "Summon a small rodent to aid you."
+	desc = "Summon a live small rat that scurries about and eats unattended food. Feeding may turn it into a Rous; there is also a small chance to summon a Rous directly. Neither is automatically tamed."
 	overlay_state = "dendor"
 	releasedrain = 30
 	recharge_time = 60 SECONDS
@@ -115,14 +115,27 @@
 
 /obj/effect/proc_holder/spell/invoked/strip/cast(list/targets, mob/user)
 	. = ..()
+	var/mob/living/carbon/target = targets[1]
+	if(!iscarbon(target))
+		revert_cast(user)
+		return FALSE
+	var/list/eligible_items = list()
+	for(var/slot in list(SLOT_GLOVES, SLOT_SHOES, SLOT_HEAD))
+		var/obj/item/clothing/item = target.get_item_by_slot(slot)
+		if(!istype(item) || istype(item, /obj/item/clothing/head/roguetown/helmet) || !target.canUnEquip(item))
+			continue
+		eligible_items += item
+	if(!length(eligible_items))
+		to_chat(user, span_warning("There is no clothing I can remove with this spell!"))
+		revert_cast(user)
+		return FALSE
+	var/obj/item/clothing/removed_item = pick(eligible_items)
+	if(!target.dropItemToGround(removed_item))
+		revert_cast(user)
+		return FALSE
 	user.emote("giggle")
-	var/mob/living/target = targets[1]
-	if(iscarbon(target))
-		var/obj/item/object = target.get_item_by_slot(pick(SLOT_GLOVES,SLOT_SHOES,SLOT_HEAD))
-		if(!istype(object, /obj/item/clothing/head/roguetown/helmet))//Can't take helmets!	
-			target.dropItemToGround(object)
-		user.log_message("has stripped a piece of clothing from [key_name(target)] via spell", LOG_ATTACK)
-		target.log_message("has had a piece of clothing stripped by [key_name(user)] via spell", LOG_ATTACK)
+	user.log_message("has stripped [removed_item] from [key_name(target)] via spell", LOG_ATTACK)
+	target.log_message("has had [removed_item] stripped by [key_name(user)] via spell", LOG_ATTACK)
 	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/drain_stam
@@ -196,8 +209,8 @@
 
 /obj/effect/proc_holder/spell/targeted/roustame
 	name = "Tame Rous"
-	desc = "Calm a nearby Rous with magicked powder."
-	range = 5
+	desc = "Calm and tame every visible Rous within two tiles with magicked powder."
+	range = 2
 	overlay_state = "tamebeast"
 	releasedrain = 30
 	recharge_time = 30 SECONDS
@@ -209,9 +222,8 @@
 
 /obj/effect/proc_holder/spell/targeted/roustame/cast(list/targets, mob/user = usr)
 	. = ..()
-	user.visible_message(span_green("[user] soothes the beast with Seelie dust."))
 	var/tamed = FALSE
-	for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in oview(2, user))
+	for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in oview(range, user))
 		if(!B.tame)
 			B.tame = TRUE
 			B.tamed()
@@ -226,6 +238,11 @@
 			B.ai_controller.set_blackboard_key(BB_BASIC_MOB_TAMED, TRUE)
 			B.ai_controller.CancelActions()
 		tamed = B.tame
+	if(!tamed)
+		to_chat(user, span_warning("There are no Rous close enough to calm!"))
+		revert_cast(user)
+		return FALSE
+	user.visible_message(span_green("[user] soothes the nearby Rous with Seelie dust."))
 	user.log_message("has tamed a rous via the spell", LOG_GAME)
 	return tamed
 
