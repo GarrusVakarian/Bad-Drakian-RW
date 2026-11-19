@@ -17,7 +17,7 @@
 	Because of their upbringing, they make for natural conduits for godly powers. \
 	The realm's populace holds them with a mixture of uneasy mixture of fear and respect. \
 	Due to their celestial nature, it is widely believed that an Aasimar's death is a bad omen...<br>\
-	(+1 Stat of their choice, Lack of Hunger & Thirst)<br>\
+	(+1 Stat of their choice)<br>\
 	<a href='byond://winset?command=Racial-Features%20aasimar'>Racial Features: Aasimar</a><br>"
 
 	skin_tone_wording = "Craft"

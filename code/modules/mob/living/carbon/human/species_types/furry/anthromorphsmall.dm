@@ -7,7 +7,7 @@
 	desc = "<b>Critterkin</b><br>\
 	A race akin to wild-kin, except afflicted with significantly smaller stature. \
 	Sometimes referred to with the derogatory term 'verminfolk' by those that disrespect the small.<br>\
-	(+1 Speed, Keen Ears Trait)<br>\
+	(+1 Speed)<br>\
 	<a href='byond://winset?command=Racial-Features%20critterkin'>Racial Features: Critterkin</a><br>"
 
 	expanded_desc = "A race akin to wild-kin, except afflicted with significantly smaller stature. \

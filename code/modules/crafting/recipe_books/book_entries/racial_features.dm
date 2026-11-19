@@ -23,6 +23,7 @@
 		<h2>Learning</h2><p>You earn skill experience but cannot sleep to advance it. Ask a non-Construct with Journeyman Engineering or better to install a Construct skill exhibitor. The modified exhibitor permits self-use.</p>
 		<h2>Your artificial body</h2><p>You do not need food or breath, do not bleed and feel no pain. Ordinary reagents are not metabolized. Campfires and many ordinary healing effects do not repair you. You are immune to toxins and deadite infection, so do not rely on deadite recovery.</p>
 		<h2>Temperature</h2><p>Extreme cold makes your frame brittle and more vulnerable to critical injuries. Overheating lowers Willpower while increasing Speed. Metal does not make you immune to fire or environmental damage.</p>
+		<h2>Revival</h2><p>If you die, have severe damage repaired first, then seek a resurrection miracle, a Fulmenor reanimation chair or a Necran ritualist performing The Toll. An Expert engineer can also revive you with Lux infusion surgery. Your head, brain and core must be present and fit for revival. Hammer repairs alone will not bring you back. DNR blocks standard revival, but The Toll can still return you.</p>
 	"}
 
 /datum/book_entry/racial_features/doll
@@ -37,6 +38,7 @@
 		<h2>Your artificial body</h2><p>You do not need food or breath, do not bleed and feel no pain. Ordinary reagents are not metabolized. Campfires and many ordinary healing effects do not repair you. You are immune to deadite infection and cannot use deadite recovery.</p>
 		<h2>Fragile frame and replacement limbs</h2><p>Your body is Beautiful but especially vulnerable to critical injuries and dismemberment. To attach a replacement limb, apply it to your body while its corresponding limb is missing. You can do this yourself or have someone help.</p>
 		<h2>Temperature</h2><p>Extreme cold makes your frame brittle and more vulnerable to critical injuries. Overheating lowers Willpower while increasing Speed. Your artificial body does not make you immune to fire or environmental damage.</p>
+		<h2>Revival</h2><p>If you die, have severe damage repaired first, then seek a resurrection miracle, a Fulmenor reanimation chair or a Necran ritualist performing The Toll. An Expert engineer can also revive you with Lux infusion surgery. Your head, brain and core must be present and fit for revival. Hammer repairs alone will not bring you back. DNR blocks standard revival, but The Toll can still return you.</p>
 	"}
 
 /datum/book_entry/racial_features/ooze
@@ -48,7 +50,8 @@
 		<h2>Closing wounds</h2><p>Ooze wounds cannot be sewn with an ordinary needle. Use a suitable lit torch on the affected body part to singe sewable wounds closed. Medicine improves treatment.</p>
 		<h2>Blob Form</h2><p>Granted during class setup: temporarily become a small blob. Your humanoid body and equipment are stored while transformed. If the blob is killed, you return to your original body rather than dying with the blob; the ability then has a longer recovery period.</p>
 		<h2>Ooze Reshape</h2><p>Also granted during class setup: opens appearance customization without needing a mirror. It takes a brief uninterrupted action to open. This changes appearance, not your race or class.</p>
-		<h2>Losing your form</h2><p>A fatal injury collapses you into a weak, suffering blob rather than a deadite. You need revival to regain your humanoid form; the reanimation chair explicitly supports suffering Oozes. This is different from voluntarily using Blob Form. Seek help and keep the blob safe.</p>
+		<h2>Losing your form</h2><p>A fatal injury collapses you into a weak, suffering blob rather than a deadite. This is different from voluntarily using Blob Form. Keep the blob safe and seek help.</p>
+		<h2>Revival</h2><p>Ask someone to restore your suffering blob with Anastasis or a Fulmenor reanimation chair. These return you to your humanoid body; other miracles need explicit Ooze support. Ordinary Lux surgery and The Toll cannot directly target this blob. DNR does not block its special restoration.</p>
 	"}
 
 /datum/book_entry/racial_features/seelie

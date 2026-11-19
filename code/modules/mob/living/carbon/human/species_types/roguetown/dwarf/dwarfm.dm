@@ -19,7 +19,7 @@
 	to improve their crafts, both in engineering workshops and the forges. \
 	Dwarves are hearty, but are not known for their speed or eyesight... \
 	Each dwarf hails from a ancient fortress named after the most plentiful mineral.<br>\
-	(+1 Constitution, +1 Willpower, Drunken Healing Trait, Dwarvish Knowledge Trait)<br>\
+	(+1 Constitution, +1 Willpower)<br>\
 	<a href='byond://winset?command=Racial-Features%20dwarf'>Racial Features: Dwarves</a><br>"
 
 	skin_tone_wording = "Dwarf Fortress"

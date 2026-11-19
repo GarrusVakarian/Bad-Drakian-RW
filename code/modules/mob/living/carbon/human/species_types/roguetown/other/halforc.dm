@@ -14,7 +14,7 @@
 	people cannot decide between regarding you with either mere distrust or outright disgust. Yet \
 	somehow your wandering feet came to these lands, where half-orcs ply muscle and their hardiness \
 	in the rough underbelly or outer reaches of society.<br>\
-	(+1 Strength, Big Guy Trait, Bed Breaker Trait)<br>\
+	(+1 Strength)<br>\
 	<a href='byond://winset?command=Racial-Features%20half_orc'>Racial Features: Half Orcs</a><br>"
 
 	skin_tone_wording = "Clan"

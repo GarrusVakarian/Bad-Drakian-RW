@@ -6,7 +6,7 @@
 	id = "arachnid"
 	clothes_id = "lamia"
 	desc = "<b>Arachnid</b><br>\
-	(+1 Strength, -1 Speed, Webwalk Trait, Longstrider Trait, Venomous Trait)<br>\
+	(+1 Strength, -1 Speed)<br>\
 	<a href='byond://winset?command=Racial-Features%20arachnid'>Racial Features: Arachnids</a><br>"
 
 	expanded_desc = ""

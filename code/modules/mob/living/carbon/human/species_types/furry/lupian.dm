@@ -15,7 +15,7 @@
 	warriors to those who earn their loyalty. Thanks to their pack minded nature they are slow to trust the other races \
 	but form deep connections with those they do. In recent years they have been driven from the forests by unrest and the \
 	inevitable spread of the rot and pressed into cohabitation with races they'd deem lesser.<br>\
-	(+1 Constitution, +1 Intelligence, Sleuth Trait)<br>\
+	(+1 Constitution, +1 Intelligence)<br>\
 	<a href='byond://winset?command=Racial-Features%20lupian'>Racial Features: Lupians</a><br>"
 
 	expanded_desc = "Lupians live under elective monarchies, forms of feudalism where the king of a pack is chosen from, and by, the military council. \
