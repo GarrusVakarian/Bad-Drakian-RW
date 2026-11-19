@@ -30,9 +30,13 @@
 
 /datum/book_entry/racial_features/doll/inner_book_html(mob/user)
 	return {"
-		<h2>Construct upkeep</h2><p>Like Metal Constructs, you can absorb coal, charcoal or small logs for energy, stones for healing, and use a hammer or mallet outside combat mode to repair selected body parts. Engineering speeds up repairs; tongs are not needed. Lie down to regain energy.</p>
-		<h2>Learning and medicine</h2><p>You cannot sleep or metabolize ordinary reagents. Skill advancement needs a Construct skill exhibitor, as described in the Metal Constructs chapter. You do not need food or breath, do not bleed, feel no pain and cannot become a deadite.</p>
-		<h2>Fragile frame</h2><p>Your body is Beautiful but especially vulnerable to critical injuries and dismemberment. You can attach replacement limbs through your Limb Attachment trait. Select the missing body part and apply the replacement limb. Extreme cold and overheating affect you as they do other Constructs.</p>
+		<h2>Energy and fuel</h2><p>You cannot sleep. Combat mode and exertion spend energy; turn combat mode off and lie down to recover. Use coal or charcoal on yourself without weak intent to absorb it for 250 energy, or a small log for 50, up to your maximum. Another person can refuel you too.</p>
+		<h2>Stones mend your frame</h2><p>Use a stone on yourself outside combat mode for a short healing effect. Stones repair wounds and bodily damage; they do not refill energy. Magically potent stones heal more effectively.</p>
+		<h2>Hammer repairs</h2><p>Turn combat mode off, select the damaged body part and use a repair hammer or mallet on yourself. Repairs repeat until the part is mended or interrupted. Tongs are not required. Another person can repair you faster; Engineering speeds up each repair.</p>
+		<h2>Learning</h2><p>You earn skill experience but cannot sleep to advance it. Ask a non-Construct with Journeyman Engineering or better to install a Construct skill exhibitor. The modified exhibitor permits self-use.</p>
+		<h2>Your artificial body</h2><p>You do not need food or breath, do not bleed and feel no pain. Ordinary reagents are not metabolized. Campfires and many ordinary healing effects do not repair you. You are immune to deadite infection and cannot use deadite recovery.</p>
+		<h2>Fragile frame and replacement limbs</h2><p>Your body is Beautiful but especially vulnerable to critical injuries and dismemberment. To attach a replacement limb, apply it to your body while its corresponding limb is missing. You can do this yourself or have someone help.</p>
+		<h2>Temperature</h2><p>Extreme cold makes your frame brittle and more vulnerable to critical injuries. Overheating lowers Willpower while increasing Speed. Your artificial body does not make you immune to fire or environmental damage.</p>
 	"}
 
 /datum/book_entry/racial_features/ooze
@@ -92,7 +96,7 @@
 
 /datum/book_entry/racial_features/kobold/inner_book_html(mob/user)
 	return {"
-		<h2>Stones and gems</h2><p>Outside combat mode, use stones or gems on yourself to eat them. Stones provide a short wound-healing and blood-recovery effect. Gems provide a brief, stronger healing effect; better gems heal more. These are healing interactions, not Construct fuel.</p>
+		<h2>Stones and gems</h2><p>Outside combat mode, use stones or gems on yourself to eat them. Stones provide a short wound-healing and blood-recovery effect. Gems provide a brief, stronger healing effect; better gems heal more. Stones and gems heal you; they do not refill energy.</p>
 		<h2>Feral appetite</h2><p>You can eat organs and tolerate food that upsets ordinary eaters. This does not make every poison or hazardous substance safe.</p>
 	"}
 
@@ -208,7 +212,7 @@
 
 /datum/book_entry/racial_features/dark_elf/inner_book_html(mob/user)
 	return {"
-		<h2>Webs and darkness</h2><p>Webwalker lets you cross webs without being caught. Darkvision improves sight in darkness. Neither trait grants Arachnid weaving spells or immunity to every environmental hazard.</p>
+		<h2>Webs and darkness</h2><p>Webwalker lets you cross webs without being caught. Darkvision improves sight in darkness. Webwalker does not let you weave webs, silk beds or cocoons. These traits do not protect you from every environmental hazard.</p>
 	"}
 
 /datum/book_entry/racial_features/goblin
