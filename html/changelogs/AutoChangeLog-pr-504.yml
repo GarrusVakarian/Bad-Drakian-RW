@@ -1,9 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - rscadd: "All Seelie now receive their six innate spells regardless of role or class."
-  - balance: "Reduced Seelie spell cooldowns."
-  - bugfix: "Losing Seelie wings now removes hovering benefits and species fall protection."
-  - bugfix: "Overlapping Seelie luck auras use the strongest Willpower, with opposing ties cancelling."
-  - bugfix: "Strip Clothes selects eligible clothing and refunds unsuccessful casts."
-  - bugfix: "Tame Rous consistently affects a two-tile area and refunds casts when no Rous are nearby."

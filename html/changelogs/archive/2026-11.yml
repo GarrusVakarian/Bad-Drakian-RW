@@ -689,6 +689,14 @@
       red headband instead of a sack mask and armored bloodied headband.
   - bugfix: Fixed Seelie sprite layering when riding a rous.
   - bugfix: Fixed weather runtimes when no clients have initialized the weather display.
+  - rscadd: All Seelie now receive their six innate spells regardless of role or class.
+  - balance: Reduced Seelie spell cooldowns.
+  - bugfix: Losing Seelie wings now removes hovering benefits and species fall protection.
+  - bugfix: Overlapping Seelie luck auras use the strongest Willpower, with opposing
+      ties cancelling.
+  - bugfix: Strip Clothes selects eligible clothing and refunds unsuccessful casts.
+  - bugfix: Tame Rous consistently affects a two-tile area and refunds casts when
+      no Rous are nearby.
   mypingishuge:
   - rscadd: Grabs and reinforced grabs show private balloons to both participants.
       Combat Aware adds the grabbed body part.
