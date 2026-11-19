@@ -103,7 +103,7 @@
 	id = /obj/item/clothing/ring/signet/silver/inqscomm
 	belt_contents = list(/obj/item/storage/keyring/puritan = 1)
 	backpack_contents = list(
- // currently full
+		// currently full
 		/obj/item/book/rogue/bibble/psy = 1,
 		/obj/item/natural/bundle/cloth/bandage/full = 2,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 2,
