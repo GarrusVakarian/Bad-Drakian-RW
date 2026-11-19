@@ -1,4 +1,0 @@
-author: "GarrusVakarian"
-delete-after: True
-changes:
-  - bugfix: "Moved an admin-only verb that had its own tab into an already existing admin tab."
