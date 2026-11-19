@@ -72,6 +72,8 @@
 	var/list/allowed_sexes = list(MALE, FEMALE)
 	var/list/allowed_races = RACES_ALL_KINDS
 	var/list/disallowed_races = null
+	/// Apply NO_COMBAT_RACES in addition to this job's existing race restrictions.
+	var/combat_role = FALSE
 	var/list/allowed_patrons
 	var/list/allowed_ages = ALL_AGES_LIST
 
@@ -661,3 +663,13 @@
 		if(initial(subclass.maximum_possible_slots) != -1)
 			return TRUE
 	return FALSE
+
+/// One race eligibility check for roundstart, latejoin, and final assignment.
+/datum/job/proc/is_species_allowed(species_type)
+	if(combat_role && (species_type in NO_COMBAT_RACES))
+		return FALSE
+	if(length(allowed_races) && !(species_type in allowed_races))
+		return FALSE
+	if(length(disallowed_races) && (species_type in disallowed_races))
+		return FALSE
+	return TRUE

@@ -381,6 +381,8 @@ SUBSYSTEM_DEF(migrants)
 	if(!player.prefs)
 		return FALSE
 	var/datum/preferences/prefs = player.prefs
+	if(role.combat_role && (prefs.pref_species.type in NO_COMBAT_RACES))
+		return FALSE
 	if(role.disallowed_races && (prefs.pref_species.type in role.disallowed_races))
 		return FALSE
 	if(role.allowed_sexes && !(prefs.gender in role.allowed_sexes))

@@ -477,9 +477,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			return JOB_UNAVAILABLE_PQ
 	#endif
 	var/datum/species/pref_species = client.prefs.pref_species
-	if(length(job.allowed_races) && !(pref_species.type in job.allowed_races))
-		return JOB_UNAVAILABLE_RACE
-	if(length(job.disallowed_races) && (pref_species.type in job.disallowed_races))
+	if(!job.is_species_allowed(pref_species.type))
 		return JOB_UNAVAILABLE_RACE
 	var/list/allowed_sexes = list()
 	if(length(job.allowed_sexes))
