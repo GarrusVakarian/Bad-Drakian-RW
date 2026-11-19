@@ -20,7 +20,8 @@
 	individual, such as a kinder heart fleeing from a brutal society that scorns them for their \
 	less cruel nature. However, not every dark elf seen on the surface can be safely assumed as \
 	kind, for some leave the Underdark simply to find their own greater heights of power.<br>\
-	(+1 Intellect, +1 Perception, Webwalker and Dark Vision Traits)"
+	(+1 Intellect, +1 Perception, Webwalker and Dark Vision Traits)<br>\
+	<a href='byond://winset?command=Racial-Features%20dark_elf'>Racial Features: Dark Elves</a><br>"
 
 /*
 	Former RT Desc: These guys were undead which doesn't really fit considering now you have a ton of them walking around.

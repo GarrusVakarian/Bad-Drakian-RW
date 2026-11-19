@@ -17,7 +17,8 @@
 	relationships, which are capable of producing half-elven children. Elves are known for \
 	their intelligence and sharp eyes, but their graceful nature typically leaves their bodies \
 	more frail and fagile than most. In these lands, only a handful of the many Elvish tribes are seen.<br>\
-	(+1 Speed, Woodwalker Trait)"
+	(+1 Speed, Woodwalker Trait)<br>\
+	<a href='byond://winset?command=Racial-Features%20elf'>Racial Features: Elves</a><br>"
 
 	skin_tone_wording = "Tribal Identity"
 

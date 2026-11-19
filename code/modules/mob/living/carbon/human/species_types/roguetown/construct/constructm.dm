@@ -8,6 +8,7 @@
 	desc = "<b>Metallic Construct</b><br>\
 	Masterworks of artifice, metal constructs are as the name implies- entirely constructed by mortal hands. They are beings not of flesh and blood, but cold metal and the arcyne. Constructs are said to originate from works of Zizo, and they hail from the far-off lands of the Southern Empty- a great city of artifice, where the only artificers capable of understanding what is necessary to create the constructs live. For some reason, they have found themselves travelling out of the empty, as of late. Children of the Resonator Siphon.<br>\
 	(+1 Willpower, -2 Speed)<br>\
+	<a href='byond://winset?command=Racial-Features%20construct'>Racial Features: Metal Constructs</a><br>\
 	(Insomnia, No hunger, no blood.)"
 
 	construct = 1

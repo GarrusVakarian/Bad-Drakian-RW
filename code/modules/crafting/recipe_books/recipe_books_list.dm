@@ -218,3 +218,12 @@
 	can_spawn = FALSE
 	wiki_only = TRUE
 	types = list(/datum/book_entry/lands)
+
+/obj/item/recipe_book/racial_features
+	name = "Racial Features"
+	wiki_name = "Racial Features"
+	wiki_section = "Guides"
+	wiki_order = 0
+	can_spawn = FALSE
+	wiki_only = TRUE
+	types = list(/datum/book_entry/racial_features)

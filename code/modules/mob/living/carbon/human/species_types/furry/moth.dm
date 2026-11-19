@@ -13,7 +13,8 @@
 	Aside from their obsession with the concept of their propensity with esoteric and seemingly inhumen rites and \
 	rituals, not much is known about the moth-kin. These so-called \"mystics\" are rarely seen within humen and \
 	beastkin settlements, but those that find themselves in civilisation are oft ascended to nobility.<br>\
-	(+1 Speed, Bewinged Trait)"
+	(+1 Speed, Bewinged Trait)<br>\
+	<a href='byond://winset?command=Racial-Features%20fluvian'>Racial Features: Fluvians</a><br>"
 
 	expanded_desc = "Fluvians are a diverse race of moth-like creechers that live in sparse, nomadic communities across Grimoria. \
 	Aside from their obsession with the concept of their propensity with esoteric and seemingly inhumen rites and rituals, not much \

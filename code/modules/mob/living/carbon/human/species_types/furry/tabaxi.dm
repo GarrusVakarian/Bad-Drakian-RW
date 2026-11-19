@@ -15,7 +15,8 @@
 	Tabaxi are taller than most humans at six to seven feet. \
 	Their bodies are slender and covered in spotted or striped fur. \
 	Like most felines, Tabaxi have long tails and retractable claws.<br>\
-	(+1 Speed, Light Steps Trait)"
+	(+1 Speed, Light Steps Trait)<br>\
+	<a href='byond://winset?command=Racial-Features%20tabaxi'>Racial Features: Tabaxi</a><br>"
 
 	expanded_desc = "Tabaxi are taller than most humans at six to seven feet. \
 	Their bodies are slender and covered in spotted or striped fur. \
