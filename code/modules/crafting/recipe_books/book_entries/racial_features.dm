@@ -114,7 +114,7 @@
 
 /datum/book_entry/racial_features/fluvian/inner_book_html(mob/user)
 	return {"
-		<h2>Rigged games</h2><p>Your Blackleg trait lets you choose a result when preparing a coin flip or die roll. With a single coin, use its self-action; right-click a die to choose its outcome, then roll it normally. You can also choose to play fairly.</p>
+		<h2>Rigged games</h2><p>Your Blackleg trait lets you choose a result when preparing a coin flip or die roll. Right-click a single coin with an empty active hand to choose its next flip. Right-click a die to choose its next roll, then roll it normally. You can also choose to play fairly.</p>
 		<h2>Wings</h2><p>Your appearance choices do not automatically grant unrestricted flight. Check your actual traits and action buttons for any additional movement abilities.</p>
 	"}
 
