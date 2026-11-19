@@ -36,15 +36,6 @@
 	name = "Bathhouse Attendant"
 	// This is just a base outfit, the actual outfits are defined in the advclasses
 
-/datum/outfit/job/roguetown/nightmaiden/pre_equip(mob/living/carbon/human/H)
-	..()
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
-
 /datum/advclass/nightmaiden
 	allowed_races = list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE, /datum/species/seelie)
 	name = "Bath Attendant"

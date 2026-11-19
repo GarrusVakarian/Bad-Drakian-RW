@@ -114,6 +114,13 @@
 	C.set_light(3, 1, 1, l_color = "#d4fcac")
 	C.verbs |= (/mob/living/carbon/human/proc/Turnlight)
 	C.verbs |= (/mob/living/carbon/proc/switchaura)
+	// Innate magic belongs to the body, including before a mind is assigned.
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
+	C.AddSpell(new /obj/effect/proc_holder/spell/targeted/seelie_kiss)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
+	C.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
 
 /datum/species/seelie/after_creation(mob/living/carbon/C)
 	..()
@@ -124,6 +131,12 @@
 	UnregisterSignal(C, COMSIG_MOB_SAY)
 	C.verbs -= /mob/living/carbon/human/proc/Turnlight
 	C.verbs -= /mob/living/carbon/proc/switchaura
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/seelie_dust)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/summon_rat)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/targeted/seelie_kiss)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/projectile/splash)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/targeted/roustame)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/strip)
 	REMOVE_TRAIT(C, TRAIT_TINY, "[type]")
 	REMOVE_TRAIT(C, TRAIT_NOFALLDAMAGE1, TRAIT_GENERIC)
 	C.transform = C.transform.Scale(2, 2)
