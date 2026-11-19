@@ -666,6 +666,7 @@
   GarrusVakarian:
   - bugfix: Moved an admin-only verb that had its own tab into an already existing
       admin tab.
+  - map: The backdoor to the smithy on Smollhill now starts locked.
   Khanivore:
   - sound: Dragons feet got heavier with werewolf footstep noise
   _Rarity:
