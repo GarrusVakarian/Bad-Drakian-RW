@@ -4,7 +4,7 @@
 	action_icon = 'icons/mob/actions/baothamiracles.dmi'
 	overlay_state = "powder"
 	releasedrain = 50
-	recharge_time = 150 SECONDS
+	recharge_time = 90 SECONDS
 	range = 7
 	cast_without_targets = TRUE
 	sound = 'sound/magic/churn.ogg'
@@ -82,7 +82,7 @@
 	desc = "Summon a small rodent to aid you."
 	overlay_state = "dendor"
 	releasedrain = 30
-	recharge_time = 2 MINUTES
+	recharge_time = 60 SECONDS
 	range = 7
 	cast_without_targets = TRUE
 	sound = 'sound/magic/churn.ogg'
@@ -107,7 +107,7 @@
 	action_icon = 'icons/mob/actions/xylixmiracles.dmi'
 	overlay_state = "slip"
 	releasedrain = 80
-	recharge_time = 6 MINUTES
+	recharge_time = 60 SECONDS
 	range = 1
 	cast_without_targets = TRUE
 	sound = 'sound/magic/churn.ogg'
@@ -200,7 +200,7 @@
 	range = 5
 	overlay_state = "tamebeast"
 	releasedrain = 30
-	recharge_time = 3 MINUTES
+	recharge_time = 30 SECONDS
 	max_targets = 0
 	cast_without_targets = TRUE
 	sound = 'sound/magic/churn.ogg'
@@ -234,7 +234,7 @@
 	desc = "Blow a kiss at your target, forcing their body to mend itself at the cost of some nausea."
 	overlay_state = "love"
 	releasedrain = 0
-	recharge_time = 4 MINUTES
+	recharge_time = 60 SECONDS
 	range = 1
 	invocation_type = "none" //can be none, whisper, emote and shout
 
@@ -263,7 +263,7 @@
 	releasedrain = 50
 	chargedrain = 1
 	chargetime = 5
-	recharge_time = 3 MINUTES
+	recharge_time = 20 SECONDS
 	warnie = "spellwarning"
 	no_early_release = TRUE
 	movement_interrupt = FALSE
