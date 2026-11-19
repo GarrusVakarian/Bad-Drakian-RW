@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - map: "The backdoor to the smithy on Smollhill now starts locked."
