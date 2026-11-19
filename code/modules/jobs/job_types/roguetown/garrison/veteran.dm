@@ -94,7 +94,7 @@
 	gloves = /obj/item/clothing/gloves/roguetown/plate/iron
 	wrists = /obj/item/clothing/wrists/roguetown/splintarms/iron
 	shoes = /obj/item/clothing/shoes/roguetown/boots/armor
-	beltr = /obj/item/storage/keyring/guardcastle
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	cloak = /obj/item/clothing/cloak/half/vet
 	belt = /obj/item/storage/belt/rogue/leather/black
@@ -202,7 +202,7 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers
 	shoes = /obj/item/clothing/shoes/roguetown/boots/armor
 	beltl = /obj/item/rogueweapon/scabbard/sword
-	beltr = /obj/item/storage/keyring/guardcastle
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/black
 	cloak = /obj/item/clothing/cloak/half/vet
@@ -317,10 +317,10 @@
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/black
 	cloak = /obj/item/clothing/cloak/half/vet
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/steel/special = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/mid = 1 // Former noble, so it makes sense for them to have some more starting capital
 		)
 	H.verbs |= /mob/proc/haltyell
@@ -419,7 +419,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/grenzelhoft
 	gloves = /obj/item/clothing/gloves/roguetown/angle/grenzelgloves
 	beltl = /obj/item/rogueweapon/sword/short
-	beltr = /obj/item/storage/keyring/guardcastle
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/black
 	cloak = /obj/item/clothing/cloak/half/vet
@@ -530,9 +530,9 @@
 	r_hand = /obj/item/rogueweapon/greataxe/steel
 	belt = /obj/item/storage/belt/rogue/leather/black
 	cloak = /obj/item/clothing/cloak/wardencloak
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/steel/special = 1,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
 		)
 	H.verbs |= /mob/proc/haltyell
@@ -632,10 +632,10 @@
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/knifebelt/iron
 	cloak = /obj/item/clothing/cloak/raincloak/mortus
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/silver/elvish = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/poison = 1,
 		/obj/item/lockpickring/mundane,
 		)

@@ -71,7 +71,7 @@
 	backr = /obj/item/storage/backpack/rogue/satchel
 	belt = /obj/item/storage/belt/rogue/leather
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
-	beltr = /obj/item/storage/keyring/innkeep
+	belt_contents = list(/obj/item/storage/keyring/innkeep = 1)
 	if(should_wear_femme_clothes(H))
 		armor = /obj/item/clothing/suit/roguetown/shirt/dress
 		cloak = /obj/item/clothing/cloak/apron/waist

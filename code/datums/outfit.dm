@@ -106,6 +106,9 @@
 	 */
 	var/list/backpack_contents = null
 
+	/// Items explicitly placed inside the belt; uses the same path=count format.
+	var/list/belt_contents = null
+
 	/// Internals box. Will be inserted at the start of backpack_contents
 	var/box
 
@@ -252,13 +255,17 @@
 //			backpack_contents.Insert(1, box)
 //			backpack_contents[box] = 1
 
-		if(backpack_contents && !visualsOnly)
-			for(var/path in backpack_contents)
-				var/number = backpack_contents[path]
+		for(var/list/container_contents in list(belt_contents, backpack_contents))
+			for(var/path in container_contents)
+				var/number = container_contents[path]
 				if(!isnum(number))//Default to 1
 					number = 1
 				for(var/i in 1 to number)
 					var/obj/item/new_item = new path(H)
+					if(container_contents == belt_contents)
+						var/obj/item/starting_belt = H.get_item_by_slot(SLOT_BELT)
+						if(starting_belt && SEND_SIGNAL(starting_belt, COMSIG_TRY_STORAGE_INSERT, new_item, null, TRUE))
+							continue
 					var/obj/item/item = H.get_item_by_slot(SLOT_BACK_L)
 					if(!item)
 						item = H.get_item_by_slot(SLOT_BACK_R)

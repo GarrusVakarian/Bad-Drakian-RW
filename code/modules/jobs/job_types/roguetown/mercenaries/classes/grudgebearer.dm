@@ -48,8 +48,8 @@
 		pants = /obj/item/clothing/under/roguetown/trou/leather
 		armor = /obj/item/clothing/suit/roguetown/armor/plate/full/dwarven/smith
 		head = /obj/item/clothing/head/roguetown/helmet/heavy/dwarven/smith
+		belt_contents = list(/obj/item/roguekey/mercenary = 1)
 		backpack_contents = list(
-			/obj/item/roguekey/mercenary,
 			/obj/item/storage/belt/rogue/pouch/coins/poor,
 			/obj/item/rogueweapon/hammer/iron,
 			/obj/item/paper/scroll/grudge,
@@ -103,8 +103,8 @@
 		pants = /obj/item/clothing/under/roguetown/trou/leather
 		armor = /obj/item/clothing/suit/roguetown/armor/plate/full/dwarven
 		head = /obj/item/clothing/head/roguetown/helmet/heavy/dwarven
+		belt_contents = list(/obj/item/roguekey/mercenary = 1)
 		backpack_contents = list(
-			/obj/item/roguekey/mercenary,
 			/obj/item/storage/belt/rogue/pouch/coins/poor,
 			/obj/item/rogueweapon/hammer/iron,
 			/obj/item/paper/scroll/grudge,

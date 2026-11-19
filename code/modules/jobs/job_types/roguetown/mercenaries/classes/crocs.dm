@@ -136,8 +136,8 @@
 	belt = /obj/item/storage/belt/rogue/leather/black
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/shadowpants/maille
 	backl = /obj/item/storage/backpack/rogue/satchel/black
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1, 
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1, 
 		/obj/item/rogueweapon/huntingknife/idagger/steel/dirk = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
@@ -297,8 +297,8 @@
 	mask = /obj/item/clothing/mask/rogue/shepherd/shadowmask/delf
 	neck = /obj/item/clothing/neck/roguetown/chaincoif/chainmantle
 	backl = /obj/item/storage/backpack/rogue/satchel/black
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1, 
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1, 
 		/obj/item/rogueweapon/huntingknife/idagger/steel/dirk = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,

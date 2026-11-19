@@ -101,14 +101,15 @@
 	mask = /obj/item/clothing/head/roguetown/helmet/blacksteel/psythorns
 	head = /obj/item/clothing/head/roguetown/helmet/heavy/absolver
 	id = /obj/item/clothing/ring/signet/silver/inqscomm
-	backpack_contents = list( // currently full
+	belt_contents = list(/obj/item/storage/keyring/puritan = 1)
+	backpack_contents = list(
+ // currently full
 		/obj/item/book/rogue/bibble/psy = 1,
 		/obj/item/natural/bundle/cloth/bandage/full = 2,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 2,
 		/obj/item/paper/inqslip/arrival/abso = 1,
 		/obj/item/needle = 1,
 		/obj/item/natural/worms/leech/cheele = 1,
-		/obj/item/storage/keyring/puritan = 1,
 		/obj/item/ritechalk = 1,
 		)
 	

@@ -93,10 +93,10 @@
 		r_hand = /obj/item/rogueweapon/sword/sabre/dec
 		head = /obj/item/clothing/head/roguetown/turban/fancypurple
 		shirt = /obj/item/clothing/suit/roguetown/shirt/robe/hierophant
+	belt_contents = list(/obj/item/storage/keyring/hand = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/dtace = 1,//You don't get killer's ice for this because you're the gross swordsmaster and I HATE YOU!!!!
 		/obj/item/rogueweapon/scabbard/sheath/royal = 1,
-		/obj/item/storage/keyring/hand = 1,
 	)
 	if(H.age == AGE_OLD)
 		H.adjust_skillrank_up_to(/datum/skill/combat/swords, 5, TRUE)
@@ -139,10 +139,10 @@
 
 //Spymaster start. More similar to the rogue adventurer - loses heavy armor and sword skills for more sneaky stuff.
 /datum/outfit/job/roguetown/hand/spymaster/pre_equip(mob/living/carbon/human/H)
+	belt_contents = list(/obj/item/storage/keyring/hand = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/dtace = 1,
 		/obj/item/rogueweapon/scabbard/sheath/royal = 1,
-		/obj/item/storage/keyring/hand = 1,
 		/obj/item/lockpickring/mundane = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/poison = 1,//Just like the wizard, since he can dip the blade.
 	)
@@ -216,10 +216,10 @@
 		shoes = /obj/item/clothing/shoes/roguetown/shalal
 		head = /obj/item/clothing/head/roguetown/turban/fancypurple
 		shirt = /obj/item/clothing/suit/roguetown/shirt/robe/hierophant
+	belt_contents = list(/obj/item/storage/keyring/hand = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/dtace = 1,
 		/obj/item/rogueweapon/scabbard/sheath/royal = 1,
-		/obj/item/storage/keyring/hand = 1,
 		/obj/item/lockpickring/mundane = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/poison = 1,//starts with a vial of poison, like all wizened evil advisors do!
 	)

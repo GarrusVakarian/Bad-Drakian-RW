@@ -88,7 +88,8 @@
 	head = /obj/item/clothing/head/roguetown/dendormask
 	id = /obj/item/clothing/neck/roguetown/psicross/dendor //Ring slot amulet for wildform so it is not dropping on the ground.
 	shirt = /obj/item/clothing/suit/roguetown/shirt/robe/dendor
-	backpack_contents = list(/obj/item/ritechalk, /obj/item/storage/keyring/churchie, /obj/item/seeds/treesap)
+	belt_contents = list(/obj/item/storage/keyring/churchie = 1)
+	backpack_contents = list(/obj/item/ritechalk, /obj/item/seeds/treesap)
 	if(H.age == AGE_OLD)
 		H.adjust_skillrank_up_to(/datum/skill/magic/holy, 5, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/magic/druidic, 5, TRUE)

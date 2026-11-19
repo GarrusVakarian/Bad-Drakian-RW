@@ -85,7 +85,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/suspenders/butler // Aware that these render over shit like coats. it's a problem for another day, in my time.
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad
 
@@ -120,7 +120,7 @@
 	cloak = /obj/item/clothing/cloak/apron/maid
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/sash
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad
 
@@ -155,6 +155,6 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/suspenders/butler
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad

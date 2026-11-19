@@ -48,8 +48,8 @@
 	gloves = /obj/item/clothing/gloves/roguetown/plate/kote
 	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/kazengun
 	backl = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/flashlight/flare/torch/lantern,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
 		/obj/item/rogueweapon/scabbard/sheath/kazengun
@@ -143,8 +143,8 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	gloves = /obj/item/clothing/gloves/roguetown/plate/kote
 	backl = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/flashlight/flare/torch/lantern,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
 		)

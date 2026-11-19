@@ -62,8 +62,8 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/psydonboots
 	mask = /obj/item/clothing/mask/rogue/sack/psy
 	id = /obj/item/clothing/ring/signet/silver/inqscomm
+	belt_contents = list(/obj/item/roguekey/inquisition = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/inquisition = 1,
 		/obj/item/grapplinghook = 1,
 		/obj/item/paper/inqslip/arrival/ortho = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/mid = 1,

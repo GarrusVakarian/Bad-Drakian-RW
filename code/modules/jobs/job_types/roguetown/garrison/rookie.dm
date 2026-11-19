@@ -92,11 +92,11 @@
 		head = /obj/item/clothing/head/roguetown/helmet/janissaryhelm
 		shoes = /obj/item/clothing/shoes/roguetown/shalal
 		shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/zyb
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger,
 		/obj/item/storage/belt/rogue/pouch,
 		/obj/item/rogueweapon/scabbard/sheath,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/rogueweapon/hammer/iron,
 		)
 	H.adjust_blindness(-3)
@@ -164,11 +164,11 @@
 		head = /obj/item/clothing/head/roguetown/helmet/janissaryhelm
 		shoes = /obj/item/clothing/shoes/roguetown/shalal
 		shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/zyb
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger,
 		/obj/item/storage/belt/rogue/pouch,
 		/obj/item/rogueweapon/scabbard/sheath,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/rogueweapon/hammer/iron,
 		)
 	H.adjust_blindness(-3)

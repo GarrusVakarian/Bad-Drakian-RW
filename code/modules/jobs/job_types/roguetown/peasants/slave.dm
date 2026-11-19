@@ -35,7 +35,7 @@
 	pants = /obj/item/clothing/under/roguetown/tights/random
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
-	beltl = /obj/item/storage/keyring/rockhillslaves
+	belt_contents = list(/obj/item/storage/keyring/rockhillslaves = 1)
 
 // Slave Subclasses
 

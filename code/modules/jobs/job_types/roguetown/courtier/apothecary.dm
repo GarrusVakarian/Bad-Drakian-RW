@@ -60,7 +60,11 @@
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 	beltl = /obj/item/storage/belt/rogue/surgery_bag/full/physician
-	beltr = /obj/item/roguekey/physician
+	belt_contents = list(
+		/obj/item/roguekey/physician = 1,
+		/obj/item/storage/keyring = 1,
+		/obj/item/roguekey/keeper = 1,
+	)
 	id = /obj/item/scomstone/bad
 	r_hand = /obj/item/rogueweapon/woodstaff/
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
@@ -69,8 +73,6 @@
 		/obj/item/natural/worms/leech/cheele = 1,
 		/obj/item/recipe_book/alchemy = 1,
 		/obj/item/clothing/mask/rogue/physician = 1,
-		/obj/item/storage/keyring = 1,
-		/obj/item/roguekey/keeper = 1,
 		/obj/item/mini_flagpole/apothecary
 	)
 	if(H.mind)

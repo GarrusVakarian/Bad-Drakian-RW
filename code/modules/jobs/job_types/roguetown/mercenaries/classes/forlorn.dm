@@ -54,9 +54,9 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
 	armor = /obj/item/clothing/suit/roguetown/armor/brigandine/light
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife,
-		/obj/item/roguekey/mercenary,
 		/obj/item/rogueweapon/scabbard/sheath,
 		/obj/item/storage/belt/rogue/pouch/coins/poor
 		)

@@ -33,7 +33,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/guard
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	belt = /obj/item/storage/belt/rogue/leather
-	beltl = /obj/item/storage/keyring/squire
+	belt_contents = list(/obj/item/storage/keyring/squire = 1)
 	id = /obj/item/scomstone/bad/garrison
 	neck = /obj/item/clothing/neck/roguetown/chaincoif
 	backr = /obj/item/storage/backpack/rogue/satchel

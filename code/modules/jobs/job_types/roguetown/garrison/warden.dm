@@ -107,8 +107,8 @@
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve/warden
 	beltr = /obj/item/quiver/arrows
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/warden_machete
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
@@ -188,8 +188,8 @@
 	beltr = /obj/item/rogueweapon/stoneaxe/woodcut/wardenpick
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/warden_machete
 	r_hand = /obj/item/rogueweapon/spear
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/signal_horn = 1
@@ -208,8 +208,8 @@
 				backl = /obj/item/rogueweapon/shield/iron
 				beltl = /obj/item/rogueweapon/scabbard/sword
 				r_hand = /obj/item/rogueweapon/sword/short/messer
+				belt_contents = list(/obj/item/storage/keyring/guard = 1)
 				backpack_contents = list(
-					/obj/item/storage/keyring/guard = 1,
 					/obj/item/flashlight/flare/torch/lantern = 1,
 					/obj/item/rogueweapon/scabbard/sheath = 1,
 					/obj/item/rogueweapon/huntingknife/idagger/warden_machete = 1,

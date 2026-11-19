@@ -35,7 +35,8 @@
 	head = /obj/item/clothing/head/roguetown/jester
 	mask = /obj/item/clothing/mask/rogue/xylixmask
 	neck = /obj/item/clothing/neck/roguetown/coif
-	backpack_contents = list(/obj/item/storage/keyring/servant)
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
+	backpack_contents = list()
 	H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/reading, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/sneaking, 4, TRUE)

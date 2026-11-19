@@ -40,8 +40,8 @@
 	gloves = /obj/item/clothing/gloves/roguetown/angle/grenzelgloves/freifechter
 	backr = /obj/item/storage/backpack/rogue/satchel/short
 	mask = /obj/item/clothing/mask/rogue/spectacles/duelist
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/natural/bundle/cloth/bandage/full = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor
 		)
@@ -104,8 +104,8 @@
 	backr = /obj/item/storage/backpack/rogue/satchel/short
 	mask = /obj/item/clothing/mask/rogue/spectacles/duelist
 	id = /obj/item/rogueweapon/katar/punchdagger/frei
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/natural/bundle/cloth/bandage/full = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor
 		)
@@ -164,8 +164,8 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/jackchain	//Obsessed with arms-hands. Keeping them protected on-spawn.
 	backr = /obj/item/storage/backpack/rogue/satchel/short
 	mask = /obj/item/clothing/mask/rogue/spectacles/duelist
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/natural/bundle/cloth/bandage/full = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor
 		)

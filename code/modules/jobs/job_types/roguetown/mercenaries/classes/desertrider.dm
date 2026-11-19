@@ -44,8 +44,8 @@
 	pants = /obj/item/clothing/under/roguetown/splintlegs
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	id = /obj/item/clothing/neck/roguetown/shalal
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kukri,
 		/obj/item/flashlight/flare/torch,
 		/obj/item/rogueweapon/scabbard/sheath,
@@ -122,8 +122,8 @@
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	l_hand = /obj/item/rogueweapon/sword/sabre/shamshir
 	id = /obj/item/clothing/neck/roguetown/shalal
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kukri,
 		/obj/item/rogueweapon/scabbard/sheath,
 		/obj/item/flashlight/flare/torch,
@@ -202,8 +202,8 @@
 	pants = /obj/item/clothing/under/roguetown/trou/leather/pontifex/zyb
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	id = /obj/item/clothing/neck/roguetown/shalal
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kukri,
 		/obj/item/rogueweapon/scabbard/sheath,
 		/obj/item/spellbook_unfinished/pre_arcyne,

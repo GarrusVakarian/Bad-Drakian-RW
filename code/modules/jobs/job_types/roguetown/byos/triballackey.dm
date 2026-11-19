@@ -85,8 +85,8 @@
 	if(!H.has_language(/datum/language/draconic))
 		H.grant_language(/datum/language/draconic)
 	r_hand = /obj/item/rogueweapon/spear/stone
+	belt_contents = list(/obj/item/roguekey/tribal = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/tribal = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
 		/obj/item/flashlight/flare/torch = 1,
