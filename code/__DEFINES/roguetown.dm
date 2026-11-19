@@ -90,6 +90,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/anthromorphsmall,\
 	/datum/species/kobold,\
 	/datum/species/tieberian,\
+	/datum/species/seelie,\
 	/datum/species/ooze\
 
 #define RACES_SHUNNED \
@@ -134,6 +135,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/dwarf/gnome,\
 	/datum/species/harpy,\
 	/datum/species/arachnid,\
+	/datum/species/seelie,\
 )
 #define ALL_BUT_BLOODLESS list(\
 	/datum/species/human/northern,\
@@ -160,6 +162,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/lamia,\
 	/datum/species/dwarf/gnome,\
 	/datum/species/harpy,\
+	/datum/species/seelie,\
 	/datum/species/arachnid\
 )
 
@@ -185,15 +188,15 @@ Balloon Alert / Floating Text defines
 	/datum/species/construct/metal/porcelain,\
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
+	/datum/species/seelie,\
 	/datum/species/arachnid,\
 )
 
-#define RACES_ALL_KINDS list(RACES_DESPISED, RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)	//Truely no restrictions
+#define RACES_ALL_KINDS list(RACES_DESPISED, RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)
 
-// Species excluded from roles with combat_role = TRUE, even if an allowlist includes them.
 #define NO_COMBAT_RACES list(/datum/species/seelie)
 
-#define ACCEPTED_RACES list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)	//Allows all races except dallahun
+#define ACCEPTED_RACES list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)
 
 #define RACES_NO_CONSTRUCT list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED)
 
