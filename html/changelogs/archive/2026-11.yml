@@ -686,6 +686,7 @@
   - rscadd: Arachnids can now choose an optional Tentacle tail.
   - balance: Arbalists now start with a Psydonic volfskulle bascinet and cosmetic
       red headband instead of a sack mask and armored bloodied headband.
+  - bugfix: Fixed Seelie sprite layering when riding a rous.
   mypingishuge:
   - rscadd: Grabs and reinforced grabs show private balloons to both participants.
       Combat Aware adds the grabbed body part.
