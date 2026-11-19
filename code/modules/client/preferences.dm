@@ -2514,9 +2514,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/faith_input = tgui_input_list(user, "The world rots. Which truth you bear?", "FAITH", faiths_named)
 					if(faith_input)
 						var/datum/faith/faith = faiths_named[faith_input]
-						to_chat(user, "<font color='yellow'>Faith: [faith.name]</font>")
-						to_chat(user, "Background: [faith.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>")
+						var/faith_info = "Background: [faith.desc]<br><br>"
+						faith_info += "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>"
+						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
 						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
 
 				if("patron")
@@ -2531,12 +2531,12 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/god_input = tgui_input_list(user, "The first amongst many.", "PATRON", patrons_named)
 					if(god_input)
 						selected_patron = patrons_named[god_input]
-						to_chat(user, "<font color='yellow'>Patron: [selected_patron]</font>")
-						to_chat(user, "<font color='#FFA500'>Domain: [selected_patron.domain]</font>")
-						to_chat(user, "Background: [selected_patron.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font>")
-						to_chat(user, "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font>")
-						to_chat(user, "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>")
+						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
+						patron_info += "Background: [selected_patron.desc]<br><br>"
+						patron_info += "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
+						patron_info += "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font><br>"
+						patron_info += "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>"
+						to_chat(user, fieldset_block("Patron: [selected_patron.name]", patron_info, "patrondesc_block"))
 
 				if("polytheism")
 					var/list/polytheism_deities = list("NONE")
