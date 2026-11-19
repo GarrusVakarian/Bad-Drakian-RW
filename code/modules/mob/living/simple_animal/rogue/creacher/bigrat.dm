@@ -113,10 +113,14 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/post_buckle_mob(mob/living/M)
 	. = ..()
+	// Apply the riding layer immediately, before the first movement update.
+	layer = OBJ_LAYER
 	ai_controller?.reset_ai_status()
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/post_unbuckle_mob(mob/living/M)
 	. = ..()
+	if(!has_buckled_mobs() && stat != DEAD)
+		layer = initial(layer)
 	ai_controller?.reset_ai_status()
 
 
@@ -128,13 +132,6 @@
 		eye_lights.plane = 19
 		eye_lights.layer = 19
 		add_overlay(eye_lights)
-		if(has_buckled_mobs())
-			if(gender == FEMALE)
-				var/mutable_appearance/mounted = mutable_appearance(icon, "Frat", 4.3)
-				add_overlay(mounted)
-			else
-				var/mutable_appearance/mounted = mutable_appearance(icon, "rat", 4.3)
-				add_overlay(mounted)
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/get_sound(input)
 	switch(input)
