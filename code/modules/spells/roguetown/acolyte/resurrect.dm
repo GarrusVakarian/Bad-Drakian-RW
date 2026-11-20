@@ -74,12 +74,19 @@
 			to_chat(user, span_warning("I need a holy [initial(temp_structure.name)] near [target]."))
 			revert_cast(user)
 			return FALSE
+		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+		if(!ooze)
+			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+			if(underworld_spirit)
+				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+				qdel(underworld_spirit)
+				ghost.mind.transfer_to(target, TRUE)
+			target.grab_ghost(force = TRUE)
 		var/precheck_error = get_revival_precheck_error(target, user)
 		if(precheck_error)
 			to_chat(user, span_warning(precheck_error))
 			revert_cast(user)
 			return FALSE
-		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
 		if(ooze)
 			var/mob/living/body = ooze.stored
 			if(!target.revive())
@@ -88,12 +95,6 @@
 			target = body
 			targets[1] = body
 		else
-			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-			if(underworld_spirit)
-				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-				qdel(underworld_spirit)
-				ghost.mind.transfer_to(target, TRUE)
-			target.grab_ghost(force = TRUE)
 			if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
 				revert_cast(user)
 				return FALSE

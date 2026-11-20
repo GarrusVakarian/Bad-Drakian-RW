@@ -187,7 +187,7 @@
 	name = "Economy"
 	wiki_name = "Economy"
 	wiki_section = "Guides"
-	wiki_order = 1
+	wiki_order = 3
 	can_spawn = FALSE
 	wiki_only = TRUE
 	types = list(/datum/book_entry/treasury_general, /datum/book_entry/treasury_realm, /datum/book_entry/treasury_merchant, /datum/book_entry/treasury_underground)
@@ -214,7 +214,7 @@
 	name = "Lands"
 	wiki_name = "Lands"
 	wiki_section = "Guides"
-	wiki_order = 3
+	wiki_order = 1
 	can_spawn = FALSE
 	wiki_only = TRUE
 	types = list(/datum/book_entry/lands)
