@@ -712,6 +712,8 @@
   _Rarity:
   - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
   - qol: Classes with belts now start with their keys and keyrings inside them.
+  - qol: Right-click your selected Origin in character setup to reset it to None.
+  - qol: Character customization pickers highlight and scroll to your saved choices.
   mypingishuge:
   - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
       and ear customization, with any lower body.
