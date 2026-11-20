@@ -10,6 +10,10 @@
 #define LACES_NEARFAIL_CEIL			5
 #define LACES_TRIP_KNOCKDOWN		2 SECONDS
 #define LACES_TRIP_GRACE			3 SECONDS
+/// Steps closer together than this count as hurrying.
+#define LACES_BRISK_GAP				0.5 SECONDS
+/// How many hurried steps in a row you get away with at walk intent before going down.
+#define LACES_BRISK_STEPS_TO_TRIP	5
 
 /datum/intent/tie_laces
 	name = "tie laces"
@@ -33,6 +37,9 @@
 	examine_text = "<span class='warning'>SUBJECTPRONOUN is standing in shoes that have been laced together!</span>"
 	/// The shoes the laces were tied on. Take them off and the knot goes with them.
 	var/obj/item/clothing/shoes/tied_shoes
+	/// Hurried steps taken in a row. Walk briskly for too long and you go down.
+	var/brisk_steps = 0
+	var/last_step_time = 0
 	COOLDOWN_DECLARE(trip_grace)
 
 /datum/status_effect/tied_laces/on_creation(mob/living/new_owner, obj/item/clothing/shoes/shoes)
@@ -64,20 +71,30 @@
 
 /datum/status_effect/tied_laces/proc/on_move(datum/source, atom/old_loc, movement_dir, forced)
 	SIGNAL_HANDLER
-	if(forced || owner.m_intent != MOVE_INTENT_RUN)
-		return
-	if(!isturf(owner.loc) || owner.loc == old_loc)
+	if(forced || !isturf(owner.loc) || owner.loc == old_loc)
 		return
 	if(owner.throwing || owner.buckled || owner.moving_from_pull || (owner.movement_type & FLYING))
 		return
 	if(!(owner.mobility_flags & MOBILITY_STAND))
 		return
+	// Keep count of how many hurried steps they've taken in a row. A pause resets it.
+	if(world.time - last_step_time <= LACES_BRISK_GAP)
+		brisk_steps++
+	else
+		brisk_steps = 0
+	last_step_time = world.time
 	if(!COOLDOWN_FINISHED(src, trip_grace))
 		return
-	trip()
+	switch(owner.m_intent)
+		if(MOVE_INTENT_RUN)
+			trip()
+		if(MOVE_INTENT_WALK)
+			if(brisk_steps >= LACES_BRISK_STEPS_TO_TRIP)
+				trip()
 
 /datum/status_effect/tied_laces/proc/trip()
 	COOLDOWN_START(src, trip_grace, LACES_TRIP_GRACE)
+	brisk_steps = 0
 	owner.visible_message(span_danger("[owner] trips over [owner.p_their()] own laces and goes down hard!"), \
 		span_userdanger("My laces are tied together! I trip and fall flat on my face!"))
 	playsound(owner, "bodyfall", 80, TRUE)
@@ -243,3 +260,5 @@
 #undef LACES_NEARFAIL_CEIL
 #undef LACES_TRIP_KNOCKDOWN
 #undef LACES_TRIP_GRACE
+#undef LACES_BRISK_GAP
+#undef LACES_BRISK_STEPS_TO_TRIP
