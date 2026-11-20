@@ -356,7 +356,6 @@
 		return FALSE
 
 	var/mob/living/carbon/human/H = ooze ? ooze.stored : patient
-	var/restored_ooze = FALSE
 
 	if(H == user)
 		to_chat(user, span_warning("You cannot ABSOLVE yourself!"))
@@ -371,20 +370,18 @@
 		if(!confirm_absolution(user, patient))
 			revert_cast(user)
 			return FALSE
-		if(ooze)
+		if(H != patient)
 			// Both prompts can yield; the blob may already have recovered or disappeared.
-			if(QDELETED(user) || user.stat == DEAD || QDELETED(patient) || patient.get_ooze_revival_holder() != ooze || !patient.revive())
+			if(QDELETED(user) || user.stat == DEAD || QDELETED(ooze) || !ooze.revive_patient(targets))
 				revert_cast(user)
 				return FALSE
-			targets[1] = H
-			restored_ooze = TRUE
 		// Create visual effects
 		H.apply_status_effect(/datum/status_effect/buff/psyvived)
 		// Kill the caster
 		user.say("MY LYFE FOR YOURS! LYVE, AS DOES HE!", forced = TRUE, count_for_stats = FALSE)
 		user.death()
 		// Revive the target
-		if(!restored_ooze)
+		if(H == patient)
 			H.revive(full_heal = TRUE, admin_revive = FALSE)
 		H.adjustOxyLoss(-H.getOxyLoss())
 		H.grab_ghost(force = TRUE) // even suicides

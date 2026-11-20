@@ -79,28 +79,22 @@
 	testing("revived1")
 	var/mob/living/target = targets[1]
 	var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
-	if(ooze)
-		var/mob/living/body = ooze.stored
-		if(!target.revive())
-			revert_cast(user)
-			return FALSE
-		target = body
-		targets[1] = body
-	else
-		if(!target.check_revive(user))
-			revert_cast(user)
-			return FALSE
+	if(!ooze && !target.check_revive(user))
+		revert_cast(user)
+		return FALSE
+	if(!ooze)
 		if(GLOB.tod == "night")
 			to_chat(user, span_warning("Let there be light."))
 		for(var/obj/structure/fluff/psycross/S in oview(5, user))
 			S.AOE_flash(user, range = 8)
-		if(target.mob_biotypes & MOB_UNDEAD) //positive energy harms the undead
-			target.visible_message(
-				span_danger("[target] is unmade by holy light!"),
-				span_userdanger("I'm unmade by holy light!")
-			)
-			target.gib()
-			return TRUE
+	if(!ooze && (target.mob_biotypes & MOB_UNDEAD)) //positive energy harms the undead
+		target.visible_message(
+			span_danger("[target] is unmade by holy light!"),
+			span_userdanger("I'm unmade by holy light!")
+		)
+		target.gib()
+		return TRUE
+	if(!ooze)
 		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
 		//GET OVER HERE!
 		if(underworld_spirit)
@@ -108,10 +102,16 @@
 			qdel(underworld_spirit)
 			ghost.mind.transfer_to(target, TRUE)
 		target.grab_ghost(force = TRUE) // even suicides
-		if(!target.mind.active)
-			to_chat(user, "[target] will not return from afterlife.")
+	if(!ooze && !target.mind.active)
+		to_chat(user, "[target] will not return from afterlife.")
+		revert_cast(user)
+		return FALSE
+	if(ooze)
+		target = ooze.revive_patient(targets)
+		if(!target)
 			revert_cast(user)
 			return FALSE
+	else
 		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
 		if(!target.revive(full_heal = FALSE))
 			to_chat(user, span_warning("Nothing happens."))

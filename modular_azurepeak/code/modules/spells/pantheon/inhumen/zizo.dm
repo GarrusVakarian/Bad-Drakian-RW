@@ -515,27 +515,26 @@
 			revert_cast(user)
 			return FALSE
 		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
-		if(ooze)
-			var/mob/living/body = ooze.stored
-			if(!target.revive())
-				revert_cast(user)
-				return FALSE
-			target = body
-			targets[1] = body
-		else
+		if(!ooze)
 			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
 			if(underworld_spirit)
 				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
 				qdel(underworld_spirit)
 				ghost.mind.transfer_to(target, TRUE)
 			target.grab_ghost(force = TRUE)
-			if(!target.check_revive(user))
+		if(!ooze && !target.check_revive(user))
+			revert_cast(user)
+			return FALSE
+		if(!ooze && (target.mob_biotypes & MOB_UNDEAD)) //no effect on undead
+			to_chat(user, span_warning("[target] is undead. Nothing happens."))
+			revert_cast(user)
+			return FALSE
+		if(ooze)
+			target = ooze.revive_patient(targets)
+			if(!target)
 				revert_cast(user)
 				return FALSE
-			if(target.mob_biotypes & MOB_UNDEAD) //no effect on undead
-				to_chat(user, span_warning("[target] is undead. Nothing happens."))
-				revert_cast(user)
-				return FALSE
+		else
 			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
 			if(!target.revive(full_heal = FALSE))
 				to_chat(user, span_warning("Nothing happens."))

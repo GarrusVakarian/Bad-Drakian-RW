@@ -87,24 +87,22 @@
 			to_chat(user, span_warning(precheck_error))
 			revert_cast(user)
 			return FALSE
+		if(!ooze && !target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
+			revert_cast(user)
+			return FALSE
+		if(!ooze && (target.mob_biotypes & MOB_UNDEAD) && harms_undead) //positive energy harms the undead
+			target.visible_message(
+				span_danger("[target] is unmade by divine magic!"),
+				span_userdanger("I'm unmade by divine magic!")
+			)
+			target.gib()
+			return TRUE
 		if(ooze)
-			var/mob/living/body = ooze.stored
-			if(!target.revive())
+			target = ooze.revive_patient(targets)
+			if(!target)
 				revert_cast(user)
 				return FALSE
-			target = body
-			targets[1] = body
 		else
-			if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
-				revert_cast(user)
-				return FALSE
-			if(target.mob_biotypes & MOB_UNDEAD && harms_undead) //positive energy harms the undead
-				target.visible_message(
-					span_danger("[target] is unmade by divine magic!"),
-					span_userdanger("I'm unmade by divine magic!")
-				)
-				target.gib()
-				return TRUE
 			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
 			if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
 				to_chat(user, span_warning(get_revival_failure_message(target)))

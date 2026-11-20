@@ -261,6 +261,17 @@
 	H.restore(death = FALSE)
 	return !QDELETED(body) && body.loc != H && !body.notransform && body.stat != DEAD
 
+/// Restore a miracle's suffering patient and redirect its aftereffects to the humanoid.
+/obj/shapeshift_holder/ooze_death/proc/revive_patient(list/targets)
+	var/mob/living/patient = targets[1]
+	if(QDELETED(patient) || patient.get_ooze_revival_holder() != src)
+		return null
+	var/mob/living/body = stored
+	if(!patient.revive())
+		return null
+	targets[1] = body
+	return body
+
 /// Ordinary mobs and voluntary blob forms are not collapsed Ooze patients.
 /mob/living/proc/get_ooze_revival_holder()
 	return null
