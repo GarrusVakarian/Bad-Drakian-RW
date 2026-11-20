@@ -38,6 +38,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	var/ghostname			//replaces name for observers name if set
 	var/mob/living/current
 	var/active = 0
+	/// One critical-condition yielding tutorial per character, including across body transfers.
+	var/critical_yield_reminded = FALSE
 
 	var/memory
 

@@ -23,6 +23,19 @@
 	var/critical_recovery_started_at
 	var/critical_recovery_reminded = FALSE
 
+/// Health updates already resolve critical state; no extra life processing is needed.
+/mob/living/carbon/human/update_stat()
+	. = ..()
+	if(QDELETED(src) || !client || client.mob != src || !mind?.key || mind.current != src || mind.critical_yield_reminded || surrendering || (status_flags & GODMODE))
+		return
+	if(stat != SOFT_CRIT && stat != UNCONSCIOUS)
+		return
+	// Sleeping and ordinary knockouts also use UNCONSCIOUS; require an actual critical cause.
+	if(!InCritical() && !(blood_volume <= BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(src, TRAIT_BLOODLOSS_IMMUNE)) && getOxyLoss() <= 75)
+		return
+	mind.critical_yield_reminded = TRUE
+	to_chat(src, span_notice("<b>You are critically injured!</b> Right-click the Combat Mode button to <b>yield</b>. This temporarily slows bleeding and grants resistance to critical injuries, but leaves you helpless. Mindless foes will keep attacking!"))
+
 /mob/living/carbon/human/Life()
 	if (notransform)
 		return
