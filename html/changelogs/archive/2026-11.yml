@@ -708,3 +708,7 @@
       visible.
   - rscadd: Added Shift+N to stash items in your cloak or draw its latest stored item.
       The shortcut can be changed in Keybinds.
+2026-11-20:
+  mypingishuge:
+  - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
+      and ear customization, with any lower body.
