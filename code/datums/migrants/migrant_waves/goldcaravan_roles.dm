@@ -165,11 +165,9 @@
 /obj/structure/handcart/ea_hasir/proc/spawn_random_loot()
 	for(var/typepath in guaranteed_loot)
 		var/obj/item/I = new typepath(src)
+		recalculate_capacity()
 		if(isitem(I))
-			if((current_capacity + I.w_class) <= maximum_capacity)
-				stuff_shit += I
-				current_capacity += I.w_class
-			else
+			if(current_capacity > maximum_capacity)
 				qdel(I)
 				break
 
@@ -180,17 +178,15 @@
 
 		var/type_to_spawn = pick(possible_loot)
 		var/obj/item/I = new type_to_spawn(src)
+		recalculate_capacity()
 
 		if(!isitem(I))
 			continue
 
 		// weight check (uses same logic as put_in)
-		if((current_capacity + I.w_class) > maximum_capacity)
+		if(current_capacity > maximum_capacity)
 			qdel(I)
 			break
-
-		stuff_shit += I
-		current_capacity += I.w_class
 
 	update_icon()
 
