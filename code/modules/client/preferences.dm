@@ -549,6 +549,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	ResetJobs()
 	if(user)
 		var/race_info = pref_species.desc ? pref_species.desc : ""
+		// The card legend already names the race; remove its old standalone heading.
+		var/static/regex/race_heading = regex("^<b>.*?</b>\\s*</?br>\\s*", "i")
+		race_info = race_heading.Replace(race_info, "")
 		if(pref_species.expanded_desc)
 			race_info += "<br><a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>"
 		if(race_info)
