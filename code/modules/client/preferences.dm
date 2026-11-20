@@ -3966,6 +3966,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.vocal_speed = bark_speed
 	character.vocal_pitch = bark_pitch
 	character.vocal_pitch_range = bark_variance
+	character.apply_dragon_bark()
 
 	//if(parent)
 	//	var/list/L = get_player_curses(parent.ckey)
