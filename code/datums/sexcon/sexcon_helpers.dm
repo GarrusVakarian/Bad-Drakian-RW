@@ -73,6 +73,57 @@
 		return
 	user.sexcon.start(target)
 
+/// An on-demand shortcut to the existing panel. Native input needs no polling loop.
+/mob/living/carbon/human/verb/open_erp_panel()
+	set name = "Open ERP panel"
+	set category = "IC"
+
+	if(!can_open_erp_panel())
+		to_chat(src, span_warning("I can't open the ERP panel right now. Check that ERP panel interactions are enabled in Content Toggles."))
+		return
+	var/list/targets = get_erp_panel_targets()
+	if(!length(targets))
+		to_chat(src, span_warning("There are no available targets nearby."))
+		return
+	var/client/picker_client = client
+	var/selection = input(src, "Choose a nearby character.", "ERP Panel") as null|anything in targets
+	if(isnull(selection) || QDELETED(src))
+		return
+	var/mob/living/carbon/human/target = targets[selection]
+	// Input yields. Repeat visibility, reach and consent checks before opening anything.
+	if(client != picker_client || !can_open_erp_panel() || !is_erp_panel_target(target, view(1, src)))
+		to_chat(src, span_warning("That character is no longer available."))
+		return
+	sexcon.start(target)
+
+/mob/living/carbon/human/proc/erp_panel_enabled()
+	return !!client?.prefs?.sexable
+
+/mob/living/carbon/human/proc/can_open_erp_panel()
+	return !QDELETED(src) && erp_panel_enabled() && sexcon && !QDELETED(sexcon) && stat == CONSCIOUS && !IsSleeping() && can_do_sex()
+
+/mob/living/carbon/human/proc/is_erp_panel_target(mob/living/carbon/human/target, list/visible_targets)
+	if(!istype(target) || QDELETED(target) || !target.sexcon || QDELETED(target.sexcon))
+		return FALSE
+	if(!isturf(loc) || !isturf(target.loc) || z != target.z)
+		return FALSE
+	if(target != src && is_blind(src))
+		return FALSE
+	return target.alpha > 0 && (target in visible_targets) && Adjacent(target) && target.erp_panel_enabled() && target.can_do_sex()
+
+/mob/living/carbon/human/proc/get_erp_panel_targets()
+	var/list/targets = list()
+	if(!can_open_erp_panel())
+		return targets
+	var/list/visible_targets = view(1, src)
+	for(var/mob/living/carbon/human/target in visible_targets)
+		if(!is_erp_panel_target(target, visible_targets))
+			continue
+		// Numbered labels keep identical names distinct without exposing real names or ckeys.
+		var/label = "[length(targets) + 1]. [target == src ? "Yourself" : target.get_visible_name()]"
+		targets[label] = target
+	return targets
+
 /mob/living/proc/can_do_sex()
 	return TRUE
 
