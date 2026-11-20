@@ -553,7 +553,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		var/static/regex/race_heading = regex("^<b>.*?</b>\\s*</?br>\\s*", "i")
 		race_info = race_heading.Replace(race_info, "")
 		if(pref_species.expanded_desc)
-			race_info += "<br><a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>"
+			race_info += "<br><a href='?src=[REF(user)];view_species_info=[url_encode(pref_species.expanded_desc)]'>Read More</a>"
 		if(race_info)
 			to_chat(user, fieldset_block("Race: [pref_species.name]", race_info, "racedesc_block"))
 		to_chat(user, "<font color='red'>Classes reset.</font>")
