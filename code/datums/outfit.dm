@@ -174,6 +174,19 @@
  * If visualsOnly is true, you can omit any work that doesn't visually appear on the character sprite
  */
 /datum/outfit/proc/equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	if(QDELETED(H))
+		return
+	H.begin_armor_warning_setup()
+	try
+		. = equip_with_deferred_armor_warning(H, visualsOnly)
+	catch(var/exception/error)
+		if(!QDELETED(H))
+			H.end_armor_warning_setup(FALSE)
+		throw error
+	if(!QDELETED(H))
+		H.end_armor_warning_setup(!visualsOnly)
+
+/datum/outfit/proc/equip_with_deferred_armor_warning(mob/living/carbon/human/H, visualsOnly = FALSE)
 	pre_equip(H, visualsOnly)
 
 	// Replace silver items with non-silver alternatives for characters with silver weakness

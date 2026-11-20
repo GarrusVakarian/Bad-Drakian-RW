@@ -73,7 +73,17 @@
 	set waitfor = FALSE
 	if(!H)
 		return FALSE
+	H.begin_armor_warning_setup()
+	try
+		. = equipme_with_deferred_armor_warning(H, dummy)
+	catch(var/exception/error)
+		if(!QDELETED(H))
+			H.end_armor_warning_setup(FALSE)
+		throw error
+	if(!QDELETED(H))
+		H.end_armor_warning_setup(!dummy)
 
+/datum/advclass/proc/equipme_with_deferred_armor_warning(mob/living/carbon/human/H, dummy = FALSE)
 	if(!dummy)
 		H.begin_credits_setup()
 

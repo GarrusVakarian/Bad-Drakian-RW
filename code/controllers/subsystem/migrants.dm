@@ -268,7 +268,21 @@ SUBSYSTEM_DEF(migrants)
 	SSjob.AssignRole(newplayer, rank, TRUE)
 
 	var/mob/living/character = newplayer.create_character(TRUE)	//creates the human and transfers vars and mind
+	var/mob/living/carbon/human/setup_character
+	if(ishuman(character))
+		setup_character = character
+		setup_character.begin_armor_warning_setup()
+	try
+		. = finish_migrant_with_deferred_armor_warning(wave, assignment, spawn_on_location, greet_text, character)
+	catch(var/exception/error)
+		if(!QDELETED(setup_character))
+			setup_character.end_armor_warning_setup(FALSE)
+		throw error
+	if(!QDELETED(setup_character))
+		setup_character.end_armor_warning_setup()
 
+/datum/controller/subsystem/migrants/proc/finish_migrant_with_deferred_armor_warning(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text, mob/living/character)
+	var/rank = "Migrant"
 	var/mob/living/carbon/human/portrait_character = character
 	portrait_character.credits_setup_depth++
 	character.islatejoin = TRUE
