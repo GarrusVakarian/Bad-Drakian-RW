@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Construct skill exhibitors now accept every eligible skill and reset properly when cancelled."
-  - bugfix: "Skill exhibitor installations safely reject selections that are no longer valid."

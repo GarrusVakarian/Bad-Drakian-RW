@@ -714,3 +714,11 @@
   mypingishuge:
   - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
       and ear customization, with any lower body.
+  - bugfix: Construct skill exhibitors now accept every eligible skill and reset properly
+      when cancelled.
+  - bugfix: Skill exhibitor installations safely reject selections that are no longer
+      valid.
+  - qol: Added a one-time chat reminder explaining how to yield when your character
+      becomes critically injured.
+  - bugfix: Starting armor no longer produces premature training warnings before your
+      class finishes loading. Genuinely untrained characters still receive a warning.
