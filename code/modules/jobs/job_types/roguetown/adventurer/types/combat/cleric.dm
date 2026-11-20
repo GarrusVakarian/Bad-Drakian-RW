@@ -329,7 +329,10 @@
 			ADD_TRAIT(H, TRAIT_HERESIARCH, TRAIT_GENERIC)
 
 	H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
+	if(H.mind && !choose_doctrine(H))
+		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.miracle_learning_tier_limit = CLERIC_T1
 	if(H.mind)
 		if(!istype(H?.patron, /datum/patron/old_god)) //Psydonics are special.
 			C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_WEAK, devotion_limit = CLERIC_REQ_1) //Capped to T1 miracles.
@@ -373,6 +376,7 @@
 			var/denomination_choice = input("Choose your DENOMINATION.", "YOUR FAITH IN HIM.") as anything in denominations
 			switch(denomination_choice)
 				if("ENDURING, AS HE DOES - FAITH")
+					C.miracle_learning_tier_limit = CLERIC_T2
 					C.grant_miracles(H, cleric_tier = CLERIC_T2, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_2)
 					H.adjust_skillrank_up_to(/datum/skill/magic/holy, SKILL_LEVEL_JOURNEYMAN, TRUE)
 					H.adjust_skillrank_up_to(/datum/skill/misc/medicine, SKILL_LEVEL_NOVICE, TRUE)
@@ -422,6 +426,28 @@
 			H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_JOURNEYMAN, TRUE)
 			r_hand = /obj/item/rogueweapon/stoneaxe/woodcut
 	H.set_blindness(0)
+
+/datum/outfit/job/roguetown/adventurer/paladin/proc/choose_doctrine(mob/living/carbon/human/H)
+	if(!istype(H) || QDELETED(H) || !H.mind || !H.patron)
+		return FALSE
+	// Clientless characters keep the existing automatic miracle path.
+	if(!H.client)
+		return TRUE
+	var/client/setup_client = H.client
+	var/datum/mind/setup_mind = H.mind
+	var/datum/patron/setup_patron = H.patron
+	var/choice = alert(H, "Choose Loyalist for your patron's usual miracles, or Radical to learn miracles through research. Your Paladin tier limit still applies.", "Paladin Doctrine", "Loyalist", "Radical")
+	if(QDELETED(H) || H.client != setup_client || H.mind != setup_mind || H.patron != setup_patron)
+		return FALSE
+	if(choice == "Radical")
+		if(!HAS_TRAIT(H, TRAIT_CLERGYRADICAL))
+			H.church_favor += 1200
+		ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
+		to_chat(H, span_notice("I embrace the radical path."))
+	else
+		REMOVE_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
+		to_chat(H, span_notice("I follow my patron's established teachings."))
+	return TRUE
 
 /datum/advclass/cleric/cantor
 	name = "Cantor"
