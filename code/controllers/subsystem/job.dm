@@ -706,6 +706,30 @@ SUBSYSTEM_DEF(job)
 
 //Gives the player the stuff he should have with his rank
 /datum/controller/subsystem/job/proc/EquipRank(mob/M, rank, joined_late = FALSE)
+	var/list/armor_setup_characters = list()
+	var/mob/living/carbon/human/setup_character
+	if(joined_late)
+		if(ishuman(M))
+			setup_character = M
+	else if(istype(M, /mob/dead/new_player))
+		var/mob/dead/new_player/player = M
+		if(ishuman(player.new_character))
+			setup_character = player.new_character
+	if(setup_character)
+		setup_character.begin_armor_warning_setup()
+		armor_setup_characters += setup_character
+	try
+		. = equip_rank_with_deferred_armor_warning(M, rank, joined_late, armor_setup_characters)
+	catch(var/exception/error)
+		for(var/mob/living/carbon/human/character in armor_setup_characters)
+			if(!QDELETED(character))
+				character.end_armor_warning_setup(FALSE)
+		throw error
+	for(var/mob/living/carbon/human/character in armor_setup_characters)
+		if(!QDELETED(character))
+			character.end_armor_warning_setup(TRUE, character.client ? character : M)
+
+/datum/controller/subsystem/job/proc/equip_rank_with_deferred_armor_warning(mob/M, rank, joined_late, list/armor_setup_characters)
 	var/mob/dead/new_player/N
 	var/mob/living/H
 	if(!joined_late)
@@ -775,6 +799,11 @@ SUBSYSTEM_DEF(job)
 		var/new_mob = job.equip(H, null, null, joined_late , null, M.client)
 		if(ismob(new_mob))
 			H = new_mob
+			if(ishuman(H) && !(H in armor_setup_characters))
+				var/mob/living/carbon/human/replacement_character = H
+				replacement_character.begin_armor_warning_setup()
+				replacement_character.armor_warning_pending = TRUE
+				armor_setup_characters += replacement_character
 			if(!joined_late)
 				N.new_character = H
 			else

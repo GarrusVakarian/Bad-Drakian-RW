@@ -514,10 +514,38 @@
 					user.vv_edit_var(variable, user_vars_to_edit[variable])
 		warn_armor_class(user)
 
+/mob/living/carbon/human
+	var/armor_warning_setup_depth = 0
+	var/armor_warning_pending = FALSE
+
+/mob/living/carbon/human/proc/begin_armor_warning_setup()
+	armor_warning_setup_depth++
+
+/mob/living/carbon/human/proc/end_armor_warning_setup(notify = TRUE, mob/recipient = src)
+	if(armor_warning_setup_depth <= 0)
+		return
+	armor_warning_setup_depth--
+	if(armor_warning_setup_depth)
+		return
+	var/check_pending = armor_warning_pending
+	armor_warning_pending = FALSE
+	if(!notify || !check_pending || istype(src, /mob/living/carbon/human/dummy))
+		return
+	if(!check_armor_skill())
+		send_untrained_armor_warning(recipient)
+
+/mob/living/carbon/human/proc/send_untrained_armor_warning(mob/recipient = src)
+	if(QDELETED(recipient))
+		recipient = src
+	to_chat(recipient, span_warning("I'm not trained to wear armor of this weight. My ability to parry, dodge, run and cast spells will be greatly impaired."))
+
 /obj/item/clothing/proc/warn_armor_class(mob/living/carbon/human/user, removed = FALSE)
 	if(armor_class <= ARMOR_CLASS_NONE)
 		return
 	if(!ishuman(user))
+		return
+	if(user.armor_warning_setup_depth)
+		user.armor_warning_pending = TRUE
 		return
 	// Was this item's armor class actually beyond the user's training?
 	var/dominated = FALSE
@@ -533,7 +561,7 @@
 		else
 			to_chat(user, span_info("I feel the weight lessens, but another piece of armor is still impairing my movements."))
 		return
-	to_chat(user, span_warning("I'm not trained to wear armor of this weight. My ability to parry, dodge, run and cast spells will be greatly impaired."))
+	user.send_untrained_armor_warning()
 
 /obj/item/clothing/examine(mob/user)
 	. = ..()
