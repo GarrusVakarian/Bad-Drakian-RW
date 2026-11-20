@@ -711,6 +711,7 @@
 2026-11-20:
   _Rarity:
   - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
+  - qol: Classes with belts now start with their keys and keyrings inside them.
   mypingishuge:
   - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
       and ear customization, with any lower body.
