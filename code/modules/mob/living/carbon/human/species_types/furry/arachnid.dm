@@ -66,7 +66,7 @@
 		/datum/customizer/bodypart_feature/face_detail,
 		/datum/customizer/bodypart_feature/underwear,
 		/datum/customizer/organ/tail_feature/anthro,
-		/datum/customizer/organ/tail/manticore/arachnid,
+		/datum/customizer/organ/tail/manticore/tailed,
 		/datum/customizer/organ/snout/anthro,
 		/datum/customizer/organ/ears/anthro,
 		/datum/customizer/organ/frills/anthro,

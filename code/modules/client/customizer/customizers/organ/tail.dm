@@ -589,44 +589,6 @@
 /datum/customizer/organ/tail/manticore/tailed
 	name = "Tailmaw"
 
-/datum/customizer/organ/tail/manticore/arachnid
-	name = "Tailmaw"
-	customizer_choices = list(/datum/customizer_choice/organ/tail/manticore/lamia, /datum/customizer_choice/organ/tail/manticore/arachnid)
-
-/datum/customizer/organ/tail/manticore/arachnid/get_available_choices(datum/preferences/prefs, datum/customizer_entry/entry)
-	if(prefs?.taur_type)
-		return list(/datum/customizer_choice/organ/tail/manticore/lamia)
-	return ..()
-
-/datum/customizer/organ/tail/manticore/arachnid/create_customizer_entry(datum/preferences/prefs, customizer_choice_type, changed_entry = TRUE)
-	var/datum/customizer_entry/organ/tail/created = ..()
-	var/datum/customizer_entry/organ/tail/previous = prefs?.get_customizer_entry_for_customizer_type(type)
-	if(istype(created) && istype(previous))
-		created.disabled = previous.disabled
-		created.fertility = previous.fertility
-		created.tailmaw_fluid = previous.tailmaw_fluid
-	return created
-
-/datum/customizer/organ/tail/manticore/arachnid/sanitize_choice(datum/preferences/prefs, datum/customizer_entry/entry)
-	if(!prefs?.taur_type || !istype(entry, /datum/customizer_entry/organ/tail))
-		return
-	if(entry.customizer_choice_type == /datum/customizer_choice/organ/tail/manticore/lamia)
-		return
-	entry.customizer_choice_type = /datum/customizer_choice/organ/tail/manticore/lamia
-	var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
-	choice.set_accessory_type(prefs, /datum/sprite_accessory/tail/tailmaw/spriteless, entry)
-
-/datum/customizer_choice/organ/tail/manticore/arachnid
-	name = "Tailmaw"
-
-/datum/customizer_choice/organ/tail/manticore/arachnid/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
-	..()
-	// Also protect organ construction if an old visible choice reaches it before menu validation.
-	if(prefs?.taur_type)
-		organ_dna.organ_type = /obj/item/organ/tail/manticore/spriteless
-		organ_dna.accessory_type = /datum/sprite_accessory/tail/tailmaw/spriteless
-		organ_dna.accessory_colors = null
-
 /datum/customizer_choice/organ/tail/manticore/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
 	..()
 	if(entry.accessory_type != /datum/sprite_accessory/tail/tailmaw/spriteless)
