@@ -8,6 +8,8 @@
 	var/list/allowed_races
 	/// Restricts species on the list
 	var/list/disallowed_races
+	/// Apply the shared combat species blacklist before admitting a migrant.
+	var/combat_role = FALSE
 	/// Restricts sexes if list is not null
 	var/list/allowed_sexes
 	/// Restricts ages if list is not null

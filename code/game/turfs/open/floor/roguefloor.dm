@@ -568,7 +568,7 @@
 /turf/open/floor/rogue/dirt/get_slowdown(mob/user)
 	//No tile slowdown for fairies
 	var/mob/living/carbon/human/FM = user
-	if(isseelie(FM) && !(FM.resting))	//Add wingcheck
+	if(is_seelie_hovering(FM))
 		return 0
 
 	. = ..()
@@ -636,7 +636,7 @@
 	..()
 	if(ishuman(O))
 		var/mob/living/carbon/human/H = O
-		if(H.shoes && !HAS_TRAIT(H, TRAIT_LIGHT_STEP) && !isseelie(H)) //Seelie hover, so they won't step on blood
+		if(H.shoes && !HAS_TRAIT(H, TRAIT_LIGHT_STEP) && !is_seelie_hovering(H)) // Hovering Seelie do not step in mud.
 			var/obj/item/clothing/shoes/S = H.shoes
 			if(!istype(S) || !S.can_be_bloody)
 				return

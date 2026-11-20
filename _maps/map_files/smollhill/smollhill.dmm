@@ -44892,6 +44892,12 @@
 	dir = 4
 	},
 /area/rogue/under/dungeon/tricksntraps)
+"uRS" = (
+/obj/structure/mineral_door/wood/deadbolt{
+	locked = 1
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/indoors)
 "uRW" = (
 /turf/closed/wall/mineral/rogue/decostone/long/east_west,
 /area/rogue/under/cavewet)
@@ -171285,7 +171291,7 @@ sjP
 fxx
 fxx
 aaH
-wjE
+uRS
 emH
 emH
 emH

@@ -663,6 +663,10 @@
   - bugfix: Putting on headgear during a writing attempt prevents writing through
       the covering.
 2026-11-19:
+  GarrusVakarian:
+  - bugfix: Moved an admin-only verb that had its own tab into an already existing
+      admin tab.
+  - map: The backdoor to the smithy on Smollhill now starts locked.
   Khanivore:
   - sound: Dragons feet got heavier with werewolf footstep noise
   _Rarity:
@@ -681,6 +685,18 @@
   - bugfix: Face-hiding hoods equipped in the mask slot now conceal your identity
       at spawn without needing to be lowered and raised again.
   - rscadd: Arachnids can now choose an optional Tentacle tail.
+  - balance: Arbalists now start with a Psydonic volfskulle bascinet and cosmetic
+      red headband instead of a sack mask and armored bloodied headband.
+  - bugfix: Fixed Seelie sprite layering when riding a rous.
+  - bugfix: Fixed weather runtimes when no clients have initialized the weather display.
+  - rscadd: All Seelie now receive their six innate spells regardless of role or class.
+  - balance: Reduced Seelie spell cooldowns.
+  - bugfix: Losing Seelie wings now removes hovering benefits and species fall protection.
+  - bugfix: Overlapping Seelie luck auras use the strongest Willpower, with opposing
+      ties cancelling.
+  - bugfix: Strip Clothes selects eligible clothing and refunds unsuccessful casts.
+  - bugfix: Tame Rous consistently affects a two-tile area and refunds casts when
+      no Rous are nearby.
   mypingishuge:
   - rscadd: Grabs and reinforced grabs show private balloons to both participants.
       Combat Aware adds the grabbed body part.
@@ -692,3 +708,9 @@
       visible.
   - rscadd: Added Shift+N to stash items in your cloak or draw its latest stored item.
       The shortcut can be changed in Keybinds.
+2026-11-20:
+  _Rarity:
+  - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
+  mypingishuge:
+  - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
+      and ear customization, with any lower body.

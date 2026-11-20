@@ -100,7 +100,7 @@
 		return
 	var/mob/living/carbon/human/human_parent = parent
 	//TODO: Look into implementing soft fluttering sounds instead, and prevent this check that will happen for every footstep ever
-	if(isseelie(human_parent))	//Need to look into a wing check for wingless seelie too
+	if(is_seelie_hovering(human_parent))
 		return
 	var/feetCover = (human_parent.wear_armor?.body_parts_covered | human_parent.wear_pants?.body_parts_covered) & FEET
 	var/used_sound

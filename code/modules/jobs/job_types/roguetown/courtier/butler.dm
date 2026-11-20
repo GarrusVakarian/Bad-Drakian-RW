@@ -55,15 +55,6 @@
 /datum/outfit/job/roguetown/seneschal
 	has_loadout = TRUE
 
-/datum/outfit/job/roguetown/seneschal/pre_equip(mob/living/carbon/human/H)
-	..()
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
-
 //This applies to all Seneschal subclasses
 /datum/outfit/job/roguetown/seneschal/choose_loadout(mob/living/carbon/human/H)
 	. = ..()

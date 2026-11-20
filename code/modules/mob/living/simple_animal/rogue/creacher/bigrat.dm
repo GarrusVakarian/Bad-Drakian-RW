@@ -45,8 +45,6 @@
 	minimum_distance = 0
 	milkies = FALSE
 	food_type = list(/obj/item/reagent_containers/food/snacks, 
-//					/obj/item/bodypart, 
-//					/obj/item/organ, 
 					/obj/item/natural/bone, 
 					/obj/item/natural/hide)
 	footstep_type = FOOTSTEP_MOB_BAREFOOT
@@ -66,7 +64,6 @@
 	remains_type = /obj/effect/decal/remains/bigrat
 	eat_forever = TRUE
 
-//new ai, old ai off
 	AIStatus = AI_OFF
 	can_have_ai = FALSE
 	ai_controller = /datum/ai_controller/big_rat
@@ -103,7 +100,7 @@
 		D.set_vehicle_dir_layer(NORTH, OBJ_LAYER)
 		D.set_vehicle_dir_layer(EAST, OBJ_LAYER)
 		D.set_vehicle_dir_layer(WEST, OBJ_LAYER)
-		D.vehicle_move_delay = 6	//Slowdown the rous, its too fast
+		D.vehicle_move_delay = 6
 		move_to_delay = 6
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/death(gibbed)
@@ -113,10 +110,15 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/post_buckle_mob(mob/living/M)
 	. = ..()
+	layer = OBJ_LAYER
+	update_icon()
 	ai_controller?.reset_ai_status()
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/post_unbuckle_mob(mob/living/M)
 	. = ..()
+	if(!has_buckled_mobs() && stat != DEAD)
+		layer = initial(layer)
+	update_icon()
 	ai_controller?.reset_ai_status()
 
 
@@ -129,12 +131,9 @@
 		eye_lights.layer = 19
 		add_overlay(eye_lights)
 		if(has_buckled_mobs())
-			if(gender == FEMALE)
-				var/mutable_appearance/mounted = mutable_appearance(icon, "Frat", 4.3)
-				add_overlay(mounted)
-			else
-				var/mutable_appearance/mounted = mutable_appearance(icon, "rat", 4.3)
-				add_overlay(mounted)
+			var/mutable_appearance/mounted = mutable_appearance(icon, "[icon_living]_mounted", 4.3)
+			mounted.appearance_flags = KEEP_APART
+			add_overlay(mounted)
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/get_sound(input)
 	switch(input)
@@ -159,7 +158,6 @@
 		Retaliate()
 		GiveTarget(pulledby)
 
-//Only Seelie or other tiny mobs can ride on a rous
 /mob/living/simple_animal/hostile/retaliate/rogue/bigrat/user_buckle_mob(mob/living/M, mob/user)
 	if(!tame || !HAS_TRAIT(M, TRAIT_TINY))
 		return
