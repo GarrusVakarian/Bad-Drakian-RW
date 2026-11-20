@@ -69,13 +69,13 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	gloves = /obj/item/clothing/gloves/roguetown/angle
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/storage/keyring/rockhillslaver = 1)
 	backpack_contents = list(
 		/obj/item/storage/belt/rogue/pouch/coins/veryrich,
 		/obj/item/clothing/neck/roguetown/psicross/silver = 1,
 		/obj/item/rogueweapon/surgery/cautery/branding = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 2,
 		/obj/item/rope/chain,
-		/obj/item/storage/keyring/rockhillslaver,
 		)
 	if(should_wear_femme_clothes(H))
 		shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/zyb

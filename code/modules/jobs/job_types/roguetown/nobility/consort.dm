@@ -63,7 +63,7 @@
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
-	beltl = /obj/item/storage/keyring/royal
+	belt_contents = list(/obj/item/storage/keyring/royal = 1)
 	beltr = /obj/item/rogueweapon/scabbard/sword/noble
 	backr = /obj/item/storage/backpack/rogue/satchel
 	l_hand = /obj/item/rogueweapon/sword/rapier/dec
@@ -108,7 +108,7 @@
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
 	head = /obj/item/clothing/head/roguetown/nyle/consortcrown
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
-	beltl = /obj/item/storage/keyring/royal
+	belt_contents = list(/obj/item/storage/keyring/royal = 1)
 	beltr = /obj/item/rogueweapon/scabbard/sheath
 	id = /obj/item/scomstone/garrison
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
@@ -162,7 +162,7 @@
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
 	head = /obj/item/clothing/head/roguetown/nyle/consortcrown
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
-	beltl = /obj/item/storage/keyring/royal
+	belt_contents = list(/obj/item/storage/keyring/royal = 1)
 	id = /obj/item/scomstone/garrison
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	backr = /obj/item/storage/backpack/rogue/satchel

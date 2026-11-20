@@ -38,8 +38,8 @@
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/chargah
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary,
 		/obj/item/flashlight/flare/torch,
 		/obj/item/rogueweapon/huntingknife/idagger/steel,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
@@ -109,8 +109,8 @@
 				backl = /obj/item/rogueweapon/shield/iron/steppesman // rucksack aka /bagpack eats whatever goes to backpack_contents so replaced with shield
 				l_hand = /obj/item/rogueweapon/stoneaxe/battle/steppesman
 				neck = /obj/item/clothing/neck/roguetown/chaincoif
+				belt_contents = list(/obj/item/roguekey/mercenary = 1)
 				backpack_contents = list(
-					/obj/item/roguekey/mercenary,
 					/obj/item/storage/belt/rogue/pouch/coins/poor,
 					/obj/item/rogueweapon/handsaw,
 					/obj/item/rogueweapon/chisel,
@@ -162,8 +162,8 @@
 				l_hand = /obj/item/rogueweapon/stoneaxe/battle/steppesman
 				neck = /obj/item/clothing/neck/roguetown/chaincoif
 				//No whip, dagger, etc. Only the explosives and some basic stuff.
+				belt_contents = list(/obj/item/roguekey/mercenary = 1)
 				backpack_contents = list(
-					/obj/item/roguekey/mercenary,
 					/obj/item/storage/belt/rogue/pouch/coins/poor,
 					/obj/item/tntstick
 					)

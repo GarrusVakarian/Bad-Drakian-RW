@@ -82,8 +82,8 @@
 		armor = /obj/item/clothing/suit/roguetown/armor/leather/hide/bikini
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
+	belt_contents = list(/obj/item/roguekey/tribal = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/tribal = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
 		)
@@ -164,8 +164,8 @@
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
+	belt_contents = list(/obj/item/roguekey/tribal = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/tribal = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		)
 	H.verbs |= /mob/proc/haltyell
@@ -253,8 +253,8 @@
 	if(should_wear_femme_clothes(H))
 		armor = /obj/item/clothing/suit/roguetown/armor/leather/bikini
 		backl = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/tribal = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/tribal = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		)
 	H.verbs |= /mob/proc/haltyell

@@ -84,8 +84,8 @@
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	shoes = /obj/item/clothing/shoes/roguetown/sandals
 	backr = /obj/item/storage/backpack/rogue/satchel/black
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/rogueweapon/huntingknife/idagger = 1,
 		/obj/item/spellbook_unfinished/pre_arcyne = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
@@ -185,8 +185,8 @@
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	shoes = /obj/item/clothing/shoes/roguetown/sandals
 	backr = /obj/item/storage/backpack/rogue/satchel/black
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/lockpick = 1,
 		/obj/item/rogueweapon/huntingknife = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
@@ -263,8 +263,8 @@
 	shoes = /obj/item/clothing/shoes/roguetown/sandals
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/rogueweapon/huntingknife = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
 		)

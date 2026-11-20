@@ -43,8 +43,8 @@
 	shoes = /obj/item/clothing/shoes/roguetown/armor/rumaclan
 	gloves = /obj/item/clothing/gloves/roguetown/eastgloves2
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun = 1, 
@@ -92,8 +92,8 @@
 	gloves = /obj/item/clothing/gloves/roguetown/eastgloves2
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun = 1,
 		/obj/item/rogueweapon/scabbard/sheath/kazengun = 1,

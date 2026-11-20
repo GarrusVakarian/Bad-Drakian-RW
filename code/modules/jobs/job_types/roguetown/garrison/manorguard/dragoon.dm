@@ -81,11 +81,11 @@
 				//As with fusiliers, we give them a treat. Not legendary though, just MA.
 				ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)//Again, m'lord. You need to rock the light armour look. Alas...
 
+		belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 		backpack_contents = list(
 			/obj/item/rogueweapon/huntingknife/combat/messer = 1,
 			/obj/item/rogueweapon/scabbard/sheath = 1,
 			/obj/item/rope/chain = 1,
-			/obj/item/storage/keyring/guardcastle = 1,
 			/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
 			/obj/item/powderflask = 1,
 			)

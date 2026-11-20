@@ -67,7 +67,7 @@
 	pants = /obj/item/clothing/under/roguetown/tights
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	shoes = /obj/item/clothing/shoes/roguetown/simpleshoes
-	beltl = /obj/item/storage/keyring/churchie
+	belt_contents = list(/obj/item/storage/keyring/churchie = 1)
 
 /datum/outfit/job/roguetown/churchling/basic/post_equip(mob/living/carbon/human/H, visualsOnly)
 	. = ..()
@@ -146,7 +146,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
 	backl = /obj/item/storage/backpack/rogue/satchel
 	belt = /obj/item/storage/belt/rogue/leather/rope
-	beltl = /obj/item/storage/keyring/churchie
+	belt_contents = list(/obj/item/storage/keyring/churchie = 1)
 	pants = /obj/item/clothing/under/roguetown/chainlegs/iron
 	gloves = /obj/item/clothing/gloves/roguetown/chain/iron
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather

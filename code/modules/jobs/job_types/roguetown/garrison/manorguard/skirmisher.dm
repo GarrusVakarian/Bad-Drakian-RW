@@ -66,10 +66,10 @@
 				shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/iron
 				ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 
+		belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 		backpack_contents = list(
 			/obj/item/rogueweapon/huntingknife/combat/messer = 1,
 			/obj/item/rope/chain = 1,
-			/obj/item/storage/keyring/guardcastle = 1,
 			/obj/item/rogueweapon/scabbard/sheath = 1,
 			/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
 			)

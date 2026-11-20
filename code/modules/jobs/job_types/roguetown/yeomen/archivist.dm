@@ -92,7 +92,7 @@
 		head = /obj/item/clothing/head/roguetown/nightman
 	backl = /obj/item/storage/backpack/rogue/satchel
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
-	wrists = /obj/item/storage/keyring/archivist
+	belt_contents = list(/obj/item/storage/keyring/archivist = 1)
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
 	beltl = /obj/item/rogueweapon/huntingknife
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/mid

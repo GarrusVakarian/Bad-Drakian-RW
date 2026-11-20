@@ -56,8 +56,8 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hatanga
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	backr = /obj/item/rogueweapon/scabbard/gwstrap
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/elvish = 1,
 		/obj/item/flashlight/flare/torch
@@ -126,8 +126,8 @@
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hatanga
 	pants = /obj/item/clothing/under/roguetown/trou/leather
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/mercenary = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/elvish = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,

@@ -52,6 +52,7 @@
 	beltl = /obj/item/rogueweapon/pick
 	backr = /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter
 	backl = /obj/item/storage/backpack/rogue/backpack
+	belt_contents = list(/obj/item/roguekey/crafterguild = 1)
 	backpack_contents = list(
 						/obj/item/rogueweapon/hammer/steel = 1,
 						/obj/item/rogueweapon/handsaw = 1,
@@ -62,7 +63,6 @@
 						/obj/item/rogueweapon/huntingknife = 1,
 						/obj/item/rogueweapon/handsaw = 1,
 						/obj/item/dye_brush = 1,
-						/obj/item/roguekey/crafterguild = 1,
 						/obj/item/rogueweapon/blowrod = 1,
 						/obj/item/clothing/mask/rogue/spectacles/golden = 1,
 						)

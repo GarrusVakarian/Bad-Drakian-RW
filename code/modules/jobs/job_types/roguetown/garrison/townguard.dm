@@ -135,10 +135,10 @@
 				H.change_stat(STATKEY_SPD, 1)
 				H.change_stat(STATKEY_STR, -1)
 
+		belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 		backpack_contents = list(
 			/obj/item/rogueweapon/huntingknife/idagger/steel = 1,
 			/obj/item/rope/chain = 1,
-			/obj/item/storage/keyring/guardcastle = 1,
 			/obj/item/rogueweapon/scabbard/sheath = 1,
 			)
 

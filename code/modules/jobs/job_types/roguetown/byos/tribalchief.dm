@@ -49,7 +49,7 @@
 	pants = /obj/item/clothing/under/roguetown/loincloth/brown
 	shoes = /obj/item/clothing/shoes/roguetown/gladiator
 	belt = /obj/item/storage/belt/rogue/leather/plaquegold
-	beltl = /obj/item/storage/keyring/tribalchief
+	belt_contents = list(/obj/item/storage/keyring/tribalchief = 1)
 
 /datum/outfit/job/roguetown/tribalchieftain/pre_equip(mob/living/carbon/human/H)
 	..()

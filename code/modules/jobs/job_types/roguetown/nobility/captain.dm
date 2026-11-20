@@ -123,8 +123,8 @@
 	head = visages[visage_choice]
 
 	backr = /obj/item/storage/backpack/rogue/satchel/black
+	belt_contents = list(/obj/item/storage/keyring/kcaptain = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/kcaptain = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/special = 1,
 		/obj/item/rogueweapon/scabbard/sheath/royal = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,

@@ -95,7 +95,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots
 	backl = /obj/item/storage/backpack/rogue/satchel
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
-	beltl = /obj/item/storage/keyring/steward // If this turns out to be overbearing re:stewardry bump down to the clerk keyring instead.
+	belt_contents = list(/obj/item/storage/keyring/steward = 1) // If this turns out to be overbearing re:stewardry bump down to the clerk keyring instead.
 	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel
 	cloak = /obj/item/clothing/cloak/stabard/surcoat/councillor
 	backpack_contents = list()
@@ -118,13 +118,15 @@
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
 	backr = /obj/item/storage/backpack/rogue/satchel
 	belt = /obj/item/storage/belt/rogue/leather
-	beltl = /obj/item/roguekey/manor
+	belt_contents = list(
+		/obj/item/roguekey/manor = 1,
+		/obj/item/storage/keyring = 1,
+	)
 	beltr = /obj/item/quiver/arrows
 	cloak = /obj/item/clothing/cloak/half/red
 	backpack_contents = list(
 		/obj/item/hunting_map/white_stag = 1,
 		/obj/item/hunting_map/boars = 1,
-		/obj/item/storage/keyring = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel = 1,
 	)
 	if(SSmapping.current_map.map_name == "Desert Town")

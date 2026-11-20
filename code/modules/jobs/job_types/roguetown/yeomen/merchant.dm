@@ -77,7 +77,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/sailor
 	pants = /obj/item/clothing/under/roguetown/tights/sailor
 	belt = /obj/item/storage/belt/rogue/leather/rope
-	wrists = /obj/item/storage/keyring/merchant
+	belt_contents = list(/obj/item/storage/keyring/merchant = 1)
 	beltl = /obj/item/gun/ballistic/firearm/arquebus_pistol
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/rich
 	id = /obj/item/clothing/ring/gold

@@ -64,8 +64,8 @@
 	head = /obj/item/clothing/head/roguetown/helmet/heavy/ordinatorhelm
 	mask = /obj/item/clothing/head/roguetown/helmet/blacksteel/psychains
 	gloves = /obj/item/clothing/gloves/roguetown/otavan/psygloves
+	belt_contents = list(/obj/item/storage/keyring/puritan = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/puritan = 1,
 		/obj/item/paper/inqslip/arrival/inq = 1
 		)
 

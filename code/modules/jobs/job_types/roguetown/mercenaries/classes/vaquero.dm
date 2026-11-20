@@ -54,12 +54,12 @@
 	l_hand = /obj/item/rogueweapon/sword/rapier/vaquero
 	beltr = /obj/item/rogueweapon/scabbard/sheath
 	r_hand = /obj/item/rogueweapon/huntingknife/idagger/steel/parrying/vaquero
+	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
 					/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 					/obj/item/rogueweapon/huntingknife/idagger/navaja = 1,
 					/obj/item/lockpick = 1,
 					/obj/item/flashlight/flare/torch/lantern = 1,
-					/obj/item/roguekey/mercenary = 1,
 					/obj/item/rogueweapon/scabbard/sheath = 1
 					)
 	var/datum/inspiration/I = new /datum/inspiration(H)

@@ -73,7 +73,7 @@
 			head = /obj/item/clothing/head/roguetown/turban/red
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	belt = /obj/item/storage/belt/rogue/leather/plaquegold/steward
-	beltr = /obj/item/storage/keyring/steward
+	belt_contents = list(/obj/item/storage/keyring/steward = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(
 		/obj/item/mini_flagpole/steward = 1,

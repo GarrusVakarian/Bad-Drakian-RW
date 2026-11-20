@@ -56,9 +56,9 @@
 	beltl = /obj/item/rogueweapon/huntingknife/scissors/steel
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	backr = /obj/item/storage/backpack/rogue/satchel
+	belt_contents = list(/obj/item/storage/keyring/tailor = 1)
 	backpack_contents = list(
 		/obj/item/needle,
-		/obj/item/storage/keyring/tailor,
 		/obj/item/dye_brush,
 		/obj/item/recipe_book/sewing,
 		/obj/item/book/rogue/swatchbook,
