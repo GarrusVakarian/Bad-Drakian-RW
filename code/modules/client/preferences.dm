@@ -155,6 +155,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
+	/// Account-wide opt-outs; unset flags leave guidance enabled.
+	var/disabled_guidance = 0
 	var/restricted_species_pref = null
 	var/wildshape_name = TRUE
 	var/xenophobe_pref = 0
@@ -797,20 +799,20 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/content_toggles_are_new()
-	return character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles")
+	return !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && (character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles"))
 
 /datum/preferences/proc/content_toggles_feature_id()
 	return character_sheet_feature_is_new("hypnosis_consent") ? "hypnosis_consent" : "content_toggles"
 
 /datum/preferences/proc/roleplay_ad_is_new()
-	return character_sheet_feature_is_new("roleplay_ad")
+	return !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && character_sheet_feature_is_new("roleplay_ad")
 
 /datum/preferences/proc/character_sheet_feature_link(feature_id, href, tooltip, label_override, element_id)
 	var/list/features = get_character_sheet_features()
 	var/datum/character_sheet_feature/feature = features[feature_id]
 	if(!istype(feature))
 		return ""
-	var/is_new = character_sheet_feature_is_new(feature_id)
+	var/is_new = !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && character_sheet_feature_is_new(feature_id)
 	var/badge = is_new ? " <small style='margin-left:6px;border:1px solid currentColor;padding:0 3px;'>NEW</small>" : ""
 	var/label = isnull(label_override) ? feature.label : label_override
 	var/id_attribute = isnull(element_id) ? "" : " id='[html_encode(element_id)]'"
@@ -867,6 +869,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/notify_character_sheet_updates(mob/user, sheet_was_visible)
+	if(disabled_guidance & DISABLE_GUIDANCE_NEW_FEATURE_CHAT)
+		return
 	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
 		return
 	// Coalesce reopenings and let the normal login notices finish first.
@@ -876,6 +880,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			send_character_sheet_updates(user, FALSE)
 
 /datum/preferences/proc/send_character_sheet_updates(mob/user, sheet_was_visible)
+	// Recheck after the delay in case the player disabled reminders while one was queued.
+	if(disabled_guidance & DISABLE_GUIDANCE_NEW_FEATURE_CHAT)
+		return
 	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
 		return
 	var/list/features = get_character_sheet_features()

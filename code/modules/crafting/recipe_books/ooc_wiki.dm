@@ -303,6 +303,8 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 /mob/living/carbon/human/proc/show_getting_started_reminder(player_ckey)
 	if(!client || client.ckey != player_ckey || advsetup || stat == DEAD)
 		return
+	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_GETTING_STARTED)
+		return
 	if(get_playerquality(client.ckey) > 5)
 		return
 	to_chat(src, span_notice("New to the game? Read the <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> chapter of the Encyclopedia for essential information and instructions to help you begin."))

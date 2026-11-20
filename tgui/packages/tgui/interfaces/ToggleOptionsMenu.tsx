@@ -36,13 +36,24 @@ type Data = {
 };
 
 export const ToggleOptionsMenu = () => {
-  const { data } = useBackend<Data>();
+  const { act, data } = useBackend<Data>();
   const { categories = [] } = data;
 
   return (
     <Window width={560} height={840}>
       <Window.Content scrollable>
         <Stack vertical>
+          <Stack.Item>
+            <Section title="Guidance Notifications">
+              <Button
+                fluid
+                icon="bell"
+                onClick={() => act('guidance_notifications')}
+              >
+                Configure Guidance Notifications
+              </Button>
+            </Section>
+          </Stack.Item>
           {categories.map((category) => (
             <Stack.Item key={category.name}>
               <ToggleCategorySection category={category} />

@@ -77,12 +77,14 @@
 
 /datum/toggle_options_menu
 	var/client/owner
+	var/datum/guidance_notifications_menu/guidance_menu
 
 /datum/toggle_options_menu/New(client/C)
 	. = ..()
 	owner = C
 
 /datum/toggle_options_menu/Destroy(force)
+	QDEL_NULL(guidance_menu)
 	if(owner?.toggles_menu == src)
 		owner.toggles_menu = null
 	owner = null
@@ -204,6 +206,14 @@
 
 	if(!owner?.prefs)
 		return FALSE
+
+	if(action == "guidance_notifications")
+		if(usr?.client != owner)
+			return FALSE
+		if(!guidance_menu)
+			guidance_menu = new(owner)
+		guidance_menu.ui_interact(owner.mob)
+		return TRUE
 
 	if(action == "toggle")
 		var/id = params["id"]
@@ -334,6 +344,82 @@
 		return TRUE
 
 	return FALSE
+
+/// The IDs are the only settings accepted from the guidance window.
+/proc/guidance_notification_options()
+	var/static/list/options = list(
+		"new_badges" = list("flag" = DISABLE_GUIDANCE_NEW_BADGES, "label" = "NEW badges", "desc" = "Hide NEW badges and highlights on character options and lobby buttons."),
+		"new_feature_chat" = list("flag" = DISABLE_GUIDANCE_NEW_FEATURE_CHAT, "label" = "New feature chat reminders", "desc" = "Hide chat reminders about unseen character options. NEW badges have their own setting."),
+		"getting_started" = list("flag" = DISABLE_GUIDANCE_GETTING_STARTED, "label" = "Getting Started reminder", "desc" = "Hide the beginner guide reminder after character setup, including its notification sound."),
+		"yield" = list("flag" = DISABLE_GUIDANCE_YIELD, "label" = "Yielding tip", "desc" = "Hide the instructions about yielding when you become critically injured."),
+		"critical_recovery" = list("flag" = DISABLE_GUIDANCE_CRITICAL_RECOVERY, "label" = "Critical condition recovery tip", "desc" = "Hide the Embrace Necra and deadite recovery reminder after prolonged critical injury."),
+		"death_recovery" = list("flag" = DISABLE_GUIDANCE_DEATH_RECOVERY, "label" = "After-death recovery tip", "desc" = "Hide instructions about rising as a deadite and seeking treatment after death."),
+	)
+	return options
+
+/datum/preferences/proc/toggle_guidance_notification(id)
+	if(id == "all")
+		disabled_guidance = disabled_guidance == DISABLE_GUIDANCE_ALL ? 0 : DISABLE_GUIDANCE_ALL
+	else
+		var/list/options = guidance_notification_options()
+		var/list/option = options[id]
+		if(!islist(option))
+			return FALSE
+		disabled_guidance ^= option["flag"]
+	save_preferences()
+	return TRUE
+
+/datum/guidance_notifications_menu
+	var/client/owner
+
+/datum/guidance_notifications_menu/New(client/C)
+	. = ..()
+	owner = C
+
+/datum/guidance_notifications_menu/Destroy(force)
+	owner = null
+	return ..()
+
+/datum/guidance_notifications_menu/ui_status(mob/user, datum/ui_state/state)
+	return owner?.prefs && user?.client == owner ? UI_INTERACTIVE : UI_CLOSE
+
+/datum/guidance_notifications_menu/ui_interact(mob/user, datum/tgui/ui)
+	if(!owner?.prefs || user?.client != owner)
+		return
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "GuidanceNotifications", "Guidance Notifications")
+		ui.set_state(GLOB.always_state)
+		ui.open()
+
+/datum/guidance_notifications_menu/ui_data(mob/user)
+	if(!owner?.prefs || user?.client != owner)
+		return list()
+	var/list/entries = list()
+	var/list/options = guidance_notification_options()
+	for(var/id in options)
+		var/list/option = options[id]
+		entries += list(list(
+			"id" = id,
+			"label" = option["label"],
+			"desc" = option["desc"],
+			"disabled" = !!(owner.prefs.disabled_guidance & option["flag"]),
+		))
+	return list("entries" = entries, "all_disabled" = owner.prefs.disabled_guidance == DISABLE_GUIDANCE_ALL)
+
+/datum/guidance_notifications_menu/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	if(..())
+		return TRUE
+	if(!owner?.prefs || usr?.client != owner || action != "toggle" || !istext(params["id"]))
+		return FALSE
+	var/previous_flags = owner.prefs.disabled_guidance
+	if(!owner.prefs.toggle_guidance_notification(params["id"]))
+		return FALSE
+	SStgui.update_uis(src)
+	if((previous_flags ^ owner.prefs.disabled_guidance) & DISABLE_GUIDANCE_NEW_BADGES)
+		// Refresh existing badges without blocking the preference update on winget().
+		INVOKE_ASYNC(owner.prefs, TYPE_PROC_REF(/datum/preferences, refresh_character_sheet_if_open), owner.mob)
+	return TRUE
 
 /client/verb/toggle_fullscreen()
 	set name = "ToggleFullscreen"

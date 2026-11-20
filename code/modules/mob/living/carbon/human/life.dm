@@ -34,6 +34,8 @@
 	if(!InCritical() && !(blood_volume <= BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(src, TRAIT_BLOODLOSS_IMMUNE)) && getOxyLoss() <= 75)
 		return
 	mind.critical_yield_reminded = TRUE
+	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_YIELD)
+		return
 	to_chat(src, span_notice("<b>You are critically injured!</b> Right-click the Combat Mode button to <b>yield</b>. This temporarily slows bleeding and grants resistance to critical injuries, but leaves you helpless. Mindless foes will keep attacking!"))
 
 /mob/living/carbon/human/Life()
@@ -163,6 +165,8 @@
 	if(critical_recovery_reminded || world.time - critical_recovery_started_at < 2 MINUTES || !client || client.mob != src)
 		return
 	critical_recovery_reminded = TRUE
+	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_CRITICAL_RECOVERY)
+		return
 	var/datum/antagonist/zombie/existing_deadite = mind.has_antag_datum(/datum/antagonist/zombie)
 	var/can_rise = existing_deadite ? (!existing_deadite.has_turned && !existing_deadite.revived) : (zombie_can_convert() && !has_world_trait(/datum/world_trait/necra_requiem))
 	var/message = "If you're stuck in critical condition, open the <b>IC</b> tab and choose <b>Embrace Necra</b> to give up and die."
