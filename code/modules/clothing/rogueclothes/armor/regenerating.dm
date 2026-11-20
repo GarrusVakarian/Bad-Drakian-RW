@@ -140,10 +140,10 @@
 	return ..()
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/lamia
-	name = "tail scales"
-	desc = "Tough scales protect the lower body and mend over time."
-	body_parts_covered = LEGS|FEET
-	body_parts_inherent = LEGS|FEET
+	name = "foot scales"
+	desc = "Tough scales protect the feet and mend over time."
+	body_parts_covered = FEET
+	body_parts_inherent = FEET
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
 	name = "talon scales"
