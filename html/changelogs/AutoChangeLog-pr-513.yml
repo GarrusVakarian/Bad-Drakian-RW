@@ -1,4 +1,0 @@
-author: "_Rarity"
-delete-after: True
-changes:
-  - bugfix: "Fixed Gnoll and Dragon sprites appearing behind later characters in credits portraits."

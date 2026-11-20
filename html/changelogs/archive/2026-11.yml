@@ -714,6 +714,8 @@
   - qol: Classes with belts now start with their keys and keyrings inside them.
   - qol: Right-click your selected Origin in character setup to reset it to None.
   - qol: Character customization pickers highlight and scroll to your saved choices.
+  - bugfix: Fixed Gnoll and Dragon sprites appearing behind later characters in credits
+      portraits.
   mypingishuge:
   - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
       and ear customization, with any lower body.
@@ -725,3 +727,6 @@
       becomes critically injured.
   - bugfix: Starting armor no longer produces premature training warnings before your
       class finishes loading. Genuinely untrained characters still receive a warning.
+  - balance: Forester Wardens buff changed to Stalwart Forester (+2CON, +3WIL & Longstrider)
+      and Ranger Wardens buff renamed to Wilderness Ranger with the same buffs (+1SPD,
+      +3PER & Longstrider). A warden must have made this pr.
