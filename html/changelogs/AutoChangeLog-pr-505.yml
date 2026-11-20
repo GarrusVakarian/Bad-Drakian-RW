@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Seelie can now take jobs that are not dedicated combat jobs/subclasses"
