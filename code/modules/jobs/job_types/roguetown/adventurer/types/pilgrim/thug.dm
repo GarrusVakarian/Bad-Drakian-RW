@@ -12,7 +12,7 @@
 	maximum_possible_slots = 8 // I dont want an army of towner thugs
 	subclass_languages = list(/datum/language/thievescant)
 
-/datum/outfit/job/roguetown/adventurer/thug/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/adventurer/thug/pre_equip(mob/living/carbon/human/H, visualsOnly)
 	..()
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/random
@@ -123,6 +123,8 @@
 					r_hand = /obj/item/lockpickring/mundane
 
 		if("Muscle")
+			if(!visualsOnly && H.mind)
+				H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/rage)
 			H.mind.cosmetic_class_title = "Muscle"
 			to_chat(H, span_warning("More akin to a corn-fed monster than a normal man, your size and strength are your greatest weapons; though they hardly supplement what's missing of your brains."))
 			H.set_blindness(0)

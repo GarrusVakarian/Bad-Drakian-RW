@@ -3050,6 +3050,7 @@
 #include "code\modules\spells\spell_types\emplosion.dm"
 #include "code\modules\spells\spell_types\ethereal_jaunt.dm"
 #include "code\modules\spells\spell_types\familiar_abilities.dm"
+#include "code\modules\spells\spell_types\class_rage.dm"
 #include "code\modules\spells\spell_types\forcewall.dm"
 #include "code\modules\spells\spell_types\godhand.dm"
 #include "code\modules\spells\spell_types\inflict_handler.dm"
