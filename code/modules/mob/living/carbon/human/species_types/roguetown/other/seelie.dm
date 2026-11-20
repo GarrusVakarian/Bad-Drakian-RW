@@ -106,15 +106,23 @@
 	..()
 	RegisterSignal(C, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 	ADD_TRAIT(C, TRAIT_TINY, "[type]")
-	ADD_TRAIT(C, TRAIT_NOFALLDAMAGE1, TRAIT_GENERIC)
 	C.transform = C.transform.Scale(0.5, 0.5)
 	C.update_transform()
 	C.pass_flags = PASSTABLE | PASSMOB
 	//C.movement_type = FLYING
-	C.set_mob_offsets("pixie_hover", _x = 0, _y = 10)
+	if(ishuman(C))
+		var/mob/living/carbon/human/H = C
+		H.update_seelie_wings()
 	C.set_light(3, 1, 1, l_color = "#d4fcac")
 	C.verbs |= (/mob/living/carbon/human/proc/Turnlight)
 	C.verbs |= (/mob/living/carbon/proc/switchaura)
+	// Innate magic belongs to the body, including before a mind is assigned.
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
+	C.AddSpell(new /obj/effect/proc_holder/spell/targeted/seelie_kiss)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
+	C.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
+	C.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
 
 /datum/species/seelie/after_creation(mob/living/carbon/C)
 	..()
@@ -125,8 +133,14 @@
 	UnregisterSignal(C, COMSIG_MOB_SAY)
 	C.verbs -= /mob/living/carbon/human/proc/Turnlight
 	C.verbs -= /mob/living/carbon/proc/switchaura
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/seelie_dust)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/summon_rat)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/targeted/seelie_kiss)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/projectile/splash)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/targeted/roustame)
+	C.RemoveSpell(/obj/effect/proc_holder/spell/invoked/strip)
 	REMOVE_TRAIT(C, TRAIT_TINY, "[type]")
-	REMOVE_TRAIT(C, TRAIT_NOFALLDAMAGE1, TRAIT_GENERIC)
+	REMOVE_TRAIT(C, TRAIT_NOFALLDAMAGE1, "[type]")
 	C.transform = C.transform.Scale(2, 2)
 	C.update_transform()
 	C.pass_flags = 0
@@ -134,6 +148,54 @@
 	//C.movement_type = (C.movement_type | ~FLYING)
 	//C.Jitter(0)
 	C.set_light(0)
+
+/proc/is_seelie_hovering(atom/movable/target)
+	if(!ishuman(target) || !isseelie(target))
+		return FALSE
+	var/mob/living/carbon/human/H = target
+	return H.stat == CONSCIOUS && !H.IsSleeping() && !H.resting && (H.mobility_flags & MOBILITY_STAND) && !H.buckled && H.haswings(H)
+
+/mob/living/carbon/human/proc/update_seelie_wings()
+	if(!isseelie(src))
+		return
+	var/source = "[/datum/species/seelie]"
+	if(haswings(src))
+		ADD_TRAIT(src, TRAIT_NOFALLDAMAGE1, source)
+		set_mob_offsets("pixie_hover", _x = 0, _y = 10)
+	else
+		REMOVE_TRAIT(src, TRAIT_NOFALLDAMAGE1, source)
+		animate(src)
+		reset_offsets("pixie_hover")
+
+/mob/living/carbon/human/proc/update_seelie_aura()
+	if(isseelie(src))
+		remove_status_effect(/datum/status_effect/buff/seelie/happy)
+		remove_status_effect(/datum/status_effect/buff/seelie/sad)
+		return
+	var/strongest_will
+	var/blessing = FALSE
+	var/curse = FALSE
+	for(var/mob/living/carbon/human/seelie in view(1, src))
+		if(!isseelie(seelie) || seelie.stat != CONSCIOUS || seelie.IsSleeping())
+			continue
+		if(isnull(strongest_will) || seelie.STAWIL > strongest_will)
+			strongest_will = seelie.STAWIL
+			blessing = seelie.aura
+			curse = !seelie.aura
+		else if(seelie.STAWIL == strongest_will)
+			blessing = blessing || seelie.aura
+			curse = curse || !seelie.aura
+	if(isnull(strongest_will))
+		return
+	if(blessing && !curse)
+		remove_status_effect(/datum/status_effect/buff/seelie/sad)
+		apply_status_effect(/datum/status_effect/buff/seelie/happy)
+	else if(curse && !blessing)
+		remove_status_effect(/datum/status_effect/buff/seelie/happy)
+		apply_status_effect(/datum/status_effect/buff/seelie/sad)
+	else
+		remove_status_effect(/datum/status_effect/buff/seelie/happy)
+		remove_status_effect(/datum/status_effect/buff/seelie/sad)
 
 /datum/species/seelie/qualifies_for_rank(rank, list/features)
 	return TRUE

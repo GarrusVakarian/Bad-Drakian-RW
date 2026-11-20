@@ -7,6 +7,8 @@
 	var/list/allowed_sexes
 	var/list/allowed_races = RACES_ALL_KINDS
 	var/list/disallowed_races = null
+	/// Dedicated combat subclasses use the shared species blacklist.
+	var/combat_role = FALSE
 	var/list/allowed_patrons
 	var/list/allowed_ages
 	var/pickprob = 100
@@ -187,6 +189,9 @@
 			local_allowed_sexes -= FEMALE
 			local_allowed_sexes += MALE
 	if(length(local_allowed_sexes) && !(H.gender in local_allowed_sexes))
+		return FALSE
+
+	if(combat_role && (H.dna.species.type in NO_COMBAT_RACES))
 		return FALSE
 
 	if(length(allowed_races) && !(H.dna.species.type in allowed_races))

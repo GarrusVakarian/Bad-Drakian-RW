@@ -663,8 +663,54 @@
   - bugfix: Putting on headgear during a writing attempt prevents writing through
       the covering.
 2026-11-19:
+  GarrusVakarian:
+  - bugfix: Moved an admin-only verb that had its own tab into an already existing
+      admin tab.
+  - map: The backdoor to the smithy on Smollhill now starts locked.
+  Khanivore:
+  - sound: Dragons feet got heavier with werewolf footstep noise
   _Rarity:
   - bugfix: Fixed switching spells allowing instant casts using leftover charge.
   - bugfix: Fixed duplicate spell fizzle messages when releasing before fully charged.
   - bugfix: Fixed bags spilling their contents at spawn and refusing to take items
       back.
+  - bugfix: Cannon, cannonball, and grapeshot recipes now appear in the encyclopedia.
+      FAFO
+  - bugfix: Wooden and metal limbs no longer bleed from embedded weapons.
+  - qol: The character sheet now shows your numeric triumph total alongside the Roman
+      numeral.
+  - qol: Added a warning when readying up or latejoining with insufficient Triumphs
+      for your character setup.
+  - bugfix: Fixed caparisons being invisible on mares
+  - bugfix: Face-hiding hoods equipped in the mask slot now conceal your identity
+      at spawn without needing to be lowered and raised again.
+  - rscadd: Arachnids can now choose an optional Tentacle tail.
+  - balance: Arbalists now start with a Psydonic volfskulle bascinet and cosmetic
+      red headband instead of a sack mask and armored bloodied headband.
+  - bugfix: Fixed Seelie sprite layering when riding a rous.
+  - bugfix: Fixed weather runtimes when no clients have initialized the weather display.
+  - rscadd: All Seelie now receive their six innate spells regardless of role or class.
+  - balance: Reduced Seelie spell cooldowns.
+  - bugfix: Losing Seelie wings now removes hovering benefits and species fall protection.
+  - bugfix: Overlapping Seelie luck auras use the strongest Willpower, with opposing
+      ties cancelling.
+  - bugfix: Strip Clothes selects eligible clothing and refunds unsuccessful casts.
+  - bugfix: Tame Rous consistently affects a two-tile area and refunds casts when
+      no Rous are nearby.
+  mypingishuge:
+  - rscadd: Grabs and reinforced grabs show private balloons to both participants.
+      Combat Aware adds the grabbed body part.
+  - bugfix: Switching out of alternate grip now retains two-handed wielding on weapons
+      that support it.
+  - qol: Wound-sewing bonus XP is awarded when stitching stops the bleeding, with
+      a completion fallback for wounds that still bleed.
+  - bugfix: Hats and open-faced helmets no longer hide head brands when the face remains
+      visible.
+  - rscadd: Added Shift+N to stash items in your cloak or draw its latest stored item.
+      The shortcut can be changed in Keybinds.
+2026-11-20:
+  _Rarity:
+  - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
+  mypingishuge:
+  - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
+      and ear customization, with any lower body.

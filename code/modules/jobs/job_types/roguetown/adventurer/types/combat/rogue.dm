@@ -207,12 +207,6 @@
 				backr = /obj/item/rogue/instrument/viola
 			if("Vocal Talisman")
 				backr = /obj/item/rogue/instrument/vocals
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
 
 /datum/advclass/rogue/swashbuckler
 	name = "Swashbuckler"
