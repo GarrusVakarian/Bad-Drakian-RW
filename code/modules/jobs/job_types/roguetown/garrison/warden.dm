@@ -63,6 +63,31 @@
 		if(!SEND_SIGNAL(H.belt, COMSIG_TRY_STORAGE_INSERT, spare, null, TRUE, TRUE))
 			spare.forceMove(get_turf(H))
 
+/mob/living/carbon/human/proc/get_warden_wilderness_buff(class_name)
+	if(job == "Warden")
+		if(isnull(class_name))
+			class_name = advjob
+		switch(class_name)
+			if("Ranger")
+				return /datum/status_effect/buff/wardenbuff/ranger
+			if("Forester")
+				return /datum/status_effect/buff/wardenbuff/forester
+	return /datum/status_effect/buff/wardenbuff
+
+/datum/advclass/warden/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	if(H.job != "Warden" || !HAS_TRAIT(H, TRAIT_WOODSMAN))
+		return
+	var/area/rogue/our_area = get_area(H)
+	if(!istype(our_area) || !our_area.warden_area)
+		return
+	var/buff_type = H.get_warden_wilderness_buff(name)
+	var/datum/status_effect/current_buff = H.has_status_effect(/datum/status_effect/buff/wardenbuff)
+	if(current_buff && current_buff.type == buff_type)
+		return
+	H.remove_status_effect(/datum/status_effect/buff/wardenbuff)
+	H.apply_status_effect(buff_type)
+
 /datum/advclass/warden/ranger
 	name = "Ranger"
 	tutorial = "You are a ranger, a hunter who volunteered to become a part of the wardens. You have great experience using bows."
