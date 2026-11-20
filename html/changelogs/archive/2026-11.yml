@@ -709,6 +709,12 @@
   - rscadd: Added Shift+N to stash items in your cloak or draw its latest stored item.
       The shortcut can be changed in Keybinds.
 2026-11-20:
+  Guidesu:
+  - rscadd: You can tie someone's laces together with a needle using the new tie laces
+      intent. Running or walking too fast with your laces tied makes you trip. Untie
+      them with an open hand or cut them with a knife.
+  - rscadd: Trying to tie the laces of someone barefoot pricks their foot instead.
+  - image: Added a tied laces overlay for footwear.
   _Rarity:
   - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
   - qol: Classes with belts now start with their keys and keyrings inside them.

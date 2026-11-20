@@ -1,6 +1,0 @@
-author: "Guidesu"
-delete-after: True
-changes:
-  - rscadd: "You can tie someone's laces together with a needle using the new tie laces intent. Running or walking too fast with your laces tied makes you trip. Untie them with an open hand or cut them with a knife."
-  - rscadd: "Trying to tie the laces of someone barefoot pricks their foot instead."
-  - image: "Added a tied laces overlay for footwear."
