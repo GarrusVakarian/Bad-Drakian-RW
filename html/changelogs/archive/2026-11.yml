@@ -736,3 +736,5 @@
   - balance: Forester Wardens buff changed to Stalwart Forester (+2CON, +3WIL & Longstrider)
       and Ranger Wardens buff renamed to Wilderness Ranger with the same buffs (+1SPD,
       +3PER & Longstrider). A warden must have made this pr.
+  - bugfix: Dragons now have Expert Reading, use Werewolf emote sounds, and have a
+      set low speech bark instead of the loaded character's.
