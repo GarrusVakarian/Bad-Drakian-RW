@@ -122,6 +122,35 @@
 	body_parts_inherent = FULL_BODY
 	combat_taggable = TRUE
 
+// Inherent armor uses the virtue's stats and regeneration without occupying clothing slots.
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial
+	slot_flags = null
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/Initialize(mapload)
+	. = ..()
+	if(ishuman(loc))
+		RegisterSignal(loc, list(COMSIG_SPECIES_ATTACKED_BY, COMSIG_LIVING_ARMOR_CHECKED, COMSIG_MOB_APPLY_DAMGE), PROC_REF(on_attacked_by))
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/Destroy()
+	if(ishuman(loc))
+		var/mob/living/carbon/human/H = loc
+		if(H.skin_armor == src)
+			H.skin_armor = null
+	deltimer(reptimer)
+	return ..()
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/lamia
+	name = "tail scales"
+	desc = "Tough scales protect the lower body and mend over time."
+	body_parts_covered = LEGS|FEET
+	body_parts_inherent = LEGS|FEET
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
+	name = "talon scales"
+	desc = "Tough scales protect the feet and mend over time."
+	body_parts_covered = FEET
+	body_parts_inherent = FEET
+
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/chest/gladiator
 	name = "pit-hardened chest"//pit? hnnnnhhhffgggg
 	desc = "Are you not entertained?!"

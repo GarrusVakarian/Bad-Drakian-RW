@@ -8,6 +8,7 @@
 	)
 	name = "Harpy"
 	id = "harpy"
+	natural_armor_type = /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
 	desc = "<b>Harpy</b></br>\
 	Harpies, often called \"songbirds\" or \"Magpies\" by some, resemble the half-kin in appearance at first glance. \
 	However, the exact nature of the creatures is a much more complicated, debated topic, with many unknown details. \
