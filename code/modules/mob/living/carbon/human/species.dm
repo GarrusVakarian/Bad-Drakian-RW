@@ -821,10 +821,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				return FALSE
 			if(num_legs < 1)
 				return FALSE
-			if(DIGITIGRADE in species_traits)
-				if(!disable_warning)
-					to_chat(H, span_warning("The footwear around here isn't compatible with my feet!"))
-				return FALSE
 			return equip_delay_self_check(I, H, bypass_equip_delay_self)
 		if(SLOT_BELT)
 			if(H.belt)

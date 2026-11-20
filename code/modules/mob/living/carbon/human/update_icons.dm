@@ -645,7 +645,8 @@ There are several things that need to be remembered:
 			if(hud_used.inventory_shown)			//if the inventory is open
 				client.screen += shoes					//add it to client's screen
 		update_observer_view(shoes,1)
-		if(dna && dna.species.sexes)
+		// Keep footwear functional in inventory, but hide artwork made for plantigrade feet.
+		if(dna && dna.species.sexes && !(DIGITIGRADE in dna.species.species_traits))
 			var/footindex = get_limbloss_index(LEG_RIGHT, LEG_LEFT)
 			var/racecustom
 			var/mutable_appearance/shoes_overlay
