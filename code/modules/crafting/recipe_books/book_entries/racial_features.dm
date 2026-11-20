@@ -152,7 +152,7 @@
 
 /datum/book_entry/racial_features/tiefling/inner_book_html(mob/user)
 	return {"
-		<h2>Hellspawn</h2><p>Your bloodline resists catching fire. You can still suffer burns, such as from lava.</p>
+		<h2>Hellspawn</h2><p>Ordinary flames cannot set you alight. You can still take burn damage, and magical flames such as divine and sunder fire can still ignite you.</p>
 	"}
 
 /datum/book_entry/racial_features/humen
