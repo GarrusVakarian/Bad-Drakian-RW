@@ -8,8 +8,7 @@
 
 /datum/book_entry/racial_features/overview/inner_book_html(mob/user)
 	return {"
-		<p>Use these chapters for practical instructions about racial abilities, unusual bodies and special interactions. Your origin, class, equipment and chosen features may add or change abilities. Read your character sheet and action tooltips for your actual traits and spells.</p>
-		<p>Classes and origins are separate from race: not every character of a race receives the same spells. Races with only ordinary attribute changes do not need a separate chapter here.</p>
+		<p>Use these chapters for instructions about racial abilities. Races with only ordinary attribute changes do not get a chapter here.</p>
 	"}
 
 /datum/book_entry/racial_features/construct
