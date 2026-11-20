@@ -738,3 +738,9 @@
       +3PER & Longstrider). A warden must have made this pr.
   - bugfix: Dragons now have Expert Reading, use Werewolf emote sounds, and have a
       set low speech bark instead of the loaded character's.
+  - rscadd: The Encyclopedia now has a Racial Features guide, with direct chapter
+      links in race descriptions. Arachnids get a short lore paragraph as well.
+  - rscadd: A new border and style for racial and patron selection text, with a more
+      readable color for the likely worshippers lists.
+  - bugfix: Revival miracles can restore suffering Oozes while retaining their usual
+      requirements.
