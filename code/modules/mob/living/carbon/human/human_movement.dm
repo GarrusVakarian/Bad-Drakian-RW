@@ -157,6 +157,8 @@
 			visible_message(span_warning("[user]'s attack is redirected to [mount]'s chest!"))
 			user.zone_selected = BODY_ZONE_CHEST
 			return mount.attackby(I, user, params)
+	if(try_free_laces(user, I))
+		return TRUE
 	return ..()
 
 /mob/living/carbon/human/attack_animal(mob/living/simple_animal/M)
