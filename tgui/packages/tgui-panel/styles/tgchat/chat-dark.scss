@@ -941,9 +941,10 @@ h2.alert {
   border-radius: 2px;
 }
 
-// Faith selection panels use the same palette as BD's examine cards.
+// Character selection panels use the same palette as BD's examine cards.
 .faithdesc_block,
-.patrondesc_block {
+.patrondesc_block,
+.racedesc_block {
   background: #1b1c1e;
   border: 1px solid #a4bad6;
   margin: 0.5em;

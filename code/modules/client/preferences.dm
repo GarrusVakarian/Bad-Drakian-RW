@@ -548,10 +548,11 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	real_name = pref_species.random_name(gender,1)
 	ResetJobs()
 	if(user)
-		if(pref_species.desc)
-			to_chat(user, "[pref_species.desc]")
+		var/race_info = pref_species.desc ? pref_species.desc : ""
 		if(pref_species.expanded_desc)
-			to_chat(user, "<a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>")
+			race_info += "<br><a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>"
+		if(race_info)
+			to_chat(user, fieldset_block("Race: [pref_species.name]", race_info, "racedesc_block"))
 		to_chat(user, "<font color='red'>Classes reset.</font>")
 	random_character(gender, FALSE, FALSE)
 	accessory = "Nothing"
@@ -2515,7 +2516,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					if(faith_input)
 						var/datum/faith/faith = faiths_named[faith_input]
 						var/faith_info = "Background: [faith.desc]<br><br>"
-						faith_info += "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>"
+						faith_info += "<font color='#c58cff'>Likely Worshippers: [faith.worshippers]</font>"
 						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
 						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
 
@@ -2533,7 +2534,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						selected_patron = patrons_named[god_input]
 						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
 						patron_info += "Background: [selected_patron.desc]<br><br>"
-						patron_info += "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
+						patron_info += "<font color='#c58cff'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
 						patron_info += "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font><br>"
 						patron_info += "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>"
 						to_chat(user, fieldset_block("Patron: [selected_patron.name]", patron_info, "patrondesc_block"))
