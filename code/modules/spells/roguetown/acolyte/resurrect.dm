@@ -48,7 +48,7 @@
 		var/validation_result = validate_items(target)
 		if(validation_result != "")
 			to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
 
 		var/found_structure = FALSE
@@ -72,39 +72,43 @@
 		if(!found_structure)
 			var/atom/temp_structure = required_structure
 			to_chat(user, span_warning("I need a holy [initial(temp_structure.name)] near [target]."))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
-			//OV edit
-		if(istype(target, /mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob/suffering))
-			target.revive()
-			return TRUE
-		//OV edit
-		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-		if(underworld_spirit)
-			var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-			qdel(underworld_spirit)
-			ghost.mind.transfer_to(target, TRUE)
-		target.grab_ghost(force = TRUE)
 		var/precheck_error = get_revival_precheck_error(target, user)
 		if(precheck_error)
 			to_chat(user, span_warning(precheck_error))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
-		if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
-			revert_cast()
-			return FALSE
-		if(target.mob_biotypes & MOB_UNDEAD && harms_undead) //positive energy harms the undead
-			target.visible_message(
-				span_danger("[target] is unmade by divine magic!"),
-				span_userdanger("I'm unmade by divine magic!")
-			)
-			target.gib()
-			return TRUE
-		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
-		if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
-			to_chat(user, span_warning(get_revival_failure_message(target)))
-			revert_cast()
-			return FALSE
+		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+		if(ooze)
+			var/mob/living/body = ooze.stored
+			if(!target.revive())
+				revert_cast(user)
+				return FALSE
+			target = body
+			targets[1] = body
+		else
+			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+			if(underworld_spirit)
+				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+				qdel(underworld_spirit)
+				ghost.mind.transfer_to(target, TRUE)
+			target.grab_ghost(force = TRUE)
+			if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
+				revert_cast(user)
+				return FALSE
+			if(target.mob_biotypes & MOB_UNDEAD && harms_undead) //positive energy harms the undead
+				target.visible_message(
+					span_danger("[target] is unmade by divine magic!"),
+					span_userdanger("I'm unmade by divine magic!")
+				)
+				target.gib()
+				return TRUE
+			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
+			if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
+				to_chat(user, span_warning(get_revival_failure_message(target)))
+				revert_cast(user)
+				return FALSE
 		target.emote("breathgasp")
 		target.Jitter(100)
 		target.update_body()
@@ -112,7 +116,7 @@
 		if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
 			adjust_playerquality(revive_pq, user.ckey)
 			ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
-		target.mind.remove_antag_datum(/datum/antagonist/zombie)
+		target.mind?.remove_antag_datum(/datum/antagonist/zombie)
 		target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
 		if(debuff_type)
 			target.apply_status_effect(debuff_type)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
@@ -120,7 +124,7 @@
 		target.apply_status_effect(/datum/status_effect/buff/healing, 14)
 		consume_items(target)
 		return TRUE
-	revert_cast()
+	revert_cast(user)
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/cast_check(skipcharge,mob/user = usr)
@@ -608,17 +612,18 @@
 
 // Wild Revival can also revive simple animal mobs (no debuff applied, full heal).
 /obj/effect/proc_holder/spell/invoked/resurrect/dendor/cast(list/targets, mob/living/user)
-	if(!isanimal(targets[1]))
+	var/mob/living/patient = targets[1]
+	if(!isanimal(patient) || patient.get_ooze_revival_holder())
 		return ..()
-	var/mob/living/simple_animal/target = targets[1]
+	var/mob/living/simple_animal/target = patient
 	if(target.stat != DEAD)
 		to_chat(user, span_warning("[target] is not dead."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	var/validation_result = validate_items(target)
 	if(validation_result != "")
 		to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	var/found_structure = FALSE
 	for(var/atom/A in oview(structure_range, target))
@@ -636,11 +641,11 @@
 	if(!found_structure)
 		var/atom/temp_structure = required_structure
 		to_chat(user, span_warning("I need a [initial(temp_structure.name)] near [target]."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	if(!target.revive(full_heal = TRUE))
 		to_chat(user, span_warning("Nothing happens."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	target.visible_message(span_notice("[target] is roused by the wild magic!"))
 	consume_items(target)

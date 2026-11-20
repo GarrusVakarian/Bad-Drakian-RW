@@ -346,40 +346,46 @@
 
 /obj/effect/proc_holder/spell/invoked/psydonabsolve/cast(list/targets, mob/living/user)
 
-	if(!ishuman(targets[1]))
+	var/mob/living/patient = targets[1]
+	var/obj/shapeshift_holder/ooze_death/ooze
+	if(isliving(patient))
+		ooze = patient.get_ooze_revival_holder()
+	if(!ishuman(patient) && !ooze)
 		to_chat(user, span_warning("ABSOLUTION is for those who walk in HIS image!"))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 
-	var/mob/living/carbon/human/H = targets[1]
+	var/mob/living/carbon/human/H = ooze ? ooze.stored : patient
+	var/restored_ooze = FALSE
 
 	if(H == user)
 		to_chat(user, span_warning("You cannot ABSOLVE yourself!"))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 
 	// Special case for dead targets
-	if(H.stat >= DEAD)
-		if(!H.check_revive(user))
-			revert_cast()
+	if(H.stat >= DEAD || ooze)
+		if(!ooze && !H.check_revive(user))
+			revert_cast(user)
 			return FALSE
-		if(alert(user, "REACH OUT AND PULL?", "THERE'S NO LUX IN THERE", "NO", "YES") != "YES")
-			revert_cast()
+		if(!confirm_absolution(user, patient))
+			revert_cast(user)
 			return FALSE
-		to_chat(user, span_warning("You attempt to revive [H] by ABSOLVING them!"))
-		// Dramatic effect
-		user.visible_message(span_danger("[user] grabs [H] by the wrists, silvery lux thread pouring from their hands!"))
-
-		if(alert(H, "They want to ABSOLVE you. Will you let them?", "ABSOLUTION", "I'll allow it", "I refuse") != "I'll allow it")
-			H.visible_message(span_notice("Nothing happens."))
-			return FALSE
+		if(ooze)
+			// Both prompts can yield; the blob may already have recovered or disappeared.
+			if(QDELETED(user) || user.stat == DEAD || QDELETED(patient) || patient.get_ooze_revival_holder() != ooze || !patient.revive())
+				revert_cast(user)
+				return FALSE
+			targets[1] = H
+			restored_ooze = TRUE
 		// Create visual effects
 		H.apply_status_effect(/datum/status_effect/buff/psyvived)
 		// Kill the caster
 		user.say("MY LYFE FOR YOURS! LYVE, AS DOES HE!", forced = TRUE, count_for_stats = FALSE)
 		user.death()
 		// Revive the target
-		H.revive(full_heal = TRUE, admin_revive = FALSE)
+		if(!restored_ooze)
+			H.revive(full_heal = TRUE, admin_revive = FALSE)
 		H.adjustOxyLoss(-H.getOxyLoss())
 		H.grab_ghost(force = TRUE) // even suicides
 		H.emote("breathgasp")
@@ -390,7 +396,7 @@
 		H.apply_status_effect(/datum/status_effect/buff/psyvived)
 		user.apply_status_effect(/datum/status_effect/buff/psyvived)
 		H.visible_message(span_notice("[H] is ABSOLVED!"), span_green("I awake from the void, covered in inert silver threads."))
-		H.mind.remove_antag_datum(/datum/antagonist/zombie)
+		H.mind?.remove_antag_datum(/datum/antagonist/zombie)
 		H.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
 		H.apply_status_effect(/datum/status_effect/debuff/revived)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
 		return TRUE
@@ -438,6 +444,18 @@
 	return TRUE
 
 // Weaker absolve for the Stigmata adventurer
+/obj/effect/proc_holder/spell/invoked/psydonabsolve/proc/confirm_absolution(mob/living/user, mob/living/patient)
+	if(alert(user, "REACH OUT AND PULL?", "THERE'S NO LUX IN THERE", "NO", "YES") != "YES")
+		return FALSE
+	if(QDELETED(user) || QDELETED(patient))
+		return FALSE
+	to_chat(user, span_warning("You attempt to revive [patient] by ABSOLVING them!"))
+	user.visible_message(span_danger("[user] grabs [patient] by the wrists, silvery lux thread pouring from their hands!"))
+	if(alert(patient, "They want to ABSOLVE you. Will you let them?", "ABSOLUTION", "I'll allow it", "I refuse") != "I'll allow it")
+		patient.visible_message(span_notice("Nothing happens."))
+		return FALSE
+	return TRUE
+
 /obj/effect/proc_holder/spell/invoked/psydonamend	
 	name = "AMEND"
 	overlay_icon = 'icons/mob/actions/psydonmiracles.dmi'

@@ -254,9 +254,22 @@
 	STASPD = 2
 
 /mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob/suffering/revive(full_heal = FALSE, admin_revive = FALSE, bypass_foreign_brain_check = FALSE)
+	var/obj/shapeshift_holder/ooze_death/H = get_ooze_revival_holder()
+	if(!H)
+		return FALSE
+	var/mob/living/body = H.stored
+	H.restore(death = FALSE)
+	return !QDELETED(body) && body.loc != H && !body.notransform && body.stat != DEAD
+
+/// Ordinary mobs and voluntary blob forms are not collapsed Ooze patients.
+/mob/living/proc/get_ooze_revival_holder()
+	return null
+
+/mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob/suffering/get_ooze_revival_holder()
 	var/obj/shapeshift_holder/ooze_death/H = locate() in src
-	if(H)
-		H.restore(death = FALSE)
+	if(QDELETED(H) || H.restoring || H.shape != src || QDELETED(H.stored) || !ishuman(H.stored) || H.stored.loc != H || !HAS_TRAIT(H.stored, TRAIT_OOZE_SUFFERING))
+		return null
+	return H
 
 /obj/effect/proc_holder/spell/targeted/shapeshift/ooze/Shapeshift(mob/living/caster)
 	if(locate(/obj/shapeshift_holder) in caster)
@@ -278,9 +291,14 @@
 		playsound(caster.loc, pick('sound/combat/gib (1).ogg','sound/combat/gib (2).ogg'), 200, FALSE, 3)
 		caster.spawn_gibs(FALSE)
 
+/obj/shapeshift_holder/ooze_death
+	/// Collapse time for miracles that only restore a recently lost life.
+	var/collapsed_at
+
 /obj/shapeshift_holder/ooze_death/Initialize(mapload,mob/living/caster)
 	if(!caster)
 		return ..()
+	collapsed_at = world.time
 	shape = loc
 	if(!istype(shape))
 		CRASH("shapeshift holder created outside mob/living")
