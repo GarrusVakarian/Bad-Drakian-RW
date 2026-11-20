@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Starting armor no longer produces premature training warnings before your class finishes loading. Genuinely untrained characters still receive a warning."
