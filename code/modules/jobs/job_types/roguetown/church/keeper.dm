@@ -93,9 +93,9 @@
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Keeper Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, "Choose your path.", "Keeper Doctrine", "Orthodox", "Eclectic")
 
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		grant_radical_path(H)
 	else
 		grant_old_path(H)
@@ -140,7 +140,7 @@
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)
 
-	to_chat(H, span_notice("I remain on the old path of Pestra's devotion."))
+	to_chat(H, span_notice("I follow Pestra's Orthodox teachings."))
 
 
 /datum/job/roguetown/keeper/proc/grant_radical_path(mob/living/carbon/human/H)
@@ -160,5 +160,5 @@
 	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/resurrect/pestra))
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/resurrect/pestra, H)
 
-	to_chat(H, span_notice("I embrace Pestra's radical doctrine."))
+	to_chat(H, span_notice("I follow Pestra's Eclectic teachings."))
 

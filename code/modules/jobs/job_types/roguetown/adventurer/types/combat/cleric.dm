@@ -436,17 +436,17 @@
 	var/client/setup_client = H.client
 	var/datum/mind/setup_mind = H.mind
 	var/datum/patron/setup_patron = H.patron
-	var/choice = alert(H, "Choose Loyalist for your patron's usual miracles, or Radical to learn miracles through research. Your Paladin tier limit still applies.", "Paladin Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, "Choose Orthodox for your patron's usual miracles, or Eclectic to learn miracles through research. Your Paladin tier limit still applies.", "Paladin Doctrine", "Orthodox", "Eclectic")
 	if(QDELETED(H) || H.client != setup_client || H.mind != setup_mind || H.patron != setup_patron)
 		return FALSE
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		if(!HAS_TRAIT(H, TRAIT_CLERGYRADICAL))
 			H.church_favor += 1200
 		ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-		to_chat(H, span_notice("I embrace the radical path."))
+		to_chat(H, span_notice("I follow the Eclectic path."))
 	else
 		REMOVE_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-		to_chat(H, span_notice("I follow my patron's established teachings."))
+		to_chat(H, span_notice("I follow the Orthodox path."))
 	return TRUE
 
 /datum/advclass/cleric/cantor

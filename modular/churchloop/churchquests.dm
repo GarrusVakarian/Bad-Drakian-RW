@@ -524,7 +524,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 		to_chat(user, span_warning("Target must be a player."))
 		return FALSE
 	if(HAS_TRAIT(HH, TRAIT_CLERGYRADICAL))
-		to_chat(user, span_warning("Radical clergy cannot be used as quest targets."))
+		to_chat(user, span_warning("Eclectic clergy cannot be used as quest targets."))
 		return FALSE
 	if(_has_quest_target_mark(HH))
 		to_chat(user, span_warning("This target is already marked by a previous quest."))

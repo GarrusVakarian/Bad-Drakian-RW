@@ -177,9 +177,9 @@ GLOBAL_LIST_EMPTY(priest_swap_timers)
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Bishop Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, "Choose your path.", "Bishop Doctrine", "Orthodox", "Eclectic")
 
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		src.grant_radical_path(H)
 	else
 		src.grant_old_path(H)
@@ -191,7 +191,7 @@ GLOBAL_LIST_EMPTY(priest_swap_timers)
 	H.verbs -= /mob/living/carbon/human/proc/change_patron
 	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
 	_pick_loyalist_miracles(H)
-	to_chat(H, span_notice("I remain on the old path of devotion."))
+	to_chat(H, span_notice("I follow the Orthodox path."))
 
 /datum/job/roguetown/priest/proc/grant_radical_path(mob/living/carbon/human/H)
 	if(!H || !H.mind || !H.patron)
@@ -215,7 +215,7 @@ GLOBAL_LIST_EMPTY(priest_swap_timers)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/wound_heal, H)
 	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/takeapprentice))
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/takeapprentice, H)
-	to_chat(H, span_notice("I embrace the radical path."))
+	to_chat(H, span_notice("I follow the Eclectic path."))
 
 /datum/job/priest/vice //just used to change the priest title
 	title = "Vice Priest"
@@ -594,7 +594,7 @@ code\modules\admin\verbs\divinewrath.dm has a variant with all the gods so keep 
 		return
 
 	if(!HAS_TRAIT(src, TRAIT_CLERGYRADICAL))
-		to_chat(src, span_warning("Only a radical bishop may abandon the old doctrine."))
+		to_chat(src, span_warning("Only an Eclectic Bishop can change patron."))
 		return
 
 	var/key = REF(src)
