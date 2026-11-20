@@ -54,7 +54,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/arbiter
 	belt = /obj/item/storage/belt/rogue/leather/arbiter
 	neck = /obj/item/clothing/neck/roguetown/psicross/silver
-	shoes = /obj/item/clothing/shoes/roguetown/boots/otavan/inqboots
+	shoes = (H.pronouns in list(HE_HIM, THEY_THEM)) ? /obj/item/clothing/shoes/roguetown/boots/otavan/inqboots : /obj/item/clothing/shoes/roguetown/boots/otavan/inqboots/heels
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/arbiter
 	backr =  /obj/item/storage/backpack/rogue/satchel/otavan
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow

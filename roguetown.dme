@@ -1795,6 +1795,7 @@
 #include "code\modules\clothing\rogueclothes\cloaks.dm"
 #include "code\modules\clothing\rogueclothes\dummy_items.dm"
 #include "code\modules\clothing\rogueclothes\feet.dm"
+#include "code\modules\clothing\rogueclothes\heel_styles.dm"
 #include "code\modules\clothing\rogueclothes\mask.dm"
 #include "code\modules\clothing\rogueclothes\mouth.dm"
 #include "code\modules\clothing\rogueclothes\neck.dm"

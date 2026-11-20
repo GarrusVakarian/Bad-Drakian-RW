@@ -29,6 +29,11 @@
 	cost = 100
 	contains = list(/obj/item/polishing_cream, /obj/item/armor_brush)
 
+/datum/supply_pack/rogue/luxury/heelificators
+	name = "Heel Elixirs"
+	cost = 300
+	contains = list(/obj/item/heelkit, /obj/item/heelkit, /obj/item/heelkit)
+
 /datum/supply_pack/rogue/luxury/circlet
 	name = "Circlet"
 	cost = 80
