@@ -251,6 +251,8 @@
 /obj/effect/proc_holder/spell/invoked/resurrect/graggar/get_revival_precheck_error(mob/living/target, mob/living/user)
 	if(target == user)
 		return "I cannot use this miracle to revive myself."
+	if(target.get_ooze_revival_holder())
+		return null
 	if(target.stat < DEAD)
 		return "[target] is not dead. This miracle can only revive the dead."
 	if(!target.mind)

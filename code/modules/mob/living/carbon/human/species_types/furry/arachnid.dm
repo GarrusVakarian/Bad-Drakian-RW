@@ -6,7 +6,9 @@
 	id = "arachnid"
 	clothes_id = "lamia"
 	desc = "<b>Arachnid</b><br>\
-	(+1 Strength, -1 Speed, Webwalk Trait, Longstrider Trait, Venomous Trait)"
+	Among shaded forests and quiet caverns, Arachnids weave homes of silk and patiently tend their broods. Many venture beyond these secluded places, seeking livelihoods among people who regard their many-legged neighbours with equal measures of curiosity and suspicion.<br>\
+	(+1 Strength, -1 Speed)<br>\
+	<a href='byond://winset?command=Racial-Features%20arachnid'>Racial Features: Arachnids</a><br>"
 
 	expanded_desc = ""
 
