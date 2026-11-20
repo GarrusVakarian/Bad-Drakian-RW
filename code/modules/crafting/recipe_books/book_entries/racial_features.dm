@@ -60,7 +60,7 @@
 	return {"
 		<h2>Small and fragile</h2><p>Your tiny body can pass through other characters and tables. You resist fall damage but are vulnerable to critical injuries. Your clothing choices are restricted by size, and your decorative wings do not grant unrestricted flight.</p>
 		<h2>Glow, luck and language</h2><p>The Seelie tab contains Seelie glow, which toggles your light, and Luck aura, which switches between blessing and misery. The aura affects nearby non-Seelie characters. You can speak Faexin with the ,t language prefix.</p>
-		<h2>Seelie magic</h2><p>You gain the following spells: Seelie Dust (disorienting powder), Call Beast (summons a rat, with a rare Rous), Strip Clothes (removes a random glove, shoe or non-helmet headwear), Drain (takes nearby energy), Replenish Nature (restores eligible natural growth), Tame Rous (calms a Rous so you can ride it), Regenerative Kiss (healing with some nausea) and Water Splash (a water projectile). Read the abilities with Shift+LMB for more details.</p>
+		<h2>Seelie magic</h2><p>You gain the following spells: Seelie Dust (disorienting powder), Call Beast (summons a rat, with a rare Rous), Strip Clothes (removes a random glove, shoe or non-helmet headwear), Tame Rous (calms a Rous so you can ride it), Regenerative Kiss (healing with some nausea) and Water Splash (a water projectile). Read the abilities with Shift+LMB for more details.</p>
 	"}
 
 /datum/book_entry/racial_features/arachnid
