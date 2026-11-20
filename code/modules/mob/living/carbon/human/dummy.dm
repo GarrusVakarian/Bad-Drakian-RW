@@ -23,6 +23,8 @@ INITIALIZE_IMMEDIATE(/mob/living/carbon/human/dummy)
 		ensure_not_taur()
 	delete_equipment()
 	cut_overlays(TRUE)
+	icon = initial(icon)
+	icon_state = ""
 
 /mob/living/carbon/human/dummy/setup_human_dna()
 	create_dna(src)
