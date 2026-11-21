@@ -338,6 +338,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/hypnotic_gaze_style = "Hypnotext"
 	var/hypnotic_presence_text = "There is something strangely compelling about their presence."
 	var/hypnotic_presence_style = "Hypnotext"
+	var/milk_production_size = OBSCENE_BREASTS_SIZE
 
 	var/setspouse = ""
 	var/gender_choice = ANY_GENDER

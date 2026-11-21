@@ -41,8 +41,20 @@
 	name = "High Milk Production"
 	point_cost = 0
 	desc = "I can store and release more milk when lactating."
-	custom_text = "Counts as Obscene chest size for milk storage and release."
+	custom_text = "Choose which chest size counts for milk storage and release."
 	added_traits = list(TRAIT_HIGH_MILK_PRODUCTION)
+
+/datum/quirk/high_milk_production/apply_to_human(mob/living/carbon/human/recipient)
+	recipient.milk_production_size = sanitize_milk_production_size(recipient.client?.prefs?.milk_production_size)
+
+/mob/living/carbon/human
+	/// Snapshot from character setup so changing slots does not change a spawned character.
+	var/milk_production_size = OBSCENE_BREASTS_SIZE
+
+/proc/sanitize_milk_production_size(size)
+	if(!isnum(size) || size < MIN_BREASTS_SIZE || size > OBSCENE_BREASTS_SIZE || round(size) != size)
+		return OBSCENE_BREASTS_SIZE
+	return size
 
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"

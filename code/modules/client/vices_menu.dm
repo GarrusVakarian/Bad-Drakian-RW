@@ -283,6 +283,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"hypnotic_presence_text" = hypnotic_presence_text,
 		"hypnotic_presence_style" = hypnotic_presence_style,
+		"milk_production_size" = milk_production_size,
 		"loadout" = loadout,
 		"loadout2" = loadout2,
 		"loadout3" = loadout3,
@@ -367,6 +368,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(snapshot["hypnotic_gaze_style"])
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(snapshot["hypnotic_presence_text"])
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(snapshot["hypnotic_presence_style"])
+	milk_production_size = sanitize_milk_production_size(snapshot["milk_production_size"])
 	loadout = snapshot["loadout"]
 	loadout2 = snapshot["loadout2"]
 	loadout3 = snapshot["loadout3"]
@@ -443,6 +445,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"hypnotic_presence_text" = hypnotic_presence_text,
 		"hypnotic_presence_style" = hypnotic_presence_style,
+		"milk_production_size" = milk_production_size,
 		"loadout" = loadout?.type,
 		"loadout2" = loadout2?.type,
 		"loadout3" = loadout3?.type,
@@ -587,6 +590,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(preset["hypnotic_gaze_style"])
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(preset["hypnotic_presence_text"])
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(preset["hypnotic_presence_style"])
+	milk_production_size = sanitize_milk_production_size(preset["milk_production_size"])
 	
 	// Load loadout types and instantiate them if valid
 	var/loadout_type = string_to_typepath(preset["loadout"])
@@ -1337,6 +1341,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
 			var/presence = istype(current_quirk, /datum/quirk/hypnotic_presence)
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];hypnotic_gaze_action=configure;presence=[presence]'>Configure [presence ? "Presence" : "Gaze"]</a>"
+		if(istype(current_quirk, /datum/quirk/high_milk_production))
+			var/milk_size_name = find_key_by_value(GLOB.named_breast_sizes, milk_production_size)
+			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];milk_production_action=configure'>Configure Milk Size ([milk_size_name])</a>"
 		if(istype(current_quirk, /datum/quirk/virgin))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];quirk_action=remove;index=[i]'>Remove</a>"
@@ -2033,6 +2040,28 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		else
 			hypnotic_gaze_text = sanitize_hypnotic_gaze_text(new_text)
 			hypnotic_gaze_style = sanitize_hypnotic_gaze_style(new_style)
+		open_vices_menu(editor)
+		return
+
+	if(href_list["milk_production_action"])
+		var/quirk_type = /datum/quirk/high_milk_production
+		if(href_list["milk_production_action"] != "configure" || !has_quirk(quirk_type))
+			return
+		var/mob/editor = usr
+		if(!editor || !parent || editor.client != parent)
+			return
+		var/editing_slot = default_slot
+		var/previous_size = milk_production_size
+		var/size_name = find_key_by_value(GLOB.named_breast_sizes, previous_size)
+		var/choice = tgui_input_list(editor, "Choose the size used for milk storage and release.", "High Milk Production", GLOB.named_breast_sizes, size_name)
+		if(!(choice in GLOB.named_breast_sizes) || QDELETED(editor) || !parent || editor.client != parent || editing_slot != default_slot || !has_quirk(quirk_type) || milk_production_size != previous_size)
+			return
+		var/new_size = GLOB.named_breast_sizes[choice]
+		if(new_size == previous_size)
+			return
+		save_to_history()
+		milk_production_size = new_size
+		save_character()
 		open_vices_menu(editor)
 		return
 

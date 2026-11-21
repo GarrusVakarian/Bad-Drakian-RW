@@ -263,13 +263,15 @@
 	milk_max = max(75, breast_size * 100)
 
 /obj/item/organ/breasts/proc/get_milk_capacity()
-	if(owner && HAS_TRAIT(owner, TRAIT_HIGH_MILK_PRODUCTION))
-		return OBSCENE_BREASTS_SIZE * 100
+	var/mob/living/carbon/human/donor = owner
+	if(istype(donor) && HAS_TRAIT(donor, TRAIT_HIGH_MILK_PRODUCTION))
+		return max(75, donor.milk_production_size * 100)
 	return milk_max
 
 /obj/item/organ/breasts/proc/get_milk_release_limit()
-	if(owner && HAS_TRAIT(owner, TRAIT_HIGH_MILK_PRODUCTION))
-		return OBSCENE_BREASTS_SIZE
+	var/mob/living/carbon/human/donor = owner
+	if(istype(donor) && HAS_TRAIT(donor, TRAIT_HIGH_MILK_PRODUCTION))
+		return max(donor.milk_production_size, 1)
 	return max(breast_size, 1)
 
 /obj/item/organ/breasts/update_overlays()/// works the same way irises do for eye organ items

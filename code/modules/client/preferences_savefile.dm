@@ -619,6 +619,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(hypnotic_gaze_style)
 	S["hypnotic_presence_text"] >> hypnotic_presence_text
 	S["hypnotic_presence_style"] >> hypnotic_presence_style
+	var/saved_milk_size
+	S["milk_production_size"] >> saved_milk_size
+	milk_production_size = sanitize_milk_production_size(saved_milk_size)
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(hypnotic_presence_text)
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(hypnotic_presence_style)
 	if(isnull(redolent_type)) // legacy savefile key from when this was named malodorous
@@ -1290,6 +1293,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["hypnotic_gaze_text_version"], 1)
 	WRITE_FILE(S["hypnotic_presence_text"], hypnotic_presence_text)
 	WRITE_FILE(S["hypnotic_presence_style"], hypnotic_presence_style)
+	WRITE_FILE(S["milk_production_size"], milk_production_size)
 	WRITE_FILE(S["feature_mcolor"]		, features["mcolor"])
 	WRITE_FILE(S["feature_mcolor2"]		, features["mcolor2"])
 	WRITE_FILE(S["feature_mcolor3"]		, features["mcolor3"])
