@@ -508,6 +508,22 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 		to_chat(completer, span_notice("The reward is credited to [owner_name]."))
 		to_chat(receiver, span_notice("+[amount] Favor from a completed quest token you created."))
 
+	if(!HAS_TRAIT(receiver, TRAIT_CLERGYRADICAL))
+		return
+
+	var/shared_favor = round(amount / 3)
+	if(shared_favor < 1)
+		return
+
+	for(var/mob/living/carbon/human/H as anything in GLOB.human_list)
+		if(H == receiver || QDELETED(H) || !HAS_TRAIT(H, TRAIT_CLERGYRADICAL))
+			continue
+		if(H.mind?.current != H || !H.mind.key || ckey(H.mind.key) == owner_ckey)
+			continue
+		H.church_favor += shared_favor
+		if(H.client)
+			to_chat(H, span_notice("+[shared_favor] Favor from a fellow Eclectic's completed quest."))
+
 /obj/item/quest_token/proc/_ensure_attacker(user)
 	if(!istype(user, /mob/living/carbon/human))
 		return FALSE
