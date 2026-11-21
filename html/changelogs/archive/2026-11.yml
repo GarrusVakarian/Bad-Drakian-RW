@@ -757,6 +757,7 @@
       tab. Loadout item descriptions now wrap onto multiple lines.
   - bugfix: Ground and standing stone lanterns no longer disappear when holding an
       unlit torch.
+  - balance: Dragon is now available only when the Dragons round modifier is selected.
   mypingishuge:
   - qol: Carts can bulk-load with middle-click or drag-and-drop, unload one chosen
       item, and supply nearby crafting materials.
