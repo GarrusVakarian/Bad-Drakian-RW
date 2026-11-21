@@ -8,7 +8,7 @@
 	class_select_category = CLASS_CAT_ROGUE
 	category_tags = list(CTAG_WRETCH)
 	subclass_languages = list(/datum/language/abyssal)
-	traits_applied = list(TRAIT_DODGEEXPERT)
+	traits_applied = list(TRAIT_DODGEEXPERT, TRAIT_FUSILIER)
 	subclass_stats = list(
 		STATKEY_STR = 1,
 		STATKEY_SPD = 1,
