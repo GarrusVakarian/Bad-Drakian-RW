@@ -1,16 +1,6 @@
 /proc/sanitize_natural_armor_text(value)
 	return trim(copytext_char(sanitize_text(value), 1, 201))
 
-/// Read the active chest customization when the quirk is added.
-/datum/preferences/proc/get_initial_milk_production_size()
-	if(!pref_species)
-		return MIN_BREASTS_SIZE
-	for(var/datum/customizer_entry/organ/breasts/entry in customizer_entries)
-		if(entry.disabled || !(entry.customizer_type in pref_species.customizers))
-			continue
-		return sanitize_milk_production_size(entry.breast_size)
-	return MIN_BREASTS_SIZE
-
 /datum/preferences/proc/has_natural_armor_virtue()
 	return istype(virtue, /datum/virtue/combat/tough_hide) || (statpack?.name == "Virtuous" && istype(virtuetwo, /datum/virtue/combat/tough_hide))
 
@@ -1969,7 +1959,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				if(istype(selected, /datum/quirk/high_milk_production))
 					if(QDELETED(quirk_editor) || !parent || quirk_editor.client != parent || default_slot != quirk_editing_slot || has_quirk(selected.type))
 						return
-					milk_production_size = get_initial_milk_production_size()
+					milk_production_size = LARGE_BREASTS_SIZE
 				quirks += new selected.type()
 				if(istype(selected, /datum/quirk/virgin))
 					configure_virgin_attraction(usr)

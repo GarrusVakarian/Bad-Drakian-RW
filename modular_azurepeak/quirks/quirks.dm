@@ -49,11 +49,11 @@
 
 /mob/living/carbon/human
 	/// Snapshot from character setup so changing slots does not change a spawned character.
-	var/milk_production_size = MIN_BREASTS_SIZE
+	var/milk_production_size = LARGE_BREASTS_SIZE
 
 /proc/sanitize_milk_production_size(size)
 	if(!isnum(size) || size < MIN_BREASTS_SIZE || size > MAX_BREASTS_SIZE || round(size) != size)
-		return MIN_BREASTS_SIZE
+		return LARGE_BREASTS_SIZE
 	return size
 
 /datum/quirk/acquiredtastes

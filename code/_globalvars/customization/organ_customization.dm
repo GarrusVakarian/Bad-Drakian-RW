@@ -16,7 +16,7 @@ GLOBAL_LIST_INIT(named_breast_sizes, list(
 	"Slight" = 1,
 	"Small" = 2,
 	"Moderate" = 3,
-	"Large" = 4,
+	"Large" = LARGE_BREASTS_SIZE,
 	"Generous" = 5,
 	"Heavy" = 6,
 	"Massive" = 7,
