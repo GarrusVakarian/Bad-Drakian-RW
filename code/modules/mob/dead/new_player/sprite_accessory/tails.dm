@@ -446,7 +446,7 @@
 
 /datum/sprite_accessory/tail/scorpian
 	icon = 'modular/icons/mob/tails/manticore_tail.dmi'
-	name = "Scorpian"
+	name = "Scorpion"
 	icon_state = "scorpian"
 	color_keys = 2
 	color_key_names = list("Tail", "Stinger")

@@ -636,5 +636,11 @@
 	default_disabled = TRUE
 
 /datum/customizer_choice/organ/tail/arachnid
-	name = "Tentacle Tail"
-	sprite_accessories = list(/datum/sprite_accessory/tail/tentacle)
+	name = "Tail"
+	sprite_accessories = list(
+		/datum/sprite_accessory/tail/tentacle,
+		/datum/sprite_accessory/tail/bee,
+		/datum/sprite_accessory/tail/insect,
+		/datum/sprite_accessory/tail/scorpian,
+		/datum/sprite_accessory/tail/pede
+	)
