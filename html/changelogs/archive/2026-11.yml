@@ -751,6 +751,10 @@
   _Rarity:
   - bugfix: Honey and Emberwine tailmaw fluids now deliver correctly during oral activities.
       uwu
+  - bugfix: Charged spells no longer fizzle just because you started charging over
+      yourself.
+  - qol: Organized the Loadout Menu into eight category tabs with search for the active
+      tab. Loadout item descriptions now wrap onto multiple lines.
   mypingishuge:
   - qol: Carts can bulk-load with middle-click or drag-and-drop, unload one chosen
       item, and supply nearby crafting materials.
