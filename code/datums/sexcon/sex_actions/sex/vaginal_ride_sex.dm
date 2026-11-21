@@ -11,12 +11,12 @@
 /datum/sex_action/vaginal_ride_sex/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(!(. = ..()))
 		return FALSE
-	return !HAS_TRAIT(user, TRAIT_TINY) || HAS_TRAIT(target, TRAIT_TINY)
+	return HAS_TRAIT(user, TRAIT_TINY) == HAS_TRAIT(target, TRAIT_TINY)
 
 /datum/sex_action/vaginal_ride_sex/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(!(. = ..()))
 		return FALSE
-	return !HAS_TRAIT(user, TRAIT_TINY) || HAS_TRAIT(target, TRAIT_TINY)
+	return HAS_TRAIT(user, TRAIT_TINY) == HAS_TRAIT(target, TRAIT_TINY)
 
 /datum/sex_action/vaginal_ride_sex/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(HAS_TRAIT(target, TRAIT_TINY) && !HAS_TRAIT(user, TRAIT_TINY))

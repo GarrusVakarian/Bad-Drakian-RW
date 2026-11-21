@@ -8,6 +8,12 @@
 	target_sex_part = SEX_PART_CUNT
 	knot_on_finish = TRUE
 
+/datum/sex_action/vaginal_sex/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	return (!HAS_TRAIT(user, TRAIT_TINY)) && ..()
+
+/datum/sex_action/vaginal_sex/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	return (!HAS_TRAIT(user, TRAIT_TINY)) && ..()
+
 /datum/sex_action/vaginal_sex/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(can_apply_tiny_injury(user, target))
 		user.visible_message(span_warning("[user] forces [user.p_their()] cock into [target]'s tiny cunt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))

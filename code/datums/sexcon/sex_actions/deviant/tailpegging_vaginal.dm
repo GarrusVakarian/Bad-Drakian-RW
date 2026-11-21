@@ -5,6 +5,12 @@
 	target_sex_part = SEX_PART_CUNT
 	user_sex_part = SEX_PART_TAIL
 
+/datum/sex_action/tailpegging_vaginal/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	return (!HAS_TRAIT(user, TRAIT_TINY)) && ..()
+
+/datum/sex_action/tailpegging_vaginal/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+	return (!HAS_TRAIT(user, TRAIT_TINY)) && ..()
+
 /datum/sex_action/tailpegging_vaginal/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(can_apply_tiny_injury(user, target))
 		user.visible_message(span_warning("[user] forces their tail into [target]'s tiny cunt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))
