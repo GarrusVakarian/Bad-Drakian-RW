@@ -41,7 +41,7 @@
 	name = "High Milk Production"
 	point_cost = 0
 	desc = "I can store and release more milk when lactating."
-	custom_text = "Choose which chest size counts for milk storage and release."
+	custom_text = "Use the button below to choose which chest size counts for milk storage and release."
 	added_traits = list(TRAIT_HIGH_MILK_PRODUCTION)
 
 /datum/quirk/high_milk_production/apply_to_human(mob/living/carbon/human/recipient)
