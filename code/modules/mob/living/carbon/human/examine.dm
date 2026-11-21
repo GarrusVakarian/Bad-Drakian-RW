@@ -378,6 +378,11 @@
 			str = "[m3] some shoes on [m2] feet!"
 		. += str
 
+	else if(!(SLOT_SHOES in obscured))
+		var/obj/item/clothing/shoes/decoration = get_talon_decoration()
+		if(decoration)
+			. += "[m3] [get_examine_item_name_with_hover(user, decoration)] decorating [m2] talons."
+
 	//mask
 	if(wear_mask && !(SLOT_WEAR_MASK in obscured))
 		var/str = "[m3] [get_examine_item_name_with_hover(user, wear_mask)] on [m2] face. "
