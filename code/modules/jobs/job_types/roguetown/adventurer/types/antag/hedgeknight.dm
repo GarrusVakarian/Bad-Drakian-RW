@@ -15,6 +15,7 @@
 		STATKEY_WIL = 2,
 		STATKEY_INT = 2,
 	)
+	adv_stat_ceiling = list(STAT_SPEED = 11)
 	subclass_skills = list(
 		/datum/skill/combat/polearms = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/swords = SKILL_LEVEL_JOURNEYMAN,	//A knight will always be a competent swordsman.
