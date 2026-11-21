@@ -757,3 +757,5 @@
       artificer gears.
   - bugfix: Cart passengers, cargo removal and stockpile selling correctly update
       capacity, with safer loading and unloading checks.
+  - bugfix: Hellspawn prevents ignition from ordinary fire while leaving burn damage
+      and magical flames unchanged.
