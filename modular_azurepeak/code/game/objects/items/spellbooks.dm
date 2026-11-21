@@ -80,14 +80,6 @@ decreases charge time if held opened in hand, for pure mage build + aesthetics.
 				if("onbelt")
 					return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
-/obj/item/book/spellbook/examine(mob/user)
-	. = ..()
-	. += span_notice("Reading it once per day allows you to unbind two spells and refund its spell point.")
-	if(born_of_rock)
-		. += span_notice("This tome was made from a magical stone instead of a proper gem. Holding it in your hand with it open reduces spell charge time by [ROCK_CHARGE_REDUCTION * 100]%")
-	else
-		. += span_notice("This tome was made from a gem. Holding it in your hand with it open reduces spell charge time by [GEM_CHARGE_REDUCTION * 100]%")
-
 /obj/item/book/spellbook/attack_self(mob/user)
 	if(!open)
 		attack_right(user)
@@ -304,3 +296,10 @@ decreases charge time if held opened in hand, for pure mage build + aesthetics.
 			return ..()
 	else
 		return ..()
+
+/obj/item/book/spellbook/examine(mob/user)
+	. = ..()
+	if(born_of_rock)
+		. += span_notice("This tome was made from a magical stone instead of a proper gem. Holding it in your hand with it open reduces spell charge time by [ROCK_CHARGE_REDUCTION * 100]%")
+	else
+		. += span_notice("This tome was made from a gem. Holding it in your hand with it open reduces spell charge time by [GEM_CHARGE_REDUCTION * 100]%")

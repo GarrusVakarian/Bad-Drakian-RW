@@ -114,7 +114,6 @@
 
 	var/msg = "It is [latched ? "latched" : "unlatched"] and [locked ? "locked." : "unlocked."]<br/>"
 	. += msg
-	. += span_info("Click with a held liquid container outside combat mode to set it at the base.")
 
 /obj/structure/pillory/attack_right(mob/living/user)
 	. = ..()

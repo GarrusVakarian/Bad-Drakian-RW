@@ -372,20 +372,6 @@
 /obj/structure/mineral_door/update_icon()
 	icon_state = "[base_state][door_opened ? "open":""]"
 
-/obj/structure/mineral_door/examine(mob/user)
-	. = ..()
-	if(repairable)
-		var/obj/cast_repair_cost_first = repair_cost_first
-		var/obj/cast_repair_cost_second = repair_cost_second
-		if((repair_state == 0) && (obj_integrity < max_integrity))
-			. += span_notice("A [initial(cast_repair_cost_first.name)] can be used to repair it.")
-			if(brokenstate)
-				. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
-		if(repair_state == 1)
-			. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
-
-
-
 /obj/structure/mineral_door/proc/door_rattle()
 	playsound(src, rattlesound, 100)
 	var/oldx = pixel_x
@@ -1295,3 +1281,14 @@
 	resident_advclass = list(/datum/advclass/witch, /datum/advclass/wretch/licker, /datum/advclass/wretch/deserter, /datum/advclass/wretch/deserter/maa, /datum/advclass/wretch/berserker, /datum/advclass/wretch/hedgemage, /datum/advclass/wretch/necromancer, /datum/advclass/wretch/heretic, /datum/advclass/wretch/heretic/spy, /datum/advclass/wretch/outlaw, /datum/advclass/wretch/poacher, /datum/advclass/wretch/plaguebearer, /datum/advclass/wretch/pyromaniac, /datum/advclass/wretch/vigilante, /datum/advclass/wretch/blackoakwyrm, /datum/advclass/wretch/antipope, /datum/advclass/wretch/ancientchampion)
 	lockid = null //Will be randomized
 
+/obj/structure/mineral_door/examine(mob/user)
+	. = ..()
+	if(repairable)
+		var/obj/cast_repair_cost_first = repair_cost_first
+		var/obj/cast_repair_cost_second = repair_cost_second
+		if((repair_state == 0) && (obj_integrity < max_integrity))
+			. += span_notice("A [initial(cast_repair_cost_first.name)] can be used to repair it.")
+			if(brokenstate)
+				. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
+		if(repair_state == 1)
+			. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")

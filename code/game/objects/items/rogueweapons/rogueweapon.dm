@@ -182,4 +182,5 @@
 /obj/item/rogueweapon/get_mechanics_examine(mob/user)
 	. = ..()
 	if(twirly)
-		. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed[length(alt_intents) ? ", out of combat mode" : ""]. Safe at [skill_to_string(twirl_skill_needed())] skill.")
+		. += span_info("Right-click it in your hand to twirl it one-handed when it is not switching an alternate grip. [twirl_cmode ? "Combat mode is required. " : ""]Safe at [skill_to_string(twirl_skill_needed())] skill.")
+		. += span_info("Alt-grip / Twirl (default Alt+G) follows the same grip restrictions; alternate gripping takes priority where available.")

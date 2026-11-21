@@ -28,10 +28,6 @@
 	misscost = 0
 	no_attack = TRUE
 
-/obj/item/rogueweapon/thresher/examine(mob/user)
-	. = ..()
-	. += span_notice("Use on STRIKE intent to break up produce for seeds. THRESH on stalks to beat out grains.")
-
 /obj/item/rogueweapon/thresher/getonmobprop(tag)
 	. = ..()
 	if(tag)
@@ -94,10 +90,6 @@
 	grid_height = 64
 	grid_width = 32
 	is_tool = TRUE
-
-/obj/item/rogueweapon/sickle/examine(mob/user)
-	. = ..()
-	. += span_notice("Use on any plant to instantly harvest it. HERBS turn to fiber when attacked.")
 
 /obj/item/rogueweapon/sickle/getonmobprop(tag)
 	. = ..()
@@ -184,10 +176,6 @@
 	max_integrity = 100
 	hoe_damage = 25
 	work_time = 15 SECONDS
-
-/obj/item/rogueweapon/hoe/examine(mob/user)
-	. = ..()
-	. += span_notice("TILT intent allows you to make new plots for plants. Using it (on any intent) on a plot that already has something planted removes WEEDS.")
 
 /obj/item/rogueweapon/hoe/getonmobprop(tag)
 	. = ..()
@@ -345,10 +333,6 @@
 	drop_sound = 'sound/foley/dropsound/wooden_drop.ogg'
 	smeltresult = /obj/item/ingot/iron
 	is_tool = TRUE
-
-/obj/item/rogueweapon/pitchfork/examine(mob/user)
-	. = ..()
-	. += span_notice("Use RIGHT CLICK to flip compost in the bin. While wielded SCOOP intent allows you to pick up large amount (19) stalks.")
 
 /obj/item/rogueweapon/pitchfork/getonmobprop(tag)
 	. = ..()

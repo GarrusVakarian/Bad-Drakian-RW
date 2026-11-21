@@ -93,10 +93,6 @@
 	icon_state = "pumpkinshell"
 	w_class = WEIGHT_CLASS_SMALL
 
-/obj/item/pumpkinshell/examine(mob/user)
-	. = ..()
-	. += span_smallnotice("Using a small blade, I could stab or cut it into a variety of decorations.")
-
 /obj/item/pumpkinshell/attackby(obj/item/I, mob/living/user, params)
 	if((user.used_intent.blade_class == BCLASS_CUT || user.used_intent.blade_class == BCLASS_STAB) && (I.wlength == WLENGTH_SHORT) && (!user.used_intent.noaa))
 		ui_interact(user)

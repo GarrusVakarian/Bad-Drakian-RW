@@ -31,6 +31,8 @@
 
 /obj/item/rogueweapon/hammer/get_mechanics_examine(mob/user)
 	. = ..()
+	. += span_info("Use a hammer on eligible damaged equipment to repair it. Some repairs require an anvil or table and the appropriate crafting skill.")
+	. += span_info("Damaged structures may also be repairable with a hammer; requirements depend on the structure.")
 	. += span_info("Twirling uses your highest Maces, Blacksmithing, Weaponsmithing, Armorsmithing or Carpentry skill.")
 
 /obj/item/rogueweapon/hammer/getonmobprop(tag)

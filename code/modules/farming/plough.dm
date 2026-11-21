@@ -10,10 +10,6 @@
 	facepull = FALSE
 	drag_slowdown = 2
 
-/obj/structure/plough/examine(mob/user)
-	. = ..()
-	. += span_notice("TILTS any dirt/grass tile it's dragged over - requires user to drag it while having SNEAK active.")
-
 /obj/structure/plough/Moved(oldLoc, movement_dir)
 	. = ..()
 	if(pulledby && pulledby.m_intent == MOVE_INTENT_SNEAK)
