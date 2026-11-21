@@ -1,6 +1,16 @@
 /proc/sanitize_natural_armor_text(value)
 	return trim(copytext_char(sanitize_text(value), 1, 201))
 
+/// Read the active chest customization when the quirk is added.
+/datum/preferences/proc/get_initial_milk_production_size()
+	if(!pref_species)
+		return MIN_BREASTS_SIZE
+	for(var/datum/customizer_entry/organ/breasts/entry in customizer_entries)
+		if(entry.disabled || !(entry.customizer_type in pref_species.customizers))
+			continue
+		return sanitize_milk_production_size(entry.breast_size)
+	return MIN_BREASTS_SIZE
+
 /datum/preferences/proc/has_natural_armor_virtue()
 	return istype(virtue, /datum/virtue/combat/tough_hide) || (statpack?.name == "Virtuous" && istype(virtuetwo, /datum/virtue/combat/tough_hide))
 
@@ -1342,7 +1352,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/presence = istype(current_quirk, /datum/quirk/hypnotic_presence)
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];hypnotic_gaze_action=configure;presence=[presence]'>Configure [presence ? "Presence" : "Gaze"]</a>"
 		if(istype(current_quirk, /datum/quirk/high_milk_production))
-			var/milk_size_name = find_key_by_value(GLOB.named_breast_sizes, milk_production_size)
+			var/milk_size_name = find_key_by_value(GLOB.named_breast_sizes, milk_production_size) || "Size [milk_production_size]"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];milk_production_action=configure'>Configure Milk Size ([milk_size_name])</a>"
 		if(istype(current_quirk, /datum/quirk/virgin))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
@@ -1950,10 +1960,16 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/triumph_collateral = get_triumph_collateral()
 			if(triumph_collateral)
 				prompt_text += "\n(Costs [triumph_collateral] TRIUMPHS)"
-			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
+			var/mob/quirk_editor = usr
+			var/quirk_editing_slot = default_slot
+			var/choice = tgui_input_list(quirk_editor, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
 
-			if(choice)
+			if(choice in quirks_available)
 				var/datum/quirk/selected = quirks_available[choice]
+				if(istype(selected, /datum/quirk/high_milk_production))
+					if(QDELETED(quirk_editor) || !parent || quirk_editor.client != parent || default_slot != quirk_editing_slot || has_quirk(selected.type))
+						return
+					milk_production_size = get_initial_milk_production_size()
 				quirks += new selected.type()
 				if(istype(selected, /datum/quirk/virgin))
 					configure_virgin_attraction(usr)
