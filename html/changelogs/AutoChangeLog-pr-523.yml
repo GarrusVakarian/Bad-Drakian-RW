@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Arachnids can choose Bee, Insect, Scorpion and Scolipede tails alongside Tentacle."
+  - spellcheck: "Corrected the Scorpion tail's display name."
