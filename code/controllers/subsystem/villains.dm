@@ -1,6 +1,7 @@
 /datum/controller/subsystem/gamemode
 	var/list/rolled_villain_events = list()
 	var/list/queued_villains = list()
+	var/werewolf_latejoin_slots = 0
 
 /datum/controller/subsystem/gamemode/proc/count_queued_villains(job_title)
 	. = 0
@@ -27,6 +28,11 @@
 		to_chat(player, span_boldwarning("You have been chosen for villainy as a [job_title]!"))
 		player.AttemptLateSpawn(job_title)
 	queued_villains = list()
+
+/datum/controller/subsystem/gamemode/proc/offer_werewolf_latejoin(datum/round_event/antagonist/solo/werewolf/event)
+	if(!(event.control in rolled_villain_events) || length(event.setup_minds))
+		return
+	werewolf_latejoin_slots = max(werewolf_latejoin_slots, event.antag_count)
 
 /mob/dead/new_player/proc/VillainChoices()
 	var/list/dat = list()
