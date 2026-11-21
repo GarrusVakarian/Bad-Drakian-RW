@@ -1,0 +1,7 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Carts can bulk-load with middle-click or drag-and-drop, unload one chosen item, and supply nearby crafting materials."
+  - qol: "Cart examine shows cargo and capacity, with concise controls in a Mechanics drop-down."
+  - rscadd: "Woodcutters can craft wheelbrace cart upgrades, mutually exclusive with artificer gears."
+  - bugfix: "Cart passengers, cargo removal and stockpile selling correctly update capacity, with safer loading and unloading checks."
