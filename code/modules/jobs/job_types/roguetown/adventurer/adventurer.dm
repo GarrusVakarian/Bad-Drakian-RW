@@ -49,6 +49,7 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 		/datum/advclass/sfighter/ironclad,
 		/datum/advclass/sfighter/amazon,
 		/datum/advclass/rogue,
+		/datum/advclass/fates_fool,
 		/datum/advclass/rogue/thief,
 		/datum/advclass/rogue/bard,
 		/datum/advclass/rogue/swashbuckler,

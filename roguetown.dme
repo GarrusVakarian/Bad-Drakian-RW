@@ -3613,6 +3613,7 @@
 #include "modular_deserttown\jobs\garrison\janissary\janissary.dm"
 #include "modular_deserttown\jobs\garrison\janissary\jezail.dm"
 #include "modular_deserttown\jobs\garrison\janissary\zephyr.dm"
+#include "modular_drakian\code\modules\jobs\fates_fool.dm"
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan.dm"
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan_abilities.dm"
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan_gear.dm"
