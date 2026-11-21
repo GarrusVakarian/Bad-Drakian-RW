@@ -772,3 +772,6 @@
       and navigator settings stay visible outside Mechanics.
   - rscadd: (Ollanius) Added item and structure tutorials from Azure Peak, adapted
       to BD's controls and mechanics.
+  - rscadd: Arachnids can choose Bee, Insect, Scorpion and Scolipede tails alongside
+      Tentacle.
+  - spellcheck: Corrected the Scorpion tail's display name.
