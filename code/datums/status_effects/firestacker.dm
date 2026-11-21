@@ -220,6 +220,9 @@
  */
 
 /datum/status_effect/fire_handler/fire_stacks/proc/ignite(silent = FALSE)
+	// Hellspawn blocks ordinary ignition, not the magical fire subtypes.
+	if(type == /datum/status_effect/fire_handler/fire_stacks && HAS_TRAIT(owner, TRAIT_HELLSPAWN))
+		return FALSE
 	if(HAS_TRAIT(owner, TRAIT_NOFIRE))
 		return FALSE
 
