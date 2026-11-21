@@ -265,6 +265,27 @@
 	skillcraft = /datum/skill/labor/lumberjacking
 	tools = list(/obj/item/rogueweapon/huntingknife = 1)
 
+/datum/crafting_recipe/roguetown/survival/lumberjacking/cart_upgrade
+	name = "woodcutters wheelbrace"
+	display_category = ITEM_CAT_ENG_MACHINERY
+	result = /obj/item/cart_upgrade/level_1
+	reqs = list(
+		/obj/item/grown/log/tree/small = 2,
+		/obj/item/natural/stone = 1,
+		)
+	craftdiff = 2
+
+/datum/crafting_recipe/roguetown/survival/lumberjacking/cart_upgrade2
+	name = "reinforced woodcutters wheelbrace"
+	display_category = ITEM_CAT_ENG_MACHINERY
+	result = /obj/item/cart_upgrade/level_2
+	reqs = list(
+		/obj/item/grown/log/tree/small = 4,
+		/obj/item/cart_upgrade/level_1 = 1,
+		/obj/item/ingot/iron = 1,
+		)
+	craftdiff = 4
+
 /datum/crafting_recipe/hair_dye
 	name = "hair dye cream"
 	result = /obj/item/hair_dye_cream
