@@ -748,6 +748,8 @@
   GarrusVakarian:
   - rscadd: Buccaneer, a swashbuckling pirate wretch. It isn't very strong, but it
       gets a gun for shooting people (and for ERP purposes).
+  - bugfix: Buccaneers now have fusilier to prevent them from hurting themselves when
+      firing their pistol.
   _Rarity:
   - bugfix: Honey and Emberwine tailmaw fluids now deliver correctly during oral activities.
       uwu
