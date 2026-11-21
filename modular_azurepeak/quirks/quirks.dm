@@ -37,6 +37,13 @@
 	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
 	added_traits = list(TRAIT_HIGH_PRODUCTION)
 
+/datum/quirk/high_milk_production
+	name = "High Milk Production"
+	point_cost = 0
+	desc = "I can store and release more milk when lactating."
+	custom_text = "Counts as Obscene chest size for milk storage and release."
+	added_traits = list(TRAIT_HIGH_MILK_PRODUCTION)
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."

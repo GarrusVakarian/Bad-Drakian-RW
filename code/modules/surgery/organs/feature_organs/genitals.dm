@@ -262,6 +262,16 @@
 	..()
 	milk_max = max(75, breast_size * 100)
 
+/obj/item/organ/breasts/proc/get_milk_capacity()
+	if(owner && HAS_TRAIT(owner, TRAIT_HIGH_MILK_PRODUCTION))
+		return OBSCENE_BREASTS_SIZE * 100
+	return milk_max
+
+/obj/item/organ/breasts/proc/get_milk_release_limit()
+	if(owner && HAS_TRAIT(owner, TRAIT_HIGH_MILK_PRODUCTION))
+		return OBSCENE_BREASTS_SIZE
+	return max(breast_size, 1)
+
 /obj/item/organ/breasts/update_overlays()/// works the same way irises do for eye organ items
 	. = ..()
 	if(icon_state != "breasts")
