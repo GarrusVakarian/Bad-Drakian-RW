@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Hellspawn prevents ignition from ordinary fire while leaving burn damage and magical flames unchanged."
