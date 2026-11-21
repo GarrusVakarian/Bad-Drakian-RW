@@ -152,12 +152,6 @@
 	attacked_sound = list('sound/combat/hits/onmetal/metalimpact (1).ogg', 'sound/combat/hits/onmetal/metalimpact (2).ogg')
 	destroy_sound = 'sound/foley/breaksound.ogg'
 
-/obj/structure/bondage/gloryhole/examine(mob/user)
-	. = ..()
-	if(isobserver(user))
-		return
-	. += "Right-click to step up to \the [src]."
-
 /obj/structure/bondage/gloryhole/buckle_mob(mob/living/M, force = FALSE, check_loc = TRUE)
 	if(force)
 		return ..()

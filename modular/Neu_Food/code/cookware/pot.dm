@@ -180,10 +180,6 @@
 	dropshrink = 1.0
 	sellprice = 85
 
-/obj/item/reagent_containers/glass/bucket/pot/teapot/examine()
-	. = ..()
-	. += span_info("It can be brushed with a dye brush to glaze it.")
-
 /obj/item/reagent_containers/glass/bucket/pot/teapot/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
 		if(reagents.total_volume)

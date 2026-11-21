@@ -308,15 +308,6 @@ GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 			if(!owner_mob)
 				GLOB.instrument_band_lobbies -= lobby_id
 
-/obj/item/rogue/instrument/examine(mob/user)
-	. = ..()
-	if (ishuman(user))
-		var/mob/living/carbon/human/viewer_human = user
-		if (viewer_human.inspiration)
-			. += span_notice("You can quickly add and remove people from your audience by <b>middle-clicking</b> on them with this instrument in your hand.")
-			. += span_notice("If you try to play with combat mode active, you'll automatically play your last song.")
-
-
 /obj/item/rogue/instrument/attack_self(mob/living/user)
 	var/stressevent = /datum/stressevent/music
 	var/can_play_with_occupied_offhand = FALSE

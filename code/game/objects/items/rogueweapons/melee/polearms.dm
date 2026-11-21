@@ -1065,11 +1065,6 @@
 		/datum/special_intent/greatsword_swing,
 		)
 
-/obj/item/rogueweapon/halberd/blacksteel/examine(mob/user)
-	. = ..()
-	if(!used)
-		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
-
 /obj/item/rogueweapon/halberd/blacksteel/attack_right(mob/user)
 	. = ..()
 	if(used)
@@ -1238,11 +1233,6 @@
 		/datum/special_intent/flail_sweep,
 		/datum/special_intent/ground_smash
 		)
-
-/obj/item/rogueweapon/eaglebeak/blacksteel/examine(mob/user)
-	. = ..()
-	if(!used)
-		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
 
 /obj/item/rogueweapon/eaglebeak/blacksteel/attack_right(mob/user)
 	. = ..()
@@ -2275,3 +2265,13 @@
 	gripped_intents = list(/datum/intent/rend/reach, /datum/intent/spear/cut/naginata, PARTIZAN_PEEL, SPEAR_BASH) // Better peeling than a Naginata
 	max_blade_int = 200 // Elven design makes it sharper than Kazengunese stuff
 	sellprice = 60
+
+/obj/item/rogueweapon/halberd/blacksteel/examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
+
+/obj/item/rogueweapon/eaglebeak/blacksteel/examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")

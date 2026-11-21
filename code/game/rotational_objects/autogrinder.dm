@@ -65,18 +65,12 @@
 
 /obj/structure/autogrinder/examine(mob/user)
 	. = ..()
-	. += span_notice(working ? "It is switched <b>on</b>." : "It is switched <b>off</b>.")
+	var/power_state_text = working ? "It is switched <b>on</b>." : "It is switched <b>off</b>."
+	. += span_notice(power_state_text)
 	if(has_power_flow())
 		. += span_notice("RPM: [rotations_per_minute]")
 	else
 		. += span_warning("It is not drawing any rotational power.")
-
-/obj/structure/autogrinder/examine(mob/user)
-	. = ..()
-	. += span_info("Left-click it with an empty hand to switch it on or off; non-skilled engineers will rarely catch their hand under the stone.")
-	. += span_info("It grinds anything millable or anything an alchemy mortar and pestle could grind from its attached hopper and only works while connected to a powered rotational network with enough RPM.")
-	. += span_info("Drop grain or other grindables onto the attached hopper's tile and switch the grinder on; it feeds itself.")
-	. += span_info("Ground product is dropped onto the grinder's own tile.")
 
 /obj/structure/autogrinder/attack_hand(mob/user)
 	. = ..()
@@ -304,10 +298,6 @@
 
 /obj/structure/closet/crate/chest/autogrinder/CanPass(atom/movable/mover, turf/target)
 	return TRUE
-
-/obj/structure/closet/crate/chest/autogrinder/examine(mob/user)
-	. = ..()
-	. += span_info("A lidless feed bin — drop grain or other grindables onto its tile and the autogrinder pulls them in.")
 
 /// The hopper has no lid, so it can never be closed.
 /obj/structure/closet/crate/chest/autogrinder/close(mob/living/user)

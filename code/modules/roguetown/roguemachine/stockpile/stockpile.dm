@@ -13,9 +13,9 @@
 
 /obj/structure/roguemachine/stockpile/get_mechanics_examine(mob/user)
 	. = ..()
+	. += span_info("Right click to sell everything in front of the stockpile.")
 	. += span_info("Left-click with an open hand to check the vomitorium's stockpile. Stored mammons can be used to purchase a wide variety of materials, which're then vended out for use.")
 	. += span_info("Left-clicking the machine with an item will load it into the stockpile, rewarding you coinage in turn. Make sure to register an account with the NERVELOCK, first, or you won't receive any coinage.")
-	. += span_info("Right-clicking the machine will automatically load all adjacent items into the stockpile at once.")
 	. += span_info("The vomitorium's stockpile naturally refills over time. Loaded items are added to the stockpile's quantities, which can then be vended by others or exported by the Steward for profit.")
 
 /obj/structure/roguemachine/stockpile/Initialize(mapload)
@@ -31,7 +31,6 @@
 
 /obj/structure/roguemachine/stockpile/examine(mob/user)
 	. = ..()
-	. += span_info("Right click to sell everything in front of the stockpile.")
 	if(SStreasury.royal_custom_unlocked)
 		. += span_info(SStreasury.royal_custom_active ? "Royal Custom is in force; direct imports pay duty to the Crown." : "Royal Custom is chartered but suspended.")
 	else

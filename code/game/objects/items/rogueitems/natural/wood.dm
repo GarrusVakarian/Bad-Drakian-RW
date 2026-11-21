@@ -38,7 +38,6 @@
 	. = ..()
 	if(blessed)
 		. += span_green("This log bears Dendor's blessing.")
-		. += span_info("Blessed timber has a big chance to yield 1 extra small log, and a smaller chance to yield 2 extra small logs when chopped.")
 
 /obj/item/grown/log/tree/Initialize(mapload)
 	. = ..()

@@ -379,8 +379,6 @@
 			. += span_notice("[F.name]'s balance is sealed from afar. Step closer to count the coin.")
 	else
 		. += span_warning("This jawbank is unbound to any treasury. Notify staff.")
-	. += span_info("Only [get_authority_label()] may withdraw or draft writs of loan from this jawbank - through a NERVELOCK's Institutional tab, not the jawbank itself.")
-	. += span_info("Strike it with any weapon to throttle coins loose.")
 
 // ============================================================================
 // AUTHORITY / ACCESS PROCS
