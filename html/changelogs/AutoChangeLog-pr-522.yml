@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Charged spells no longer fizzle just because you started charging over yourself."
