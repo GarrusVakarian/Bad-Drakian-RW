@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Ground and standing stone lanterns no longer disappear when holding an unlit torch."
