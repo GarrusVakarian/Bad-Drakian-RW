@@ -3,8 +3,8 @@
 	flag = DRAGON
 	antag_job = TRUE
 	faction = "Station"
-	total_positions = 1
-	spawn_positions = 1
+	total_positions = 0
+	spawn_positions = 0
 	allowed_races = list(/datum/species/dracon)
 	tutorial = "You are an ancient dragon, guarding a hoard of treasure. Strike deals with mortals, protect your territory, and secure a future for your brood."
 	outfit = null
