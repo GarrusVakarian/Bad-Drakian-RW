@@ -430,6 +430,9 @@
 /datum/outfit/job/roguetown/adventurer/paladin/proc/choose_doctrine(mob/living/carbon/human/H)
 	if(!istype(H) || QDELETED(H) || !H.mind || !H.patron)
 		return FALSE
+	// Psydonites keep their denomination-based miracle progression.
+	if(istype(H.patron, /datum/patron/old_god))
+		return TRUE
 	// Clientless characters keep the existing automatic miracle path.
 	if(!H.client)
 		return TRUE
