@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - balance: "Dragon is now available only when the Dragons round modifier is selected."
