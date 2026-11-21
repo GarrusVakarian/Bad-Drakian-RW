@@ -1679,9 +1679,9 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 		var/base_desc = "[D["desc"]]"
 		var/use_desc = " Single-use quest item."
 
-		if(istype(QI, /obj/item/quest_token/coin_chest) || istype(QI, /obj/item/quest_token/donation_box) || istype(QI, /obj/item/quest_token/reliquary))
+		if(istype(QI, /obj/item/quest_token/reliquary))
 			use_desc = " Self-completion item."
-		else
+		else if(!istype(QI, /obj/item/quest_token/coin_chest) && !istype(QI, /obj/item/quest_token/donation_box))
 			use_desc = " Peaceful use gives Boon. Combat-mode use forces to accept and gives Scorn."
 
 		QI.desc = "[base_desc] Reward goes to the token owner ([QBASE.reward_amount] Favor).[use_desc]"
