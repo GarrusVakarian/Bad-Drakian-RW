@@ -755,6 +755,8 @@
       yourself.
   - qol: Organized the Loadout Menu into eight category tabs with search for the active
       tab. Loadout item descriptions now wrap onto multiple lines.
+  - bugfix: Ground and standing stone lanterns no longer disappear when holding an
+      unlit torch.
   mypingishuge:
   - qol: Carts can bulk-load with middle-click or drag-and-drop, unload one chosen
       item, and supply nearby crafting materials.
