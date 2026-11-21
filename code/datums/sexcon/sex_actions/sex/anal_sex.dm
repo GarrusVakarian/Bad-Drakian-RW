@@ -8,29 +8,15 @@
 	target_sex_part = SEX_PART_ANUS
 	knot_on_finish = TRUE
 
-/datum/sex_action/anal_sex/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	return (!HAS_TRAIT(user, TRAIT_TINY) || HAS_TRAIT(target, TRAIT_TINY)) && ..()
-
-/datum/sex_action/anal_sex/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	return (!HAS_TRAIT(user, TRAIT_TINY) || HAS_TRAIT(target, TRAIT_TINY)) && ..()
-
 /datum/sex_action/anal_sex/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(can_apply_tiny_injury(user, target))
 		user.visible_message(span_warning("[user] forces [user.p_their()] cock into [target]'s tiny butt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))
 		apply_tiny_start_injury(user, target)
-	else if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] tries and fails to insert [user.p_their()] tiny cock into [target]'s butt!"))
 	else
 		user.visible_message(span_warning("[user] slides [user.p_their()] cock into [target]'s butt!"))
 	playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/anal_sex/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] tries to fuck [target]'s ass, unsuccessfully."))
-		user.sexcon.do_thrust_animate(target)
-		playsound(target, 'sound/misc/mat/segso.ogg', 50, TRUE, -2, ignore_walls = FALSE)
-		return FALSE
-
 	if(!user.sexcon.do_knot_action)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] fucks [target]'s ass."))
 	else
@@ -92,19 +78,11 @@
 	if(can_apply_tiny_injury(user, target))
 		user.visible_message(span_warning("[user] forces [user.p_their()] cocks into [target]'s tiny butt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))
 		apply_tiny_start_injury(user, target)
-	else if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] tries and fails to insert [user.p_their()] tiny cocks into [target]'s butt!"))
 	else
 		user.visible_message(span_warning("[user] slides [user.p_their()] cocks into [target]'s butt!"))
 	playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/anal_sex/double/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] tries to double-fuck [target]'s ass, unsuccessfully."))
-		user.sexcon.do_thrust_animate(target)
-		playsound(target, 'sound/misc/mat/segso.ogg', 50, TRUE, -2, ignore_walls = FALSE)
-		return FALSE
-
 	if(!user.sexcon.do_knot_action)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] double-fucks [target]'s ass."))
 	else
