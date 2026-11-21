@@ -762,3 +762,9 @@
       capacity, with safer loading and unloading checks.
   - bugfix: Hellspawn prevents ignition from ordinary fire while leaving burn damage
       and magical flames unchanged.
+  - rscadd: Examining supported items and structures (almost everything!) now shows
+      a collapsible Mechanics section with usage instructions. Item contents, page
+      counts, spellbook bonuses, repair materials, contextual prompts, on/off statuses
+      and navigator settings stay visible outside Mechanics.
+  - rscadd: (Ollanius) Added item and structure tutorials from Azure Peak, adapted
+      to BD's controls and mechanics.
