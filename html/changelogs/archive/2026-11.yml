@@ -745,6 +745,9 @@
   - bugfix: Revival miracles can restore suffering Oozes while retaining their usual
       requirements.
 2026-11-21:
+  GarrusVakarian:
+  - rscadd: Buccaneer, a swashbuckling pirate wretch. It isn't very strong, but it
+      gets a gun for shooting people (and for ERP purposes).
   _Rarity:
   - bugfix: Honey and Emberwine tailmaw fluids now deliver correctly during oral activities.
       uwu
