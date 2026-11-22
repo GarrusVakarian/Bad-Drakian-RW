@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Added Instant Transform, a 2-point quirk that lets you edit your appearance and anatomy without a mirror."
