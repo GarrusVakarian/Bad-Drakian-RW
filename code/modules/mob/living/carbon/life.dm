@@ -786,6 +786,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 					if(fallingas > 12)
 						teleport_to_dream(src, 10000, 2)
 						Sleeping(300)
+						SEND_SIGNAL(src, COMSIG_MOB_SLEEP)
 			else
 				energy_add(sleepy_mod * 10)
 		// Resting on the ground (not sleeping or with eyes closed and about to fall asleep)
@@ -826,6 +827,7 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 					if(fallingas > 25)
 						teleport_to_dream(src, 10000, 2)
 						Sleeping(300)
+						SEND_SIGNAL(src, COMSIG_MOB_SLEEP)
 			else
 				energy_add(10)
 		else if(fallingas)

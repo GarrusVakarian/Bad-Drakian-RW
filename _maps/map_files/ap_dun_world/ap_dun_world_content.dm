@@ -711,12 +711,6 @@
 /turf/open/floor/rogue/underworld/space/sparkle_quiet/dense
 	density = TRUE
 
-/turf/open/rebound
-	parent_type = /turf/open/water/ocean/deep
-	name = "undercurrent"
-	water_color = "#2a3852"
-	density = TRUE
-
 /turf/open/water/ocean/abyssal
 	parent_type = /turf/open/water/ocean/deep
 	name = "darkwater"

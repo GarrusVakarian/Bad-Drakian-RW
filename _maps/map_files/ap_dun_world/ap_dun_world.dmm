@@ -144820,6 +144820,32 @@
 /obj/effect/landmark/start/ap_lamplighter,
 /turf/open/floor/rogue/ruinedwood/herringbone,
 /area/rogue/indoors/town/tavern)
+"abl" = (
+/obj/effect/landmark/start/painter,
+/obj/structure/lever/wall{
+	pixel_y = 30;
+	redstone_id = "dreampool"
+	},
+/turf/open/floor/rogue/concrete,
+/area/rogue/under/cave/abyssor/inner)
+"abm" = (
+/obj/structure/roguemachine/ritual_rune,
+/turf/open/floor/rogue/churchrough,
+/area/rogue/under/cave/abyssor/inner)
+"abo" = (
+/obj/structure/roguemachine/dream_pool{
+	redstone_id = "dreampool"
+	},
+/turf/open/rebound,
+/area/rogue/under/cave/abyssor/inner)
+"abp" = (
+/obj/effect/landmark/start/painter,
+/turf/open/floor/rogue/concrete,
+/area/rogue/under/cave/abyssor/inner)
+"abq" = (
+/obj/effect/landmark/start/painter,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cave/abyssor/inner)
 "abr" = (
 /obj/effect/decal/edge{
 	color = "#3f3f3f";
@@ -162483,16 +162509,16 @@ bOZ
 bOZ
 mvP
 uaS
-kKG
+abl
 mnZ
 nyJ
-gSd
+abm
 nma
-uSO
+abo
 nma
 ayu
 nDR
-qwh
+abp
 uaS
 qyl
 vEZ
@@ -165207,7 +165233,7 @@ uaS
 ixy
 sfC
 pOm
-qtp
+abq
 lvn
 utc
 pyI
@@ -165662,7 +165688,7 @@ iqW
 pOm
 vEZ
 kTp
-qtp
+abq
 crw
 xRQ
 ylh
@@ -166113,7 +166139,7 @@ oUV
 uaS
 ixy
 pOm
-qtp
+abq
 iNs
 vEZ
 vUF

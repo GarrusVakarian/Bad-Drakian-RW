@@ -19,6 +19,20 @@
 					/obj/effect/proc_holder/spell/invoked/abyssal_infusion		= CLERIC_T4,
 					/obj/effect/proc_holder/spell/invoked/resurrect/abyssor		= CLERIC_T4,
 	)
+	var/list/paint_miracles = list(
+		/obj/effect/proc_holder/spell/targeted/touch/orison = CLERIC_ORI,
+		/obj/effect/proc_holder/spell/invoked/aquatic_compulsion = CLERIC_T0,
+		/obj/effect/proc_holder/spell/self/abyssor_wind = CLERIC_T0,
+		/obj/effect/proc_holder/spell/invoked/lesser_heal = CLERIC_T1,
+		/obj/effect/proc_holder/spell/invoked/blood_heal = CLERIC_T1,
+		/obj/effect/proc_holder/spell/self/ink_presence = CLERIC_T1,
+		/obj/effect/proc_holder/spell/invoked/paint_blessing = CLERIC_T1,
+		/obj/effect/proc_holder/spell/self/umbral_viscosity = CLERIC_T2,
+		/obj/effect/proc_holder/spell/self/transmute_ink = CLERIC_T3,
+		/obj/effect/proc_holder/spell/invoked/call_dreamfiend = CLERIC_T3,
+		/obj/effect/proc_holder/spell/invoked/recharge_pylon = CLERIC_T4,
+		/obj/effect/proc_holder/spell/invoked/resurrect/dream = CLERIC_T4,
+	)
 	energy_color = COLOR_PATRON_ABYSSOR
 	confess_lines = list(
 		"ABYSSOR COMMANDS THE WAVES!",

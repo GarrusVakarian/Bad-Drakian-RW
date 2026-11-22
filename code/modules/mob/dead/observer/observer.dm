@@ -413,7 +413,7 @@ Works together with spawning an observer, noted above.
 				return
 	return ..()
 
-/mob/proc/scry_ghost()
+/mob/proc/scry_ghost(eye_type = /mob/dead/observer/screye)
 	if(key)
 		stop_sound_channel(CHANNEL_HEARTBEAT) //Stop heartbeat sounds because You Are A Ghost Now
 //		stop_all_loops()
@@ -421,7 +421,7 @@ Works together with spawning an observer, noted above.
 			SSdroning.kill_rain(client)
 			SSdroning.kill_loop(client)
 			SSdroning.kill_droning(client)
-		var/mob/dead/observer/screye/ghost = new(src)	// Transfer safety to observer spawning proc.
+		var/mob/dead/observer/screye/ghost = new eye_type(src)	// Transfer safety to observer spawning proc.
 		ghost.ghostize_time = world.time
 		SStgui.on_transfer(src, ghost) // Transfer NanoUIs.
 		ghost.can_reenter_corpse = TRUE

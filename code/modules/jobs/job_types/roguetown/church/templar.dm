@@ -24,7 +24,7 @@
 	quirk_restrictions = list(/datum/quirk/noble)
 	vice_restrictions = list(/datum/charflaw/hemophage, /datum/charflaw/silverweakness)
 	job_subclasses = list(
-		/datum/advclass/templar/crusader
+		/datum/advclass/templar/crusader,
 	)
 
 /datum/outfit/job/roguetown/templar

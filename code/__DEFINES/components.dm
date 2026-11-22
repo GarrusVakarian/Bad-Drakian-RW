@@ -434,6 +434,7 @@
 #define COMSIG_FOOD_EATEN "food_eaten"		//from base of obj/item/reagent_containers/food/snacks/attack(): (mob/living/eater, mob/feeder)
 
 //Bed
+#define COMSIG_MOB_SLEEP "mob_started_sleeping"
 #define COMSIG_CARBON_HANDLE_SLEEP "carbon_handle_sleep" //from /mob/living/carbon/proc/handle_sleep() when IsSleeping(): ()
 
 //Gibs

@@ -23,7 +23,7 @@
 	job_traits = list(TRAIT_RITUALIST, TRAIT_HOMESTEAD_EXPERT)
 	advclass_cat_rolls = list(CTAG_ACOLYTE = 2)
 	job_subclasses = list(
-		/datum/advclass/acolyte
+		/datum/advclass/acolyte,
 	)
 	
 /datum/job/roguetown/monk/proc/grant_old_path(mob/living/carbon/human/H)
@@ -85,7 +85,12 @@
 		H.real_name = "[title] [prev_real_name]"
 		H.name = "[title] [prev_name]"
 
-		addtimer(CALLBACK(src, PROC_REF(_delayed_path_choice), H), 50)
+
+/datum/advclass/acolyte/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	var/datum/job/roguetown/monk/job = SSjob.GetJob("Acolyte")
+	if(job)
+		addtimer(CALLBACK(job, TYPE_PROC_REF(/datum/job/roguetown/monk, _delayed_path_choice), H), 5 SECONDS)
 
 /datum/advclass/acolyte
 	name = "Acolyte"

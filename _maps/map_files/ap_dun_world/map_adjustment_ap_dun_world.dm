@@ -42,6 +42,9 @@
 	change_job_position(/datum/job/roguetown/lamplighter, 3)
 	change_job_position(/datum/job/roguetown/hag, 0)
 	add_ap_subclasses(/datum/job/roguetown/villager, list(/datum/advclass/levy))
+	change_job_position(/datum/job/roguetown/painter, 1)
+	add_ap_subclasses(/datum/job/roguetown/monk, list(/datum/advclass/herald))
+	add_ap_subclasses(/datum/job/roguetown/templar, list(/datum/advclass/templar/maris))
 	mercenary.job_subclasses |= list(
 		/datum/advclass/mercenary/etrusca_condottiero,
 		/datum/advclass/mercenary/blackoak_adept,

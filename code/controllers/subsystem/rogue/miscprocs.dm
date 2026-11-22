@@ -160,9 +160,13 @@
 	if(suppress_grants)
 		return FALSE
 	if(patron)
-		if(length(patron.miracles))
-			for(var/spell_type in patron.miracles)
-				var/required_tier = patron.miracles[spell_type]
+		var/list/miracles = patron.miracles
+		if(istype(patron, /datum/patron/divine/abyssor) && HAS_TRAIT_FROM(holder, TRAIT_INK_AFFINITY, ROUNDSTART_TRAIT))
+			var/datum/patron/divine/abyssor/abyssor = patron
+			miracles = abyssor.paint_miracles
+		if(length(miracles))
+			for(var/spell_type in miracles)
+				var/required_tier = miracles[spell_type]
 				if(required_tier <= level)
 					if(holder.mind.has_spell(spell_type))
 						continue

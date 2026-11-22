@@ -182,7 +182,7 @@
 	name = "church miniature flagpole"
 	controlled_role = "church"
 	flag_color = "#00FFFF" // Cyan
-	authorized_jobs = list("Bishop", "Keeper", "Templar", "Druid", "Acolyte", "Head Physician", "Apothecary")
+	authorized_jobs = list("Bishop", "Keeper", "Templar", "Druid", "Acolyte", "Painter", "Head Physician", "Apothecary")
 
 /obj/item/mini_flagpole/fisher
 	name = "fisher miniature flagpole"

@@ -288,6 +288,11 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	name = "Cleric"
 	icon_state = "arrow"
 
+/obj/effect/landmark/start/painter
+	name = "Painter"
+	jobspawn_override = list("Painter")
+	delete_after_roundstart = FALSE
+
 /obj/effect/landmark/start/monk
 	name = "Acolyte"
 	icon_state = "arrow"

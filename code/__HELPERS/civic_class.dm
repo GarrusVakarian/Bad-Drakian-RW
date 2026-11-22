@@ -38,7 +38,7 @@
 		if("Innkeeper", "Guildsman", "Archivist", "Apothecary", "Tailor", "Jester", "Town Crier")
 			return "TOWN_BURGHER"
 		// The Church.
-		if("Vice Priest", "Vice Priestess", "Acolyte", "Druid", "Druidess", "Templar", "Martyr", "Churchling", "Keeper")
+		if("Vice Priest", "Vice Priestess", "Acolyte", "Painter", "Druid", "Druidess", "Templar", "Martyr", "Churchling", "Keeper")
 			return "TOWN_CLERGY"
 		// Town elites. The Bishop heads this tree's church and sits with the notables rather
 		// than the common clergy, matching AP's placement of their head-of-church.

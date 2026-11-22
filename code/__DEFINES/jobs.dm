@@ -131,6 +131,7 @@
 #define MONK		(1<<1)
 #define GRAVEDIGGER	(1<<2)
 #define DRUID		(1<<3)
+#define PAINTER		(1<<6)
 
 #define COURTIERS	(1<<3)
 
@@ -292,6 +293,7 @@
 #define JDO_TEMPLAR 12
 #define JDO_MONK 13
 #define JDO_DRUID 13.1
+#define JDO_PAINTER 13.2
 #define JDO_CHURCHLING 14
 #define JDO_KEEPER 14.1
 #define JDO_GRAVEMAN 15

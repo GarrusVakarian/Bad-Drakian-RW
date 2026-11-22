@@ -114,6 +114,7 @@ GLOBAL_LIST_INIT(church_positions, list(
 	"Bishop",
 	"Confessor",
 	"Acolyte",
+	"Painter",
 	"Mortician",
 	"Keeper",
 	"Templar",
