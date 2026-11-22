@@ -180,6 +180,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/get_base_points()
 	return 10
 
+/// Older editors stored HTML-escaped input. Decode one layer only for unversioned data.
+/proc/load_redolent_scent_text(scent, text_version)
+	if(!istext(scent))
+		return ""
+	return text_version == 1 ? scent : html_decode(scent)
+
 /datum/preferences/proc/get_default_redolent_scent(scent_type)
 	switch(scent_type)
 		if("Gross")

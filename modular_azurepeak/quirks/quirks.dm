@@ -293,13 +293,17 @@
 	return 30 SECONDS
 
 /proc/redolent_examine_text(scent_type, scent)
-	var/scent_text = html_encode(scent || "an unusual scent")
+	var/scent_text = trim(scent) || "an unusual scent"
+	var/static/list/sentence_endings = list(".", "!", "?", "…", "。", "！", "？")
+	if(!(copytext_char(scent_text, -1) in sentence_endings))
+		scent_text += "."
+	scent_text = html_encode(scent_text)
 	switch(scent_type)
 		if("Gross")
-			return span_greentext("They reek of [scent_text].")
+			return span_greentext("They reek of [scent_text]")
 		if("Pleasant")
-			return "<span style='color:#FFB6C1'>They smell of [scent_text].</span>"
-	return "<span style='color:#d8cf8a'>They smell of [scent_text].</span>"
+			return "<span style='color:#FFB6C1'>They smell of [scent_text]</span>"
+	return "<span style='color:#d8cf8a'>They smell of [scent_text]</span>"
 
 /proc/redolent_visual_effect(mob/living/carbon/human/H, scent_type)
 	switch(scent_type)

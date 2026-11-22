@@ -440,6 +440,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"vice6" = vice6?.type,
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
+		"redolent_scent_text_version" = 1,
 		"hypnotic_gaze_text" = hypnotic_gaze_text,
 		"hypnotic_gaze_text_version" = 1,
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
@@ -582,7 +583,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		vice6 = null
 	fix_duplicate_vices()
 	redolent_type = preset["redolent_type"] || "Neutral"
-	redolent_scent = preset["redolent_scent"] || ""
+	redolent_scent = load_redolent_scent_text(preset["redolent_scent"], preset["redolent_scent_text_version"])
 	var/gaze_text = preset["hypnotic_gaze_text"]
 	if(preset["hypnotic_gaze_text_version"] != 1 && istext(gaze_text))
 		gaze_text = html_decode(gaze_text)
@@ -1292,7 +1293,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 
 		if(istype(current_quirk, /datum/quirk/redolent))
 			var/scent_display = redolent_scent || get_default_redolent_scent(redolent_type)
-			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
+			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [html_encode(scent_display)]</div>"
 
 		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
 			var/datum/quirk/hypnotic_gaze/hypnosis_quirk = current_quirk
@@ -2096,10 +2097,12 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		else
 			var/scent_leadin = redolent_scent_leadin(new_scent_type)
 			var/scent_prompt = "Describe the scent - a preview of the output in game is shown below:"
-			new_scent = tgui_input_text(usr, scent_prompt, "Redolent", redolent_scent, max_length = 100, multiline = TRUE, preview_leadin = scent_leadin)
+			new_scent = tgui_input_text(usr, scent_prompt, "Redolent", redolent_scent, max_length = 100, multiline = TRUE, encode = FALSE, preview_leadin = scent_leadin)
 			if(isnull(new_scent))
 				return
-			if(!length(trim(new_scent)))
+			// Native input does not enforce the TGUI length limit.
+			new_scent = trim(copytext_char(trim(new_scent), 1, 101))
+			if(!length(new_scent))
 				new_scent = get_default_redolent_scent(new_scent_type)
 
 		save_to_history()
