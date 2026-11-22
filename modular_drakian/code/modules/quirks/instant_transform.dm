@@ -1,8 +1,8 @@
 /datum/quirk/instant_transform
 	name = "Instant Transform"
 	desc = "I can reshape my appearance with a moment of concentration."
-	point_cost = 1
-	custom_text = "Grants Instant Transform. Edit your hair, colors and other cosmetic features without a mirror."
+	point_cost = 2
+	custom_text = "Grants Instant Transform. Edit your appearance and anatomy without a mirror."
 
 /datum/quirk/instant_transform/apply_to_human(mob/living/carbon/human/recipient)
 	var/spell_type = /obj/effect/proc_holder/spell/self/instant_transform
@@ -67,6 +67,8 @@
 	var/client/player
 	var/datum/mind/owner
 	var/invalidated = FALSE
+	var/organ_slot
+	var/obj/item/organ/expected_organ
 
 /datum/instant_transform_session/New(mob/living/carbon/human/human)
 	. = ..()
@@ -80,16 +82,33 @@
 	invalidated = TRUE
 
 /datum/instant_transform_session/proc/is_valid(mob/living/carbon/human/human)
-	if(QDELETED(src) || invalidated || body != human || QDELETED(body) || !player || QDELETED(owner))
+	if(QDELETED(src) || invalidated || body != human || QDELETED(body) || !has_control())
 		return FALSE
-	if(body.client != player || player.mob != body || body.mind != owner || owner.current != body)
+	if(!body.dna || !body.dna.species || body.is_shapeshift_shell() || body.incapacitated())
 		return FALSE
-	return body.dna?.species && !body.is_shapeshift_shell() && !body.incapacitated()
+	if(organ_slot && body.getorganslot(organ_slot) != expected_organ)
+		return FALSE
+	return !expected_organ || (!QDELETED(expected_organ) && expected_organ.owner == body)
+
+/datum/instant_transform_session/proc/has_control()
+	return player && !QDELETED(owner) && body.client == player && player.mob == body && body.mind == owner && owner.current == body
+
+/// The selected slot must stay intact until the anatomy prompt is answered.
+/datum/instant_transform_session/proc/watch_organ(slot)
+	organ_slot = slot
+	expected_organ = body.getorganslot(slot)
+	RegisterSignal(body, COMSIG_MOB_ORGAN_REMOVED, PROC_REF(on_organ_removed))
+
+/datum/instant_transform_session/proc/on_organ_removed(datum/source, obj/item/organ/removed)
+	SIGNAL_HANDLER
+	if(removed.slot == organ_slot)
+		invalidated = TRUE
 
 /datum/instant_transform_session/Destroy()
 	if(body)
-		UnregisterSignal(body, list(COMSIG_MOB_LOGOUT, COMSIG_MIND_TRANSFER, COMSIG_SPECIES_LOSS, COMSIG_QDELETING))
+		UnregisterSignal(body, list(COMSIG_MOB_LOGOUT, COMSIG_MIND_TRANSFER, COMSIG_SPECIES_LOSS, COMSIG_QDELETING, COMSIG_MOB_ORGAN_REMOVED))
 	body = null
 	player = null
 	owner = null
+	expected_organ = null
 	return ..()

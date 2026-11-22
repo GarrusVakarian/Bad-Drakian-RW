@@ -51,12 +51,13 @@
 	var/force_bodypart_update = FALSE
 	var/list/choices = list("reset appearance", "hairstyle", "facial hairstyle", "accessory", "pubes", "pits", "face detail", "crest", "horns", "horn color", "ears", "ear color one", "ear color two", "tail", "tail color one", "tail color two", "tail feature", "tail feature color", "wings", "wing color one", "wing color two", "frills", "frill color", "antennas", "antenna color", "snout", "snout color", "head feature", "head feature color", "neck feature", "neck feature color", "back feature", "back feature color", "descriptors", "hair color", "facial hair color", "eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3", "natural gradient", "natural gradient color", "dye gradient", "dye gradient color", "penis", "penis color", "penis color 2", "testicles", "testicles color", "breasts", "breasts color", "vagina", "vagina color", "breast size", "penis size", "testicle size")
 	if(session)
-		// This quirk edits cosmetics without resetting preferences or changing anatomy.
+		// Keep the quirk menu limited to the options with session validation.
 		choices = list(
 			"hairstyle", "hair color", "facial hairstyle", "facial hair color",
 			"natural gradient", "natural gradient color", "dye gradient", "dye gradient color",
 			"eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3",
 			"accessory", "face detail", "descriptors",
+			"penis", "penis size", "testicles", "testicle size", "vagina", "breasts", "breast size",
 		)
 	var/chosen = input(H, "Change what?", "Appearance") as null|anything in choices
 	if(guarded && (QDELETED(session) || !session.is_valid(H)))
@@ -64,6 +65,20 @@
 
 	if(!(chosen in choices))
 		return
+
+	if(guarded)
+		var/static/list/anatomy_slots = list(
+			"penis" = ORGAN_SLOT_PENIS,
+			"penis size" = ORGAN_SLOT_PENIS,
+			"testicles" = ORGAN_SLOT_TESTICLES,
+			"testicle size" = ORGAN_SLOT_TESTICLES,
+			"vagina" = ORGAN_SLOT_VAGINA,
+			"breasts" = ORGAN_SLOT_BREASTS,
+			"breast size" = ORGAN_SLOT_BREASTS,
+		)
+		var/slot = anatomy_slots[chosen]
+		if(slot)
+			session.watch_organ(slot)
 
 	switch(chosen)
 		if("reset appearance")
@@ -595,6 +610,8 @@
 				)
 
 			var/new_style = input(H, "Choose your penis type", "Penis Customization") as null|anything in valid_penis_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				if(new_style == "none")
 					var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
@@ -676,6 +693,8 @@
 				valid_testicle_types[testicles.name] = testicle_path
 
 			var/new_style = input(H, "Choose your testicles type", "Testicles Customization") as null|anything in valid_testicle_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				if(new_style == "none")
 					var/obj/item/organ/testicles/testicles = H.getorganslot(ORGAN_SLOT_TESTICLES)
@@ -721,6 +740,8 @@
 				valid_breast_types[breasts.name] = breast_path
 
 			var/new_style = input(H, "Choose your breast type", "Breast Customization") as null|anything in valid_breast_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 
 			if(new_style)
 				if(new_style == "none")
@@ -768,6 +789,8 @@
 				valid_vagina_types[vagina.name] = vagina_path
 
 			var/new_style = input(H, "Choose your vagina type", "Vagina Customization") as null|anything in valid_vagina_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 
 			if(new_style)
 				if(new_style == "none")
@@ -810,6 +833,8 @@
 		if("breast size")
 			var/list/breast_sizes = list("Flat", "Slight", "Small", "Moderate", "Large", "Generous", "Heavy", "Massive", "Heaping", "Obscene")
 			var/new_size = input(H, "Choose your breast size", "Breast Size") as null|anything in breast_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
 				if(breasts)
@@ -842,6 +867,8 @@
 
 		if("penis size")
 			var/new_size = input(H, "Choose your penis size", "Penis Size") as null|anything in GLOB.named_penis_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
 				if(penis)
@@ -852,6 +879,8 @@
 		if("testicle size")
 			var/list/testicle_sizes = list("small", "average", "large")
 			var/new_size = input(H, "Choose your testicle size", "Testicle Size") as null|anything in testicle_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/testicles/testicles = H.getorganslot(ORGAN_SLOT_TESTICLES)
 				if(testicles)
