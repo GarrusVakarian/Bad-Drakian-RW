@@ -708,17 +708,6 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 			if(eyesclosed && !HAS_TRAIT(src, TRAIT_NOSLEEP))
 				teleport_to_dream(src, 10000, 2)
 				Sleeping(300)
-		// i would love it if handle_sleep actually handled just sleep instead of also falling asleep
-		// that way i could put this in an override on /mob/living/carbon/human
-		if(ishuman(src))
-			var/mob/living/carbon/human/human_src = src
-			var/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin/skin = human_src.skin_armor
-			if(istype(skin)) // this checks if it's harpy skin specifically
-				if(skin.obj_integrity < skin.max_integrity)
-					skin.obj_integrity = skin.max_integrity
-					to_chat(src, "I can feel the skin on my feet mend...")
-				else if((skin.obj_integrity >= skin.max_integrity) && skin.obj_broken)
-					skin.obj_broken = FALSE
 		// handle_dreams() // this has no functionality currently
 		if(prob(10) && health > crit_threshold)
 			emote("snore", suppress_chat = TRUE)
