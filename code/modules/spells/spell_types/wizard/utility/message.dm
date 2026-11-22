@@ -11,9 +11,12 @@
 	overlay_state = "message"
 	/// The stat threshold needed to pass the identify check.
 	var/identify_difficulty = 15
+	/// Whether to show the mouth-flash emotes during casting.
+	var/show_mouth_flash = TRUE
 
 /obj/effect/proc_holder/spell/self/message/gnoll
 	breaks_invisibility = FALSE
+	show_mouth_flash = FALSE
 
 /obj/effect/proc_holder/spell/self/message/cast(list/targets, mob/user)
 	. = ..()
@@ -29,7 +32,8 @@
 		return FALSE
 
 	eligible_players = sortList(eligible_players)
-	user.emote("me", 1, "mutters an incantation and their mouth briefly flashes white.", TRUE, custom_me = TRUE)
+	if(show_mouth_flash)
+		user.emote("me", 1, "mutters an incantation and their mouth briefly flashes white.", TRUE, custom_me = TRUE)
 	var/input = input(user, "Who do you wish to contact?", src) as null|anything in eligible_players
 	if(isnull(input))
 		to_chat(user, span_warning("No target selected."))
@@ -38,7 +42,8 @@
 
 	for(var/mob/living/carbon/human/HL in GLOB.human_list)
 		if(HL.real_name == input)
-			user.emote("me", 1, "mutters an incantation, their mouth briefly flashing white!", TRUE, custom_me = TRUE)
+			if(show_mouth_flash)
+				user.emote("me", 1, "mutters an incantation, their mouth briefly flashing white!", TRUE, custom_me = TRUE)
 
 			// Standard message color, for anonymous communications.
 			var/message_color = "7246ff"
