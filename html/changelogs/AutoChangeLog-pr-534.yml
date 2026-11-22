@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "The lobby ready list shows Gnoll names for players readied as Gnolls."
