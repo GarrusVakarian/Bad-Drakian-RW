@@ -60,7 +60,8 @@
 					to_chat(massager, span_warning("I decided not to"))
 					return
 
-			switch(alert(massagee, "Do you want to be given a massage by [massager.name]?", "Do you want a Massage?", "Yes", "No"))
+			// TGUI focuses the first choice and displays the buttons in reverse order.
+			switch(tgui_alert(massagee, "Do you want to be given a massage by [massager.name]?", "Do you want a Massage?", list("No", "Yes"), force_tgui = TRUE))
 				if("No")
 					to_chat(massager, span_warning("They declined"))
 					return
