@@ -256,7 +256,9 @@
 	)
 	extra_context = "This subclass gains Expert skill in their weapon of choice, be it maces or unarmed."
 
-/datum/outfit/job/roguetown/mercenary/ferentia_thug/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/mercenary/ferentia_thug/pre_equip(mob/living/carbon/human/H, visualsOnly)
+	if(!visualsOnly && H.mind)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/rage)
 	..()
 	to_chat(H, span_warning("The mercenary guild is teeming with corn-fed brutes looking to make mammons off the only thing they're good at - while simple-minded describes you best, you possess brute strength and a heavy club. Sometimes that's all you need to solve problems in lyfe."))
 	if(H.mind)

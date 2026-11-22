@@ -2474,5 +2474,5 @@
 /datum/status_effect/buff/battle_cry
 	id = "battle_cry"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/battle_cry
-	duration = 1 MINUTES
+	duration = 5 MINUTES
 	status_type = STATUS_EFFECT_REFRESH
