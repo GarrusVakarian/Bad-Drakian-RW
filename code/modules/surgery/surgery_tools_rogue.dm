@@ -521,7 +521,7 @@
 		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears away a brand on [target.p_their()] [LOWER_TEXT(final_answer)]!"))
 		to_chat(target, span_userdanger("A brand has been burned away!"))
 	else
-		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears a mark on [target.p_their()] [LOWER_TEXT(final_answer)]! The fresh brand shows [span_boldwarning(branding_text)]."))
+		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears a mark on [target.p_their()] [LOWER_TEXT(final_answer)]! The fresh brand shows [span_boldwarning(branding_text)][descriptor_sentence_period(mob_descriptor_visible_text(branding_text))]"))
 		to_chat(target, span_userdanger("You have been branded!"))
 
 // Single entry point for action-phase combat logs

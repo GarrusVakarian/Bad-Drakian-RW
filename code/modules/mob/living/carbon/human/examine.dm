@@ -870,7 +870,7 @@
 				// Head brands are facial: use current concealment, not surgical head access.
 				var/brand_visible = branded_bodypart.body_zone == BODY_ZONE_HEAD ? (!skipface && !(wear_neck && (wear_neck.flags_inv & HIDEFACE))) : get_location_accessible(src, branded_bodypart.body_zone)
 				if(brand_visible)
-					. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been branded with ") + "[span_boldwarning(brand_text)]."
+					. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been branded with ") + "[span_boldwarning(brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(brand_text))]"
 			if(istype(branded_bodypart, /obj/item/bodypart/chest))
 				var/obj/item/bodypart/chest/chest = branded_bodypart
 				var/chest_brand_text = ""
@@ -879,14 +879,14 @@
 					if(chest.enslavement_mark)
 						chest_brand_text = "[chest_brand_text], a mark of ownership"
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(chest_brand_text))]"
 				var/stomach_brand_text = ""
 				if(length(chest.branded_writing_on_stomach))
 					stomach_brand_text = chest.branded_writing_on_stomach
 					if(chest.enslavement_mark)
 						stomach_brand_text = "[stomach_brand_text], a mark of ownership"
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
-					. += span_info("[capitalize(m2)] stomach has been branded with ") + "[span_boldwarning(stomach_brand_text)]."
+					. += span_info("[capitalize(m2)] stomach has been branded with ") + "[span_boldwarning(stomach_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(stomach_brand_text))]"
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
 				var/obj/item/bodypart/head/neck = branded_bodypart
 				var/neck_brand_text = ""
@@ -897,7 +897,7 @@
 				else if(neck.enslavement_mark)
 					neck_brand_text = "a mark of ownership"
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
-					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)]."
+					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(neck_brand_text))]"
 
 	if(bodywritten) // our body has been written on, now check what body-writings we've got. genital body-writings handled separately.
 		for(var/obj/item/bodypart/branded_bodypart as anything in bodyparts)
@@ -905,31 +905,31 @@
 			if(length(branded_bodypart.body_writing))
 				brand_text = branded_bodypart.body_writing
 			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone, ignored_item = branded_bodypart.body_zone == BODY_ZONE_HEAD ? mouth : null))
-				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_beautiful_fem(brand_text)]."
+				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + span_beautiful_fem(brand_text)
 			if(istype(branded_bodypart, /obj/item/bodypart/chest))
 				var/obj/item/bodypart/chest/chest = branded_bodypart
 				var/chest_brand_text = ""
 				if(length(chest.body_writing_on_buttocks))
 					chest_brand_text = chest.body_writing_on_buttocks
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_beautiful_fem(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + span_beautiful_fem(chest_brand_text)
 				var/stomach_brand_text = ""
 				if(length(chest.body_writing_on_stomach))
 					stomach_brand_text = chest.body_writing_on_stomach
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
-					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_beautiful_fem(stomach_brand_text)]."
+					. += span_info("[capitalize(m2)] stomach has been written on: ") + span_beautiful_fem(stomach_brand_text)
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
 				var/obj/item/bodypart/head/head = branded_bodypart
 				var/neck_brand_text = ""
 				if(length(head.body_writing_on_neck))
 					neck_brand_text = head.body_writing_on_neck
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
-					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_beautiful_fem(neck_brand_text)]."
+					. += span_info("[capitalize(m2)] neck has been written on: ") + span_beautiful_fem(neck_brand_text)
 				var/mouth_brand_text = ""
 				if(length(head.body_writing_on_mouth))
 					mouth_brand_text = head.body_writing_on_mouth
 				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
-					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_beautiful_fem(mouth_brand_text)]."
+					. += span_info("[capitalize(m2)] mouth has been written on: ") + span_beautiful_fem(mouth_brand_text)
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
