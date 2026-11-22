@@ -9,8 +9,9 @@
  * * buttons - The options that can be chosen by the user, each string is assigned a button on the UI.
  * * timeout - The timeout of the alert, after which the modal will close and qdel itself. Set to zero for no timeout.
  * * autofocus - The bool that controls if this alert should grab window focus.
+ * * force_tgui - Opens the TGUI alert even when the player prefers native inputs.
  */
-/proc/tgui_alert(mob/user, message = "", title, list/buttons = list("Ok"), timeout = 0, autofocus = TRUE, strict_byond = FALSE, ui_state = GLOB.tgui_always_state)
+/proc/tgui_alert(mob/user, message = "", title, list/buttons = list("Ok"), timeout = 0, autofocus = TRUE, strict_byond = FALSE, ui_state = GLOB.tgui_always_state, force_tgui = FALSE)
 	if (istext(buttons))
 		stack_trace("tgui_alert() received text for buttons instead of list")
 		return
@@ -35,7 +36,7 @@
 	//	return tgui_input_list(user, message, title, buttons, timeout, autofocus)
 
 	// Client does NOT have tgui_input on: Returns regular input
-	if(!user.client.prefs.tgui_pref || strict_byond)
+	if(strict_byond || (!force_tgui && !user.client.prefs.tgui_pref))
 		if(length(buttons) == 2)
 			return alert(user, message, title, buttons[1], buttons[2])
 		if(length(buttons) == 3)
