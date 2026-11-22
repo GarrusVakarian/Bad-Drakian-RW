@@ -38,16 +38,11 @@
 #define PESTRA_ORGAN_T3_PRICE_FAVOR 1500
 #endif
 
-#ifndef NOC_SECRET_MP_COST
-#define NOC_SECRET_MP_COST 3
-#endif
-
 /mob/living/carbon/human
 	var/miracle_points = 0
 	var/church_favor = 0
 	var/personal_research_points = 0
 
-	var/unlocked_research_noc_secrets = FALSE
 	var/unlocked_research_pestra_fleshcraft = FALSE
 	var/unlocked_research_malum_craft = FALSE
 
@@ -84,17 +79,6 @@ var/global/list/PESTRA_ORGAN_KEYS = list(
 	"Lungs" = "lungs",
 	"Liver" = "liver",
 	"Stomach" = "stomach"
-)
-
-var/global/list/NOC_SECRET_MIRACLES = list(
-	list(
-		"id" = "greater_diagnose",
-		"name" = "Greater Diagnose",
-		"desc" = "A precise divine appraisal: shows reagents, blood level, organ status, and quantified damage.",
-		"type" = /obj/effect/proc_holder/spell/invoked/diagnose/greater,
-		"cost" = NOC_SECRET_MP_COST,
-		"requires" = /obj/effect/proc_holder/spell/invoked/diagnose
-	)
 )
 
 /// helpa
@@ -472,7 +456,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 /proc/_can_access_miracle_research(mob/living/carbon/human/H, study)
 	if(!istype(H) || !H.patron)
 		return FALSE
-	if(study in list("noc", "pestra", "malum"))
+	if(study in list("pestra", "malum"))
 		return istype(H.patron, /datum/patron/divine)
 	return FALSE
 
@@ -709,9 +693,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	if(!show_shunned_tabs && _is_inhumen_patron_name(src.current_learn_tab))
 		src.current_learn_tab = "none"
 
-	if(src.current_learn_tab != "none" && src.current_learn_tab != "noc_secrets" && !_can_access_miracle_patron(H, src.current_learn_tab))
-		src.current_learn_tab = "none"
-	if(src.current_learn_tab == "noc_secrets" && !_can_access_miracle_research(H, "noc"))
+	if(src.current_learn_tab != "none" && !_can_access_miracle_patron(H, src.current_learn_tab))
 		src.current_learn_tab = "none"
 	var/list/nav = list()
 	var/list/nav_shunned = list()
@@ -767,14 +749,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			else
 				nav_shunned += "<span style='color:#7f8c8d'>[_cr_html_attr(n2)]</span>"
 
-	if(_can_access_miracle_research(H, "noc"))
-		if(src.current_learn_tab == "noc_secrets")
-			nav += "<b>Secrets of Noc</b>"
-		else if(H.unlocked_research_noc_secrets)
-			nav += "<a href=\"?src=[REF(src)];learntab=noc_secrets\">Secrets of Noc</a>"
-		else
-			nav += "<span style='color:#7f8c8d'>Secrets of Noc</span>"
-
 	var/html = "<center><h3>Learn Miracles</h3></center><hr>"
 	html += "Favor: <b>[H.church_favor]</b> | MP: <b>[H.miracle_points]</b><hr>"
 	html += jointext(nav, " | ")
@@ -787,52 +761,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 	if(src.current_learn_tab == "none")
 		html += "<i>Select a patron.</i>"
-	else if(src.current_learn_tab == "noc_secrets")
-		html += "<b>Secrets of Noc</b><br>"
-		html += "<div style='color:#95a5a6; margin-bottom:8px;'>Special purchasable miracles.</div>"
-		html += "<table width='100%' cellspacing='2' cellpadding='2'>"
-		html += "<tr><th align='left'>Miracle</th><th>Description</th><th width='100'>Cost</th><th width='160'>Action</th></tr>"
-
-		for(var/entry in NOC_SECRET_MIRACLES)
-			var/list/E = entry
-			if(!islist(E))
-				continue
-
-			var/id2 = "[E["id"]]"
-			var/nm = "[E["name"]]"
-			var/ds = "[E["desc"]]"
-			var/cost2 = E["cost"]
-			var/type2 = E["type"]
-			var/req2 = E["requires"]
-
-			var/known_secret = FALSE
-			var/has_requirement = FALSE
-
-			if(H.mind)
-				for(var/obj/effect/proc_holder/spell/SG in H.mind.spell_list)
-					if(type2 && SG.type == type2)
-						known_secret = TRUE
-					if(req2 && SG.type == req2)
-						has_requirement = TRUE
-
-			html += "<tr>"
-			html += "<td><b>[_cr_html_attr(nm)]</b></td>"
-			html += "<td>[_cr_html_attr(ds)]</td>"
-			html += "<td align='center'>[cost2] MP</td>"
-			html += "<td align='center'>"
-
-			if(known_secret)
-				html += "<span style='color:#2ecc71'>Learned</span>"
-			else if(req2 && !has_requirement)
-				html += "<span style='color:#7f8c8d'>Requirement missing</span>"
-			else if(H.miracle_points >= cost2)
-				html += "<a href=\"?src=[REF(src)];buynoc=[id2]\">Buy</a>"
-			else
-				html += "<span style='color:#7f8c8d'>Not enough MP</span>"
-
-			html += "</td></tr>"
-
-		html += "</table>"
 	else
 		if(!islist(buckets[src.current_learn_tab]) || !length(buckets[src.current_learn_tab]))
 			html += "<i>No miracles available for this patron.</i>"
@@ -906,16 +834,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			html += "<span style='color:#7f8c8d'>Buy 1 MP ([MIRACLE_MP_PRICE_FLAVOR] Favor)</span><br>"
 	else
 		html += "<span style='color:#7f8c8d'>Only clergy may buy RP/MP.</span><br>"
-
-	/* html += "<tr><td>Secrets of Noc</td><td>[status_yn(H.unlocked_research_noc_secrets)]</td><td align='center'>"
-	if(!H.unlocked_research_noc_secrets)
-		if(H.church_favor >= RESEARCH_UNLOCK_FAVOR)
-			html += "<a href='?src=[REF(src)];unlockresearch=noc'>Unlock ([RESEARCH_UNLOCK_FAVOR] Favor)</a>"
-		else
-			html += "<span style='color:#7f8c8d'>Unlock ([RESEARCH_UNLOCK_FAVOR] Favor)</span>"
-	else
-		html += "<span style='color:#7f8c8d'>See Learn tab</span>"
-	html += "</td></tr>" */
 
 	if(can_research_ten)
 		html += "<hr><b>Studies</b><br>"
@@ -1213,9 +1131,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 		var/tb2 = href_list["learntab"]
 		if(tb2 == "none")
 			src.current_learn_tab = "none"
-		else if(tb2 == "noc_secrets")
-			if(H.unlocked_research_noc_secrets && _can_access_miracle_research(H, "noc"))
-				src.current_learn_tab = "noc_secrets"
 		else
 			var/my_patron2 = _get_human_patron_name(H)
 			if(_can_access_miracle_patron(H, tb2))
@@ -1253,9 +1168,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			open_research_ui(H)
 			return
 
-		if(which == "noc")
-			H.unlocked_research_noc_secrets = TRUE
-		else if(which == "pestra")
+		if(which == "pestra")
 			H.unlocked_research_pestra_fleshcraft = TRUE
 		else if(which == "malum")
 			H.unlocked_research_malum_craft = TRUE
