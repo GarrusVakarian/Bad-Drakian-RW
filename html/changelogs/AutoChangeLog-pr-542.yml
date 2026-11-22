@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Eligible latejoiners who opt into Werewolf can become one if the Verevolf roll picks nobody at roundstart."
