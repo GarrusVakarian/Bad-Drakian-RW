@@ -77,6 +77,12 @@
 	reqs = list(/obj/item/natural/hide/cured = 2,
 				/obj/item/rope = 1)
 
+/datum/crafting_recipe/roguetown/leather/container/bandolier
+	name = "bandolier"
+	result = /obj/item/clothing/cloak/bandolier
+	reqs = list(/obj/item/natural/hide/cured = 2,
+				/obj/item/rope = 1)
+
 /datum/crafting_recipe/roguetown/leather/container/twstrap
 	name = "knife bandolier"
 	result = /obj/item/twstrap

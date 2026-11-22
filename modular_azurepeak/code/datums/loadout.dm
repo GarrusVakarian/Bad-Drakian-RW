@@ -612,6 +612,11 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Poncho"
 	path = /obj/item/clothing/cloak/poncho
 
+/datum/loadout_item/bandolier
+	name = "Bandolier"
+	path = /obj/item/clothing/cloak/bandolier
+	triumph_cost = 2
+
 /datum/loadout_item/guardhood
 	name = "Guard's Hood"
 	path = /obj/item/clothing/cloak/stabard/guardhood
