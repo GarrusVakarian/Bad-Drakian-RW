@@ -16,6 +16,9 @@ SUBSYSTEM_DEF(gamemode)
 	///world.time of our last devotion check we add 2 minutes to this to determine if we should switch storytellers
 	var/last_devotion_check = 0
 
+	/// Carried wealth recorded when the Chronicle's Magnate was selected.
+	var/magnate_wealth = 0
+
 	/// List of our event tracks for fast access during for loops.
 	var/list/event_tracks = EVENT_TRACKS
 	/// Our storyteller. They progresses our trackboards and picks out events
@@ -1328,6 +1331,7 @@ SUBSYSTEM_DEF(gamemode)
 			total_wealth += wealth
 			if(wealth > highest_wealth)
 				highest_wealth = wealth
+				magnate_wealth = wealth
 				set_chronicle_stat(CHRONICLE_STATS_RICHEST_PERSON, human_mob)
 
 			if(!lowest_intelligence)
