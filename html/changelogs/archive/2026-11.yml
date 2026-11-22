@@ -857,6 +857,15 @@
   - bugfix: Stale grabs no longer leave players unable to move after their grabber
       falls to another floor.
   - rscadd: Wrap a Say or Whisper message in tildes to slur your words for that line.
+  - rscadd: Non-Psydonite Paladins, Monks, Court Chaplains, Cantors and Missionaries
+      can now also choose Orthodox or Eclectic while keeping their existing miracle
+      tier limits.
+  - bugfix: Inhumen Eclectic clergy can no longer access Tennite miracle research,
+      relations or their bonuses.
+  - bugfix: Targeted church quests can no longer be completed on yourself.
+  - rscadd: Tennite and Ascendant Eclectics receive a third of quest rewards earned
+      by other Eclectics of their faith.
+  - rscadd: Tennite and Ascendant Eclectics recognize others of their faith on examine.
   mypingishuge (port), SatinIsle:
   - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
       a chance of magic or miracles. Starting gear follows their training.
