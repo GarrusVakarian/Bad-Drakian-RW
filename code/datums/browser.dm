@@ -223,6 +223,8 @@
 	if (A.selectedbutton)
 		return A.selectedbutton
 
+/client/var/list/waiting_browser_modals
+
 /datum/browser/modal
 	var/opentime = 0
 	var/timeout
@@ -249,6 +251,8 @@
 		. = ..(use_onclose = 1)
 	else
 		var/focusedwindow = winget(user, null, "focus")
+		if(!opentime || !user?.client)
+			return
 		. = ..(use_onclose = 1)
 
 		//waits for the window to show up client side before attempting to un-focus it
@@ -264,8 +268,14 @@
 		addtimer(CALLBACK(src, PROC_REF(close)), timeout)
 
 /datum/browser/modal/proc/wait()
-	while (opentime && selectedbutton <= 0 && (!timeout || opentime+timeout > world.time))
+	var/client/window_client = user?.client
+	if(!window_client)
+		return
+	LAZYADD(window_client.waiting_browser_modals, src)
+	while(window_client && opentime && selectedbutton <= 0 && (!timeout || opentime + timeout > world.time))
 		stoplag(1)
+	if(window_client)
+		LAZYREMOVE(window_client.waiting_browser_modals, src)
 
 /datum/browser/modal/listpicker
 	var/valueslist = list()
@@ -435,6 +445,8 @@
 		if (button <= 3 && button >= 1)
 			selectedbutton = button
 	if (selectedbutton != 1)
+		if(!opentime)
+			return
 		set_content(ShowChoices(user))
 		open()
 		return

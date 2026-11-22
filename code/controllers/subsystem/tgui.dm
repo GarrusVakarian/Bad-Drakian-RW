@@ -111,9 +111,10 @@ SUBSYSTEM_DEF(tgui)
 /datum/controller/subsystem/tgui/proc/force_close_all_windows(mob/user)
 	log_tgui(user, context = "SStgui/force_close_all_windows")
 	if(user.client)
-		user.client.tgui_windows = list()
 		for(var/i in 1 to TGUI_WINDOW_HARD_LIMIT)
 			var/window_id = TGUI_WINDOW_ID(i)
+			// Embedded interfaces such as chat are registered separately from the popup pool.
+			user.client.tgui_windows -= window_id
 			user << browse(null, "window=[window_id]")
 
 /**
