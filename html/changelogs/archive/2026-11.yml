@@ -784,6 +784,8 @@
   _Rarity:
   - bugfix: The round-end Chronicle now shows how many mammons the Magnate was carrying
       when they earned the title.
+  - rscadd: Eligible latejoiners who opt into Werewolf can become one if the Verevolf
+      roll picks nobody at roundstart.
   mypingishuge:
   - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
       correctly.
