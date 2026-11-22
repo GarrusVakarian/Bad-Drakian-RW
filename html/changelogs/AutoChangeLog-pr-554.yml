@@ -1,0 +1,8 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Non-Psydonite Paladins, Monks, Court Chaplains, Cantors and Missionaries can now also choose Orthodox or Eclectic while keeping their existing miracle tier limits."
+  - bugfix: "Inhumen Eclectic clergy can no longer access Tennite miracle research, relations or their bonuses."
+  - bugfix: "Targeted church quests can no longer be completed on yourself."
+  - rscadd: "Tennite and Ascendant Eclectics receive a third of quest rewards earned by other Eclectics of their faith."
+  - rscadd: "Tennite and Ascendant Eclectics recognize others of their faith on examine."
