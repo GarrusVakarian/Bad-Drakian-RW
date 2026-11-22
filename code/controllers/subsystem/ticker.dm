@@ -422,6 +422,10 @@ SUBSYSTEM_DEF(ticker)
 //	SEND_SOUND(world, sound('sound/misc/roundstart.ogg'))
 	current_state = GAME_STATE_PLAYING
 
+	// The lobby subsystem stops refreshing once gameplay begins.
+	for(var/mob/dead/new_player/player as anything in GLOB.new_player_list)
+		if(player.client)
+			player.client << browse(null, "window=lobby_window")
 
 	Master.SetRunLevel(RUNLEVEL_GAME)
 /*
