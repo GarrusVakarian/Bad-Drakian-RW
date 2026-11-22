@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Gnolls no longer broadcast the white-mouth casting emotes when using Message."

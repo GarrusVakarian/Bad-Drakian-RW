@@ -821,3 +821,4 @@
   - balance: The Dragon cannot withdraw a hoard challenge while someone carries the
       objective gem or post another after a challenge is completed that round.
   - rscadd: Arachnids can customize their chest fluff in character setup.
+  - bugfix: Gnolls no longer broadcast the white-mouth casting emotes when using Message.
