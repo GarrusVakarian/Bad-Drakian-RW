@@ -852,3 +852,10 @@
   - rscadd: Hired Thugs and town Thugs who choose Muscle gain a simpler Rage that
       temporarily increases strength.
   - balance: Gronn's warcry buff now lasts five minutes instead of one.
+  - bugfix: Custom brands no longer get an extra period after existing punctuation,
+      and body writing displays without added punctuation.
+  - bugfix: Stale grabs no longer leave players unable to move after their grabber
+      falls to another floor.
+  mypingishuge (port), SatinIsle:
+  - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
+      a chance of magic or miracles. Starting gear follows their training.
