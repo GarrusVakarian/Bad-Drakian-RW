@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Custom brands no longer get an extra period after existing punctuation, and body writing displays without added punctuation."
