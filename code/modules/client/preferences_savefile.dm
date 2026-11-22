@@ -609,6 +609,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	fix_duplicate_vices()
 	S["redolent_type"] >> redolent_type
 	S["redolent_scent"] >> redolent_scent
+	var/redolent_scent_text_version
+	S["redolent_scent_text_version"] >> redolent_scent_text_version
 	S["hypnotic_gaze_text"] >> hypnotic_gaze_text
 	S["hypnotic_gaze_style"] >> hypnotic_gaze_style
 	var/hypnotic_gaze_text_version
@@ -627,6 +629,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(isnull(redolent_type)) // legacy savefile key from when this was named malodorous
 		S["malodorous_type"] >> redolent_type
 		S["malodorous_scent"] >> redolent_scent
+		redolent_scent_text_version = null
+	redolent_scent = load_redolent_scent_text(redolent_scent, redolent_scent_text_version)
 	if(redolent_type == "Positive")
 		redolent_type = "Pleasant"
 	if(!(redolent_type in list("Gross", "Neutral", "Pleasant")))
@@ -1288,6 +1292,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["vice6"], preferences_typepath_or_null(vice6))
 	WRITE_FILE(S["redolent_type"], redolent_type)
 	WRITE_FILE(S["redolent_scent"], redolent_scent)
+	WRITE_FILE(S["redolent_scent_text_version"], 1)
 	WRITE_FILE(S["hypnotic_gaze_text"], hypnotic_gaze_text)
 	WRITE_FILE(S["hypnotic_gaze_style"], hypnotic_gaze_style)
 	WRITE_FILE(S["hypnotic_gaze_text_version"], 1)
