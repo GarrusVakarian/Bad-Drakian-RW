@@ -1,7 +1,7 @@
 // Adapted from Ochre Valley #341 by SatinIsle. Uses BD's existing skills, gear and magic.
 /datum/advclass/fates_fool
 	name = "Fate's Fool"
-	tutorial = "Let fate choose your tools and talents. Start with random stats, skills, traits and equipment, with a chance of arcane training or miracles. Your equipment may not match your skills."
+	tutorial = "Let fate choose your tools and talents. Start with random stats, skills, traits and equipment, with a chance of arcane training or miracles."
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/adventurer/fates_fool
 	cmode_music = 'sound/music/cmode/adventurer/combat_outlander2.ogg'
