@@ -826,3 +826,9 @@
   - bugfix: Gnolls no longer broadcast the white-mouth casting emotes when using Message.
   - balance: Xylix's confetti burst now has a 5% chance to trigger, or 10% under Emberwine's
       effect.
+  - balance: Lamia and Harpy feet now have regenerating natural armor equivalent to
+      the Natural Armor virtue.
+  - qol: Digitigrade legs can wear footwear without displaying incompatible boot sprites
+      or dropping footwear when changing leg shape.
+  - qol: Shift-left-click the footwear slot to inspect Lamia or Harpy scales. Harpies
+      can decorate their talons with anklets or footwraps.

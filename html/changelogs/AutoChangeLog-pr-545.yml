@@ -1,6 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - balance: "Lamia and Harpy feet now have regenerating natural armor equivalent to the Natural Armor virtue."
-  - qol: "Digitigrade legs can wear footwear without displaying incompatible boot sprites or dropping footwear when changing leg shape."
-  - qol: "Shift-left-click the footwear slot to inspect Lamia or Harpy scales. Harpies can decorate their talons with anklets or footwraps."
