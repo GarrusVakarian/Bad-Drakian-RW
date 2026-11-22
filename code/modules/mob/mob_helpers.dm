@@ -136,12 +136,15 @@
  */
 /proc/slur(n)
 	var/phrase = STRIP_HTML_SIMPLE(n, MAX_MESSAGE_LEN)
-	var/leng = length_char(phrase)
-	var/counter=length_char(phrase)
-	var/newphrase=""
-	var/newletter=""
-	while(counter>=1)
-		newletter=copytext_char(phrase,(leng-counter)+1,(leng-counter)+2)
+	var/phrase_length = length_char(phrase)
+	var/newphrase = ""
+	var/static/regex/html_entity = regex(@"^&(?:#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6}|[A-Za-z][A-Za-z0-9]{0,30});")
+	for(var/index = 1; index <= phrase_length; index++)
+		var/newletter = copytext_char(phrase, index, index + 1)
+		if(newletter == "&" && html_entity.Find(copytext_char(phrase, index, index + 33)))
+			newphrase += html_entity.match
+			index += length(html_entity.match) - 1
+			continue
 		if(rand(1,3)==3)
 			if(LOWER_TEXT(newletter)=="o")
 				newletter="u"
@@ -167,7 +170,7 @@
 				newletter+="[newletter][newletter]"
 			else
 				;;
-		newphrase+="[newletter]";counter-=1
+		newphrase += newletter
 	return newphrase
 
 /// Makes you talk like you got cult stunned, which is slurring but with some dark messages
