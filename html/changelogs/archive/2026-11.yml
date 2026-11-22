@@ -866,6 +866,8 @@
   - rscadd: Tennite and Ascendant Eclectics receive a third of quest rewards earned
       by other Eclectics of their faith.
   - rscadd: Tennite and Ascendant Eclectics recognize others of their faith on examine.
+  - rscdel: Instant Transform's menu is now limited to chest and genital type and
+      size options.
   mypingishuge (port), SatinIsle:
   - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
       a chance of magic or miracles. Starting gear follows their training.
