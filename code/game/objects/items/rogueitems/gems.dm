@@ -19,6 +19,9 @@
 	if(!user.cmode)
 
 		if(iskobold(M))
+			if(GetComponent(/datum/component/quest_object/retrieval/dragon_hoard))
+				to_chat(user, span_warning("This gem is marked and too important to eat."))
+				return
 			if(M == user)
 				user.visible_message(span_warning("[user] is attempting to eat [src]!"), span_warning("I begin to eat [src]!"))
 			else
