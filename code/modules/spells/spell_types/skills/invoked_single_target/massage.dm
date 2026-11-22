@@ -60,7 +60,7 @@
 					to_chat(massager, span_warning("I decided not to"))
 					return
 
-			switch(alert(massagee, "Do you want to be given a massage by [massager.name]?", "Do you want a Massage?", "No", "Yes"))
+			switch(alert(massagee, "Do you want to be given a massage by [massager.name]?", "Do you want a Massage?", "Yes", "No"))
 				if("No")
 					to_chat(massager, span_warning("They declined"))
 					return
