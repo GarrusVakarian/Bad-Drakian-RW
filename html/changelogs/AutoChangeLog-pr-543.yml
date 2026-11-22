@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Compliant no longer forces you to yield to your own spoken commands."
