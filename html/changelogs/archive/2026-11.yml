@@ -824,3 +824,5 @@
       objective gem or post another after a challenge is completed that round.
   - rscadd: Arachnids can customize their chest fluff in character setup.
   - bugfix: Gnolls no longer broadcast the white-mouth casting emotes when using Message.
+  - balance: Xylix's confetti burst now has a 5% chance to trigger, or 10% under Emberwine's
+      effect.
