@@ -31,11 +31,11 @@
 	added_traits = list(TRAIT_FAT_KNOT)
 
 /datum/quirk/high_production
-	name = "High Production"
+	name = "High Seed Production"
 	point_cost = 0
 	desc = "My body produces a larger volume of seed than average."
 	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
-	added_traits = list(TRAIT_HIGH_PRODUCTION)
+	added_traits = list(TRAIT_HIGH_SEED_PRODUCTION)
 
 /datum/quirk/high_milk_production
 	name = "High Milk Production"
