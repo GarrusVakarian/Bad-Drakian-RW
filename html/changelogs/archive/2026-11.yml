@@ -833,3 +833,6 @@
   - qol: Shift-left-click the footwear slot to inspect Lamia or Harpy scales. Harpies
       can decorate their talons with anklets or footwraps.
   - bugfix: The Bed of Onyx consistently appears at its intended size.
+  - bugfix: Redolent scents display apostrophes and other punctuation correctly, including
+      saved and inherited scents.
+  - bugfix: Redolent examines no longer add a period after existing sentence punctuation.
