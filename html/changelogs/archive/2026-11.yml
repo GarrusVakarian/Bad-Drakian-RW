@@ -781,6 +781,9 @@
       Tentacle.
   - spellcheck: Corrected the Scorpion tail's display name.
 2026-11-22:
+  _Rarity:
+  - bugfix: The round-end Chronicle now shows how many mammons the Magnate was carrying
+      when they earned the title.
   mypingishuge:
   - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
       correctly.
