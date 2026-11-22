@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Wooden and iron gloryholes now support placing and retrieving liquid containers."
