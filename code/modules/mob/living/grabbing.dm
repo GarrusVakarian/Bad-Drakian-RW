@@ -38,7 +38,9 @@
 
 /// One private, viewer-specific balloon over the victim for each participant.
 /obj/item/grabbing/proc/show_grab_balloon()
-	if(QDELETED(src) || !isliving(grabbed) || !isliving(grabbee) || grabbed == grabbee || isitem(sublimb_grabbed) || !(src in grabbee.held_items))
+	if(QDELETED(src) || !isliving(grabbed) || !isliving(grabbee) || grabbed == grabbee || isitem(sublimb_grabbed))
+		return
+	if(!(src in grabbee.held_items) && !(istype(src, /obj/item/grabbing/bite) && grabbee.get_item_by_slot(SLOT_MOUTH) == src))
 		return
 	var/mob/living/victim = grabbed
 	var/label = grab_state >= GRAB_AGGRESSIVE ? "tight grab!" : "grabbed!"
