@@ -798,3 +798,19 @@
       player.
   - bugfix: Hypnotic suggestions strip speech formatting markers while keeping their
       purple styling.
+  - rscadd: Dragons can post or withdraw a featured Notorious hoard challenge for
+      a fellowship of at least two on Neuhill and Smollhill.
+  - rscadd: Quest ledgers announce new hoard challenges. Stewards and Clerks receive
+      a private notice and the Dragon is warned when the contract is accepted.
+  - rscadd: Dragons sense visitors entering the cave and can use Roar to the Realm
+      to broadcast an announcement from the lair.
+  - qol: Any character race can select an available Dragon slot. Dragons use their
+      own physical descriptors and hide player-written descriptions while in Dragon
+      form.
+  - balance: Dragons resist grabs in combat mode and knock targets down and back with
+      Strong Kick.
+  - rscadd: Dragons gain Secular Appraise and a Covetous Crown in their lair.
+  - qol: "The hoard writ lists Dragon\u2019s Lair as its locale and alerts its holder\
+      \ on withdrawal."
+  - balance: The Dragon cannot withdraw a hoard challenge while someone carries the
+      objective gem or post another after a challenge is completed that round.
