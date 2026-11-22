@@ -841,3 +841,14 @@
   - bugfix: Offensive weapon enchantments no longer activate or consume cooldown on
       ordinary clicks and unsuccessful attacks.
   - bugfix: Failed enchantment effects no longer consume their cooldown.
+  - qol: Revival miracles explain their effects on the description and show their
+      current ritual requirements when cast on yourself.
+  - qol: Revival ritual sites can be up to two tiles from the corpse in line of sight.
+  - rscadd: Restored Xylix's tier-four revival with one random aftereffect, without
+      the chance to teleport naked.
+  - rscadd: Barbarians and Wretch Berserkers can enter Rage, gaining strength and
+      automatically unlocking energy recovery, physical regeneration and dismemberment
+      resistance as injuries increase.
+  - rscadd: Hired Thugs and town Thugs who choose Muscle gain a simpler Rage that
+      temporarily increases strength.
+  - balance: Gronn's warcry buff now lasts five minutes instead of one.

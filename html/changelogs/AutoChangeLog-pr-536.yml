@@ -1,6 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Barbarians and Wretch Berserkers can enter Rage, gaining strength and automatically unlocking energy recovery, physical regeneration and dismemberment resistance as injuries increase."
-  - rscadd: "Hired Thugs and town Thugs who choose Muscle gain a simpler Rage that temporarily increases strength."
-  - balance: "Gronn's warcry buff now lasts five minutes instead of one."
