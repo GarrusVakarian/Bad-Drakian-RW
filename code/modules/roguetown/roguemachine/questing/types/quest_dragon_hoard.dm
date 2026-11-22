@@ -55,7 +55,7 @@ GLOBAL_VAR_INIT(dragon_hoard_completed, FALSE)
 	SIGNAL_HANDLER
 	withdraw_hoard_quest()
 
-/datum/antagonist/dragon/proc/withdraw_hoard_quest(rescinded_by_dragon = FALSE)
+/datum/antagonist/dragon/proc/withdraw_hoard_quest(rescinded_by_dragon = FALSE, notice)
 	var/datum/quest/retrieval/dragon_hoard/Q = hoard_quest_ref?.resolve()
 	if(QDELETED(Q) || Q.complete)
 		return FALSE
@@ -68,8 +68,8 @@ GLOBAL_VAR_INIT(dragon_hoard_completed, FALSE)
 	if(!istype(holder))
 		holder = Q.quest_receiver_reference?.resolve()
 	if(istype(holder))
-		var/message = rescinded_by_dragon ? "The dragon's hoard writ went up in flames!" : "The dragon's hoard challenge has been withdrawn. Your writ is void."
-		to_chat(holder, span_notice(message))
+		notice ||= rescinded_by_dragon ? "The dragon's hoard writ went up in flames!" : "The dragon's hoard challenge has been withdrawn. Your writ is void."
+		to_chat(holder, span_notice(notice))
 	qdel(Q)
 	return TRUE
 
@@ -127,8 +127,19 @@ GLOBAL_VAR_INIT(dragon_hoard_completed, FALSE)
 	var/obj/item/treasure = new target_item_type(lair_turf)
 	hoard_item_ref = WEAKREF(treasure)
 	add_tracked_atom(treasure)
+	RegisterSignal(treasure, COMSIG_QDELETING, PROC_REF(on_hoard_gem_deleted))
 	treasure.AddComponent(/datum/component/quest_object/retrieval/dragon_hoard, src)
 	return TRUE
+
+/datum/quest/retrieval/dragon_hoard/proc/on_hoard_gem_deleted()
+	SIGNAL_HANDLER
+	// A successful delivery marks the quest complete before consuming the gem.
+	if(!materialized || complete || QDELETED(src))
+		return
+	var/datum/mind/dragon_mind = dragon_mind_ref?.resolve()
+	var/datum/antagonist/dragon/dragon = dragon_mind?.has_antag_datum(/datum/antagonist/dragon)
+	if(dragon?.hoard_quest_ref?.resolve() == src)
+		dragon.withdraw_hoard_quest(notice = "The marked hoard gem was destroyed. Your writ is void.")
 
 /datum/quest/retrieval/dragon_hoard/proc/target_available()
 	var/obj/item/treasure = hoard_item_ref?.resolve()
