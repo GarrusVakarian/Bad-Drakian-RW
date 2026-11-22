@@ -16,12 +16,12 @@ GLOBAL_LIST_INIT(named_breast_sizes, list(
 	"Slight" = 1,
 	"Small" = 2,
 	"Moderate" = 3,
-	"Large" = 4,
+	"Large" = LARGE_BREASTS_SIZE,
 	"Generous" = 5,
 	"Heavy" = 6,
 	"Massive" = 7,
 	"Heaping" = 8,
-	"Obscene" = 9
+	"Obscene" = OBSCENE_BREASTS_SIZE
 ))
 
 GLOBAL_LIST_INIT(customizer_choices, build_customizer_choices())
