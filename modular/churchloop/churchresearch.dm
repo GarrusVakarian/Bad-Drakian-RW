@@ -1173,9 +1173,8 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	html += "Each quest can have <u>Easy / Medium / Hard</u> variants, or just one special task.<br>"
 	html += "When you click <b>Get special item</b> on one row, you lock that quest to that difficulty and receive a quest item.<br>"
 	html += "Other rows for that quest lock until reroll.<br>"
-	html += "The quest item is single-use, may be handed to others, and stays bound to the owner for completion rewards."
-	html += "</u>Quest items may be given to other players</u>."
-	html += "Outside combat mode, the target must willingly accept. In combat mode, the quest is forced upon them and completes immediately.<br>"
+	html += "Each quest item can complete one quest. You can hand it to another player, and the quest owner still receives the reward.<br>"
+	html += "For quests that target another player, the recipient must accept outside combat mode. In combat mode, you can complete the quest without their acceptance.<br>"
 	html += "</div></center><hr>"
 
 	var/quest_count = islist(H.quest_ui_entries) ? H.quest_ui_entries.len : 0
