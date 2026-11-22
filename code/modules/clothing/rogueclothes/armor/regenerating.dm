@@ -172,8 +172,12 @@
 		/obj/item/clothing/shoes/roguetown/boots/footwraps,
 	), list(/obj/item/clothing/shoes/roguetown/anklets/baotha))
 
-/datum/component/storage/concrete/roguetown/talon_decoration/can_be_inserted(obj/item/I, stop_messages = FALSE, mob/M)
-	if(!istype(I) || length(I.contents) || I.GetComponent(/datum/component/storage))
+/datum/component/storage/concrete/roguetown/talon_decoration/can_be_inserted(obj/item/storing, stop_messages, mob/user, worn_check = FALSE, params, storage_click = FALSE)
+	var/obj/item/scales = parent
+	var/mob/living/carbon/human/wearer = scales.loc
+	if(!istype(wearer) || QDELETED(wearer) || wearer != user || wearer.skin_armor != scales || !wearer.get_num_legs(FALSE))
+		return FALSE
+	if(!istype(storing) || length(storing.contents) || storing.GetComponent(/datum/component/storage))
 		return FALSE
 	return ..()
 

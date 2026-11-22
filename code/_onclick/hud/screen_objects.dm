@@ -345,7 +345,7 @@
 				return TRUE
 			var/obj/item/decoration = wearer.get_active_held_item()
 			if(storage && decoration && modifiers["left"] && !modifiers["shift"] && !modifiers["ctrl"] && !modifiers["alt"])
-				if(wearer.get_num_legs(FALSE) && storage.can_be_inserted(decoration, TRUE, wearer))
+				if(storage.can_be_inserted(decoration, TRUE, wearer))
 					storage.handle_item_insertion(decoration, FALSE, wearer)
 				else
 					to_chat(wearer, span_warning("Only one pair of anklets or footwraps fits over your talon scales."))
