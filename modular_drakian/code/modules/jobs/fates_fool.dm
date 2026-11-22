@@ -18,9 +18,9 @@
 	if(visualsOnly)
 		return
 	roll_character(H)
-	to_chat(H, span_warning("Xylix laughs either at or with you. Make the most of what fate has given you."))
+	to_chat(H, span_warning("Xylix laughs either at or with you, strange person with such unusual skills and tools."))
 	if(H.client)
-		to_chat(H, span_warning("Keep your rolls. Do not leave and respawn for better ones."))
+		to_chat(H, span_warningbig("Do not leave and respawn as this class to get better rolls, live with what you are given. Admins will be informed if you try."))
 		message_admins("[ADMIN_LOOKUPFLW(H)] spawned as Fate's Fool. Watch for respawn rerolls.")
 		log_game("[key_name(H)] spawned as Fate's Fool.")
 
