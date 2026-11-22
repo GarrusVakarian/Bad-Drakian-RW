@@ -522,7 +522,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 			continue
 		H.church_favor += shared_favor
 		if(H.client)
-			to_chat(H, span_notice("+[shared_favor] Favor from a fellow Eclectic's completed quest."))
+			to_chat(H, span_notice("A fellow Eclectic completed a quest. I gain [shared_favor] Favor."))
 
 /obj/item/quest_token/proc/_ensure_attacker(user)
 	if(!istype(user, /mob/living/carbon/human))
