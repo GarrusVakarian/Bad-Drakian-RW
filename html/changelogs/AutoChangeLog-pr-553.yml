@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Revival miracles explain their effects on the description and show their current ritual requirements when cast on yourself."
+  - qol: "Revival ritual sites can be up to two tiles from the corpse in line of sight."
+  - rscadd: "Restored Xylix's tier-four revival with one random aftereffect, without the chance to teleport naked."
