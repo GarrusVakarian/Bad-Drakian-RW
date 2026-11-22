@@ -465,18 +465,18 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	if(patron_name == H.patron.name)
 		return TRUE
 	if(patron_name in divine_patrons_index)
-		return !istype(H.patron, /datum/patron/inhumen)
+		return istype(H.patron, /datum/patron/divine)
 	if(patron_name in inhumen_patrons_index)
-		return !istype(H.patron, /datum/patron/divine)
+		return istype(H.patron, /datum/patron/inhumen)
 	return FALSE
 
 /proc/_can_access_miracle_research(mob/living/carbon/human/H, study)
 	if(!istype(H) || !H.patron)
 		return FALSE
 	if(study == "zizo")
-		return !istype(H.patron, /datum/patron/divine)
+		return istype(H.patron, /datum/patron/inhumen)
 	if(study in list("noc", "pestra", "malum"))
-		return !istype(H.patron, /datum/patron/inhumen)
+		return istype(H.patron, /datum/patron/divine)
 	return FALSE
 
 /proc/_miracle_learning_tier_limit(mob/living/carbon/human/H)
@@ -509,7 +509,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	return allowed_owners
 
 /proc/_shunned_relations_unlocked(mob/living/carbon/human/H)
-	if(!H || istype(H.patron, /datum/patron/divine))
+	if(!H || !istype(H.patron, /datum/patron/inhumen))
 		return FALSE
 	if(_is_churchling(H))
 		return TRUE

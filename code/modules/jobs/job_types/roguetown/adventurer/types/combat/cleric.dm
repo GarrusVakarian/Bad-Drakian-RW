@@ -332,7 +332,7 @@
 			ADD_TRAIT(H, TRAIT_HERESIARCH, TRAIT_GENERIC)
 
 	H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
-	if(H.mind && !istype(H.patron, /datum/patron/old_god) && !choose_miracle_doctrine(H, "Paladin Doctrine"))
+	if(H.mind && !choose_miracle_doctrine(H, "Paladin Doctrine"))
 		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.miracle_learning_tier_limit = CLERIC_T1
@@ -433,6 +433,8 @@
 /datum/outfit/job/roguetown/proc/choose_miracle_doctrine(mob/living/carbon/human/H, doctrine_title)
 	if(!istype(H) || QDELETED(H) || !H.mind || !H.patron)
 		return FALSE
+	if(!istype(H.patron, /datum/patron/divine) && !istype(H.patron, /datum/patron/inhumen))
+		return TRUE
 	// Clientless characters keep the existing automatic miracle path.
 	if(!H.client)
 		return TRUE
