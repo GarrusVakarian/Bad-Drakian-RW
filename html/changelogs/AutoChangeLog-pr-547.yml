@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "The massage consent popup shows Yes before No and defaults to No when you press Enter."
