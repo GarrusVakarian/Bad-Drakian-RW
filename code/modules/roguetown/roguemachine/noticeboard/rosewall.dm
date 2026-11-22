@@ -171,11 +171,19 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 			"name" = worker.real_name,
 			"roster" = get_roster(worker),
 			"status" = advert_data["status"] || ROSEWALL_STATUS_AVAILABLE,
-			"message" = advert_data["message"] || "",
+			// Rosewall renders this field as a text node.
+			"message" = html_decode(advert_data["message"] || ""),
 			"advjob" = worker.advjob || "",
 		))
 	data["adverts"] = adverts
 	return data
+
+/obj/structure/roguemachine/rosewall/proc/prompt_advert_message(mob/user, prompt, encoded_message)
+	var/message = input(user, prompt, "Rosewall Advert", html_decode(encoded_message || "")) as text|null
+	if(isnull(message))
+		return null
+	// Apply the limit before encoding so it cannot cut an entity in half.
+	return html_encode(trim(copytext_char(message, 1, message_char_limit + 1)))
 
 /// Personal ads use the same editors as the OOC and character-customization menus.
 /obj/structure/roguemachine/rosewall/proc/handle_personal_ad(mob/living/carbon/human/H, action)
@@ -245,8 +253,7 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 				advert_data = list("status" = ROSEWALL_STATUS_AVAILABLE, "mob" = owner, "message" = "")
 				rosewall_adverts[owner.real_name] = advert_data
 			var/client/editor = H.client
-			var/current_msg = advert_data["message"] || ""
-			var/new_msg = stripped_input(H, "Compose my advert for the Rosewall (max [message_char_limit] characters):", "Rosewall Advert", current_msg, message_char_limit)
+			var/new_msg = prompt_advert_message(H, "Compose my advert for the Rosewall (max [message_char_limit] characters):", advert_data["message"])
 			if(new_msg == null)
 				return
 			if(QDELETED(src) || QDELETED(H) || QDELETED(owner) || !editor || H.client != editor || editor.mob != H || H.get_shapeshift_owner() != owner || !can_advertise(H) || rosewall_adverts[owner.real_name] != advert_data)
@@ -389,7 +396,7 @@ passerby may peruse the board, examine a worker's headshot, or send them an offe
 		update_all_boards()
 		to_chat(actor, span_notice("I set my Rosewall status to: <b>[new_status]</b>"))
 		log_admin_private("[key_name(H)] set Rosewall status to [new_status]")
-		var/new_msg = stripped_input(actor, "Compose my advert for this round (max [message_char_limit] characters):", "Rosewall Advert", data["message"] || "", message_char_limit)
+		var/new_msg = prompt_advert_message(actor, "Compose my advert for this round (max [message_char_limit] characters):", data["message"])
 		if(new_msg == null || QDELETED(src) || QDELETED(H) || QDELETED(actor) || !editor || actor.client != editor || editor.mob != actor || actor.get_shapeshift_owner() != H || actor.stat == DEAD)
 			return
 		if(!can_advertise(H) || rosewall_adverts[H.real_name] != data || data["mob"] != H)

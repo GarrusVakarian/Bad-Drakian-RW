@@ -457,7 +457,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 
 /obj/structure/chair/freedomchair
 	name = "LIBERTAS"
-	desc = "A modified collaring machine that safely removes Castifico collars. Right-click it with someone seated to remove their collar."
+	desc = "A modified collaring machine that safely removes Castifico collars."
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "evilchair"
 	blade_dulling = DULLING_BASH

@@ -77,6 +77,12 @@
 /datum/mob_descriptor/scales/peeling
 	name = "Peeling Scales"
 
+/datum/mob_descriptor/scales/dragon
+	name = "Dark Scales"
+	describe = "covered in dark scales"
+	verbage = "%ARE%"
+	show_obscured = TRUE
+
 /datum/mob_descriptor/fur
 	abstract_type = /datum/mob_descriptor/fur
 	slot = MOB_DESCRIPTOR_SLOT_SKIN

@@ -37,6 +37,25 @@
 	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
 	added_traits = list(TRAIT_HIGH_PRODUCTION)
 
+/datum/quirk/high_milk_production
+	name = "High Milk Production"
+	point_cost = 0
+	desc = "I can store and release more milk when lactating."
+	custom_text = "Use the button below to choose which chest size counts for milk storage and release."
+	added_traits = list(TRAIT_HIGH_MILK_PRODUCTION)
+
+/datum/quirk/high_milk_production/apply_to_human(mob/living/carbon/human/recipient)
+	recipient.milk_production_size = sanitize_milk_production_size(recipient.client?.prefs?.milk_production_size)
+
+/mob/living/carbon/human
+	/// Snapshot from character setup so changing slots does not change a spawned character.
+	var/milk_production_size = LARGE_BREASTS_SIZE
+
+/proc/sanitize_milk_production_size(size)
+	if(!isnum(size) || size < MIN_BREASTS_SIZE || size > MAX_BREASTS_SIZE || round(size) != size)
+		return LARGE_BREASTS_SIZE
+	return size
+
 /datum/quirk/acquiredtastes
 	name = "Acquired Tastes"
 	desc = "Despite my unorthodox tastes, I'm always prepared to handle a guest with the toys, assorted gear and emberwine I keep stashed."

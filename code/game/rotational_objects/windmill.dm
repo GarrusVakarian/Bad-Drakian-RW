@@ -26,12 +26,6 @@
 	. = ..()
 	base_rpm = WINDMILL_TOP_RPM_MAX
 
-/obj/structure/windmill/examine(mob/user)
-	. = ..()
-	. += span_info("Place it somewhere with a clear view of the sky - a roof or an upper floor stops it catching the wind.")
-	. += span_info("It spins fastest on the highest level; the wind weakens, halving its output, for each z-level it sits below the top.")
-	. += span_info("Middle-click it with an engineering wrench to disassemble it.")
-
 /obj/structure/windmill/find_rotation_network()
 	. = ..()
 	setup_rotation()

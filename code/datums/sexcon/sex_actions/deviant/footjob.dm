@@ -4,16 +4,6 @@
 	user_sex_part = SEX_PART_FEET
 	target_sex_part = SEX_PART_COCK
 
-/datum/sex_action/footjob/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return HAS_TRAIT(user, TRAIT_TINY) || !HAS_TRAIT(target, TRAIT_TINY)
-
-/datum/sex_action/footjob/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return HAS_TRAIT(user, TRAIT_TINY) || !HAS_TRAIT(target, TRAIT_TINY)
-
 /datum/sex_action/footjob/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(HAS_TRAIT(user, TRAIT_TINY) && !HAS_TRAIT(target, TRAIT_TINY))
 		user.visible_message(span_warning("[user] plants their tiny feet against [target]'s cock..."))

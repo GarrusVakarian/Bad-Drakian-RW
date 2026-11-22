@@ -26,6 +26,7 @@ type Contract = {
   is_defense: BooleanLike;
   is_towner: BooleanLike;
   is_standing: BooleanLike;
+  is_dragon_hoard?: BooleanLike;
   required_fellowship_size: number;
   lapse_minutes: number;
 };
@@ -165,6 +166,8 @@ export const ContractLedger = () => {
   const filtered = data.pool
     .filter((c) => matchesRegion(c) && matchesDifficulty(c))
     .sort((a, b) => {
+      const featuredOrder = Number(!!b.is_dragon_hoard) - Number(!!a.is_dragon_hoard);
+      if (featuredOrder) return featuredOrder;
       const sa = a.is_standing ? 0 : 1;
       const sb = b.is_standing ? 0 : 1;
       return sa - sb;
@@ -490,6 +493,7 @@ const ContractCard = (props: { contract: Contract }) => {
             ? `Requires a Fellowship of ${c.required_fellowship_size}, you have ${data.user_fellowship_size || 0}.`
             : undefined;
   const stamps: { label: string; modifier: string }[] = [];
+  if (c.is_dragon_hoard) stamps.push({ label: "DRAGON'S SEAL", modifier: 'dragon' });
   if (c.is_rumor) stamps.push({ label: 'RUMORED!', modifier: 'rumor' });
   if (c.is_defense) {
     stamps.push({ label: 'COMMISSIONED', modifier: 'commissioned' });
@@ -497,7 +501,9 @@ const ContractCard = (props: { contract: Contract }) => {
   if (c.levy_exempt) stamps.push({ label: 'LEVY EXEMPT', modifier: 'exempt' });
   const contentTopPad = stamps.length > 0 ? 8 + stamps.length * 16 : 0;
   return (
-    <div className="ContractLedger__Card">
+    <div className={c.is_dragon_hoard
+      ? "ContractLedger__Card ContractLedger__Card--dragon"
+      : "ContractLedger__Card"}>
       <div className={difficultyPinClass(c.difficulty)} />
       {stamps.map((s, i) => (
         <div
@@ -603,7 +609,7 @@ const ContractCard = (props: { contract: Contract }) => {
       <div className="ContractLedger__CardRow">
         <span className="ContractLedger__CardLabel">Lapses</span>
         <span className="ContractLedger__CardValue">
-          {c.lapse_minutes > 0 ? `~${c.lapse_minutes}m` : '<1m'}
+          {c.is_dragon_hoard ? 'Until withdrawn' : c.lapse_minutes > 0 ? `~${c.lapse_minutes}m` : '<1m'}
         </span>
       </div>
       {c.threat_bands > 0 && (

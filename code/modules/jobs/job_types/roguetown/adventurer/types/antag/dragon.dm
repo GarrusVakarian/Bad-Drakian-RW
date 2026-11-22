@@ -3,9 +3,9 @@
 	flag = DRAGON
 	antag_job = TRUE
 	faction = "Station"
-	total_positions = 1
-	spawn_positions = 1
-	allowed_races = list(/datum/species/dracon)
+	total_positions = 0
+	spawn_positions = 0
+	allowed_races = null
 	tutorial = "You are an ancient dragon, guarding a hoard of treasure. Strike deals with mortals, protect your territory, and secure a future for your brood."
 	outfit = null
 	outfit_female = null
@@ -42,7 +42,16 @@
 			H.verbs |= /mob/living/carbon/human/proc/dragon_inspect_skin
 
 
+/mob/living/carbon/human/proc/apply_dragon_bark()
+	if(!istype(dna?.species, /datum/species/dragon))
+		return
+	set_bark("mutedc2")
+	vocal_speed = 5
+	vocal_pitch = 1
+	vocal_pitch_range = 0.25
+
 /mob/living/carbon/human/proc/apply_dragon_preferences(initial_setup = TRUE)
+	apply_dragon_bark()
 	// Species swaps do not always clear extra body zones from prior forms.
 	// Purge lamia/taur leftovers so dragons only use dragon body setup.
 	ensure_not_taur()
@@ -81,7 +90,12 @@
 	facial_hairstyle = "Shaved"
 	update_body()
 	ambushable = FALSE
+	clear_mob_descriptors()
+	custom_descriptors = null
+	add_mob_descriptor(/datum/mob_descriptor/trait/towering)
 	add_mob_descriptor(/datum/mob_descriptor/stature/dragon)
+	add_mob_descriptor(/datum/mob_descriptor/voice/deep)
+	add_mob_descriptor(/datum/mob_descriptor/scales/dragon)
 
 	var/obj/item/organ/eyes/eyes = getorganslot(ORGAN_SLOT_EYES)
 	if(eyes)
@@ -105,6 +119,9 @@
 		H.set_blindness(0)
 		H.regenerate_icons()
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_gate_control)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_hoard_challenge)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_realm_roar)
+		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/appraise/secular)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/message)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/claws/dragon)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/spitfire)
@@ -160,6 +177,7 @@
 		/datum/skill/misc/hunting = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/labor/butchering = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/tracking = SKILL_LEVEL_MASTER,
+		/datum/skill/misc/reading = SKILL_LEVEL_EXPERT,
 	)
 
 /datum/outfit/job/roguetown/dragon/pre_equip(mob/living/carbon/human/H)

@@ -46,8 +46,6 @@
 	if(occupant)
 		. += span_warning("It bulges and shifts; someone is trapped inside.")
 		. += span_notice("Use it in hand to loosen the mouth and release them.")
-	else
-		. += span_notice("Use it on a living target to pull the sack over them. A moving target will interrupt the attempt.")
 
 /obj/item/capture_sack/getonmobprop(tag)
 	. = ..()

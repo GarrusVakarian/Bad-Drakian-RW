@@ -12,7 +12,8 @@
 	have historically been at odds with one another. Being the eldest creations of the Weeping God, humens \
 	tend to find fortune easier than the other races, and are so diverse that no other racial traits \
 	are dominant in their species.<br>\
-	(+1 Willpower, +1 Intelligence, Humen Ingenuity Trait)"
+	(+1 Willpower, +1 Intelligence)<br>\
+	<a href='byond://winset?command=Racial-Features%20humen'>Racial Features: Humens</a><br>"
 
 	skin_tone_wording = "Ancestry"
 

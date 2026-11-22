@@ -460,7 +460,7 @@
 			data += "<div style='margin: 10px 0;'>"
 			if(richest)
 				data += get_headshot_icon(richest)
-				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[richest.real_name]</font><br><i>[richest.job]</i><br>(with <font color='#d8dd90'>[get_mammons_in_atom(richest)] mammons</font>)</div>"
+				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[richest.real_name]</font><br><i>[richest.job]</i><br>(with <font color='#d8dd90'>[SSgamemode.magnate_wealth] mammons</font>)</div>"
 			else
 				data += "Nobody"
 			data += "</div>"

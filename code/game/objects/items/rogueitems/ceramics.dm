@@ -68,10 +68,6 @@
 	return ..()
 
 
-/obj/item/reagent_containers/glass/bottle/claybottle/examine(mob/user)
-	. = ..()
-	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
-
 /obj/item/reagent_containers/glass/bottle/claybottle/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
 		var/obj/item/dye_brush/brush = I
@@ -153,10 +149,6 @@
 		return
 	return ..()
 
-/obj/item/reagent_containers/glass/bottle/clayvase/examine(mob/user)
-	. = ..()
-	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
-
 /obj/item/reagent_containers/glass/bottle/clayvase/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
 		var/obj/item/dye_brush/brush = I
@@ -237,10 +229,6 @@
 	if(pottery_throw_shatter(hit_atom, thrownthing))
 		return
 	return ..()
-
-/obj/item/reagent_containers/glass/bottle/clayfancyvase/examine(mob/user)
-	. = ..()
-	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
 
 /obj/item/reagent_containers/glass/bottle/clayfancyvase/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
@@ -331,10 +319,6 @@
 	if(pottery_throw_shatter(hit_atom, thrownthing))
 		return
 	return ..()
-
-/obj/item/reagent_containers/glass/cup/claycup/examine(mob/user)
-	. = ..()
-	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
 
 /obj/item/reagent_containers/glass/cup/claycup/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
@@ -486,10 +470,6 @@
 	. = ..(mapload)
 	icon_state = "claystatuecooked5"
 
-/obj/item/roguestatue/clay/examine(mob/user)
-	. = ..()
-	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
-
 /obj/item/roguestatue/clay/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
 		var/obj/item/dye_brush/brush = I
@@ -550,10 +530,6 @@
 /obj/item/roguestatue/glass/design5/Initialize(mapload)
 	. = ..(mapload)
 	icon_state = "statueglass5"
-
-/obj/item/roguestatue/glass/examine(mob/user)
-	. = ..()
-	. += span_info("Glassed pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
 
 // -------------------- Porcelain --------------------
 
@@ -721,10 +697,6 @@
 		return
 	return ..()
 
-/obj/item/carvedgem/porcelain/examine(mob/user)
-	. = ..()
-	. += span_info("Porcelain pottery can be glazed with a dye brush.")
-
 /obj/item/carvedgem/porcelain/attackby(obj/item/I, mob/living/carbon/human/user)
 	. = ..()
 	if(istype(I, /obj/item/dye_brush))
@@ -838,10 +810,6 @@
 			dice_count = min(3, dice_count)
 		add_overlay(mutable_appearance(icon, "[icon_state]dice[dice_count]"))
 
-/obj/item/reagent_containers/glass/cup/porcelain/examine()
-	. = ..()
-	. += span_info("It can be brushed with a dye brush to glaze it.")
-
 /obj/item/reagent_containers/glass/cup/porcelain/attackby(obj/item/I, mob/living/carbon/human/user)
 	. = ..()
 	if(istype(I, /obj/item/dye_brush))
@@ -888,10 +856,6 @@
 	if(pottery_throw_shatter(hit_atom, thrownthing))
 		return
 	return ..()
-
-/obj/item/reagent_containers/glass/bucket/pot/teapot/porcelain/examine()
-	. = ..()
-	. += span_info("It can be brushed with a dye brush to glaze it.")
 
 /obj/item/reagent_containers/glass/bucket/pot/teapot/porcelain/attackby(obj/item/I, mob/living/carbon/human/user)
 	if(istype(I, /obj/item/dye_brush))
@@ -1091,16 +1055,8 @@
 	obj_flags = CAN_BE_HIT|UNIQUE_RENAME
 	sellprice = 4
 
-/obj/item/reagent_containers/glass/bottle/blown/examine(mob/user)
-	. = ..()
-	. += span_info("Blown glass can be tinted in a dye bin.")
-
 /obj/item/reagent_containers/glass/bottle/alchemical/blown
 	name = "blown alchemical vial"
 	desc = "A small vial carefully shaped from molten glass by a skilled glassblower. Its surface can be glazed with pigment in a dye bin."
 	obj_flags = CAN_BE_HIT|UNIQUE_RENAME
 	sellprice = 2
-
-/obj/item/reagent_containers/glass/bottle/alchemical/blown/examine(mob/user)
-	. = ..()
-	. += span_info("Blown glass can be tinted in a dye bin.")

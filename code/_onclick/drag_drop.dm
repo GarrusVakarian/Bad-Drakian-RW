@@ -204,6 +204,9 @@
 /mob
 	var/datum/intent/curplaying
 
+/atom/proc/should_click_on_mouse_up(atom/original_object)
+	return TRUE
+
 /client/MouseUp(object, location, control, params)
 	var/was_charging
 	if(charging && isliving(mob))
@@ -253,7 +256,8 @@
 
 	if(tcompare)
 		var/atom/target_atom = object
-		if(istype(target_atom) && tcompare != mob && (mob.atkswinging == "middle" || mob.used_intent?.tranged || (mob.atkswinging && object != tcompare)))
+		var/is_spell_release = mob.atkswinging == "middle" && mob.used_intent?.type == INTENT_SPELL && istype(mob.ranged_ability, /obj/effect/proc_holder/spell/invoked)
+		if(istype(target_atom) && target_atom.should_click_on_mouse_up(tcompare) && (tcompare != mob || is_spell_release) && (mob.atkswinging == "middle" || mob.used_intent?.tranged || (mob.atkswinging && object != tcompare)))
 			target_atom.Click(location, control, params)
 		tcompare = null
 

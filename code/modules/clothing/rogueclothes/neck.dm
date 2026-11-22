@@ -13,8 +13,6 @@
 	. = ..()
 	if(bell)
 		. += span_info("It has a <a href='?src=[REF(src)];removebell=1'>bell</a> attached.")
-	if(is_snoutable())
-		. += span_notice("Alt+RMB makes room for a snout.")
 
 /obj/item/clothing/neck/roguetown/Topic(href, href_list)
 	..()
@@ -550,10 +548,6 @@
 		L.regenerate_clothes()
 	return TRUE
 
-/obj/item/clothing/neck/roguetown/psicross/examine(mob/user)
-	. = ..()
-	. += span_info("Middle-click to adjust the amulet's wrist/neck display. Right-click to pray if you know how.")
-
 /obj/item/clothing/neck/roguetown/psicross/inhumen
 	name = "inverted psycross"
 	desc = "A symbol of ambition from an era that had reason to believe in it."
@@ -775,10 +769,6 @@
 	resistance_flags = FIRE_PROOF
 	sellprice = 80
 	anvilrepair = /datum/skill/craft/armorsmithing
-
-/obj/item/clothing/neck/roguetown/horus/examine(mob/user)
-	. = ..()
-	. += span_info("Click on a turf or an item to see how much it is worth. Avoid tables.")
 
 /obj/item/clothing/neck/roguetown/horus/afterattack(atom/A, mob/user, params)
 	. = ..()

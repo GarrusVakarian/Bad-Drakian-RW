@@ -126,7 +126,7 @@
 #define TRAIT_DEATHBYSNUSNU "Bed Breaker" //What do you think? Pelvis crushing and increased pain.
 #define TRAIT_HUMEN_INGENUITY "Humen Ingenuity"//25% cheaper sleep levels.
 #define TRAIT_JACKOFALLTRADES "Jack of All Trades"	//Reduces skill up cost
-#define TRAIT_HELLSPAWN "Hellspawn"//15% chance to avoid ignition.
+#define TRAIT_HELLSPAWN "Hellspawn" // Prevents ordinary fire ignition.
 #define TRAIT_WING_BOUND "Wing Bound"//Welcome back, OldAcrobat. Offbalance (12s) and stun(2s) from falling 1Z, but no damage.
 #define TRAIT_DWARF_REPAIR "Dwarvish Knowledge"//Squire Repair, but very slightly worse. Only for needle / hammer.
 #define TRAIT_DRUNK_HEALING "Drunk Healing"//Having anything with booze power of 25 or more in your system slowly heals you.
@@ -294,6 +294,7 @@
 #define TRAIT_LARGE_FRAME "Large Frame"
 #define TRAIT_FAT_KNOT "Fat Knot"
 #define TRAIT_HIGH_PRODUCTION "High Production"
+#define TRAIT_HIGH_MILK_PRODUCTION "High Milk Production"
 #define TRAIT_RESIDENT "Resident"
 #define TRAIT_COUNTERCOUNTERSPELL "Counter Counterspell"
 #define TRAIT_UNSEEMLY "Ugly"
@@ -669,7 +670,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_OVERTHERETIC = span_bloody("I've played my cards. Hallowed ground is now my bane."),
 	TRAIT_DEATHBYSNUSNU = "With strong intent, I am a violent partner in bed. Breaking pelvis and spirit alike.",
 	TRAIT_HUMEN_INGENUITY = span_notice("Like most of my people, I am blessed with knowledge. Learning comes easier."),
-	TRAIT_HELLSPAWN = span_warning("My bloodline affords me an inherent resistance to catching ablaze."),
+	TRAIT_HELLSPAWN = span_warning("Ordinary flames cannot set me alight. I can still suffer burn damage and magical fire."),
 	TRAIT_WING_BOUND = span_info("The wings upon my back allow me to glide. Poorly. Falls will be less painful, but still not ideal."),
 	TRAIT_DWARF_REPAIR = span_info("Never again will there be a people like ours. Repairs come easy to me."),
 	TRAIT_DRUNK_HEALING = span_info("A little drinking never hurt!"),

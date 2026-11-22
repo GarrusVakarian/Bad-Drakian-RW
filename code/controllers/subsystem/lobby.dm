@@ -32,7 +32,7 @@ SUBSYSTEM_DEF(lobbymenu)
 					if (player.ready == PLAYER_READY_TO_PLAY)
 						if (!ready_players_by_job[job_name])
 							ready_players_by_job[job_name] = list()
-						ready_players_by_job[job_name] += player.client.prefs.real_name
+						ready_players_by_job[job_name] += player.client.prefs.get_lobby_character_name(job_name)
 						break
 
 	var/list/job_list_by_department = list( // Oorah Key value pair
@@ -75,3 +75,11 @@ SUBSYSTEM_DEF(lobbymenu)
 			player.lobby_refresh(actor_list)
 		if (MC_TICK_CHECK)
 			return
+
+/// Resolve the name for the role being displayed without changing the normal character slot.
+/datum/preferences/proc/get_lobby_character_name(job_name)
+	if(job_name == "Gnoll")
+		if(gnoll_prefs)
+			return gnoll_prefs.ensure_gnoll_name()
+		return "Gnoll"
+	return real_name

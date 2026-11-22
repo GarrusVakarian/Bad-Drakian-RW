@@ -289,6 +289,9 @@
 			if(H.try_accept_offered_item(src, offered_item, stealthy))
 				return TRUE
 
+	if(try_free_laces(user))
+		return TRUE
+
 	if(..())	//to allow surgery to return properly.
 		return
 	retaliate(user)

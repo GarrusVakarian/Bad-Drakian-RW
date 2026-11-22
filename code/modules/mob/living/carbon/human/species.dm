@@ -1090,13 +1090,15 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.adjust_nutrition(-hunger_rate)
 
 		var/obj/item/organ/breasts/breasts = H.has_breasts()
-		if(breasts)
-			if(H.nutrition > NUTRITION_LEVEL_HUNGRY && breasts.lactating && breasts.milk_max > breasts.milk_stored) //Vrell - numbers may need to be tweaked for balance but hey this works for now.
-				var/milk_to_make = min(hunger_rate, breasts.milk_max - breasts.milk_stored)
-				breasts.milk_stored += milk_to_make
-				H.adjust_nutrition(-milk_to_make)
+		if(istype(breasts) && breasts.lactating)
+			if(H.nutrition > NUTRITION_LEVEL_HUNGRY)
+				var/milk_space = breasts.get_milk_capacity() - breasts.milk_stored
+				if(milk_space > 0)
+					var/milk_to_make = min(hunger_rate, milk_space)
+					breasts.milk_stored += milk_to_make
+					H.adjust_nutrition(-milk_to_make)
 
-			else if(H.nutrition < NUTRITION_LEVEL_STARVING && breasts.lactating) //Vrell - If starving, your milk drains automatically to slow your starvation.
+			else if(H.nutrition < NUTRITION_LEVEL_STARVING) // Stored milk slows starvation.
 				var/milk_to_take = min(hunger_rate, breasts.milk_stored)
 				breasts.milk_stored -= milk_to_take
 				H.adjust_nutrition(milk_to_take)

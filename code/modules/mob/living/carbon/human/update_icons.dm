@@ -662,7 +662,13 @@ There are several things that need to be remembered:
 		if(OFFSET_SHOES in dna.species.offset_features)
 			shoes_overlay.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
 			shoes_overlay.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
-		overlays_standing[SHOES_LAYER] = shoes_overlay
+		var/datum/status_effect/tied_laces/laces
+		if(visible_footwear == shoes)
+			laces = has_status_effect(/datum/status_effect/tied_laces)
+		if(laces)
+			overlays_standing[SHOES_LAYER] = list(shoes_overlay, laces.get_overlay())
+		else
+			overlays_standing[SHOES_LAYER] = shoes_overlay
 
 		//add sleeve overlays, then offset
 		var/list/sleeves = list()

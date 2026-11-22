@@ -600,27 +600,27 @@
 		organ_dna.accessory_colors = visual_dna.accessory_colors
 		qdel(visual_dna)
 
-/// Match the last enabled normal tail entry, as the ordinary organ-DNA pipeline does.
+/// The no-sprite maw borrows a separately retained normal tail's appearance.
+/proc/get_tailmaw_visual_entry(datum/preferences/prefs)
+	if(!prefs?.pref_species)
+		return null
+	var/datum/customizer_entry/visual_entry
+	for(var/datum/customizer_entry/entry as anything in prefs.get_active_customizer_entries())
+		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !ispath(entry.customizer_type, /datum/customizer/organ/tail/manticore))
+			visual_entry = entry
+	return visual_entry
+
 /proc/get_tailmaw_visual_dna(datum/preferences/prefs)
 	if(!prefs?.pref_species)
 		return null
-	var/datum/organ_dna/visual_dna
-	for(var/datum/customizer_entry/entry as anything in prefs.customizer_entries)
-		if(!istype(entry) || entry.disabled || !ispath(entry.customizer_type, /datum/customizer/organ/tail) || ispath(entry.customizer_type, /datum/customizer/organ/tail/manticore))
-			continue
-		if(!(entry.customizer_type in prefs.pref_species.customizers))
-			continue
-		var/datum/customizer_choice/organ/tail/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
-		if(!istype(choice))
-			continue
-		QDEL_NULL(visual_dna)
-		visual_dna = choice.create_organ_dna(entry, prefs)
-	if(visual_dna)
-		return visual_dna
+	var/datum/customizer_entry/entry = get_tailmaw_visual_entry(prefs)
+	if(entry)
+		var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+		return choice.create_organ_dna(entry, prefs)
 	var/obj/item/organ/tail/species_tail = prefs.pref_species.organs?[ORGAN_SLOT_TAIL]
 	if(!ispath(species_tail, /obj/item/organ/tail))
 		return null
-	visual_dna = new /datum/organ_dna/tail()
+	var/datum/organ_dna/tail/visual_dna = new
 	visual_dna.organ_type = species_tail
 	visual_dna.accessory_type = initial(species_tail.accessory_type)
 	visual_dna.accessory_colors = initial(species_tail.accessory_colors)
@@ -636,5 +636,11 @@
 	default_disabled = TRUE
 
 /datum/customizer_choice/organ/tail/arachnid
-	name = "Tentacle Tail"
-	sprite_accessories = list(/datum/sprite_accessory/tail/tentacle)
+	name = "Tail"
+	sprite_accessories = list(
+		/datum/sprite_accessory/tail/tentacle,
+		/datum/sprite_accessory/tail/bee,
+		/datum/sprite_accessory/tail/insect,
+		/datum/sprite_accessory/tail/scorpian,
+		/datum/sprite_accessory/tail/pede
+	)

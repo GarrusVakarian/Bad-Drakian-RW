@@ -88,6 +88,10 @@
 			handle_random_events(15) // pain stun, vomitting, etc
 			update_sneak_invis()
 			handle_traits(3) // eye, ear, brain damages
+		else if(ishuman(src))
+			var/mob/living/carbon/human/human = src
+			if(human.mode != NPC_AI_OFF && human.mode != NPC_AI_SLEEP)
+				human.handle_pain(track_stress = FALSE)
 	else
 		handle_status_effects() //all special effects, stun, knockdown, jitteryness, hallucination, sleeping, etc
 		handle_environment()

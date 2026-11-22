@@ -40,6 +40,8 @@
 		UNTYPED_LIST_ADD(loadout_items, list(
 			"name" = item.name,
 			"desc" = initial(I.desc),
+			"category" = item.sort_category ? item.sort_category : get_item_category(I),
+			"point_cost" = item.triumph_cost ? item.triumph_cost : 0,
 			"triumph_cost" = item.desc, // Don't @ me... this is wack.
 			"nobility_check" = noble_passed, // True means they passed. Returns true on items that don't have the check as well.
 			"donoritem" = donoritem_passed,
@@ -48,6 +50,80 @@
 		))
 	data["loadout_items"] = loadout_items
 	return data
+
+/datum/loadout_menu/proc/get_item_category(item_path)
+	if(ispath(item_path, /obj/item/clothing))
+		var/obj/item/clothing/clothing = item_path
+		if( \
+			initial(clothing.armor_class) > ARMOR_CLASS_NONE || \
+			ispath(item_path, /obj/item/clothing/armor) || \
+			ispath(item_path, /obj/item/clothing/suit/roguetown/armor) || \
+			ispath(item_path, /obj/item/clothing/head/roguetown/helmet) || \
+			ispath(item_path, /obj/item/clothing/neck/roguetown/gorget) || \
+			ispath(item_path, /obj/item/clothing/suit/roguetown/shirt/freifechter) \
+		)
+			return "Armor"
+		if(ispath(item_path, /obj/item/clothing/cloak))
+			return "Cloaks"
+		if(ispath(item_path, /obj/item/clothing/mask/rogue/spectacles) || ispath(item_path, /obj/item/clothing/neck) || ispath(item_path, /obj/item/clothing/ring))
+			return "Accessories"
+		if(ispath(item_path, /obj/item/clothing/head) || ispath(item_path, /obj/item/clothing/mask))
+			return "Headwear"
+		return "Clothing"
+	if( \
+		ispath(item_path, /obj/item/toy) || \
+		ispath(item_path, /obj/item/storage/pill_bottle/dice) || \
+		ispath(item_path, /obj/item/chessboard_folded) || \
+		ispath(item_path, /obj/item/chastity) || \
+		ispath(item_path, /obj/item/dildo) || \
+		ispath(item_path, /obj/item/leash) \
+	)
+		return "Toys"
+	if(ispath(item_path, /obj/item/flowercrown))
+		return "Headwear"
+	if(ispath(item_path, /obj/item/catbell))
+		return "Accessories"
+	if( \
+		ispath(item_path, /obj/item/storage/belt) || \
+		ispath(item_path, /obj/item/storage/backpack) || \
+		ispath(item_path, /obj/item/storage/roguebag) || \
+		ispath(item_path, /obj/item/rogueweapon/scabbard) \
+	)
+		return "Belts & Bags"
+	if(ispath(item_path, /obj/item/book) || ispath(item_path, /obj/item/recipe_book) || ispath(item_path, /obj/item/rogue/instrument))
+		return "Books & Music"
+	if( \
+		ispath(item_path, /obj/item/perfume) || \
+		ispath(item_path, /obj/item/azure_lipstick) || \
+		ispath(item_path, /obj/item/hair_dye_cream) || \
+		ispath(item_path, /obj/item/handmirror) || \
+		ispath(item_path, /obj/item/soap) \
+	)
+		return "Personal Care"
+	if( \
+		ispath(item_path, /obj/item/rogueweapon/shovel) || \
+		ispath(item_path, /obj/item/rogueweapon/hammer) || \
+		ispath(item_path, /obj/item/rogueweapon/tongs) || \
+		ispath(item_path, /obj/item/rogueweapon/pick) || \
+		ispath(item_path, /obj/item/rogueweapon/hoe) || \
+		ispath(item_path, /obj/item/rogueweapon/sickle) || \
+		ispath(item_path, /obj/item/rogueweapon/scythe) || \
+		ispath(item_path, /obj/item/rogueweapon/thresher) || \
+		ispath(item_path, /obj/item/rogueweapon/pitchfork) || \
+		ispath(item_path, /obj/item/rogueweapon/chisel) || \
+		ispath(item_path, /obj/item/rogueweapon/surgery) || \
+		ispath(item_path, /obj/item/needle) || \
+		ispath(item_path, /obj/item/dye_brush) || \
+		ispath(item_path, /obj/item/paint_brush) || \
+		ispath(item_path, /obj/item/broom) || \
+		ispath(item_path, /obj/item/flint) || \
+		ispath(item_path, /obj/item/natural/whetstone) || \
+		ispath(item_path, /obj/item/natural/bundle/cloth/bandage) \
+	)
+		return "Tools"
+	if(ispath(item_path, /obj/item/rogueweapon))
+		return "Weapons"
+	return "Misc"
 
 /datum/loadout_menu/ui_act(action, list/params, datum/tgui/ui)
 	. = ..()

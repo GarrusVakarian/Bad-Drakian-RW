@@ -442,7 +442,6 @@
 	update_icon()
 	..()
 
-
 /obj/structure/roguewindow/examine(mob/user)
 	. = ..()
 	var/obj/cast_repair_cost_first = repair_costs[1]

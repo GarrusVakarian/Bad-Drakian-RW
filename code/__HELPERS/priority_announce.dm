@@ -1,17 +1,18 @@
-/proc/priority_announce(text, title = "", sound, type , mob/living/sender = null, mob/living/receiver = null, strip_html = TRUE)
+/proc/priority_announce(text, title = "", sound, type , mob/living/sender = null, mob/living/receiver = null, strip_html = TRUE, text_color = null)
 	if(!text)
 		return
 
 	var/announcement
+	var/color_style = text_color ? " style='color:[text_color]'" : ""
 
 	if (title && length(title) > 0)
-		announcement += "<h1 class='alert'>[title]</h1>"
+		announcement += "<h1 class='alert'[color_style]>[title]</h1>"
 	// strip_html defaults TRUE (legacy behavior). Charter broadcasts that carry long,
 	// intentionally-formatted bodies pass FALSE so they aren't truncated at MAX_MESSAGE_LEN.
 	if(strip_html)
-		announcement += "<br><span class='alert'>[STRIP_HTML_SIMPLE(text, MAX_MESSAGE_LEN)]</span>"
+		announcement += "<br><span class='alert'[color_style]>[STRIP_HTML_SIMPLE(text, MAX_MESSAGE_LEN)]</span>"
 	else
-		announcement += "<br><span class='alert'>[text]</span>"
+		announcement += "<br><span class='alert'[color_style]>[text]</span>"
 
 	if (sender)
 		sender.log_talk(text, LOG_SAY, tag="priority announcement")
@@ -19,15 +20,13 @@
 
 	var/s = sound(sound)
 	for(var/mob/M in GLOB.player_list)
-		if (!M.can_hear())
-			return
-		if (receiver && !(istype(M, receiver) || (sender && M == sender)))
-			return
+		if(!M.client || !M.can_hear())
+			continue
+		if(receiver && !(istype(M, receiver) || (sender && M == sender)))
+			continue
 
 		to_chat(M, announcement)
-		if (M.client.prefs.toggles & SOUND_ANNOUNCEMENTS)
-			if (!sound)
-				return
+		if(sound && (M.client.prefs.toggles & SOUND_ANNOUNCEMENTS))
 			M.playsound_local(M, s, 100)
 
 /proc/minor_announce(message, title = "", alert)

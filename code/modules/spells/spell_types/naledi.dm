@@ -200,13 +200,23 @@
 	devotion_cost = 70
 
 /obj/effect/proc_holder/spell/invoked/stasis/cast(list/targets, mob/user = usr)
-	var/mob/living/carbon/self = usr
-	var/mob/living/carbon/target = targets[1]
+	var/mob/living/carbon/self = user
+	var/mob/living/patient = targets[1]
+	if(!isliving(patient))
+		revert_cast(user)
+		return FALSE
+	var/obj/shapeshift_holder/ooze_death/ooze = patient.get_ooze_revival_holder()
+	var/mob/living/carbon/target = ooze ? ooze.stored : patient
+	var/lost_life_at = ooze ? ooze.collapsed_at : target.timeofdeath
 	// Reverse a recently departed soul. Must be done within 1 minute.
-	if(target?.stat == DEAD)
+	if(target?.stat == DEAD || ooze)
 		if(!self.has_status_effect(/datum/status_effect/debuff/devitalised))
-			if(target.timeofdeath && (world.time - target.timeofdeath) <= 1 MINUTES)
-				if(alert(user, "[target] has very recently departed. Sacrifice your Lux to rewind their soul back?", "Origin Restoration", "Restore Them", "Leave Them") == "Restore Them")
+			if(!isnull(lost_life_at) && (ooze || lost_life_at) && (world.time - lost_life_at) <= 1 MINUTES)
+				if(confirm_origin_restoration(user, target))
+					if(target != patient)
+						if(QDELETED(self) || self.stat == DEAD || self.has_status_effect(/datum/status_effect/debuff/devitalised) || QDELETED(ooze) || world.time - ooze.collapsed_at > 1 MINUTES || !ooze.revive_patient(targets))
+							revert_cast(user)
+							return FALSE
 					var/obj/effect/temp_visual/origin_restoration/V = new
 					target.vis_contents += V
 					var/turf/user_turf = get_turf(user)
@@ -217,7 +227,7 @@
 					playsound(target.loc, 'sound/magic/regression1.ogg')
 					self.apply_status_effect(/datum/status_effect/debuff/devitalised)
 					target.setOxyLoss(0)
-					if(target.revive(full_heal = FALSE))
+					if(target != patient || target.revive(full_heal = FALSE))
 						target.grab_ghost(force = TRUE)
 						target.emote("gasp")
 						target.Jitter(100)
@@ -227,11 +237,15 @@
 						target.visible_message(span_blue("[user]'s Lux is forcefully torn away as [target]'s soul is rewound back into their body!"),	span_blue("A distant darkness releases its grip on me. I wake once more, feeling the remnants of a dying light..."))
 						return TRUE
 					else
-						revert_cast()
+						revert_cast(user)
 						return FALSE
 				else
-					revert_cast()
+					revert_cast(user)
 					return FALSE
+
+	if(ooze)
+		revert_cast(user)
+		return FALSE
 
 	if(isliving(target))
 		var/mob/living/carbon/C = target
@@ -257,8 +271,11 @@
 		addtimer(CALLBACK(src, PROC_REF(remove_buff), target), wait = 10 SECONDS)
 		return TRUE
 	else
-		revert_cast()
+		revert_cast(user)
 		return FALSE
+
+/obj/effect/proc_holder/spell/invoked/stasis/proc/confirm_origin_restoration(mob/user, mob/living/target)
+	return alert(user, "[target] has very recently departed. Sacrifice your Lux to rewind their soul back?", "Origin Restoration", "Restore Them", "Leave Them") == "Restore Them"
 
 /obj/effect/proc_holder/spell/invoked/stasis/proc/remove_buff(mob/living/carbon/target)
 	do_teleport(target, origin, no_effects=TRUE)

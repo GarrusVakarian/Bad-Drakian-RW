@@ -203,13 +203,6 @@
 	return TRUE
 
 
-/obj/item/rogueweapon/scabbard/examine(mob/user)
-	. = ..()
-
-	if(sheathed)
-		. += span_notice("The sheath is occupied by [sheathed]. Right-click to draw it; left-click with an empty hand to pick up the sheath.")
-
-
 /obj/item/rogueweapon/scabbard/update_icon(mob/living/user)
 	if(sheathed)
 		icon_state = "[initial(icon_state)]_[sheathed.sheathe_icon]"
@@ -844,3 +837,9 @@
 	wdefense = 3
 
 	max_integrity = 0
+
+/obj/item/rogueweapon/scabbard/examine(mob/user)
+	. = ..()
+
+	if(sheathed)
+		. += span_notice("The sheath is occupied by [sheathed].")

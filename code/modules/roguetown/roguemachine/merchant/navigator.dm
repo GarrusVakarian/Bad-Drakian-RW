@@ -29,17 +29,13 @@
 	/// Throttle for player-initiated market refresh actions; 5 seconds between refreshes per machine.
 	var/last_market_refresh = 0
 
-/obj/item/roguemachine/navigator/examine()
+/obj/item/roguemachine/navigator/examine(mob/user)
 	. = ..()
 	var/export_time = EXPORT_TIME
 	#ifdef LOCALTEST
 	export_time = EXPORT_TIME_TESTING
 	#endif
 	. += span_notice("This machine attracts trading balloons every [DisplayTimeText(export_time)]. Goods are sucked into the air and mammons are dropped after tax has been collected.")
-
-/obj/item/roguemachine/navigator/get_mechanics_examine(mob/user)
-	. = ..()
-	. += span_info("Drop items on the tiles around the navigator. Trading balloons arrive periodically and lift the goods away, leaving mammon in change on this tile.")
 	if(fixed_tax > 0)
 		. += span_info("This navigator charges a fixed handler's fee of [fixed_tax * 100]% before any Crown duty. Smuggler-grade.")
 	else
@@ -681,3 +677,7 @@
 	if(!length(parts))
 		return "Markets steady across the board."
 	return "This week: [jointext(parts, "; ")]."
+
+/obj/item/roguemachine/navigator/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Drop items on the tiles around the navigator. Trading balloons arrive periodically and lift the goods away, leaving mammon in change on this tile.")

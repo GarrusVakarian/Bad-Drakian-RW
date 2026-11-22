@@ -59,15 +59,6 @@
 	for(var/mob/mob in showers)
 		remove_shower(mob)
 
-/obj/item/canvas/examine(mob/user)
-	. = ..()
-	if(archived)
-		return
-	if(title)
-		. += span_info("It can be archived at a printing press.")
-	else
-		. += span_info("It can be signed with a feather, then archived at a printing press.")
-
 /obj/item/canvas/attack_hand(mob/user)
 	. = ..()
 	if(user.cmode)
@@ -466,3 +457,12 @@
 		var/color_name = colors[i]
 		MA.color = colors[color_name]
 		add_overlay(MA)
+
+/obj/item/canvas/examine(mob/user)
+	. = ..()
+	if(archived)
+		return
+	if(title)
+		. += span_info("It can be archived at a printing press.")
+	else
+		. += span_info("It can be signed with a feather, then archived at a printing press.")

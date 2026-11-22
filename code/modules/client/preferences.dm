@@ -338,6 +338,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/hypnotic_gaze_style = "Hypnotext"
 	var/hypnotic_presence_text = "There is something strangely compelling about their presence."
 	var/hypnotic_presence_style = "Hypnotext"
+	var/milk_production_size = LARGE_BREASTS_SIZE
 
 	var/setspouse = ""
 	var/gender_choice = ANY_GENDER
@@ -548,10 +549,14 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	real_name = pref_species.random_name(gender,1)
 	ResetJobs()
 	if(user)
-		if(pref_species.desc)
-			to_chat(user, "[pref_species.desc]")
+		var/race_info = pref_species.desc ? pref_species.desc : ""
+		// The card legend already names the race; remove its old standalone heading.
+		var/static/regex/race_heading = regex("^<b>.*?</b>\\s*</?br>\\s*", "i")
+		race_info = race_heading.Replace(race_info, "")
 		if(pref_species.expanded_desc)
-			to_chat(user, "<a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>")
+			race_info += "<br><a href='?src=[REF(user)];view_species_info=[url_encode(pref_species.expanded_desc)]'>Read More</a>"
+		if(race_info)
+			to_chat(user, fieldset_block("Race: [pref_species.name]", race_info, "racedesc_block"))
 		to_chat(user, "<font color='red'>Classes reset.</font>")
 	random_character(gender, FALSE, FALSE)
 	accessory = "Nothing"
@@ -2525,9 +2530,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/faith_input = tgui_input_list(user, "The world rots. Which truth you bear?", "FAITH", faiths_named)
 					if(faith_input)
 						var/datum/faith/faith = faiths_named[faith_input]
-						to_chat(user, "<font color='yellow'>Faith: [faith.name]</font>")
-						to_chat(user, "Background: [faith.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>")
+						var/faith_info = "Background: [faith.desc]<br><br>"
+						faith_info += "<font color='#c58cff'>Likely Worshippers: [faith.worshippers]</font>"
+						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
 						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
 
 				if("patron")
@@ -2542,12 +2547,12 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/god_input = tgui_input_list(user, "The first amongst many.", "PATRON", patrons_named)
 					if(god_input)
 						selected_patron = patrons_named[god_input]
-						to_chat(user, "<font color='yellow'>Patron: [selected_patron]</font>")
-						to_chat(user, "<font color='#FFA500'>Domain: [selected_patron.domain]</font>")
-						to_chat(user, "Background: [selected_patron.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font>")
-						to_chat(user, "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font>")
-						to_chat(user, "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>")
+						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
+						patron_info += "Background: [selected_patron.desc]<br><br>"
+						patron_info += "<font color='#c58cff'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
+						patron_info += "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font><br>"
+						patron_info += "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>"
+						to_chat(user, fieldset_block("Patron: [selected_patron.name]", patron_info, "patrondesc_block"))
 
 				if("polytheism")
 					var/list/polytheism_deities = list("NONE")
@@ -3966,6 +3971,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.vocal_speed = bark_speed
 	character.vocal_pitch = bark_pitch
 	character.vocal_pitch_range = bark_variance
+	character.apply_dragon_bark()
 
 	//if(parent)
 	//	var/list/L = get_player_curses(parent.ckey)
