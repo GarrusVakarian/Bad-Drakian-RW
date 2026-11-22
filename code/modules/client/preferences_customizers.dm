@@ -1,9 +1,156 @@
+/// Species-local groups: no choices are added to the global customizer datums.
+/// Identical type paths are also deduplicated (Construct and Doll have repeated entries).
+/datum/preferences/proc/get_customizer_groups()
+	var/list/groups = list()
+	var/list/slot_groups = list()
+	for(var/customizer_type in pref_species?.customizers)
+		var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+		if(!customizer)
+			continue
+		// Tailmaw is an independent override. No-sprite Tailmaw borrows the ordinary tail.
+		var/slot = ispath(customizer_type, /datum/customizer/organ/tail/manticore) ? null : customizer.get_shared_organ_slot()
+		var/group_key = slot ? slot_groups[slot] : null
+		if(!group_key)
+			group_key = customizer_type
+			groups[group_key] = list()
+			if(slot)
+				slot_groups[slot] = group_key
+		var/list/group = groups[group_key]
+		group |= customizer_type
+	return groups
+
+/datum/preferences/proc/get_customizer_group(customizer_type)
+	var/list/groups = get_customizer_groups()
+	for(var/group_key in groups)
+		var/list/group = groups[group_key]
+		if(customizer_type in group)
+			return group
+
+/// Match legacy organ DNA precedence: last enabled entry, with manticore priority.
+/// Existing entries, their disabled flags and all per-choice settings remain intact.
+/datum/preferences/proc/get_customizer_group_entry(list/group)
+	var/datum/customizer_entry/primary = get_customizer_entry_for_customizer_type(group[1])
+	if(primary && (primary.group_selected_customizer in group))
+		var/datum/customizer_entry/selected = get_customizer_entry_for_customizer_type(primary.group_selected_customizer)
+		var/datum/customizer/selected_customizer = CUSTOMIZER(primary.group_selected_customizer)
+		if(selected && selected_customizer.is_allowed(src))
+			return selected
+	var/datum/customizer_entry/selected
+	var/manticore_selected = FALSE
+	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+		if(!(entry.customizer_type in group) || entry.disabled)
+			continue
+		var/datum/customizer/customizer = CUSTOMIZER(entry.customizer_type)
+		if(!customizer.is_allowed(src))
+			continue
+		var/datum/customizer_choice/organ/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+		var/is_manticore = istype(choice, /datum/customizer_choice/organ/tail) && (ispath(choice.organ_type, /obj/item/organ/tail/manticore) || entry.accessory_type == /datum/sprite_accessory/tail/manticore)
+		if(manticore_selected && !is_manticore)
+			continue
+		selected = entry
+		manticore_selected = is_manticore
+	return selected ? selected : primary
+
+/datum/preferences/proc/customizer_group_allows_disabling(list/group)
+	for(var/customizer_type in group)
+		var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+		if(!customizer.allows_disabling)
+			return FALSE
+	return TRUE
+
+/// Runtime/preview consumers see the selected alternative, not hidden saved alternatives.
+/datum/preferences/proc/get_active_customizer_entries()
+	var/list/entries = list()
+	var/list/groups = get_customizer_groups()
+	for(var/group_key in groups)
+		var/list/group = groups[group_key]
+		var/datum/customizer_entry/entry = get_customizer_group_entry(group)
+		var/datum/customizer_entry/primary = get_customizer_entry_for_customizer_type(group_key)
+		if(entry && !entry.disabled && !(length(group) > 1 && primary?.group_disabled))
+			entries += entry
+	// Keep legacy precedence when two independent controls generate the same organ slot.
+	return customizer_entries & entries
+
+/// Map labels to both the source control and choice, preserving distinct organ behavior.
+/datum/preferences/proc/get_customizer_group_choices(list/group)
+	var/list/choices = list()
+	for(var/customizer_type in group)
+		var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+		if(!customizer.is_allowed(src))
+			continue
+		var/datum/customizer_entry/entry = get_customizer_entry_for_customizer_type(customizer_type)
+		for(var/choice_type in customizer.get_available_choices(src, entry))
+			var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(choice_type)
+			var/label = choice.name
+			if(choices[label])
+				label = "[label] ([customizer.name])"
+			if(choices[label])
+				label = "[label] ([length(choices) + 1])"
+			choices[label] = list(customizer_type, choice_type)
+	return choices
+
+/// Validate the species-local selection before applying it.
+/datum/preferences/proc/select_customizer_group_choice(list/group, customizer_type, choice_type)
+	if(!(customizer_type in group))
+		return FALSE
+	var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+	var/datum/customizer_entry/entry = get_customizer_entry_for_customizer_type(customizer_type)
+	if(!entry || !customizer.is_allowed(src) || !(choice_type in customizer.get_available_choices(src, entry)))
+		return FALSE
+	var/datum/customizer_entry/primary = get_customizer_entry_for_customizer_type(group[1])
+	if(entry.customizer_choice_type != choice_type)
+		var/datum/customizer_entry/new_entry = customizer.create_customizer_entry(src, choice_type)
+		new_entry.group_selected_customizer = entry.group_selected_customizer
+		new_entry.group_disabled = entry.group_disabled
+		customizer_entries[customizer_entries.Find(entry)] = new_entry
+		if(entry == primary)
+			primary = new_entry
+		entry = new_entry
+	primary.group_selected_customizer = customizer_type
+	primary.group_disabled = FALSE
+	// Explicit selection enables an optional choice; untouched legacy flags are preserved.
+	entry.disabled = FALSE
+	return TRUE
+
+/datum/preferences/proc/handle_customizer_group_topic(mob/user, list/href_list, list/group)
+	var/datum/customizer_entry/primary = get_customizer_entry_for_customizer_type(group[1])
+	var/datum/customizer_entry/entry = get_customizer_group_entry(group)
+	switch(href_list["customizer_task"])
+		if("toggle_missing")
+			if(customizer_group_allows_disabling(group))
+				if(!primary.group_selected_customizer)
+					primary.group_selected_customizer = entry.customizer_type
+					primary.group_disabled = entry.disabled
+				primary.group_disabled = !primary.group_disabled
+				if(!primary.group_disabled)
+					entry.disabled = FALSE
+		if("change_choice")
+			var/list/choices = get_customizer_group_choices(group)
+			var/chosen = tgui_input_list(user, "Choose your customization:", "Character Preference", choices)
+			if(!chosen || !choices[chosen])
+				return
+			var/list/selection = choices[chosen]
+			// Recheck after the modal: the user may have switched character slots or races.
+			var/list/current_group = get_customizer_group(group[1])
+			if(!current_group || current_group[1] != group[1] || get_customizer_entry_for_customizer_type(group[1]) != primary)
+				return
+			select_customizer_group_choice(current_group, selection[1], selection[2])
+
 /// Bee and Insect tails share genital artwork outside taur mode.
 /datum/preferences/proc/has_selected_insect_tail()
 	if(taur_type)
 		return FALSE
 	for(var/datum/customizer_entry/entry as anything in customizer_entries)
-		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !entry.disabled && (entry.accessory_type in list(/datum/sprite_accessory/tail/bee, /datum/sprite_accessory/tail/insect)))
+		if(entry.disabled || !ispath(entry.customizer_type, /datum/customizer/organ/tail))
+			continue
+		var/list/group = get_customizer_group(entry.customizer_type)
+		var/datum/customizer_entry/primary = group ? get_customizer_entry_for_customizer_type(group[1]) : null
+		// Untouched legacy saves retain their existing dependent choices. Once a
+		// consolidated selection is made, only the chosen ordinary tail counts.
+		if(primary?.group_selected_customizer && length(group) > 1)
+			if(primary.group_disabled || entry != get_customizer_group_entry(group))
+				continue
+		if(entry && (entry.accessory_type in list(/datum/sprite_accessory/tail/bee, /datum/sprite_accessory/tail/insect)))
 			return TRUE
 	return FALSE
 
@@ -77,8 +224,8 @@
 	. = dat
 	if(!pref_species)
 		return
-	var/list/customizers = pref_species.customizers
-	if(!customizers)
+	var/list/customizers = get_customizer_groups()
+	if(!length(customizers))
 		return
 	dat += "<table width='100%'>"
 	dat += "<td valign='top' width='33%'>"
@@ -89,26 +236,32 @@
 			continue
 		if(!customizer.is_allowed(src))
 			continue
-		var/datum/customizer_entry/entry = get_customizer_entry_for_customizer_type(customizer_type)
+		var/list/group = customizers[customizer_type]
+		var/merged = length(group) > 1
+		var/datum/customizer_entry/entry = get_customizer_group_entry(group)
+		var/datum/customizer_entry/primary = get_customizer_entry_for_customizer_type(customizer_type)
 		if(!entry)
 			stack_trace("Missing customizer entry in preferences for customizer [customizer_type]")
 			continue
 		var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
-		var/list/available_choices = customizer.get_available_choices(src, entry)
+		var/list/available_choices = merged ? get_customizer_group_choices(group) : customizer.get_available_choices(src, entry)
+		var/disabled = entry.disabled || (merged && primary.group_disabled)
+		var/allows_disabling = merged ? customizer_group_allows_disabling(group) : customizer.allows_disabling
 
 		var/customizer_link
 
-		if(entry.disabled)
+		if(disabled)
 			customizer_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=toggle_missing'"
 		else
-			if(customizer.allows_disabling)
+			if(allows_disabling)
 				customizer_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=toggle_missing' class='linkOn'"
 			else
 				customizer_link = ""
 
 		dat += "<table align='center'; width='100%'; height='100px'; style='background-color:#1c1313'><td width=100%>"
-		dat += "<a [customizer_link]>[customizer.name]</a>"
-		if(!entry.disabled)
+		var/group_name = merged ? capitalize(customizer.get_shared_organ_slot()) : customizer.name
+		dat += "<a [customizer_link]>[group_name]</a>"
+		if(!disabled)
 			var/choice_link
 			if(length(available_choices) > 1)
 				choice_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=change_choice'"
@@ -117,7 +270,7 @@
 			if(length(available_choices) > 1)
 				dat += "<br><a [choice_link]>[choice.name]</a>"
 
-			var/list/choice_list = choice.show_pref_choices(src, entry, customizer_type)
+			var/list/choice_list = choice.show_pref_choices(src, entry, entry.customizer_type)
 			if(choice_list)
 				dat += choice_list
 
@@ -138,7 +291,7 @@
 /// Gets an associative list of organ slots to organ dna created from organ customization
 /datum/preferences/proc/get_organ_dna_list()
 	var/list/organ_list = list()
-	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+	for(var/datum/customizer_entry/entry as anything in get_active_customizer_entries())
 		var/datum/customizer_choice/customizer_choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 		var/datum/customizer/customizer = CUSTOMIZER(entry.customizer_type)
 		if(!customizer.is_allowed(src))
@@ -158,7 +311,7 @@
 	return organ_list
 
 /datum/preferences/proc/customize_organ(obj/item/organ/organ)
-	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+	for(var/datum/customizer_entry/entry as anything in get_active_customizer_entries())
 		var/datum/customizer_choice/customizer_choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 		var/datum/customizer/customizer = CUSTOMIZER(entry.customizer_type)
 		if(!customizer.is_allowed(src))
@@ -170,7 +323,7 @@
 		customizer_choice.customize_organ(organ, entry)
 
 /datum/preferences/proc/apply_customizers_to_character(mob/living/carbon/human/human)
-	for(var/datum/customizer_entry/entry as anything in customizer_entries)
+	for(var/datum/customizer_entry/entry as anything in get_active_customizer_entries())
 		var/datum/customizer_choice/customizer_choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 		var/datum/customizer/customizer = CUSTOMIZER(entry.customizer_type)
 		if(!customizer.is_allowed(src))
@@ -187,6 +340,16 @@
 		return
 	var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 	var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
+	var/list/group = get_customizer_group(customizer_type)
+	if(!group)
+		return
+	if(length(group) > 1 && (href_list["customizer_task"] in list("toggle_missing", "change_choice")))
+		handle_customizer_group_topic(user, href_list, group)
+		validate_customizer_entries()
+		if(ishuman(user))
+			var/mob/living/carbon/human/humanized = user
+			humanized.update_body_parts(TRUE)
+		return
 	switch(href_list["customizer_task"])
 		if("toggle_missing")
 			if(customizer.allows_disabling)

@@ -59,3 +59,15 @@
 /datum/customizer/bodypart_feature
 	abstract_type = /datum/customizer/bodypart_feature
 	name = "Bodypart Feature"
+
+/// Only group controls whose choices all occupy the same real organ slot.
+/datum/customizer/proc/get_shared_organ_slot()
+	var/shared_slot
+	for(var/choice_type in customizer_choices)
+		var/datum/customizer_choice/organ/choice = CUSTOMIZER_CHOICE(choice_type)
+		if(!istype(choice) || !choice.organ_slot)
+			return null
+		if(shared_slot && shared_slot != choice.organ_slot)
+			return null
+		shared_slot = choice.organ_slot
+	return shared_slot
