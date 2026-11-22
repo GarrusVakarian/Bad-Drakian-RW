@@ -89,7 +89,7 @@
 	var/branded = ""
 	var/brand_text = ""
 	if(length(penis.branded_writing))
-		brand_text = penis.branded_writing
+		brand_text = replacetext(penis.branded_writing, "%", "&#37;")
 		if(penis.enslavement_mark)
 			brand_text = "[brand_text], a mark of ownership"
 	else if(penis.enslavement_mark)
@@ -100,7 +100,7 @@
 	var/body_written = ""
 	var/body_writing_text = ""
 	if(length(penis.body_writing))
-		body_writing_text = penis.body_writing
+		body_writing_text = replacetext(penis.body_writing, "%", "&#37;")
 	if(length(body_writing_text))
 		body_written = ", with <span style='font-size:150%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
@@ -156,7 +156,7 @@
 	var/branded = ""
 	var/brand_text = ""
 	if(length(testes.branded_writing))
-		brand_text = testes.branded_writing
+		brand_text = replacetext(testes.branded_writing, "%", "&#37;")
 		if(testes.enslavement_mark)
 			brand_text = "[brand_text], a mark of ownership"
 	else if(testes.enslavement_mark)
@@ -167,7 +167,7 @@
 	var/body_written = ""
 	var/body_writing_text = ""
 	if(length(testes.body_writing))
-		body_writing_text = testes.body_writing
+		body_writing_text = replacetext(testes.body_writing, "%", "&#37;")
 	if(length(body_writing_text))
 		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
@@ -232,7 +232,7 @@
 	var/branded = ""
 	var/brand_text = ""
 	if(length(vagina.branded_writing))
-		brand_text = vagina.branded_writing
+		brand_text = replacetext(vagina.branded_writing, "%", "&#37;")
 		if(vagina.enslavement_mark)
 			brand_text = "[brand_text], a mark of ownership"
 	else if(vagina.enslavement_mark)
@@ -243,7 +243,7 @@
 	var/body_written = ""
 	var/body_writing_text = ""
 	if(length(vagina.body_writing))
-		body_writing_text = vagina.body_writing
+		body_writing_text = replacetext(vagina.body_writing, "%", "&#37;")
 	if(length(body_writing_text))
 		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on it"
 
@@ -310,7 +310,7 @@
 	var/branded = ""
 	var/brand_text = ""
 	if(length(breasts.branded_writing))
-		brand_text = breasts.branded_writing
+		brand_text = replacetext(breasts.branded_writing, "%", "&#37;")
 		if(breasts.enslavement_mark)
 			brand_text = "[brand_text], a mark of ownership"
 	else if(breasts.enslavement_mark)
@@ -321,7 +321,7 @@
 	var/body_written = ""
 	var/body_writing_text = ""
 	if(length(breasts.body_writing))
-		body_writing_text = breasts.body_writing
+		body_writing_text = replacetext(breasts.body_writing, "%", "&#37;")
 	if(length(body_writing_text))
 		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on them"
 

@@ -107,12 +107,12 @@
 	if(fourth_line)
 		lines += fourth_line
 
-	var/fifth_template = (ishuman(described) && modular_chastity_genital_note_visible(described, watcher, ORGAN_SLOT_PENIS)) ? "%THEY% %DESC1%, and %DESC2%." : "%THEY% %DESC1% and %DESC2%."
-	var/fifth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_PENIS, MOB_DESCRIPTOR_SLOT_TESTICLES), fifth_template, watcher)
+	var/fifth_template = (ishuman(described) && modular_chastity_genital_note_visible(described, watcher, ORGAN_SLOT_PENIS)) ? "%THEY% %DESC1%, and %DESC2%" : "%THEY% %DESC1% and %DESC2%"
+	var/fifth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_PENIS, MOB_DESCRIPTOR_SLOT_TESTICLES), fifth_template, watcher, conditional_period = TRUE)
 	if(fifth)
 		lines += fifth
 
-	var/sixth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_BREASTS, MOB_DESCRIPTOR_SLOT_VAGINA), "%THEY% %DESC1% and %DESC2%.", watcher)
+	var/sixth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_BREASTS, MOB_DESCRIPTOR_SLOT_VAGINA), "%THEY% %DESC1% and %DESC2%", watcher, conditional_period = TRUE)
 	if(sixth)
 		lines += sixth
 
@@ -149,12 +149,12 @@
 	if(fourth_line)
 		lines += fourth_line
 
-	var/fifth_template = (ishuman(described) && modular_chastity_genital_note_visible(described, watcher, ORGAN_SLOT_PENIS)) ? "%THEY% %DESC1%, and %DESC2%." : "%THEY% %DESC1% and %DESC2%."
-	var/fifth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_PENIS, MOB_DESCRIPTOR_SLOT_TESTICLES), fifth_template, watcher)
+	var/fifth_template = (ishuman(described) && modular_chastity_genital_note_visible(described, watcher, ORGAN_SLOT_PENIS)) ? "%THEY% %DESC1%, and %DESC2%" : "%THEY% %DESC1% and %DESC2%"
+	var/fifth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_PENIS, MOB_DESCRIPTOR_SLOT_TESTICLES), fifth_template, watcher, conditional_period = TRUE)
 	if(fifth)
 		lines += fifth
 
-	var/sixth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_BREASTS, MOB_DESCRIPTOR_SLOT_VAGINA), "%THEY% %DESC1% and %DESC2%.", watcher)
+	var/sixth = build_coalesce_description(desc_copy, described, list(MOB_DESCRIPTOR_SLOT_BREASTS, MOB_DESCRIPTOR_SLOT_VAGINA), "%THEY% %DESC1% and %DESC2%", watcher, conditional_period = TRUE)
 	if(sixth)
 		lines += sixth
 
@@ -171,7 +171,7 @@
 
 	return lines
 
-/proc/build_coalesce_description(list/descriptors, mob/living/described, list/slots, string, mob/watcher)
+/proc/build_coalesce_description(list/descriptors, mob/living/described, list/slots, string, mob/watcher, conditional_period = FALSE)
 	var/list/descs = described.get_descriptor_slot_list(slots, descriptors)
 	if(!descs)
 		return
@@ -187,8 +187,9 @@
 		if(used_verb)
 			used_verbage |= used_verb
 	descriptors -= descs
-	string = treat_mob_descriptor_string(string, described)
-	return string
+	if(conditional_period)
+		string += descriptor_sentence_period(mob_descriptor_visible_text(string))
+	return treat_mob_descriptor_string(string, described)
 
 /proc/build_coalesce_description_nofluff(list/descriptors, mob/living/described, list/slots, string)
 	var/list/descs = described.get_descriptor_slot_list(slots, descriptors)
@@ -206,6 +207,7 @@
 	string = treat_mob_descriptor_string(string, described)
 	return string
 
+// Descriptor producers that embed literal player text escape percent signs before this substitution.
 /proc/treat_mob_descriptor_string(string, mob/living/described)
 	var/they_replace
 	if(described.gender == MALE)
