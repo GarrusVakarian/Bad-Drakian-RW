@@ -154,7 +154,10 @@
 			wrists = /obj/item/clothing/wrists/roguetown/wrappings
 			shoes = /obj/item/clothing/shoes/roguetown/sandals
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/astrata
+	if(H.mind && !choose_miracle_doctrine(H, "Court Chaplain Doctrine"))
+		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.miracle_learning_tier_limit = CLERIC_T1
 	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_1)
 
 /datum/outfit/job/roguetown/chaplain/choose_loadout(mob/living/carbon/human/H)

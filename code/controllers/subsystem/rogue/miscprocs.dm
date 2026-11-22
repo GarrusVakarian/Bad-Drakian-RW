@@ -48,6 +48,8 @@
 	var/list/granted_spells
 	///suppress granting miracles updating from devotion level up
 	var/suppress_grants = FALSE
+	/// Optional class cap for Eclectic learning and patron research.
+	var/miracle_learning_tier_limit = null
 
 /datum/devotion/New(mob/living/carbon/human/holder, datum/patron/patron)
 	. = ..()
@@ -288,6 +290,7 @@
 		D.passive_progression_gain = 0
 		D.granted_spells = null
 		D.suppress_grants = FALSE
+		D.miracle_learning_tier_limit = null
 	else
 		D = new /datum/devotion(src, patron)
 	D.grant_miracles(src, cleric_tier = cleric_tier, passive_gain = passive_gain, devotion_limit = devotion_limit, start_maxed = start_maxed)

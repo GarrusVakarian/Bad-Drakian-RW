@@ -34,7 +34,7 @@
 	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
 	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/projectile/divineblast))
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast, H)
-	to_chat(H, span_notice("I remain on the old path of devotion."))
+	to_chat(H, span_notice("I follow the Orthodox path."))
 
 /datum/job/roguetown/monk/proc/grant_radical_path(mob/living/carbon/human/H)
 	if(!H || !H.mind || !H.patron)
@@ -46,15 +46,15 @@
 	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
 	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/projectile/divineblast))
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast, H)
-	to_chat(H, span_notice("I embrace the radical path."))
+	to_chat(H, span_notice("I follow the Eclectic path."))
 
 /datum/job/roguetown/monk/proc/_delayed_path_choice(mob/living/carbon/human/H)
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Acolyte Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, CLERGY_DOCTRINE_PROMPT, "Acolyte Doctrine", "Orthodox", "Eclectic")
 
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		grant_radical_path(H)
 	else
 		grant_old_path(H)
