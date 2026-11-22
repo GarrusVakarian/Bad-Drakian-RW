@@ -792,6 +792,8 @@
   - bugfix: Compliant no longer forces you to yield to your own spoken commands.
   - bugfix: Removed duplicate character customization options.
   - rscadd: Wooden and iron gloryholes now support placing and retrieving liquid containers.
+  aKromatopzia:
+  - rscadd: '''IC'' verb to change your character''s speech mannerism.'
   mypingishuge:
   - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
       correctly.
