@@ -1004,6 +1004,7 @@
 	. += span_info("To secure another person, restrain them or hold an aggressive grab first.")
 	if(!isobserver(user))
 		. += span_info("Right-click to step up to \the [src].")
+	. += span_info("Use a liquid container on it out of combat mode to place it. Click the bucket beneath the opening with an empty hand to retrieve your container.")
 
 /obj/structure/wooden_horse/get_mechanics_examine(mob/user)
 	. = ..()
