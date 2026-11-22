@@ -6,10 +6,11 @@
 	return !!participant?.client?.prefs?.hypnosis_content
 
 /// Speech arrives HTML-encoded, with optional renderer-inserted formatting tags.
-/// Strip only actual markup, decode exactly once, and encode only at display time.
+/// Render speech markdown before stripping tags, decode once, and encode at display time.
 /proc/hypnotic_speech_plaintext(text)
-	if(!istext(text))
+	if(!istext(text) || !length(text))
 		return ""
+	text = parsemarkdown_basic(text, limited = TRUE, barebones = TRUE)
 	var/static/regex/markup = regex(@"<[^>]*>", "g")
 	return trim(copytext_char(html_decode(markup.Replace(text, "")), 1, MAX_MESSAGE_LEN))
 
