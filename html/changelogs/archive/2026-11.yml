@@ -780,3 +780,9 @@
   - rscadd: Arachnids can choose Bee, Insect, Scorpion and Scolipede tails alongside
       Tentacle.
   - spellcheck: Corrected the Scorpion tail's display name.
+2026-11-22:
+  mypingishuge:
+  - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
+      correctly.
+  - rscadd: High Milk Production is a free quirk that lets you choose your effective
+      chest size for milk storage and release without changing your appearance.

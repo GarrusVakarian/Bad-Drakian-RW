@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Rosewall adverts in the Bathhouse and Slaves tabs display punctuation correctly."
