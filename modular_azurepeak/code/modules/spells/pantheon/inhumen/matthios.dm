@@ -320,8 +320,8 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/matthios
 	name = "Rekindled Exchange"
-	desc = "Revives the target by invoking a deal with Matthios. In exchange for their lyfe returned, they will be placed\
-	in a lasting debt to Him. Any coins within their hands will be spent paying off said debt. Blood for gold."
+	desc = "Matthios buys back a life on credit. Raise the dead at His cross, and the one who rises owes Him 200 mammons. The debt is paid from coins they hold. Blood for gold.<br><b>Cast on yourself to see where to perform the rite and what to carry.</b>"
+	ritual_site_name = "a grinning cross or ornate cross"
 	debuff_type = /datum/status_effect/debuff/debt_indicator
 	alt_required_items = list()
 	required_items = list()

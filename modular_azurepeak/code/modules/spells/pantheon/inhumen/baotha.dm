@@ -525,7 +525,8 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/baotha
 	name = "Drive the Thorns Deep"
-	desc = "Revives the target by afflicting them with a lasting addiction."
+	desc = "Baotha trades the silence of death for the ache of craving. Offer thorns at Her spider cross to raise the dead. The one who rises carries a lasting hunger for dust.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	ritual_site_name = "a spider cross or webbed spider cross"
 	debuff_type = /datum/status_effect/debuff/baotha_addiction
 	alt_required_items = list(/obj/item/natural/thorn = 3)
 	required_items = list(/obj/item/natural/thorn = 7)

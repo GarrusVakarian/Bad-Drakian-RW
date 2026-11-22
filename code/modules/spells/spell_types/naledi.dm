@@ -166,7 +166,7 @@
 
 /obj/effect/proc_holder/spell/invoked/stasis
 	name = "Stasis"
-	desc = "You capture your target's current state in time, reverting them to such a state several seconds later. If under Convergence  when expiring, your target will keep any healing they receive."
+	desc = "Carry a Naledi psycross to hold a moment in time and return your target to it several seconds later. Under Convergence, they keep the healing they received. Within one minute of death, you can also spend your Lux to call them back. You must confirm the sacrifice, and you cannot do so while Devitalised."
 	releasedrain = 35
 	chargedrain = 1
 	chargetime = 30
