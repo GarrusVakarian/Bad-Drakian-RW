@@ -838,3 +838,6 @@
   - bugfix: Redolent examines no longer add a period after existing sentence punctuation.
   - rscadd: Added Instant Transform, a 2-point quirk that lets you edit your appearance
       and anatomy without a mirror.
+  - bugfix: Offensive weapon enchantments no longer activate or consume cooldown on
+      ordinary clicks and unsuccessful attacks.
+  - bugfix: Failed enchantment effects no longer consume their cooldown.

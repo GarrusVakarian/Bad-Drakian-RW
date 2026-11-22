@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Offensive weapon enchantments no longer activate or consume cooldown on ordinary clicks and unsuccessful attacks."
-  - bugfix: "Failed enchantment effects no longer consume their cooldown."
