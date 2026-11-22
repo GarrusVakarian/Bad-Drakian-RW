@@ -61,6 +61,7 @@
 
 	var/on_hit_state = P.on_hit(src, armor)
 	var/nodmg = FALSE
+	var/health_before_projectile = health
 	if(!P.nodamage && on_hit_state != BULLET_ACT_BLOCK)
 		if(!apply_damage(P.damage, P.damage_type, def_zone, armor))
 			nodmg = TRUE
@@ -99,6 +100,8 @@
 	next_attack_msg.Cut()
 
 
+	if(!QDELETED(src) && health < health_before_projectile && !QDELETED(P) && P.fired_from)
+		SEND_SIGNAL(P.fired_from, COMSIG_PROJECTILE_ENCHANTMENT_HIT, P.firer, src, P.Angle)
 	return on_hit_state ? BULLET_ACT_HIT : BULLET_ACT_BLOCK
 
 /mob/living/proc/check_projectile_dismemberment(obj/projectile/P, def_zone)

@@ -4,63 +4,26 @@
 #define CHAOS_COOLDOWN 10 SECONDS
 //T4 Enchantments
 /datum/magic_item/mythic/infernalflame
+	confirmed_hits_only = TRUE
+	offensive_cooldown = INFERNAL_FLAME_COOLDOWN
 	name = "infernal flame"
 	description = "It glows with white hot heat."
 	var/last_used
 	var/warned
 
-/datum/magic_item/mythic/infernalflame/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!proximity_flag)
-		return
-	if(!try_start_cooldown(user, INFERNAL_FLAME_COOLDOWN))
-		return
-	if(isliving(target))
-		var/mob/living/targeted = target
-		targeted.adjust_fire_stacks(10)
-		targeted.ignite_mob()
-		targeted.visible_message(span_danger("[source] sets [targeted] on fire!"))
-
 /datum/magic_item/mythic/infernalflame/projectile_hit(atom/fired_from, atom/movable/firer, atom/target, Angle)
-	if(!try_start_cooldown(firer, INFERNAL_FLAME_COOLDOWN))
-		if(!warned)
-			to_chat(firer, span_notice("[fired_from] is not yet ready to immolate!"))
-			warned = TRUE
-		return
-	if(isliving(firer) && isliving(target))
-		var/mob/living/damaging = target
-		if(damaging.stat != DEAD)
-			damaging.adjust_fire_stacks(10)
-			damaging.ignite_mob()
-			damaging.visible_message(span_danger("[fired_from] sets [damaging] on fire!"))
+	return trigger_offensive_effect(fired_from, firer, target)
 
 /datum/magic_item/mythic/freezing
+	confirmed_hits_only = TRUE
+	offensive_cooldown = FREEZING_COOLDOWN
 	name = "freezing"
 	description = "It feels ice cold."
 	var/last_used
 	var/warned
 
 /datum/magic_item/mythic/freezing/projectile_hit(atom/fired_from, atom/movable/firer, atom/target, Angle)
-	if(!try_start_cooldown(firer, FREEZING_COOLDOWN))
-		if(!warned)
-			to_chat(firer, span_notice("[fired_from] is not yet ready to glaciate!"))
-			warned = TRUE
-		return
-	if(isliving(firer) && isliving(target))
-		var/mob/living/damaging = target
-		if(damaging.stat != DEAD)
-			damaging.apply_status_effect(/datum/status_effect/freon/freezing)
-			damaging.visible_message(span_danger("[fired_from] freezes[damaging] solid!"))
-
-/datum/magic_item/mythic/freezing/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!proximity_flag)
-		return
-	if(!try_start_cooldown(user, FREEZING_COOLDOWN))
-		return
-	if(isliving(target))
-		var/mob/living/targeted = target
-		targeted.apply_status_effect(/datum/status_effect/freon/freezing)
-		targeted.visible_message(span_danger("[source] freezes [targeted] solid!"))
-		last_used = world.time
+	return trigger_offensive_effect(fired_from, firer, target)
 
 /datum/magic_item/mythic/briarcurse
 	name = "Briar's curse"
@@ -112,38 +75,53 @@
 
 
 /datum/magic_item/mythic/chaos_storm
+	confirmed_hits_only = TRUE
+	offensive_cooldown = CHAOS_COOLDOWN
 	name = "chaos storm"
 	description = "Its crackles with unpredictable chaotic energy."
 	var/last_used
 
-/datum/magic_item/mythic/chaos_storm/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!proximity_flag)
-		return
-	if(!try_start_cooldown(user, CHAOS_COOLDOWN))
-		return
-	if(isliving(target))
-		var/mob/living/targeted = target
-		switch(rand(1,5))
-			if(1)
-				targeted.apply_damage(15, BURN)
-				targeted.adjust_fire_stacks(5)
-				targeted.ignite_mob()
-				to_chat(targeted, span_warning("Chaotic flames engulf you!"))
-			if(2)
-				targeted.apply_damage(10, BRUTE)
-				targeted.Knockdown(20)
-				targeted.drop_all_held_items()
-				to_chat(targeted, span_warning("Chaotic force slams into you!"))
-			if(3)
-				targeted.electrocute_act(12, source, 1)
-				to_chat(targeted, span_warning("Chaotic lightning courses through you!"))
-			if(4)
-				targeted.OffBalance(2.5 SECONDS)
-				to_chat(targeted, span_warning("Chaotic energy disrupts your coordination!"))
-			if(5)
-				targeted.confused += 2 SECONDS
-				to_chat(targeted, span_warning("Chaotic energy scrambles your thoughts!"))
+/datum/magic_item/mythic/infernalflame/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	if(!apply_offensive_fire(target, 10))
+		return FALSE
+	target.visible_message(span_danger("[source] sets [target] on fire!"))
+	return TRUE
 
+/datum/magic_item/mythic/freezing/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	var/datum/status_effect/freon/freezing/applied = target.apply_status_effect(/datum/status_effect/freon/freezing)
+	if(!istype(applied) || QDELETED(applied))
+		return FALSE
+	target.visible_message(span_danger("[source] freezes [target] solid!"))
+	return TRUE
+
+/datum/magic_item/mythic/chaos_storm/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	var/health_before = target.health
+	switch(rand(1,5))
+		if(1)
+			if(!apply_offensive_fire(target, 5))
+				return FALSE
+			target.apply_damage(15, BURN)
+			to_chat(target, span_warning("Chaotic flames engulf you!"))
+		if(2)
+			target.apply_damage(10, BRUTE)
+			if(target.health >= health_before)
+				return FALSE
+			target.Knockdown(20)
+			target.drop_all_held_items()
+			to_chat(target, span_warning("Chaotic force slams into you!"))
+		if(3)
+			if(!target.electrocute_act(12, source, 1) || target.health >= health_before)
+				return FALSE
+			to_chat(target, span_warning("Chaotic lightning courses through you!"))
+		if(4)
+			var/datum/status_effect/offbalance = target.OffBalance(2.5 SECONDS)
+			if(!istype(offbalance) || QDELETED(offbalance))
+				return FALSE
+			to_chat(target, span_warning("Chaotic energy disrupts your coordination!"))
+		if(5)
+			target.confused += 2 SECONDS
+			to_chat(target, span_warning("Chaotic energy scrambles your thoughts!"))
+	return TRUE
 
 #undef INFERNAL_FLAME_COOLDOWN
 #undef FREEZING_COOLDOWN
