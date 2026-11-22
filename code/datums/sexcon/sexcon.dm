@@ -1029,7 +1029,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return
 	if(user.get_skill_level(/datum/skill/magic/holy) < SKILL_LEVEL_NOVICE)
 		return
-	var/trigger_chance = user.has_status_effect(/datum/status_effect/debuff/emberwine) ? 2 : 1
+	var/trigger_chance = user.has_status_effect(/datum/status_effect/debuff/emberwine) ? 10 : 5
 	if(!prob(trigger_chance))
 		return
 	var/turf/center = get_turf(user)
