@@ -52519,6 +52519,412 @@
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet)
 
+"AAA" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 4
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet)
+"AAB" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 2
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet)
+"AAC" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 1
+	},
+/obj/structure/stairs/stone{
+	dir = 1
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet)
+"AAD" = (
+/obj/item/coveter,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet)
+"AAE" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 4
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"AAF" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 2
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"AAG" = (
+/obj/effect/landmark/dragon_cave_entrance{
+	dir = 1
+	},
+/obj/structure/stairs/stone{
+	dir = 1
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAH" = (
+/obj/item/coveter,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAI" = (
+/obj/item/ingot/draconic,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAJ" = (
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAK" = (
+/obj/machinery/light/rogue/firebowl/stump,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAL" = (
+/obj/machinery/light/rogue/torchholder{
+	dir = 4
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAM" = (
+/obj/item/enchantmentscroll/mythic/infernalflame,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAN" = (
+/obj/structure/bed/rogue/eora/dragon,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAO" = (
+/obj/item/roguecoin/silver/pile,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAP" = (
+/obj/structure/lever/wall{
+	name = "Cage";
+	dir = 4;
+	redstone_id = "pdragoncage"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAQ" = (
+/obj/item/roguegem/random,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAR" = (
+/obj/structure/bars/passage{
+	redstone_id = "pdragonexit"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAS" = (
+/obj/machinery/light/rogue/candle/red/r,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAT" = (
+/obj/item/riddleofsteel,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAU" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/ingot/silver,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAV" = (
+/obj/structure/stairs/stone/ccw{
+	dir = 1
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAW" = (
+/obj/structure/closet/crate/chest,
+/obj/item/baotha_crayon,
+/obj/item/leash/chain,
+/obj/item/leash/chain,
+/obj/item/clothing/neck/roguetown/collar/leather,
+/obj/item/clothing/neck/roguetown/collar/leather,
+/obj/item/rogueweapon/surgery/cautery/branding/slave,
+/obj/item/clothing/neck/roguetown/cursed_collar,
+/obj/item/clothing/neck/roguetown/cursed_collar,
+/obj/item/chastity/cursed,
+/obj/item/chastity/cursed,
+/obj/item/chastity/chastity_cage/flat,
+/obj/item/chastity/chastity_cage,
+/obj/item/chastity/chastity_cage/flat/spiked,
+/obj/item/chastity/chastity_cage/anal,
+/obj/item/capture_sack,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAX" = (
+/obj/structure/lever/wall/dragon_gate_control{
+	dir = 8;
+	tag = "pdragonexit"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAY" = (
+/obj/item/roguecoin/copper/pile,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAZ" = (
+/obj/item/reagent_containers/lux,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAa" = (
+/obj/item/roguegem/random,
+/obj/item/roguegem/random,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAb" = (
+/obj/effect/decal/cleanable/blood/tracks{
+	icon_state = "splatter6"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAc" = (
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"AAd" = (
+/obj/item/roguecoin/silver/pile,
+/obj/item/clothing/ring/signet/silver,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAe" = (
+/obj/structure/bed/rogue/shit,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAf" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/roguegem/random,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAg" = (
+/obj/structure/stairs/stone{
+	dir = 1
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAh" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/candle/candlestick/gold/lit,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAi" = (
+/obj/item/clothing/ring/dragon_ring,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAj" = (
+/obj/effect/decal/cleanable/blood/tracks{
+	icon_state = "gibbl5"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAk" = (
+/obj/item/reagent_containers/glass/bowl,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAl" = (
+/obj/structure/closet/crate/chest/crate,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak/wolf,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak/wolf,
+/obj/item/reagent_containers/food/snacks/rogue/meat/steak/wolf,
+/obj/item/reagent_containers/food/snacks/rogue/meat/poultry,
+/obj/item/reagent_containers/food/snacks/rogue/meat/poultry,
+/obj/item/reagent_containers/food/snacks/rogue/meat/salami,
+/obj/item/reagent_containers/food/snacks/rogue/meat/salami,
+/obj/item/reagent_containers/food/snacks/rogue/meat/rabbit,
+/obj/item/reagent_containers/food/snacks/rogue/meat/rabbit,
+/obj/item/reagent_containers/food/snacks/rogue/meat/bacon,
+/obj/item/reagent_containers/food/snacks/rogue/meat/bacon,
+/obj/item/reagent_containers/food/snacks/rogue/meat/coppiette,
+/obj/item/reagent_containers/food/snacks/rogue/meat/coppiette,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAm" = (
+/obj/structure/fluff/walldeco/chains,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAn" = (
+/obj/effect/decal/cleanable/blood/tracks{
+	dir = 5
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAo" = (
+/obj/structure/stairs/stone/cw{
+	dir = 1
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAp" = (
+/obj/structure/stairs/stone/ccw,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAq" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/candle/candlestick/gold/lit,
+/obj/item/roguegem/random,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAr" = (
+/obj/structure/pillory{
+	lockid = "inhumen"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAs" = (
+/obj/item/roguecoin/silver/pile,
+/obj/item/roguestatue/gold,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAt" = (
+/obj/structure/stairs/stone{
+	dir = 4
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAu" = (
+/obj/structure/table/finestone,
+/turf/open/floor/rogue/hexstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAv" = (
+/turf/open/water/cleanshallow,
+/area/rogue/under/cavewet/dragon_lair)
+"AAw" = (
+/obj/machinery/light/rogue/oven/south,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAx" = (
+/obj/effect/decal/cleanable/blood/tracks{
+	dir = 4
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAy" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/ingot/gold,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"AAz" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/dildo/blacksteel,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABA" = (
+/obj/structure/fluff/pillow/magenta{
+	dir = 1
+	},
+/obj/effect/landmark/start/dragon,
+/obj/effect/landmark/start/dragonlate,
+/turf/open/floor/rogue/hexstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABB" = (
+/obj/machinery/light/rogue/candle/red/l,
+/obj/effect/decal/cleanable/blood/tracks{
+	icon_state = "gibdown1"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABC" = (
+/obj/structure/fluff/railing/border{
+	dir = 9
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"ABD" = (
+/obj/structure/stairs/stone,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABE" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/ingot/blacksteel,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABF" = (
+/obj/structure/rack/rogue,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/obj/item/rope,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABG" = (
+/obj/item/ingot/weeping,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABH" = (
+/obj/structure/stairs/stone{
+	dir = 1
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"ABI" = (
+/obj/item/reagent_containers/glass/bowl,
+/obj/effect/decal/cleanable/blood/tracks{
+	icon_state = "splatter5"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABJ" = (
+/obj/structure/closet/crate/chest/crate,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/obj/item/grown/log/tree/small,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABK" = (
+/obj/structure/stairs/stone{
+	dir = 8
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABL" = (
+/obj/structure/fluff/railing/border{
+	dir = 5
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/under/cavewet/dragon_lair)
+"ABM" = (
+/obj/structure/stairs/stone/cw,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABN" = (
+/obj/item/roguecoin/gold/pile,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABO" = (
+/obj/item/rogueweapon/sword/decorated,
+/obj/item/ingot/silverblessed,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABP" = (
+/obj/structure/bars/passage{
+	name = "the cage";
+	redstone_id = "pdragoncage"
+	},
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABQ" = (
+/obj/machinery/light/rogue/candle/red,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+"ABR" = (
+/obj/item/roguecoin/gold/pile,
+/obj/item/ingot/sylveric,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/cavewet/dragon_lair)
+
 (1,1,1) = {"
 pMX
 pMX
@@ -180987,8 +181393,8 @@ sYx
 wUl
 wUl
 whb
-gBA
-gBA
+AAE
+AAE
 whb
 whb
 whb
@@ -181289,8 +181695,8 @@ wZF
 wZF
 whb
 whb
-gBA
-gBA
+AAc
+AAc
 whb
 whb
 whb
@@ -181591,7 +181997,7 @@ wZF
 wZF
 whb
 whb
-gBA
+AAc
 whb
 whb
 whb
@@ -181893,7 +182299,7 @@ qbG
 qbG
 whb
 whb
-gBA
+AAc
 whb
 whb
 whb
@@ -182195,7 +182601,7 @@ qbG
 qbG
 whb
 whb
-aaf
+AAJ
 whb
 whb
 whb
@@ -182497,7 +182903,7 @@ qbG
 qbG
 whb
 whb
-aaf
+AAJ
 whb
 whb
 whb
@@ -182799,7 +183205,7 @@ qbG
 qbG
 whb
 whb
-aaf
+AAJ
 whb
 whb
 whb
@@ -183101,9 +183507,9 @@ qbG
 qbG
 whb
 whb
-aaf
-aaf
-aaf
+AAJ
+AAJ
+AAJ
 whb
 whb
 whb
@@ -183404,8 +183810,8 @@ qbG
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -183707,8 +184113,8 @@ whb
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -184009,8 +184415,8 @@ whb
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -184307,11 +184713,11 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
-gBA
-aaf
-aaf
+AAc
+AAc
+AAc
+AAJ
+AAJ
 whb
 whb
 whb
@@ -184609,9 +185015,9 @@ qbG
 qbG
 fDB
 vtB
-ugv
-gBA
-gBA
+ABL
+AAc
+AAc
 whb
 whb
 whb
@@ -184911,8 +185317,8 @@ qbG
 qbG
 qFb
 qFb
-tMR
-gBA
+ABH
+AAF
 whb
 whb
 whb
@@ -185213,9 +185619,9 @@ qbG
 qbG
 qbG
 qFb
-tMR
-gBA
-gBA
+ABH
+AAF
+AAc
 whb
 whb
 whb
@@ -185515,10 +185921,10 @@ qbG
 qbG
 fDB
 oyG
-sal
-gBA
-aaf
-aaf
+ABC
+AAc
+AAJ
+AAJ
 whb
 whb
 whb
@@ -185818,9 +186224,9 @@ qbG
 qbG
 qbG
 whb
-gBA
-aaf
-aaf
+AAc
+AAJ
+AAJ
 whb
 whb
 whb
@@ -186121,11 +186527,11 @@ qbG
 qbG
 whb
 whb
-aaf
-aaf
-aaf
-aaf
-ilt
+AAJ
+AAJ
+AAJ
+AAJ
+AAG
 aag
 aag
 whb
@@ -186423,7 +186829,7 @@ qbG
 whb
 whb
 whb
-aaf
+AAJ
 whb
 whb
 whb
@@ -186724,8 +187130,8 @@ qbG
 qbG
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -187027,7 +187433,7 @@ whb
 whb
 whb
 whb
-aaf
+AAJ
 whb
 whb
 whb
@@ -187324,12 +187730,12 @@ qbG
 qbG
 qbG
 qbG
-gBA
+AAc
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -187626,12 +188032,12 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
-gBA
-aaf
-aaf
-aaf
+AAc
+AAc
+AAc
+AAJ
+AAJ
+AAJ
 whb
 whb
 whb
@@ -187928,10 +188334,10 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
-gBA
-gBA
+AAc
+AAc
+AAc
+AAc
 whb
 whb
 whb
@@ -188229,10 +188635,10 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
-gBA
-gBA
+AAc
+AAc
+AAc
+AAc
 whb
 whb
 whb
@@ -188530,11 +188936,11 @@ qbG
 qbG
 qbG
 qbG
-gBA
+AAc
 whb
-gBA
-gBA
-gBA
+AAc
+AAc
+AAc
 whb
 whb
 whb
@@ -188832,11 +189238,11 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
-gBA
-gBA
-gBA
+AAc
+AAc
+AAc
+AAc
+AAc
 whb
 whb
 whb
@@ -189134,11 +189540,11 @@ qbG
 qbG
 qbG
 qbG
-gBA
-gBA
+AAc
+AAc
 whb
-gBA
-gBA
+AAc
+AAc
 whb
 whb
 whb
@@ -189439,8 +189845,8 @@ whb
 whb
 whb
 whb
-gBA
-aaf
+AAc
+AAJ
 whb
 whb
 whb
@@ -189741,8 +190147,8 @@ whb
 whb
 whb
 whb
-gBA
-aaf
+AAc
+AAJ
 whb
 whb
 whb
@@ -190043,8 +190449,8 @@ whb
 whb
 whb
 whb
-aaf
-gBA
+AAJ
+AAc
 whb
 whb
 whb
@@ -190345,8 +190751,8 @@ whb
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -190647,8 +191053,8 @@ whb
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -190949,8 +191355,8 @@ whb
 whb
 whb
 whb
-aaf
-aaf
+AAJ
+AAJ
 whb
 whb
 whb
@@ -191251,8 +191657,8 @@ whb
 whb
 fyc
 fyc
-bwb
-bwb
+AAR
+AAR
 fyc
 whb
 whb
@@ -191553,8 +191959,8 @@ fyc
 fyc
 fyc
 fyc
-aaf
-aaf
+AAJ
+AAJ
 fyc
 whb
 whb
@@ -191847,16 +192253,16 @@ whb
 whb
 whb
 fyc
-oKc
-kaT
+AAu
+AAl
 fyc
 fyc
 fyc
 fyc
 fyc
-dsx
-aaf
-aaf
+AAX
+AAJ
+AAJ
 fyc
 whb
 whb
@@ -192149,15 +192555,15 @@ whb
 fyc
 fyc
 fyc
-oXN
-aaf
-uLb
+AAw
+AAJ
+ABJ
 fyc
 fyc
 fyc
-arm
-aaf
-aaf
+AAL
+AAJ
+AAJ
 fyc
 whb
 whb
@@ -192449,17 +192855,17 @@ whb
 whb
 whb
 fyc
-oNE
-aaf
-bIM
-tHv
-aaj
+AAv
+AAJ
+AAO
+ABG
+AAK
 fyc
-aaf
-aaf
-aaf
-aaf
-aaf
+AAJ
+AAJ
+AAJ
+AAJ
+AAJ
 fyc
 whb
 whb
@@ -192751,16 +193157,16 @@ whb
 fyc
 fyc
 fyc
-aaf
-sjn
-moO
-aaf
-ntE
-aaf
-aaf
-ezq
-aaf
-aaf
+AAJ
+ABE
+AAq
+AAJ
+AAs
+AAJ
+AAJ
+AAY
+AAJ
+AAJ
 fyc
 fyc
 whb
@@ -193051,17 +193457,17 @@ whb
 fyc
 fyc
 fyc
-aaj
-aaf
-fUX
-bvu
-yiT
-vGN
-grt
-bIM
-aaf
-aaf
-aaf
+AAK
+AAJ
+AAZ
+AAQ
+ABR
+ABN
+AAd
+AAO
+AAJ
+AAJ
+AAJ
 fyc
 fyc
 whb
@@ -193351,17 +193757,17 @@ whb
 whb
 fyc
 fyc
-aaf
-aaf
-aaf
-aaf
-aaf
-csD
-wWJ
-rGH
-bIM
-aaf
-ezq
+AAJ
+AAJ
+AAJ
+AAJ
+AAJ
+AAU
+ABO
+AAz
+AAO
+AAJ
+AAY
 fyc
 fyc
 fyc
@@ -193652,16 +194058,16 @@ whb
 whb
 whb
 fyc
-aaf
-aaf
-mEO
-oFY
-mhQ
-aaf
-vGN
-hyf
-fZS
-aaj
+AAJ
+AAJ
+AAo
+AAt
+AAp
+AAJ
+ABN
+AAf
+AAa
+AAK
 fyc
 fyc
 fyc
@@ -193954,16 +194360,16 @@ whb
 whb
 fyc
 fyc
-aaf
-aaf
-scz
-sMg
-ilt
-aaf
-cpX
-qnD
-aZM
-jkv
+AAJ
+AAJ
+ABD
+ABA
+AAg
+AAJ
+AAT
+AAy
+AAI
+AAi
 fyc
 whb
 whb
@@ -194255,17 +194661,17 @@ whb
 whb
 whb
 fyc
-svn
-aaf
-aaf
-dGC
-ucA
-uxW
-aaf
-aaf
-bDE
-bIM
-ixa
+ABF
+AAJ
+AAJ
+AAV
+ABK
+ABM
+AAJ
+AAJ
+AAM
+AAO
+AAh
 fyc
 whb
 whb
@@ -194557,17 +194963,17 @@ whb
 whb
 fyc
 fyc
-aaf
-aaf
-aaf
-aaf
-aaf
-aaf
-aaf
-bQi
-aaf
-pAd
-aaf
+AAJ
+AAJ
+AAJ
+AAJ
+AAJ
+AAJ
+AAJ
+AAP
+AAJ
+AAx
+AAJ
 fyc
 whb
 whb
@@ -194858,18 +195264,18 @@ whb
 whb
 whb
 fyc
-oNE
-aaf
-bGY
-aaf
-aaj
+AAv
+AAH
+AAN
+AAJ
+AAK
 fyc
 fyc
-dfS
+AAW
 fyc
-wYM
-wYM
-wYM
+ABP
+ABP
+ABP
 fyc
 whb
 whb
@@ -195161,19 +195567,19 @@ whb
 whb
 whb
 fyc
-aaf
-aaf
-aaf
+AAJ
+AAJ
+AAJ
 fyc
 fyc
 fyc
 fyc
 fyc
-aaf
-mDZ
-aaf
-jsp
-kEE
+AAJ
+AAn
+AAJ
+AAj
+AAk
 whb
 whb
 whb
@@ -195472,12 +195878,12 @@ whb
 whb
 whb
 whb
-aaf
-lyR
-aaf
-aaf
-aaf
-sYO
+AAJ
+AAm
+AAJ
+AAJ
+AAJ
+ABB
 whb
 whb
 whb
@@ -195775,12 +196181,12 @@ whb
 whb
 whb
 whb
-xjc
-aaf
-nEI
-aaf
-aaf
-hrT
+ABQ
+AAJ
+AAr
+AAJ
+AAJ
+AAe
 whb
 whb
 whb
@@ -196078,10 +196484,10 @@ whb
 whb
 whb
 whb
-flN
-ciy
-aaf
-uKP
+AAb
+AAS
+AAJ
+ABI
 whb
 whb
 whb
@@ -196382,7 +196788,7 @@ whb
 whb
 whb
 whb
-hrT
+AAe
 whb
 whb
 whb
