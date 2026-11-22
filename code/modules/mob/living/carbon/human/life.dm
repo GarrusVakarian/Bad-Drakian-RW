@@ -404,7 +404,7 @@
 	return min(1,thermal_protection)
 
 /mob/living/carbon/human/handle_random_events()
-	..()
+	..(track_pain_stress = (client || mode == NPC_AI_OFF))
 	//Puke if toxloss is too high
 	if(!stat)
 		if(prob(33) && getToxLoss() >= 75)

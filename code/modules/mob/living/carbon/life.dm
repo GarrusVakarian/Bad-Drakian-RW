@@ -86,10 +86,17 @@
 
 	check_cremation()
 
-/mob/living/carbon/handle_random_events()//BP/WOUND BASED PAIN
+/mob/living/carbon/handle_random_events(additional = 0, track_pain_stress = TRUE)
+	handle_pain(track_stress = track_pain_stress)
+
+/// NPCs only need the wound total when the cooldown allows a pain reaction.
+/mob/living/carbon/proc/handle_pain(track_stress = TRUE)
 	if(HAS_TRAIT(src, TRAIT_NOPAIN))
 		return
 	if(!stat)
+		var/pain_roll_due = world.time > mob_timers["painstun"]
+		if(!track_stress && !pain_roll_due)
+			return
 		var/pain_willpower = STAWIL
 		var/pain_threshold = get_pain_threshold()
 		if(has_status_effect(/datum/status_effect/buff/battle_cry))
@@ -97,7 +104,7 @@
 		var/painpercent = get_complex_pain() / pain_threshold
 		painpercent = painpercent * 100
 
-		if(world.time > mob_timers["painstun"])
+		if(pain_roll_due)
 			mob_timers["painstun"] = world.time + 100
 			var/probby = 40 - (pain_willpower * 2)
 			probby = max(probby, 10)
@@ -127,7 +134,7 @@
 						if(probby)
 							emote("painmoan")
 
-		if(painpercent >= 100)
+		if(track_stress && painpercent >= 100)
 			add_stress(/datum/stressevent/painmax)
 
 /mob/living/carbon/proc/paincrit()
