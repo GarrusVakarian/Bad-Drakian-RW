@@ -5,7 +5,7 @@
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
-	allowed_races = list(/datum/species/dracon)
+	allowed_races = null
 	tutorial = "You are an ancient dragon, guarding a hoard of treasure. Strike deals with mortals, protect your territory, and secure a future for your brood."
 	outfit = null
 	outfit_female = null
@@ -81,7 +81,12 @@
 	facial_hairstyle = "Shaved"
 	update_body()
 	ambushable = FALSE
+	clear_mob_descriptors()
+	custom_descriptors = null
+	add_mob_descriptor(/datum/mob_descriptor/trait/towering)
 	add_mob_descriptor(/datum/mob_descriptor/stature/dragon)
+	add_mob_descriptor(/datum/mob_descriptor/voice/deep)
+	add_mob_descriptor(/datum/mob_descriptor/scales/dragon)
 
 	var/obj/item/organ/eyes/eyes = getorganslot(ORGAN_SLOT_EYES)
 	if(eyes)
@@ -105,6 +110,9 @@
 		H.set_blindness(0)
 		H.regenerate_icons()
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_gate_control)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_hoard_challenge)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_realm_roar)
+		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/appraise/secular)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/message)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/claws/dragon)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/spitfire)

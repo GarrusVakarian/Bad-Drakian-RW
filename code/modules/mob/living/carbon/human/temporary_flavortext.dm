@@ -16,7 +16,7 @@
 
 /mob/living/carbon/human/Topic(href, href_list)
 	. = ..()
-	if(href_list["task"] == "show_temp_ft")
+	if(href_list["task"] == "show_temp_ft" && !is_species(src, /datum/species/dragon))
 		var/output = "<span class='info' style='color: #eaeaea'>[temporary_flavortext]</span>"
 		if(!usr.client.prefs.no_examine_blocks)
 			output = examine_block(output)

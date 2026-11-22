@@ -2928,6 +2928,7 @@
 #include "code\modules\roguetown\roguemachine\questing\types\__quest.dm"
 #include "code\modules\roguetown\roguemachine\questing\types\quest_courier.dm"
 #include "code\modules\roguetown\roguemachine\questing\types\quest_retrieval.dm"
+#include "code\modules\roguetown\roguemachine\questing\types\quest_dragon_hoard.dm"
 #include "code\modules\roguetown\roguemachine\questing\types\kill\__quest_kill_base.dm"
 #include "code\modules\roguetown\roguemachine\questing\types\kill\quest_blockade_defense.dm"
 #include "code\modules\roguetown\roguemachine\questing\types\kill\quest_bounty.dm"

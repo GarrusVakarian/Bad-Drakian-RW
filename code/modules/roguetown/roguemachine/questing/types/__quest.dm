@@ -46,6 +46,8 @@
 	/// Landmark picked at preview time; materialize() spawns content around it when claimed.
 	var/datum/weakref/pending_landmark_ref
 	var/materialized = FALSE
+	/// Preplaced objectives can opt out of spawning an encounter at a quest landmark.
+	var/requires_spawn_landmark = TRUE
 	/// Threat region this quest's content lives in. Captured from the landmark at preview time.
 	var/region = ""
 	/// Quest faction id (see QUEST_FACTION_* defines). Captured at preview for kill / bounty quests.

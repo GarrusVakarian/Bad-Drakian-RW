@@ -942,7 +942,7 @@
 	if(!isnull(trait_exam))
 		. += trait_exam
 
-	if(temporary_flavortext) //should be kept at the bottom always if possible, since someone could change the spans to trick people if it's on other places
+	if(temporary_flavortext && !is_species(src, /datum/species/dragon)) //should be kept at the bottom always if possible, since someone could change the spans to trick people if it's on other places
 		var/max_temp_ft_length = 100 //Proably a good idea to fine-tune this later
 		if(length_char(temporary_flavortext) > max_temp_ft_length)
 			. += " <span class='info' style='color: #eaeaea'> ø ------------ ø\n [copytext_char(temporary_flavortext, 1, max_temp_ft_length + 1)]</span>" + "<a href='?src=[REF(src)];task=show_temp_ft;'>...</a>"
@@ -1065,7 +1065,7 @@
 		if(family_datum)
 			social_strata = "<a href='?src=[REF(src)];social_strata=1'><font color='#[rank_color]'>⛯</font></A>"
 		var/display1
-		var/display2 = "[(!HAS_TRAIT(usr, TRAIT_OUTLANDER) && src.social_rank) ? "[social_strata]" : " "]"
+		var/display2 = "[(!HAS_TRAIT(user, TRAIT_OUTLANDER) && src.social_rank) ? "[social_strata]" : " "]"
 		if(migrant_type)
 			used_title = MIGRANT_ROLE(migrant_type)
 			display1 += span_info("This is <EM>[used_name]</EM>, the wandering [race_name] [used_title].")

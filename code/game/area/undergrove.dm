@@ -21,6 +21,8 @@
 	deathsight_message = "wet root-bound caverns"
 	detail_text = DETAIL_TEXT_UNDERGROVE
 
+/area/rogue/under/cavewet/dragon_lair
+
 /area/rogue/under/cavewet/bogcaves
 	name = "The Undergrove"
 	first_time_text = "The Undergrove"

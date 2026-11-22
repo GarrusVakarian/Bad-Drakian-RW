@@ -35,6 +35,7 @@
 	return ..()
 
 /datum/antagonist/dragon/on_removal()
+	withdraw_hoard_quest()
 	. = ..()
 	if(owner)
 		owner.special_role = null
