@@ -836,3 +836,5 @@
   - bugfix: Redolent scents display apostrophes and other punctuation correctly, including
       saved and inherited scents.
   - bugfix: Redolent examines no longer add a period after existing sentence punctuation.
+  - rscadd: Added Instant Transform, a 2-point quirk that lets you edit your appearance
+      and anatomy without a mirror.
