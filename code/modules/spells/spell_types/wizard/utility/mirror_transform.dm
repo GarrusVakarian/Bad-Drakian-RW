@@ -67,7 +67,8 @@
 		return
 
 	if(guarded)
-		var/static/list/anatomy_slots = list(
+		var/static/list/organ_slots = list(
+			"eye color" = ORGAN_SLOT_EYES,
 			"penis" = ORGAN_SLOT_PENIS,
 			"penis size" = ORGAN_SLOT_PENIS,
 			"testicles" = ORGAN_SLOT_TESTICLES,
@@ -76,7 +77,7 @@
 			"breasts" = ORGAN_SLOT_BREASTS,
 			"breast size" = ORGAN_SLOT_BREASTS,
 		)
-		var/slot = anatomy_slots[chosen]
+		var/slot = organ_slots[chosen]
 		if(slot)
 			session.watch_organ(slot)
 
@@ -241,12 +242,16 @@
 				new_eye_color = sanitize_hexcolor(new_eye_color, 6, TRUE)
 				var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
 				if(eyes)
-					eyes.Remove(H)
+					if(!guarded)
+						eyes.Remove(H)
 					eyes.eye_color = new_eye_color
-					eyes.Insert(H, TRUE, FALSE)
+					if(!guarded)
+						eyes.Insert(H, TRUE, FALSE)
 				H.eye_color = new_eye_color
 				H.dna.features["eye_color"] = new_eye_color
 				H.dna.update_ui_block(DNA_EYE_COLOR_BLOCK)
+				if(guarded)
+					H.dna.species.handle_body(H)
 				H.update_body_parts()
 				should_update = TRUE
 
