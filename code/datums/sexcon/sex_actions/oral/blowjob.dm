@@ -7,16 +7,6 @@
 	target_sex_part = SEX_PART_COCK
 	knot_on_finish = TRUE
 
-/datum/sex_action/blowjob/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return !HAS_TRAIT(target, TRAIT_TINY)
-
-/datum/sex_action/blowjob/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return !HAS_TRAIT(target, TRAIT_TINY)
-
 /datum/sex_action/blowjob/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(HAS_TRAIT(user, TRAIT_TINY) && !HAS_TRAIT(target, TRAIT_TINY))
 		user.visible_message(span_warning("[user] starts licking [target]'s cock..."), vision_distance = (user.sexcon.do_subtle_action ? 1 : DEFAULT_MESSAGE_RANGE))

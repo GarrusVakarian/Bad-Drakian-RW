@@ -47,8 +47,6 @@ GLOBAL_LIST_EMPTY(saltmineticketmachines)
 	. = ..()
 	if(HAS_TRAIT(user, TRAIT_DUNGEONMASTER_LABOR_CAMP))
 		. += span_info("The winning tickets from the machine are [span_boldwarning("highly")] sought after as collector items.")
-	else
-		. += span_info("Right click to deposit all the salt in front of the machine.")
 
 /obj/structure/roguemachine/stockpile_saltcamp/proc/get_salt_interest(mob/user)
 	if(!user || !ishuman(user))

@@ -21,11 +21,6 @@
 	user.visible_message("<span class='suicide'>[user] is stabbing \the [src] into [user.p_their()] eyes! It looks like [user.p_theyre()] trying to commit suicide!</span>")
 	return BRUTELOSS
 
-/obj/item/clothing/glasses/examine(mob/user)
-	. = ..()
-	if(glass_colour_type && ishuman(user))
-		. += "<span class='notice'>Alt-click to toggle its colors.</span>"
-
 /obj/item/clothing/glasses/visor_toggling()
 	..()
 	if(visor_vars_to_toggle & VISOR_VISIONFLAGS)

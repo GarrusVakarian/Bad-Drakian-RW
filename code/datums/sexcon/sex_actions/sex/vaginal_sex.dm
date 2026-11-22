@@ -13,26 +13,15 @@
 		user.visible_message(span_warning("[user] forces [user.p_their()] cock into [target]'s tiny cunt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))
 		apply_tiny_start_injury(user, target)
 		playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
-	else if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] tries and fails to insert [user.p_their()] tiny cock into [target]'s cunt."))
 	else
 		user.visible_message(span_warning("[user] slides [user.p_their()] cock into [target]'s cunt!"))
 		playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/vaginal_sex/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] tries to fuck [target]'s cunt, unsuccessfully."))
-		user.sexcon.do_thrust_animate(target)
-		playsound(target, 'sound/misc/mat/segso.ogg', 50, TRUE, -2, ignore_walls = FALSE)
-		return FALSE
-
 	if(!user.sexcon.do_knot_action)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] fucks [target]'s cunt."))
 	else
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] knot-fucks [target]'s cunt."))
-	if(HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		return FALSE
-
 	user.sexcon.intercourse_noise(target, TRUE)
 	user.sexcon.do_thrust_animate(target)
 
@@ -63,10 +52,7 @@
 	target.sexcon.handle_passive_ejaculation()
 
 /datum/sex_action/vaginal_sex/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] stops trying to insert [user.p_their()] tiny cock into [target]'s cunt."))
-	else
-		user.visible_message(span_warning("[user] pulls [user.p_their()] cock out of [target]'s cunt."))
+	user.visible_message(span_warning("[user] pulls [user.p_their()] cock out of [target]'s cunt."))
 
 /datum/sex_action/vaginal_sex/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(user.sexcon.finished_check())
@@ -91,26 +77,15 @@
 		user.visible_message(span_warning("[user] forces [user.p_their()] cocks into [target]'s tiny cunt!"), ignored_mobs = get_extreme_content_excluded_mobs(user))
 		apply_tiny_start_injury(user, target)
 		playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
-	else if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] tries and fails to insert [user.p_their()] tiny cocks into [target]'s cunt."))
 	else
 		user.visible_message(span_warning("[user] slides [user.p_their()] cocks into [target]'s cunt!"))
 		playsound(target, list('sound/misc/mat/insert (1).ogg','sound/misc/mat/insert (2).ogg'), 20, TRUE, ignore_walls = FALSE)
 
 /datum/sex_action/vaginal_sex/double/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] tries to double-fuck [target]'s cunt, unsuccessfully."))
-		user.sexcon.do_thrust_animate(target)
-		playsound(target, 'sound/misc/mat/segso.ogg', 50, TRUE, -2, ignore_walls = FALSE)
-		return FALSE
-
 	if(!user.sexcon.do_knot_action)
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] double-fucks [target]'s cunt."))
 	else
 		user.sexcon_action_message(user.sexcon.spanify_force("[user] [user.sexcon.get_generic_force_adjective()] double-knots [target]'s cunt."))
-	if(HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		return FALSE
-
 	user.sexcon.intercourse_noise(target, TRUE)
 	user.sexcon.do_thrust_animate(target)
 
@@ -141,7 +116,4 @@
 	target.sexcon.handle_passive_ejaculation()
 
 /datum/sex_action/vaginal_sex/double/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!HAS_TRAIT(target, TRAIT_TINY) && HAS_TRAIT(user, TRAIT_TINY))
-		user.visible_message(span_warning("[user] stops trying to insert [user.p_their()] tiny cocks into [target]'s cunt."))
-	else
-		user.visible_message(span_warning("[user] pulls [user.p_their()] cocks out of [target]'s cunt."))
+	user.visible_message(span_warning("[user] pulls [user.p_their()] cocks out of [target]'s cunt."))

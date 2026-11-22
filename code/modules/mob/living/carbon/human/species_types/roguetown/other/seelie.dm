@@ -11,7 +11,8 @@
 	Instead, Seelie tend to appear and gather in places of chaos and misfortune, thriving in such an environment. \
 	Seelie are known to have Elemental Attunements, an influence of nature that mystically sprung them into existance. \
 	Any tribalism or history regarding the race is scarce and uncommmon, and as such misconception and myth surrounds them. \
-	The wary traveller should take heed of such beings, as both fortune and missery is said to accompany the little troublemakers."
+	The wary traveller should take heed of such beings, as both fortune and missery is said to accompany the little troublemakers.<br>\
+	<a href='byond://winset?command=Racial-Features%20seelie'>Racial Features: Seelies</a><br>"
 
 	skin_tone_wording = "Elemental Connection"
 

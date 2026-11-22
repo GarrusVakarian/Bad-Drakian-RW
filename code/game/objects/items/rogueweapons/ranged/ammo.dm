@@ -662,10 +662,6 @@
 	heavy_metal = FALSE						//Stops spin animation, maybe.
 	thrown_damage_flag = "piercing"			//Checks peircing protection.
 
-/obj/item/ammo_casing/caseless/rogue/javelin/examine(mob/user)
-	. = ..()
-	. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Journeyman Polearms skill.")
-
 /obj/item/ammo_casing/caseless/rogue/javelin/getonmobprop(tag)
 	. = ..()
 	if(tag)

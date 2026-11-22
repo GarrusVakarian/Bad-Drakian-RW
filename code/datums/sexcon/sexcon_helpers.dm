@@ -329,7 +329,7 @@
 	var/turf/location = get_turf(src)
 	if(!location || !prob(25))
 		return
-	var/milk_to_release = min(max(breasts.breast_size, 1), breasts.milk_stored)
+	var/milk_to_release = min(breasts.get_milk_release_limit(), breasts.milk_stored)
 	breasts.milk_stored -= milk_to_release
 	spill_floor_fluid(location, /datum/reagent/consumable/milk, milk_to_release)
 	visible_message(span_notice("Milk drips from [src]'s [get_chest_word()]."), span_notice("I can feel milk drip from my [get_chest_word()]."), vision_distance = message_range)

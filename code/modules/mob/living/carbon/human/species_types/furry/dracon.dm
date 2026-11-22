@@ -13,7 +13,8 @@
 	They are highly protective of their bloodline and do everything in their power to make sure it does not spread beyond their own, \
 	as they believe themselves to be guardians of tradition and that it is their ultimate duty to maintain their prestige as a race. \
 	After all, a single drop of draconic blood in one's bloodline means that they will experience all of the benefits of having draconic ancestors such as agelessness.<br>\
-	(+1 Strength, Wing Bound Trait)"
+	(+1 Strength)<br>\
+	<a href='byond://winset?command=Racial-Features%20drakian'>Racial Features: Drakians</a><br>"
 	expanded_desc = "Drakians are a proud and ancient race that trace their heritage to dragons of old. \
 	They are highly protective of their bloodline and do everything in their power to make sure it does not spread beyond their own, \
 	as they believe themselves to be guardians of tradition and that it is their ultimate duty to maintain their prestige as a race. \

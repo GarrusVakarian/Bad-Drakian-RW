@@ -589,7 +589,9 @@
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
 /datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE, extra_volume = null)
-	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
+	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents)
+		return FALSE
+	if(!ispath(reagent_type, /datum/reagent/erpjuice) && !find_key_by_value(GLOB.tailmaw_fluid_options, reagent_type))
 		return FALSE
 	if(!isnum(amount) || amount <= 0)
 		return FALSE

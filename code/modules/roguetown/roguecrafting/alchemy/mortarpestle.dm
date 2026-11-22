@@ -56,7 +56,6 @@
 	. += ..()
 	if(to_grind)
 		. += ("[to_grind] is inside the mortar.")
-	. += span_notice("Left click with a pestle to grind the item inside into alchemical ingredients. Middle Click with a pestle to grind or juice them. Right click to remove it.")
 
 /obj/item/reagent_containers/glass/mortar/attack_right(mob/user)
 	user.changeNext_move(CLICK_CD_INTENTCAP)

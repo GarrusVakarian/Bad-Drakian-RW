@@ -1339,3 +1339,7 @@ GLOBAL_VAR_INIT(pixel_diff_time, 1)
 			SSspatial_grid.remove_grid_awareness(movable_loc, SPATIAL_GRID_CONTENTS_TYPE_CLIENTS)
 		ASSOC_UNSETEMPTY(recursive_contents, RECURSIVE_CONTENTS_CLIENT_MOBS)
 		UNSETEMPTY(movable_loc.important_recursive_contents)
+
+/// Directly accessible crafting materials exposed by structures such as carts.
+/atom/movable/proc/get_crafting_contents()
+	return null

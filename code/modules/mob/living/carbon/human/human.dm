@@ -1422,6 +1422,7 @@
 	vocal_pitch = client.prefs.bark_pitch
 	vocal_pitch_range = client.prefs.bark_variance
 	apply_voicepacks(src, client)
+	apply_dragon_bark()
 	return TRUE
 
 /mob/living/carbon/human/Topic(href, href_list)

@@ -1,0 +1,21 @@
+.LoadoutMenu__tabs {
+  --tab-background: hsl(from var(--color-text) h s l / 0.16);
+  --tab-color: var(--color-text);
+
+  flex-wrap: wrap;
+  gap: 0;
+  padding-block-end: 1px;
+
+  .Tab {
+    border: 1px solid var(--section-separator-color);
+    border-radius: 0;
+    // Overlap adjacent borders so each seam is one pixel wide.
+    margin-inline-end: -1px;
+    margin-block-end: -1px;
+  }
+
+  .Tab--selected {
+    border-color: var(--tab-color-selected);
+    z-index: 1;
+  }
+}

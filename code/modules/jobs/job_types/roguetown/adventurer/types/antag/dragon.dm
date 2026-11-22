@@ -3,8 +3,8 @@
 	flag = DRAGON
 	antag_job = TRUE
 	faction = "Station"
-	total_positions = 1
-	spawn_positions = 1
+	total_positions = 0
+	spawn_positions = 0
 	allowed_races = null
 	tutorial = "You are an ancient dragon, guarding a hoard of treasure. Strike deals with mortals, protect your territory, and secure a future for your brood."
 	outfit = null
@@ -42,7 +42,16 @@
 			H.verbs |= /mob/living/carbon/human/proc/dragon_inspect_skin
 
 
+/mob/living/carbon/human/proc/apply_dragon_bark()
+	if(!istype(dna?.species, /datum/species/dragon))
+		return
+	set_bark("mutedc2")
+	vocal_speed = 5
+	vocal_pitch = 1
+	vocal_pitch_range = 0.25
+
 /mob/living/carbon/human/proc/apply_dragon_preferences(initial_setup = TRUE)
+	apply_dragon_bark()
 	// Species swaps do not always clear extra body zones from prior forms.
 	// Purge lamia/taur leftovers so dragons only use dragon body setup.
 	ensure_not_taur()
@@ -168,6 +177,7 @@
 		/datum/skill/misc/hunting = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/labor/butchering = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/tracking = SKILL_LEVEL_MASTER,
+		/datum/skill/misc/reading = SKILL_LEVEL_EXPERT,
 	)
 
 /datum/outfit/job/roguetown/dragon/pre_equip(mob/living/carbon/human/H)

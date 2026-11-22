@@ -122,13 +122,7 @@
 /obj/structure/roguemachine/mail/examine(mob/user)
 	. = ..()
 	. += "<a href='?src=[REF(src)];directory=1'>Directory:</a> [mailtag]"
-	. += span_info("Right click to write a letter, or insert coins to buy postage, parchment, and quills.")
-	. += span_info("Use a paper or wrapped package on the machine to send it for free.")
-	if(HAS_TRAIT(user, TRAIT_INQUISITION))
-		. += span_info("<br>The MARQUETTE can be accessed via a secret compartment fitted within the HERMES. Load a Marque to access it.")
 
-		. += span_info("You can send arrival slips, accusation slips, fully loaded INDEXERs or confessions here.")
-		. += span_info("Properly sign them. Include an INDEXER where needed. Stamp them for two additional Marques.")
 
 /obj/structure/roguemachine/mail/attack_right(mob/user)
 	. = ..()

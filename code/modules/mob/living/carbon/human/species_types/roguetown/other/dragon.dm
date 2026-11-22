@@ -56,8 +56,8 @@
 	nojumpsuit = 1
 	sexes = 1
 	offset_features = list(OFFSET_HANDS = list(0,2), OFFSET_HANDS_F = list(0,2))
-	soundpack_m = /datum/voicepack/gnoll
-	soundpack_f = /datum/voicepack/gnoll
+	soundpack_m = /datum/voicepack/werewolf
+	soundpack_f = /datum/voicepack/werewolf
 	enflamed_icon = "widefire"
 	organs = list(
 		ORGAN_SLOT_BRAIN = /obj/item/organ/brain,

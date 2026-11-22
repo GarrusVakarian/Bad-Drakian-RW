@@ -167,7 +167,6 @@ GLOBAL_LIST_EMPTY(signal_flare_codebook)
 		. += span_notice("It's loaded and ready to fire.")
 	if(primed_color)
 		. += span_notice("Its dial is set to [signal_label(primed_color)], ready to fire without further thought.")
-	. += span_info("Middle-click it to set its dial ahead of time, so it fires without asking.")
 	. += get_signal_flare_codebook_lines(user)
 
 /obj/item/signal_flare_gun/attackby(obj/item/W, mob/living/user, params)

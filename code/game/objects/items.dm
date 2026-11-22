@@ -1985,21 +1985,6 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	// Show original name if item was renamed
 	if(original_name && original_name != name)
 		. += "<span style='font-size:0.8em;color:#888'>Originally: [original_name]</span>"
-	if(isliving(user))
-		var/mob/living/L = user
-		if(L.STAINT < 9)
-			return .
-	if(isnull(anvilrepair) && isnull(sewrepair))
-		return .
-	else
-		var/str = "This object can be repaired using "
-		if(anvilrepair)
-			var/datum/skill/S = anvilrepair		//Should only ever be a skill or null
-			str += "<b>[initial(S.name)]</b> and a hammer."
-		if(sewrepair)
-			str += "<b>Sewing</b> and a needle."
-		str = span_info(str)
-		. += str
 
 /obj/item/proc/step_action() //this was made to rewrite clown shoes squeaking, moved here to avoid throwing runtimes with non-/clothing wearables
 	SEND_SIGNAL(src, COMSIG_CLOTHING_STEP_ACTION)

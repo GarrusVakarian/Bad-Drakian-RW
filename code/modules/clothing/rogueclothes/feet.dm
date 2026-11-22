@@ -48,10 +48,6 @@
 		holdinglockpick = null
 	return ..()
 
-/obj/item/clothing/shoes/roguetown/boots/examine(mob/user)
-	. = ..()
-	. += span_smallnotice("Knives and lockpicks can be stowed inside.")
-
 /obj/item/clothing/shoes/roguetown/boots/attackby(obj/item/storing_item, mob/living/carbon/user, params)
 	if(istype(storing_item, /obj/item/rogueweapon/huntingknife))
 		if(!isnull(holdingknife))

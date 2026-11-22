@@ -34,6 +34,8 @@
 	var/obj/item/bodypart/taur/taur_parts = get_taur_tail()
 	if(istype(taur_parts))
 		multiplier += 0.5
+	if(isseelie(src))
+		multiplier /= 3
 	return multiplier
 
 /// Called only when new fluid/leakage arrives or the preference is enabled, not by metabolism.

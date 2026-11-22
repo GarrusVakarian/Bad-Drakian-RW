@@ -49,6 +49,7 @@
 	anvilrepair = /datum/skill/craft/blacksmithing
 	tool_behaviour = TOOL_SUTURE
 	experimental_inhand = FALSE
+	possible_item_intents = list(/datum/intent/use, /datum/intent/tie_laces)
 	/// Amount of uses left
 	var/stringamt = 20
 	var/maxstring = 20
@@ -88,6 +89,9 @@
 //		qdel(src)
 
 /obj/item/needle/attack(mob/living/M, mob/user)
+	if(user.used_intent?.type == /datum/intent/tie_laces)
+		tie_laces(M, user)
+		return
 	sew(M, user)
 
 /obj/item/needle/attackby(obj/item/I, mob/user, params)

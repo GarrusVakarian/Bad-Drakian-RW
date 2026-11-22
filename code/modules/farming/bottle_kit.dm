@@ -13,7 +13,6 @@
 	. = ..()
 	if(fake_glass_name)
 		. += span_info("The kit is set to [fake_glass_name] bottles.")
-	. += span_info("You can change the bottle colour by using the kit. Click on a fermentation keg / distiller that has finished brewing to bottle its results.")	
 
 /obj/item/bottle_kit/attack_self(mob/user as mob)
 	..()

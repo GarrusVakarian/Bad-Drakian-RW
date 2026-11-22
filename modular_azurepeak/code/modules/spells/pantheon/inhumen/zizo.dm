@@ -488,7 +488,7 @@
 		var/validation_result = validate_items(target)
 		if(validation_result != "")
 			to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
 
 		var/found_structure = FALSE
@@ -512,26 +512,34 @@
 		if(!found_structure)
 			var/atom/temp_structure = required_structure
 			to_chat(user, span_warning("I need an unholy [initial(temp_structure.name)] near [target]."))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
-		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-		if(underworld_spirit)
-			var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-			qdel(underworld_spirit)
-			ghost.mind.transfer_to(target, TRUE)
-		target.grab_ghost(force = TRUE)
-		if(!target.check_revive(user))
-			revert_cast()
+		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+		if(!ooze)
+			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+			if(underworld_spirit)
+				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+				qdel(underworld_spirit)
+				ghost.mind.transfer_to(target, TRUE)
+			target.grab_ghost(force = TRUE)
+		if(!ooze && !target.check_revive(user))
+			revert_cast(user)
 			return FALSE
-		if(target.mob_biotypes & MOB_UNDEAD) //no effect on undead
+		if(!ooze && (target.mob_biotypes & MOB_UNDEAD)) //no effect on undead
 			to_chat(user, span_warning("[target] is undead. Nothing happens."))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
-		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
-		if(!target.revive(full_heal = FALSE))
-			to_chat(user, span_warning("Nothing happens."))
-			revert_cast()
-			return FALSE
+		if(ooze)
+			target = ooze.revive_patient(targets)
+			if(!target)
+				revert_cast(user)
+				return FALSE
+		else
+			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
+			if(!target.revive(full_heal = FALSE))
+				to_chat(user, span_warning("Nothing happens."))
+				revert_cast(user)
+				return FALSE
 		target.emote("agony")
 		target.Jitter(100)
 		target.update_body()
@@ -539,14 +547,14 @@
 		if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
 			adjust_playerquality(revive_pq, user.ckey)
 			ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
-		target.mind.remove_antag_datum(/datum/antagonist/zombie)
+		target.mind?.remove_antag_datum(/datum/antagonist/zombie)
 		target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
 		target.apply_status_effect(debuff_type)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
 		//Due to an increased cost and cooldown, these revival types heal quite a bit.
 		target.apply_status_effect(/datum/status_effect/buff/healing, 14)
 		consume_items(target)
 		return TRUE
-	revert_cast()
+	revert_cast(user)
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/evil_resurrect/cast_check(skipcharge = 0,mob/user = usr)

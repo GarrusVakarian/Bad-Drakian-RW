@@ -32,10 +32,6 @@
 	name = pick("rontz ring", "gold ring")
 	ADD_TRAIT(src, TRAIT_EXAMINE_SKIP, INNATE_TRAIT)
 
-/obj/item/mattcoin/examine(mob/user)
-	. = ..()
-	. += span_notice("It can be used in hand to give it a disguise. Use it again to return it back to normal.")
-
 /obj/item/mattcoin/pickup(mob/living/user)
 	if(!HAS_TRAIT(user, TRAIT_COMMIE))
 		to_chat(user, "The coin turns to ash in my hands!")

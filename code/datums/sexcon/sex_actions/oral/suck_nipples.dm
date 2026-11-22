@@ -15,8 +15,10 @@
 	target.sexcon.handle_passive_ejaculation()
 
 	var/obj/item/organ/breasts/breasts = target.getorganslot(ORGAN_SLOT_BREASTS)
-	var/milk_to_add = min(max(breasts.breast_size, 1), breasts.milk_stored)
-	if(breasts.lactating && milk_to_add > 0 && prob(25))
+	if(!istype(breasts) || !breasts.lactating || breasts.milk_stored <= 0)
+		return
+	var/milk_to_add = min(breasts.get_milk_release_limit(), breasts.milk_stored)
+	if(prob(25))
 		user.reagents.add_reagent(/datum/reagent/consumable/milk, milk_to_add)
 		breasts.milk_stored -= milk_to_add
 		to_chat(user, span_notice("I can taste milk."))
