@@ -856,6 +856,7 @@
       and body writing displays without added punctuation.
   - bugfix: Stale grabs no longer leave players unable to move after their grabber
       falls to another floor.
+  - rscadd: Wrap a Say or Whisper message in tildes to slur your words for that line.
   mypingishuge (port), SatinIsle:
   - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
       a chance of magic or miracles. Starting gear follows their training.

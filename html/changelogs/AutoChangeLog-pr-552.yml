@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Wrap a Say or Whisper message in tildes to slur your words for that line."
