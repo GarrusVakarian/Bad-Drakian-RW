@@ -176,10 +176,9 @@
 	max_integrity = 500
 	color = "#333333"
 
-/obj/structure/bed/rogue/eora/dragon/New()
-	..()
+/obj/structure/bed/rogue/eora/dragon/Initialize(mapload)
+	. = ..()
 	var/matrix/M = matrix()
 	M.Scale(2, 1.5)
-	M.Translate(0, 0)
-	src.transform = M
+	transform = M
 
