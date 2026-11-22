@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Redolent scents display apostrophes and other punctuation correctly, including saved and inherited scents."
+  - bugfix: "Redolent examines no longer add a period after existing sentence punctuation."
