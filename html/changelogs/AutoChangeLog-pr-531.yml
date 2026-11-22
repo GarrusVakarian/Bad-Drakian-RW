@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - rscadd: "Adventurer thieves can now choose to spawn with skimpy, studded leather armor."
