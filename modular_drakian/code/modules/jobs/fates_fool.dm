@@ -203,10 +203,7 @@
 			/obj/item/storage/belt/rogue/leather/black,
 			/obj/item/storage/belt/rogue/leather/cloth,
 	)
-	beltl = pick(/obj/item/storage/belt/rogue/pouch/coins/poor,
-			/obj/item/storage/belt/rogue/pouch/coins/rich,
-			/obj/item/storage/belt/rogue/pouch/coins/mid,
-	)
+	beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
 	if(prob(40))
 		cloak = pick_wearable(H, list(/obj/item/clothing/cloak/raincloak/furcloak,
 				/obj/item/clothing/cloak/half,
@@ -246,13 +243,11 @@
 				/obj/item/clothing/neck/roguetown/coif/padded,
 				/obj/item/clothing/neck/roguetown/bevor/iron,
 				/obj/item/clothing/neck/roguetown/psicross/silver,
-				/obj/item/storage/belt/rogue/pouch/coins/poor,
 		))
 	backl = /obj/item/storage/backpack/rogue/satchel
 	var/backpack_items = list(
 		/obj/item/recipe_book/magic,
 		/obj/item/flashlight/flare/torch/metal,
-		/obj/item/storage/belt/rogue/pouch/coins/poor,
 		/obj/item/rogueweapon/scabbard/sheath,
 		/obj/item/chalk,
 		/obj/item/flashlight/flare/torch/lantern,
