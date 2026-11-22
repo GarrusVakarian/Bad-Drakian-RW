@@ -334,8 +334,39 @@
 		if(inv_item)
 			return inv_item.Click(location, control, params)
 
+	if(slot_id == SLOT_SHOES && usr == hud?.mymob && ishuman(usr))
+		if(handle_racial_footwear_click(usr, params2list(params)))
+			return TRUE
+
 	if(usr.attack_ui(slot_id, params))
 		usr.update_inv_hands()
+	return TRUE
+
+/atom/movable/screen/inventory/proc/handle_racial_footwear_click(mob/living/carbon/human/wearer, list/modifiers)
+	var/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/scales = wearer.skin_armor
+	if(!istype(scales) || QDELETED(scales))
+		return FALSE
+
+	if(modifiers["shift"] && modifiers["left"] && !modifiers["right"] && !modifiers["ctrl"] && !modifiers["alt"])
+		scales.ShiftClick(wearer)
+		return TRUE
+
+	if(!scales.attachment_component)
+		return FALSE
+	var/datum/component/storage/concrete/roguetown/talon_decoration/storage = scales.GetComponent(scales.attachment_component)
+	if(!storage)
+		return FALSE
+	if(modifiers["shift"] && modifiers["right"])
+		storage.rmb_show(wearer)
+		return TRUE
+
+	var/obj/item/decoration = wearer.get_active_held_item()
+	if(!decoration || !modifiers["left"] || modifiers["shift"] || modifiers["ctrl"] || modifiers["alt"])
+		return FALSE
+	if(storage.can_be_inserted(decoration, TRUE, wearer))
+		storage.handle_item_insertion(decoration, FALSE, wearer)
+	else
+		to_chat(wearer, span_warning("Only one pair of anklets or footwraps fits over your talon scales."))
 	return TRUE
 
 /atom/movable/screen/inventory/MouseEntered(location, control, params)

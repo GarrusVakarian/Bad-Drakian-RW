@@ -645,36 +645,42 @@ There are several things that need to be remembered:
 			if(hud_used.inventory_shown)			//if the inventory is open
 				client.screen += shoes					//add it to client's screen
 		update_observer_view(shoes,1)
-		if(dna && dna.species.sexes)
-			var/footindex = get_limbloss_index(LEG_RIGHT, LEG_LEFT)
-			var/racecustom
-			var/mutable_appearance/shoes_overlay
-			racecustom = get_custom_clothing_id()
-			if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
-				shoes_overlay = shoes.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = footindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
-			else
-				shoes_overlay = shoes.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, sleeveindex = footindex, clip_mask = c_mask)
+	var/obj/item/clothing/shoes/decoration = get_talon_decoration()
+	var/obj/item/clothing/shoes/visible_footwear = decoration
+	if(shoes && dna && !(DIGITIGRADE in dna.species.species_traits))
+		visible_footwear = shoes
+	if(visible_footwear && dna && dna.species.sexes)
+		var/footindex = get_limbloss_index(LEG_RIGHT, LEG_LEFT)
+		var/racecustom
+		var/mutable_appearance/shoes_overlay
+		racecustom = get_custom_clothing_id()
+		if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
+			shoes_overlay = visible_footwear.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = footindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
+		else
+			shoes_overlay = visible_footwear.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, sleeveindex = footindex, clip_mask = c_mask)
 
-			if(OFFSET_SHOES in dna.species.offset_features)
-				shoes_overlay.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
-				shoes_overlay.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
-			var/datum/status_effect/tied_laces/laces = has_status_effect(/datum/status_effect/tied_laces)
-			if(laces)
-				overlays_standing[SHOES_LAYER] = list(shoes_overlay, laces.get_overlay())
-			else
-				overlays_standing[SHOES_LAYER] = shoes_overlay
+		if(OFFSET_SHOES in dna.species.offset_features)
+			shoes_overlay.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
+			shoes_overlay.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
+		var/datum/status_effect/tied_laces/laces
+		if(visible_footwear == shoes)
+			laces = has_status_effect(/datum/status_effect/tied_laces)
+		if(laces)
+			overlays_standing[SHOES_LAYER] = list(shoes_overlay, laces.get_overlay())
+		else
+			overlays_standing[SHOES_LAYER] = shoes_overlay
 
-			//add sleeve overlays, then offset
-			var/list/sleeves = list()
-			if(shoes.sleeved && footindex > 0 && !should_hide_sleeves_for_layer(SHOESLEEVE_LAYER))
-				sleeves = get_sleeves_layer(shoes,footindex,SHOESLEEVE_LAYER)
-			if(sleeves)
-				for(var/mutable_appearance/S as anything in sleeves)
-					if(OFFSET_SHOES in dna.species.offset_features)
-						S.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
-						S.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
+		//add sleeve overlays, then offset
+		var/list/sleeves = list()
+		if(visible_footwear.sleeved && footindex > 0 && !should_hide_sleeves_for_layer(SHOESLEEVE_LAYER))
+			sleeves = get_sleeves_layer(visible_footwear,footindex,SHOESLEEVE_LAYER)
+		if(sleeves)
+			for(var/mutable_appearance/S as anything in sleeves)
+				if(OFFSET_SHOES in dna.species.offset_features)
+					S.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
+					S.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
 
-				overlays_standing[SHOESLEEVE_LAYER] = sleeves
+			overlays_standing[SHOESLEEVE_LAYER] = sleeves
 
 	rebuild_obscured_flags()
 	apply_overlay(SHOES_LAYER)

@@ -122,6 +122,84 @@
 	body_parts_inherent = FULL_BODY
 	combat_taggable = TRUE
 
+// Inherent armor uses the virtue's stats and regeneration without occupying clothing slots.
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial
+	slot_flags = null
+	attachment_component = null
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/Initialize(mapload)
+	. = ..()
+	if(ishuman(loc))
+		RegisterSignal(loc, list(COMSIG_SPECIES_ATTACKED_BY, COMSIG_LIVING_ARMOR_CHECKED, COMSIG_MOB_APPLY_DAMGE), PROC_REF(on_attacked_by))
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/Destroy()
+	if(ishuman(loc))
+		var/mob/living/carbon/human/H = loc
+		if(H.skin_armor == src)
+			H.skin_armor = null
+	deltimer(reptimer)
+	return ..()
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/lamia
+	name = "foot scales"
+	desc = "Tough scales protect the feet and mend over time."
+	body_parts_covered = FEET
+	body_parts_inherent = FEET
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
+	name = "talon scales"
+	desc = "Tough scales protect the feet and mend over time."
+	body_parts_covered = FEET
+	body_parts_inherent = FEET
+	attachment_component = /datum/component/storage/concrete/roguetown/talon_decoration
+
+/datum/component/storage/concrete/roguetown/talon_decoration
+	max_items = 1
+	max_w_class = WEIGHT_CLASS_NORMAL
+	screen_max_rows = 2
+	screen_max_columns = 2
+	attack_hand_interact = FALSE
+	intercept_parent_attack = FALSE
+	intercept_parent_mousedrop = FALSE
+	insert_preposition = "onto"
+
+/datum/component/storage/concrete/roguetown/talon_decoration/New(datum/P, ...)
+	. = ..()
+	set_holdable(list(
+		/obj/item/clothing/shoes/roguetown/anklets,
+		/obj/item/clothing/shoes/roguetown/boots/clothlinedanklets,
+		/obj/item/clothing/shoes/roguetown/boots/furlinedanklets,
+		/obj/item/clothing/shoes/roguetown/boots/footwraps,
+	), list(/obj/item/clothing/shoes/roguetown/anklets/baotha))
+
+/datum/component/storage/concrete/roguetown/talon_decoration/can_be_inserted(obj/item/storing, stop_messages, mob/user, worn_check = FALSE, params, storage_click = FALSE)
+	var/obj/item/scales = parent
+	var/mob/living/carbon/human/wearer = scales.loc
+	if(!istype(wearer) || QDELETED(wearer) || wearer != user || wearer.skin_armor != scales || !wearer.get_num_legs(FALSE))
+		return FALSE
+	if(!istype(storing) || length(storing.contents) || storing.GetComponent(/datum/component/storage))
+		return FALSE
+	return ..()
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy/update_icon()
+	. = ..()
+	var/mob/living/carbon/human/wearer = loc
+	if(istype(wearer) && wearer.skin_armor == src && !QDELETED(wearer))
+		wearer.update_inv_shoes()
+
+/obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy/Destroy()
+	var/datum/component/storage/concrete/roguetown/talon_decoration/storage = GetComponent(attachment_component)
+	var/turf/destination = get_turf(src)
+	var/obj/item/clothing/shoes/decoration = locate() in contents
+	if(storage && destination && decoration)
+		storage.remove_from_storage(decoration, destination)
+	return ..()
+
+/mob/living/carbon/human/proc/get_talon_decoration()
+	if(!istype(skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy) || QDELETED(skin_armor) || get_num_legs(FALSE) < 1)
+		return null
+	return locate(/obj/item/clothing/shoes) in skin_armor.contents
+
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/chest/gladiator
 	name = "pit-hardened chest"//pit? hnnnnhhhffgggg
 	desc = "Are you not entertained?!"

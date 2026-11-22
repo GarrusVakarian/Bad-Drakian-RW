@@ -78,6 +78,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	var/toxic_food = TOXIC
 	/// slots the race can't equip stuff to
 	var/list/no_equip = list()
+	/// Regenerating skin for species whose anatomy leaves specific areas unarmored.
+	var/natural_armor_type = null
 	/// this is sorta... weird. it basically lets you equip stuff that usually needs jumpsuits without one, like belts and pockets and ids
 	var/nojumpsuit = 0
 	/// affects the speech message
@@ -594,10 +596,18 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 	SEND_SIGNAL(C, COMSIG_SPECIES_GAIN, src, old_species)
 
+	if(natural_armor_type && ishuman(C))
+		var/mob/living/carbon/human/H = C
+		if(!istype(H.skin_armor, natural_armor_type))
+			QDEL_NULL(H.skin_armor)
+			H.skin_armor = new natural_armor_type(H)
+
 	properly_gained = TRUE
 
 
 /datum/species/proc/on_species_loss(mob/living/carbon/human/C, datum/species/new_species, pref_load)
+	if(natural_armor_type && ishuman(C) && istype(C.skin_armor, natural_armor_type))
+		QDEL_NULL(C.skin_armor)
 	if(C.dna.species.exotic_bloodtype)
 		C.dna.blood_type = random_blood_type()
 	if(DIGITIGRADE in species_traits)
@@ -810,10 +820,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			if( !(I.slot_flags & ITEM_SLOT_SHOES) )
 				return FALSE
 			if(num_legs < 1)
-				return FALSE
-			if(DIGITIGRADE in species_traits)
-				if(!disable_warning)
-					to_chat(H, span_warning("The footwear around here isn't compatible with my feet!"))
 				return FALSE
 			return equip_delay_self_check(I, H, bypass_equip_delay_self)
 		if(SLOT_BELT)
