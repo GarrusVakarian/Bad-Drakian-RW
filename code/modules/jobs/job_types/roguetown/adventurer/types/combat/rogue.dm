@@ -97,20 +97,21 @@
 		/datum/skill/craft/crafting = SKILL_LEVEL_APPRENTICE,
 	)
 
-/datum/outfit/job/roguetown/adventurer/thief/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/adventurer/thief/pre_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	..()
 	to_chat(H, span_warning("You are a scoundrel and a thief. A master in getting into places you shouldn't be and taking things that aren't rightfully yours."))
 
-	var/armor = list("Classic","Skimpy studded leather")
-	var/armor_choice = tgui_input_list(H, "Choose your armor.", "CHOOSE YOUR ARMOR", armor)
+	armor = /obj/item/clothing/suit/roguetown/armor/leather
+	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
+	pants = /obj/item/clothing/under/roguetown/trou/leather
 
-	switch(armor_choice)
-		if("Classic")
-			armor = /obj/item/clothing/suit/roguetown/armor/leather
-			shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
-			pants = /obj/item/clothing/under/roguetown/trou/leather
-		if("Skimpy studded leather")
+	if(!visualsOnly && H.client)
+		var/list/armor_options = list("Classic", "Skimpy studded leather")
+		var/armor_choice = tgui_input_list(H, "Choose your armor.", "CHOOSE YOUR ARMOR", armor_options)
+		if(armor_choice == "Skimpy studded leather")
 			armor = /obj/item/clothing/suit/roguetown/armor/leather/studded/bikini
+			shirt = null
+			pants = null
 
 	backl = /obj/item/storage/backpack/rogue/backpack
 	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow
