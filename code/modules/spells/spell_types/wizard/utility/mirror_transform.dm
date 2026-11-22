@@ -51,12 +51,8 @@
 	var/force_bodypart_update = FALSE
 	var/list/choices = list("reset appearance", "hairstyle", "facial hairstyle", "accessory", "pubes", "pits", "face detail", "crest", "horns", "horn color", "ears", "ear color one", "ear color two", "tail", "tail color one", "tail color two", "tail feature", "tail feature color", "wings", "wing color one", "wing color two", "frills", "frill color", "antennas", "antenna color", "snout", "snout color", "head feature", "head feature color", "neck feature", "neck feature color", "back feature", "back feature color", "descriptors", "hair color", "facial hair color", "eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3", "natural gradient", "natural gradient color", "dye gradient", "dye gradient color", "penis", "penis color", "penis color 2", "testicles", "testicles color", "breasts", "breasts color", "vagina", "vagina color", "breast size", "penis size", "testicle size")
 	if(session)
-		// Keep the quirk menu limited to the options with session validation.
+		// Instant Transform only changes genital and chest anatomy.
 		choices = list(
-			"hairstyle", "hair color", "facial hairstyle", "facial hair color",
-			"natural gradient", "natural gradient color", "dye gradient", "dye gradient color",
-			"eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3",
-			"accessory", "face detail", "descriptors",
 			"penis", "penis size", "testicles", "testicle size", "vagina", "breasts", "breast size",
 		)
 	var/chosen = input(H, "Change what?", "Appearance") as null|anything in choices
@@ -68,7 +64,6 @@
 
 	if(guarded)
 		var/static/list/organ_slots = list(
-			"eye color" = ORGAN_SLOT_EYES,
 			"penis" = ORGAN_SLOT_PENIS,
 			"penis size" = ORGAN_SLOT_PENIS,
 			"testicles" = ORGAN_SLOT_TESTICLES,

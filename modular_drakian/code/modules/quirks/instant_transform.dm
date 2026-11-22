@@ -1,8 +1,8 @@
 /datum/quirk/instant_transform
 	name = "Instant Transform"
-	desc = "I can reshape my appearance with a moment of concentration."
+	desc = "I can reshape my chest and genitals with a moment of concentration."
 	point_cost = 2
-	custom_text = "Grants Instant Transform. Edit your appearance and anatomy without a mirror."
+	custom_text = "Grants Instant Transform. Change chest and genital types and sizes without a mirror."
 
 /datum/quirk/instant_transform/apply_to_human(mob/living/carbon/human/recipient)
 	var/spell_type = /obj/effect/proc_holder/spell/self/instant_transform
@@ -18,7 +18,7 @@
 
 /obj/effect/proc_holder/spell/self/instant_transform
 	name = "Instant Transform"
-	desc = "Change your appearance without a mirror."
+	desc = "Change your chest and genitals without a mirror."
 	human_req = TRUE
 	clothes_req = FALSE
 	invocations = list("Effingo")
