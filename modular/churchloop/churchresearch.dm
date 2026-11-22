@@ -50,7 +50,6 @@
 	var/unlocked_research_noc_secrets = FALSE
 	var/unlocked_research_pestra_fleshcraft = FALSE
 	var/unlocked_research_malum_craft = FALSE
-	var/unlocked_research_zizo_forbidden = FALSE
 
 	var/list/patron_relations = null
 	var/list/quest_ui_entries = null
@@ -473,8 +472,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 /proc/_can_access_miracle_research(mob/living/carbon/human/H, study)
 	if(!istype(H) || !H.patron)
 		return FALSE
-	if(study == "zizo")
-		return istype(H.patron, /datum/patron/inhumen)
 	if(study in list("noc", "pestra", "malum"))
 		return istype(H.patron, /datum/patron/divine)
 	return FALSE
@@ -507,13 +504,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 		if(_can_access_miracle_patron(H, owner_name))
 			allowed_owners += owner_name
 	return allowed_owners
-
-/proc/_shunned_relations_unlocked(mob/living/carbon/human/H)
-	if(!H || !istype(H.patron, /datum/patron/inhumen))
-		return FALSE
-	if(_is_churchling(H))
-		return TRUE
-	return !!H.unlocked_research_zizo_forbidden
 
 /proc/_update_reroll_charges(mob/living/carbon/human/H)
 	if(!H)
@@ -587,7 +577,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	overlay_state = "startmiracle"
 
 	var/current_research_tab = "pestra"
-	var/current_rel_tab = "ten"
 	var/current_learn_tab = "none"
 	var/current_pestra_tier = "t1"
 
@@ -609,7 +598,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	if(length(my_patron))
 		H.patron_relations[my_patron] = _is_keeper(H) ? 3 : 4
 
-	if(_shunned_relations_unlocked(H) || _is_inhumen_patron_name(my_patron))
+	if(istype(H.patron, /datum/patron/inhumen))
 		build_inhumen_patrons_index()
 		for(var/n2 in inhumen_patrons_index)
 			if(!(n2 in H.patron_relations))
@@ -674,10 +663,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			continue
 
 		for(var/owner_name in owners)
-			if(_is_inhumen_patron_name(owner_name))
-				if(!_shunned_relations_unlocked(H) && owner_name != my_patron)
-					continue
-
 			var/owner_rel = 0
 			if(owner_name == my_patron)
 				owner_rel = 4
@@ -720,7 +705,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 	var/list/buckets = _build_learn_buckets(H)
 	var/my_patron = _get_human_patron_name(H)
-	var/show_shunned_tabs = !istype(H.patron, /datum/patron/divine) && (_shunned_relations_unlocked(H) || _is_inhumen_patron_name(my_patron))
+	var/show_shunned_tabs = istype(H.patron, /datum/patron/inhumen)
 	if(!show_shunned_tabs && _is_inhumen_patron_name(src.current_learn_tab))
 		src.current_learn_tab = "none"
 
@@ -900,16 +885,9 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	build_inhumen_patrons_index()
 
 	var/can_research_ten = _can_access_miracle_research(H, "pestra")
-	var/can_research_inhumen = _can_access_miracle_research(H, "zizo")
-	if(!_can_access_miracle_research(H, src.current_research_tab))
-		src.current_research_tab = can_research_ten ? "pestra" : "zizo"
-	if(!can_research_ten && src.current_rel_tab == "ten")
-		src.current_rel_tab = "shunned"
-	if(!can_research_inhumen)
-		if(src.current_research_tab == "zizo")
-			src.current_research_tab = "pestra"
-		if(src.current_rel_tab == "shunned")
-			src.current_rel_tab = "ten"
+	var/is_ascendant = istype(H.patron, /datum/patron/inhumen)
+	if(src.current_research_tab != "pestra" && src.current_research_tab != "malum")
+		src.current_research_tab = "pestra"
 
 	var/html = "<center><h3>Research</h3></center><hr>"
 	html += "<b>Favor:</b> [H.church_favor]<br>"
@@ -929,10 +907,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	else
 		html += "<span style='color:#7f8c8d'>Only clergy may buy RP/MP.</span><br>"
 
-	html += "<hr><b>Studies</b><br>"
-	html += "<table width='100%' cellspacing='2' cellpadding='2'>"
-	html += "<tr><th align='left'>Study</th><th width='120'>Status</th><th width='220'>Action</th></tr>"
-
 	/* html += "<tr><td>Secrets of Noc</td><td>[status_yn(H.unlocked_research_noc_secrets)]</td><td align='center'>"
 	if(!H.unlocked_research_noc_secrets)
 		if(H.church_favor >= RESEARCH_UNLOCK_FAVOR)
@@ -944,6 +918,9 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 	html += "</td></tr>" */
 
 	if(can_research_ten)
+		html += "<hr><b>Studies</b><br>"
+		html += "<table width='100%' cellspacing='2' cellpadding='2'>"
+		html += "<tr><th align='left'>Study</th><th width='120'>Status</th><th width='220'>Action</th></tr>"
 		html += "<tr><td>Fleshcraft of Pestra</td><td>[status_yn(H.unlocked_research_pestra_fleshcraft)]</td><td align='center'>"
 		if(!H.unlocked_research_pestra_fleshcraft)
 			if(H.church_favor >= RESEARCH_UNLOCK_FAVOR)
@@ -964,30 +941,14 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			html += "<span style='color:#7f8c8d'>Unlocked</span>"
 		html += "</td></tr>"
 
-	if(can_research_inhumen)
-		html += "<tr><td>Forbidden Knowledges of Zizo</td><td>[status_yn(H.unlocked_research_zizo_forbidden)]</td><td align='center'>"
-		if(!H.unlocked_research_zizo_forbidden)
-			if(H.church_favor >= RESEARCH_UNLOCK_FAVOR)
-				html += "<a href='?src=[REF(src)];unlockresearch=zizo'>Unlock ([RESEARCH_UNLOCK_FAVOR] Favor)</a>"
-			else
-				html += "<span style='color:#7f8c8d'>Unlock ([RESEARCH_UNLOCK_FAVOR] Favor)</span>"
-		else
-			html += "<span style='color:#7f8c8d'>Unlocked</span>"
-		html += "</td></tr>"
-
-	html += "</table><hr>"
-
-	var/list/rnav = list()
-	if(can_research_ten)
+		html += "</table><hr>"
+		var/list/rnav = list()
 		rnav += (src.current_research_tab == "pestra") ? "<b>Fleshcraft of Pestra</b>" : "<a href='?src=[REF(src)];researchtab=pestra'>Fleshcraft of Pestra</a>"
 		rnav += (src.current_research_tab == "malum") ? "<b>Craft of Malum</b>" : "<a href='?src=[REF(src)];researchtab=malum'>Craft of Malum</a>"
+		html += jointext(rnav, " | ")
+		html += "<hr>"
 
-	if(can_research_inhumen)
-		rnav += (src.current_research_tab == "zizo") ? "<b>Forbidden Knowledges of Zizo</b>" : "<a href='?src=[REF(src)];researchtab=zizo'>Forbidden Knowledges of Zizo</a>"
-	html += jointext(rnav, " | ")
-	html += "<hr>"
-
-	if(src.current_research_tab == "pestra")
+	if(can_research_ten && src.current_research_tab == "pestra")
 		html += "<b>Fleshcraft of Pestra</b><br>"
 		html += "Status: [status_yn(H.unlocked_research_pestra_fleshcraft)]<br><br>"
 
@@ -1017,7 +978,7 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 			html += "</table>"
 
-	else if(src.current_research_tab == "malum")
+	else if(can_research_ten && src.current_research_tab == "malum")
 		html += "<b>Craft of Malum</b><br>"
 		html += "Status: [status_yn(H.unlocked_research_malum_craft)]<br><br>"
 
@@ -1059,33 +1020,11 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 
 			html += "</table>"
 
-	else if(src.current_research_tab == "zizo")
-		html += "<b>Forbidden Knowledges of Zizo</b><br>"
-		html += "Status: [status_yn(H.unlocked_research_zizo_forbidden)]<br><br>"
-
-		if(!H.unlocked_research_zizo_forbidden)
-			html += "<span style='color:#7f8c8d'>Unlock this study above.</span>"
-		else
-			html += "<span style='color:#2ecc71'>Shunned relations are unlocked.</span>"
-
-	html += "<hr>"
-
-	var/list/nav_bits = list()
-	if(can_research_ten)
-		nav_bits += (src.current_rel_tab == "ten") ? "<b>Ten</b>" : "<a href='?src=[REF(src)];reltab=ten'>Ten</a>"
-	if(_shunned_relations_unlocked(H))
-		nav_bits += (src.current_rel_tab == "shunned") ? "<b>Shunned</b>" : "<a href='?src=[REF(src)];reltab=shunned'>Shunned</a>"
-	else if(can_research_inhumen)
-		nav_bits += "<span style='color:#7f8c8d'>Shunned</span>"
-
-	html += jointext(nav_bits, " | ")
-	html += "<br><br>"
-
-
 	var/rel_cap = _miracle_learning_tier_limit(H)
 
-	if(src.current_rel_tab == "ten" || (src.current_rel_tab == "shunned" && _shunned_relations_unlocked(H)))
-		var/list/idx = (src.current_rel_tab == "shunned") ? inhumen_patrons_index : divine_patrons_index
+	if(can_research_ten || is_ascendant)
+		html += is_ascendant ? "<hr><b>Ascendant Relations</b><br>" : "<hr><b>Relations with the Ten</b><br>"
+		var/list/idx = is_ascendant ? inhumen_patrons_index : divine_patrons_index
 		if(idx && idx.len)
 			html += "<table width='100%' cellspacing='2' cellpadding='2'>"
 			html += "<tr><th align='left'>Patron</th><th>Domain</th><th width='80'>Level</th><th width='220'>Action</th></tr>"
@@ -1270,15 +1209,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 		open_research_ui(H)
 		return
 
-	if(href_list["reltab"])
-		var/tb = lowertext(href_list["reltab"])
-		if(tb == "ten" && _can_access_miracle_research(H, "pestra"))
-			src.current_rel_tab = "ten"
-		else if(tb == "shunned" && _shunned_relations_unlocked(H))
-			src.current_rel_tab = "shunned"
-		open_research_ui(H)
-		return
-
 	if(href_list["learntab"])
 		var/tb2 = href_list["learntab"]
 		if(tb2 == "none")
@@ -1287,21 +1217,8 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			if(H.unlocked_research_noc_secrets && _can_access_miracle_research(H, "noc"))
 				src.current_learn_tab = "noc_secrets"
 		else
-			build_divine_patrons_index()
-			build_inhumen_patrons_index()
-
-			var/allowed_tab = FALSE
 			var/my_patron2 = _get_human_patron_name(H)
-
-			if(tb2 in divine_patrons_index)
-				allowed_tab = TRUE
-			else if(tb2 in inhumen_patrons_index)
-				if(!istype(H.patron, /datum/patron/divine) && (_shunned_relations_unlocked(H) || tb2 == my_patron2))
-					allowed_tab = TRUE
-
-			if(tb2 == my_patron2 && istype(H.patron, /datum/patron/old_god))
-				allowed_tab = TRUE
-			if(allowed_tab && _can_access_miracle_patron(H, tb2))
+			if(_can_access_miracle_patron(H, tb2))
 				var/relv = 0
 				if(H.patron_relations && (tb2 in H.patron_relations))
 					relv = H.patron_relations[tb2]
@@ -1342,14 +1259,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 			H.unlocked_research_pestra_fleshcraft = TRUE
 		else if(which == "malum")
 			H.unlocked_research_malum_craft = TRUE
-		else if(which == "zizo")
-			H.unlocked_research_zizo_forbidden = TRUE
-			build_inhumen_patrons_index()
-			if(!islist(H.patron_relations))
-				H.patron_relations = list()
-			for(var/n in inhumen_patrons_index)
-				if(!(n in H.patron_relations))
-					H.patron_relations[n] = 0
 		else
 			open_research_ui(H)
 			return
@@ -1518,10 +1427,6 @@ var/global/list/NOC_SECRET_MIRACLES = list(
 		build_inhumen_patrons_index()
 
 		if(!_can_access_miracle_patron(H, god))
-			open_research_ui(H)
-			return
-
-		if((god in inhumen_patrons_index) && !_shunned_relations_unlocked(H))
 			open_research_ui(H)
 			return
 
