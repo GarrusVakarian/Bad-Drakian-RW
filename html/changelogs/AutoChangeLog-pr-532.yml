@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Hypnotic suggestions strip speech formatting markers while keeping their purple styling."

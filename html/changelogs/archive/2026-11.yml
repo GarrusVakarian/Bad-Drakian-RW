@@ -789,3 +789,10 @@
       correctly.
   - rscadd: High Milk Production is a free quirk that lets you choose your effective
       chest size for milk storage and release without changing your appearance.
+  - bugfix: Humanoid NPCs check for pain collapse on the player schedule and skip
+      wound scans during the cooldown.
+  - bugfix: The lobby ready list shows Gnoll names for players readied as Gnolls.
+  - rscadd: (SatinIsle) Added Open ERP panel under IC to choose yourself or a nearby
+      player.
+  - bugfix: Hypnotic suggestions strip speech formatting markers while keeping their
+      purple styling.
