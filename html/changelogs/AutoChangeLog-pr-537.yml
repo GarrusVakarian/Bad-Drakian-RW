@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Humanoid NPCs check for pain collapse on the player schedule and skip wound scans during the cooldown."
