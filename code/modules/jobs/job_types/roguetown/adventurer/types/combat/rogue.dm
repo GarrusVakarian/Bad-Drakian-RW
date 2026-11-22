@@ -100,11 +100,20 @@
 /datum/outfit/job/roguetown/adventurer/thief/pre_equip(mob/living/carbon/human/H)
 	..()
 	to_chat(H, span_warning("You are a scoundrel and a thief. A master in getting into places you shouldn't be and taking things that aren't rightfully yours."))
-	armor = /obj/item/clothing/suit/roguetown/armor/leather
-	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
+
+	var/armor = list("Classic","Skimpy studded leather")
+	var/armor_choice = tgui_input_list(H, "Choose your armor.", "CHOOSE YOUR ARMOR", armor)
+
+	switch(armor_choice)
+		if("Classic")
+			armor = /obj/item/clothing/suit/roguetown/armor/leather
+			shirt = /obj/item/clothing/suit/roguetown/armor/gambeson
+			pants = /obj/item/clothing/under/roguetown/trou/leather
+		if("Skimpy studded leather")
+			armor = /obj/item/clothing/suit/roguetown/armor/leather/studded/bikini
+
 	backl = /obj/item/storage/backpack/rogue/backpack
 	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow
-	pants = /obj/item/clothing/under/roguetown/trou/leather
 	shoes = /obj/item/clothing/shoes/roguetown/boots
 	neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
