@@ -584,6 +584,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/mob/living/carbon/human/humanc
 	if(ishuman(character))
 		humanc = character	//Let's retypecast the var to be human,
+		SSgamemode.try_assign_latejoin_werewolf(humanc, job)
 /*
 	if(humanc)	//These procs all expect humans
 		GLOB.data_core.manifest_inject(humanc)
