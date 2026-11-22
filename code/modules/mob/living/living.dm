@@ -1127,9 +1127,32 @@
 	else
 		stop_pulling()
 
+/// Repair a broken incoming pull before it can block client movement.
+/mob/living/proc/recover_stale_pull()
+	var/mob/puller = pulledby
+	if(!puller || puller == src)
+		return
+
+	if(!QDELETED(puller) && puller.pulling == src)
+		var/turf/our_turf = get_turf(src)
+		var/turf/puller_turf = get_turf(puller)
+		// A buckled rider can briefly be on a different floor from their carrier.
+		if(our_turf && puller_turf && (our_turf.z == puller_turf.z || buckled == puller))
+			return
+		puller.stop_pulling()
+
+	// The normal release may already have cleared this grip.
+	if(pulledby == puller)
+		pulledby = null
+		if(mob_offsets["pulledby"])
+			reset_offsets("pulledby")
+			if(!is_shifted && !buckled)
+				layer = MOB_LAYER
+		update_mobility()
+
 /mob/living/stop_pulling(forced = TRUE)
 	if(pulling)
-		if(ismob(pulling))
+		if(ismob(pulling) && pulling.pulledby == src)
 			var/mob/living/M = pulling
 			M.reset_offsets("pulledby")
 			if(!M.is_shifted)

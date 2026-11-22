@@ -198,16 +198,18 @@
 	if(pulling)
 		testing("stoppull2")
 		if(pulling != src)
-			pulling.pulledby = null
-			var/mob/living/ex_pulled = pulling
+			var/atom/movable/ex_pulled = pulling
 			pulling = null
-			if(isliving(ex_pulled))
-				var/mob/living/L = ex_pulled
-				L.update_mobility()// mob gets up if it was lyng down in a chokehold
-				if(ex_pulled.hud_used)
-					var/atom/movable/screen/inventory/hand/H = ex_pulled.hud_used.hand_slots["[ex_pulled.active_hand_index]"]
-					if(H)
-						H.update_icon()
+			// Releasing an old hold must not clear the victim's newer puller.
+			if(ex_pulled.pulledby == src)
+				ex_pulled.pulledby = null
+				if(isliving(ex_pulled))
+					var/mob/living/L = ex_pulled
+					L.update_mobility()
+					if(L.hud_used)
+						var/atom/movable/screen/inventory/hand/H = L.hud_used.hand_slots["[L.active_hand_index]"]
+						if(H)
+							H.update_icon()
 	setGrabState(0)
 
 /atom/movable/proc/Move_Pulled(atom/A)
