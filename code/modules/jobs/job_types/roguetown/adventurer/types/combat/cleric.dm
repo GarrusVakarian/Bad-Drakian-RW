@@ -77,7 +77,10 @@
 		if(/datum/patron/inhumen/baotha)
 			backpack_contents[/obj/item/clothing/neck/roguetown/psicross/inhumen/baotha] = 1
 
+	if(H.mind && !choose_miracle_doctrine(H, "Monk Doctrine"))
+		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.miracle_learning_tier_limit = CLERIC_T1
 	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_DEVOTEE, devotion_limit = CLERIC_REQ_1)
 
 	if(H.mind)
@@ -329,7 +332,7 @@
 			ADD_TRAIT(H, TRAIT_HERESIARCH, TRAIT_GENERIC)
 
 	H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
-	if(H.mind && !choose_doctrine(H))
+	if(H.mind && !istype(H.patron, /datum/patron/old_god) && !choose_miracle_doctrine(H, "Paladin Doctrine"))
 		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.miracle_learning_tier_limit = CLERIC_T1
@@ -427,19 +430,16 @@
 			r_hand = /obj/item/rogueweapon/stoneaxe/woodcut
 	H.set_blindness(0)
 
-/datum/outfit/job/roguetown/adventurer/paladin/proc/choose_doctrine(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/adventurer/proc/choose_miracle_doctrine(mob/living/carbon/human/H, doctrine_title)
 	if(!istype(H) || QDELETED(H) || !H.mind || !H.patron)
 		return FALSE
-	// Psydonites keep their denomination-based miracle progression.
-	if(istype(H.patron, /datum/patron/old_god))
-		return TRUE
 	// Clientless characters keep the existing automatic miracle path.
 	if(!H.client)
 		return TRUE
 	var/client/setup_client = H.client
 	var/datum/mind/setup_mind = H.mind
 	var/datum/patron/setup_patron = H.patron
-	var/choice = alert(H, "Choose Orthodox for your patron's usual miracles, or Eclectic to learn miracles through research. Your Paladin tier limit still applies.", "Paladin Doctrine", "Orthodox", "Eclectic")
+	var/choice = alert(H, "Choose Orthodox for your patron's usual miracles, or Eclectic to learn miracles through research. Your class's miracle tier limit still applies.", doctrine_title, "Orthodox", "Eclectic")
 	if(QDELETED(H) || H.client != setup_client || H.mind != setup_mind || H.patron != setup_patron)
 		return FALSE
 	if(choice == "Eclectic")
@@ -733,7 +733,10 @@
 			H.cmode_music = 'sound/music/combat_baotha.ogg'
 			ADD_TRAIT(H, TRAIT_HERESIARCH, TRAIT_GENERIC)
 
+	if(H.mind && !choose_miracle_doctrine(H, "Missionary Doctrine"))
+		return
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
+	C.miracle_learning_tier_limit = CLERIC_T4
 	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, devotion_limit = CLERIC_REQ_3)//Only T4 NOT to start maxed, with a devotion cap.
 	C.update_devotion(C.max_devotion / 4 - 50, C.max_devotion / 4 - 50, silent = TRUE) // Start at ~25% of devotion cap
 	if(H.mind)

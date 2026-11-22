@@ -1275,6 +1275,8 @@
 		var/heretic_text = get_heretic_text(user)
 		if(heretic_text)
 			. += span_notice(heretic_text)
+		if(user != src && HAS_TRAIT(user, TRAIT_CLERGYRADICAL) && HAS_TRAIT(src, TRAIT_CLERGYRADICAL))
+			. += span_notice("A fellow Eclectic. I recognize the signs.")
 		var/inquisition_text = get_inquisition_text(user)
 		if(inquisition_text)
 			. +=span_notice(inquisition_text)
