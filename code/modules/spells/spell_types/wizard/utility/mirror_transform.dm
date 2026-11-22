@@ -42,16 +42,27 @@
 		REMOVE_TRAIT(H, TRAIT_MIRROR_MAGIC, TRAIT_GENERIC)
 		to_chat(H, span_warning("Your connection to mirrors fades away."))
 
-/proc/perform_mirror_transform(mob/living/carbon/human/H)
+/proc/perform_mirror_transform(mob/living/carbon/human/H, datum/instant_transform_session/session)
 	// Handles the actual appearance changing part of the spell. For reasons unknown to man, this previously lived exclusively on the mirror object.
-	if (!H)
+	var/guarded = !isnull(session)
+	if(!H || (guarded && (QDELETED(session) || !session.is_valid(H))))
 		return
 	var/should_update = FALSE
 	var/force_bodypart_update = FALSE
 	var/list/choices = list("reset appearance", "hairstyle", "facial hairstyle", "accessory", "pubes", "pits", "face detail", "crest", "horns", "horn color", "ears", "ear color one", "ear color two", "tail", "tail color one", "tail color two", "tail feature", "tail feature color", "wings", "wing color one", "wing color two", "frills", "frill color", "antennas", "antenna color", "snout", "snout color", "head feature", "head feature color", "neck feature", "neck feature color", "back feature", "back feature color", "descriptors", "hair color", "facial hair color", "eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3", "natural gradient", "natural gradient color", "dye gradient", "dye gradient color", "penis", "penis color", "penis color 2", "testicles", "testicles color", "breasts", "breasts color", "vagina", "vagina color", "breast size", "penis size", "testicle size")
+	if(session)
+		// This quirk edits cosmetics without resetting preferences or changing anatomy.
+		choices = list(
+			"hairstyle", "hair color", "facial hairstyle", "facial hair color",
+			"natural gradient", "natural gradient color", "dye gradient", "dye gradient color",
+			"eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3",
+			"accessory", "face detail", "descriptors",
+		)
 	var/chosen = input(H, "Change what?", "Appearance") as null|anything in choices
+	if(guarded && (QDELETED(session) || !session.is_valid(H)))
+		return
 
-	if(!chosen)
+	if(!(chosen in choices))
 		return
 
 	switch(chosen)
@@ -109,6 +120,8 @@
 				valid_hairstyles[hair.name] = hair_type
 
 			var/new_style = input(H, "Choose your hairstyle", "Hair Styling") as null|anything in valid_hairstyles
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -141,6 +154,8 @@
 
 		if("hair color")
 			var/new_hair_color = color_pick_sanitized(H, "Choose your hair color", "Hair Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_hair_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -175,6 +190,8 @@
 
 		if("facial hair color")
 			var/new_facial_hair_color = color_pick_sanitized(H, "Choose your facial hair color", "Facial Hair Color", H.facial_hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_facial_hair_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -203,6 +220,8 @@
 
 		if("eye color")
 			var/new_eye_color = color_pick_sanitized(H, "Choose your eye color", "Eye Color", H.eye_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_eye_color)
 				new_eye_color = sanitize_hexcolor(new_eye_color, 6, TRUE)
 				var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
@@ -218,6 +237,8 @@
 
 		if("skin color")
 			var/new_color = color_pick_sanitized(H, "Choose your skin color", "Skin Color", H.skin_tone)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.skin_tone = new_color
 				H.update_body()
@@ -225,6 +246,8 @@
 
 		if("mutant color")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color", "Mutant Color", H.dna.features["mcolor"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor"] = new_color
 				H.update_body()
@@ -232,6 +255,8 @@
 
 		if("mutant color 2")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color 2", "Mutant Color 2", H.dna.features["mcolor2"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor2"] = new_color
 				H.update_body()
@@ -239,6 +264,8 @@
 
 		if("mutant color 3")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color 3", "Mutant Color 3", H.dna.features["mcolor3"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor3"] = new_color
 				H.update_body()
@@ -251,6 +278,8 @@
 				valid_gradients[gradient_type] = gradient_type
 
 			var/new_style = input(H, "Choose your natural gradient", "Hair Gradient") as null|anything in valid_gradients
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -278,6 +307,8 @@
 
 		if("natural gradient color")
 			var/new_gradient_color = color_pick_sanitized(H, "Choose your natural gradient color", "Natural Gradient Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_gradient_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -313,6 +344,8 @@
 				valid_gradients[gradient_type] = gradient_type
 
 			var/new_style = input(H, "Choose your dye gradient", "Hair Gradient") as null|anything in valid_gradients
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -340,6 +373,8 @@
 
 		if("dye gradient color")
 			var/new_gradient_color = color_pick_sanitized(H, "Choose your dye gradient color", "Dye Gradient Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_gradient_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -376,6 +411,8 @@
 				valid_facial_hairstyles[facial.name] = facial_type
 
 			var/new_style = input(H, "Choose your facial hairstyle", "Hair Styling") as null|anything in valid_facial_hairstyles
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -409,6 +446,8 @@
 				valid_accessories[acc.name] = accessory_type
 
 			var/new_style = input(H, "Choose your accessory", "Accessory Styling") as null|anything in valid_accessories
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -432,6 +471,8 @@
 				valid_details[detail.name] = detail_type
 
 			var/new_detail = input(H, "Choose your face detail", "Face Detail") as null|anything in valid_details
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_detail)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -1373,6 +1414,8 @@
 				descriptor_categories[choice.name] = choice_type
 			
 			var/chosen_category = input(H, "Which descriptor category?", "Descriptor Category") as null|anything in descriptor_categories
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(!chosen_category)
 				return
 			
@@ -1387,6 +1430,8 @@
 				descriptor_options[desc.name] = desc_type
 			
 			var/chosen_descriptor_name = input(H, "Choose your [chosen_category]", "[chosen_category] Selection") as null|anything in descriptor_options
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(!chosen_descriptor_name)
 				return
 			
