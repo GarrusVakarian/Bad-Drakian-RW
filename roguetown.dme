@@ -3617,6 +3617,7 @@
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan.dm"
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan_abilities.dm"
 #include "modular_drakian\code\modules\jobs\mercenary\lirvan_gear.dm"
+#include "modular_drakian\code\modules\mob\mob.dm"
 #include "modular_drakian\code\turfs\water.dm"
 #include "modular_hearthstone\code\datums\accents.dm"
 #include "modular_hearthstone\code\game\objects\effects\track.dm"
