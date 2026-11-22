@@ -52,7 +52,7 @@
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Acolyte Doctrine", "Orthodox", "Eclectic")
+	var/choice = alert(H, CLERGY_DOCTRINE_PROMPT, "Acolyte Doctrine", "Orthodox", "Eclectic")
 
 	if(choice == "Eclectic")
 		grant_radical_path(H)

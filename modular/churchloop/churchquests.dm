@@ -511,18 +511,59 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 	if(!HAS_TRAIT(receiver, TRAIT_CLERGYRADICAL))
 		return
 
+	var/patron_group
+	if(istype(receiver.patron, /datum/patron/divine))
+		patron_group = /datum/patron/divine
+	else if(istype(receiver.patron, /datum/patron/inhumen))
+		patron_group = /datum/patron/inhumen
+	else
+		return
+
 	var/shared_favor = round(amount / 3)
 	if(shared_favor < 1)
 		return
 
+	var/patron_label = _eclectic_quest_patron_label(receiver.patron)
 	for(var/mob/living/carbon/human/H as anything in GLOB.human_list)
-		if(H == receiver || QDELETED(H) || !HAS_TRAIT(H, TRAIT_CLERGYRADICAL))
+		if(H == receiver || QDELETED(H) || !HAS_TRAIT(H, TRAIT_CLERGYRADICAL) || !istype(H.patron, patron_group))
 			continue
 		if(H.mind?.current != H || !H.mind.key || ckey(H.mind.key) == owner_ckey)
 			continue
 		H.church_favor += shared_favor
 		if(H.client)
-			to_chat(H, span_notice("A fellow Eclectic completed a quest. I gain [shared_favor] Favor."))
+			to_chat(H, span_notice("[patron_label] Eclectic completed a quest. I gain [shared_favor] Favor."))
+
+/proc/_eclectic_quest_patron_label(datum/patron/patron)
+	switch(patron.type)
+		if(/datum/patron/divine/astrata)
+			return "An Astratan"
+		if(/datum/patron/divine/noc)
+			return "A Noccian"
+		if(/datum/patron/divine/dendor)
+			return "A Dendorite"
+		if(/datum/patron/divine/abyssor)
+			return "An Abyssorite"
+		if(/datum/patron/divine/ravox)
+			return "A Ravoxian"
+		if(/datum/patron/divine/necra)
+			return "A Necran"
+		if(/datum/patron/divine/xylix)
+			return "A Xylixian"
+		if(/datum/patron/divine/pestra)
+			return "A Pestran"
+		if(/datum/patron/divine/malum)
+			return "A Malumite"
+		if(/datum/patron/divine/eora)
+			return "An Eoran"
+		if(/datum/patron/inhumen/zizo)
+			return "A Zizite"
+		if(/datum/patron/inhumen/matthios)
+			return "A Matthiosan"
+		if(/datum/patron/inhumen/graggar)
+			return "A Graggarite"
+		if(/datum/patron/inhumen/baotha)
+			return "A Baothan"
+	return "A fellow"
 
 /obj/item/quest_token/proc/_ensure_attacker(user)
 	if(!istype(user, /mob/living/carbon/human))

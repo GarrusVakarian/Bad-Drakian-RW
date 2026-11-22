@@ -354,6 +354,7 @@
 #define TRAIT_GANG_B "Gang Blortz Volves"
 #define TRAIT_NATURALARMOR "Tough Skin"
 #define TRAIT_CLERGYRADICAL "Eclectic Clergy"
+#define CLERGY_DOCTRINE_PROMPT "How shall I seek the divine?\n\nOrthodox: I follow my patron's teachings and receive their miracles through devotion.\n\nEclectic: I study miracles through research and earn favor by undertaking church quests."
 #define TRAIT_ON_BOAT "on_boat"
 #define TRAIT_OAR "oar"
 #define TRAIT_OAR_PROPELLED "oar_propelled"

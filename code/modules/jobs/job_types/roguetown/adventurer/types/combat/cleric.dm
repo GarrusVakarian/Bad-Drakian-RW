@@ -430,7 +430,7 @@
 			r_hand = /obj/item/rogueweapon/stoneaxe/woodcut
 	H.set_blindness(0)
 
-/datum/outfit/job/roguetown/adventurer/proc/choose_miracle_doctrine(mob/living/carbon/human/H, doctrine_title)
+/datum/outfit/job/roguetown/proc/choose_miracle_doctrine(mob/living/carbon/human/H, doctrine_title)
 	if(!istype(H) || QDELETED(H) || !H.mind || !H.patron)
 		return FALSE
 	// Clientless characters keep the existing automatic miracle path.
@@ -439,7 +439,7 @@
 	var/client/setup_client = H.client
 	var/datum/mind/setup_mind = H.mind
 	var/datum/patron/setup_patron = H.patron
-	var/choice = alert(H, "Choose Orthodox for your patron's usual miracles, or Eclectic to learn miracles through research. Your class's miracle tier limit still applies.", doctrine_title, "Orthodox", "Eclectic")
+	var/choice = alert(H, CLERGY_DOCTRINE_PROMPT, doctrine_title, "Orthodox", "Eclectic")
 	if(QDELETED(H) || H.client != setup_client || H.mind != setup_mind || H.patron != setup_patron)
 		return FALSE
 	if(choice == "Eclectic")
