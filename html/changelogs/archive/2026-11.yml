@@ -787,6 +787,7 @@
   - rscadd: Eligible latejoiners who opt into Werewolf can become one if the Verevolf
       roll picks nobody at roundstart.
   - bugfix: Compliant no longer forces you to yield to your own spoken commands.
+  - bugfix: Removed duplicate character customization options.
   mypingishuge:
   - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
       correctly.
