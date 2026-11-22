@@ -172,6 +172,9 @@
 		mob.used_intent = mob.mmb_intent
 		if(mob.used_intent.type == INTENT_SPELL && mob.ranged_ability)
 			var/obj/effect/proc_holder/spell/S = mob.ranged_ability
+			// Mouse-up handles a revival rite's self-target as private instructions.
+			if(object == mob && istype(S, /obj/effect/proc_holder/spell/invoked/revival_rite))
+				return
 			if(!S.cast_check(TRUE, mob))
 				return
 

@@ -228,10 +228,9 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/graggar
 	name = "Blood for Graggar"
-	desc = "You cannot dominate the dead. Place one extracted pair of eyes of any kind on the floor on or next to the corpse, \
-	with a placed vicious cross or revered vicious cross on the corpse's tile or an adjacent tile. \
-	No amulet is required. Grant them the chance to fight again... for a price. Their intelligence will be drained \
-	for some time, or until they slay an orcish challenger from His realm."
+	desc = "You cannot dominate the dead. Offer a pair of eyes at a vicious cross and grant the fallen the chance to fight again. Their intelligence is drained for a time, or until they slay an orcish challenger from His realm.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	ritual_site_name = "a vicious cross or revered vicious cross"
+	ritual_offering_note = "An extracted pair of eyes from any race works."
 	req_items = list()
 	debuff_type = /datum/status_effect/debuff/graggar_challenge
 	alt_required_items = list(/obj/item/organ/eyes = 1) //Easiest organ to obtain - everyone has eyes. Let's not make it hard.

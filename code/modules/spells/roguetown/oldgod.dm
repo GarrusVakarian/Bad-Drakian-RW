@@ -328,7 +328,7 @@
 	overlay_icon = 'icons/mob/actions/psydonmiracles.dmi'
 	action_icon = 'icons/mob/actions/psydonmiracles.dmi'
 	overlay_state = "ABSOLVE"
-	desc = "Absolve the target, taking their damage as your own, potentially even shouldering their death at the cost of your Lyfe."
+	desc = "Take another’s wounds upon yourself. To bring back the dead, stand beside the corpse and confirm the sacrifice. If they accept, you give your lyfe for theirs."
 	releasedrain = 20
 	chargedrain = 0
 	chargetime = 0

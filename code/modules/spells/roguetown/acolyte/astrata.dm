@@ -33,8 +33,11 @@
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/revive
+	parent_type = /obj/effect/proc_holder/spell/invoked/revival_rite
+	structure_range = 5
+	ritual_site_near_caster = TRUE
 	name = "Anastasis"
-	desc = "Focus Astratas energy though a stationary psycross, reviving the target from death."
+	desc = "By Astrata’s light, call the dead back to life. Raise them in sight of a placed cross. They return weakened for a time.<br><b>Cast on yourself to see where to perform the rite and what to carry.</b>"
 	overlay_icon = 'icons/mob/actions/astratamiracles.dmi'
 	action_icon = 'icons/mob/actions/astratamiracles.dmi'
 	overlay_state = "resurrect"
@@ -142,11 +145,8 @@
 /obj/effect/proc_holder/spell/invoked/revive/cast_check(skipcharge,mob/user = usr)
 	if(!..())
 		return FALSE
-	var/found = null
-	for(var/obj/structure/fluff/psycross/S in oview(5, user))
-		found = S
-	if(!found)
-		to_chat(user, span_warning("I need a holy cross."))
+	if(!find_ritual_site(user))
+		to_chat(user, span_warning("I need a placed cross in sight within [structure_range] tiles of me."))
 		return FALSE
 	return TRUE
 
