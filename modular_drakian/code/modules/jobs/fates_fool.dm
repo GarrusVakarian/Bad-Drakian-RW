@@ -10,14 +10,34 @@
 	townie_contract_gate_exempt = TRUE
 	townie_contract_gate_hide_in_list = TRUE
 
+/datum/outfit/job/roguetown/adventurer/fates_fool
+	// Keep all rollable combat skills here, including skills that don't use a weapon.
+	var/static/list/combat_weapons = list(
+		/datum/skill/combat/knives = list(/obj/item/rogueweapon/huntingknife, /obj/item/rogueweapon/huntingknife/idagger/steel),
+		/datum/skill/combat/swords = list(/obj/item/rogueweapon/sword/short/iron, /obj/item/rogueweapon/sword/sabre),
+		/datum/skill/combat/polearms = list(/obj/item/rogueweapon/spear/billhook, /obj/item/rogueweapon/eaglebeak/lucerne),
+		/datum/skill/combat/maces = list(/obj/item/rogueweapon/mace/cudgel, /obj/item/rogueweapon/mace/warhammer),
+		/datum/skill/combat/axes = list(/obj/item/rogueweapon/stoneaxe/battle, /obj/item/rogueweapon/greataxe),
+		/datum/skill/combat/whipsflails = list(/obj/item/rogueweapon/whip, /obj/item/rogueweapon/flail),
+		/datum/skill/combat/bows = list(/obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve),
+		/datum/skill/combat/crossbows = list(/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow),
+		/datum/skill/combat/firearms = list(/obj/item/gun/ballistic/firearm/handgonne),
+		/datum/skill/combat/wrestling = null,
+		/datum/skill/combat/unarmed = list(/obj/item/rogueweapon/knuckles, /obj/item/rogueweapon/katar/bronze),
+		/datum/skill/combat/shields = list(/obj/item/rogueweapon/shield/iron, /obj/item/rogueweapon/shield/wood),
+		/datum/skill/combat/slings = list(/obj/item/gun/ballistic/revolver/grenadelauncher/sling),
+	)
+
 /datum/outfit/job/roguetown/adventurer/fates_fool/pre_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	..()
 	if(QDELETED(H))
 		return
-	roll_equipment()
+	if(!visualsOnly)
+		roll_character(H)
+	roll_equipment(H)
 	if(visualsOnly)
 		return
-	roll_character(H)
+	roll_weapon(H)
 	to_chat(H, span_warning("Xylix laughs either at or with you, strange person with such unusual skills and tools."))
 	if(H.client)
 		to_chat(H, span_warningbig("Do not leave and respawn as this class to get better rolls, live with what you are given. Admins will be informed if you try."))
@@ -83,22 +103,7 @@
 			var/trait = pick_n_take(available_traits)
 			ADD_TRAIT(H, trait, ADVENTURER_TRAIT)
 
-	var/static/list/combat_skills = list(
-		/datum/skill/combat/knives,
-		/datum/skill/combat/swords,
-		/datum/skill/combat/polearms,
-		/datum/skill/combat/maces,
-		/datum/skill/combat/axes,
-		/datum/skill/combat/whipsflails,
-		/datum/skill/combat/bows,
-		/datum/skill/combat/crossbows,
-		/datum/skill/combat/firearms,
-		/datum/skill/combat/wrestling,
-		/datum/skill/combat/unarmed,
-		/datum/skill/combat/shields,
-		/datum/skill/combat/slings,
-	)
-	for(var/skill in combat_skills)
+	for(var/skill in combat_weapons)
 		if(prob(20))
 			H.adjust_skillrank_up_to(skill, rand(1, 4), TRUE)
 	var/static/list/other_skills = list(
@@ -148,13 +153,13 @@
 		H.adjust_skillrank_up_to(/datum/skill/magic/holy, rand(1, 6), TRUE)
 		D.grant_miracles(H, cleric_tier = rand(1, 4), passive_gain = rand(1, 10) / 10, devotion_limit = rand(250, 1000))
 
-/datum/outfit/job/roguetown/adventurer/fates_fool/proc/roll_equipment()
+/datum/outfit/job/roguetown/adventurer/fates_fool/proc/roll_equipment(mob/living/carbon/human/H)
 	// Reset conditional slots when an outfit datum is reused for another preview or character.
 	for(var/slot in list("shirt", "armor", "pants", "belt", "beltl", "beltr", "cloak", "shoes", "wrists", "gloves", "neck", "backl", "backr", "r_hand", "l_hand", "mask", "head", "mouth"))
 		vars[slot] = null
 
 	if(prob(80))
-		shirt = pick(/obj/item/clothing/suit/roguetown/armor/gambeson,
+		shirt = pick_wearable(H, list(/obj/item/clothing/suit/roguetown/armor/gambeson,
 				/obj/item/clothing/suit/roguetown/shirt/tunic/random,
 				/obj/item/clothing/suit/roguetown/shirt/undershirt/black,
 				/obj/item/clothing/suit/roguetown/armor/chainmail,
@@ -164,9 +169,9 @@
 				/obj/item/clothing/suit/roguetown/shirt/undershirt,
 				/obj/item/clothing/suit/roguetown/shirt/undershirt/eastshirt1,
 				/obj/item/clothing/suit/roguetown/armor/corset,
-		)
+		))
 	if(prob(60))
-		armor = pick(/obj/item/clothing/suit/roguetown/armor/plate/half/iron,
+		armor = pick_wearable(H, list(/obj/item/clothing/suit/roguetown/armor/plate/half/iron,
 				/obj/item/clothing/suit/roguetown/armor/leather,
 				/obj/item/clothing/suit/roguetown/armor/leather/cuirass,
 				/obj/item/clothing/suit/roguetown/armor/leather/hide,
@@ -179,9 +184,9 @@
 				/obj/item/clothing/suit/roguetown/shirt/robe/monk,
 				/obj/item/clothing/suit/roguetown/shirt/dress/silkdress,
 				/obj/item/clothing/suit/roguetown/armor/armordress,
-		)
+		))
 	if(prob(80))
-		pants = pick(/obj/item/clothing/under/roguetown/tights/black,
+		pants = pick_wearable(H, list(/obj/item/clothing/under/roguetown/tights/black,
 				/obj/item/clothing/under/roguetown/chainlegs/iron,
 				/obj/item/clothing/under/roguetown/chainlegs/iron/kilt,
 				/obj/item/clothing/under/roguetown/splintlegs,
@@ -190,7 +195,7 @@
 				/obj/item/clothing/under/roguetown/loincloth,
 				/obj/item/clothing/under/roguetown/heavy_leather_pants,
 				/obj/item/clothing/under/roguetown/skirt/red,
-		)
+		))
 	belt = pick(/obj/item/storage/belt/rogue/leather,
 			/obj/item/storage/belt/rogue/leather/rope,
 			/obj/item/storage/belt/rogue/leather/sash,
@@ -202,70 +207,53 @@
 			/obj/item/storage/belt/rogue/pouch/coins/rich,
 			/obj/item/storage/belt/rogue/pouch/coins/mid,
 	)
-	beltr = pick(/obj/item/rogueweapon/sword/short,
-			/obj/item/rogueweapon/sword,
-			/obj/item/rogueweapon/mace/steel,
-			/obj/item/rogueweapon/flail/sflail,
-			/obj/item/rogueweapon/mace/warhammer,
-			/obj/item/rogueweapon/sword/short/iron,
-			/obj/item/rogueweapon/huntingknife/idagger/steel,
-			/obj/item/rogueweapon/huntingknife,
-			/obj/item/rogueweapon/sword/long,
-			/obj/item/rogueweapon/sword/long/broadsword,
-			/obj/item/rogueweapon/whip,
-			/obj/item/rogueweapon/sword/short/messer/iron,
-			/obj/item/rogueweapon/sword/sabre,
-			/obj/item/rogueweapon/mace/cudgel,
-			/obj/item/rogueweapon/stoneaxe/woodcut,
-	)
 	if(prob(40))
-		cloak = pick(/obj/item/clothing/cloak/raincloak/furcloak,
+		cloak = pick_wearable(H, list(/obj/item/clothing/cloak/raincloak/furcloak,
 				/obj/item/clothing/cloak/half,
 				/obj/item/clothing/cloak/apron,
 				/obj/item/clothing/cloak/poncho,
 				/obj/item/clothing/cloak/tabard,
 				/obj/item/clothing/cloak/cape,
-		)
+		))
 	if(prob(90))
-		shoes = pick(/obj/item/clothing/shoes/roguetown/boots,
+		shoes = pick_wearable(H, list(/obj/item/clothing/shoes/roguetown/boots,
 				/obj/item/clothing/shoes/roguetown/boots/leather/reinforced,
 				/obj/item/clothing/shoes/roguetown/boots/furlinedboots,
 				/obj/item/clothing/shoes/roguetown/boots/armor/iron,
 				/obj/item/clothing/shoes/roguetown/boots/armor,
 				/obj/item/clothing/shoes/roguetown/sandals,
-		)
+		))
 	if(prob(50))
-		wrists = pick(/obj/item/clothing/wrists/roguetown/bracers/iron,
+		wrists = pick_wearable(H, list(/obj/item/clothing/wrists/roguetown/bracers/iron,
 				/obj/item/clothing/wrists/roguetown/splintarms/iron,
 				/obj/item/clothing/wrists/roguetown/bracers/leather,
 				/obj/item/clothing/neck/roguetown/psicross/silver,
 				/obj/item/clothing/neck/roguetown/psicross/naledi,
 				/obj/item/clothing/wrists/roguetown/bracers/cloth/monk,
-		)
+		))
 	if(prob(50))
-		gloves = pick(/obj/item/clothing/gloves/roguetown/angle,
+		gloves = pick_wearable(H, list(/obj/item/clothing/gloves/roguetown/angle,
 				/obj/item/clothing/gloves/roguetown/chain/iron,
 				/obj/item/clothing/gloves/roguetown/fingerless_leather,
 				/obj/item/clothing/gloves/roguetown/leather,
 				/obj/item/clothing/gloves/roguetown/bandages,
 				/obj/item/clothing/gloves/roguetown/bandages/weighted,
-		)
+		))
 	if(prob(40))
-		neck = pick(/obj/item/clothing/neck/roguetown/gorget,
+		neck = pick_wearable(H, list(/obj/item/clothing/neck/roguetown/gorget,
 				/obj/item/clothing/neck/roguetown/chaincoif/iron,
 				/obj/item/clothing/neck/roguetown/coif/heavypadding,
 				/obj/item/clothing/neck/roguetown/coif/padded,
 				/obj/item/clothing/neck/roguetown/bevor/iron,
 				/obj/item/clothing/neck/roguetown/psicross/silver,
 				/obj/item/storage/belt/rogue/pouch/coins/poor,
-		)
+		))
 	backl = /obj/item/storage/backpack/rogue/satchel
 	var/backpack_items = list(
 		/obj/item/recipe_book/magic,
 		/obj/item/flashlight/flare/torch/metal,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
 		/obj/item/rogueweapon/scabbard/sheath,
-		/obj/item/rogueweapon/huntingknife,
 		/obj/item/chalk,
 		/obj/item/flashlight/flare/torch/lantern,
 		/obj/item/lockpickring/mundane,
@@ -276,7 +264,6 @@
 		/obj/item/reagent_containers/glass/bottle/rogue/beer,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot,
 		/obj/item/rope/chain,
-		/obj/item/rogueweapon/huntingknife/scissors,
 		/obj/item/clothing/mask/cigarette/rollie/cannabis,
 		/obj/item/rope,
 	)
@@ -287,77 +274,22 @@
 			backpack_contents[item_path] = 0
 		backpack_contents[item_path]++
 	if(prob(50))
-		backr = pick(/obj/item/rogueweapon/shield/iron,
-				/obj/item/rogueweapon/shield/wood,
-				/obj/item/rogueweapon/sword/long,
-				/obj/item/rogueweapon/sword/long/broadsword/steel,
-				/obj/item/rogueweapon/scabbard/gwstrap,
-				/obj/item/rogueweapon/sword/long/exe,
-				/obj/item/rogueweapon/woodstaff,
-				/obj/item/rogueweapon/shield/tower/metal,
+		backr = pick(/obj/item/rogueweapon/scabbard/gwstrap,
 				/obj/item/rogue/instrument/lute,
-				/obj/item/rogueweapon/shield/bronze,
-				/obj/item/rogueweapon/shovel,
 				/obj/item/flashlight/flare/torch/metal,
-				/obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve,
-				/obj/item/quiver/arrows,
-				/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow,
 				/obj/item/storage/backpack/rogue/satchel,
 		)
-	r_hand = pick(/obj/item/rogueweapon/greatsword/iron,
-			/obj/item/rogueweapon/sword/short,
-			/obj/item/rogueweapon/spear/billhook,
-			/obj/item/rogueweapon/flail/peasantwarflail,
-			/obj/item/rogueweapon/huntingknife/idagger/steel/parrying,
-			/obj/item/rogueweapon/sword/rapier,
-			/obj/item/rogueweapon/sword/sabre,
-			/obj/item/rogueweapon/huntingknife/idagger/steel,
-			/obj/item/rogueweapon/katar/bronze,
-			/obj/item/rogueweapon/whip/bronze,
-			/obj/item/rogueweapon/eaglebeak/lucerne,
-			/obj/item/rogueweapon/greataxe,
-			/obj/item/rogueweapon/mace/steel/silver,
-			/obj/item/rogueweapon/mace/woodclub,
-			/obj/item/rogueweapon/stoneaxe/battle,
-			/obj/item/rogueweapon/scabbard/sword/noble,
-			/obj/item/rogueweapon/woodstaff/quarterstaff/iron,
-	)
-	if(prob(40))
-		l_hand = pick(/obj/item/rogueweapon/greatsword/iron,
-				/obj/item/rogueweapon/sword/short,
-				/obj/item/rogueweapon/spear/billhook,
-				/obj/item/rogueweapon/flail/peasantwarflail,
-				/obj/item/rogueweapon/huntingknife/idagger/steel/parrying,
-				/obj/item/rogueweapon/sword/rapier,
-				/obj/item/rogueweapon/sword/sabre,
-				/obj/item/rogueweapon/huntingknife/idagger/steel,
-				/obj/item/rogueweapon/katar/bronze,
-				/obj/item/rogueweapon/whip/bronze,
-				/obj/item/rogueweapon/eaglebeak/lucerne,
-				/obj/item/rogueweapon/greataxe,
-				/obj/item/rogueweapon/mace/steel/silver,
-				/obj/item/rogueweapon/mace/woodclub,
-				/obj/item/rogueweapon/stoneaxe/battle,
-				/obj/item/rogueweapon/scabbard/sword/noble,
-				/obj/item/rogueweapon/woodstaff/quarterstaff/iron,
-				/obj/item/rogueweapon/shield/iron,
-				/obj/item/rogueweapon/shield/wood,
-				/obj/item/rogueweapon/shield/tower/metal,
-				/obj/item/rogueweapon/huntingknife,
-				/obj/item/bouquet,
-				/obj/item/cooking/pan,
-		)
 	if(prob(20))
-		mask = pick(/obj/item/clothing/head/roguetown/roguehood/black,
+		mask = pick_wearable(H, list(/obj/item/clothing/head/roguetown/roguehood/black,
 			/obj/item/clothing/mask/rogue/duelmask,
 			/obj/item/clothing/mask/rogue/facemask/steel,
 			/obj/item/clothing/mask/rogue/eyepatch,
 			/obj/item/clothing/mask/rogue/wildguard,
 			/obj/item/clothing/head/roguetown/armingcap,
 			/obj/item/clothing/mask/rogue/spectacles,
-		)
+		))
 	if(prob(35))
-		head = pick(/obj/item/clothing/head/roguetown/witchhat,
+		head = pick_wearable(H, list(/obj/item/clothing/head/roguetown/witchhat,
 			/obj/item/clothing/head/roguetown/archercap,
 			/obj/item/clothing/head/roguetown/headband/monk,
 			/obj/item/clothing/head/roguetown/bardhat,
@@ -373,12 +305,50 @@
 			/obj/item/clothing/head/roguetown/helmet/heavy/bucket,
 			/obj/item/clothing/head/roguetown/helmet/bascinet/pigface,
 			/obj/item/clothing/head/roguetown/helmet/kettle/iron,
-		)
+		))
 	if(prob(5))
-		mouth = pick(/obj/item/rogueweapon/huntingknife,
-			/obj/item/clothing/mask/cigarette/pipe/westman,
+		mouth = pick_wearable(H, list(/obj/item/clothing/mask/cigarette/pipe/westman,
 			/obj/item/alch/rosa,
-			/obj/item/rogueweapon/stoneaxe/hurlbat,
-			/obj/item/needle,
 			/obj/item/clothing/mask/cigarette/rollie,
-		)
+		))
+
+/datum/outfit/job/roguetown/adventurer/fates_fool/proc/pick_wearable(mob/living/carbon/human/H, list/options)
+	var/can_wear_medium = HAS_TRAIT(H, TRAIT_MEDIUMARMOR)
+	var/can_wear_heavy = HAS_TRAIT(H, TRAIT_HEAVYARMOR)
+	for(var/i in length(options) to 1 step -1)
+		var/obj/item/clothing/option = options[i]
+		if(!ispath(option, /obj/item/clothing))
+			continue
+		var/armor_class = initial(option.armor_class)
+		if((armor_class == ARMOR_CLASS_MEDIUM && !can_wear_medium) || (armor_class == ARMOR_CLASS_HEAVY && !can_wear_heavy))
+			options.Cut(i, i + 1)
+	return length(options) ? pick(options) : null
+
+/datum/outfit/job/roguetown/adventurer/fates_fool/proc/roll_weapon(mob/living/carbon/human/H)
+	var/best_rank = 0
+	var/list/best_weapon_skills = list()
+	for(var/skill in combat_weapons)
+		var/rank = H.get_skill_level(skill)
+		if(!rank || rank < best_rank)
+			continue
+		if(rank > best_rank)
+			best_rank = rank
+			best_weapon_skills.Cut()
+		if(combat_weapons[skill])
+			best_weapon_skills += skill
+
+	if(!length(best_weapon_skills))
+		return
+	var/skill = pick(best_weapon_skills)
+	var/list/weapons = combat_weapons[skill]
+	r_hand = pick(weapons)
+	switch(skill)
+		if(/datum/skill/combat/bows)
+			beltr = /obj/item/quiver/arrows
+		if(/datum/skill/combat/crossbows)
+			beltr = /obj/item/quiver/bolts
+		if(/datum/skill/combat/slings)
+			beltr = /obj/item/quiver/sling/iron
+		if(/datum/skill/combat/firearms)
+			beltr = /obj/item/quiver/bullet/lead
+			backpack_contents[/obj/item/powderflask] = 1
