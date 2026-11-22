@@ -788,6 +788,7 @@
       roll picks nobody at roundstart.
   - bugfix: Compliant no longer forces you to yield to your own spoken commands.
   - bugfix: Removed duplicate character customization options.
+  - rscadd: Wooden and iron gloryholes now support placing and retrieving liquid containers.
   mypingishuge:
   - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
       correctly.
