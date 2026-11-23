@@ -353,6 +353,8 @@
 		H.body_overlay_cache_key = null
 		H.damage_overlay_cache_key = null
 		H.icon_render_key = null
+		if(body_part & ARMS)
+			H.update_talon_amulet_for_arm_change()
 
 	update_icon_dropped()
 	was_owner.update_health_hud() //update the healthdoll
@@ -610,6 +612,8 @@
 		H.icon_render_key = null
 		var/new_key = H.generate_icon_render_key()
 		H.limb_icon_cache -= new_key
+		if(body_part & ARMS)
+			H.update_talon_amulet_for_arm_change()
 
 	if(organ_slowdown)
 		C.add_movespeed_modifier("[src.type]_slow", update=TRUE, priority=100, flags=NONE, override=FALSE, multiplicative_slowdown=organ_slowdown, movetypes=GROUND, blacklisted_movetypes=NONE, conflict=FALSE)

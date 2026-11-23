@@ -379,7 +379,7 @@
 		. += str
 
 	else if(!(SLOT_SHOES in obscured))
-		var/obj/item/clothing/shoes/decoration = get_talon_decoration()
+		var/obj/item/clothing/decoration = get_talon_decoration()
 		if(decoration)
 			. += "[m3] [get_examine_item_name_with_hover(user, decoration)] decorating [m2] talons."
 
