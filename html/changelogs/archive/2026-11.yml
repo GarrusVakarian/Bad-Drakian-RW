@@ -873,3 +873,11 @@
   mypingishuge (port), SatinIsle:
   - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
       a chance of magic or miracles. Starting gear follows their training.
+2026-11-23:
+  _Rarity:
+  - rscadd: Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking,
+      and the wardrobe merchant.
+  mypingishuge:
+  - bugfix: NPC bite holds and tightened hand grabs show private grab balloons.
+  - bugfix: Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep
+      the caster in their grabber's grip.
