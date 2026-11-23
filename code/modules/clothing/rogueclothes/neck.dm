@@ -534,6 +534,9 @@
 /obj/item/clothing/neck/roguetown/psicross/proc/has_talon_wrist_sprite()
 	return icon_exists('icons/roguetown/clothing/onmob/wrists.dmi', icon_state)
 
+/obj/item/clothing/neck/roguetown/psicross/proc/uses_talon_wrist_sprite()
+	return (wrist_display || !icon_exists(initial(mob_overlay_icon), icon_state)) && has_talon_wrist_sprite()
+
 /obj/item/clothing/neck/roguetown/psicross/MiddleClick(mob/user, params)
 	if(!user || user.incapacitated())
 		return

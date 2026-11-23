@@ -688,10 +688,15 @@ There are several things that need to be remembered:
 	apply_overlay(SHOES_LAYER)
 	apply_overlay(SHOESLEEVE_LAYER)
 
+/mob/living/carbon/human/proc/update_talon_amulet_for_arm_change()
+	var/obj/item/clothing/neck/roguetown/psicross/amulet = get_talon_decoration()
+	if(istype(amulet) && amulet.uses_talon_wrist_sprite())
+		update_inv_shoes()
+
 /// Cache the decoration with the footwear overlays so removing it also clears its visible sprite.
 /mob/living/carbon/human/proc/build_talon_amulet_overlays(obj/item/clothing/neck/roguetown/amulet)
 	var/obj/item/clothing/neck/roguetown/psicross/cross = amulet
-	var/on_wrist = istype(cross) && (cross.wrist_display || !icon_exists(initial(cross.mob_overlay_icon), cross.icon_state)) && cross.has_talon_wrist_sprite()
+	var/on_wrist = istype(cross) && cross.uses_talon_wrist_sprite()
 	if(istype(cross))
 		cross.set_wrist_sprite(on_wrist)
 
@@ -700,10 +705,18 @@ There are several things that need to be remembered:
 	var/offset
 	if(on_wrist)
 		var/arms = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
-		if(!arms)
+		if(arms == 1) // The limb index starts at one even when no limbs remain.
 			return null
 		var/female_sprite = ((gender == FEMALE && !dna.species.use_m) || dna.species.use_f) && icon_exists(amulet.mob_overlay_icon, "[amulet.icon_state]_f")
-		jewelry = amulet.build_worn_icon(default_layer = WRISTS_LAYER, female = female_sprite, sleeveindex = arms)
+		var/wrist_state
+		if(arms < 4)
+			var/side = arms == 2 ? "r" : "l"
+			wrist_state = "[side]_[amulet.icon_state]"
+			if(female_sprite && icon_exists(amulet.mob_overlay_icon, "[wrist_state]_f"))
+				wrist_state += "_f"
+			if(!icon_exists(amulet.mob_overlay_icon, wrist_state))
+				return null
+		jewelry = amulet.build_worn_icon(default_layer = WRISTS_LAYER, override_state = wrist_state, female = female_sprite, sleeveindex = arms)
 		jewelry.layer = -WRISTS_LAYER
 		if(amulet.sleeved && !should_hide_sleeves_for_layer(WRISTSLEEVE_LAYER))
 			sleeves = get_sleeves_layer(amulet, arms, WRISTSLEEVE_LAYER)
