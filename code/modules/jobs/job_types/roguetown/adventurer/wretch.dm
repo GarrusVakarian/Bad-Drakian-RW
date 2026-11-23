@@ -45,6 +45,7 @@
 		/datum/advclass/wretch/outlaw,
 		/datum/advclass/wretch/outlaw/marauder,
 		/datum/advclass/wretch/buccaneer,
+		/datum/advclass/wretch/wildwitch,
 		/datum/advclass/wretch/lunacyembracer,
 		/datum/advclass/wretch/poacher,
 		/datum/advclass/wretch/plaguebearer,
