@@ -568,8 +568,8 @@
 
 /obj/machinery/light/rogue/oven/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use the top of the oven to load or inspect food and the bottom to add fuel.")
-	. += span_info("Keep it lit while cooking and remove finished food before it burns. Middle-click to take an item out.")
+	. += span_info("Use the top of the oven to load food and the bottom to add fuel.")
+	. += span_info("Keep it lit while cooking and remove finished food before it burns. Left-click the top with an empty hand to take an item out.")
 
 /obj/item/natural/worms/leech/get_mechanics_examine(mob/user)
 	. = ..()
