@@ -51,9 +51,10 @@
 	var/force_bodypart_update = FALSE
 	var/list/choices = list("reset appearance", "hairstyle", "facial hairstyle", "accessory", "pubes", "pits", "face detail", "crest", "horns", "horn color", "ears", "ear color one", "ear color two", "tail", "tail color one", "tail color two", "tail feature", "tail feature color", "wings", "wing color one", "wing color two", "frills", "frill color", "antennas", "antenna color", "snout", "snout color", "head feature", "head feature color", "neck feature", "neck feature color", "back feature", "back feature color", "descriptors", "hair color", "facial hair color", "eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3", "natural gradient", "natural gradient color", "dye gradient", "dye gradient color", "penis", "penis color", "penis color 2", "testicles", "testicles color", "breasts", "breasts color", "vagina", "vagina color", "breast size", "penis size", "testicle size")
 	if(session)
-		// Instant Transform only changes genital and chest anatomy.
 		choices = list(
-			"penis", "penis size", "testicles", "testicle size", "vagina", "breasts", "breast size",
+			"penis", "penis size", "penis color", "penis color 2",
+			"testicles", "testicle size", "testicles color",
+			"vagina", "vagina color", "breasts", "breast size", "breasts color", "hairstyle",
 		)
 	var/chosen = input(H, "Change what?", "Appearance") as null|anything in choices
 	if(guarded && (QDELETED(session) || !session.is_valid(H)))
@@ -66,15 +67,24 @@
 		var/static/list/organ_slots = list(
 			"penis" = ORGAN_SLOT_PENIS,
 			"penis size" = ORGAN_SLOT_PENIS,
+			"penis color" = ORGAN_SLOT_PENIS,
+			"penis color 2" = ORGAN_SLOT_PENIS,
 			"testicles" = ORGAN_SLOT_TESTICLES,
 			"testicle size" = ORGAN_SLOT_TESTICLES,
+			"testicles color" = ORGAN_SLOT_TESTICLES,
 			"vagina" = ORGAN_SLOT_VAGINA,
+			"vagina color" = ORGAN_SLOT_VAGINA,
 			"breasts" = ORGAN_SLOT_BREASTS,
 			"breast size" = ORGAN_SLOT_BREASTS,
+			"breasts color" = ORGAN_SLOT_BREASTS,
 		)
 		var/slot = organ_slots[chosen]
 		if(slot)
 			session.watch_organ(slot)
+		var/static/list/color_channels = list("penis color" = 1, "penis color 2" = 2, "testicles color" = 1, "vagina color" = 1, "breasts color" = 1)
+		if(color_channels[chosen])
+			instant_transform_organ_color(H, session, chosen, color_channels[chosen])
+			return
 
 	switch(chosen)
 		if("reset appearance")
@@ -124,6 +134,7 @@
 			should_update = TRUE
 
 		if("hairstyle")
+			var/obj/item/bodypart/original_head = guarded ? H.get_bodypart(BODY_ZONE_HEAD) : null
 			var/datum/customizer_choice/bodypart_feature/hair/head/humanoid/hair_choice = CUSTOMIZER_CHOICE(/datum/customizer_choice/bodypart_feature/hair/head/humanoid)
 			var/list/valid_hairstyles = list()
 			for(var/hair_type in hair_choice.sprite_accessories)
@@ -135,13 +146,20 @@
 				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
+				if(guarded && head != original_head)
+					return
 				if(head && head.bodypart_features)
 					var/datum/bodypart_feature/hair/head/current_hair = null
 					for(var/datum/bodypart_feature/hair/head/hair_feature in head.bodypart_features)
 						current_hair = hair_feature
 						break
 
-					if(current_hair)
+					if(guarded && current_hair)
+						// Retain the existing hair feature and its entire palette.
+						current_hair.accessory_type = valid_hairstyles[new_style]
+						should_update = TRUE
+						force_bodypart_update = TRUE
+					else if(current_hair)
 						var/datum/customizer_entry/hair/hair_entry = new()
 						hair_entry.hair_color = current_hair.hair_color
 
@@ -641,10 +659,13 @@
 						penis.accessory_type = new_accessory_type
 					if(new_colors)
 						penis.accessory_colors = new_colors
-					else
+					else if(!guarded)
 						// Use build_colors_for_accessory to properly set colors from character
 						penis.build_colors_for_accessory(null)
 					penis.Insert(H, TRUE, FALSE)
+					if(guarded)
+						// Default palette resolution needs the installed organ's owner.
+						penis.set_accessory_type(penis.accessory_type, new_colors)
 					H.update_body()
 					should_update = TRUE
 
@@ -708,9 +729,12 @@
 					if(!testicles)
 						testicles = new()
 						testicles.Insert(H, TRUE, FALSE)
-					testicles.accessory_type = valid_testicle_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					testicles.build_colors_for_accessory(null)
+					if(guarded)
+						testicles.set_accessory_type(valid_testicle_types[new_style], testicles.accessory_colors)
+					else
+						testicles.accessory_type = valid_testicle_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						testicles.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -757,9 +781,12 @@
 						breasts = new()
 						breasts.Insert(H, TRUE, FALSE)
 
-					breasts.accessory_type = valid_breast_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					breasts.build_colors_for_accessory(null)
+					if(guarded)
+						breasts.set_accessory_type(valid_breast_types[new_style], breasts.accessory_colors)
+					else
+						breasts.accessory_type = valid_breast_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						breasts.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -805,9 +832,12 @@
 					if(!vagina)
 						vagina = new()
 						vagina.Insert(H, TRUE, FALSE)
-					vagina.accessory_type = valid_vagina_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					vagina.build_colors_for_accessory(null)
+					if(guarded)
+						vagina.set_accessory_type(valid_vagina_types[new_style], vagina.accessory_colors)
+					else
+						vagina.accessory_type = valid_vagina_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						vagina.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -1531,3 +1561,21 @@
 		H.update_body_parts(force_bodypart_update)
 		if(H.sexcon)
 			H.sexcon.update_erect_state()
+
+/proc/instant_transform_organ_color(mob/living/carbon/human/human, datum/instant_transform_session/session, choice, channel)
+	var/obj/item/organ/organ = session.expected_organ
+	if(!organ)
+		to_chat(human, span_warning("There is nothing to recolor there."))
+		return
+	var/datum/sprite_accessory/accessory = SPRITE_ACCESSORY(organ.accessory_type)
+	if(!accessory || accessory.color_disabled || channel > accessory.color_keys)
+		return
+	var/current_palette = accessory.validate_color_keys_for_owner(human, organ.accessory_colors)
+	var/list/colors = color_string_to_list(current_palette)
+	var/new_color = color_pick_sanitized(human, "Choose your [choice]", capitalize(choice), colors[channel])
+	if(!new_color || QDELETED(session) || !session.is_valid(human))
+		return
+	colors[channel] = sanitize_hexcolor(new_color, 6, TRUE)
+	organ.set_accessory_type(organ.accessory_type, color_list_to_string(colors))
+	human.update_body()
+	human.update_body_parts(TRUE)
