@@ -10,14 +10,30 @@
 	if(!client)
 		return
 	var/client/input_client = client
+	switch(get_say_hotkey_channel())
+		if("ooc")
+			var/ooc_message = input(input_client, "", "ooc") as text|null
+			if(length(ooc_message) && client == input_client && get_say_hotkey_channel() == "ooc")
+				input_client.ooc(ooc_message)
+			return
+		if("dsay")
+			return input_client.get_dead_say(from_say_hotkey = TRUE)
+
 	display_typing_indicator()
 	var/mutable_appearance/indicator = typing_indicator_current
 	var/message = input(src, "", "say") as text|null
 	if(typing_indicator_current == indicator)
 		clear_typing_indicator(length(message) ? "sent" : "closed input")
-	if(!length(message) || client != input_client)
+	if(!length(message) || client != input_client || get_say_hotkey_channel() != "say")
 		return
 	return send_say_message(message, FALSE)
+
+/mob/proc/get_say_hotkey_channel()
+	if(isnewplayer(src) || SSticker.current_state >= GAME_STATE_FINISHED)
+		return "ooc"
+	if(is_deadchat_participant())
+		return "dsay"
+	return "say"
 
 /mob/verb/say_verb(message as text)
 	set name = "Say"
