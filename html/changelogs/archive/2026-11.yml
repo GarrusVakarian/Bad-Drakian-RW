@@ -905,3 +905,4 @@
   - bugfix: The oven's Mechanics tip now gives the correct control for taking items
       out.
   - balance: Adventurer and Refugee now require 0 PQ on every map again.
+  - bugfix: Removed the Bandit, Maniac, and Lich toggles from villain preferences.
