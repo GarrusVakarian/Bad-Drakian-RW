@@ -1967,6 +1967,13 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		refresh_completed_panel_effects(action)
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
+
+		//EVIL BAOTHAN STATDRAIN
+		if(HAS_TRAIT(user, TRAIT_EVIL_DRAINER) && user.cmode && user != target)
+			target?.apply_status_effect(/datum/status_effect/debuff/baothadrained, 10 SECONDS)
+		if(target && HAS_TRAIT(target, TRAIT_EVIL_DRAINER) && target.cmode && user != target)
+			user.apply_status_effect(/datum/status_effect/debuff/baothadrained, 10 SECONDS)
+
 		// It could want to finish afterwards the performed action
 		if(action.is_finished(user, target))
 			break
