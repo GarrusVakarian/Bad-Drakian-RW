@@ -127,6 +127,8 @@
 
 	///these persist between logins/logouts during the same round.
 	var/datum/player_details/player_details
+	/// Cached badge eligibility. Refreshed at login and when PQ changes.
+	var/has_pq_sapling = FALSE
 
 	///Should only be a key-value list of north/south/east/west = atom/movable/screen.
 	var/list/char_render_holders

@@ -310,6 +310,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 
 	GLOB.clients += src
 	GLOB.directory[ckey] = src
+	has_pq_sapling = qualifies_for_pq_sapling(get_playerquality(ckey))
 
 	initialize_commandbar_spy()
 
