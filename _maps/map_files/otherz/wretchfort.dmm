@@ -552,6 +552,7 @@
 /obj/item/chastity/chastity_cage/flat/spiked,
 /obj/item/chastity/chastity_cage/anal,
 /obj/item/capture_sack,
+/obj/item/dogclicker,
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/under/wretch/gnollcavern)
 "fJ" = (
@@ -1651,6 +1652,7 @@
 /obj/item/chastity/chastity_cage,
 /obj/item/chastity/chastity_cage/flat/spiked,
 /obj/item/chastity/chastity_cage/anal,
+/obj/item/dogclicker,
 /turf/open/floor/rogue/cobble/mossy,
 /area/rogue/under/wretch/gnollcavern)
 "qC" = (
