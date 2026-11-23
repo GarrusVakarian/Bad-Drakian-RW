@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Removed the Bandit, Maniac, and Lich toggles from villain preferences."
