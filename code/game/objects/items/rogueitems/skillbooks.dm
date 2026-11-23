@@ -135,16 +135,33 @@
 		if(reading_skill < skill_cap || subject_skill < skill_cap)//You couldn't have written this book so you're not allowed to get the exp for finishing it
 			to_chat(user, span_warning("I can do nothing with [src]."))
 			return
-		if(alert("Are you ready to finish your book?", "Writer", "Yes", "No") == "Yes")
-			to_chat(user,"I begin finalizing my writing...")
-			if(do_after(user, 50))
-				to_chat(user, span_notice("I finish the book!"))
-				add_sleep_experience(user, /datum/skill/misc/reading, user.STAINT*1.5)//decently more than writing the book
-				var/obj/item/skillbook/newbook = new /obj/item/skillbook(get_turf(src))
-				newbook.set_bookstats(skill_req,skill_cap,subject)
-				if(HAS_TRAIT(user, TRAIT_GOODWRITER))
-					newbook.wellwritten = TRUE
-				qdel(src)
+		var/finished_skill_cap = skill_cap
+		if(alert(user, "Are you ready to finish your book?", "Writer", "Yes", "No") != "Yes")
+			return
+		if(QDELETED(src) || QDELETED(user) || loc != user)
+			return
+
+		var/custom_title = stripped_input(user, "Enter a custom title or leave it blank to use the default.", "Skillbook Title", max_length = PREVENT_CHARACTER_TRIM_LOSS(64))
+		if(QDELETED(src) || QDELETED(user) || loc != user)
+			return
+		var/custom_desc = stripped_multiline_input(user, "Enter a custom description or leave it blank to use the default.", "Skillbook Description", max_length = PREVENT_CHARACTER_TRIM_LOSS(256))
+		if(QDELETED(src) || QDELETED(user) || loc != user || writing_page || skill_cap != finished_skill_cap)
+			return
+
+		to_chat(user, "I begin finalizing my writing...")
+		if(!do_after(user, 50, target = src) || QDELETED(src) || writing_page || skill_cap != finished_skill_cap)
+			return
+		to_chat(user, span_notice("I finish the book!"))
+		add_sleep_experience(user, /datum/skill/misc/reading, user.STAINT*1.5)//decently more than writing the book
+		var/obj/item/skillbook/newbook = new /obj/item/skillbook(get_turf(src))
+		newbook.set_bookstats(skill_req, skill_cap, subject)
+		if(custom_title)
+			newbook.name = custom_title
+		if(custom_desc)
+			newbook.desc = custom_desc
+		if(HAS_TRAIT(user, TRAIT_GOODWRITER))
+			newbook.wellwritten = TRUE
+		qdel(src)
 
 
 
