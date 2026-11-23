@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking, and the wardrobe merchant."
