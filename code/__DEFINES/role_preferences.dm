@@ -59,14 +59,11 @@
 #define ROLE_NOTORIOUS_BOUNTY	"Notorious Bounty Target"
 
 GLOBAL_LIST_INIT(special_roles_rogue, list(
-	ROLE_MANIAC = /datum/antagonist/maniac,
 	ROLE_PREBEL = /datum/antagonist/prebel,
-	ROLE_BANDIT = /datum/antagonist/bandit,
 	ROLE_ASPIRANT = /datum/antagonist/aspirant,
 	ROLE_WEREWOLF = /datum/antagonist/werewolf,
 	ROLE_NBEAST = /datum/antagonist/vampire/lord,
 	ROLE_VAMPIRE = /datum/antagonist/vampire,
-	ROLE_LICH = /datum/antagonist/lich,
 	ROLE_DREAMWALKER = /datum/antagonist/dreamwalker,
 	ROLE_GNOLL = /datum/antagonist/gnoll,
 	ROLE_DRAGON = /datum/antagonist/dragon,
