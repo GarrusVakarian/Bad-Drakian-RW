@@ -1,0 +1,4 @@
+author: "GarrusVakarian"
+delete-after: True
+changes:
+  - balance: "Player skeletons (checked for by antag datum) no longer get stunned for twenty seconds when they try to throw. They don't have a stomach to begin with."
