@@ -874,6 +874,9 @@
   - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
       a chance of magic or miracles. Starting gear follows their training.
 2026-11-23:
+  GarrusVakarian:
+  - balance: Player skeletons (checked for by antag datum) no longer get stunned for
+      twenty seconds when they try to throw. They don't have a stomach to begin with.
   _Rarity:
   - rscadd: Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking,
       and the wardrobe merchant.
