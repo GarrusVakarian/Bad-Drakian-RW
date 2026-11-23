@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "NPC bite holds and tightened hand grabs show private grab balloons."
+  - bugfix: "Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep the caster in their grabber's grip."
