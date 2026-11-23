@@ -892,6 +892,8 @@
   - bugfix: Seelies no longer slow larger characters carrying them.
   - qol: Added a Guidance Notifications window under Toggles to disable optional tips
       and reminders.
+  - rscadd: Shovels can now sift for clay and stone or dig for bait. Right-click the
+      shovel in your inactive hand to change modes.
   mypingishuge:
   - bugfix: NPC bite holds and tightened hand grabs show private grab balloons.
   - bugfix: Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep
@@ -915,3 +917,5 @@
       punctuation correctly.
   - qol: Forester Warden loadouts now show the Expert weapon skill they add in the
       selection popup.
+  - qol: Harpies can attach amulets to their talons. The footwear preview now recognizes
+      eligible decorations.
