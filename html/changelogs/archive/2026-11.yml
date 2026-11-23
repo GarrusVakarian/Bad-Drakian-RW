@@ -877,6 +877,9 @@
   _Rarity:
   - rscadd: Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking,
       and the wardrobe merchant.
+  - bugfix: "Enchanter\u2019s Apprentice no longer unlocks Tier 2 Arcyne spells."
+  - bugfix: The Lobby countdown now closes at roundstart.
+  - qol: Added "Close All Windows" verb under Options.
   mypingishuge:
   - bugfix: NPC bite holds and tightened hand grabs show private grab balloons.
   - bugfix: Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep
