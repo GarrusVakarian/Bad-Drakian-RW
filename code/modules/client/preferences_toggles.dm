@@ -42,6 +42,29 @@
 
 	toggles_menu.ui_interact(mob)
 
+/client/verb/close_all_windows()
+	set name = "Close All Windows"
+	set category = "Options"
+	set desc = "Close open popup windows while staying connected."
+
+	SStgui.close_user_uis(mob)
+	if(mob)
+		SStgui.force_close_all_windows(mob)
+
+	for(var/datum/browser/modal/modal as anything in waiting_browser_modals?.Copy())
+		modal.close()
+
+	// BYOND lists top-level windows separately from the embedded map and chat panes.
+	var/window_list = winget(src, null, "windows")
+	if(!window_list)
+		return
+	var/list/window_ids = splittext(window_list, ";")
+	for(var/window_id in window_ids)
+		if(!window_id || window_id == "mainwindow")
+			continue
+		winshow(src, window_id, FALSE)
+		src << browse(null, "window=[window_id]")
+
 /client/verb/keybindings_menu()
 	set name = "Keybindings"
 	set category = "Options"

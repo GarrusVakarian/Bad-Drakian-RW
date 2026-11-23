@@ -99,7 +99,7 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 	client << output(actor_list, "lobby_window.browser:update_jobs")
 
 /mob/dead/new_player/proc/open_lobby()
-	if (!client)
+	if(!client || SSticker.HasRoundStarted() || SSticker.GetTimeLeft() <= 0)
 		return
 	client << browse(
 		file("html/lobby/lobby.html"),
