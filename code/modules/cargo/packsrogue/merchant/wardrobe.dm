@@ -68,6 +68,11 @@
 					/obj/item/clothing/cloak/half,
 				)
 
+/datum/supply_pack/rogue/wardrobe/cloaks/bandolier
+	name = "Bandolier"
+	cost = 30
+	contains = list(/obj/item/clothing/cloak/bandolier)
+
 /datum/supply_pack/rogue/wardrobe/cloaks/raincloak
 	name = "Raincloak"
 	cost = 15
