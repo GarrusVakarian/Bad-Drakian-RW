@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - rscadd: "Shovels can now sift for clay and stone or dig for bait. Right-click the shovel in your inactive hand to change modes."
