@@ -348,8 +348,9 @@
 	zombie.set_blurriness(0)
 	if(!zombie.cmode)
 		zombie.toggle_cmode()
-	to_chat(zombie, span_boldwarning("I have risen as a feral, mindless deadite. I can no longer use weapons, climb most walls, cast spells or use the advanced fighting techniques I knew in lyfe. I cannot recognize those I once knew. Only endless hunger remains: bite and claw, hunt the lyving, and feast upon their flesh!"))
-	to_chat(zombie, span_notice("I can examine the lyving to identify those I can infect. Seek the Lyving helps me track them down."))
+	if(zombie.wants_death_recovery_tips())
+		to_chat(zombie, span_boldwarning("I have risen as a feral, mindless deadite. I can no longer use weapons, climb most walls, cast spells or use the advanced fighting techniques I knew in lyfe. I cannot recognize those I once knew. Only endless hunger remains: bite and claw, hunt the lyving, and feast upon their flesh!"))
+		to_chat(zombie, span_notice("I can examine the lyving to identify those I can infect. Seek the Lyving helps me track them down."))
 
 // Infected wake param is just a transition from living to zombie, via zombie_infect()
 // Prevoously you just died without warning in ~3 min, now you just become an antag instead of having to die first if infected.

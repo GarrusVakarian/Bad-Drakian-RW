@@ -1206,6 +1206,10 @@
 
 /mob/living/var/necra_embrace_pending = FALSE
 
+/// Controls the newer automatic tips about yielding, giving up, and deadite recovery.
+/mob/living/proc/wants_death_recovery_tips()
+	return !client?.prefs?.hide_death_recovery_tips
+
 /// Keep the existing succumb requirements shared by the verb and delayed prompts.
 /mob/living/proc/can_succumb()
 	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE)

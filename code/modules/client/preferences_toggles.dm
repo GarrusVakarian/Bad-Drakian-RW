@@ -152,6 +152,7 @@
 		list("id" = "vocal_barks", "label" = "Hear Vocal Barks", "enabled" = !!owner.prefs.hear_barks, "desc" = "Enable hearing vocal bark sounds."),
 		list("id" = "compliance_notifs", "label" = "Compliance Notifications", "enabled" = !!owner.prefs.compliance_notifs, "desc" = "Show chat notices when compliance mode changes."),
 		list("id" = "skillcap_notifs", "label" = "Skillcap Notifications", "enabled" = !!owner.prefs.skillcap_notifs, "desc" = "Notify when a skill reaches its XP cap."),
+		list("id" = "hide_death_recovery_tips", "label" = "Hide Death and Recovery Tips", "enabled" = !!owner.prefs.hide_death_recovery_tips, "desc" = "Hide automatic tips about yielding, Embrace Necra, and deadite recovery."),
 		list("id" = "autopunctuation", "label" = "Disable Autopunctuation", "enabled" = !!owner.prefs.no_autopunctuate, "desc" = "Prevent automatic punctuation in your chat messages."),
 		list("id" = "deadchat", "label" = "Show Deadchat", "enabled" = !!(owner.prefs.chat_toggles & CHAT_DSAY), "desc" = "Receive deadchat messages."),
 		list("id" = "legacy_craft", "label" = "Enable Legacy Craft", "enabled" = !!owner.legacycraft, "desc" = "Use legacy crafting UI/behavior."),
@@ -260,6 +261,9 @@
 				owner.toggle_compliance_notifs()
 			if("skillcap_notifs")
 				owner.toggle_skillcap_notifs()
+			if("hide_death_recovery_tips")
+				owner.prefs.hide_death_recovery_tips = !owner.prefs.hide_death_recovery_tips
+				owner.prefs.save_preferences()
 			if("autopunctuation")
 				owner.toggle_autopunctuation()
 			if("deadchat")

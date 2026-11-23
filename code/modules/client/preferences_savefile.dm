@@ -296,6 +296,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["runmode"]			>> runmode
 	S["compliance_notifs"]  >> compliance_notifs
 	S["skillcap_notifs"]	>> skillcap_notifs
+	S["hide_death_recovery_tips"] >> hide_death_recovery_tips
+	hide_death_recovery_tips = sanitize_integer(hide_death_recovery_tips, 0, 1, FALSE)
 
 
 	S["default_slot"]		>> default_slot
@@ -543,6 +545,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["patreon_say_color_enabled"], patreon_say_color_enabled)
 	WRITE_FILE(S["compliance_notifs"], compliance_notifs)
 	WRITE_FILE(S["skillcap_notifs"], skillcap_notifs)
+	WRITE_FILE(S["hide_death_recovery_tips"], hide_death_recovery_tips)
 
 	return TRUE
 

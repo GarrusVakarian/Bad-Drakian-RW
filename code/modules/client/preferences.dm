@@ -155,6 +155,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
+	var/hide_death_recovery_tips = FALSE
 	var/restricted_species_pref = null
 	var/wildshape_name = TRUE
 	var/xenophobe_pref = 0
@@ -604,6 +605,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		"free_use_default",
 		"grain",
 		"hear_barks",
+		"hide_death_recovery_tips",
 		"hide_unavailable_emotes",
 		"hypnosis_content",
 		"cumflation_content",
