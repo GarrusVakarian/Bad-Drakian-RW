@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Instant Transform can now recolor genitals and chest and change hairstyle without changing hair color."
+  - balance: "Instant Transform now costs 1 quirk point."
+  - bugfix: "Instant Transform now applies default colors when creating a penis without a previous palette."
