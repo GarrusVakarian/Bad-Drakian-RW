@@ -28,7 +28,7 @@
 			eligible_players += people
 	else
 		to_chat(user, span_warning("I don't know anyone."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 
 	eligible_players = sortList(eligible_players)
@@ -37,7 +37,7 @@
 	var/input = input(user, "Who do you wish to contact?", src) as null|anything in eligible_players
 	if(isnull(input))
 		to_chat(user, span_warning("No target selected."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 
 	for(var/mob/living/carbon/human/HL in GLOB.human_list)
@@ -57,13 +57,14 @@
 			if(alert(user, "Transmit as a worldessly projected vision or as a whispered message?", "", "Projection", "Message") == "Projection")
 				is_projection = TRUE
 
-			var/message = sanitize(input(user, "You successfully make a connection! [is_projection == TRUE ? "What sensory vision are you trying to send into their mind?" : "What are you trying to whisper into their mind?"]"))
+			var/raw_message = input(user, "You successfully make a connection! [is_projection == TRUE ? "What sensory vision are you trying to send into their mind?" : "What are you trying to whisper into their mind?"]") as text|null
+			var/message = sanitize(raw_message)
 			if(!arcane_speech_allowed(user, TRUE))
 				if(!QDELETED(user))
 					revert_cast(user)
 				return FALSE
 			if(!message)
-				revert_cast()
+				revert_cast(user)
 				return FALSE
 
 			if(alert(user, "Send anonymously?", "", "Yes", "No") == "No") //yes or no popup, if you say No run this code
@@ -101,7 +102,8 @@
 					to_chat(user, span_big("You slip a brief vision anonymously into [HL]'s mind: <font color=#[message_color]>\[<b>[message]</b>\]</font>"))
 			// Messages are whispered out loud, projections are just a silent murmur.
 			if(!is_projection)
-				user.whisper(message)
+				// Whisper escapes its input. Only the private HTML above uses the escaped copy.
+				user.whisper(raw_message)
 			else
 				user.emote("me", 1, "focuses intensely on some sort of thought...", TRUE, custom_me = TRUE)
 			log_game("[key_name(user)] sent a message to [key_name(HL)] with contents [message]")
@@ -110,5 +112,5 @@
 			return TRUE
 			
 	to_chat(user, span_warning("I seek a mental connection, but can't find [input]."))
-	revert_cast()
+	revert_cast(user)
 	return FALSE
