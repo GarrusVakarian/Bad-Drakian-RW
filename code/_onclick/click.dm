@@ -967,9 +967,17 @@ GLOBAL_LIST_EMPTY(reach_dummy_pool)
 /mob/proc/try_special_attack(atom/A, list/modifiers)
 	return FALSE
 
+/mob/proc/can_perform_combat_action(atom/target)
+	return !(SEND_SIGNAL(src, COMSIG_MOB_CHECK_COMBAT_ACTION, target) & COMPONENT_BLOCK_COMBAT_ACTION)
+
+/mob/proc/try_flight_move(direction)
+	return SEND_SIGNAL(src, COMSIG_MOB_FLIGHT_MOVE, direction) & COMPONENT_HANDLED_FLIGHT_MOVE
+
 /mob/living/try_special_attack(atom/A, list/modifiers)
 	if(!rmb_intent || !cmode || A.loc == src || istype(A, /obj/item/clothing) || istype(A, /obj/item/quiver) || istype(A, /obj/item/storage) || istype(A, /obj/item/rogueweapon/scabbard))
 		return FALSE
+	if(!can_perform_combat_action(A))
+		return TRUE
 
 	if(next_move > world.time && !rmb_intent?.bypasses_click_cd)
 		return FALSE

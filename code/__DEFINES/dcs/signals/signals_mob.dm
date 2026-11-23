@@ -1,6 +1,13 @@
 /// From /mob/verb/toggle_cmode() when combat mode is enabled: ()
 #define COMSIG_MOB_COMBAT_MODE_ENABLED "mob_combat_mode_enabled"
 
+/// Before a combat action begins or completes: (atom/target).
+#define COMSIG_MOB_CHECK_COMBAT_ACTION "mob_check_combat_action"
+	#define COMPONENT_BLOCK_COMBAT_ACTION (1<<0)
+/// A Fly Up/Down request: (direction).
+#define COMSIG_MOB_FLIGHT_MOVE "mob_flight_move"
+	#define COMPONENT_HANDLED_FLIGHT_MOVE (1<<0)
+
 #define COMSIG_MOB_MOVESPEED_UPDATED "mob_updated_movespeed"
 ///from base of /mob/Login(): ()
 #define COMSIG_MOB_LOGIN "mob_login"

@@ -124,6 +124,7 @@
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/appraise/secular)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/message)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/claws/dragon)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_flight)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/spitfire)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball/greater)

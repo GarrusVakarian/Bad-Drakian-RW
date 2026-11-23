@@ -174,7 +174,9 @@
 	message.plane = ABOVE_HUD_PLANE
 	message.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA | KEEP_APART
 	message.alpha = 0
-	message.pixel_y = owner.bound_height * 0.95
+	var/list/indicator_offset = get_mob_indicator_offset(message_loc)
+	message.pixel_x = indicator_offset[1]
+	message.pixel_y = owner.bound_height * 0.95 + indicator_offset[2]
 	message.maptext_width = CHAT_MESSAGE_WIDTH
 	message.maptext_height = mheight
 	message.maptext_x = (CHAT_MESSAGE_WIDTH - owner.bound_width) * -0.5

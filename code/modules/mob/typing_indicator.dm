@@ -26,6 +26,9 @@ GLOBAL_LIST_EMPTY(typing_indicator_overlays)
 		var/atom/thing = new state(null)
 		var/mutable_appearance/generated = new(thing)
 		generated.plane = FULLSCREEN_PLANE
+		var/list/indicator_offset = get_mob_indicator_offset(src)
+		generated.pixel_x += indicator_offset[1]
+		generated.pixel_y += indicator_offset[2]
 		qdel(thing)
 		return generated
 	else
