@@ -348,3 +348,118 @@
 	return html
 
 // Old Topic handler removed - now handled in vices_menu.dm
+
+/datum/preferences
+	var/loadout_preview_busy = FALSE
+	var/loadout_preview_available_at = 0
+
+/// Wear positions that can be used without a second item, in preferred order.
+/proc/get_loadout_preview_wear_slots(slot_flags)
+	var/static/list/wear_flags = list(
+		ITEM_SLOT_HEAD, ITEM_SLOT_MASK, ITEM_SLOT_NECK, ITEM_SLOT_CLOAK,
+		ITEM_SLOT_ARMOR, ITEM_SLOT_SHIRT, ITEM_SLOT_PANTS, ITEM_SLOT_GLOVES,
+		ITEM_SLOT_SHOES, ITEM_SLOT_WRISTS, ITEM_SLOT_RING, ITEM_SLOT_BELT,
+		ITEM_SLOT_BACK_R, ITEM_SLOT_BACK_L, ITEM_SLOT_MOUTH,
+	)
+	var/static/list/wear_slots = list(
+		SLOT_HEAD, SLOT_WEAR_MASK, SLOT_NECK, SLOT_CLOAK,
+		SLOT_ARMOR, SLOT_SHIRT, SLOT_PANTS, SLOT_GLOVES,
+		SLOT_SHOES, SLOT_WRISTS, SLOT_RING, SLOT_BELT,
+		SLOT_BACK_R, SLOT_BACK_L, SLOT_MOUTH,
+	)
+	var/list/supported
+	for(var/i in 1 to length(wear_flags))
+		if(slot_flags & wear_flags[i])
+			LAZYADD(supported, wear_slots[i])
+	return supported
+
+/datum/preferences/proc/show_loadout_equipped_preview(mob/user, slot, slot_var)
+	if(!parent || user?.client != parent || parent.prefs != src || loadout_preview_busy || world.time < loadout_preview_available_at)
+		return
+	var/datum/loadout_item/selected = vars[slot_var]
+	if(!istype(selected) || !ispath(selected.path, /obj/item))
+		return
+	var/obj/item/item_type = selected.path
+	if(!get_loadout_preview_wear_slots(initial(item_type.slot_flags)) || !spec_check(user))
+		return
+
+	var/client/viewer = parent
+	var/character_slot = default_slot
+	var/color_field = "loadout_[slot]_hex"
+	var/dye = vars[color_field]
+	var/size_multiplier = get_preview_customization_scale()
+	loadout_preview_busy = TRUE
+	loadout_preview_available_at = world.time + 2 SECONDS
+	var/mob/living/carbon/human/dummy/mannequin
+	var/list/rendered
+	try
+		// A private nullspace mannequin cannot share gear, overlays or anatomy with
+		// another request or with an existing character-sheet/portrait mannequin.
+		mannequin = new(null)
+		if(!QDELETED(user) && user.client == viewer && viewer.prefs == src && default_slot == character_slot && vars[slot_var] == selected && vars[color_field] == dye)
+			rendered = render_loadout_equipped_preview(mannequin, item_type, dye, size_multiplier)
+	catch(var/exception/error)
+		loadout_preview_busy = FALSE
+		if(mannequin)
+			qdel(mannequin)
+		throw error
+	if(mannequin)
+		qdel(mannequin)
+	loadout_preview_busy = FALSE
+
+	if(QDELETED(user) || user.client != viewer || viewer.prefs != src || default_slot != character_slot || vars[slot_var] != selected || vars[color_field] != dye)
+		return
+	if(!rendered)
+		to_chat(user, span_notice("This item can't be worn by this character on its own."))
+		return
+
+	var/datum/browser/popup = new(user, "loadout_equipped_preview", "Loadout Preview", 368, 294)
+	popup.set_content({"<div style='text-align:center;'>
+		<h3>[html_encode(selected.name)]</h3>
+		<div style='display:flex; justify-content:center; gap:12px;'>
+			<div style='width:156px;'><div style='height:174px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[1]]</div><b>Front</b></div>
+			<div style='width:156px;'><div style='height:174px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[2]]</div><b>Back</b></div>
+		</div>
+	</div>"})
+	popup.open(FALSE)
+
+/// Render only on request. The caller owns the mannequin and discards it even on failure.
+/datum/preferences/proc/render_loadout_equipped_preview(mob/living/carbon/human/dummy/mannequin, obj/item/item_type, dye, size_multiplier)
+	copy_to(mannequin, FALSE, FALSE, TRUE)
+	mannequin.delete_equipment()
+	var/obj/item/sample = new item_type(mannequin)
+	if(QDELETED(sample))
+		return
+
+	if(dye)
+		sample.add_atom_colour(dye, FIXED_COLOUR_PRIORITY)
+		sample.update_icon()
+
+	var/equipped = FALSE
+	for(var/wear_slot in get_loadout_preview_wear_slots(sample.slot_flags))
+		if(mannequin.equip_to_slot_if_possible(sample, wear_slot, disable_warning = TRUE, bypass_equip_delay_self = TRUE, initial = TRUE) && mannequin.get_item_by_slot(wear_slot) == sample)
+			equipped = TRUE
+			break
+	if(!equipped)
+		qdel(sample)
+		return
+
+	mannequin.regenerate_clothes()
+	mannequin.rebuild_obscured_flags()
+	mannequin.update_body()
+	mannequin.update_hair()
+	mannequin.update_body_parts(redraw = TRUE)
+
+	// Flattening retains worn layers and tint. Apply body scale to the resulting
+	// display dimensions because getFlatIcon does not bake the parent transform.
+	var/view_scale = 3 * mannequin.dna.current_body_size * size_multiplier
+	var/list/rendered = list()
+	for(var/direction in list(SOUTH, NORTH))
+		mannequin.setDir(direction)
+		var/icon/view = getFlatIcon(mannequin, no_anim = TRUE)
+		var/encoded = icon2base64(view)
+		if(!encoded)
+			return
+		var/scale = min(view_scale, 152 / view.Width(), 170 / view.Height())
+		rendered += "<img alt='[direction == SOUTH ? "Front" : "Back"]' src='data:image/png;base64,[encoded]' style='image-rendering:pixelated; width:[round(view.Width() * scale)]px; height:[round(view.Height() * scale)]px;'>"
+	return rendered
