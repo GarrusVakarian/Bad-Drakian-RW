@@ -880,6 +880,7 @@
   - map: Adds a statue to the Dun World warden armory.
   - rscadd: Added a dog clicker so I can train Nash and Mana to drool at the sight
       of Fenrir's feet.
+  - rscadd: Berserker gnolls have wrestling moves now.
   _Rarity:
   - rscadd: Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking,
       and the wardrobe merchant.
@@ -887,6 +888,8 @@
   - bugfix: The Lobby countdown now closes at roundstart.
   - qol: Added "Close All Windows" verb under Options.
   - bugfix: Seelies no longer slow larger characters carrying them.
+  - qol: Added a Guidance Notifications window under Toggles to disable optional tips
+      and reminders.
   mypingishuge:
   - bugfix: NPC bite holds and tightened hand grabs show private grab balloons.
   - bugfix: Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep
