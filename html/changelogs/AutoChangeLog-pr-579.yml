@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Added a Guidance Notifications window under Toggles to disable optional tips and reminders."
