@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Fire no longer skeletonizes your body before you respawn, preserving a chance to recover after death in lava."
+  - qol: "The Embrace Necra reminder appears sooner if you’re stuck in hard critical in lava or acid."
