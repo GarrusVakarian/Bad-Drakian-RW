@@ -913,3 +913,5 @@
       \ in lava or acid."
   - bugfix: Message and Message Summoner whispers now display apostrophes and other
       punctuation correctly.
+  - qol: Forester Warden loadouts now show the Expert weapon skill they add in the
+      selection popup.
