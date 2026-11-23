@@ -553,7 +553,7 @@
 			else
 				. += "There's \a [attachment.name] on it."
 		else if(istype(attachment, /obj/item/reagent_containers/glass/bucket/pot))
-			var/isboiling = attachment.reagents.chem_temp > MIN_STEW_TEMPERATURE
+			var/isboiling = on && attachment.reagents.total_volume && attachment.reagents.chem_temp >= MIN_STEW_TEMPERATURE
 			if(isboiling)
 				. += "There's \a [attachment.name] on it, it is boiling." // This is common shorthand for the contents don't nitpick
 			else
@@ -654,28 +654,49 @@
 			for(var/datum/stew_recipe/R in GLOB.stew_recipes)
 				for(var/I in R.inputs)
 					if(istype(W, I))
-						if(!pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER))
-							to_chat(user, span_notice("Not enough water."))
-							return
-						if(pot.reagents.chem_temp < MIN_STEW_TEMPERATURE)
-							to_chat(user, span_notice("[pot] isn't boiling!</span>"))
-							return
-						if(do_after(user, 2 SECONDS / cooktime_divisor, target = src))
-							user.visible_message(span_info("[user] places [W] into the pot.</span>"))
-							add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
-							qdel(W)
-							playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
-							pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
-							sleep(R.cooktime / cooktime_divisor)
-							playsound(src, "bubbles", 30, TRUE)
-							pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK_AFTER) // Remove water first prevent overfill
-							pot.reagents.add_reagent(R.output, VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER)
-							return
+						cook_stew(pot, R, W, user, cooktime_divisor)
+						return
 	. = ..()
 
 //////////////////////////////////
 
+/obj/machinery/light/rogue/hearth/proc/cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, datum/stew_recipe/recipe, obj/item/ingredient, mob/living/user, cooktime_divisor)
+	var/recipe_volume = VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER
+	if(!pot.reagents.has_reagent(/datum/reagent/water, recipe_volume + pot.pending_hearth_stews * VOLUME_PER_STEW_COOK_AFTER))
+		to_chat(user, span_notice("Not enough water."))
+		return
+	if(pot.reagents.chem_temp < MIN_STEW_TEMPERATURE)
+		to_chat(user, span_notice("[pot] isn't boiling!"))
+		return
+	if(!do_after(user, 2 SECONDS / cooktime_divisor, target = src))
+		return
+	if(QDELETED(pot) || QDELETED(ingredient) || pot != attachment || pot.loc != src || ingredient.loc != user)
+		return
+	if(!pot.reagents.has_reagent(/datum/reagent/water, recipe_volume + pot.pending_hearth_stews * VOLUME_PER_STEW_COOK_AFTER))
+		to_chat(user, span_notice("Not enough water."))
+		return
+
+	user.visible_message(span_info("[user] places [ingredient] into the pot."))
+	if(user.mind)
+		add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
+	qdel(ingredient)
+	playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
+	pot.pending_hearth_stews++
+	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
+	sleep(recipe.cooktime / cooktime_divisor)
+	if(QDELETED(pot))
+		return
+
+	pot.pending_hearth_stews--
+	playsound(pot, "bubbles", 30, TRUE)
+	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK_AFTER)
+	if(pot.reagents.add_reagent(recipe.output, recipe_volume, reagtemp = pot.reagents.chem_temp))
+		if(!pot.pending_hearth_stews && !pot.reagents.has_reagent(/datum/reagent/water, recipe_volume))
+			pot.visible_message(span_notice("It smells ready..."))
+
 /obj/machinery/light/rogue/hearth/update_icon()
+	if(!on && boilloop?.loop_started)
+		boilloop.stop()
 	cut_overlays()
 	icon_state = "[base_state][on]"
 	if(attachment)
@@ -754,13 +775,15 @@
 				if(C)
 					qdel(food)
 					food = C
-		if(istype(attachment, /obj/item/reagent_containers/glass/bucket/pot))
-			if(attachment.reagents)
-				attachment.reagents.expose_temperature(400, 0.033)
-				if(attachment.reagents.chem_temp > MIN_STEW_TEMPERATURE && !boilloop.loop_started)
-					boilloop.start()
-				else
-					boilloop.stop()
+	var/boiling = FALSE
+	if(on && istype(attachment, /obj/item/reagent_containers/glass/bucket/pot) && attachment.loc == src && attachment.reagents)
+		attachment.reagents.expose_temperature(400, 0.033)
+		boiling = attachment.reagents.total_volume && attachment.reagents.chem_temp >= MIN_STEW_TEMPERATURE
+	if(boiling)
+		if(!boilloop.loop_started)
+			boilloop.start()
+	else if(boilloop.loop_started)
+		boilloop.stop()
 	update_icon()
 
 /obj/machinery/light/rogue/hearth/onkick(mob/user)
