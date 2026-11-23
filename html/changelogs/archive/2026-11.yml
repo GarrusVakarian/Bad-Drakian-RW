@@ -906,3 +906,4 @@
       out.
   - balance: Adventurer and Refugee now require 0 PQ on every map again.
   - bugfix: Removed the Bandit, Maniac, and Lich toggles from villain preferences.
+  - bugfix: Fixed a typo in the Net debuff tooltip.
