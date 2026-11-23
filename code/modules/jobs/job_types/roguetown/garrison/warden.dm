@@ -223,8 +223,17 @@
 	H.set_blindness(0)
 
 	if(H.mind)
-		var/weapons = list("Billhook", "Steel Messer and Iron Shield", "Kriegsmesser", "Bronze Warclub and Iron Shield", "Goedendag", "Bronze War Axe and Iron Shield", "Iron Greataxe")
-		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
+		var/list/weapons = list(
+			"Billhook (Axes)" = "Billhook",
+			"Steel Messer and Iron Shield (Swords)" = "Steel Messer and Iron Shield",
+			"Kriegsmesser (Swords)" = "Kriegsmesser",
+			"Bronze Warclub and Iron Shield (Maces)" = "Bronze Warclub and Iron Shield",
+			"Goedendag (Maces)" = "Goedendag",
+			"Bronze War Axe and Iron Shield (Axes)" = "Bronze War Axe and Iron Shield",
+			"Iron Greataxe (Axes)" = "Iron Greataxe",
+		)
+		var/weapon_label = input(H, "Choose your EXPERTISE, beyond Polearms.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_choice = weapons[weapon_label]
 		switch(weapon_choice)
 			if("Billhook", "Iron Greataxe")
 				r_hand = weapon_choice == "Billhook" ? /obj/item/rogueweapon/spear/billhook : /obj/item/rogueweapon/greataxe
