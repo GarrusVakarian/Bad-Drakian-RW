@@ -170,6 +170,11 @@
 		/obj/item/clothing/shoes/roguetown/boots/clothlinedanklets,
 		/obj/item/clothing/shoes/roguetown/boots/furlinedanklets,
 		/obj/item/clothing/shoes/roguetown/boots/footwraps,
+		/obj/item/clothing/neck/roguetown/psicross,
+		/obj/item/clothing/neck/roguetown/carved,
+		/obj/item/clothing/neck/roguetown/ornateamulet,
+		/obj/item/clothing/neck/roguetown/skullamulet,
+		/obj/item/clothing/neck/roguetown/horus,
 	), list(/obj/item/clothing/shoes/roguetown/anklets/baotha))
 
 /datum/component/storage/concrete/roguetown/talon_decoration/can_be_inserted(obj/item/storing, stop_messages, mob/user, worn_check = FALSE, params, storage_click = FALSE)
@@ -179,7 +184,13 @@
 		return FALSE
 	if(!istype(storing) || length(storing.contents) || storing.GetComponent(/datum/component/storage))
 		return FALSE
-	return ..()
+	if(!..())
+		return FALSE
+	var/obj/item/clothing/neck/roguetown/amulet = storing
+	if(istype(amulet) && !icon_exists(initial(amulet.mob_overlay_icon), amulet.icon_state))
+		var/obj/item/clothing/neck/roguetown/psicross/cross = amulet
+		return istype(cross) && cross.has_talon_wrist_sprite()
+	return TRUE
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy/update_icon()
 	. = ..()
@@ -190,15 +201,20 @@
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy/Destroy()
 	var/datum/component/storage/concrete/roguetown/talon_decoration/storage = GetComponent(attachment_component)
 	var/turf/destination = get_turf(src)
-	var/obj/item/clothing/shoes/decoration = locate() in contents
+	var/obj/item/clothing/decoration = locate() in contents
 	if(storage && destination && decoration)
 		storage.remove_from_storage(decoration, destination)
 	return ..()
 
+/mob/living/carbon/human/proc/get_talon_decoration_storage()
+	if(!istype(skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy) || QDELETED(skin_armor))
+		return null
+	return skin_armor.GetComponent(/datum/component/storage/concrete/roguetown/talon_decoration)
+
 /mob/living/carbon/human/proc/get_talon_decoration()
 	if(!istype(skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy) || QDELETED(skin_armor) || get_num_legs(FALSE) < 1)
 		return null
-	return locate(/obj/item/clothing/shoes) in skin_armor.contents
+	return locate(/obj/item/clothing) in skin_armor.contents
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/chest/gladiator
 	name = "pit-hardened chest"//pit? hnnnnhhhffgggg

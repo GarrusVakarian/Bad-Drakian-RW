@@ -645,8 +645,8 @@ There are several things that need to be remembered:
 			if(hud_used.inventory_shown)			//if the inventory is open
 				client.screen += shoes					//add it to client's screen
 		update_observer_view(shoes,1)
-	var/obj/item/clothing/shoes/decoration = get_talon_decoration()
-	var/obj/item/clothing/shoes/visible_footwear = decoration
+	var/obj/item/clothing/decoration = get_talon_decoration()
+	var/obj/item/clothing/shoes/visible_footwear = istype(decoration, /obj/item/clothing/shoes) ? decoration : null
 	if(shoes && dna && !(DIGITIGRADE in dna.species.species_traits))
 		visible_footwear = shoes
 	if(visible_footwear && dna && dna.species.sexes)
@@ -681,10 +681,46 @@ There are several things that need to be remembered:
 					S.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
 
 			overlays_standing[SHOESLEEVE_LAYER] = sleeves
+	else if(istype(decoration, /obj/item/clothing/neck/roguetown) && dna?.species?.sexes)
+		overlays_standing[SHOES_LAYER] = build_talon_amulet_overlays(decoration)
 
 	rebuild_obscured_flags()
 	apply_overlay(SHOES_LAYER)
 	apply_overlay(SHOESLEEVE_LAYER)
+
+/// Cache the decoration with the footwear overlays so removing it also clears its visible sprite.
+/mob/living/carbon/human/proc/build_talon_amulet_overlays(obj/item/clothing/neck/roguetown/amulet)
+	var/obj/item/clothing/neck/roguetown/psicross/cross = amulet
+	var/on_wrist = istype(cross) && (cross.wrist_display || !icon_exists(initial(cross.mob_overlay_icon), cross.icon_state)) && cross.has_talon_wrist_sprite()
+	if(istype(cross))
+		cross.set_wrist_sprite(on_wrist)
+
+	var/mutable_appearance/jewelry
+	var/list/sleeves
+	var/offset
+	if(on_wrist)
+		var/arms = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
+		if(!arms)
+			return null
+		var/female_sprite = ((gender == FEMALE && !dna.species.use_m) || dna.species.use_f) && icon_exists(amulet.mob_overlay_icon, "[amulet.icon_state]_f")
+		jewelry = amulet.build_worn_icon(default_layer = WRISTS_LAYER, female = female_sprite, sleeveindex = arms)
+		jewelry.layer = -WRISTS_LAYER
+		if(amulet.sleeved && !should_hide_sleeves_for_layer(WRISTSLEEVE_LAYER))
+			sleeves = get_sleeves_layer(amulet, arms, WRISTSLEEVE_LAYER)
+		offset = gender == MALE ? OFFSET_WRISTS : OFFSET_WRISTS_F
+	else
+		jewelry = amulet.build_worn_icon(default_layer = NECK_LAYER)
+		offset = gender == MALE ? OFFSET_NECK : OFFSET_NECK_F
+
+	var/list/appearance_parts = list(jewelry)
+	if(length(sleeves))
+		appearance_parts += sleeves
+	var/list/position = dna.species.offset_features[offset]
+	if(position)
+		for(var/mutable_appearance/part as anything in appearance_parts)
+			part.pixel_x += position[1]
+			part.pixel_y += position[2]
+	return appearance_parts
 
 /mob/living/carbon/human/update_inv_s_store()
 /*

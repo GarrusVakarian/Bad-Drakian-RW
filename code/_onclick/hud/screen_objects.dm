@@ -351,9 +351,7 @@
 		scales.ShiftClick(wearer)
 		return TRUE
 
-	if(!scales.attachment_component)
-		return FALSE
-	var/datum/component/storage/concrete/roguetown/talon_decoration/storage = scales.GetComponent(scales.attachment_component)
+	var/datum/component/storage/concrete/roguetown/talon_decoration/storage = wearer.get_talon_decoration_storage()
 	if(!storage)
 		return FALSE
 	if(modifiers["shift"] && modifiers["right"])
@@ -366,7 +364,7 @@
 	if(storage.can_be_inserted(decoration, TRUE, wearer))
 		storage.handle_item_insertion(decoration, FALSE, wearer)
 	else
-		to_chat(wearer, span_warning("Only one pair of anklets or footwraps fits over your talon scales."))
+		to_chat(wearer, span_warning("Only one amulet or pair of anklets or footwraps fits over your talon scales."))
 	return TRUE
 
 /atom/movable/screen/inventory/MouseEntered(location, control, params)
@@ -417,7 +415,15 @@
 
 	if(hud)
 		hud.overlay_curloc = src
-	update_hover_overlay(holding, user.can_equip(holding, slot_id, disable_warning = TRUE, bypass_equip_delay_self = TRUE))
+	update_hover_overlay(holding, can_preview_equip(user, holding))
+
+/atom/movable/screen/inventory/proc/can_preview_equip(mob/user, obj/item/holding)
+	if(slot_id == SLOT_SHOES && ishuman(user))
+		var/mob/living/carbon/human/wearer = user
+		var/datum/component/storage/concrete/roguetown/talon_decoration/storage = wearer.get_talon_decoration_storage()
+		if(storage)
+			return storage.can_be_inserted(holding, TRUE, wearer)
+	return user.can_equip(holding, slot_id, disable_warning = TRUE, bypass_equip_delay_self = TRUE)
 
 
 /atom/movable/screen/inventory/hand

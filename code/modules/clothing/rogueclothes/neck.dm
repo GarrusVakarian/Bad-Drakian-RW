@@ -520,30 +520,38 @@
 
 /obj/item/clothing/neck/roguetown/psicross/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
 	..()
+	set_wrist_sprite(slot == SLOT_WRISTS || (wrist_display && slot != SLOT_NECK))
+	return TRUE
 
-	if(slot == SLOT_WRISTS || (wrist_display && slot != SLOT_NECK))
+/obj/item/clothing/neck/roguetown/psicross/proc/set_wrist_sprite(display_on_wrist)
+	if(display_on_wrist)
 		mob_overlay_icon = 'icons/roguetown/clothing/onmob/wrists.dmi'
 		sleeved = 'icons/roguetown/clothing/onmob/wrists.dmi'
 	else
 		mob_overlay_icon = initial(mob_overlay_icon)
 		sleeved = initial(sleeved)
 
-	return TRUE
+/obj/item/clothing/neck/roguetown/psicross/proc/has_talon_wrist_sprite()
+	return icon_exists('icons/roguetown/clothing/onmob/wrists.dmi', icon_state)
 
 /obj/item/clothing/neck/roguetown/psicross/MiddleClick(mob/user, params)
-	if(loc != user || user.incapacitated())
+	if(!user || user.incapacitated())
 		return
+	var/mob/living/carbon/human/wearer = user
+	var/on_talons = istype(wearer) && loc == wearer.skin_armor && wearer.get_talon_decoration() == src
+	if(loc != user && (!on_talons || user.active_storage != wearer.get_talon_decoration_storage()))
+		return
+	if(on_talons && (!has_talon_wrist_sprite() || !icon_exists(initial(mob_overlay_icon), icon_state)))
+		to_chat(user, span_info("This amulet has only one appearance on the talons."))
+		return TRUE
 
 	wrist_display = !wrist_display
 	to_chat(user, span_info("You adjust \the [src] to [wrist_display ? "display on your wrists" : "display around your neck"]."))
-	if(wrist_display)
-		mob_overlay_icon = 'icons/roguetown/clothing/onmob/wrists.dmi'
-		sleeved = 'icons/roguetown/clothing/onmob/wrists.dmi'
-	else
-		mob_overlay_icon = initial(mob_overlay_icon)
-		sleeved = initial(sleeved)
+	set_wrist_sprite(wrist_display)
 
-	if(isliving(loc))
+	if(on_talons)
+		wearer.update_inv_shoes()
+	else if(isliving(loc))
 		var/mob/living/L = loc
 		L.regenerate_clothes()
 	return TRUE
