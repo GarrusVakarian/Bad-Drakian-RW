@@ -897,3 +897,6 @@
   - bugfix: Instant Transform now applies default colors when creating a penis without
       a previous palette.
   - balance: Milk now provides twice as much nutrition.
+  - bugfix: The oven's Mechanics tip now gives the correct control for taking items
+      out.
+  - balance: Adventurer and Refugee now require 0 PQ on every map again.
