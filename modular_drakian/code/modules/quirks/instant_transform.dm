@@ -1,7 +1,7 @@
 /datum/quirk/instant_transform
 	name = "Instant Transform"
 	desc = "I can reshape my chest and genitals and restyle my hair with a moment of concentration."
-	point_cost = 2
+	point_cost = 1
 	custom_text = "Grants Instant Transform. Change your hairstyle and your chest and genital types, sizes and colors without a mirror."
 
 /datum/quirk/instant_transform/apply_to_human(mob/living/carbon/human/recipient)
