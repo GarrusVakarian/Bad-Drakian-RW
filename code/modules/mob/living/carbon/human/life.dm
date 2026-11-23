@@ -21,6 +21,7 @@
 	var/allmig_reward = 0
 	var/last_sleep
 	var/critical_recovery_started_at
+	var/hazard_critical_started_at
 	var/critical_recovery_reminded = FALSE
 
 /// Health updates already resolve critical state; no extra life processing is needed.
@@ -158,11 +159,21 @@
 /mob/living/carbon/human/proc/update_critical_recovery_reminder()
 	if(!mind?.key || (stat != SOFT_CRIT && stat != UNCONSCIOUS) || !can_succumb())
 		critical_recovery_started_at = null
+		hazard_critical_started_at = null
 		critical_recovery_reminded = FALSE
+		return
+	if(critical_recovery_reminded)
 		return
 	if(isnull(critical_recovery_started_at))
 		critical_recovery_started_at = world.time
-	if(critical_recovery_reminded || world.time - critical_recovery_started_at < 2 MINUTES || !client || client.mob != src)
+	var/turf/open/lava/hazard = loc
+	if(InFullCritical() && istype(hazard) && !hazard.is_safe())
+		if(isnull(hazard_critical_started_at))
+			hazard_critical_started_at = world.time
+	else
+		hazard_critical_started_at = null
+	var/hazard_reminder_due = !isnull(hazard_critical_started_at) && world.time - hazard_critical_started_at >= 10 SECONDS
+	if((!hazard_reminder_due && world.time - critical_recovery_started_at < 2 MINUTES) || !client || client.mob != src)
 		return
 	critical_recovery_reminded = TRUE
 	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_CRITICAL_RECOVERY)

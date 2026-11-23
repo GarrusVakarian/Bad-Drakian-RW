@@ -837,6 +837,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	. = new_character
 	if(.)
 		new_character.key = key		//Manually transfer the key to log them in
+		record_character_spawn(new_character.ckey)
 		new_character.stop_sound_channel(CHANNEL_LOBBYMUSIC)
 		var/area/joined_area = get_area(new_character.loc)
 		if(joined_area)
