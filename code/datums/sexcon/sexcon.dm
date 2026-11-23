@@ -567,6 +567,12 @@
 	if(consume_charge)
 		after_intimate_climax(oral, splashed_user)
 
+	//EVIL BAOTHAN STATDRAIN
+	if(effective_target && HAS_TRAIT(user, TRAIT_EVIL_DRAINER) && user.cmode)
+		effective_target.apply_status_effect(/datum/status_effect/debuff/baothadrained, 1 MINUTES)
+	if(effective_target && HAS_TRAIT(effective_target, TRAIT_EVIL_DRAINER) && effective_target.cmode)
+		user.apply_status_effect(/datum/status_effect/debuff/baothadrained, 1 MINUTES)
+
 /// Applies or accumulates a creampie drip status effect, correctly ORing new orifice flags onto an existing drip rather than silently dropping the second application.
 /proc/apply_creampie_drip(mob/living/carbon/human/target, orifice, use_long = FALSE, added_duration = 60 SECONDS)
 	if(!ishuman(target) || QDELETED(target) || !isnum(added_duration) || added_duration <= 0)
