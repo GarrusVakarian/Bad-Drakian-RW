@@ -224,15 +224,15 @@
 
 	if(H.mind)
 		var/list/weapons = list(
-			"Billhook (Expert Axes)" = "Billhook",
-			"Steel Messer and Iron Shield (Expert Sword-fighting)" = "Steel Messer and Iron Shield",
-			"Kriegsmesser (Expert Sword-fighting)" = "Kriegsmesser",
-			"Bronze Warclub and Iron Shield (Expert Maces)" = "Bronze Warclub and Iron Shield",
-			"Goedendag (Expert Maces)" = "Goedendag",
-			"Bronze War Axe and Iron Shield (Expert Axes)" = "Bronze War Axe and Iron Shield",
-			"Iron Greataxe (Expert Axes)" = "Iron Greataxe",
+			"Billhook (Axes)" = "Billhook",
+			"Steel Messer and Iron Shield (Swords)" = "Steel Messer and Iron Shield",
+			"Kriegsmesser (Swords)" = "Kriegsmesser",
+			"Bronze Warclub and Iron Shield (Maces)" = "Bronze Warclub and Iron Shield",
+			"Goedendag (Maces)" = "Goedendag",
+			"Bronze War Axe and Iron Shield (Axes)" = "Bronze War Axe and Iron Shield",
+			"Iron Greataxe (Axes)" = "Iron Greataxe",
 		)
-		var/weapon_label = input(H, "All Foresters start with Expert Polearms.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_label = input(H, "Choose your EXPERTISE, beyond Polearms.", "TAKE UP ARMS") as anything in weapons
 		var/weapon_choice = weapons[weapon_label]
 		switch(weapon_choice)
 			if("Billhook", "Iron Greataxe")
