@@ -19,6 +19,7 @@ const categories = [
   'Personal Care',
   'Misc',
   'Point-Cost Items',
+  'Point-Cost (No Armor)',
 ] as const;
 
 type Category = (typeof categories)[number];
@@ -56,12 +57,16 @@ export const LoadoutMenu = () => {
           (item.triumph_cost || '').toLowerCase().includes(query)
         );
       }
-      return (
-        category === 'All' ||
-        (category === 'Point-Cost Items'
-          ? item.point_cost > 0
-          : item.category === category)
-      );
+      switch (category) {
+        case 'All':
+          return true;
+        case 'Point-Cost Items':
+          return item.point_cost > 0;
+        case 'Point-Cost (No Armor)':
+          return item.point_cost > 0 && item.category !== 'Armor';
+        default:
+          return item.category === category;
+      }
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
