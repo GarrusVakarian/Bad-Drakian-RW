@@ -1,4 +1,10 @@
 GLOBAL_LIST_EMPTY(last_words)
+/// Round-local character spawn counters. Leaving a body or reconnecting does not advance them.
+GLOBAL_LIST_EMPTY(character_spawn_generations)
+
+/proc/record_character_spawn(player_ckey)
+	if(player_ckey)
+		GLOB.character_spawn_generations[player_ckey] = (GLOB.character_spawn_generations[player_ckey] || 0) + 1
 
 /mob/living/gib(no_brain, no_organs, no_bodyparts)
 	var/prev_lying = lying

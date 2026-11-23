@@ -5,6 +5,8 @@
 
 	silent = FALSE
 	losebreath = 0
+	corpse_player_ckey = ckey(key || mind?.key)
+	corpse_player_spawn_generation = corpse_player_ckey ? GLOB.character_spawn_generations[corpse_player_ckey] : null
 
 //	if(!gibbed)
 //		emote("deathgasp")

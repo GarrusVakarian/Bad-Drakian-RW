@@ -514,9 +514,12 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 	if(stat != DEAD)
 		return
 
+	if(corpse_player_ckey && corpse_player_spawn_generation == GLOB.character_spawn_generations[corpse_player_ckey])
+		return
+
 	//Only starts when the chest has taken full damage
 	var/obj/item/bodypart/chest = get_bodypart(BODY_ZONE_CHEST)
-	if(!(chest.get_damage() >= chest.max_damage))
+	if(!chest || chest.get_damage() < chest.max_damage)
 		return
 
 	//Burn off limbs one by one
