@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Message and Message Summoner whispers now display apostrophes and other punctuation correctly."

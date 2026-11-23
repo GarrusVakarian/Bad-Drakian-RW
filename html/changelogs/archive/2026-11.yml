@@ -911,3 +911,5 @@
       chance to recover after death in lava.
   - qol: "The Embrace Necra reminder appears sooner if you\u2019re stuck in hard critical\
       \ in lava or acid."
+  - bugfix: Message and Message Summoner whispers now display apostrophes and other
+      punctuation correctly.
