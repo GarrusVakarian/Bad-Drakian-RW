@@ -153,6 +153,8 @@
 		B.limb_grabbed = BP
 		B.sublimb_grabbed = used_limb
 		B.update_grabbed_spell_hud()
+		if(user.npc_ai_active())
+			B.show_grab_balloon()
 
 		lastattacker = user.real_name
 		lastattackerckey = user.ckey

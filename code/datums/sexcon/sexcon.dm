@@ -620,7 +620,7 @@
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	if(!istype(testes) || !isnum(testes.ball_size))
 		return null
-	return HAS_TRAIT(user, TRAIT_HIGH_PRODUCTION) ? MAX_TESTICLES_SIZE : testes.ball_size
+	return HAS_TRAIT(user, TRAIT_HIGH_SEED_PRODUCTION) ? MAX_TESTICLES_SIZE : testes.ball_size
 
 /// Size-based bonus shared with container collection; oral repeats grant half the amount.
 /datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
