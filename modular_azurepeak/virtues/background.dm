@@ -324,7 +324,7 @@
 	name = "Enchanter's Apprentice"
 	desc = "In my youth, I worked under a skilled enchanter, learning to bind lux to matter."
 	background_desc = "Ritualist comes with chalk, mortar, pestle and writing supplies. Brewster comes with alchemical vials and reagents."
-	added_traits = list(TRAIT_ALCHEMY_EXPERT, TRAIT_ARCYNE_T2)
+	added_traits = list(TRAIT_ALCHEMY_EXPERT)
 	added_skills = list(list(/datum/skill/craft/alchemy, 2, 2),
 						list(/datum/skill/craft/blacksmithing, 2, 2),
 						list(/datum/skill/craft/engineering, 2, 2),
