@@ -47,3 +47,4 @@
 /datum/loadout_item/sophisticated_coat
 	name = "sophisticated coat"
 	path = /obj/item/clothing/armor/gambeson/sophisticated_coat
+	sort_category = "Cloaks"

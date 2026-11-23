@@ -53,16 +53,6 @@
 
 /datum/loadout_menu/proc/get_item_category(item_path)
 	if(ispath(item_path, /obj/item/clothing))
-		var/obj/item/clothing/clothing = item_path
-		if( \
-			initial(clothing.armor_class) > ARMOR_CLASS_NONE || \
-			ispath(item_path, /obj/item/clothing/armor) || \
-			ispath(item_path, /obj/item/clothing/suit/roguetown/armor) || \
-			ispath(item_path, /obj/item/clothing/head/roguetown/helmet) || \
-			ispath(item_path, /obj/item/clothing/neck/roguetown/gorget) || \
-			ispath(item_path, /obj/item/clothing/suit/roguetown/shirt/freifechter) \
-		)
-			return "Armor"
 		if(ispath(item_path, /obj/item/clothing/cloak))
 			return "Cloaks"
 		if(ispath(item_path, /obj/item/clothing/mask/rogue/spectacles) || ispath(item_path, /obj/item/clothing/neck) || ispath(item_path, /obj/item/clothing/ring))
