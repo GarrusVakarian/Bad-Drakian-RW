@@ -232,7 +232,7 @@
 			"Bronze War Axe and Iron Shield (Expert Axes)" = "Bronze War Axe and Iron Shield",
 			"Iron Greataxe (Expert Axes)" = "Iron Greataxe",
 		)
-		var/weapon_label = input(H, "Choose your weapon.\nAll Foresters start with Expert Polearms", "TAKE UP ARMS") as anything in weapons
+		var/weapon_label = input(H, "All Foresters start with Expert Polearms.", "TAKE UP ARMS") as anything in weapons
 		var/weapon_choice = weapons[weapon_label]
 		switch(weapon_choice)
 			if("Billhook", "Iron Greataxe")
