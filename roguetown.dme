@@ -1545,6 +1545,7 @@
 #include "code\modules\antagonists\roguetown\villain\ascendant\ascendant.dm"
 #include "code\modules\antagonists\roguetown\villain\ascendant\ascendant_altar.dm"
 #include "code\modules\antagonists\roguetown\villain\dragon\dragon.dm"
+#include "code\modules\antagonists\roguetown\villain\dragon\dragon_flight.dm"
 #include "code\modules\antagonists\roguetown\villain\dragon\dragon_spells.dm"
 #include "code\modules\antagonists\roguetown\villain\dreamwalker\dreamwalker_spells.dm"
 #include "code\modules\antagonists\roguetown\villain\dreamwalker\dreamwalker_trident.dm"

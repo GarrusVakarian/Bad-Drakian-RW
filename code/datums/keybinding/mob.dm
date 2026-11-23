@@ -185,6 +185,8 @@
 /datum/keybinding/mob/fly_up/down(client/user)
 	. = TRUE
 	var/mob/flyer = user.mob
+	if(flyer.try_flight_move(UP))
+		return
 	if(!flyer.flying)
 		to_chat(flyer, span_red("I'm not flying!"))
 		return
@@ -244,6 +246,8 @@
 /datum/keybinding/mob/fly_down/down(client/user)
 	. = TRUE
 	var/mob/flyer = user.mob
+	if(flyer.try_flight_move(DOWN))
+		return
 	if(!flyer.flying)
 		to_chat(flyer, span_red("I'm not flying!"))
 		return

@@ -55,7 +55,7 @@
 	no_equip = list(SLOT_SHIRT, SLOT_HEAD, SLOT_WEAR_MASK, SLOT_ARMOR, SLOT_GLOVES, SLOT_SHOES, SLOT_PANTS, SLOT_CLOAK, SLOT_BELT, SLOT_BACK_L, SLOT_BACK_R, SLOT_S_STORE)
 	nojumpsuit = 1
 	sexes = 1
-	offset_features = list(OFFSET_HANDS = list(0,2), OFFSET_HANDS_F = list(0,2))
+	offset_features = list(OFFSET_HANDS = list(32,34), OFFSET_HANDS_F = list(32,34), OFFSET_HEAD = list(32,32), OFFSET_HEAD_F = list(32,32))
 	soundpack_m = /datum/voicepack/werewolf
 	soundpack_f = /datum/voicepack/werewolf
 	enflamed_icon = "widefire"
@@ -80,6 +80,11 @@
 	var/static/list/dragon_base_intents = list(INTENT_HELP, INTENT_DISARM, INTENT_GRAB)
 	H.icon = 'icons/roguetown/mob/monster/player_dragon.dmi'
 	H.base_intents = dragon_base_intents
+	var/list/mark_overlays = list()
+	for(var/mutable_appearance/marking as anything in H.overlays)
+		if(marking.icon == 'icons/roguetown/misc/baotha_marking.dmi')
+			mark_overlays += marking
+	H.cut_overlay(mark_overlays)
 	H.update_damage_overlays()
 	H.update_inv_armor_special()
 	return TRUE
@@ -99,6 +104,9 @@
 	H.set_mob_offsets("protected_dragon_offset", _x = -32, _y = -16)
 
 /datum/species/dragon/on_species_loss(mob/living/carbon/C)
+	var/mob/living/carbon/human/H = C
+	H.remove_status_effect(/datum/status_effect/debuff/dragon_flight)
+	H.RemoveSpell(/obj/effect/proc_holder/spell/self/dragon_flight)
 	. = ..()
 	UnregisterSignal(C, COMSIG_MOB_SAY)
 

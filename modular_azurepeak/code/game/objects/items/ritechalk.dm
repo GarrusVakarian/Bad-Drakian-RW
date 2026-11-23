@@ -106,6 +106,8 @@
 
 /// Shared with the rune: use the existing tattoo and short-body offsets.
 /mob/living/carbon/human/proc/add_baotha_fertility_mark()
+	if(dna?.species?.id == "dragon")
+		return
 	var/mutable_appearance/marking_overlay = mutable_appearance('icons/roguetown/misc/baotha_marking.dmi', "marking_[gender == MALE ? "m" : "f"]", -BODY_LAYER)
 	if(isdwarf(src) || isgoblinp(src) || iskobold(src) || iscritter(src))
 		marking_overlay.pixel_y -= gender == MALE ? 6 : 4
