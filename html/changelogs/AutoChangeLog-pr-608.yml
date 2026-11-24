@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Ctrl-click the action bar to rearrange buttons and their hotkeys. The first nine buttons show their shortcut numbers."
