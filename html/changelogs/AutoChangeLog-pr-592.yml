@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Sort protective loadout wearables under Armor and move unprotective garments to their clothing categories."
+  - rscadd: "Added a Cost only filter to the loadout menu."
