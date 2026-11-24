@@ -267,7 +267,8 @@ SUBSYSTEM_DEF(migrants)
 
 	SSjob.AssignRole(newplayer, rank, TRUE)
 
-	var/mob/living/character = newplayer.create_character(TRUE)	//creates the human and transfers vars and mind
+	var/is_gnoll_migrant = ispath(assignment.role_type, /datum/migrant_role/gnoll)
+	var/mob/living/character = newplayer.create_character(TRUE, gnoll_migrant = is_gnoll_migrant)
 	var/mob/living/carbon/human/setup_character
 	if(ishuman(character))
 		setup_character = character

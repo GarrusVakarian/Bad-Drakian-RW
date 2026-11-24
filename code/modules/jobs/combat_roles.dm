@@ -4,10 +4,9 @@
 #define COMBAT_ROLE(role_type) role_type { combat_role = TRUE }
 
 // Dedicated combat jobs (mixed jobs are classified by subclass).
+// Dragon and Gnoll replace the selected species before subclass selection.
 COMBAT_ROLE(/datum/job/roguetown/assassin)
 COMBAT_ROLE(/datum/job/roguetown/bandit)
-COMBAT_ROLE(/datum/job/roguetown/dragon)
-COMBAT_ROLE(/datum/job/roguetown/gnoll)
 COMBAT_ROLE(/datum/job/roguetown/templar)
 COMBAT_ROLE(/datum/job/roguetown/martyr)
 COMBAT_ROLE(/datum/job/roguetown/dungeoneer)
@@ -167,7 +166,6 @@ COMBAT_ROLE(/datum/advclass/ukj_varlet_harrier)
 // Migrant combat slots; mixed waves still classify individual subclasses.
 COMBAT_ROLE(/datum/migrant_role/bandit)
 COMBAT_ROLE(/datum/migrant_role/assassin)
-COMBAT_ROLE(/datum/migrant_role/gnoll)
 COMBAT_ROLE(/datum/migrant_role/ea_hasir/guard)
 COMBAT_ROLE(/datum/migrant_role/grenzel/bodyguard)
 COMBAT_ROLE(/datum/migrant_role/otavan/knight)

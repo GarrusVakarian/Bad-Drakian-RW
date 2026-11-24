@@ -52,20 +52,45 @@
 	typepath = /datum/round_event/antagonist/solo/assassins
 	antag_datum = /datum/antagonist/assassin
 
+/datum/round_event_control/antagonist/solo/assassins/trim_candidates(list/candidates)
+	. = ..()
+	var/datum/job/assassin_job = SSjob.GetJob("Assassin")
+	for(var/mob/candidate as anything in .)
+		if(!is_assassin_species_allowed(candidate, assassin_job))
+			. -= candidate
+
+/datum/round_event_control/antagonist/solo/assassins/proc/is_assassin_species_allowed(mob/candidate, datum/job/assassin_job)
+	if(QDELETED(candidate) || !assassin_job)
+		return FALSE
+	if(candidate.client && !assassin_job.is_species_allowed(candidate.client.prefs?.pref_species?.type))
+		return FALSE
+	if(ishuman(candidate))
+		var/mob/living/carbon/human/character = candidate
+		return assassin_job.is_species_allowed(character.dna?.species?.type)
+	return isnewplayer(candidate) && !!candidate.client
+
 /datum/round_event/antagonist/solo/assassins/start()
+	var/datum/round_event_control/antagonist/solo/assassins/assassin_control = control
+	var/datum/job/assassin_job = SSjob.GetJob("Assassin")
 	for(var/datum/mind/antag_mind as anything in setup_minds)
+		var/mob/living/carbon/human/character = antag_mind.current
 		var/datum/job/original_job = SSjob.GetJob(antag_mind.assigned_role)
-		if(antag_mind.current.client)
-			SSrole_class_handler.cancel_class_handler(antag_mind.current.client.ckey)
-		SSjob.AssignRole(antag_mind.current, "Assassin")
+		if(!ishuman(character) || !assassin_control.is_assassin_species_allowed(character, assassin_job) || !SSjob.AssignRole(character, "Assassin"))
+			antag_mind.picking = FALSE
+			if(antag_mind.special_role == ROLE_ASSASSIN)
+				antag_mind.special_role = null
+				antag_mind.restricted_roles = null
+			continue
+		if(character.client)
+			SSrole_class_handler.cancel_class_handler(character.client.ckey)
 		if(original_job)
 			if(original_job.total_positions == 1)
 				original_job.current_positions = max(original_job.current_positions, 1)
 			else
 				original_job.current_positions += 1
-		SSmapping.retainer.assassins |= antag_mind.current
-		antag_mind.add_antag_datum(/datum/antagonist/assassin)
-	SSrole_class_handler.assassins_in_round = TRUE
+		if(antag_mind.add_antag_datum(/datum/antagonist/assassin))
+			SSmapping.retainer.assassins |= character
+			SSrole_class_handler.assassins_in_round = TRUE
 
 /datum/round_event_control/antagonist/solo/assassins/canSpawnEvent(players_amt, gamemode, fake_check)
 	. = ..()
