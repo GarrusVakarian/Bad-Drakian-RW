@@ -322,21 +322,20 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	return tgui_input_list(target, prompt, title, tiers, option_details = details, window_width = 600)
 
 /// Ask whether the law has more than a name and overall build for a minor bounty.
-/proc/choose_bounty_body_description(mob/living/carbon/human/target)
-	var/choice = input(target, "What does the law know about your appearance?", "Bounty Description") as null|anything in list("They know only my name and overall build", "They know my body features")
-	return choice == "They know my body features"
+/proc/choose_bounty_full_description(mob/living/carbon/human/target)
+	var/choice = input(target, "What does the law know about your appearance and voice?", "Bounty Description") as null|anything in list("They know only my name and overall build", "They know my body features and voice")
+	return choice == "They know my body features and voice"
 
 /// Record a character bounty, taking a snapshot of any publicly listed features.
 /proc/add_character_bounty(mob/living/carbon/human/target, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_FACE)
 	var/descriptor_height
 	var/descriptor_body
 	var/descriptor_voice
-	if(description_level >= BOUNTY_DESCRIPTION_BODY)
+	if(description_level == BOUNTY_DESCRIPTION_FULL)
 		var/list/descriptors = target.get_mob_descriptors()
 		descriptor_height = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
 		descriptor_body = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
-		if(description_level == BOUNTY_DESCRIPTION_FULL)
-			descriptor_voice = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
+		descriptor_voice = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
 	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition, is_church_bounty_issuer(employer_name))
 
 /proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE, church_issued = FALSE)
@@ -349,7 +348,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	new_bounty.bandit = bandit_status
 	new_bounty.reason = html_encode(reason)
 	new_bounty.employer = employer_name
-	if(description_level >= BOUNTY_DESCRIPTION_BODY)
+	if(description_level == BOUNTY_DESCRIPTION_FULL)
 		new_bounty.target_race = race
 		new_bounty.target_height = LOWER_TEXT(descriptor_height)
 		new_bounty.target_body = LOWER_TEXT(descriptor_body)
@@ -359,13 +358,12 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		else
 			var/bro_real = "a "
 			new_bounty.target_body_prefix = LOWER_TEXT(bro_real += descriptor_body)
-		if(description_level == BOUNTY_DESCRIPTION_FULL)
-			if(descriptor_voice == "Ordinary" || descriptor_voice == "Androgynous")
-				var/bro_unreal = "an "
-				new_bounty.target_voice_prefix = LOWER_TEXT(bro_unreal += descriptor_voice)
-			else
-				var/bro_real = "a "
-				new_bounty.target_voice_prefix = LOWER_TEXT(bro_real += descriptor_voice)
+		if(descriptor_voice == "Ordinary" || descriptor_voice == "Androgynous")
+			var/bro_unreal = "an "
+			new_bounty.target_voice_prefix = LOWER_TEXT(bro_unreal += descriptor_voice)
+		else
+			var/bro_real = "a "
+			new_bounty.target_voice_prefix = LOWER_TEXT(bro_real += descriptor_voice)
 	if(gender == MALE)
 		new_bounty.target_body_type = "masculine"
 	else
@@ -441,30 +439,29 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 ///@param new_bounty:  The bounty datum.
 /proc/compose_bounty(datum/bounty/new_bounty)
 	var/short_description = "They are of a [new_bounty.target_body_type] build.<BR>"
-	var/voice_description = new_bounty.description_level == BOUNTY_DESCRIPTION_FULL ? " They speak with [new_bounty.target_voice_prefix] voice.'." : ""
 	switch(rand(1, 3))
 		if(1)
 			new_bounty.banner += "A dire bounty hangs upon the capture of [new_bounty.target], for '[new_bounty.reason]'.<BR>"
-			if(new_bounty.description_level >= BOUNTY_DESCRIPTION_BODY)
-				new_bounty.banner += "They are a criminal belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique.[voice_description]<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a criminal belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
 			else
 				new_bounty.banner += short_description
 			new_bounty.banner += "The patron, [new_bounty.employer], offers [new_bounty.amount] mammons for the task.<BR>"
 		if(2)
-			if(new_bounty.description_level >= BOUNTY_DESCRIPTION_BODY)
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
 				new_bounty.banner += "The capture of [new_bounty.target] is wanted for '[new_bounty.reason]''.<BR>"
 			else
 				new_bounty.banner += "The capture of [new_bounty.target] is wanted for '[new_bounty.reason]'.<BR>"
-			if(new_bounty.description_level >= BOUNTY_DESCRIPTION_BODY)
-				new_bounty.banner += "They are a reprobate belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique.[voice_description]<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a reprobate belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
 			else
 				new_bounty.banner += short_description
 			new_bounty.banner += "The employer, [new_bounty.employer], offers [new_bounty.amount] mammons for the deed.<BR>"
 		if(3)
 			new_bounty.banner += "[new_bounty.employer] hath offered to pay [new_bounty.amount] mammons for the capture of [new_bounty.target].<BR>"
 			new_bounty.banner += "By reason of the following: '[new_bounty.reason]'.<BR>"
-			if(new_bounty.description_level >= BOUNTY_DESCRIPTION_BODY)
-				new_bounty.banner += "They are a heathen belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique.[voice_description]<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a heathen belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
 			else
 				new_bounty.banner += short_description
 	new_bounty.banner += "--------------<BR>"

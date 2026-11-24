@@ -82,7 +82,7 @@
 	switch(bounty_severity)
 		if("Small Game")
 			bounty_total = rand(100, 200)
-			description_level = choose_bounty_body_description(H) ? BOUNTY_DESCRIPTION_BODY : BOUNTY_DESCRIPTION_BUILD
+			description_level = choose_bounty_full_description(H) ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD
 		if("Highwayman")
 			bounty_total = rand(200, 300)
 		if("Realm Boogeyman")

@@ -587,5 +587,4 @@ GLOBAL_LIST_EMPTY(round_join_times)
 
 // Details included in a public bounty notice.
 #define BOUNTY_DESCRIPTION_BUILD 0
-#define BOUNTY_DESCRIPTION_BODY 1
-#define BOUNTY_DESCRIPTION_FULL 2
+#define BOUNTY_DESCRIPTION_FULL 1
