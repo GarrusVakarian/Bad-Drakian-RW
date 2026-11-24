@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "You can now use the ERP panel during a tackle pin when both players have it enabled. Use the panel's Stop button to end the action and keep the pin active."
