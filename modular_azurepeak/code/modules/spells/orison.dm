@@ -22,9 +22,9 @@
 	name = "\improper lesser prayer"
 	desc = "The fundamental teachings of theology return to you:\n \
 		<b>Fill</b>: Beseech your Divine to create a small quantity of water in a container that you touch for some devotion.\n \
-		<b>Touch</b>: Direct a sliver of divine thaumaturgy into your being, causing your voice to become LOUD when you next speak. Known to sometimes scare the rats inside the SCOMlines. Can be used on light sources at range, and it will cause them flicker.\n \
-		<b>Use</b>: Issue a prayer for illumination, causing you or another living creature to begin glowing with light for five minutes - this stacks each time you cast it, with no upper limit. Using thaumaturgy on a person will remove this blessing from them, and MMB on your praying hand will remove any light blessings from yourself.\n \
-		<b>Shove</b>: Lay hands upon an adjacent creature to channel divine restorative power through your touch. Both you and your target must remain still for the channeling to continue."
+		<b>Voice</b>: Direct a sliver of divine thaumaturgy into your being, causing your voice to become LOUD when you next speak. Known to sometimes scare the rats inside the SCOMlines. Can be used on light sources at range, and it will cause them flicker.\n \
+		<b>Light</b>: Issue a prayer for illumination, causing you or another living creature to begin glowing with light for five minutes - this stacks each time you cast it, with no upper limit. Using Voice on a person will remove this blessing from them, and MMB on your praying hand will remove any light blessings from yourself.\n \
+		<b>Lay Hands</b>: Lay hands upon an adjacent creature to channel divine restorative power through your touch. Both you and your target must remain still for the channeling to continue."
 	catchphrase = null
 	possible_item_intents = list(/datum/intent/fill, INTENT_HELP, /datum/intent/use, INTENT_DISARM)
 	icon = 'icons/mob/roguehudgrabs.dmi'
@@ -38,6 +38,16 @@
 	var/light_devotion = 5
 	var/water_moisten = 2
 	var/lay_hands_devotion = 10
+
+/obj/item/melee/touch_attack/orison/get_intent_display_name(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return "Voice"
+		if(/datum/intent/use)
+			return "Light"
+		if(INTENT_DISARM)
+			return "Lay Hands"
+	return ..()
 
 /obj/item/melee/touch_attack/orison/attack_self()
 	qdel(src)

@@ -36,10 +36,10 @@
 /obj/item/melee/touch_attack/prestidigitation
 	name = "\improper prestidigitating touch"
 	desc = "You recall the following incantations you've learned:\n \
-	<b>Touch</b>: Use your arcyne powers to scrub an object or something clean, like using soap. Also known as the Apprentice's Woe.\n \
-	<b>Shove</b>: Will forth a spark on an item of your choosing (or in front of you, if used on the ground) to ignite flammable items and things like torches, lanterns or campfires. \n \
-	<b>Use</b>: Conjure forth an orbiting mote of magelight to light your way. Middle-click this hand to set the mote's color. Alt-right-click to reset it.\n \
-	<b>Punch</b>: Conjure a harmless bolt of water at your target, extinguishing any flames upon them. When aimed at the head, it may distress those of feline nature or noble bearing."
+	<b>Clean</b>: Use your arcyne powers to scrub an object or something clean, like using soap. Also known as the Apprentice's Woe.\n \
+	<b>Spark</b>: Will forth a spark on an item of your choosing (or in front of you, if used on the ground) to ignite flammable items and things like torches, lanterns or campfires. \n \
+	<b>Light</b>: Conjure forth an orbiting mote of magelight to light your way. Middle-click this hand to set the mote's color. Alt-right-click to reset it.\n \
+	<b>Splash</b>: Conjure a harmless bolt of water at your target, extinguishing any flames upon them. When aimed at the head, it may distress those of feline nature or noble bearing."
 	catchphrase = null
 	no_effect = TRUE
 	possible_item_intents = list(INTENT_HELP, INTENT_DISARM, /datum/intent/use, INTENT_HARM)
@@ -54,6 +54,18 @@
 	var/sparkspeed = 30 // spark summoning speed
 	var/spark_cd = 0
 	var/gatherspeed = 35
+
+/obj/item/melee/touch_attack/prestidigitation/get_intent_display_name(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return "Clean"
+		if(INTENT_DISARM)
+			return "Spark"
+		if(/datum/intent/use)
+			return "Light"
+		if(INTENT_HARM)
+			return "Splash"
+	return ..()
 
 /obj/item/melee/touch_attack/prestidigitation/Initialize(mapload)
 	. = ..()

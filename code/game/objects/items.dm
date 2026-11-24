@@ -1298,6 +1298,10 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/get_temperature()
 	return heat
 
+/** Display name used when inspecting one of this item's intents. */
+/obj/item/proc/get_intent_display_name(datum/intent/intent)
+	return intent.name
+
 ///Returns the sharpness of src. If you want to get the sharpness of an item use this.
 /obj/item/proc/get_sharpness()
 	//Oh no, we are dulled out!
