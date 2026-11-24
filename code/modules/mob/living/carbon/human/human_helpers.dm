@@ -163,6 +163,13 @@
 		return if_no_face
 	return real_name
 
+/mob/living/carbon/human/proc/can_show_pq_sapling(mob/viewer)
+	if(!client?.has_pq_sapling || !viewer || name != real_name || istype(src, /mob/living/carbon/human/species/wildshape))
+		return FALSE
+	if(HAS_TRAIT(viewer, TRAIT_PROSOPAGNOSIA) || HAS_TRAIT(src, TRAIT_SCARRED))
+		return FALSE
+	return get_face_name("") == real_name
+
 //gets name from ID or PDA itself, ID inside PDA doesn't matter
 //Useful when player is being seen by other mobs
 /mob/living/carbon/human/proc/get_id_name(if_no_id = "Unknown")

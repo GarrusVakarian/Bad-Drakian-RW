@@ -191,31 +191,39 @@
 			return FALSE
 		p.client.mouseovertext.maptext_height = mouseover_data["height"]
 		p.client.mouseovertext.maptext = mouseover_data["text"]
-		p.client.mouseovertext.movethis(PM, viewer = p.client, y_shift = mouseover_data["y_shift"] ? mouseover_data["y_shift"] : 0)
+		p.client.mouseovertext.movethis(PM, viewer = p.client, y_shift = mouseover_data["y_shift"] || 0, text_width = mouseover_data["width"])
 		p.client.screen |= p.client.mouseovertext
 	return TRUE
 
-/mob/proc/get_mouseover_data(mob/viewer)
+/mob/proc/get_mouseover_data(mob/viewer, display_name = name)
 	return list(
 		"height" = 32,
-		"text" = {"<span style='font-size:8pt;font-family:"Pterra";color:#c1aaaa;text-shadow:0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;' class='center maptext '>[name]"},
+		"text" = {"<span style='font-size:8pt;font-family:"Pterra";color:#c1aaaa;text-shadow:0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;' class='center maptext '>[display_name]"},
 	)
 
-/mob/living/carbon/human/get_mouseover_data(mob/viewer)
+/mob/living/carbon/human/get_mouseover_data(mob/viewer, display_name = name)
 	var/mousecolor = "#c1aaaa"
 	if(voice_color && name == real_name)
 		mousecolor = "#[voice_color]"
+
+	var/has_sapling = can_show_pq_sapling(viewer)
+	if(has_sapling)
+		var/static/icon/sapling = icon('icons/pq-sapling.png')
+		display_name += " \icon[sapling]"
 
 	if(viewer?.client?.prefs?.show_mouseover_role && get_face_name(""))
 		var/role_text = get_mouseover_role_title()
 		if(role_text)
 			return list(
 				"height" = 44,
+				"width" = has_sapling ? 112 : null,
 				"y_shift" = 3,
-				"text" = "<span style='font-size:8pt;font-family:\"Pterra\";color:[mousecolor];text-shadow:0 0 10px #fff,0 0 20px #fff,0 0 30px #e60073,0 0 40px #e60073,0 0 50px #e60073,0 0 60px #e60073,0 0 70px #e60073;display:block;text-align:center;' class='center maptext '>[name]</span><span style='font-size:6pt;font-family:\"Pterra\";color:#c1aaaa;text-shadow:0 0 10px #000,0 0 10px #000,0 0 10px #000;display:block;text-align:center;'>[role_text]</span>",
+				"text" = "<span style='font-size:8pt;font-family:\"Pterra\";color:[mousecolor];text-shadow:0 0 10px #fff,0 0 20px #fff,0 0 30px #e60073,0 0 40px #e60073,0 0 50px #e60073,0 0 60px #e60073,0 0 70px #e60073;display:block;text-align:center;' class='center maptext '>[display_name]</span><span style='font-size:6pt;font-family:\"Pterra\";color:#c1aaaa;text-shadow:0 0 10px #000,0 0 10px #000,0 0 10px #000;display:block;text-align:center;'>[role_text]</span>",
 			)
 
-	var/list/mouseover_data = ..()
+	var/list/mouseover_data = ..(viewer, display_name)
+	if(has_sapling)
+		mouseover_data["width"] = 112
 	mouseover_data["text"] = replacetext(mouseover_data["text"], "color:#c1aaaa", "color:[mousecolor]")
 	return mouseover_data
 
@@ -253,7 +261,7 @@
 	maptext_width = 96
 	alpha = 150
 
-/atom/movable/screen/movable/mouseover/proc/movethis(list/PM, hudobj = FALSE, client/viewer, y_shift = 0)
+/atom/movable/screen/movable/mouseover/proc/movethis(list/PM, hudobj = FALSE, client/viewer, y_shift = 0, text_width)
 	if(locked) //no! I am locked! begone!
 		return
 
@@ -277,6 +285,7 @@
 	var/pix_X = length(screen_loc_X) > 1 ? text2num(screen_loc_X[2]) : 0
 	var/pix_Y = length(screen_loc_Y) > 1 ? text2num(screen_loc_Y[2]) : 0
 
+	maptext_width = text_width || initial(maptext_width)
 	if(hudobj)
 		maptext_y = 28
 		maptext_x = -48
@@ -298,6 +307,7 @@
 	if(view_width <= 0 || view_height <= 0)
 		return
 
+	maptext_x -= (maptext_width - initial(maptext_width)) / 2
 	maptext_y += y_shift
 	if(anchor_y + maptext_y + maptext_height > view_height - 2)
 		maptext_y = -maptext_height - 4 // No room above: put the label below the target.
