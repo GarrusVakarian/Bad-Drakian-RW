@@ -214,9 +214,11 @@
 			to_chat(src, span_danger("I cannot use LOOC while in the lobby. Join the round or observe first."))
 			return
 
-	else if((isobserver(mob) || (mob?.stat == DEAD && (wp || !isliving(mob)))) && !(holder && istype(mob, /mob/dead/observer/admin)))
-		var/refusal = isobserver(mob) ? "I cannot use LOOC while ghosted." : "I can only use standard or Subtle LOOC while dead."
-		to_chat(src, span_danger(refusal))
+	else if(istype(mob, /mob/dead/observer/screye))
+		to_chat(src, span_danger("I cannot use LOOC while scrying."))
+		return
+	else if(wp && (mob?.stat == DEAD || isobserver(mob)) && !(holder && istype(mob, /mob/dead/observer/admin)))
+		to_chat(src, span_danger("I cannot use Wall Pierce LOOC while dead."))
 		return
 
 	if(!mob)
