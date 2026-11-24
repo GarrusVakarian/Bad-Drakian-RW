@@ -788,7 +788,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Artificer Jacket"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/jacket/artijacket
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/priestrobe
 	name = "Undervestments"
@@ -981,13 +981,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Leather Trousers"
 	path = /obj/item/clothing/under/roguetown/trou/leather
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/leathershorts
 	name = "Leather Shorts"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/shorts
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/sailorpants
 	name = "Seafaring Pants"
@@ -1025,7 +1025,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Fingerless Leather Gloves"
 	path = /obj/item/clothing/gloves/roguetown/fingerless_leather
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/allwrappings
 	name = "Cloth Wrappings"
@@ -1039,7 +1039,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Leather Gloves"
 	path = /obj/item/clothing/gloves/roguetown/leather
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/fingerless
 	name = "Fingerless Gloves"
@@ -1049,7 +1049,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Bandages, Gloves"
 	path = /obj/item/clothing/gloves/roguetown/bandages
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/exoticsilkbelt
 	name = "Exotic Silk Belt"
@@ -1437,19 +1437,19 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Old Kitsune Mask"
 	path = /obj/item/clothing/mask/rogue/facemask/yoruku_kitsune
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/oni_mask
 	name = "Old Oni Mask"
 	path = /obj/item/clothing/mask/rogue/facemask/yoruku_oni
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/naledi_lordmask
 	name = "Old Naledi Mask"
 	path = /obj/item/clothing/mask/rogue/lordmask/naledi
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 // CLOAKS
 /datum/loadout_item/darkcloak
@@ -1531,14 +1531,14 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Old Forlorn Collar"
 	path = /obj/item/clothing/neck/roguetown/gorget/forlorncollar
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 // EASTERN CLOTHING
 /datum/loadout_item/captain_robe
 	name = "Eastern Flowery Robe"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast/captainrobe
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/decorative_captain_robe
 	name = "Decorative Flowery Robe"
@@ -1549,7 +1549,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Eastern Mentor Suit"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast/mentorsuit
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/decorative_mentor_suit
 	name = "Decorative Mentor Robe"
@@ -1560,13 +1560,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Eastern Craft Robe"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast/crafteast
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/dopoeast
 	name = "Eastern dopo Robe"
 	path = /obj/item/clothing/suit/roguetown/armor/basiceast
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 // HEADWEAR
 /datum/loadout_item/nochood
@@ -1772,13 +1772,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Mask"
 	path = /obj/item/clothing/mask/rogue/facemask/ancient
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/ancient_kilt
 	name = "Ancient Kilt"
 	path = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 //─────────────────────────────────────────────────────────────
 // 3 TRIUMPH - Wooden Polearms & Noble Clothing
@@ -1925,49 +1925,49 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Psydonic Iron Plate"
 	path = /obj/item/clothing/suit/roguetown/armor/plate/psydoniciron
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_desert_coat
 	name = "Desert Coat"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/zyb
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_duelist_coat
 	name = "Duelist Coat"
 	path = /obj/item/clothing/armor/leather/jacket/leathercoat/duelcoat
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_fencing_gambeson
 	name = "Fencing Gambeson (Otavan)"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_fencing_shirt
 	name = "Fencing Shirt (Padded)"
 	path = /obj/item/clothing/suit/roguetown/shirt/freifechter
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_fencing_shirt_shepherd
 	name = "Shepherd's Shirt (Padded)"
 	path = /obj/item/clothing/suit/roguetown/shirt/freifechter/shepherd
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_fencing_vest_shepherd
 	name = "Shepherd's Vest (Padded)"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/heavy/shepherd
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gambeson
 	name = "Gambeson"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gambeson_light
 	name = "Gambeson (Light)"
@@ -1979,79 +1979,79 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Gambeson (Padded)"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_grenzelhoft_hipshirt
 	name = "Grenzelhoft Hip-Shirt"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/grenzelhoft
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_byrine_chausses
 	name = "Byrine Chausses"
 	path = /obj/item/clothing/under/roguetown/splintlegs/iron/gronn
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_byrine_gloves
 	name = "Byrine Gloves"
 	path = /obj/item/clothing/gloves/roguetown/chain/gronn
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_byrine_hauberk
 	name = "Byrine"
 	path = /obj/item/clothing/suit/roguetown/armor/brigandine/gronn
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_fur_pants
 	name = "Fur Pants"
 	path = /obj/item/clothing/under/roguetown/trou/leather/gronn
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_bone_gloves
 	name = "Bone Gloves"
 	path = /obj/item/clothing/gloves/roguetown/angle/gronnfur
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_hierophant_gambeson
 	name = "Hierophant Gambeson"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hierophant
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_gronn_ravager_mantle
 	name = "Ravager Mantle"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/heavy/gronn
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_huus_quyaq
 	name = "Huus Quyaq (Northern)"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/Huus_quyaq
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_kurche
 	name = "Kurche (Gronn)"
 	path = /obj/item/clothing/suit/roguetown/armor/kurche
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_leather_cuirass
 	name = "Leather Cuirass"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/cuirass
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_leather_corslet
 	name = "Leather Corslet"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/bikini
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/corset
 	name = "Corset"
@@ -2067,13 +2067,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "New Moon Hood"
 	path = /obj/item/clothing/head/roguetown/roguehood/reinforced/newmoon
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_newmoon_jacket
 	name = "New Moon Jacket"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/newmoon_jacket
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_newmoon_tunic
 	name = "New Moon Tunic"
@@ -2088,92 +2088,92 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Otavan Gambeson"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_padded_caftan
 	name = "Padded Caftan"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/chargah
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/padded_kini
 	name = "Padded corslet"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/bikini
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_pontifex_gambeson
 	name = "Pontifex Gambeson"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/pontifex
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_psyaltrist_leather
 	name = "Psyaltrist Leather"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/studded/psyaltrist
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_zyb_coat
 	name = "Desert Coat"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/heavy/coat/zyb
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_zyb_gambeson
 	name = "Desert Gambeson"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/zyb
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_shamanic_coat
 	name = "Shamanic Coat"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/heavy/atgervi
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_spellcaster_hat
 	name = "Spellcaster Hat"
 	path = /obj/item/clothing/head/roguetown/spellcasterhat
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_steppe_coat
 	name = "Steppe Coat"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/heavy/coat/steppe
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 // HELMETS AND HEADWEAR (Alphabetically Ordered)
 /datum/loadout_item/tri_grenzelhoft_hat
 	name = "Grenzelhoft Hat"
 	path = /obj/item/clothing/head/roguetown/grenzelhofthat
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_hierophant_hood
 	name = "Hierophant Hood"
 	path = /obj/item/clothing/head/roguetown/roguehood/hierophant
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_armorhood_hood
 	name = "Studded Leather Hood"
 	path = /obj/item/clothing/head/roguetown/helmet/leather/armorhood/advanced
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_pontifex_hood
 	name = "Pontifex Hood"
 	path = /obj/item/clothing/head/roguetown/roguehood/pontifex
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_zyb_hijab
 	name = "Desert Hijab"
 	path = /obj/item/clothing/head/roguetown/roguehood/shalal/hijab/zyb
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 
 // GLOVES (Alphabetically Ordered)
@@ -2181,37 +2181,37 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Atgervi Gloves"
 	path = /obj/item/clothing/gloves/roguetown/angle/atgervi
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_eastern_gloves
 	name = "Eastern Gloves"
 	path = /obj/item/clothing/gloves/roguetown/eastgloves2
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_grenzelhoft_gloves
 	name = "Grenzelhoft Gloves"
 	path = /obj/item/clothing/gloves/roguetown/angle/grenzelgloves
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_kote_gloves
 	name = "Kote Gauntlets"
 	path = /obj/item/clothing/gloves/roguetown/plate/kote
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_otavan_gloves
 	name = "Otavan Gloves"
 	path = /obj/item/clothing/gloves/roguetown/otavan
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_pontifex_gloves
 	name = "Pontifex Gloves"
 	path = /obj/item/clothing/gloves/roguetown/angle/pontifex
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 // BOOTS & SHOES (Alphabetically Ordered)
 /datum/loadout_item/tri_atgervi_boots
@@ -2225,21 +2225,21 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Grenzelhoft Boots"
 	path = /obj/item/clothing/shoes/roguetown/boots/grenzelhoft
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 
 /datum/loadout_item/tri_kazengun_boots
 	name = "Kazengun Boots"
 	path = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced/kazengun
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 
 /datum/loadout_item/tri_otavan_boots
 	name = "Otavan Boots"
 	path = /obj/item/clothing/shoes/roguetown/boots/otavan
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 
 /datum/loadout_item/tri_rumaclan_boots
@@ -2262,61 +2262,61 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Psydonic Iron Plate Greaves"
 	path = /obj/item/clothing/under/roguetown/platelegs/psydoniciron
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_atgervi_pants
 	name = "Atgervi Fur Pants"
 	path = /obj/item/clothing/under/roguetown/trou/leather/atgervi
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_eastern_pants_1
 	name = "Eastern Pants (Black)"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/eastpants1
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_eastern_pants_2
 	name = "Eastern Pants (White)"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/eastpants2
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_grenzelhoft_pants
 	name = "Grenzelhoft Pants"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/grenzelpants
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_otavan_pants
 	name = "Otavan Pants"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_otavan_generic_pants
 	name = "Otavan Pants (Generic)"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan/generic
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_kazengun_pants
 	name = "Kazengun Pants"
 	path = /obj/item/clothing/under/roguetown/heavy_leather_pants/kazengun
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_pontifex_pants
 	name = "Pontifex Pants"
 	path = /obj/item/clothing/under/roguetown/trou/leather/pontifex
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_zyb_pants
 	name = "Zybantine Pants"
 	path = /obj/item/clothing/under/roguetown/trou/leather/pontifex/zyb
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 
 // CLOAKS & CAPES (Alphabetically Ordered)
@@ -2345,7 +2345,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Fencerguard"
 	path = /obj/item/clothing/neck/roguetown/fencerguard
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_naledi_cross
 	name = "Naledi Psicross"
@@ -2362,13 +2362,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Hierophant Robe"
 	path = /obj/item/clothing/suit/roguetown/shirt/robe/hierophant
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/tri_pontifex_robe
 	name = "Pontifex Robe"
 	path = /obj/item/clothing/suit/roguetown/shirt/robe/pointfex
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/slitteddress
 	name = "Slitted dress"
@@ -2834,13 +2834,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Horsey Harness Corset"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/studded/bikini/horsey
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/horsey/gloves
 	name = "Horsey Arm Harness"
 	path = /obj/item/clothing/gloves/roguetown/leather/horsey
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
 
 /datum/loadout_item/horsey/shoes
 	name = "Horsey Leg Harness"

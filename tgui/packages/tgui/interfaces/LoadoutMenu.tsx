@@ -75,30 +75,38 @@ export const LoadoutMenu = () => {
       <Window.Content>
         <Stack vertical fill>
           <Stack.Item>
-            {categoryRows.map((row) => (
-              <Tabs key={row[0]} className="LoadoutMenu__tabs">
-                {row.map((tab) => (
-                  <Tabs.Tab
-                    key={tab}
-                    selected={tab === activeCategory}
-                    onClick={() => {
-                      setCategory(tab);
-                      setSearch('');
-                    }}
-                  >
-                    {tab}
-                  </Tabs.Tab>
-                ))}
-                {row === categoryRows[1] && (
-                  <Button.Checkbox
-                    checked={pointCostOnly}
-                    onClick={() => setPointCostOnly(!pointCostOnly)}
-                  >
-                    Point-Cost only
-                  </Button.Checkbox>
-                )}
-              </Tabs>
-            ))}
+            <div className="LoadoutMenu__category-rows">
+              {categoryRows.map((row) => (
+                <Tabs key={row[0]} className="LoadoutMenu__tabs">
+                  {row.map((tab) => (
+                    <Tabs.Tab
+                      key={tab}
+                      selected={tab === activeCategory}
+                      onClick={() => {
+                        setCategory(tab);
+                        setSearch('');
+                      }}
+                    >
+                      {tab}
+                    </Tabs.Tab>
+                  ))}
+                  {row === categoryRows[1] && (
+                    <label className="Tab Tabs__Tab LoadoutMenu__cost-toggle">
+                      <span className="Tab__text">
+                        <input
+                          type="checkbox"
+                          checked={pointCostOnly}
+                          onChange={(event) =>
+                            setPointCostOnly(event.currentTarget.checked)
+                          }
+                        />
+                        Cost only
+                      </span>
+                    </label>
+                  )}
+                </Tabs>
+              ))}
+            </div>
           </Stack.Item>
           <Stack.Item>
             <Stack align="center">

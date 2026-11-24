@@ -28,4 +28,4 @@
 	name = "druid armor"
 	path = /obj/item/clothing/suit/roguetown/armor/leather/druid/loadout
 	sort_category = "Armor"
-	triumph_cost = 4
+	triumph_cost = 3
