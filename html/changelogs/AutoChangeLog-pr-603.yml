@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "The Say hotkey opens OOC in the lobby and DSay while dead."
+  - qol: "Dead players can use standard LOOC from their bodies or as ghosts."
