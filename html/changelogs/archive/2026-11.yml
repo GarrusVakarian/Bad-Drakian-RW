@@ -924,3 +924,8 @@
   - bugfix: Fixed an error when examining outlaws without a penance record.
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
+  - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
+      prone when they hear a dog clicker nearby.
+  - qol: The Dog Clicker is now the Toys category for 0 loadout points. Use it on
+      an adjacent character outside combat mode to offer them Clicker-Trained for
+      the round.

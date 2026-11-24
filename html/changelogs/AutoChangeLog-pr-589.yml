@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Added Clicker-Trained, a 0-point quirk that makes your character drop prone when they hear a dog clicker nearby."
-  - qol: "The Dog Clicker is now the Toys category for 0 loadout points. Use it on an adjacent character outside combat mode to offer them Clicker-Trained for the round."
