@@ -17,7 +17,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/last_id
 
 	//game-preferences
-	var/lastchangelog = ""				//Saved changlog filesize to detect if there was a change
+	var/lastchangelog = ""				// Hash of the latest changelog opened by this player.
 	var/ooccolor = "#c43b23"
 	var/asaycolor = "#ff4500"			//This won't change the color for current admins, only incoming ones.
 	var/triumphs = 0

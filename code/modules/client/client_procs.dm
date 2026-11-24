@@ -530,7 +530,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	generate_clickcatcher()
 	apply_clickcatcher()
 
-	if(prefs.lastchangelog != GLOB.changelog_hash) //bolds the changelog button on the interface so we know there are updates.
+	if(has_unread_changelog())
 		to_chat(src, span_info("You have unread updates in the changelog."))
 		if(CONFIG_GET(flag/aggressive_changelog))
 			changelog()

@@ -161,11 +161,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		return 1
 
 	if(href_list["open_changelog"])
-		var/datum/changelog/changelog_ui = GLOB.changelog_tgui
-		if(!changelog_ui)
-			changelog_ui = new /datum/changelog
-			GLOB.changelog_tgui = changelog_ui
-		changelog_ui.ui_interact(src)
+		client.changelog()
 		return 1
 
 	if(href_list["ready"])
