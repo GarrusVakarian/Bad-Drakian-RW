@@ -169,6 +169,28 @@
 	var/medicine_quality
 	var/medicine_amount = 0
 
+/obj/item/natural/cloth/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
+	if(slot == SLOT_MOUTH && mouth_gag_is_blocked(M, equipper, disable_warning))
+		return FALSE
+	return ..()
+
+/obj/item/natural/cloth/proc/mouth_gag_is_blocked(mob/wearer, mob/user, silent = FALSE)
+	var/mob/living/carbon/human/target = wearer
+	if(!istype(target))
+		return FALSE
+	var/mob/actor = user ? user : wearer
+	var/covered = target.get_mouth_covering_gear()
+	if(covered)
+		if(!silent)
+			target.warn_remove_mouth_cover(actor, covered)
+		return TRUE
+	if(target.mouth)
+		if(!silent)
+			var/whose = actor == target ? "My" : capitalize(target.p_their())
+			to_chat(actor, span_warning("[whose] mouth is already occupied!"))
+		return TRUE
+	return FALSE
+
 /obj/item/natural/cloth/attack_right(mob/user)
 	if(user.get_active_held_item())
 		return
@@ -243,8 +265,61 @@
 
 // BANDAGING
 /obj/item/natural/cloth/attack(mob/living/M, mob/user)
-	testing("attack")
+	if(ishuman(user) && ishuman(M) && user != M && user.zone_selected == BODY_ZONE_PRECISE_MOUTH)
+		var/mob/living/applier = user
+		applier.try_equip_item_on(src, M, SLOT_MOUTH)
+		return TRUE
 	bandage(M, user)
+
+/obj/item/natural/cloth/proc/can_remove_mouth_gag(mob/living/carbon/human/wearer, mob/living/carbon/human/user)
+	if(QDELETED(src) || QDELETED(wearer) || QDELETED(user) || wearer.mouth != src || loc != wearer)
+		return FALSE
+	if(!user.Adjacent(wearer) || user.incapacitated() || HAS_TRAIT(user, TRAIT_CHUNKYFINGERS))
+		return FALSE
+	if(!user.has_hand_for_held_index(user.active_hand_index, TRUE) || user.check_arm_grabbed(user.active_hand_index))
+		return FALSE
+	return canStrip(user, wearer) && (user != wearer || allow_self_unequip)
+
+/obj/item/natural/cloth/proc/wait_to_remove_mouth_gag(mob/living/carbon/human/wearer, mob/living/carbon/human/user, obj/item/blade)
+	if(!can_remove_mouth_gag(wearer, user))
+		return FALSE
+	if(blade && user.get_active_held_item() != blade)
+		return FALSE
+	var/delay = (user == wearer) ? 10 SECONDS : 5 SECONDS
+	if(blade)
+		delay = 1 SECONDS
+	to_chat(user, span_notice(blade ? "I start cutting away [src]..." : "I start removing [src]..."))
+	// Gag removal uses fixed times regardless of the wearer's or helper's action speed.
+	if(!do_after(user, delay / user.do_after_coefficent(), target = wearer) || !can_remove_mouth_gag(wearer, user))
+		return FALSE
+	return !blade || (!QDELETED(blade) && user.get_active_held_item() == blade)
+
+/obj/item/natural/cloth/proc/remove_mouth_gag(mob/living/carbon/human/wearer, mob/living/carbon/human/user, obj/item/blade)
+	if(!wait_to_remove_mouth_gag(wearer, user, blade) || !wearer.dropItemToGround(src))
+		return FALSE
+	user.visible_message(span_notice("[user] removes [src] from [wearer]'s mouth."), span_notice("I remove [src] from [wearer]'s mouth."))
+	return TRUE
+
+/mob/living/carbon/human/proc/try_cut_mouth_gag(atom/target, obj/item/blade)
+	if(used_intent?.blade_class != BCLASS_CUT && used_intent?.blade_class != BCLASS_CHOP)
+		return FALSE
+	var/mob/living/carbon/human/wearer
+	if(ishuman(target))
+		if(cmode || zone_selected != BODY_ZONE_PRECISE_MOUTH)
+			return FALSE
+		wearer = target
+	else if(istype(target, /obj/item/natural/cloth) && ishuman(target.loc))
+		wearer = target.loc
+		if(wearer.mouth != target)
+			return FALSE
+	if(!istype(wearer) || !istype(wearer.mouth, /obj/item/natural/cloth) || get_active_held_item() != blade)
+		return FALSE
+	if(!Adjacent(wearer))
+		to_chat(src, span_warning("I need to get closer to cut the gag free."))
+		return TRUE
+	var/obj/item/natural/cloth/gag = wearer.mouth
+	gag.remove_mouth_gag(wearer, src, blade)
+	return TRUE
 
 /obj/item/natural/cloth/wash_act()
 	. = ..()

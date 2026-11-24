@@ -392,7 +392,11 @@
 		. += str
 
 	//mouth
-	if(mouth && !(SLOT_MOUTH in obscured))
+	if(istype(mouth, /obj/item/natural/cloth))
+		var/gag_tooltip = mouth.get_hover_examine_html(user, src == user)
+		var/gag_name = "<span data-component='TooltipHTML' data-position='bottom-start' data-html=\"[html_encode(gag_tooltip)]\">[html_encode(mouth.name)]</span>"
+		. += "<a href='?src=[REF(src)];remove_mouth_gag=[REF(mouth)]'><span class='warning'>[m3] a [gag_name] gagging [m2] mouth!</span></a>"
+	else if(mouth && !(SLOT_MOUTH in obscured))
 		var/str
 		if(istype(mouth, /obj/item/clothing))
 			var/obj/item/clothing/CM = mouth

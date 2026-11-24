@@ -65,11 +65,7 @@
 			else
 				return FALSE
 
-	var/covered = ""
-	if(C.is_mouth_covered(head_only = 1))
-		covered = "headgear"
-	else if(C.is_mouth_covered(mask_only = 1))
-		covered = "mask"
+	var/covered = C.get_mouth_covering_gear()
 	if(C != user)
 		if((C.mobility_flags & MOBILITY_STAND) && eaterrelay)
 			if(get_dir(eater, user) != eater.dir)
@@ -79,8 +75,7 @@
 			return FALSE
 	if(covered)
 		if(!silent)
-			var/who = (isnull(user) || eater == user) ? "my" : "[eater.p_their()]"
-			to_chat(user, span_warning("I have to remove [who] [covered] first!"))
+			C.warn_remove_mouth_cover(user, covered)
 		return FALSE
 	return TRUE
 

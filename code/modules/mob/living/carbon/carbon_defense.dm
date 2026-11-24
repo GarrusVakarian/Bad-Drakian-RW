@@ -24,6 +24,18 @@
 	if( (!mask_only && head && (head.flags_cover & HEADCOVERSMOUTH)) || (!head_only && wear_mask && (wear_mask.flags_cover & MASKCOVERSMOUTH)) )
 		return TRUE
 
+/// Returns the gear label used when an action needs access to the mouth.
+/mob/living/carbon/proc/get_mouth_covering_gear()
+	if(is_mouth_covered(head_only = TRUE))
+		return "headgear"
+	if(is_mouth_covered(mask_only = TRUE))
+		return "mask"
+	return null
+
+/mob/living/carbon/proc/warn_remove_mouth_cover(mob/user, covered)
+	var/whose = (!user || user == src) ? "my" : p_their()
+	to_chat(user, span_warning("I have to remove [whose] [covered] first!"))
+
 /mob/living/carbon/is_eyes_covered(check_glasses = TRUE, check_head = TRUE, check_mask = TRUE)
 	if(check_head && head && (head.flags_cover & HEADCOVERSEYES))
 		return head
