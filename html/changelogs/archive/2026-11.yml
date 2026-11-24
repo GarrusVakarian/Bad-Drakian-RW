@@ -922,3 +922,5 @@
 2026-11-24:
   _Rarity:
   - bugfix: Fixed an error when examining outlaws without a penance record.
+  mypingishuge:
+  - bugfix: River currents carry thrown items only after they land.
