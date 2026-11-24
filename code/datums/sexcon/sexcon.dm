@@ -1743,10 +1743,6 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return
 
 /datum/sex_controller/Topic(href, href_list)
-	if(href_list["task"] == "stop_pinned_panel")
-		var/obj/item/grabbing/pin = locate(href_list["pin"])
-		stop_pinned_panel(usr, pin, text2num(href_list["pin_id"]))
-		return
 	if(usr != user)
 		return
 	switch(href_list["task"])
@@ -1821,14 +1817,6 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(!current_action)
 		return
 	desire_stop = TRUE
-
-/datum/sex_controller/proc/stop_pinned_panel(mob/recipient, obj/item/grabbing/pin, pin_id)
-	if(!current_action || (desire_stop && !next_pinned_action))
-		return
-	if(QDELETED(recipient) || recipient != panel_pinned_target || QDELETED(pin) || pin != panel_tackle_pin || pin_id != panel_tackle_pin_id || pin_id != pin.tackle_pin_id)
-		return
-	try_stop_current_action()
-	to_chat(recipient, span_notice("You stopped the ERP panel action."))
 
 /datum/sex_controller/proc/find_panel_tackle_pin()
 	if(QDELETED(user) || QDELETED(target) || user == target)
@@ -1912,8 +1900,6 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	panel_tackle_pin = pin
 	panel_tackle_pin_id = pin?.tackle_pin_id
 	panel_pinned_target = pin ? target : null
-	if(pin)
-		to_chat(target, span_notice("<a href='?src=[REF(src)];task=stop_pinned_panel;pin=[REF(pin)];pin_id=[panel_tackle_pin_id]'>Stop ERP panel action</a>"))
 	bed = null
 	target_on_bed = FALSE
 	table_or_pillory = null
