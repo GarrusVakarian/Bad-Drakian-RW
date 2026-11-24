@@ -922,6 +922,8 @@
 2026-11-24:
   GarrusVakarian:
   - bugfix: Making a cannon no longer causes a runtime.
+  Muzanemus:
+  - map: Ported Azure Peak's Dun World!
   R3Nomon, JackSage, Khanivore:
   - rscadd: 'R3Nomon: Wild Witch wretch class, stronger the older your character.'
   - rscadd: 'R3Nomon: Additional Wretch classes to the Wretch door so they can properly
@@ -944,6 +946,14 @@
   - bugfix: The lobby changelog now opens automatically only when you have unread
       changes.
   - bugfix: Thirst debuffs no longer overlap when you drink water.
+  - qol: Class Selection groups roles by department and makes priorities and eligibility
+      requirements easier to see.
+  - qol: Virtue, background, and statpack pickers highlight and scroll to your saved
+      choice.
+  - bugfix: Warden Rangers and Foresters can equip a shroud without a helmet.
+  - bugfix: The Chronicle clears the Magnate entry when nobody qualifies.
+  - server: Server revision logs now include the compiled game's SHA-256 so we can
+      tell if the thing was rebuilt!
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
   - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
@@ -991,3 +1001,21 @@
       with their custom dye applied.
   - qol: Ctrl-click the action bar to rearrange buttons and their hotkeys. The first
       nine buttons show their shortcut numbers.
+  - balance: Dreamwalker Marks chosen alive must stay alive during extraction. A living
+      mark who dies is replaced and excluded from that reroll.
+  - rscadd: Dreamwalkers mark dead players of any job first and can revive them without
+      ritual prerequisites to earn Sylveric. A failed revival or a dead mark revived
+      by someone else triggers a reroll.
+  - balance: Dreamwalkers can also mark Adventurers, Rookies, and Vanguards.
+  - balance: Dreamwalkers can now wake up, ending their antagonism and reverting to
+      normal, after crafting one empowered weapon from Sylveric. They can keep the
+      weapon as an inert trophy. Yielding or falling into life-threatening critical
+      condition also forces them to wake.
+  - bugfix: The storyteller can no longer select Seelies or existing villains to become
+      Dreamwalkers.
+  - balance: The Dreamwalker event now requires at least 20 players instead of 40.
+  - balance: The Rite of Dreamcraft no longer applies Devitalised.
+  - balance: Dreamwalker extraction and dead-mark revival take 10 seconds and reset
+      Mark Target on success.
+  - balance: All Abyssal Curse variants no longer reduce Fortune.
+  - bugfix: Removed the trailing periods from the Abyssal Curse names.
