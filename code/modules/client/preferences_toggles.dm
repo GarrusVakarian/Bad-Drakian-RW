@@ -185,6 +185,7 @@
 		list("id" = "descriptor_color", "label" = "Enable Colored Descriptors", "enabled" = !!owner.prefs.descriptor_color, "desc" = "Color genital descriptors based on arousal and body hair descriptors based on hair color."),
 		list("id" = "cursed_collars", "label" = "Enable Cursed Collars", "enabled" = !!owner.prefs.cursed_collarable, "desc" = "Allow others to equip a cursed collar on you."),
 		list("id" = "milkable", "label" = "Enable Breast Milking", "enabled" = !!owner.prefs.milkable, "desc" = "Allow other players to milk your breasts if lactating. Also allow milk release during the Hands actions \"Rub breasts\" and \"Rub their breasts\", including when used on yourself. Direct self-milking with a container remains available when disabled."),
+		list("id" = "stat_drainable", "label" = "Enable Erotic Draining", "enabled" = !!owner.prefs.stat_drainable, "desc" = "Allow others to be able to drain your stats during erotic actions."),
 		list("id" = "manticore_tail_messages", "label" = "Tailmaws", "enabled" = !!owner.prefs.manticore_tail_messages, "desc" = "Show flavor messages from your manticore tail when moving or during intimate actions, and see tail maw descriptions when examining others."),
 		list("id" = "hypnosis_content", "label" = "Enable Hypnosis Content", "enabled" = !!owner.prefs.hypnosis_content, "desc" = "Show hypnosis examine text and allow casting and receiving hypnotic spells. Disabling clears your current hypnosis effect."),
 		list("id" = "cumflation_content", "label" = "Enable Cumflation Content", "enabled" = !!owner.prefs.cumflation_content, "desc" = "Enable the Stuffed effect from accumulated leakage or Erotic Fluid, and see its examine text. Disabling clears your current Stuffed effect."),
@@ -321,6 +322,8 @@
 				owner.toggle_cursed_collars()
 			if("milkable")
 				owner.toggle_milkable()
+			if("stat_drainable")
+				owner.toggle_stat_drainable()
 			if("cumflation_content")
 				owner.toggle_cumflation_content()
 			if("hypnosis_content")
@@ -851,6 +854,19 @@
 		to_chat(src, "You can now be milked by other players.")
 		return
 	to_chat(src, "Other players can no longer milk you.")
+
+/client/verb/toggle_stat_drainable() // toggles being milked by players clicking the chest with a container to milk player breasts
+	set category = "Options"
+	set name = "Toggle Stat Draining"
+	set hidden = 1
+	if(!prefs)
+		return
+	prefs.stat_drainable = !prefs.stat_drainable
+	prefs.save_preferences()
+	if(prefs.stat_drainable)
+		to_chat(src, "You will now participate in stat draining.")
+		return
+	to_chat(src, "You are no longer participating in stat draining.")
 
 /client/verb/toggle_manticore_tail_messages_pref()
 	set category = "Options"
