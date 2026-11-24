@@ -5,7 +5,7 @@
 
 // Dedicated combat jobs (mixed jobs are classified by subclass).
 // Dragon and Gnoll replace the selected species before subclass selection.
-// Assassin is open to Seelies across the job, subclasses, and migration.
+// Seelie Assassins can use the Poisoner subclass.
 COMBAT_ROLE(/datum/job/roguetown/bandit)
 COMBAT_ROLE(/datum/job/roguetown/templar)
 COMBAT_ROLE(/datum/job/roguetown/martyr)
@@ -58,6 +58,8 @@ COMBAT_ROLE(/datum/advclass/knave)
 COMBAT_ROLE(/datum/advclass/pioneer)
 COMBAT_ROLE(/datum/advclass/roguemage)
 COMBAT_ROLE(/datum/advclass/sellsword)
+COMBAT_ROLE(/datum/advclass/assassin_hitman)
+COMBAT_ROLE(/datum/advclass/assassin_ranger)
 COMBAT_ROLE(/datum/advclass/gnoll)
 COMBAT_ROLE(/datum/advclass/gnoll_impure)
 COMBAT_ROLE(/datum/advclass/wretch)
