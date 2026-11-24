@@ -990,6 +990,11 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				flex-wrap: wrap;
 				gap: 3px;
 			}
+			.loadout-actions .btn {
+				padding: 3px 4px;
+				margin: 0;
+				white-space: nowrap;
+			}
 			.statpack-section {
 				background: [theme["button_hover"]];
 				border: 2px solid [theme["border"]];
@@ -1504,7 +1509,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "</div>"
 			html += "</div>"
 			
-			html += "<div class='actions'>"
+			html += "<div class='actions loadout-actions'>"
 			html += "<a class='btn btn-select' href='byond://?src=\ref[src];loadout_action=item;slot=[i]'>Change Item</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=rename;slot=[i]'>Rename</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=describe;slot=[i]'>Description</a>"

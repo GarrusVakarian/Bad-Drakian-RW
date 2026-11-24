@@ -413,12 +413,14 @@
 		to_chat(user, span_notice("This item can't be worn by this character on its own."))
 		return
 
-	var/datum/browser/popup = new(user, "loadout_equipped_preview", "Loadout Preview", 368, 294)
+	var/view_width = max(74, rendered["width"])
+	var/view_height = rendered["height"]
+	var/datum/browser/popup = new(user, "loadout_equipped_preview", "Loadout Preview", max(218, 2 * view_width + 46), view_height + 114)
 	popup.set_content({"<div style='text-align:center;'>
-		<h3>[html_encode(selected.name)]</h3>
-		<div style='display:flex; justify-content:center; gap:12px;'>
-			<div style='width:156px;'><div style='height:174px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[1]]</div><b>Front</b></div>
-			<div style='width:156px;'><div style='height:174px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[2]]</div><b>Back</b></div>
+		<h3 style='margin:0 0 4px; padding:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;'>[html_encode(selected.name)]</h3>
+		<div style='display:flex; justify-content:center;'>
+			<div style='width:[view_width]px; margin-right:10px;'><div style='height:[view_height]px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[1]]</div><b>Front</b></div>
+			<div style='width:[view_width]px;'><div style='height:[view_height]px; display:flex; align-items:flex-end; justify-content:center;'>[rendered[2]]</div><b>Back</b></div>
 		</div>
 	</div>"})
 	popup.open(FALSE)
@@ -449,17 +451,30 @@
 	mannequin.update_body()
 	mannequin.update_hair()
 	mannequin.update_body_parts(redraw = TRUE)
+	// Armor and cloak updates can queue a second pass for dependent layers.
+	for(var/pass in 1 to 3)
+		if(!mannequin.pending_icon_updates)
+			break
+		mannequin.process_pending_icon_updates()
 
 	// Flattening retains worn layers and tint. Apply body scale to the resulting
 	// display dimensions because getFlatIcon does not bake the parent transform.
 	var/view_scale = 3 * mannequin.dna.current_body_size * size_multiplier
 	var/list/rendered = list()
+	var/view_width = 0
+	var/view_height = 0
 	for(var/direction in list(SOUTH, NORTH))
 		mannequin.setDir(direction)
 		var/icon/view = getFlatIcon(mannequin, no_anim = TRUE)
 		var/encoded = icon2base64(view)
 		if(!encoded)
 			return
-		var/scale = min(view_scale, 152 / view.Width(), 170 / view.Height())
-		rendered += "<img alt='[direction == SOUTH ? "Front" : "Back"]' src='data:image/png;base64,[encoded]' style='image-rendering:pixelated; width:[round(view.Width() * scale)]px; height:[round(view.Height() * scale)]px;'>"
+		var/scale = min(view_scale, 136 / view.Width(), 156 / view.Height())
+		var/width = max(1, round(view.Width() * scale))
+		var/height = max(1, round(view.Height() * scale))
+		view_width = max(view_width, width)
+		view_height = max(view_height, height)
+		rendered += "<img alt='[direction == SOUTH ? "Front" : "Back"]' src='data:image/png;base64,[encoded]' style='image-rendering:pixelated; width:[width]px; height:[height]px;'>"
+	rendered["width"] = view_width
+	rendered["height"] = view_height
 	return rendered
