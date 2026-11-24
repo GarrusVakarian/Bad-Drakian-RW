@@ -1,0 +1,5 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Large pintles now display their existing Large sprites on standard bodies."
+  - rscadd: "Added Endowed by Baotha, a free quirk that is a port of Ratwoods \"Massive\" option. It grants extra ERP interactions, pain, and effects to Large pintles."
