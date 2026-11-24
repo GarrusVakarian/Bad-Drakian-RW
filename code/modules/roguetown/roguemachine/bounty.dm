@@ -291,21 +291,22 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	message_admins("[ADMIN_LOOKUPFLW(user)] has set a bounty on [ADMIN_LOOKUPFLW(target)] with the reason of: '[reason]'")
 
 /// Show the same tier details in the expanded picker and its classic input fallback.
-/proc/choose_bounty_tier(mob/living/carbon/human/target, prompt, title, list/tiers, wanted_vagabond = FALSE)
+/proc/choose_bounty_tier(mob/living/carbon/human/target, prompt, title, list/tiers, wanted_vagabond = FALSE, minor_notice_requires_description = FALSE)
 	if(!target.client)
 		return
 	var/list/descriptions
 	var/list/rewards
 	if(wanted_vagabond)
 		descriptions = list(
-			"Bounty lists your name and build. Recognized only with face exposed.",
+			"Bounty lists your name and build. No face recognition.",
 			"Bounty lists your name and build. Recognized only with face exposed.",
 			"Bounty lists a full description, including voice. Recognized only with face exposed.",
 		)
 		rewards = list("51–100 mammons", "101–150 mammons", "150–200 mammons")
 	else
+		var/minor_recognition = minor_notice_requires_description ? "Recognized only if body features are listed." : "Recognized only with face exposed."
 		descriptions = list(
-			"Bounty lists your name and build. You can opt to also list body features. Recognized only with face exposed.",
+			"Bounty lists your name and build. You can opt to also list body features. [minor_recognition]",
 			"Bounty lists a full description, including voice. Recognized only with face exposed.",
 			"Bounty lists a full description, including voice. Recognized even while masked!",
 		)

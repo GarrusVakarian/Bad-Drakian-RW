@@ -75,7 +75,7 @@
 	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list(justiciary, "The Grenzelhoftian Holy See", "The Otavan Orthodoxy")
 	if(QDELETED(H) || !H.client || !bounty_poster)
 		return
-	var/bounty_severity = choose_bounty_tier(H, "How severe are your crimes?", "Bounty Amount", list("Misdeed", "Harm towards lyfe", "Horrific atrocities"))
+	var/bounty_severity = choose_bounty_tier(H, "How severe are your crimes?", "Bounty Amount", list("Misdeed", "Harm towards lyfe", "Horrific atrocities"), minor_notice_requires_description = TRUE)
 	var/bounty_total
 	var/description_level = BOUNTY_DESCRIPTION_FULL
 	var/recognition = BOUNTY_RECOGNITION_FACE
@@ -83,6 +83,8 @@
 		if("Misdeed")
 			bounty_total = rand(100, 200)
 			description_level = choose_bounty_full_description(H) ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD
+			if(description_level == BOUNTY_DESCRIPTION_BUILD)
+				recognition = BOUNTY_RECOGNITION_NONE
 		if("Harm towards lyfe")
 			bounty_total = rand(200, 300)
 		if("Horrific atrocities")
