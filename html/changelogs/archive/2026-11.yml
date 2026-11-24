@@ -919,3 +919,6 @@
       selection popup.
   - qol: Harpies can attach amulets to their talons. The footwear preview now recognizes
       eligible decorations.
+2026-11-24:
+  _Rarity:
+  - bugfix: Fixed an error when examining outlaws without a penance record.
