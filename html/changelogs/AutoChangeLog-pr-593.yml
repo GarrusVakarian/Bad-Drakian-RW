@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - rscadd: "Players with 5 PQ or less have a small sapling beside their mouse-over name and in examine."
