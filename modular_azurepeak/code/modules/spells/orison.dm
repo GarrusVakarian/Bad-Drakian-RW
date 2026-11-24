@@ -76,7 +76,7 @@
 		if(/datum/intent/use)
 			return "inlight"
 		if(INTENT_DISARM)
-			return "inlayhands"
+			return "intouch"
 	return ..()
 
 /obj/item/melee/touch_attack/orison/attack_self()
