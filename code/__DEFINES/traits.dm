@@ -260,6 +260,8 @@
 #define TRAIT_SIMPLE_WOUNDS "simple_wounds"
 #define TRAIT_VAMP_DREAMS "vamp_dreams"
 #define TRAIT_LIMPDICK "Limp Dick"
+/// Grants the massive gameplay effects to this body while it has a Large pintle.
+#define TRAIT_MASSIVE_PINTLE "massive_pintle"
 #define TRAIT_SEXPASS "sexpass"
 #define TRAIT_STEELHEARTED "Steelhearted" //no bad mood from dismembering or seeing this
 #define TRAIT_IWASREVIVED "iwasrevived" //prevents PQ gain from reviving the same person twice

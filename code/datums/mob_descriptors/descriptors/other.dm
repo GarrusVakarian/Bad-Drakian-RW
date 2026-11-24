@@ -40,6 +40,13 @@
 		return FALSE
 	return TRUE
 
+/datum/mob_descriptor/penis/get_descriptor_color(mob/living/described, mob/watcher)
+	var/mob/living/carbon/human/H = described
+	var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
+	if(penis?.is_massive() && user_allows_descriptor_color(watcher))
+		return MASSIVE_PENIS_DESCRIPTOR_COLOR
+	return ..()
+
 /datum/mob_descriptor/penis/get_description(mob/living/described)
 	return get_description_for_watcher(described, null)
 
@@ -57,6 +64,8 @@
 			adjective = "an average"
 		if(MAX_PENIS_SIZE)
 			adjective = "a large"
+	if(penis.is_massive())
+		adjective = pick("a massive", "a colossal", "an unpleasantly large", "a jumbo", "a grotesquely swelled", "an obscene", "an unnaturally large")
 	if(H.sexcon)
 		switch(H.sexcon.arousal)
 			if(80 to INFINITY)
@@ -73,7 +82,9 @@
 	if(penis.erect_state != ERECT_STATE_HARD && penis.sheath_type != SHEATH_TYPE_NONE)
 		switch(penis.sheath_type)
 			if(SHEATH_TYPE_NORMAL)
-				if(penis.penis_size == MAX_PENIS_SIZE)
+				if(penis.is_massive())
+					used_name = "a bulging sheath"
+				else if(penis.penis_size == MAX_PENIS_SIZE)
 					used_name = "a fat sheath"
 				else if(penis.penis_size == MIN_PENIS_SIZE)
 					used_name = "a tiny sheath"
