@@ -40,7 +40,7 @@
 		if (!my_crime)
 			my_crime = "crimes against the Crown"
 		var/list/bounty_cats = list("Meager", "Moderate", "Massive")
-		var/bounty_amount = input(H, "How ample is your bounty?", "Blooded Gold") as anything in bounty_cats
+		var/bounty_amount = choose_bounty_tier(H, "How ample is your bounty?", "Blooded Gold", bounty_cats, wanted_vagabond = TRUE)
 		var/bounty_total
 		switch(bounty_amount)
 			if("Meager")

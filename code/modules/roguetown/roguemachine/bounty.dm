@@ -290,6 +290,37 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 
 	message_admins("[ADMIN_LOOKUPFLW(user)] has set a bounty on [ADMIN_LOOKUPFLW(target)] with the reason of: '[reason]'")
 
+/// Show the same tier details in the expanded picker and its classic input fallback.
+/proc/choose_bounty_tier(mob/living/carbon/human/target, prompt, title, list/tiers, wanted_vagabond = FALSE)
+	if(!target.client)
+		return
+	var/list/descriptions
+	var/list/rewards
+	if(wanted_vagabond)
+		descriptions = list(
+			"Bounty lists your name and build. Recognized only with face exposed.",
+			"Bounty lists your name and build. Recognized only with face exposed.",
+			"Bounty lists a full description, including voice. Recognized only with face exposed.",
+		)
+		rewards = list("51–100 mammons", "101–150 mammons", "150–200 mammons")
+	else
+		descriptions = list(
+			"Bounty lists your name and build. You can opt to also list body features. Recognized only with face exposed.",
+			"Bounty lists a full description, including voice. Recognized only with face exposed.",
+			"Bounty lists a full description, including voice. Recognized even while masked!",
+		)
+		rewards = list("100–200 mammons", "200–300 mammons", "300–400 mammons")
+
+	var/list/details = list()
+	var/classic_input = !target.client.prefs.tgui_pref
+	for(var/i in 1 to length(tiers))
+		var/tier = tiers[i]
+		if(classic_input)
+			prompt += "\n\n[tier] ([rewards[i]])\n[descriptions[i]]"
+		else
+			details[tier] = list("description" = descriptions[i], "cost" = rewards[i])
+	return tgui_input_list(target, prompt, title, tiers, option_details = details, window_width = 600)
+
 /// Ask whether the law has more than a name and overall build for a minor bounty.
 /proc/choose_bounty_body_description(mob/living/carbon/human/target)
 	var/choice = input(target, "What does the law know about your appearance?", "Bounty Description") as null|anything in list("They know only my name and overall build", "They know my body features")

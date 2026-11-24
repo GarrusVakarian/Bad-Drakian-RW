@@ -75,7 +75,7 @@
 	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See")
 	if(QDELETED(H) || !H.client || !bounty_poster)
 		return
-	var/bounty_severity = input(H, "How notorious are you?", "Bounty Amount") as anything in list("Small Game", "Highwayman", "Realm Boogeyman")
+	var/bounty_severity = choose_bounty_tier(H, "How notorious are you?", "Bounty Amount", list("Small Game", "Highwayman", "Realm Boogeyman"))
 	var/bounty_total
 	var/description_level = BOUNTY_DESCRIPTION_FULL
 	var/recognition = BOUNTY_RECOGNITION_FACE
