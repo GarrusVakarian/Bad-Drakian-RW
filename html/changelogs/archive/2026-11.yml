@@ -935,3 +935,4 @@
   - rscadd: Smollhill now has one slot each for Knight, Squire, Magicians Associate
       and Bathhouse Attendant.
   - bugfix: Meathooks require two small logs and one rope to build.
+  - bugfix: The encyclopedia shows the traits required by anvil recipes.
