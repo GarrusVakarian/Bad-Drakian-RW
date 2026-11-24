@@ -372,6 +372,11 @@
 	if(!A)
 		return
 	if(W)
+		if(ishuman(src))
+			var/mob/living/carbon/human/user = src
+			if(user.try_cut_mouth_gag(A, W))
+				break_invisibility()
+				return
 		W.melee_attack_chain(src, A, params)
 		if(isliving(src))
 			var/mob/living/L = src

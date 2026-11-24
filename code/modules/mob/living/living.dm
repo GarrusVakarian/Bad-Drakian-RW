@@ -2073,6 +2073,12 @@
 // The src mob is trying to strip an item from someone
 // Override if a certain type of mob should be behave differently when stripping items (can't, for example)
 /mob/living/stripPanelUnequip(obj/item/what, mob/who, where)
+	if(where == SLOT_MOUTH && ishuman(src) && ishuman(who) && istype(what, /obj/item/natural/cloth))
+		var/obj/item/natural/cloth/gag = what
+		gag.remove_mouth_gag(who, src)
+		if(!QDELETED(who) && Adjacent(who))
+			who.show_inv(src)
+		return
 	if(!what.canStrip(who))
 		to_chat(src, span_warning("I can't remove \the [what.name], it appears to be stuck!"))
 		return
@@ -2140,50 +2146,61 @@
 // The src mob is trying to place an item on someone
 // Override if a certain mob should be behave differently when placing items (can't, for example)
 /mob/living/stripPanelEquip(obj/item/what, mob/who, where)
-	what = src.get_active_held_item()
-	if(what && (HAS_TRAIT(what, TRAIT_NODROP)))
-		to_chat(src, span_warning("I can't put \the [what.name] on [who], it's stuck to my hand!"))
+	if(!try_equip_item_on(get_active_held_item(), who, where))
 		return
-	if(what)
-		var/list/where_list
-		var/final_where
+	if(!QDELETED(who) && Adjacent(who))
+		who.show_inv(src)
+	else if(!QDELETED(who))
+		src << browse(null,"window=mob[REF(who)]")
 
-		if(islist(where))
-			where_list = where
-			final_where = where[1]
-		else
-			final_where = where
+/// Start the timed equip action without opening the inventory panel. Returns TRUE if an attempt started.
+/mob/living/proc/try_equip_item_on(obj/item/what, mob/who, where)
+	if(QDELETED(what) || QDELETED(who) || what != get_active_held_item() || !Adjacent(who) || incapacitated())
+		return FALSE
+	if(HAS_TRAIT(what, TRAIT_NODROP))
+		to_chat(src, span_warning("I can't put \the [what.name] on [who], it's stuck to my hand!"))
+		return FALSE
 
-		if(!what.mob_can_equip(who, src, final_where, TRUE, TRUE))
-			to_chat(src, span_warning("\The [what.name] doesn't fit in that place!"))
-			return
+	var/list/where_list
+	var/final_where = where
+	if(islist(where))
+		where_list = where
+		final_where = where_list[1]
 
-		var/surrender_mod = 1
+	var/obj/item/natural/cloth/gag
+	if(final_where == SLOT_MOUTH && istype(what, /obj/item/natural/cloth))
+		gag = what
+		if(gag.mouth_gag_is_blocked(who, src))
+			return FALSE
+	if(!what.mob_can_equip(who, src, final_where, TRUE, TRUE))
+		to_chat(src, span_warning("\The [what.name] doesn't fit in that place!"))
+		return FALSE
 
-		if(isliving(who))
-			var/mob/living/L = who
-			if(L.cmode && L.mobility_flags & MOBILITY_STAND)
-				to_chat(src, span_warning("I can't put \the [what] on them, they are too tense!"))
-				return
-			if(L.compliance || L.surrendering)
-				surrender_mod = 0.5
+	var/surrender_mod = 1
+	var/mob/living/target = who
+	if(istype(target))
+		if(target.cmode && (target.mobility_flags & MOBILITY_STAND))
+			to_chat(src, span_warning("I can't put \the [what] on them, they are too tense!"))
+			return FALSE
+		if(target.compliance || target.surrendering)
+			surrender_mod = 0.5
 
-		who.visible_message(span_notice("[src] tries to put [what] on [who]."), \
-						span_notice("[src] tries to put [what] on you."), null, null, src)
-		to_chat(src, span_notice("I try to put [what] on [who]..."))
-		if(do_mob(src, who, what.equip_delay_other * surrender_mod))
-			if(what && Adjacent(who) && what.mob_can_equip(who, src, final_where, TRUE, TRUE))
-				if(temporarilyRemoveItemFromInventory(what))
-					if(where_list)
-						if(!who.put_in_hand(what, where_list[2]))
-							what.forceMove(get_turf(who))
-					else
-						who.equip_to_slot(what, where, TRUE)
-
-		if(Adjacent(who)) //update inventory window
-			who.show_inv(src)
-		else
-			src << browse(null,"window=mob[REF(who)]")
+	who.visible_message(span_notice("[src] tries to put [what] on [who]."), span_notice("[src] tries to put [what] on you."), null, null, src)
+	to_chat(src, span_notice("I try to put [what] on [who]..."))
+	if(do_mob(src, who, what.equip_delay_other * surrender_mod))
+		if(QDELETED(what) || QDELETED(who) || what != get_active_held_item() || !Adjacent(who) || incapacitated())
+			return TRUE
+		if(istype(target) && target.cmode && (target.mobility_flags & MOBILITY_STAND))
+			return TRUE
+		if(gag && gag.mouth_gag_is_blocked(who, src))
+			return TRUE
+		if(what.mob_can_equip(who, src, final_where, TRUE, TRUE) && temporarilyRemoveItemFromInventory(what))
+			if(where_list)
+				if(!who.put_in_hand(what, where_list[2]))
+					what.forceMove(get_turf(who))
+			else
+				who.equip_to_slot(what, where, TRUE)
+	return TRUE
 
 /mob/living/proc/do_jitter_animation(jitteriness)
 	var/amplitude = min(4, (jitteriness/100) + 1)

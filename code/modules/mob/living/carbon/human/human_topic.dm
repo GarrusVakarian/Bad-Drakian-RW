@@ -4,6 +4,17 @@ GLOBAL_VAR_INIT(year_integer, text2num(year)) // = 2013???
 /mob/living/carbon/human/Topic(href, href_list)
 	var/observer_privilege = isobserver(usr)
 
+	if(href_list["remove_mouth_gag"])
+		var/mob/living/carbon/human/user = usr
+		var/obj/item/natural/cloth/gag = mouth
+		if(!istype(user) || !istype(gag) || href_list["remove_mouth_gag"] != REF(gag) || !user.canUseTopic(src, BE_CLOSE))
+			return
+		var/obj/item/blade
+		if(user.a_intent?.blade_class == BCLASS_CUT || user.a_intent?.blade_class == BCLASS_CHOP)
+			blade = user.get_active_held_item()
+		gag.remove_mouth_gag(src, user, blade)
+		return
+
 	if(href_list["task"] == "bloodpoolinfo")
 		to_chat(usr, span_notice("Usable blood that yields Vitae and total blood is not the same thing. It takes some time for blood to become nourishing for us."))
 		return
