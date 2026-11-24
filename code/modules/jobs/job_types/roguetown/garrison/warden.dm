@@ -161,7 +161,7 @@
 			"None"
 		)
 		var/hoodchoice = input(H, "Choose your Shroud.", "HOOD SELECTION") as anything in hoods
-		if(helmchoice != "None")
+		if(hoodchoice != "None")
 			mask = hoods[hoodchoice]
 
 /datum/advclass/warden/forester
@@ -287,7 +287,7 @@
 			"None"
 		)
 		var/hoodchoice = input(H, "Choose your Shroud.", "HOOD SELECTION") as anything in hoods
-		if(helmchoice != "None")
+		if(hoodchoice != "None")
 			mask = hoods[hoodchoice]
 
 /obj/item/rogueweapon/scabbard/gwstrap/forester_kriegsmesser/Initialize(mapload)
