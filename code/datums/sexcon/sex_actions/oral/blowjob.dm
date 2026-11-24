@@ -14,7 +14,7 @@
 		user.visible_message(span_warning("[user] starts sucking [target]'s cock..."), vision_distance = (user.sexcon.do_subtle_action ? 1 : DEFAULT_MESSAGE_RANGE))
 	user.sexcon.show_progress = FALSE
 
-/datum/sex_action/blowjob/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+/datum/sex_action/blowjob/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target, datum/callback/still_active)
 	var/do_subtle = user.sexcon.do_subtle_action
 	user.sexcon.show_progress = !do_subtle
 	user.sexcon.suppress_moan = target.sexcon.suppress_moan = do_subtle
@@ -42,6 +42,8 @@
 		for(var/i = 1; i <= burst_count; i++)
 			target.sexcon.cum_into(oral = TRUE, splashed_user = user, knot_action = src, knot_swap_roles = TRUE, knot_btm = user, consume_charge = i == 1 ? TRUE : FALSE, oral_extra_volume = extra_per_burst)
 			sleep(10)
+			if(still_active && !still_active.Invoke())
+				break
 
 	user.sexcon.suppress_moan = target.sexcon.suppress_moan = FALSE
 

@@ -60,7 +60,7 @@
 /datum/sex_action/proc/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	return
 
-/datum/sex_action/proc/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+/datum/sex_action/proc/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target, datum/callback/still_active)
 	return
 
 /datum/sex_action/proc/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)

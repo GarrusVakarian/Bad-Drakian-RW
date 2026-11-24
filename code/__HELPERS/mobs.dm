@@ -246,16 +246,18 @@ GLOBAL_LIST_EMPTY(species_list)
  * interrupt - whether to interrupt a prior do_after or not
 */
 
-/proc/do_after(mob/user, delay, needhand = TRUE, atom/target = null, progress = TRUE, datum/callback/extra_checks = null, same_direction = FALSE, no_interrupt = FALSE)
-	if(!user)
+/// Pass use_action_lock = FALSE only when the caller owns cancellation through extra_checks.
+/proc/do_after(mob/user, delay, needhand = TRUE, atom/target = null, progress = TRUE, datum/callback/extra_checks = null, same_direction = FALSE, no_interrupt = FALSE, use_action_lock = TRUE)
+	if(!user || (!use_action_lock && !extra_checks))
 		return FALSE
 
-	if(user.doing)
+	if(use_action_lock && user.doing)
 		if(no_interrupt)
 			return
 		return FALSE
 
-	user.doing = TRUE
+	if(use_action_lock)
+		user.doing = TRUE
 #ifdef UNIT_TESTS
 	SEND_SIGNAL(user, COMSIG_DO_AFTER_BEGAN)
 #endif
@@ -293,7 +295,7 @@ GLOBAL_LIST_EMPTY(species_list)
 			. = FALSE
 			break
 
-		if(!user.doing)
+		if(use_action_lock && !user.doing)
 			. = FALSE
 			break
 
@@ -318,7 +320,8 @@ GLOBAL_LIST_EMPTY(species_list)
 			if(user.get_active_held_item() != holding)
 				. = FALSE
 				break
-	user.doing = FALSE
+	if(use_action_lock)
+		user.doing = FALSE
 	if (progress)
 		qdel(progbar)
 
