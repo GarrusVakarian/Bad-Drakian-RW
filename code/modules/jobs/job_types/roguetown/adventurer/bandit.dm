@@ -64,53 +64,39 @@
 		H.choose_name_popup("BANDIT")
 		bandit_select_bounty(H)
 
-// Changed up proc from Wretch to suit bandits bit more
+// Bandits may decline a bounty entirely.
 /proc/bandit_select_bounty(mob/living/carbon/human/H)
-	var/wanted = list("Yes", "No")
-	var/wanted_choice = input(H, "Are you wanted by the kingdom?", "You will be more skilled from your experience") as anything in wanted
-	switch(wanted_choice)
-		if("Yes")
-			ADD_TRAIT(H, TRAIT_KNOWNCRIMINAL, TRAIT_GENERIC)
-		if("No")
-			to_chat(H, span_warning("I am still relatively new to the gang. My crimes have gone unnoticed so far, but I lack experience."))
-			return null
+	if(QDELETED(H) || !H.client)
+		return
+	var/wanted_choice = input(H, "Are you wanted by the kingdom?", "Bounty") as anything in list("Yes", "No")
+	if(wanted_choice != "Yes")
+		to_chat(H, span_warning("I am still relatively new to the gang. My crimes have gone unnoticed so far, but I lack experience."))
+		return
 	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See")
-	var/bounty_severity = input(H, "How notorious are you?", "Bounty Amount") as anything in list("Small Game", "Highwayman", "Realm Boogeyman")
-	var/race = H.dna.species
-	var/gender = H.gender
-	var/list/d_list = H.get_mob_descriptors()
-	var/descriptor_height = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
-	var/descriptor_body = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
-	var/descriptor_voice = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
-	var/bounty_total = rand(200, 600)
-	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
-	if (!my_crime)
-		my_crime = "Brigandry"
+	if(QDELETED(H) || !H.client || !bounty_poster)
+		return
+	var/bounty_severity = choose_bounty_tier(H, "How notorious are you?", "Bounty Amount", list("Small Game", "Highwayman", "Realm Boogeyman"))
+	var/bounty_total
+	var/description_level = BOUNTY_DESCRIPTION_FULL
+	var/recognition = BOUNTY_RECOGNITION_FACE
 	switch(bounty_severity)
 		if("Small Game")
-			bounty_total = rand(200, 300)
+			bounty_total = rand(100, 200)
+			description_level = choose_bounty_full_description(H) ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD
 		if("Highwayman")
+			bounty_total = rand(200, 300)
+		if("Realm Boogeyman")
 			bounty_total = rand(300, 400)
-		if("Vale Boogeyman")
-			bounty_total = rand(500, 600)
-	if(bounty_severity == "Small Game")
-		add_bounty_obscure(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, TRUE, my_crime, bounty_poster)
-	else if(bounty_severity == "Highwayman")
-		add_bounty_noface(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, TRUE, my_crime, bounty_poster)
-	else
-		add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, TRUE, my_crime, bounty_poster)
-		var/skillbuff = input(H, "Your experience grants you a boon", "Choose An Attribute") as anything in list("Strength", "Perception", "Intelligence", "Constitution", "Willpower", "Speed")
-		switch(skillbuff)
-			if("Strength")
-				H.change_stat(STATKEY_STR, 1)
-			if("Perception")
-				H.change_stat(STATKEY_PER, 1)
-			if("Intelligence")
-				H.change_stat(STATKEY_INT, 1)
-			if("Constitution")
-				H.change_stat(STATKEY_CON, 1)
-			if("Willpower")
-				H.change_stat(STATKEY_WIL, 1)
-			if("Speed")
-				H.change_stat(STATKEY_SPD, 1)
+			recognition = BOUNTY_RECOGNITION_ALWAYS
+		else
+			return
+	if(QDELETED(H) || !H.client)
+		return
+	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
+	if(QDELETED(H))
+		return
+	if(!my_crime)
+		my_crime = "Brigandry"
+	ADD_TRAIT(H, TRAIT_KNOWNCRIMINAL, TRAIT_GENERIC)
+	add_character_bounty(H, bounty_total, TRUE, my_crime, bounty_poster, description_level, recognition)
 	to_chat(H, span_danger("You are playing an Antagonist role. By choosing to spawn as a Bandit, you are expected to actively create conflict with other players regardless of bounty status. Failing to play this role with the appropriate gravitas may result in punishment for Low Roleplay standards."))

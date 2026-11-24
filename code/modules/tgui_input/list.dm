@@ -12,8 +12,9 @@
  * * option_details - Optional label/description/cost records keyed by original option name; enables the expanded layout.
  * * large_window - Expands the window while retaining the ordinary list layout.
  * * window_width - Optional starting width in pixels.
+ * * window_height - Optional starting height in pixels.
  */
-/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE, list/option_details = null, large_window = FALSE, window_width)
+/proc/tgui_input_list(mob/user, message, title = "Select", list/items, default, timeout = 0, strict_modern = FALSE, ui_state = GLOB.tgui_always_state, enable_combat_music_preview = FALSE, list/option_details = null, large_window = FALSE, window_width, window_height)
 	if (!user)
 		user = usr
 	if(!length(items))
@@ -31,7 +32,7 @@
 	/// Client does NOT have tgui_input on: Returns regular input
 	if(!user.client.prefs.tgui_pref && !strict_modern)
 		return input(user, message, title, default) as null|anything in items
-	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview, option_details, large_window, window_width)
+	var/datum/tgui_list_input/input = new(user, message, title, items, default, timeout, ui_state, enable_combat_music_preview, option_details, large_window, window_width, window_height)
 	if(input.invalid)
 		qdel(input)
 		return
@@ -62,6 +63,8 @@
 	var/large_window = FALSE
 	/// Optional starting width in pixels.
 	var/window_width
+	/// Optional starting height in pixels.
+	var/window_height
 	/// The button that the user has pressed, null if no selection has been made
 	var/choice
 	/// The default button to be selected
@@ -85,7 +88,7 @@
 	/// Owning client for preview actions.
 	var/client/preview_owner
 
-/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview, list/option_details, large_window = FALSE, window_width)
+/datum/tgui_list_input/New(mob/user, message, title, list/items, default, timeout, ui_state, enable_preview, list/option_details, large_window = FALSE, window_width, window_height)
 	src.title = title
 	src.message = message
 	src.items = list()
@@ -93,6 +96,7 @@
 	src.option_details = list()
 	src.large_window = !!large_window
 	src.window_width = window_width
+	src.window_height = window_height
 	src.default = default
 	src.state = ui_state
 	src.enable_combat_music_preview = !!enable_preview
@@ -156,6 +160,7 @@
 	data["option_details"] = option_details
 	data["large_window"] = large_window
 	data["window_width"] = window_width
+	data["window_height"] = window_height
 	data["large_buttons"] = FALSE // user.read_preference(/datum/preference/toggle/tgui_large_buttons)
 	data["message"] = message
 	data["swapped_buttons"] = FALSE // !user.read_preference(/datum/preference/toggle/tgui_swapped_buttons)
