@@ -35,6 +35,24 @@
 	var/handaction
 	var/bleed_suppressing = 0.75 //multiplier for how much we suppress bleeding, can accumulate so two grabs means 50% less bleeding; each grab being 25% basically.
 	var/chokehold = FALSE
+	/// Changes every time this grab begins a new tackle pin.
+	var/tackle_pin_id = 0
+	var/tackle_pin_active = FALSE
+	var/pinned_panel_requested = FALSE
+	var/client/pinned_panel_holder
+	var/client/pinned_panel_recipient
+
+/obj/item/grabbing/proc/is_active_chest_pin(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
+	if(!tackle_pin_active || QDELETED(src) || QDELETED(holder) || QDELETED(recipient) || holder == recipient || grabbee != holder || grabbed != recipient)
+		return FALSE
+	if(grab_state < GRAB_AGGRESSIVE || limb_grabbed?.body_zone != BODY_ZONE_CHEST || isitem(sublimb_grabbed))
+		return FALSE
+	if(!(src in holder.held_items) || !(src in recipient.grabbedby) || !isturf(holder.loc) || holder.loc != recipient.loc)
+		return FALSE
+	return holder.stat == CONSCIOUS && recipient.stat == CONSCIOUS && (holder.mobility_flags & MOBILITY_STAND) && !(recipient.mobility_flags & MOBILITY_STAND) && !holder.buckled && !holder.incapacitated()
+
+/obj/item/grabbing/proc/has_pinned_panel_permission(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
+	return is_active_chest_pin(holder, recipient) && pinned_panel_holder && holder.client == pinned_panel_holder && pinned_panel_recipient && recipient.client == pinned_panel_recipient && holder.erp_panel_enabled() && recipient.erp_panel_enabled()
 
 /// One private, viewer-specific balloon over the victim for each participant.
 /obj/item/grabbing/proc/show_grab_balloon()
@@ -125,6 +143,9 @@
 	C.update_action_buttons_icon()
 
 /obj/item/grabbing/Destroy()
+	tackle_pin_active = FALSE
+	pinned_panel_holder = null
+	pinned_panel_recipient = null
 	STOP_PROCESSING(SSfastprocess, src)
 	if(isobj(grabbed))
 		var/obj/I = grabbed
@@ -370,6 +391,10 @@
 				if(user.loc != M.loc)
 					to_chat(user, span_warning("I must be above them."))
 					return
+				if(tackle_pin_active)
+					return
+				tackle_pin_id++
+				pinned_panel_requested = FALSE
 				var/stun_dur = max(((65 + (skill_diff * 10) + (user.STASTR * 5) - (M.STASTR * 5)) * combat_modifier), 20)
 				var/pincount = 0
 				var/list/pin_hold
@@ -380,16 +405,22 @@
 							qdel(src)
 							break
 						pin_hold = M.apply_pin_hold(stun_dur - pincount * 2, stun_dur)	//Made immobile for the whole do_after duration, though
+						tackle_pin_active = TRUE
 						user.stamina_add(rand(1,3) + abs(skill_diff) + stun_dur / 1.5)
 						M.visible_message(span_danger("[user] keeps [M] pinned to the ground!"))
 						pincount += 2
 					else if(src in M.grabbedby)
 						pin_hold = M.apply_pin_hold(stun_dur - 10, stun_dur)
+						tackle_pin_active = TRUE
 						user.stamina_add(rand(1,3) + abs(skill_diff) + stun_dur / 1.5)
 						pincount += 2
 						M.visible_message(span_danger("[user] pins [M] to the ground!"), \
 							span_userdanger("[user] pins me to the ground!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
-				M.release_pin_hold(pin_hold)
+				tackle_pin_active = FALSE
+				pinned_panel_holder = null
+				pinned_panel_recipient = null
+				if(!QDELETED(M))
+					M.release_pin_hold(pin_hold)
 			else
 				user.stamina_add(rand(5,15))
 				if(M.compliance || prob(clamp((((4 + (((user.STASTR - M.STASTR)/2) + skill_diff)) * 10 + rand(-5, 5)) * combat_modifier), 5, 95)))

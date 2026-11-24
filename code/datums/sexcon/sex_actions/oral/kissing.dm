@@ -35,6 +35,8 @@
 /datum/sex_controller/proc/kissing_oxygen_tick(mob/living/carbon/human/recipient, session, notice_sent = FALSE)
 	if(session != kissing_oxygen_session || current_action != /datum/sex_action/kissing || desire_stop)
 		return
+	if(panel_tackle_pin && !panel_action_still_active(panel_action_session))
+		return
 	if(QDELETED(user) || QDELETED(recipient) || target != recipient || !user.client || user.sexcon != src)
 		return
 	// Temporary ineligibility skips healing but retains the clock. The main action loop

@@ -39,6 +39,10 @@
 	/// Identity and progress deadline of the current action loop.
 	var/panel_action_session = 0
 	var/panel_action_deadline = 0
+	var/obj/item/grabbing/panel_tackle_pin
+	var/panel_tackle_pin_id
+	var/mob/living/carbon/human/panel_pinned_target
+	var/next_pinned_action
 	/// Invalidates oxygen-healing callbacks when a make-out action stops or restarts.
 	var/kissing_oxygen_session = 0
 	/// Recipient-side cooldown shared by every initiator; base recovery cannot stack.
@@ -1739,6 +1743,23 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return
 
 /datum/sex_controller/Topic(href, href_list)
+	if(href_list["task"] == "allow_pinned_panel" || href_list["task"] == "stop_pinned_panel")
+		var/mob/living/carbon/human/recipient = usr
+		var/obj/item/grabbing/pin = locate(href_list["pin"])
+		if(!istype(recipient) || !istype(pin) || pin.tackle_pin_id != text2num(href_list["pin_id"]))
+			return
+		if(href_list["task"] == "allow_pinned_panel")
+			if(pin.pinned_panel_requested && pin.pinned_panel_holder == user?.client && !pin.pinned_panel_recipient && pin.is_active_chest_pin(user, recipient) && user.erp_panel_enabled() && recipient.erp_panel_enabled())
+				pin.pinned_panel_recipient = recipient.client
+				to_chat(user, span_notice("[recipient] accepted ERP panel interaction for this pin. Select an action to start."))
+				to_chat(recipient, span_notice("You accepted ERP panel interaction for this pin. <a href='?src=[REF(src)];task=stop_pinned_panel;pin=[REF(pin)];pin_id=[pin.tackle_pin_id]'>Stop and withdraw permission</a>."))
+		else if(pin.grabbed == recipient && pin.pinned_panel_recipient && recipient.client == pin.pinned_panel_recipient)
+			pin.pinned_panel_holder = null
+			pin.pinned_panel_recipient = null
+			if(panel_tackle_pin == pin)
+				try_stop_current_action()
+			to_chat(recipient, span_notice("You withdrew permission for ERP panel interaction during this pin."))
+		return
 	if(usr != user)
 		return
 	switch(href_list["task"])
@@ -1809,10 +1830,25 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 
 /datum/sex_controller/proc/try_stop_current_action()
 	clear_panel_triumph_action()
+	next_pinned_action = null
 	if(!current_action)
 		return
 	desire_stop = TRUE
-	user.doing = FALSE
+
+/datum/sex_controller/proc/find_panel_tackle_pin()
+	if(QDELETED(user) || QDELETED(target) || user == target)
+		return null
+	for(var/obj/item/grabbing/pin in user.held_items)
+		if(pin.is_active_chest_pin(user, target))
+			return pin
+	return null
+
+/datum/sex_controller/proc/panel_action_still_active(session)
+	if(QDELETED(src) || QDELETED(user) || QDELETED(target) || user.sexcon != src || session != panel_action_session || !current_action || desire_stop)
+		return FALSE
+	if(!panel_tackle_pin)
+		return TRUE
+	return !QDELETED(panel_tackle_pin) && target == panel_pinned_target && panel_tackle_pin.tackle_pin_id == panel_tackle_pin_id && panel_tackle_pin.has_pinned_panel_permission(user, target)
 
 /// Recover abandoned loops even when no completion is currently pending.
 /datum/sex_controller/proc/expire_panel_action()
@@ -1826,12 +1862,18 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(!current_action)
 		return
 	var/datum/sex_action/action = SEX_ACTION(current_action)
+	var/obj/item/grabbing/finished_pin = panel_tackle_pin
+	var/finished_pin_id = panel_tackle_pin_id
+	var/mob/living/carbon/human/finish_target = finished_pin ? panel_pinned_target : target
+	var/followup_action = next_pinned_action
 	panel_action_session++
 	panel_action_deadline = 0
+	panel_tackle_pin = null
+	panel_tackle_pin_id = null
+	panel_pinned_target = null
+	next_pinned_action = null
 	suppress_action_messages = FALSE
 	desire_stop = FALSE
-	if(ishuman(user) && !QDELETED(user))
-		user.doing = FALSE
 	orison_indulgence_notice_shown = FALSE
 	current_action = null
 	bed = null
@@ -1843,8 +1885,10 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	popwarning = FALSE
 	using_zones = list()
 	// Clear state first: a failed finish callback must not strand this session.
-	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(target) && !QDELETED(target))
-		action.on_finish(user, target)
+	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(finish_target) && !QDELETED(finish_target))
+		action.on_finish(user, finish_target)
+	if(followup_action && !current_action && !QDELETED(finished_pin) && target == finish_target && finished_pin.tackle_pin_id == finished_pin_id && finished_pin.has_pinned_panel_permission(user, target))
+		try_start_action(followup_action)
 
 /datum/sex_controller/proc/try_start_action(action_type)
 	if(action_type == current_action)
@@ -1852,16 +1896,31 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return
 	if(current_action != null)
 		try_stop_current_action()
+		if(panel_tackle_pin && action_type)
+			next_pinned_action = action_type
 		return
 	if(!action_type)
 		return
 	if(!can_perform_action(action_type, user.incapacitated()))
+		return
+	var/obj/item/grabbing/pin = find_panel_tackle_pin()
+	if(user.doing && !pin)
+		return
+	if(pin && !pin.has_pinned_panel_permission(user, target))
+		if(!pin.pinned_panel_requested && user.erp_panel_enabled() && target.erp_panel_enabled())
+			pin.pinned_panel_requested = TRUE
+			pin.pinned_panel_holder = user.client
+			to_chat(target, span_notice("[user] requests ERP panel interaction during this pin. <a href='?src=[REF(src)];task=allow_pinned_panel;pin=[REF(pin)];pin_id=[pin.tackle_pin_id]'>Accept for this pin</a>."))
+			to_chat(user, span_notice("You asked [target] to allow ERP panel interaction during this pin."))
 		return
 	knot_check_remove(action_type)
 	// Set vars
 	desire_stop = FALSE
 	orison_indulgence_notice_shown = FALSE
 	current_action = action_type
+	panel_tackle_pin = pin
+	panel_tackle_pin_id = pin?.tackle_pin_id
+	panel_pinned_target = pin ? target : null
 	bed = null
 	target_on_bed = FALSE
 	table_or_pillory = null
@@ -1879,6 +1938,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 /datum/sex_controller/proc/sex_action_loop(session)
 	if(session != panel_action_session)
 		return
+	if(!panel_action_still_active(session))
+		stop_current_action(session)
+		return
 	// Do action loop
 	var/performed_action_type = current_action
 	var/datum/sex_action/action = SEX_ACTION(current_action)
@@ -1890,10 +1952,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/virgin_reaction_checked = FALSE
 	show_progress = 1
 	suppress_moan = FALSE
+	var/datum/callback/action_checks = CALLBACK(src, PROC_REF(panel_action_still_active), session)
+	var/datum/callback/pinned_action_checks = panel_tackle_pin ? action_checks : null
 	action.on_start(user, target)
 	find_occupying_furniture()
 	find_occupying_grass()
-	while(session == panel_action_session)
+	while(panel_action_still_active(session))
 		if(!target?.client?.prefs?.sexable) // no prefs/sexability means we should safely stop the loop
 			break
 		var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
@@ -1907,10 +1971,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			break
 		var/action_delay = action.do_time / get_speed_multiplier()
 		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
-		if(!do_after(user, action_delay, target = target, progress = show_progress))
+		if(!do_after(user, action_delay, target = target, progress = show_progress, extra_checks = action_checks, use_action_lock = !panel_tackle_pin))
 			break
 		if(session != panel_action_session)
 			return
+		if(!panel_action_still_active(session))
+			break
 		if(current_action == null || performed_action_type != current_action)
 			break
 		if(!can_perform_action(current_action, user.incapacitated()))
@@ -1955,9 +2021,11 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				target.react_to_virgin_affection(user)
 		// Existing delivery routines can sleep for up to ten one-second bursts.
 		panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
-		action.on_perform(user, target)
+		action.on_perform(user, target, pinned_action_checks)
 		if(session != panel_action_session)
 			return
+		if(!panel_action_still_active(session))
+			break
 		refresh_completed_panel_effects(action)
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
@@ -2062,6 +2130,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 
 /datum/sex_controller/proc/set_target(mob/living/carbon/human/new_target)
 	if(new_target != target)
+		if(panel_tackle_pin)
+			try_stop_current_action()
 		clear_panel_triumph_action()
 	//remove_from_target_receiving()
 	target = new_target
