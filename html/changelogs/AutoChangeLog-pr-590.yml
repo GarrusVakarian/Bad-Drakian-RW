@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "River currents carry thrown items only after they land."
