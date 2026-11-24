@@ -1302,6 +1302,10 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/get_intent_display_name(datum/intent/intent)
 	return intent.name
 
+/// Icon state drawn for this item's intent button.
+/obj/item/proc/get_intent_hud_icon_state(datum/intent/intent)
+	return intent.icon_state
+
 ///Returns the sharpness of src. If you want to get the sharpness of an item use this.
 /obj/item/proc/get_sharpness()
 	//Oh no, we are dulled out!

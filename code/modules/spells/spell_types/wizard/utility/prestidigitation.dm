@@ -67,6 +67,18 @@
 			return "Splash"
 	return ..()
 
+/obj/item/melee/touch_attack/prestidigitation/get_intent_hud_icon_state(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return "inclean"
+		if(INTENT_DISARM)
+			return "inspark"
+		if(/datum/intent/use)
+			return "inlight"
+		if(INTENT_HARM)
+			return "insplash"
+	return ..()
+
 /obj/item/melee/touch_attack/prestidigitation/Initialize(mapload)
 	. = ..()
 	mote = new(src)

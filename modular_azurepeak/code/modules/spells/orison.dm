@@ -49,6 +49,16 @@
 			return "Lay Hands"
 	return ..()
 
+/obj/item/melee/touch_attack/orison/get_intent_hud_icon_state(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return "invoice"
+		if(/datum/intent/use)
+			return "inlight"
+		if(INTENT_DISARM)
+			return "inlayhands"
+	return ..()
+
 /obj/item/melee/touch_attack/orison/attack_self()
 	qdel(src)
 
