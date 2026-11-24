@@ -19,6 +19,8 @@
 	var/msg = input(src, "", title) as text|null
 	if(generation == looc_input_generation && !QDELETED(typing_mob) && indicator && typing_mob.typing_indicator_current == indicator)
 		typing_mob.clear_typing_indicator(length(msg) ? "sent" : "closed input")
+	if(QDELETED(typing_mob) || mob != typing_mob)
+		return
 	return msg
 
 /client/proc/get_looc()
@@ -204,8 +206,11 @@
 		to_chat(src, span_danger("I cannot use LOOC (temp muted)."))
 		return
 
+	var/mob/S = mob
 	if(is_banned_from(ckey, "LOOC"))
 		to_chat(src, span_danger("I cannot use LOOC (perma muted)."))
+		return
+	if(QDELETED(S) || mob != S)
 		return
 
 	// Lobby restriction: disable LOOC for normal players still in the lobby (new_player)
@@ -214,12 +219,11 @@
 			to_chat(src, span_danger("I cannot use LOOC while in the lobby. Join the round or observe first."))
 			return
 
-	else if((mob?.stat == DEAD || isobserver(mob)) && !(holder && istype(mob, /mob/dead/observer/admin)))
-		var/refusal = isobserver(mob) ? "I cannot use LOOC while ghosted." : "I cannot use LOOC while dead, only SLOOC."
-		to_chat(src, span_danger(refusal))
+	else if(istype(mob, /mob/dead/observer/screye))
+		to_chat(src, span_danger("I cannot use LOOC while scrying."))
 		return
-
-	if(!mob)
+	else if(wp && (mob?.stat == DEAD || isobserver(mob)) && !(holder && istype(mob, /mob/dead/observer/admin)))
+		to_chat(src, span_danger("I cannot use Wall Pierce LOOC while dead."))
 		return
 
 	if(!(prefs.chat_toggles & CHAT_OOC))
@@ -234,7 +238,6 @@
 
 	//msg = emoji_parse(msg)
 
-	var/mob/S = mob
 	var/s_name = S.name
 	var/s_ckey = ckey
 	var/pfx = wp ? "LOOC (WP)" : "LOOC"
