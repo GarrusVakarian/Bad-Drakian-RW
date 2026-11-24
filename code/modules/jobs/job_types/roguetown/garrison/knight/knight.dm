@@ -63,6 +63,7 @@
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	id = /obj/item/scomstone/bad/garrison
 	belt_contents = list(/obj/item/storage/keyring/guardknight = 1)
+	unique_belt_contents = list(/obj/item/storage/keyring/guardknight)
 	backpack_contents = list(
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
 	)

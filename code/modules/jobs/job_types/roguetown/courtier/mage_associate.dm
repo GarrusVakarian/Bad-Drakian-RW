@@ -36,6 +36,7 @@
 	neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 	belt = /obj/item/storage/belt/rogue/leather
 	belt_contents = list(/obj/item/storage/keyring/mageapprentice = 1)
+	unique_belt_contents = list(/obj/item/storage/keyring/mageapprentice)
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backr = /obj/item/rogueweapon/woodstaff
 	shoes = /obj/item/clothing/shoes/roguetown/gladiator // FANCY SANDALS

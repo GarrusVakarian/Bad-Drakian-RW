@@ -74,6 +74,7 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	cloak = /obj/item/clothing/cloak/lordcloak
 	belt = /obj/item/storage/belt/rogue/leather/plaquegold
 	belt_contents = list(/obj/item/storage/keyring/lord = 1)
+	unique_belt_contents = list(/obj/item/storage/keyring/lord)
 	id = /obj/item/scomstone/garrison
 
 /datum/outfit/job/roguetown/lord/pre_equip(mob/living/carbon/human/H)

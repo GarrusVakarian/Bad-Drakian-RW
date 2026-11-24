@@ -36,6 +36,7 @@
 
 /datum/outfit/job/roguetown/baron
 	belt_contents = list(/obj/item/roguekey/manor = 1)
+	unique_belt_contents = list(/obj/item/roguekey/manor)
 	id = /obj/item/scomstone/bad/garrison
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/formal
 	pants = /obj/item/clothing/under/roguetown/trou/formal

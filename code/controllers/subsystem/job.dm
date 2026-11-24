@@ -1148,6 +1148,14 @@ SUBSYSTEM_DEF(job)
 	else if(map_name == "Dun World")
 		if(T.z != 3 || T.y <= 234)
 			return FALSE
+	else if(map_name == "AP Dun World")
+		var/public_spawn_turf = FALSE
+		for(var/obj/effect/landmark/start/public_spawn in GLOB.jobspawn_overrides["Towner"])
+			if(get_turf(public_spawn) == T)
+				public_spawn_turf = TRUE
+				break
+		if(!public_spawn_turf)
+			return FALSE
 
 	var/open_neighbors = 0
 	for(var/direction in list(NORTH, SOUTH, EAST, WEST))

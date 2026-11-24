@@ -220,6 +220,8 @@
 	if(!ishuman(H))
 		return
 
+	SSmapping.map_adjustment?.issue_spawn_key(type, H)
+
 	if(spells && H.mind)
 		for(var/S in spells)
 			H.mind.AddSpell(new S)
