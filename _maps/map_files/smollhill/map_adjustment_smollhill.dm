@@ -29,7 +29,6 @@
 		/datum/job/roguetown/jester,
 		/datum/job/roguetown/steward,
 		/datum/job/roguetown/clerk,
-		/datum/job/roguetown/wapprentice,
 		/datum/job/roguetown/butler,
 		/datum/job/roguetown/chaplain,
 		/datum/job/roguetown/magician,
@@ -43,15 +42,12 @@
 		/datum/job/roguetown/manorguard,
 		/datum/job/roguetown/marshal,
 		/datum/job/roguetown/rookie,
-		/datum/job/roguetown/knight,
 		/datum/job/roguetown/watchcaptain,
 		/datum/job/roguetown/sergeant,
 		/datum/job/roguetown/veteran,
 		/datum/job/roguetown/dungeoneer,
 		/datum/job/roguetown/guardsman,
-		/datum/job/roguetown/squire,
 
-		/datum/job/roguetown/nightmaiden,
 		/datum/job/roguetown/cook,
 		/datum/job/roguetown/shophand,
 		/datum/job/roguetown/gapprentice,
@@ -73,6 +69,10 @@
 
 		)
 	slot_adjust = list(
+		/datum/job/roguetown/knight = 1,
+		/datum/job/roguetown/squire = 1,
+		/datum/job/roguetown/wapprentice = 1,
+		/datum/job/roguetown/nightmaiden = 1,
 		/datum/job/roguetown/councillor = 1,
 		/datum/job/roguetown/warden = 6,
 		/datum/job/roguetown/templar = 2,

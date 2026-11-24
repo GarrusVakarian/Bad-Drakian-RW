@@ -434,6 +434,13 @@
 	if(!J)
 		J = SSjob.GetJob(H.job)
 
+	// Smollhill manor doors use a different lock from the standard court keyrings.
+	if(istype(SSmapping?.map_adjustment, /datum/map_adjustment/template/smollhill) && (H.job in list("Knight", "Squire", "Magicians Associate")))
+		var/obj/item/roguekey/baron/manor_key = new(get_turf(H))
+		var/obj/item/starting_belt = H.get_item_by_slot(SLOT_BELT)
+		if(!starting_belt || !SEND_SIGNAL(starting_belt, COMSIG_TRY_STORAGE_INSERT, manor_key, null, TRUE))
+			H.put_in_hands(manor_key)
+
 //Warden and regular officers add this result to their get_access()
 /datum/job/proc/check_config_for_sec_maint()
 	if(CONFIG_GET(flag/security_has_maint_access))
