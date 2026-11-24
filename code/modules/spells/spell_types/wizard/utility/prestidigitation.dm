@@ -3,6 +3,11 @@
 #define PRESTI_MOTE    "presti_mote"
 #define PRESTI_SPLASH  "presti_splash"
 
+#define PRESTI_CLEAN_DESCRIPTION "Use your arcyne powers to scrub an object or something clean, like using soap. Also known as the Apprentice's Woe."
+#define PRESTI_SPARK_DESCRIPTION "Will forth a spark on an item of your choosing (or in front of you, if used on the ground) to ignite flammable items and things like torches, lanterns or campfires."
+#define PRESTI_LIGHT_DESCRIPTION "Conjure forth an orbiting mote of magelight to light your way. Middle-click this hand to set the mote's color. Alt-right-click to reset it."
+#define PRESTI_SPLASH_DESCRIPTION "Conjure a harmless bolt of water at your target, extinguishing any flames upon them. When aimed at the head, it may distress those of feline nature or noble bearing."
+
 /obj/effect/proc_holder/spell/targeted/touch/prestidigitation
 	name = "Prestidigitation"
 	desc = "A few basic tricks many apprentices use to practice basic manipulation of the arcyne."
@@ -18,6 +23,7 @@
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane
 	hand_path = /obj/item/melee/touch_attack/prestidigitation
+	show_hand_intent_descriptions = TRUE
 	var/mote_color = null
 
 // Re-apply saved prestidigitation color when the touch hand is summoned again.
@@ -36,10 +42,10 @@
 /obj/item/melee/touch_attack/prestidigitation
 	name = "\improper prestidigitating touch"
 	desc = "You recall the following incantations you've learned:\n \
-	<b>Clean</b>: Use your arcyne powers to scrub an object or something clean, like using soap. Also known as the Apprentice's Woe.\n \
-	<b>Spark</b>: Will forth a spark on an item of your choosing (or in front of you, if used on the ground) to ignite flammable items and things like torches, lanterns or campfires. \n \
-	<b>Light</b>: Conjure forth an orbiting mote of magelight to light your way. Middle-click this hand to set the mote's color. Alt-right-click to reset it.\n \
-	<b>Splash</b>: Conjure a harmless bolt of water at your target, extinguishing any flames upon them. When aimed at the head, it may distress those of feline nature or noble bearing."
+	<b>Clean</b>: " + PRESTI_CLEAN_DESCRIPTION + "\n \
+	<b>Spark</b>: " + PRESTI_SPARK_DESCRIPTION + "\n \
+	<b>Light</b>: " + PRESTI_LIGHT_DESCRIPTION + "\n \
+	<b>Splash</b>: " + PRESTI_SPLASH_DESCRIPTION
 	catchphrase = null
 	no_effect = TRUE
 	possible_item_intents = list(INTENT_HELP, INTENT_DISARM, /datum/intent/use, INTENT_HARM)
@@ -65,6 +71,18 @@
 			return "Light"
 		if(INTENT_HARM)
 			return "Splash"
+	return ..()
+
+/obj/item/melee/touch_attack/prestidigitation/get_intent_display_description(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return PRESTI_CLEAN_DESCRIPTION
+		if(INTENT_DISARM)
+			return PRESTI_SPARK_DESCRIPTION
+		if(/datum/intent/use)
+			return PRESTI_LIGHT_DESCRIPTION
+		if(INTENT_HARM)
+			return PRESTI_SPLASH_DESCRIPTION
 	return ..()
 
 /obj/item/melee/touch_attack/prestidigitation/get_intent_hud_icon_state(datum/intent/intent)
@@ -387,3 +405,8 @@
 #undef PRESTI_SPARK
 #undef PRESTI_MOTE
 #undef PRESTI_SPLASH
+
+#undef PRESTI_CLEAN_DESCRIPTION
+#undef PRESTI_SPARK_DESCRIPTION
+#undef PRESTI_LIGHT_DESCRIPTION
+#undef PRESTI_SPLASH_DESCRIPTION
