@@ -50,7 +50,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		apply_voicepacks(character, player)
 	if(player.prefs.dnr_pref)
 		apply_dnr_trait(character, player)
-	for(var/slot in 1 to 10)
+	for(var/slot in 1 to LOADOUT_SLOT_COUNT)
 		var/datum/loadout_item/item = player.prefs.vars[slot == 1 ? "loadout" : "loadout[slot]"]
 		if(!item)
 			continue

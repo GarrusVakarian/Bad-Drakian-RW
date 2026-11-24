@@ -21,20 +21,20 @@
 	. = list()
 	if(!islist(fields))
 		return
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		for(var/kind in list("name", "desc"))
 			var/field = "loadout_[i]_[kind]"
 			if(field in fields)
 				. += field
 
 /datum/preferences/proc/get_loadout_text(slot, is_name = FALSE, preview = FALSE)
-	if(!isnum(slot) || slot < 1 || slot > 10 || slot != round(slot))
+	if(!isnum(slot) || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot))
 		return null
 	var/field = "loadout_[slot]_[is_name ? "name" : "desc"]"
 	return format_loadout_text(vars[field], field in loadout_markdown_fields, is_name, preview)
 
 /datum/preferences/proc/set_loadout_custom_text(slot, is_name, text)
-	if(!isnum(slot) || slot < 1 || slot > 10 || slot != round(slot) || !istext(text))
+	if(!isnum(slot) || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot) || !istext(text))
 		return FALSE
 	var/field = "loadout_[slot]_[is_name ? "name" : "desc"]"
 	var/limit = is_name ? MAX_NAME_LEN : 500
@@ -62,7 +62,7 @@
 	var/spent_triumphs = 0
 	
 	// Calculate spent triumphs
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/datum/loadout_item/loadout_slot = vars["loadout[i == 1 ? "" : "[i]"]"]
 		if(loadout_slot && loadout_slot.triumph_cost)
 			spent_triumphs += loadout_slot.triumph_cost
@@ -272,8 +272,8 @@
 			<div class="loadout-grid">
 	"}
 	
-	// Generate 10 loadout slots
-	for(var/i = 1 to 10)
+	// Generate the loadout slots
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/slot_var = i == 1 ? "loadout" : "loadout[i]"
 		var/datum/loadout_item/current_item = vars[slot_var]
 		var/custom_name = vars["loadout_[i]_name"]

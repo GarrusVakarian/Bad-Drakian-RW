@@ -998,11 +998,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						var/is_loadout_item = FALSE
 						var/keep_stats = FALSE
 						if(user.client?.prefs)
-							var/list/loadout_slots = list(
-								"loadout", "loadout2", "loadout3", "loadout4", "loadout5",
-								"loadout6", "loadout7", "loadout8", "loadout9", "loadout10",
-							)
-							for(var/slot in loadout_slots)
+							for(var/i in 1 to LOADOUT_SLOT_COUNT)
+								var/slot = i == 1 ? "loadout" : "loadout[i]"
 								var/datum/loadout_item/loadout_datum = user.client.prefs.vars[slot]
 								if(loadout_datum && loadout_datum.path == path2item)
 									is_loadout_item = TRUE
