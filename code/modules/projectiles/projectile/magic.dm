@@ -284,14 +284,16 @@
 
 /obj/projectile/magic/fetch/on_hit(target)
 	. = ..()
+	if(QDELETED(firer) || !get_turf(firer))
+		return BULLET_ACT_BLOCK
 	var/atom/throw_target = get_step(firer, get_dir(firer, target))
 	if(isliving(target))
 		var/mob/living/L = target
-		if(L.anti_magic_check() || !firer)
+		if(L.anti_magic_check())
 			L.visible_message(span_warning("[src] vanishes on contact with [target]!"))
 			return BULLET_ACT_BLOCK
-		L.throw_at(throw_target, 200, 4)
-		new /datum/magic_throw_slip_watcher(L)
+		if(L.throw_at(throw_target, 200, 4, preserve_pull = isliving(firer) ? firer : null))
+			new /datum/magic_throw_slip_watcher(L)
 	else
 		if(isitem(target))
 			var/obj/item/I = target
@@ -440,23 +442,23 @@
 
 /obj/projectile/magic/aoe/fireball/on_hit(target)
 	. = ..()
-	if(ismob(target))
-		var/mob/living/M = target
-		if(M.anti_magic_check())
+	var/mob/living/hit_mob = isliving(target) ? target : null
+	if(hit_mob)
+		if(hit_mob.anti_magic_check())
 			visible_message(span_warning("[src] vanishes into smoke on contact with [target]!"))
 			return BULLET_ACT_BLOCK
 		if(exp_fire)
-			M.adjust_fire_stacks(exp_fire*3)
+			hit_mob.adjust_fire_stacks(exp_fire*3)
 	var/turf/T
 	if(isturf(target))
 		T = target
 	else
 		T = get_turf(target)
 	explosion(T, -1, exp_heavy, exp_light, exp_flash, 0, flame_range = exp_fire, soundin = explode_sound)
-	if(ismob(target))
-		var/mob/living/M = target
-		var/atom/throw_target = get_edge_target_turf(M, angle2dir(Angle))
-		M.throw_at(throw_target, exp_light, EXPLOSION_THROW_SPEED)
+	if(exp_light > 0 && !QDELETED(hit_mob))
+		var/atom/throw_target = get_edge_target_turf(hit_mob, angle2dir(Angle))
+		var/mob/living/caster_to_drag = istype(src, /obj/projectile/magic/aoe/fireball/rogue) && isliving(firer) ? firer : null
+		hit_mob.throw_at(throw_target, exp_light, EXPLOSION_THROW_SPEED, preserve_pull = caster_to_drag)
 
 /obj/projectile/magic/aoe/fireball/infernal
 	name = "infernal fireball"

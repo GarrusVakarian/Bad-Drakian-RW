@@ -15,7 +15,8 @@
 	Venardine are a crafty, cunning, and perceptive people. Many Venardine have used their nature \
 	to take advantage of other races, causing them to be known for their wit and charm at the expense \
 	of a reputation as cheats, frauds, tricksters, and thieves.<br>\
-	(+1 Perception, +1 Intelligence, Sleuth Trait)"
+	(+1 Perception, +1 Intelligence)<br>\
+	<a href='byond://winset?command=Racial-Features%20venardine'>Racial Features: Venardines</a><br>"
 
 	expanded_desc = "Venardine are a fox-like Beastling race with the majority hailing from the Kingdom \
 	of Vulpkheim, which borders Hammerhold. However, there are a few Venardine tribes that \

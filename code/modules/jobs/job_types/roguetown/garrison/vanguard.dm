@@ -97,8 +97,8 @@
 	beltr = /obj/item/quiver/arrows //replaces sword
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
 	id = /obj/item/scomstone/bad/garrison
+	belt_contents = list(/obj/item/roguekey/walls = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/walls = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,
@@ -154,8 +154,8 @@
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
 	r_hand = /obj/item/rogueweapon/spear
 	id = /obj/item/scomstone/bad/garrison
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/signal_horn = 1
@@ -205,8 +205,8 @@
 	beltr = /obj/item/rogueweapon/mace/cudgel
 	beltl = /obj/item/rogueweapon/huntingknife/idagger
 	id = /obj/item/scomstone/bad/garrison
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/signal_horn = 1
@@ -257,8 +257,8 @@
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
 	r_hand = /obj/item/rogueweapon/sword/iron
 	id = /obj/item/scomstone/bad/garrison
+	belt_contents = list(/obj/item/roguekey/walls = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/walls = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,
 		/obj/item/signal_horn = 1,

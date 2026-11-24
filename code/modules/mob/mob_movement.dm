@@ -230,6 +230,10 @@
  * Called by client/Move()
  */
 /client/proc/Process_Grab()
+	if(mob.pulledby && isliving(mob))
+		var/mob/living/grabbed_mob = mob
+		grabbed_mob.recover_stale_pull()
+
 	if(mob.pulledby)
 		if(mob.pulledby == mob)
 			return FALSE

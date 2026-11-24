@@ -296,6 +296,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["runmode"]			>> runmode
 	S["compliance_notifs"]  >> compliance_notifs
 	S["skillcap_notifs"]	>> skillcap_notifs
+	S["disabled_guidance"] >> disabled_guidance
+	disabled_guidance = sanitize_integer(disabled_guidance, 0, DISABLE_GUIDANCE_ALL, initial(disabled_guidance))
 
 
 	S["default_slot"]		>> default_slot
@@ -543,6 +545,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["patreon_say_color_enabled"], patreon_say_color_enabled)
 	WRITE_FILE(S["compliance_notifs"], compliance_notifs)
 	WRITE_FILE(S["skillcap_notifs"], skillcap_notifs)
+	WRITE_FILE(S["disabled_guidance"], disabled_guidance)
 
 	return TRUE
 
@@ -609,6 +612,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	fix_duplicate_vices()
 	S["redolent_type"] >> redolent_type
 	S["redolent_scent"] >> redolent_scent
+	var/redolent_scent_text_version
+	S["redolent_scent_text_version"] >> redolent_scent_text_version
 	S["hypnotic_gaze_text"] >> hypnotic_gaze_text
 	S["hypnotic_gaze_style"] >> hypnotic_gaze_style
 	var/hypnotic_gaze_text_version
@@ -619,11 +624,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(hypnotic_gaze_style)
 	S["hypnotic_presence_text"] >> hypnotic_presence_text
 	S["hypnotic_presence_style"] >> hypnotic_presence_style
+	var/saved_milk_size
+	S["milk_production_size"] >> saved_milk_size
+	milk_production_size = sanitize_milk_production_size(saved_milk_size)
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(hypnotic_presence_text)
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(hypnotic_presence_style)
 	if(isnull(redolent_type)) // legacy savefile key from when this was named malodorous
 		S["malodorous_type"] >> redolent_type
 		S["malodorous_scent"] >> redolent_scent
+		redolent_scent_text_version = null
+	redolent_scent = load_redolent_scent_text(redolent_scent, redolent_scent_text_version)
 	if(redolent_type == "Positive")
 		redolent_type = "Pleasant"
 	if(!(redolent_type in list("Gross", "Neutral", "Pleasant")))
@@ -805,6 +815,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 
 /datum/preferences/proc/_load_loadout_colours(S)
+	var/list/loaded_markdown_fields
+	S["loadout_markdown_fields"] >> loaded_markdown_fields
+	loadout_markdown_fields = normalize_loadout_markdown_fields(loaded_markdown_fields)
 	S["loadout_1_hex"] >> loadout_1_hex
 	S["loadout_2_hex"] >> loadout_2_hex
 	S["loadout_3_hex"] >> loadout_3_hex
@@ -916,6 +929,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 
 /datum/preferences/proc/load_character(slot)
+	// Invalidate queued portraits even if the player switches away and back.
+	credits_revision++
 	if(!path)
 		return FALSE
 	if(!fexists(path))
@@ -940,6 +955,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	_load_species(S)
 
 	_load_virtue(S)
+	var/saved_natural_armor_name
+	S["natural_armor_name"] >> saved_natural_armor_name
+	natural_armor_name = sanitize_natural_armor_text(saved_natural_armor_name)
+	var/saved_natural_armor_desc
+	S["natural_armor_desc"] >> saved_natural_armor_desc
+	natural_armor_desc = sanitize_natural_armor_text(saved_natural_armor_desc)
 	_load_quirks(S)
 	_load_flaw(S)
 
@@ -1274,11 +1295,13 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["vice6"], preferences_typepath_or_null(vice6))
 	WRITE_FILE(S["redolent_type"], redolent_type)
 	WRITE_FILE(S["redolent_scent"], redolent_scent)
+	WRITE_FILE(S["redolent_scent_text_version"], 1)
 	WRITE_FILE(S["hypnotic_gaze_text"], hypnotic_gaze_text)
 	WRITE_FILE(S["hypnotic_gaze_style"], hypnotic_gaze_style)
 	WRITE_FILE(S["hypnotic_gaze_text_version"], 1)
 	WRITE_FILE(S["hypnotic_presence_text"], hypnotic_presence_text)
 	WRITE_FILE(S["hypnotic_presence_style"], hypnotic_presence_style)
+	WRITE_FILE(S["milk_production_size"], milk_production_size)
 	WRITE_FILE(S["feature_mcolor"]		, features["mcolor"])
 	WRITE_FILE(S["feature_mcolor2"]		, features["mcolor2"])
 	WRITE_FILE(S["feature_mcolor3"]		, features["mcolor3"])
@@ -1365,6 +1388,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(!background_typepath)
 		background_typepath = /datum/virtue/background/none
 	WRITE_FILE(S["virtue_background"], background_typepath)
+	WRITE_FILE(S["natural_armor_name"], natural_armor_name)
+	WRITE_FILE(S["natural_armor_desc"], natural_armor_desc)
 	WRITE_FILE(S["quirks"], get_quirk_typepaths())
 	WRITE_FILE(S["virgin_attraction"], sanitize_virgin_attraction(virgin_attraction))
 	WRITE_FILE(S["race_bonus"], race_bonus)
@@ -1401,6 +1426,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["loadout_8_hex"], loadout_8_hex)
 	WRITE_FILE(S["loadout_9_hex"], loadout_9_hex)
 	WRITE_FILE(S["loadout_10_hex"], loadout_10_hex)
+	WRITE_FILE(S["loadout_markdown_fields"], normalize_loadout_markdown_fields(loadout_markdown_fields))
 	// Save custom names
 	WRITE_FILE(S["loadout_1_name"], loadout_1_name)
 	WRITE_FILE(S["loadout_2_name"], loadout_2_name)

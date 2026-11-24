@@ -51,8 +51,7 @@
 	var/visible_text = mob_descriptor_visible_text(text)
 	if(!length(visible_text))
 		return
-	var/last_character = copytext_char(visible_text, -1)
-	return "%THEY% [text][findtext(".!?", last_character) ? "" : "."]"
+	return "%THEY% [text][descriptor_sentence_period(visible_text)]"
 
 /datum/mob_descriptor/proc/get_coalesce_text(mob/living/described, list/used_verbage, mob/watcher)
 	var/description = get_description_for_watcher(described, watcher)
@@ -95,3 +94,8 @@
 		var/static/regex/html_tags = regex("<\[^>\]*>", "g")
 		text = html_tags.Replace(text, "")
 	return trim(html_decode(text))
+
+/// Supply punctuation for descriptive prose without changing the text itself.
+/proc/descriptor_sentence_period(visible_text)
+	var/static/list/sentence_endings = list(".", "!", "?", "…", "。", "！", "？")
+	return (copytext_char(visible_text, -1) in sentence_endings) ? "" : "."

@@ -80,7 +80,7 @@
 		belt = /obj/item/storage/belt/rogue/leather
 		cloak = /obj/item/clothing/cloak/apron/blacksmith
 		beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
-		beltr = /obj/item/roguekey/crafterguild
+		belt_contents = list(/obj/item/roguekey/crafterguild = 1)
 	else if(should_wear_masc_clothes(H))
 		pants = /obj/item/clothing/under/roguetown/trou
 		shoes = /obj/item/clothing/shoes/roguetown/boots/leather
@@ -94,7 +94,7 @@
 			)
 		belt = /obj/item/storage/belt/rogue/leather
 		beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
-		beltr = /obj/item/roguekey/crafterguild
+		belt_contents = list(/obj/item/roguekey/crafterguild = 1)
 		cloak = /obj/item/clothing/cloak/apron/blacksmith
 	if(SSmapping.current_map.map_name == "Desert Town")
 		pants = /obj/item/clothing/under/roguetown/sirwal/plainrandom
@@ -154,7 +154,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/artificer
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced/short
 	belt = /obj/item/storage/belt/rogue/leather/black
-	beltr = /obj/item/roguekey/crafterguild
+	belt_contents = list(/obj/item/roguekey/crafterguild = 1)
 	beltl = /obj/item/flashlight/flare/torch/lantern/bronzelamptern
 	backl = /obj/item/storage/backpack/rogue/artibackpack/engineer
 	backr = /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter/dolabra/albranze

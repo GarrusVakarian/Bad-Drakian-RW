@@ -17,9 +17,17 @@
 	var/datum/organ_dna/tail/tail_dna = organ_dna
 	var/datum/customizer_entry/organ/tail/tail_entry = entry
 	tail_dna.fertility = tail_entry.fertility
+	tail_dna.tailmaw_fluid = (tail_entry.tailmaw_fluid in GLOB.tailmaw_fluid_options) ? tail_entry.tailmaw_fluid : "Default"
 
 /datum/customizer_entry/organ/tail
 	var/fertility = TRUE
+	var/tailmaw_fluid = "Default"
+
+/datum/customizer_choice/organ/tail/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
+	..()
+	var/datum/customizer_entry/organ/tail/tail_entry = entry
+	if(!(tail_entry.tailmaw_fluid in GLOB.tailmaw_fluid_options))
+		tail_entry.tailmaw_fluid = "Default"
 
 /datum/customizer_choice/organ/tail/generate_pref_choices(list/dat, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
@@ -27,13 +35,24 @@
 		return
 	var/datum/customizer_entry/organ/tail/tail_entry = entry
 	dat += "<br>Fertile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=fertile'>[tail_entry.fertility ? "Fertile" : "Sterile"]</a>"
+	dat += "<br>Fluid: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=fluid'>[tail_entry.tailmaw_fluid]</a>"
 
 /datum/customizer_choice/organ/tail/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
-	if((organ_type != /obj/item/organ/tail/manticore && entry.accessory_type != /datum/sprite_accessory/tail/manticore) || href_list["customizer_task"] != "fertile")
+	if(organ_type != /obj/item/organ/tail/manticore && entry.accessory_type != /datum/sprite_accessory/tail/manticore)
 		return
 	var/datum/customizer_entry/organ/tail/tail_entry = entry
-	tail_entry.fertility = !tail_entry.fertility
+	switch(href_list["customizer_task"])
+		if("fertile")
+			tail_entry.fertility = !tail_entry.fertility
+		if("fluid")
+			var/editing_slot = prefs.default_slot
+			var/old_choice = entry.customizer_choice_type
+			var/old_fluid = tail_entry.tailmaw_fluid
+			var/choice = tgui_input_list(user, "Choose your tailmaw's fluid.", "Tailmaw Fluid", GLOB.tailmaw_fluid_options, old_fluid)
+			if(!(choice in GLOB.tailmaw_fluid_options) || !user || user.client != prefs.parent || prefs.default_slot != editing_slot || prefs.get_customizer_entry_for_customizer_type(customizer_type) != entry || entry.customizer_choice_type != old_choice || tail_entry.tailmaw_fluid != old_fluid)
+				return
+			tail_entry.tailmaw_fluid = choice
 
 /datum/customizer/organ/tail/vulpkanin
 	customizer_choices = list(/datum/customizer_choice/organ/tail/vulpkanin)
@@ -581,27 +600,27 @@
 		organ_dna.accessory_colors = visual_dna.accessory_colors
 		qdel(visual_dna)
 
-/// Match the last enabled normal tail entry, as the ordinary organ-DNA pipeline does.
+/// The no-sprite maw borrows a separately retained normal tail's appearance.
+/proc/get_tailmaw_visual_entry(datum/preferences/prefs)
+	if(!prefs?.pref_species)
+		return null
+	var/datum/customizer_entry/visual_entry
+	for(var/datum/customizer_entry/entry as anything in prefs.get_active_customizer_entries())
+		if(ispath(entry.customizer_type, /datum/customizer/organ/tail) && !ispath(entry.customizer_type, /datum/customizer/organ/tail/manticore))
+			visual_entry = entry
+	return visual_entry
+
 /proc/get_tailmaw_visual_dna(datum/preferences/prefs)
 	if(!prefs?.pref_species)
 		return null
-	var/datum/organ_dna/visual_dna
-	for(var/datum/customizer_entry/entry as anything in prefs.customizer_entries)
-		if(!istype(entry) || entry.disabled || !ispath(entry.customizer_type, /datum/customizer/organ/tail) || ispath(entry.customizer_type, /datum/customizer/organ/tail/manticore))
-			continue
-		if(!(entry.customizer_type in prefs.pref_species.customizers))
-			continue
-		var/datum/customizer_choice/organ/tail/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
-		if(!istype(choice))
-			continue
-		QDEL_NULL(visual_dna)
-		visual_dna = choice.create_organ_dna(entry, prefs)
-	if(visual_dna)
-		return visual_dna
+	var/datum/customizer_entry/entry = get_tailmaw_visual_entry(prefs)
+	if(entry)
+		var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
+		return choice.create_organ_dna(entry, prefs)
 	var/obj/item/organ/tail/species_tail = prefs.pref_species.organs?[ORGAN_SLOT_TAIL]
 	if(!ispath(species_tail, /obj/item/organ/tail))
 		return null
-	visual_dna = new /datum/organ_dna/tail()
+	var/datum/organ_dna/tail/visual_dna = new
 	visual_dna.organ_type = species_tail
 	visual_dna.accessory_type = initial(species_tail.accessory_type)
 	visual_dna.accessory_colors = initial(species_tail.accessory_colors)
@@ -610,3 +629,18 @@
 		if(istype(accessory))
 			visual_dna.accessory_colors = accessory.get_default_colors(color_key_source_list_from_prefs(prefs))
 	return visual_dna
+
+/datum/customizer/organ/tail/arachnid
+	customizer_choices = list(/datum/customizer_choice/organ/tail/arachnid)
+	allows_disabling = TRUE
+	default_disabled = TRUE
+
+/datum/customizer_choice/organ/tail/arachnid
+	name = "Tail"
+	sprite_accessories = list(
+		/datum/sprite_accessory/tail/tentacle,
+		/datum/sprite_accessory/tail/bee,
+		/datum/sprite_accessory/tail/insect,
+		/datum/sprite_accessory/tail/scorpian,
+		/datum/sprite_accessory/tail/pede
+	)

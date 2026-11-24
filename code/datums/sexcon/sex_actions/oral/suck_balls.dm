@@ -3,16 +3,6 @@
 	user_sex_part = SEX_PART_JAWS
 	target_sex_part = SEX_PART_BALLS
 
-/datum/sex_action/suck_balls/shows_on_menu(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return !HAS_TRAIT(target, TRAIT_TINY)
-
-/datum/sex_action/suck_balls/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!(. = ..()))
-		return FALSE
-	return !HAS_TRAIT(target, TRAIT_TINY)
-
 /datum/sex_action/suck_balls/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(HAS_TRAIT(user, TRAIT_TINY) && !HAS_TRAIT(target, TRAIT_TINY))
 		user.visible_message(span_warning("[user] starts licking [target]'s balls..."))

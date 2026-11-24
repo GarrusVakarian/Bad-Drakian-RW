@@ -122,13 +122,7 @@
 /obj/structure/roguemachine/mail/examine(mob/user)
 	. = ..()
 	. += "<a href='?src=[REF(src)];directory=1'>Directory:</a> [mailtag]"
-	. += span_info("Right click to write a letter, or insert coins to buy postage, parchment, and quills.")
-	. += span_info("Use a paper or wrapped package on the machine to send it for free.")
-	if(HAS_TRAIT(user, TRAIT_INQUISITION))
-		. += span_info("<br>The MARQUETTE can be accessed via a secret compartment fitted within the HERMES. Load a Marque to access it.")
 
-		. += span_info("You can send arrival slips, accusation slips, fully loaded INDEXERs or confessions here.")
-		. += span_info("Properly sign them. Include an INDEXER where needed. Stamp them for two additional Marques.")
 
 /obj/structure/roguemachine/mail/attack_right(mob/user)
 	. = ..()
@@ -278,7 +272,9 @@
 	else
 		master.new_mail = TRUE
 		master.update_icon()
-		send_ooc_note("A new letter has arrived for you.", name = destination)
+		var/mail_kind = istype(parcel, /obj/item/smallDelivery) ? "package" : "letter"
+		var/mail_notice = sender == "Anonymous" ? "A new [mail_kind] has arrived for you." : "New [mail_kind] from <b>[sender]</b>."
+		to_chat(recipient, span_biginfo("[mail_notice] Collect it at a HERMES."))
 		recipient.apply_status_effect(/datum/status_effect/ugotmail)
 		recipient.playsound_local(recipient, 'sound/misc/mail.ogg', 100, FALSE, -1)
 	visible_message(span_warning("[user] sends something."))

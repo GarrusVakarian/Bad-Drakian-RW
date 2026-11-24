@@ -65,7 +65,7 @@
 		if(current_oxy > max_oxy)
 			max_oxy = current_oxy
 			priority_target = L
-			max_brute = current_brute 
+			max_brute = current_brute
 
 		else if(current_oxy == max_oxy && !priority_target)
 			if(current_brute > max_brute)
@@ -169,3 +169,16 @@
 			qdel(B)
 	bed_refs.Cut()
 	return ..()
+
+/obj/structure/bed/rogue/eora/dragon
+	name = "bed of onyx"
+	desc = "A nest of massive, dark, red-tinted gemstones. Too hard and rough for mere mortals to sleep on, but the perfect resting spot for a dastardly dragon."
+	max_integrity = 500
+	color = "#333333"
+
+/obj/structure/bed/rogue/eora/dragon/Initialize(mapload)
+	. = ..()
+	var/matrix/M = matrix()
+	M.Scale(2, 1.5)
+	transform = M
+

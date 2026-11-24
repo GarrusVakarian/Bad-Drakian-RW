@@ -89,6 +89,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/statpack/statpack	= new /datum/statpack/wildcard/fated // LETHALSTONE EDIT: the statpack we're giving our char instead of racial bonuses
 	var/datum/virtue/virtue = new /datum/virtue/none // LETHALSTONE EDIT: the virtue we get for not picking a statpack
 	var/datum/virtue/virtuetwo = new /datum/virtue/none
+	var/natural_armor_name = ""
+	var/natural_armor_desc = ""
 	// Backgrounds: a virtue-like pick (skills + a starting equipment kit) in its own free slot
 	// alongside virtue/virtuetwo, so nobody has to burn a virtue on "some skills and a kit".
 	// See modular_azurepeak/virtues/background.dm.
@@ -153,6 +155,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/voting_popup = TRUE
 	var/compliance_notifs = TRUE
 	var/skillcap_notifs = TRUE
+	/// Account-wide opt-outs; unset flags leave guidance enabled.
+	var/disabled_guidance = 0
 	var/restricted_species_pref = null
 	var/wildshape_name = TRUE
 	var/xenophobe_pref = 0
@@ -177,6 +181,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 // Base points available to every character
 /datum/preferences/proc/get_base_points()
 	return 10
+
+/// Older editors stored HTML-escaped input. Decode one layer only for unversioned data.
+/proc/load_redolent_scent_text(scent, text_version)
+	if(!istext(scent))
+		return ""
+	return text_version == 1 ? scent : html_decode(scent)
 
 /datum/preferences/proc/get_default_redolent_scent(scent_type)
 	switch(scent_type)
@@ -336,6 +346,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/hypnotic_gaze_style = "Hypnotext"
 	var/hypnotic_presence_text = "There is something strangely compelling about their presence."
 	var/hypnotic_presence_style = "Hypnotext"
+	var/milk_production_size = LARGE_BREASTS_SIZE
 
 	var/setspouse = ""
 	var/gender_choice = ANY_GENDER
@@ -406,6 +417,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/loadout_10_hex
 
 	// Custom names for loadout items
+	var/list/loadout_markdown_fields = list()
 	var/loadout_1_name
 	var/loadout_2_name
 	var/loadout_3_name
@@ -545,15 +557,19 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	real_name = pref_species.random_name(gender,1)
 	ResetJobs()
 	if(user)
-		if(pref_species.desc)
-			to_chat(user, "[pref_species.desc]")
+		var/race_info = pref_species.desc ? pref_species.desc : ""
+		// The card legend already names the race; remove its old standalone heading.
+		var/static/regex/race_heading = regex("^<b>.*?</b>\\s*</?br>\\s*", "i")
+		race_info = race_heading.Replace(race_info, "")
 		if(pref_species.expanded_desc)
-			to_chat(user, "<a href='?src=[REF(user)];view_species_info=[pref_species.expanded_desc]'>Read More</a>")
+			race_info += "<br><a href='?src=[REF(user)];view_species_info=[url_encode(pref_species.expanded_desc)]'>Read More</a>"
+		if(race_info)
+			to_chat(user, fieldset_block("Race: [pref_species.name]", race_info, "racedesc_block"))
 		to_chat(user, "<font color='red'>Classes reset.</font>")
 	random_character(gender, FALSE, FALSE)
 	accessory = "Nothing"
 
-	if(pref_species.forced_taur && pref_species.allowed_taur_types.len)
+	if((pref_species.forced_taur || pref_species.default_taur) && pref_species.allowed_taur_types.len)
 		taur_type = pick(pref_species.allowed_taur_types)
 	else
 		taur_type = null
@@ -783,20 +799,20 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/content_toggles_are_new()
-	return character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles")
+	return !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && (character_sheet_feature_is_new("hypnosis_consent") || character_sheet_feature_is_new("content_toggles"))
 
 /datum/preferences/proc/content_toggles_feature_id()
 	return character_sheet_feature_is_new("hypnosis_consent") ? "hypnosis_consent" : "content_toggles"
 
 /datum/preferences/proc/roleplay_ad_is_new()
-	return character_sheet_feature_is_new("roleplay_ad")
+	return !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && character_sheet_feature_is_new("roleplay_ad")
 
 /datum/preferences/proc/character_sheet_feature_link(feature_id, href, tooltip, label_override, element_id)
 	var/list/features = get_character_sheet_features()
 	var/datum/character_sheet_feature/feature = features[feature_id]
 	if(!istype(feature))
 		return ""
-	var/is_new = character_sheet_feature_is_new(feature_id)
+	var/is_new = !(disabled_guidance & DISABLE_GUIDANCE_NEW_BADGES) && character_sheet_feature_is_new(feature_id)
 	var/badge = is_new ? " <small style='margin-left:6px;border:1px solid currentColor;padding:0 3px;'>NEW</small>" : ""
 	var/label = isnull(label_override) ? feature.label : label_override
 	var/id_attribute = isnull(element_id) ? "" : " id='[html_encode(element_id)]'"
@@ -853,6 +869,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	return TRUE
 
 /datum/preferences/proc/notify_character_sheet_updates(mob/user, sheet_was_visible)
+	if(disabled_guidance & DISABLE_GUIDANCE_NEW_FEATURE_CHAT)
+		return
 	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
 		return
 	// Coalesce reopenings and let the normal login notices finish first.
@@ -862,6 +880,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			send_character_sheet_updates(user, FALSE)
 
 /datum/preferences/proc/send_character_sheet_updates(mob/user, sheet_was_visible)
+	// Recheck after the delay in case the player disabled reminders while one was queued.
+	if(disabled_guidance & DISABLE_GUIDANCE_NEW_FEATURE_CHAT)
+		return
 	if(sheet_was_visible || current_tab != 0 || !parent || user?.client != parent || parent.is_new_player())
 		return
 	var/list/features = get_character_sheet_features()
@@ -951,7 +972,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "</td>"
 
 			dat += "<td style='width:33%;text-align:center'>"
-			dat += "<a href='?_src_=prefs;preference=triumphs;task=menu'><b>TRIUMPHS:</b></a> [user.get_triumphs() ? "\Roman [user.get_triumphs()]" : "None"]"
+			var/triumph_count = user.get_triumphs() || 0
+			dat += "<a href='?_src_=prefs;preference=triumphs;task=menu'><b>TRIUMPHS:</b></a> [triumph_count ? "\Roman [triumph_count]" : "None"] ([triumph_count])"
 			if(SStriumphs.triumph_buys_enabled)
 				dat += "<a style='white-space:nowrap;' href='?_src_=prefs;preference=triumph_buy_menu'>Triumph Buy</a>"
 			dat += "</td>"
@@ -1072,7 +1094,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				dat += "<b>[taur_type == /obj/item/bodypart/taur/equine ? "Horse Tail" : "Taur Tertiary"]:</b> <span style='border: 1px solid #161616; background-color: #[taur_tertiary];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=taur_tertiary;task=input'>Change</a><BR>"
 
 			dat += "<b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a><BR>"
-			dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>[origin ? origin.name : "None"]</a><BR>"
+			if(origin)
+				dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input' oncontextmenu='window.location.href=\"?_src_=prefs;preference=origin_reset\";return false;' title='Right-click to reset to None'>[origin.name]</a><BR>"
+			else
+				dat += "<b>Origin:</b> <a href='?_src_=prefs;preference=origin;task=input'>None</a><BR>"
 
 //			dat += "<br><b>Age:</b> <a href='?_src_=prefs;preference=age;task=input'>[age]</a>"
 //			if(randomise[RANDOM_BODY] || randomise[RANDOM_BODY_ANTAG]) //doesn't work unless random body
@@ -2162,6 +2187,13 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			refresh_character_sheet_if_open(user)
 		ShowCustomizers(user)
 		return
+	else if(href_list["preference"] == "origin_reset")
+		if(origin)
+			origin = null
+			save_character()
+			user << browse(null, "window=origin_map")
+			ShowChoices(user)
+		return
 	else if(href_list["preference"] == "origin_select")
 		select_origin(user, href_list["type"])
 		return
@@ -2461,7 +2493,11 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					for(var/obj/item/bodypart/taur/tt as anything in pref_species.get_taur_list())
 						taur_selection[tt::name] = tt
 
+					var/datum/species/editing_species = pref_species
+					var/editing_slot = default_slot
 					var/new_taur_type = tgui_input_list(user, "Choose your character's taur body", "TAUR BODY", taur_selection)
+					if(!user?.client || user.client != parent || pref_species != editing_species || default_slot != editing_slot)
+						return
 					if(!new_taur_type)
 						return
 
@@ -2507,9 +2543,9 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/faith_input = tgui_input_list(user, "The world rots. Which truth you bear?", "FAITH", faiths_named)
 					if(faith_input)
 						var/datum/faith/faith = faiths_named[faith_input]
-						to_chat(user, "<font color='yellow'>Faith: [faith.name]</font>")
-						to_chat(user, "Background: [faith.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>")
+						var/faith_info = "Background: [faith.desc]<br><br>"
+						faith_info += "<font color='#c58cff'>Likely Worshippers: [faith.worshippers]</font>"
+						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
 						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
 
 				if("patron")
@@ -2524,12 +2560,12 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					var/god_input = tgui_input_list(user, "The first amongst many.", "PATRON", patrons_named)
 					if(god_input)
 						selected_patron = patrons_named[god_input]
-						to_chat(user, "<font color='yellow'>Patron: [selected_patron]</font>")
-						to_chat(user, "<font color='#FFA500'>Domain: [selected_patron.domain]</font>")
-						to_chat(user, "Background: [selected_patron.desc]")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font>")
-						to_chat(user, "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font>")
-						to_chat(user, "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>")
+						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
+						patron_info += "Background: [selected_patron.desc]<br><br>"
+						patron_info += "<font color='#c58cff'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
+						patron_info += "<font color='white'>Considers these to be VIRTUES: [selected_patron.virtues]</font><br>"
+						patron_info += "<font color='red'>Considers these to be SINS: [selected_patron.sins]</font>"
+						to_chat(user, fieldset_block("Patron: [selected_patron.name]", patron_info, "patrondesc_block"))
 
 				if("polytheism")
 					var/list/polytheism_deities = list("NONE")
@@ -3732,55 +3768,21 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	return FALSE
 
 /datum/preferences/proc/resolve_loadout_to_name(item_path)
-	if (loadout && (item_path == loadout.path) && loadout_1_name)
-		return loadout_1_name
-	if (loadout2 && (item_path == loadout2.path) && loadout_2_name)
-		return loadout_2_name
-	if (loadout3 && (item_path == loadout3.path) && loadout_3_name)
-		return loadout_3_name
-	if (loadout4 && (item_path == loadout4.path) && loadout_4_name)
-		return loadout_4_name
-	if (loadout5 && (item_path == loadout5.path) && loadout_5_name)
-		return loadout_5_name
-	if (loadout6 && (item_path == loadout6.path) && loadout_6_name)
-		return loadout_6_name
-	if (loadout7 && (item_path == loadout7.path) && loadout_7_name)
-		return loadout_7_name
-	if (loadout8 && (item_path == loadout8.path) && loadout_8_name)
-		return loadout_8_name
-	if (loadout9 && (item_path == loadout9.path) && loadout_9_name)
-		return loadout_9_name
-	if (loadout10 && (item_path == loadout10.path) && loadout_10_name)
-		return loadout_10_name
-
+	for(var/i = 1 to 10)
+		var/datum/loadout_item/item = vars[i == 1 ? "loadout" : "loadout[i]"]
+		if(istype(item) && item.path == item_path && vars["loadout_[i]_name"])
+			return get_loadout_text(i, TRUE)
 	return FALSE
 
 /datum/preferences/proc/resolve_loadout_to_desc(item_path)
-	if (loadout && (item_path == loadout.path) && loadout_1_desc)
-		return loadout_1_desc
-	if (loadout2 && (item_path == loadout2.path) && loadout_2_desc)
-		return loadout_2_desc
-	if (loadout3 && (item_path == loadout3.path) && loadout_3_desc)
-		return loadout_3_desc
-	if (loadout4 && (item_path == loadout4.path) && loadout_4_desc)
-		return loadout_4_desc
-	if (loadout5 && (item_path == loadout5.path) && loadout_5_desc)
-		return loadout_5_desc
-	if (loadout6 && (item_path == loadout6.path) && loadout_6_desc)
-		return loadout_6_desc
-	if (loadout7 && (item_path == loadout7.path) && loadout_7_desc)
-		return loadout_7_desc
-	if (loadout8 && (item_path == loadout8.path) && loadout_8_desc)
-		return loadout_8_desc
-	if (loadout9 && (item_path == loadout9.path) && loadout_9_desc)
-		return loadout_9_desc
-	if (loadout10 && (item_path == loadout10.path) && loadout_10_desc)
-		return loadout_10_desc
-
+	for(var/i = 1 to 10)
+		var/datum/loadout_item/item = vars[i == 1 ? "loadout" : "loadout[i]"]
+		if(istype(item) && item.path == item_path && vars["loadout_[i]_desc"])
+			return get_loadout_text(i)
 	return FALSE
 
 
-/datum/preferences/proc/copy_to(mob/living/carbon/human/character, icon_updates = 1, roundstart_checks = TRUE, character_setup = FALSE, antagonist = FALSE, skip_normal_prefs = FALSE)
+/datum/preferences/proc/copy_to(mob/living/carbon/human/character, icon_updates = 1, roundstart_checks = TRUE, character_setup = FALSE, antagonist = FALSE, skip_normal_prefs = FALSE, dragon_special_race = FALSE)
 	if(skip_normal_prefs)
 		// Gnoll ads use the separate gnoll preferences, never the normal slot's ad.
 		character.roleplay_ad = gnoll_prefs?.roleplay_ad
@@ -3836,7 +3838,10 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.age = age
 	character.dna.features = features.Copy()
 	character.gender = gender
-	character.set_species(chosen_species, icon_update = FALSE, pref_load = src)
+	if(dragon_special_race)
+		character.set_species(/datum/species/dragon, icon_update = FALSE, pref_load = src)
+	else
+		character.set_species(chosen_species, icon_update = FALSE, pref_load = src)
 	character.dna.update_body_size()
 
 	if((randomise[RANDOM_NAME] || randomise[RANDOM_NAME_ANTAG] && antagonist) && !character_setup)
@@ -3979,6 +3984,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.vocal_speed = bark_speed
 	character.vocal_pitch = bark_pitch
 	character.vocal_pitch_range = bark_variance
+	character.apply_dragon_bark()
 
 	//if(parent)
 	//	var/list/L = get_player_curses(parent.ckey)

@@ -139,6 +139,10 @@
 	buckle_blocks_spells = FALSE
 	var/buckle_offset_x = 0
 	var/buckle_offset_y = 1
+	var/obj/item/reagent_containers/glass/placed_container
+	var/obj/effect/gloryhole_bucket/container_display
+	var/placed_container_alpha
+	var/placed_container_mouse_opacity
 
 /obj/structure/bondage/gloryhole/iron
 	name = "iron gloryhole"
@@ -152,11 +156,81 @@
 	attacked_sound = list('sound/combat/hits/onmetal/metalimpact (1).ogg', 'sound/combat/hits/onmetal/metalimpact (2).ogg')
 	destroy_sound = 'sound/foley/breaksound.ogg'
 
-/obj/structure/bondage/gloryhole/examine(mob/user)
+/obj/structure/bondage/gloryhole/attackby(obj/item/item, mob/user, params)
+	if(istype(item, /obj/item/reagent_containers/glass) && isliving(user) && !user.cmode)
+		place_liquid_container(item, user)
+		return TRUE
+	return ..()
+
+/obj/structure/bondage/gloryhole/proc/place_liquid_container(obj/item/reagent_containers/glass/container, mob/living/user)
+	if(placed_container)
+		to_chat(user, span_warning("There is already a container at [src]."))
+		return FALSE
+	if(QDELETED(container) || !Adjacent(user) || user.get_active_held_item() != container || !isturf(loc))
+		return FALSE
+	var/turf/placement_turf = loc
+	if(!user.transferItemToLoc(container, placement_turf, silent = FALSE))
+		return FALSE
+	// Inventory and turf callbacks can move or delete either object during the drop.
+	if(QDELETED(src) || QDELETED(container) || loc != placement_turf || container.loc != placement_turf || placed_container)
+		return FALSE
+
+	// Keep the actual item on the turf for ordinary spill collection.
+	placed_container = container
+	placed_container_alpha = container.alpha
+	placed_container_mouse_opacity = container.mouse_opacity
+	container.alpha = 0
+	container.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	RegisterSignal(container, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING), PROC_REF(clear_container_placement))
+
+	container_display = new(placement_turf)
+	container_display.support = src
+	container_display.plane = plane
+	container_display.layer = layer + 0.01
+	container_display.pixel_x = pixel_x
+	container_display.pixel_y += pixel_y
+	RegisterSignal(container_display, COMSIG_QDELETING, PROC_REF(clear_container_placement))
+	return TRUE
+
+/obj/structure/bondage/gloryhole/proc/clear_container_placement()
+	SIGNAL_HANDLER
+	if(placed_container)
+		UnregisterSignal(placed_container, list(COMSIG_MOVABLE_MOVED, COMSIG_QDELETING))
+		if(!QDELETED(placed_container))
+			placed_container.alpha = placed_container_alpha
+			placed_container.mouse_opacity = placed_container_mouse_opacity
+		placed_container = null
+	if(container_display)
+		UnregisterSignal(container_display, COMSIG_QDELETING)
+		QDEL_NULL(container_display)
+
+/obj/structure/bondage/gloryhole/Moved(atom/old_loc, direction, forced, list/old_locs, momentum_change)
 	. = ..()
-	if(isobserver(user))
-		return
-	. += "Right-click to step up to \the [src]."
+	if(loc != old_loc)
+		clear_container_placement()
+
+/obj/structure/bondage/gloryhole/Destroy()
+	clear_container_placement()
+	return ..()
+
+/obj/effect/gloryhole_bucket
+	name = "placed container"
+	icon = 'icons/roguetown/misc/gloryhole_bucket.dmi'
+	icon_state = "attached_bucket"
+	pixel_y = -4
+	mouse_opacity = MOUSE_OPACITY_ICON
+	var/obj/structure/bondage/gloryhole/support
+
+/obj/effect/gloryhole_bucket/attack_hand(mob/user)
+	if(!QDELETED(support) && Adjacent(user) && !user.get_active_held_item())
+		var/obj/item/container = support.placed_container
+		if(!QDELETED(container) && container.loc == loc)
+			container.attack_hand(user)
+	return TRUE
+
+/obj/effect/gloryhole_bucket/Destroy()
+	support = null
+	return ..()
 
 /obj/structure/bondage/gloryhole/buckle_mob(mob/living/M, force = FALSE, check_loc = TRUE)
 	if(force)

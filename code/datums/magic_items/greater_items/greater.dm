@@ -5,6 +5,8 @@
 #define VOIDTOUCHED_COOLDOWN 10 SECONDS
 ///T3 Enchantmentsdatum
 /datum/magic_item/greater/lifesteal
+	confirmed_hits_only = TRUE
+	offensive_cooldown = LIFESTEAL_COOLDOWN
 	name = "life steal"
 	description = "It seems bloodthirsty."
 	var/flat_heal = 25
@@ -12,66 +14,19 @@
 	var/warned = FALSE
 
 /datum/magic_item/greater/lifesteal/projectile_hit(atom/fired_from, atom/movable/firer, atom/target, Angle)
-	if(!try_start_cooldown(firer, LIFESTEAL_COOLDOWN))
-		to_chat(firer, span_notice("[fired_from] is not yet hungry for more life!"))
-		return
-	if(isliving(firer) && isliving(target))
-		var/mob/living/healing = firer
-		var/mob/living/damaging = target
-		if(damaging.stat != DEAD)
-			healing.heal_ordered_damage(flat_heal, damage_heal_order)
-			firer.visible_message(span_danger("[fired_from] drains life from [target]!"))
-
-/datum/magic_item/greater/lifesteal/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!try_start_cooldown(user, LIFESTEAL_COOLDOWN))
-		if(!warned)
-			to_chat(user, span_notice("[source] is not yet hungry for more life!"))
-			warned = TRUE
-		return
-	if(isliving(user) && isliving(target))
-		var/mob/living/healing = user
-		var/mob/living/damaging = target
-		if(damaging.stat != DEAD)
-			healing.heal_ordered_damage(flat_heal, damage_heal_order)
-			user.visible_message(span_danger("[source] drains life from [target]!"))
-			warned = FALSE
+	return trigger_offensive_effect(fired_from, firer, target)
 
 /datum/magic_item/greater/lightning
+	confirmed_hits_only = TRUE
+	offensive_cooldown = LIGHTNING_COOLDOWN
 	name = "lightning"
 	description = "It has small arcs of electricity dance across it"
 
-/datum/magic_item/greater/lightning/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!try_start_cooldown(user, LIGHTNING_COOLDOWN))
-		return
-
-	if(isliving(target))
-		var/mob/living/L = target
-		L.Immobilize(0.5 SECONDS)
-		L.apply_status_effect(/datum/status_effect/debuff/clickcd, 6 SECONDS)
-		L.electrocute_act(1, src, 1, SHOCK_NOSTUN)
-		L.apply_status_effect(/datum/status_effect/buff/lightningstruck, 6 SECONDS)
-
-		for(var/mob/living/nearby in range(2, target))
-			if(nearby == target || nearby == user)
-				continue
-			if(prob(30))
-				nearby.Immobilize(0.5 SECONDS)
-				nearby.apply_status_effect(/datum/status_effect/debuff/clickcd, 6 SECONDS)
-				nearby.electrocute_act(1, src, 1, SHOCK_NOSTUN)
-				nearby.apply_status_effect(/datum/status_effect/buff/lightningstruck, 6 SECONDS)
-				new /obj/effect/temp_visual/lightning(get_turf(target), get_turf(nearby))
-
 /datum/magic_item/greater/frostveil
+	confirmed_hits_only = TRUE
+	offensive_cooldown = FROSTVEIL_COOLDOWN
 	name = "frostveil"
 	description = "It feels rather cold."
-
-/datum/magic_item/greater/frostveil/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!try_start_cooldown(user, FROSTVEIL_COOLDOWN))
-		return
-	if(isliving(target))
-		var/mob/living/targeted = target
-		targeted.apply_status_effect(/datum/status_effect/debuff/cold)
-		targeted.visible_message(span_danger("[source] chills [targeted]!"))
 
 /datum/magic_item/greater/frostveil/on_hit_response(obj/item/I, mob/living/carbon/human/owner, mob/living/carbon/human/attacker)
 	if(!try_start_cooldown(owner, FROSTVEIL_COOLDOWN))
@@ -219,24 +174,62 @@
 		to_chat(user, span_notice("I feel mundane once more"))
 
 /datum/magic_item/greater/void
+	confirmed_hits_only = TRUE
+	offensive_cooldown = VOIDTOUCHED_COOLDOWN
 	name = "void touched"
 	description = "It seems to absorb light around it, existing partially outside reality."
 	var/list/last_used = list()
 
-/datum/magic_item/greater/void/on_hit(obj/item/source, atom/target, mob/user, proximity_flag, click_parameters)
-	if(!try_start_cooldown(user, VOIDTOUCHED_COOLDOWN))
-		return
+/datum/magic_item/greater/lifesteal/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	var/damage_before = user.getBruteLoss() + user.getFireLoss() + user.getOxyLoss()
+	user.heal_ordered_damage(flat_heal, damage_heal_order)
+	if(user.getBruteLoss() + user.getFireLoss() + user.getOxyLoss() >= damage_before)
+		return FALSE
+	user.visible_message(span_danger("[source] drains life from [target]!"))
+	return TRUE
 
-	if(isliving(target) && target != user) //self teleporting might be scary actually
-		var/mob/living/L = target
-		to_chat(L, span_warning("You feel reality warp around you!"))
-		var/list/possible_turfs = list()
-		for(var/turf/T in range(3, L))
-			if(T.density)
-				continue
-			possible_turfs += T
-		if(possible_turfs.len)
-			L.forceMove(pick(possible_turfs))
+/datum/magic_item/greater/lightning/proc/shock_target(mob/living/target)
+	var/health_before = target.health
+	if(!target.electrocute_act(1, src, 1, SHOCK_NOSTUN) || target.health >= health_before)
+		return FALSE
+	target.Immobilize(0.5 SECONDS)
+	target.apply_status_effect(/datum/status_effect/debuff/clickcd, 6 SECONDS)
+	target.apply_status_effect(/datum/status_effect/buff/lightningstruck, 6 SECONDS)
+	return TRUE
+
+/datum/magic_item/greater/lightning/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	if(!shock_target(target))
+		return FALSE
+	for(var/mob/living/nearby in range(2, target))
+		if(nearby == target || nearby == user || nearby.stat == DEAD)
+			continue
+		if(prob(30) && shock_target(nearby))
+			new /obj/effect/temp_visual/lightning(get_turf(target), get_turf(nearby))
+	return TRUE
+
+/datum/magic_item/greater/frostveil/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	var/datum/status_effect/debuff/cold/applied = target.apply_status_effect(/datum/status_effect/debuff/cold)
+	if(!istype(applied) || QDELETED(applied))
+		return FALSE
+	target.visible_message(span_danger("[source] chills [target]!"))
+	return TRUE
+
+/datum/magic_item/greater/void/apply_offensive_effect(obj/item/source, mob/living/user, mob/living/target)
+	var/turf/origin = get_turf(target)
+	if(!origin)
+		return FALSE
+	var/list/possible_turfs = list()
+	for(var/turf/T in range(3, origin))
+		if(T.density || T == origin)
+			continue
+		possible_turfs += T
+	if(!length(possible_turfs))
+		return FALSE
+	target.forceMove(pick(possible_turfs))
+	if(get_turf(target) == origin)
+		return FALSE
+	to_chat(target, span_warning("You feel reality warp around you!"))
+	return TRUE
 
 #undef PHOENIX_GUARD_COOLDOWN
 #undef FROSTVEIL_COOLDOWN

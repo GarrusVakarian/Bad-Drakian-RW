@@ -268,7 +268,23 @@ SUBSYSTEM_DEF(migrants)
 	SSjob.AssignRole(newplayer, rank, TRUE)
 
 	var/mob/living/character = newplayer.create_character(TRUE)	//creates the human and transfers vars and mind
+	var/mob/living/carbon/human/setup_character
+	if(ishuman(character))
+		setup_character = character
+		setup_character.begin_armor_warning_setup()
+	try
+		. = finish_migrant_with_deferred_armor_warning(wave, assignment, spawn_on_location, greet_text, character)
+	catch(var/exception/error)
+		if(!QDELETED(setup_character))
+			setup_character.end_armor_warning_setup(FALSE)
+		throw error
+	if(!QDELETED(setup_character))
+		setup_character.end_armor_warning_setup()
 
+/datum/controller/subsystem/migrants/proc/finish_migrant_with_deferred_armor_warning(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text, mob/living/character)
+	var/rank = "Migrant"
+	var/mob/living/carbon/human/portrait_character = character
+	portrait_character.credits_setup_depth++
 	character.islatejoin = TRUE
 	SSjob.EquipRank(character, rank, TRUE)
 
@@ -340,6 +356,9 @@ SUBSYSTEM_DEF(migrants)
 	else
 		// Apply a special if we're not applying an adv class, otherwise let the adv class apply it afterwards
 		try_apply_character_post_equipment(character, character.client)
+	portrait_character.credits_setup_depth--
+	if(!role.advclass_cat_rolls || portrait_character.credits_equipment_ready)
+		portrait_character.add_credit()
 
 /datum/controller/subsystem/migrants/proc/get_priority_players(list/players, role_type, wave_type)
 	var/list/weighted = list()
@@ -376,6 +395,8 @@ SUBSYSTEM_DEF(migrants)
 	if(!player.prefs)
 		return FALSE
 	var/datum/preferences/prefs = player.prefs
+	if(role.combat_role && (prefs.pref_species.type in NO_COMBAT_RACES))
+		return FALSE
 	if(role.disallowed_races && (prefs.pref_species.type in role.disallowed_races))
 		return FALSE
 	if(role.allowed_sexes && !(prefs.gender in role.allowed_sexes))

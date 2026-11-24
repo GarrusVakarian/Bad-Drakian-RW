@@ -89,7 +89,7 @@
 	pants = /obj/item/clothing/under/roguetown/loincloth/brown
 	shoes = /obj/item/clothing/shoes/roguetown/sandals
 	belt = /obj/item/storage/belt/rogue/leather
-	beltr = /obj/item/storage/keyring/tribalchief
+	belt_contents = list(/obj/item/storage/keyring/tribalchief = 1)
 	beltl = /obj/item/storage/magebag/associate
 	id = /obj/item/clothing/ring/gold
 	r_hand = /obj/item/rogueweapon/woodstaff/riddle_of_steel/serpent

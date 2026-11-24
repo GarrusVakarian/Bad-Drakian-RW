@@ -58,19 +58,11 @@
 
 	handle_sleep()
 
-	if(isseelie(src) && !IsSleeping())
-		if((mobility_flags & MOBILITY_STAND) && haswings(src) && !buckled)
-			INVOKE_ASYNC(src, PROC_REF(fairy_hover))
-		//Seelie luck aura
-		for(var/mob/living/carbon/human/H in view(1, src))
-			if(!H || isseelie(H))
-				continue
-			if(aura)
-				H.apply_status_effect(/datum/status_effect/buff/seelie/happy)
-				H.remove_status_effect(/datum/status_effect/buff/seelie/sad)
-			else
-				H.apply_status_effect(/datum/status_effect/buff/seelie/sad)
-				H.remove_status_effect(/datum/status_effect/buff/seelie/happy)
+	if(is_seelie_hovering(src))
+		INVOKE_ASYNC(src, PROC_REF(fairy_hover))
+	if(ishuman(src))
+		var/mob/living/carbon/human/H = src
+		H.update_seelie_aura()
 
 	if(HAS_TRAIT(src, TRAIT_IN_FRENZY))
 		handle_automated_frenzy()
@@ -94,10 +86,17 @@
 
 	check_cremation()
 
-/mob/living/carbon/handle_random_events()//BP/WOUND BASED PAIN
+/mob/living/carbon/handle_random_events(additional = 0, track_pain_stress = TRUE)
+	handle_pain(track_stress = track_pain_stress)
+
+/// NPCs only need the wound total when the cooldown allows a pain reaction.
+/mob/living/carbon/proc/handle_pain(track_stress = TRUE)
 	if(HAS_TRAIT(src, TRAIT_NOPAIN))
 		return
 	if(!stat)
+		var/pain_roll_due = world.time > mob_timers["painstun"]
+		if(!track_stress && !pain_roll_due)
+			return
 		var/pain_willpower = STAWIL
 		var/pain_threshold = get_pain_threshold()
 		if(has_status_effect(/datum/status_effect/buff/battle_cry))
@@ -105,7 +104,7 @@
 		var/painpercent = get_complex_pain() / pain_threshold
 		painpercent = painpercent * 100
 
-		if(world.time > mob_timers["painstun"])
+		if(pain_roll_due)
 			mob_timers["painstun"] = world.time + 100
 			var/probby = 40 - (pain_willpower * 2)
 			probby = max(probby, 10)
@@ -135,7 +134,7 @@
 						if(probby)
 							emote("painmoan")
 
-		if(painpercent >= 100)
+		if(track_stress && painpercent >= 100)
 			add_stress(/datum/stressevent/painmax)
 
 /mob/living/carbon/proc/paincrit()
@@ -515,9 +514,12 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 	if(stat != DEAD)
 		return
 
+	if(corpse_player_ckey && corpse_player_spawn_generation == GLOB.character_spawn_generations[corpse_player_ckey])
+		return
+
 	//Only starts when the chest has taken full damage
 	var/obj/item/bodypart/chest = get_bodypart(BODY_ZONE_CHEST)
-	if(!(chest.get_damage() >= chest.max_damage))
+	if(!chest || chest.get_damage() < chest.max_damage)
 		return
 
 	//Burn off limbs one by one
@@ -629,10 +631,10 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 
 /mob/living/carbon/proc/fairy_hover()
 	//Fairy hovering animation
-	if(!resting && !wallpressed)
+	if(is_seelie_hovering(src) && !wallpressed)
 		animate(src, pixel_y = pixel_y + 2, time = 5, loop = -1)
 	sleep(5)
-	if(!resting && !wallpressed)
+	if(is_seelie_hovering(src) && !wallpressed)
 		animate(src, pixel_y = pixel_y - 2, time = 5, loop = -1)
 
 /// Handles sleep. Mobs with no_sleep trait cannot sleep.
@@ -716,17 +718,6 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 			if(eyesclosed && !HAS_TRAIT(src, TRAIT_NOSLEEP))
 				teleport_to_dream(src, 10000, 2)
 				Sleeping(300)
-		// i would love it if handle_sleep actually handled just sleep instead of also falling asleep
-		// that way i could put this in an override on /mob/living/carbon/human
-		if(ishuman(src))
-			var/mob/living/carbon/human/human_src = src
-			var/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin/skin = human_src.skin_armor
-			if(istype(skin)) // this checks if it's harpy skin specifically
-				if(skin.obj_integrity < skin.max_integrity)
-					skin.obj_integrity = skin.max_integrity
-					to_chat(src, "I can feel the skin on my feet mend...")
-				else if((skin.obj_integrity >= skin.max_integrity) && skin.obj_broken)
-					skin.obj_broken = FALSE
 		// handle_dreams() // this has no functionality currently
 		if(prob(10) && health > crit_threshold)
 			emote("snore", suppress_chat = TRUE)

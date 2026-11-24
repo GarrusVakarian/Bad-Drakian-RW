@@ -36,7 +36,9 @@
 	subclass_stashed_items = list(
 		"Sewing Kit" = /obj/item/repair_kit,
 	)
-/datum/outfit/job/roguetown/wretch/berserker/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/wretch/berserker/pre_equip(mob/living/carbon/human/H, visualsOnly)
+	if(!visualsOnly && H.mind)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/rage/full)
 	cloak = /obj/item/clothing/cloak/raincloak/furcloak/brown
 	gloves = /obj/item/clothing/gloves/roguetown/plate
 	wrists = /obj/item/clothing/wrists/roguetown/bracers

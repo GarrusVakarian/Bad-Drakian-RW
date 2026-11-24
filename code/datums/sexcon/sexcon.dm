@@ -541,7 +541,7 @@
 			if(user.getorganslot(ORGAN_SLOT_PENIS) && !(source_part & SEX_PART_TAIL_MAW))
 				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/cum, get_semen_volume(), repeat_intake = !!splashed_type, extra_volume = oral_extra_volume)
 			else
-				add_oral_intake_reagent(splashed_user, /datum/reagent/erpjuice/femcum, 2)
+				add_oral_intake_reagent(splashed_user, (source_part & SEX_PART_TAIL_MAW) ? get_tailmaw_fluid() : /datum/reagent/erpjuice/femcum, 2)
 			apply_cum_consumed_buff(splashed_user)
 		if(!oral && user?.dna?.species?.id == "gnoll")
 			splashed_user.has_gnoll_scent_this_round = TRUE
@@ -589,7 +589,9 @@
 
 /// Announce the incoming flavor directly so every successful intake has feedback.
 /datum/sex_controller/proc/add_oral_intake_reagent(mob/living/carbon/human/consumer, reagent_type, amount, repeat_intake = FALSE, extra_volume = null)
-	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents || !ispath(reagent_type, /datum/reagent/erpjuice))
+	if(!ishuman(consumer) || QDELETED(consumer) || !consumer.reagents)
+		return FALSE
+	if(!ispath(reagent_type, /datum/reagent/erpjuice) && !find_key_by_value(GLOB.tailmaw_fluid_options, reagent_type))
 		return FALSE
 	if(!isnum(amount) || amount <= 0)
 		return FALSE
@@ -618,7 +620,7 @@
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	if(!istype(testes) || !isnum(testes.ball_size))
 		return null
-	return HAS_TRAIT(user, TRAIT_HIGH_PRODUCTION) ? MAX_TESTICLES_SIZE : testes.ball_size
+	return HAS_TRAIT(user, TRAIT_HIGH_SEED_PRODUCTION) ? MAX_TESTICLES_SIZE : testes.ball_size
 
 /// Size-based bonus shared with container collection; oral repeats grant half the amount.
 /datum/sex_controller/proc/get_oral_intake_extra_volume(repeat_intake = FALSE)
@@ -837,7 +839,7 @@
 	if(!cur_loc || !isturf(cur_loc))
 		return
 	if(from_tailmaw || (!user.getorganslot(ORGAN_SLOT_PENIS) && user.getorganslot(ORGAN_SLOT_VAGINA)))
-		spill_floor_fluid(cur_loc, /datum/reagent/erpjuice/femcum, 1, do_big_puddle)
+		spill_floor_fluid(cur_loc, from_tailmaw ? get_tailmaw_fluid() : /datum/reagent/erpjuice/femcum, 1, do_big_puddle)
 	else
 		spill_floor_fluid(cur_loc, /datum/reagent/erpjuice/cum, semen_vol + floor(get_oral_intake_extra_volume()), do_big_puddle)
 
@@ -1027,7 +1029,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return
 	if(user.get_skill_level(/datum/skill/magic/holy) < SKILL_LEVEL_NOVICE)
 		return
-	var/trigger_chance = user.has_status_effect(/datum/status_effect/debuff/emberwine) ? 2 : 1
+	var/trigger_chance = user.has_status_effect(/datum/status_effect/debuff/emberwine) ? 10 : 5
 	if(!prob(trigger_chance))
 		return
 	var/turf/center = get_turf(user)
@@ -1956,6 +1958,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		action.on_perform(user, target)
 		if(session != panel_action_session)
 			return
+		refresh_completed_panel_effects(action)
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
 		// It could want to finish afterwards the performed action
@@ -2211,9 +2214,51 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		if(SEX_FORCE_LUDICROUS)
 			return "<span class='love_ludicrous'>[string]</span>"
 
+/// These callbacks run from completed on_perform steps, never from button/start events.
+/// Extend existing effects without reapplying penalties, traits or notification messages.
+/datum/sex_controller/proc/refresh_existing_panel_effect(mob/living/recipient, effect_type, refresh_duration = null)
+	if(!istype(recipient) || QDELETED(recipient) || !ispath(effect_type, /datum/status_effect) || ispath(effect_type, /datum/status_effect/debuff/stuffed))
+		return FALSE
+	if(!istype(user) || QDELETED(user) || !user.client?.prefs?.sexable || !recipient.client?.prefs?.sexable)
+		return FALSE
+	var/datum/status_effect/existing = recipient.has_status_effect(effect_type)
+	if(!istype(existing) || QDELETED(existing) || existing.duration <= world.time)
+		return FALSE
+	if(isnull(refresh_duration))
+		refresh_duration = initial(existing.duration)
+	if(!isnum(refresh_duration) || refresh_duration <= 0)
+		return FALSE
+	existing.duration = max(existing.duration, world.time + refresh_duration)
+	return TRUE
+
+/datum/sex_controller/proc/refresh_completed_panel_effects(datum/sex_action/action)
+	if(!istype(action) || !action.knot_on_finish || QDELETED(user) || QDELETED(target))
+		return
+	// Delivery callbacks can sleep; do not sustain an effect after the pair separates.
+	if(!Adjacent_Or_Closet(target))
+		return
+	var/mob/living/carbon/human/donor
+	var/mob/living/carbon/human/recipient
+	var/receiving_parts = SEX_PART_ANUS | SEX_PART_CUNT | SEX_PART_JAWS
+	if((action.user_sex_part & SEX_PART_COCK) && (action.target_sex_part & receiving_parts))
+		donor = user
+		recipient = target
+	else if((action.target_sex_part & SEX_PART_COCK) && (action.user_sex_part & receiving_parts))
+		donor = target
+		recipient = user
+	if(!istype(recipient) || !istype(donor) || donor == recipient)
+		return
+	refresh_existing_panel_effect(recipient, /datum/status_effect/knot_gaped)
+	var/datum/sex_controller/recipient_controller = recipient.sexcon
+	if(istype(recipient_controller) && recipient_controller.knotted_status == KNOTTED_AS_BTM && recipient_controller.knotted_owner == donor)
+		refresh_existing_panel_effect(recipient, /datum/status_effect/knot_fucked_stupid)
+
 /datum/sex_controller/proc/try_pelvis_crush(mob/living/carbon/human/target)
 	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
-		if(prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
+		var/refreshed = refresh_existing_panel_effect(target, /datum/status_effect/quivering)
+		if(refreshed)
+			refresh_existing_panel_effect(target, STATUS_EFFECT_OFFBALANCED, 30 SECONDS)
+		if(!refreshed && prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
 			target.apply_status_effect(/datum/status_effect/quivering)
 			target.confused += 25
 			target.OffBalance(30 SECONDS)
@@ -2230,7 +2275,10 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/list/excluded = get_extreme_content_excluded_mobs(user)
 	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force == SEX_FORCE_LUDICROUS)
 		if(user?.client?.prefs?.extreme_erp && target?.client?.prefs?.extreme_erp)
-			if(prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
+			var/refreshed = refresh_existing_panel_effect(target, /datum/status_effect/quivering)
+			if(refreshed)
+				refresh_existing_panel_effect(target, STATUS_EFFECT_OFFBALANCED, 30 SECONDS)
+			if(!refreshed && prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
 				target.apply_status_effect(/datum/status_effect/quivering)
 				target.confused += 25
 				target.OffBalance(30 SECONDS)
@@ -2284,13 +2332,18 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				if(prob(10))
 					var/obj/item/bodypart/mouth = target.get_bodypart(check_zone(BODY_ZONE_PRECISE_MOUTH))
 					mouth.add_wound(/datum/wound/fracture)
-		if(prob(10) && !target.has_status_effect(/datum/status_effect/jaw_gaped) && !target.has_wound(/datum/wound/fracture/mouth))
+		var/refreshed = FALSE
+		if(!target.has_wound(/datum/wound/fracture/mouth))
+			refreshed = refresh_existing_panel_effect(target, /datum/status_effect/jaw_gaped)
+			if(refreshed)
+				refresh_existing_panel_effect(target, /datum/status_effect/debuff/dazed)
+		if(!refreshed && prob(10) && !target.has_status_effect(/datum/status_effect/jaw_gaped) && !target.has_wound(/datum/wound/fracture/mouth))
 			target.apply_status_effect(/datum/status_effect/jaw_gaped)
 			target.apply_status_effect(/datum/status_effect/debuff/dazed)
 
 /datum/status_effect/quivering
 	id = "quivering"
-	duration = 30 SECONDS
+	duration = 15 MINUTES
 	status_type = STATUS_EFFECT_UNIQUE
 	alert_type = /atom/movable/screen/alert/status_effect/quivering
 	effectedstats = list("speed" = -2)
@@ -2357,3 +2410,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 #undef SEX_ZONE_MOUTH
 #undef SEX_ZONE_CHEST
 #undef SEX_ZONE_CHEST_GRAB
+
+/datum/sex_controller/proc/get_tailmaw_fluid()
+	var/obj/item/organ/tail/manticore/tail = get_manticore_tail(user)
+	return istype(tail) ? tail.get_fluid_reagent() : /datum/reagent/erpjuice/femcum

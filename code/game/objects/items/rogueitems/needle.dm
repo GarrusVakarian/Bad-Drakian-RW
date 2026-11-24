@@ -29,7 +29,7 @@
 #define XP_ON_SUCCESS 0.5
 /// The minimum delay between automatic sewing attempts.
 #define AUTO_SEW_DELAY CLICK_CD_MELEE
-#define SEW_HP_EXP_NORMALIZER 600
+#define SEW_HP_EXP_NORMALIZER 100
 #define SEW_EXP_PER_STEP 0.1
 #define SEW_EXP_FINISH 5
 
@@ -49,6 +49,7 @@
 	anvilrepair = /datum/skill/craft/blacksmithing
 	tool_behaviour = TOOL_SUTURE
 	experimental_inhand = FALSE
+	possible_item_intents = list(/datum/intent/use, /datum/intent/tie_laces)
 	/// Amount of uses left
 	var/stringamt = 20
 	var/maxstring = 20
@@ -88,6 +89,9 @@
 //		qdel(src)
 
 /obj/item/needle/attack(mob/living/M, mob/user)
+	if(user.used_intent?.type == /datum/intent/tie_laces)
+		tie_laces(M, user)
+		return
 	sew(M, user)
 
 /obj/item/needle/attackby(obj/item/I, mob/user, params)
@@ -235,15 +239,25 @@
 		stringamt >= 1)
 		if(!do_after(doctor, 2 SECONDS, target = patient))
 			break
-		if(doctor.mind)
-			doctor.mind.add_sleep_experience(skill_used, doctor.STAINT * SEW_EXP_PER_STEP)
+		if(QDELETED(target_wound) || QDELETED(src) || QDELETED(doctor))
+			break
+		if(!target_wound.can_sew || target_wound.sew_progress >= target_wound.sew_threshold || stringamt < 1)
+			break
 		playsound(loc, 'sound/foley/sewflesh.ogg', 100, TRUE, -2)
 		target_wound.sew_progress = min(target_wound.sew_progress + moveup, target_wound.sew_threshold)
 
+		var/was_bleeding = target_wound.bleed_rate > 0
 		var/bleedreduction = max((doctor_skill / 2), 1)	//Half of medicine skill, or 1, whichever is higher.
 		target_wound.set_bleed_rate(max( (target_wound.bleed_rate - bleedreduction), 0))
+		if(doctor.mind)
+			var/experience = doctor.STAINT * SEW_EXP_PER_STEP
+			if(was_bleeding && !target_wound.sewing_bonus_awarded && (target_wound.bleed_rate == 0 || target_wound.sew_progress >= target_wound.sew_threshold))
+				target_wound.sewing_bonus_awarded = TRUE
+				experience += doctor.STAINT * SEW_EXP_FINISH * (target_wound.sew_threshold / SEW_HP_EXP_NORMALIZER)
+			doctor.mind.add_sleep_experience(skill_used, experience)
 		if(target_wound.bleed_rate == 0 && !informed)
-			patient.visible_message(span_smallgreen("One last drop of blood trickles from the [(target_wound.name)] on [patient]'s [affecting.name] before it closes."), span_smallgreen("The throbbing warmth coming out of [target_wound] soothes and stops. It no longer bleeds."))
+			var/wound_location = affecting ? "[patient]'s [affecting.name]" : "[patient]"
+			patient.visible_message(span_smallgreen("One last drop of blood trickles from the [(target_wound.name)] on [wound_location] before it closes."), span_smallgreen("The throbbing warmth coming out of [target_wound] soothes and stops. It no longer bleeds."))
 			informed = TRUE
 		if(istype(target_wound, /datum/wound/dynamic))
 			var/datum/wound/dynamic/dynwound = target_wound
@@ -253,10 +267,6 @@
 				dynwound.is_armor_maxed = FALSE
 		if(target_wound.sew_progress < target_wound.sew_threshold)
 			continue
-		if(doctor.mind)
-			var/exp_scale = target_wound.sew_threshold / SEW_HP_EXP_NORMALIZER
-			var/base_exp = doctor.STAINT * SEW_EXP_FINISH
-			doctor.mind.add_sleep_experience(skill_used, base_exp * exp_scale)
 		use(1)
 		target_wound.sew_wound()
 		if(patient == doctor)

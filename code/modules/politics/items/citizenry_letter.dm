@@ -23,7 +23,6 @@
 	var/year = issuer_year || CALENDAR_EPOCH_YEAR
 	. += span_info("The letter reads: <i>\"Be it known to all who read this writ, that the bearer, upon claiming this letter, is enrolled as a Citizen of the Vale and raised to the station of Burgher, bearing the protections and obligations attending that rank under the Golden Bull of Kingsfield.\"</i>")
 	. += span_info("<i>Signed in the year [year], [signature].</i>")
-	. += span_notice("Left-click in hand to claim its rights.")
 
 /obj/item/citizenry_letter/attack_self(mob/living/carbon/human/user)
 	if(!istype(user))

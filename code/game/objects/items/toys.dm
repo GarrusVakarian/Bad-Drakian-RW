@@ -118,10 +118,6 @@
 	grid_width = 32
 	grid_height = 32
 
-/obj/item/toy/cards/deck/examine()
-	. = ..()
-	. += span_smallnotice("Use the deck in your hand to shuffle the cards. Draw a card by clicking on it with an empty hand.")
-
 /obj/item/toy/cards/deck/Initialize(mapload)
 	. = ..()
 	populate_deck()

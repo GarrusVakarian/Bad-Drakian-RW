@@ -107,7 +107,7 @@
 	pants = /obj/item/clothing/under/roguetown/tights/random
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	belt = /obj/item/storage/belt/rogue/leather/plaquesilver
-	beltr = /obj/item/storage/keyring/mage
+	belt_contents = list(/obj/item/storage/keyring/mage = 1)
 	beltl = /obj/item/storage/magebag/associate
 	id = /obj/item/scomstone/garrison
 	r_hand = /obj/item/rogueweapon/woodstaff/riddle_of_steel/magos

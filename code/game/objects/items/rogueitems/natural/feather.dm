@@ -141,7 +141,8 @@
 					zone_options += "Stomach"
 		if(BODY_ZONE_HEAD)
 			if(!length(zone_options) && !covered)
-				zone_options += "Head"
+				if(get_location_accessible(target, BODY_ZONE_HEAD, ignored_item = target.mouth))
+					zone_options += "Head"
 				if(!target.is_mouth_covered())
 					zone_options += "Mouth"
 				if(get_location_accessible(target, BODY_ZONE_PRECISE_NECK))
@@ -226,7 +227,7 @@
 
 // Sends a message confirming body writing has completed.
 /obj/item/natural/feather/proc/send_writing_result_messages(mob/living/user, mob/living/carbon/human/target, final_answer, writing_text)
-	user.visible_message(span_info("[user] writes  on [target]'s [LOWER_TEXT(final_answer)]! The fresh ink shows [span_beautiful_fem(writing_text)]."))
+	user.visible_message(span_info("[user] writes  on [target]'s [LOWER_TEXT(final_answer)]! The fresh ink shows [span_beautiful_fem(writing_text)]"))
 	to_chat(target, span_userdanger("Someone wrote on your body!"))
 
 // Single entry point for action-phase combat logs.
@@ -252,7 +253,7 @@
 	var/body_zone = check_zone(precise_zone)
 	var/obj/item/bodypart/writing_part = target.get_bodypart(body_zone)
 	var/writing_self = user == target
-	if(!get_location_accessible(target, user.zone_selected))
+	if(!get_location_accessible(target, precise_zone, ignored_item = precise_zone == BODY_ZONE_HEAD ? target.mouth : null))
 		to_chat(user, span_warning("That part is obstructed by clothing."))
 		return TRUE
 

@@ -29,11 +29,6 @@
 	. = ..()
 	restore_snout()
 
-/obj/item/clothing/mask/rogue/examine(mob/user)
-	. = ..()
-	if(is_snoutable())
-		. += span_notice("Alt+RMB makes room for a snout.")
-
 /obj/item/clothing/mask/rogue/spectacles
 	name = "spectacles"
 	icon_state = "glasses"
@@ -933,13 +928,6 @@
 		if(toggle_identity(user))
 			return
 	return ..()
-
-/obj/item/clothing/mask/rogue/xylixmask/examine(mob/user)
-	. = ..()
-	. += span_notice("Alt+RMB opens the style radial menu.")
-	. += span_notice("Shift+RMB toggles the snout version of the selected style.")
-	. += span_notice("Shift+MMB toggles identity concealment.")
-	. += span_notice("When using the harlequin styles: Right-click to honk.")
 
 // Duelist Goggles = New invention that protects your eyes against critical hits +  doesn't hide your identity
 

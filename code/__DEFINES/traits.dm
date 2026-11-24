@@ -39,6 +39,9 @@
 #define TRAIT_CRITICAL_RESISTANCE "Critical Resistance"
 #define TRAIT_TINY "Tiny"
 #define TRAIT_JOURNEYS_END "Journey's End"
+/// Source-scoped pressure from an intact rescue cocoon; never changes wound data.
+#define TRAIT_SILK_COMPRESSION "silk_compression"
+
 #define TRAIT_BLOOD_RESISTANCE "Thick Blooded" //50% less bleeding
 #define TRAIT_CRITICAL_WEAKNESS "Critical Weakness"
 #define TRAIT_SHATTER_WEAKNESS "Brittle Form"
@@ -123,7 +126,7 @@
 #define TRAIT_DEATHBYSNUSNU "Bed Breaker" //What do you think? Pelvis crushing and increased pain.
 #define TRAIT_HUMEN_INGENUITY "Humen Ingenuity"//25% cheaper sleep levels.
 #define TRAIT_JACKOFALLTRADES "Jack of All Trades"	//Reduces skill up cost
-#define TRAIT_HELLSPAWN "Hellspawn"//15% chance to avoid ignition.
+#define TRAIT_HELLSPAWN "Hellspawn" // Prevents ordinary fire ignition.
 #define TRAIT_WING_BOUND "Wing Bound"//Welcome back, OldAcrobat. Offbalance (12s) and stun(2s) from falling 1Z, but no damage.
 #define TRAIT_DWARF_REPAIR "Dwarvish Knowledge"//Squire Repair, but very slightly worse. Only for needle / hammer.
 #define TRAIT_DRUNK_HEALING "Drunk Healing"//Having anything with booze power of 25 or more in your system slowly heals you.
@@ -145,6 +148,7 @@
 #define TRAIT_CHASTITY_SPIKED "Genital Spikes" // Causes discomfort during arousal.
 #define TRAIT_CHASTITY_LOCKED "Locked Chastity Device" // Prevents removal of the chastity device.
 #define TRAIT_EXTREME_TEMPERATURE_IMMUNE "Extreme Temperature Immunity" //immunitty to heatstroke and frostbite without damage reduction
+#define TRAIT_LAVA_IMMUNE "Lava Immunity" // Prevents damage and ignition from standing in lava.
 #define TRAIT_COMPLIANT "Compliant" //forced to be compliant
 #define TRAIT_MARTIAL_PROWESS "Martial Prowess" //allows mastering weapon skills
 #define TRAIT_SELF_AWARE "Self Aware" //Absolver/Stigmata trait that allows them to self-diagnose and get full damage numbers.
@@ -289,7 +293,8 @@
 #define TRAIT_BIGGUY "Big Guy"
 #define TRAIT_LARGE_FRAME "Large Frame"
 #define TRAIT_FAT_KNOT "Fat Knot"
-#define TRAIT_HIGH_PRODUCTION "High Production"
+#define TRAIT_HIGH_SEED_PRODUCTION "High Seed Production"
+#define TRAIT_HIGH_MILK_PRODUCTION "High Milk Production"
 #define TRAIT_RESIDENT "Resident"
 #define TRAIT_COUNTERCOUNTERSPELL "Counter Counterspell"
 #define TRAIT_UNSEEMLY "Ugly"
@@ -335,7 +340,6 @@
 #define TRAIT_NECRAS_VOW "Necra's Vow"
 #define TRAIT_PESTRAS_BLESSING "Pestra's blessing"
 #define TRAIT_ADRENALINE_RUSH "Adrenaline Rush"
-#define TRAIT_DYES "Dyemaster"
 #define TRAIT_GOODWRITER "Great Writer"
 #define TRAIT_NODEF "Recklessness"
 #define TRAIT_LEYLINE_HASTE "Leyline's Clarity"
@@ -350,7 +354,8 @@
 #define TRAIT_GANG_A "Gang Rontz Ratz"
 #define TRAIT_GANG_B "Gang Blortz Volves"
 #define TRAIT_NATURALARMOR "Tough Skin"
-#define TRAIT_CLERGYRADICAL "Radical member of Clergy"
+#define TRAIT_CLERGYRADICAL "Eclectic Clergy"
+#define CLERGY_DOCTRINE_PROMPT "How shall I seek the divine?\n\nOrthodox: I follow my patron's teachings and receive their miracles through devotion.\n\nEclectic: I study miracles through research and earn favor by undertaking church quests."
 #define TRAIT_ON_BOAT "on_boat"
 #define TRAIT_OAR "oar"
 #define TRAIT_OAR_PROPELLED "oar_propelled"
@@ -652,7 +657,6 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_EXPERT_HUNTER = span_greentext("I am a skilled local hunter; my hunting skill can progress to expert levels."),
 	TRAIT_DEATHLESS = span_info("I cannot truly die by ordinary means."),
 	TRAIT_SILVER_WEAK = span_warning("Silver is the greatest threat to my lyfe. Blows from silver weapons will set me alight, inhibit my ability to regenerate, and - if blessed - can outright destroy my vessel."),
-	TRAIT_DYES = span_notice("I know my way around pigments and shades, and I'm able to create the exact colors I want in a dye station."),
 	TRAIT_BLACKOAK = span_warning("The Black Oaks can spot <b>any</b> foreigners and outsiders, no matter how long they've lived in the Vale. I can spot an invader at a glance."),
 	TRAIT_GOODWRITER = span_notice("I'm proficient at writing. Any skillbooks made by me will allow the reader to learn the subject more quickly."),
 	TRAIT_ROYAL_SUBSIDY = span_notice("I am recognized under a Crown subsidy. I hold privileged access to the Stockpile without cost, and any goods returned to it are considered service rendered to the realm. My taxes are waived where applicable."),
@@ -667,7 +671,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_OVERTHERETIC = span_bloody("I've played my cards. Hallowed ground is now my bane."),
 	TRAIT_DEATHBYSNUSNU = "With strong intent, I am a violent partner in bed. Breaking pelvis and spirit alike.",
 	TRAIT_HUMEN_INGENUITY = span_notice("Like most of my people, I am blessed with knowledge. Learning comes easier."),
-	TRAIT_HELLSPAWN = span_warning("My bloodline affords me an inherent resistance to catching ablaze."),
+	TRAIT_HELLSPAWN = span_warning("Ordinary flames cannot set me alight. I can still suffer burn damage and magical fire."),
 	TRAIT_WING_BOUND = span_info("The wings upon my back allow me to glide. Poorly. Falls will be less painful, but still not ideal."),
 	TRAIT_DWARF_REPAIR = span_info("Never again will there be a people like ours. Repairs come easy to me."),
 	TRAIT_DRUNK_HEALING = span_info("A little drinking never hurt!"),
@@ -702,9 +706,10 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_GANG_A = span_info("I belong to the Rontz Ratz gang"),
 	TRAIT_GANG_B = span_info("I belong to the Blortz Volves gang"),
 	TRAIT_EXTREME_TEMPERATURE_IMMUNE = span_info("I will not suffer ills from extreme temperatures, wether hot or cold, yet fire and ice can still harm me."),
+	TRAIT_LAVA_IMMUNE = span_info("I can stand in lava without being burned or set alight."),
 	TRAIT_TRIBAL = span_info("I belong to the Island's tribe."),
 	TRAIT_NATURALARMOR = span_info("Whether by natural or other means, my skin is strong enough to resist being pierced and cut."),
-	TRAIT_CLERGYRADICAL = span_info("I follow the radical path of the clergy, abandoning the old road of devotion in favor of self-guided miracle study."),
+	TRAIT_CLERGYRADICAL = span_info("I follow the Eclectic path and study miracles through research."),
 	TRAIT_TRIBAL = span_info("I belong to the Island's tribe."),
 	TRAIT_COMPLIANT = span_info("No matter how hard I try, I can't put up a fight against others."),
 	TRAIT_SELF_AWARE = span_info("I know my body well, and know innately what its aches mean."),
@@ -941,6 +946,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_AGEUSIA			"ageusia"
 #define TRAIT_HEAVY_SLEEPER		"heavy_sleeper"
 #define TRAIT_NIGHT_VISION		"night_vision"
+#define TRAIT_BLIND_NITE_VISION	"blind_nite_vision"
 #define TRAIT_SPIRITUAL			"spiritual"
 #define TRAIT_FAN_CLOWN			"fan_clown"
 #define TRAIT_FAN_MIME			"fan_mime"

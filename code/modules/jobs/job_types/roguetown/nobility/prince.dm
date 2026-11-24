@@ -77,7 +77,7 @@
 	belt = /obj/item/storage/belt/rogue/leather
 	l_hand = /obj/item/rogueweapon/sword/sabre
 	beltl = /obj/item/rogueweapon/scabbard/sword/royal
-	beltr = /obj/item/storage/keyring/heir
+	belt_contents = list(/obj/item/storage/keyring/heir = 1)
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
 	backr = /obj/item/storage/backpack/rogue/satchel
 	if(SSmapping.current_map.map_name == "Desert Town")
@@ -132,7 +132,7 @@
 		armor = /obj/item/clothing/suit/roguetown/shirt/dress/royal/princess
 	head = /obj/item/clothing/head/roguetown/circlet
 	belt = /obj/item/storage/belt/rogue/leather/cloth/lady
-	beltr = /obj/item/storage/keyring/heir
+	belt_contents = list(/obj/item/storage/keyring/heir = 1)
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/special
 	backr = /obj/item/storage/backpack/rogue/satchel
 	backl = /obj/item/rogueweapon/woodstaff/emerald/blacksteelstaff/royal
@@ -200,7 +200,7 @@
 /datum/outfit/job/roguetown/heir/aristocrat/pre_equip(mob/living/carbon/human/H)
 	..()
 	head = /obj/item/clothing/head/roguetown/circlet
-	wrists = /obj/item/storage/keyring/heir
+	belt_contents = list(/obj/item/storage/keyring/heir = 1)
 	belt = /obj/item/storage/belt/rogue/leather
 	beltl = /obj/item/rogueweapon/huntingknife/scissors/steel
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/rich
@@ -267,7 +267,7 @@
 	..()
 	head = /obj/item/clothing/head/roguetown/circlet
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
-	wrists = /obj/item/storage/keyring/heir
+	belt_contents = list(/obj/item/storage/keyring/heir = 1)
 	belt = /obj/item/storage/belt/rogue/leather
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
 	beltr = /obj/item/rogueweapon/scabbard/sheath/noble
@@ -346,7 +346,7 @@
 	..()
 	head = /obj/item/clothing/head/roguetown/circlet
 	mask = /obj/item/clothing/head/roguetown/roguehood/black
-	neck = /obj/item/storage/keyring/heir
+	belt_contents = list(/obj/item/storage/keyring/heir = 1)
 	wrists = /obj/item/lockpickring/mundane
 	belt = /obj/item/storage/belt/rogue/leather
 	beltl = /obj/item/quiver/sling/iron

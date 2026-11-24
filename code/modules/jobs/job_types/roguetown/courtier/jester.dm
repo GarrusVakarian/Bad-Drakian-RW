@@ -35,7 +35,8 @@
 	head = /obj/item/clothing/head/roguetown/jester
 	mask = /obj/item/clothing/mask/rogue/xylixmask
 	neck = /obj/item/clothing/neck/roguetown/coif
-	backpack_contents = list(/obj/item/storage/keyring/servant)
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
+	backpack_contents = list()
 	H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/reading, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/sneaking, 4, TRUE)
@@ -54,12 +55,6 @@
 		H.STAINT = rand(1, 21)
 		H.STAPER = rand(1, 21)
 		H.STALUC = rand(1, 21)
-	else if(H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
 	H.cmode_music = 'sound/music/combat_jester.ogg'
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/dropkick) // hilarious
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/chokeslam)

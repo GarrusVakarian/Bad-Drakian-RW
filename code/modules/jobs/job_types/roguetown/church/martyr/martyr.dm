@@ -97,7 +97,7 @@
 	H.adjust_blindness(-3)
 	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/holysee
 	belt = /obj/item/storage/belt/rogue/leather/plaquegold
-	beltr = /obj/item/storage/keyring/priest
+	belt_contents = list(/obj/item/storage/keyring/priest = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/rich
 	r_hand = /obj/item/rogueweapon/scabbard/gwstrap
 	backr = /obj/item/storage/backpack/rogue/satchel

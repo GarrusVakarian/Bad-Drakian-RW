@@ -55,15 +55,6 @@
 /datum/outfit/job/roguetown/seneschal
 	has_loadout = TRUE
 
-/datum/outfit/job/roguetown/seneschal/pre_equip(mob/living/carbon/human/H)
-	..()
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
-
 //This applies to all Seneschal subclasses
 /datum/outfit/job/roguetown/seneschal/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
@@ -85,7 +76,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/suspenders/butler // Aware that these render over shit like coats. it's a problem for another day, in my time.
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad
 
@@ -120,7 +111,7 @@
 	cloak = /obj/item/clothing/cloak/apron/maid
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/sash
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad
 
@@ -155,6 +146,6 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	belt = /obj/item/storage/belt/rogue/leather/suspenders/butler
-	beltr = /obj/item/storage/keyring/servant
+	belt_contents = list(/obj/item/storage/keyring/servant = 1)
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/bad

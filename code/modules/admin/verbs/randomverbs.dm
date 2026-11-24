@@ -361,6 +361,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 		new_character.mind.assigned_role = "Adventurer"//If they somehow got a null assigned role.
 
 	new_character.key = G_found.key
+	record_character_spawn(new_character.ckey)
 
 	/*
 	The code below functions with the assumption that the mob is already a traitor if they have a special role.

@@ -110,6 +110,7 @@
 	smeltresult = null
 
 /obj/item/rogueweapon/surgery/cautery
+	twirly = SKILL_LEVEL_EXPERT
 	name = "cautery iron"
 	desc = "A tool used to cauterize wounds. Heat it up before use."
 	icon_state = "cauteryiron"
@@ -520,7 +521,7 @@
 		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears away a brand on [target.p_their()] [LOWER_TEXT(final_answer)]!"))
 		to_chat(target, span_userdanger("A brand has been burned away!"))
 	else
-		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears a mark on [target.p_their()] [LOWER_TEXT(final_answer)]! The fresh brand shows [span_boldwarning(branding_text)]."))
+		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears a mark on [target.p_their()] [LOWER_TEXT(final_answer)]! The fresh brand shows [span_boldwarning(branding_text)][descriptor_sentence_period(mob_descriptor_visible_text(branding_text))]"))
 		to_chat(target, span_userdanger("You have been branded!"))
 
 // Single entry point for action-phase combat logs
@@ -749,6 +750,7 @@
 		to_chat(owner, span_userdanger("I can barely feel my lips again."))
 
 /obj/item/rogueweapon/surgery/hammer
+	twirly = SKILL_LEVEL_EXPERT
 	name = "examination hammer"
 	desc = "A small hammer used to check a patient's reactions and diagnose their condition."
 	icon_state = "kneehammer"

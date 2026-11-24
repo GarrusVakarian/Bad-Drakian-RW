@@ -93,9 +93,9 @@
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Keeper Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, CLERGY_DOCTRINE_PROMPT, "Keeper Doctrine", "Orthodox", "Eclectic")
 
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		grant_radical_path(H)
 	else
 		grant_old_path(H)
@@ -113,6 +113,11 @@
 	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/pestrasickle
 	beltl = /obj/item/flashlight/flare/torch/lantern
 	backl = /obj/item/storage/backpack/rogue/backpack
+	belt_contents = list(
+		/obj/item/roguekey/keeper = 1,
+		/obj/item/roguekey/keeper_inner = 1,
+		/obj/item/storage/keyring/churchie = 1,
+	)
 	backpack_contents = list(/obj/item/rogueweapon/huntingknife/idagger/steel/special = 1,
 							/obj/item/storage/belt/rogue/pouch/coins/mid = 1,
 							/obj/item/heart_canister = 2,
@@ -121,9 +126,6 @@
 							/obj/item/heart_blood_vial = 5,
 							/obj/item/heart_blood_canister = 4,
 							/obj/item/rogueweapon/huntingknife/idagger/steel/parrying = 1,
-							/obj/item/roguekey/keeper = 1,
-							/obj/item/roguekey/keeper_inner = 1,
-							/obj/item/storage/keyring/churchie = 1,
 							/obj/item/ritechalk = 1,
 							/obj/item/rogueweapon/scabbard/sheath = 2)
 	H.put_in_hands(new /obj/item/storage/belt/rogue/surgery_bag/full/physician(H), TRUE)
@@ -138,7 +140,7 @@
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)
 
-	to_chat(H, span_notice("I remain on the old path of Pestra's devotion."))
+	to_chat(H, span_notice("I follow Pestra's Orthodox teachings."))
 
 
 /datum/job/roguetown/keeper/proc/grant_radical_path(mob/living/carbon/human/H)
@@ -158,5 +160,5 @@
 	if(!H.mind.has_spell(/obj/effect/proc_holder/spell/invoked/resurrect/pestra))
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/resurrect/pestra, H)
 
-	to_chat(H, span_notice("I embrace Pestra's radical doctrine."))
+	to_chat(H, span_notice("I follow Pestra's Eclectic teachings."))
 

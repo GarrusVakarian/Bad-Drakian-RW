@@ -33,8 +33,11 @@
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/revive
+	parent_type = /obj/effect/proc_holder/spell/invoked/revival_rite
+	structure_range = 5
+	ritual_site_near_caster = TRUE
 	name = "Anastasis"
-	desc = "Focus Astratas energy though a stationary psycross, reviving the target from death."
+	desc = "By Astrata’s light, call the dead back to life. Raise them in sight of a placed cross. They return weakened for a time.<br><b>Cast on yourself to see where to perform the rite and what to carry.</b>"
 	overlay_icon = 'icons/mob/actions/astratamiracles.dmi'
 	action_icon = 'icons/mob/actions/astratamiracles.dmi'
 	overlay_state = "resurrect"
@@ -74,45 +77,49 @@
 	..()
 
 	if(!isliving(targets[1]))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	testing("revived1")
 	var/mob/living/target = targets[1]
-	//OV edit
-	if(istype(target, /mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob/suffering))
-		target.revive()
-		return TRUE
-	//OV edit end
-	if(!target.check_revive(user))
-		revert_cast()
+	var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+	if(!ooze && !target.check_revive(user))
+		revert_cast(user)
 		return FALSE
-	if(GLOB.tod == "night")
-		to_chat(user, span_warning("Let there be light."))
-	for(var/obj/structure/fluff/psycross/S in oview(5, user))
-		S.AOE_flash(user, range = 8)
-	if(target.mob_biotypes & MOB_UNDEAD) //positive energy harms the undead
+	if(!ooze)
+		if(GLOB.tod == "night")
+			to_chat(user, span_warning("Let there be light."))
+		for(var/obj/structure/fluff/psycross/S in oview(5, user))
+			S.AOE_flash(user, range = 8)
+	if(!ooze && (target.mob_biotypes & MOB_UNDEAD)) //positive energy harms the undead
 		target.visible_message(
 			span_danger("[target] is unmade by holy light!"),
 			span_userdanger("I'm unmade by holy light!")
 		)
 		target.gib()
 		return TRUE
-	var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-	//GET OVER HERE!
-	if(underworld_spirit)
-		var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-		qdel(underworld_spirit)
-		ghost.mind.transfer_to(target, TRUE)
-	target.grab_ghost(force = TRUE) // even suicides
-	if(!target.mind.active)
+	if(!ooze)
+		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+		//GET OVER HERE!
+		if(underworld_spirit)
+			var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+			qdel(underworld_spirit)
+			ghost.mind.transfer_to(target, TRUE)
+		target.grab_ghost(force = TRUE) // even suicides
+	if(!ooze && !target.mind.active)
 		to_chat(user, "[target] will not return from afterlife.")
-		revert_cast()
+		revert_cast(user)
 		return FALSE
-	target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
-	if(!target.revive(full_heal = FALSE))
-		to_chat(user, span_warning("Nothing happens."))
-		revert_cast()
-		return FALSE
+	if(ooze)
+		target = ooze.revive_patient(targets)
+		if(!target)
+			revert_cast(user)
+			return FALSE
+	else
+		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
+		if(!target.revive(full_heal = FALSE))
+			to_chat(user, span_warning("Nothing happens."))
+			revert_cast(user)
+			return FALSE
 	testing("revived2")
 	target.emote("breathgasp")
 	target.Jitter(100)
@@ -130,7 +137,7 @@
 	if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
 		adjust_playerquality(revive_pq, user.ckey)
 		ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
-	target.mind.remove_antag_datum(/datum/antagonist/zombie)
+	target.mind?.remove_antag_datum(/datum/antagonist/zombie)
 	target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
 	target.apply_status_effect(/datum/status_effect/debuff/revived)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
 	return TRUE
@@ -138,11 +145,8 @@
 /obj/effect/proc_holder/spell/invoked/revive/cast_check(skipcharge,mob/user = usr)
 	if(!..())
 		return FALSE
-	var/found = null
-	for(var/obj/structure/fluff/psycross/S in oview(5, user))
-		found = S
-	if(!found)
-		to_chat(user, span_warning("I need a holy cross."))
+	if(!find_ritual_site(user))
+		to_chat(user, span_warning("I need a placed cross in sight within [structure_range] tiles of me."))
 		return FALSE
 	return TRUE
 

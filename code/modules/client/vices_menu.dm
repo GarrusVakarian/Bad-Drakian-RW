@@ -1,3 +1,9 @@
+/proc/sanitize_natural_armor_text(value)
+	return trim(copytext_char(sanitize_text(value), 1, 201))
+
+/datum/preferences/proc/has_natural_armor_virtue()
+	return istype(virtue, /datum/virtue/combat/tough_hide) || (statpack?.name == "Virtuous" && istype(virtuetwo, /datum/virtue/combat/tough_hide))
+
 /// Old/edited presets must not grant or charge for both hypnosis alternatives.
 /// Preserve the first selected variant and leave every unrelated quirk alone.
 /datum/preferences/proc/normalize_hypnotic_quirks()
@@ -260,6 +266,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtue" = virtue,
 		"virtuetwo" = virtuetwo,
 		"virtue_background" = virtue_background,
+		"natural_armor_name" = natural_armor_name,
+		"natural_armor_desc" = natural_armor_desc,
 		"quirks" = quirks.Copy(),
 		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1,
@@ -275,6 +283,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"hypnotic_presence_text" = hypnotic_presence_text,
 		"hypnotic_presence_style" = hypnotic_presence_style,
+		"milk_production_size" = milk_production_size,
 		"loadout" = loadout,
 		"loadout2" = loadout2,
 		"loadout3" = loadout3,
@@ -285,6 +294,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8,
 		"loadout9" = loadout9,
 		"loadout10" = loadout10,
+		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
 		"loadout_3_name" = loadout_3_name,
@@ -339,6 +349,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	virtue = snapshot["virtue"]
 	virtuetwo = snapshot["virtuetwo"]
 	virtue_background = snapshot["virtue_background"]
+	natural_armor_name = snapshot["natural_armor_name"]
+	natural_armor_desc = snapshot["natural_armor_desc"]
 	var/list/quirks_snapshot = snapshot["quirks"]
 	quirks = quirks_snapshot ? quirks_snapshot.Copy() : list()
 	normalize_hypnotic_quirks()
@@ -356,6 +368,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(snapshot["hypnotic_gaze_style"])
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(snapshot["hypnotic_presence_text"])
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(snapshot["hypnotic_presence_style"])
+	milk_production_size = sanitize_milk_production_size(snapshot["milk_production_size"])
 	loadout = snapshot["loadout"]
 	loadout2 = snapshot["loadout2"]
 	loadout3 = snapshot["loadout3"]
@@ -366,6 +379,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout8 = snapshot["loadout8"]
 	loadout9 = snapshot["loadout9"]
 	loadout10 = snapshot["loadout10"]
+	loadout_markdown_fields = normalize_loadout_markdown_fields(snapshot["loadout_markdown_fields"])
 	loadout_1_name = snapshot["loadout_1_name"]
 	loadout_2_name = snapshot["loadout_2_name"]
 	loadout_3_name = snapshot["loadout_3_name"]
@@ -414,6 +428,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"virtue" = virtue?.type,
 		"virtuetwo" = virtuetwo?.type,
 		"virtue_background" = virtue_background?.type,
+		"natural_armor_name" = natural_armor_name,
+		"natural_armor_desc" = natural_armor_desc,
 		"quirks" = get_quirk_typepaths(),
 		"virgin_attraction" = sanitize_virgin_attraction(virgin_attraction),
 		"vice1" = vice1?.type,
@@ -424,11 +440,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"vice6" = vice6?.type,
 		"redolent_type" = redolent_type,
 		"redolent_scent" = redolent_scent,
+		"redolent_scent_text_version" = 1,
 		"hypnotic_gaze_text" = hypnotic_gaze_text,
 		"hypnotic_gaze_text_version" = 1,
 		"hypnotic_gaze_style" = hypnotic_gaze_style,
 		"hypnotic_presence_text" = hypnotic_presence_text,
 		"hypnotic_presence_style" = hypnotic_presence_style,
+		"milk_production_size" = milk_production_size,
 		"loadout" = loadout?.type,
 		"loadout2" = loadout2?.type,
 		"loadout3" = loadout3?.type,
@@ -439,6 +457,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8?.type,
 		"loadout9" = loadout9?.type,
 		"loadout10" = loadout10?.type,
+		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
 		"loadout_3_name" = loadout_3_name,
@@ -515,6 +534,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		virtue_background = new background_type()
 	else
 		virtue_background = new /datum/virtue/background/none()
+	natural_armor_name = sanitize_natural_armor_text(preset["natural_armor_name"])
+	natural_armor_desc = sanitize_natural_armor_text(preset["natural_armor_desc"])
 
 	quirks = list()
 	virgin_attraction = sanitize_virgin_attraction(preset["virgin_attraction"])
@@ -562,7 +583,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		vice6 = null
 	fix_duplicate_vices()
 	redolent_type = preset["redolent_type"] || "Neutral"
-	redolent_scent = preset["redolent_scent"] || ""
+	redolent_scent = load_redolent_scent_text(preset["redolent_scent"], preset["redolent_scent_text_version"])
 	var/gaze_text = preset["hypnotic_gaze_text"]
 	if(preset["hypnotic_gaze_text_version"] != 1 && istext(gaze_text))
 		gaze_text = html_decode(gaze_text)
@@ -570,6 +591,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	hypnotic_gaze_style = sanitize_hypnotic_gaze_style(preset["hypnotic_gaze_style"])
 	hypnotic_presence_text = sanitize_hypnotic_presence_text(preset["hypnotic_presence_text"])
 	hypnotic_presence_style = sanitize_hypnotic_gaze_style(preset["hypnotic_presence_style"])
+	milk_production_size = sanitize_milk_production_size(preset["milk_production_size"])
 	
 	// Load loadout types and instantiate them if valid
 	var/loadout_type = string_to_typepath(preset["loadout"])
@@ -633,6 +655,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		loadout10 = null
 	
 	// Always restore all string values from preset (including null/empty values)
+	loadout_markdown_fields = normalize_loadout_markdown_fields(preset["loadout_markdown_fields"])
 	loadout_1_name = preset["loadout_1_name"]
 	loadout_2_name = preset["loadout_2_name"]
 	loadout_3_name = preset["loadout_3_name"]
@@ -1193,8 +1216,17 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(!istype(virtuetwo, /datum/virtue/none))
 			html += "<a class='btn btn-clear' href='byond://?src=\ref[src];virtue_action=clear_secondary'>Clear Second Virtue</a>"
 
+	var/show_natural_armor = has_natural_armor_virtue()
+	if(show_natural_armor)
+		html += "<a class='btn btn-customize' href='byond://?src=\ref[src];edit_natural_armor=name'>Edit Natural Armor Name</a>"
+		html += "<a class='btn btn-customize' href='byond://?src=\ref[src];edit_natural_armor=description'>Edit Natural Armor Description</a>"
+	html += "</div>"
+	if(show_natural_armor && natural_armor_name)
+		html += "<div class='statpack-desc'><b>Natural Armor Name:</b> [html_encode(natural_armor_name)]</div>"
+	if(show_natural_armor && natural_armor_desc)
+		html += "<div class='statpack-desc'><b>Natural Armor Description:</b> [html_encode(natural_armor_desc)]</div>"
+
 	html += {"
-			</div>
 		</div>
 		<div class="statpack-section">
 			<h2>Background Selection</h2>
@@ -1261,7 +1293,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 
 		if(istype(current_quirk, /datum/quirk/redolent))
 			var/scent_display = redolent_scent || get_default_redolent_scent(redolent_type)
-			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [scent_display]</div>"
+			html += "<div class='statpack-stats' style='margin-top: 4px;'><b>[redolent_type]</b>: [html_encode(scent_display)]</div>"
 
 		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
 			var/datum/quirk/hypnotic_gaze/hypnosis_quirk = current_quirk
@@ -1310,6 +1342,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		if(istype(current_quirk, /datum/quirk/hypnotic_gaze))
 			var/presence = istype(current_quirk, /datum/quirk/hypnotic_presence)
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];hypnotic_gaze_action=configure;presence=[presence]'>Configure [presence ? "Presence" : "Gaze"]</a>"
+		if(istype(current_quirk, /datum/quirk/high_milk_production))
+			var/milk_size_name = find_key_by_value(GLOB.named_breast_sizes, milk_production_size) || "Size [milk_production_size]"
+			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];milk_production_action=configure'>Configure Milk Size ([milk_size_name])</a>"
 		if(istype(current_quirk, /datum/quirk/virgin))
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];virgin_action=configure'>Configure Attraction</a>"
 		html += "<a class='btn btn-clear' href='byond://?src=\ref[src];quirk_action=remove;index=[i]'>Remove</a>"
@@ -1456,8 +1491,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			
 			html += "</div>"
 			html += "<div style='flex: 1;'>"
-			html += "<div class='vice-name'>[custom_name ? custom_name : current_item.name]</div>"
-			html += "<div class='vice-desc'>[custom_desc ? custom_desc : (item_desc ? item_desc : current_item.desc)]</div>"
+			html += "<div class='vice-name'>[custom_name ? get_loadout_text(i, TRUE, TRUE) : current_item.name]</div>"
+			html += "<div class='vice-desc'>[custom_desc ? get_loadout_text(i, FALSE, TRUE) : (item_desc ? item_desc : current_item.desc)]</div>"
 			
 			if(custom_name || custom_desc)
 				html += "<div style='margin-top: 3px; font-size: 0.7em; color: [theme["label"]];'>✎ Customized</div>"
@@ -1916,10 +1951,16 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/triumph_collateral = get_triumph_collateral()
 			if(triumph_collateral)
 				prompt_text += "\n(Costs [triumph_collateral] TRIUMPHS)"
-			var/choice = tgui_input_list(usr, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
+			var/mob/quirk_editor = usr
+			var/quirk_editing_slot = default_slot
+			var/choice = tgui_input_list(quirk_editor, prompt_text, "Quirk Selection", quirks_available, option_details = get_customization_picker_details(quirks_available))
 
-			if(choice)
+			if(choice in quirks_available)
 				var/datum/quirk/selected = quirks_available[choice]
+				if(istype(selected, /datum/quirk/high_milk_production))
+					if(QDELETED(quirk_editor) || !parent || quirk_editor.client != parent || default_slot != quirk_editing_slot || has_quirk(selected.type))
+						return
+					milk_production_size = LARGE_BREASTS_SIZE
 				quirks += new selected.type()
 				if(istype(selected, /datum/quirk/virgin))
 					configure_virgin_attraction(usr)
@@ -2009,6 +2050,28 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		open_vices_menu(editor)
 		return
 
+	if(href_list["milk_production_action"])
+		var/quirk_type = /datum/quirk/high_milk_production
+		if(href_list["milk_production_action"] != "configure" || !has_quirk(quirk_type))
+			return
+		var/mob/editor = usr
+		if(!editor || !parent || editor.client != parent)
+			return
+		var/editing_slot = default_slot
+		var/previous_size = milk_production_size
+		var/size_name = find_key_by_value(GLOB.named_breast_sizes, previous_size)
+		var/choice = tgui_input_list(editor, "Choose the size used for milk storage and release.", "High Milk Production", GLOB.named_breast_sizes, size_name)
+		if(!(choice in GLOB.named_breast_sizes) || QDELETED(editor) || !parent || editor.client != parent || editing_slot != default_slot || !has_quirk(quirk_type) || milk_production_size != previous_size)
+			return
+		var/new_size = GLOB.named_breast_sizes[choice]
+		if(new_size == previous_size)
+			return
+		save_to_history()
+		milk_production_size = new_size
+		save_character()
+		open_vices_menu(editor)
+		return
+
 	if(href_list["redolent_action"])
 		if(href_list["redolent_action"] != "configure")
 			return
@@ -2034,10 +2097,12 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		else
 			var/scent_leadin = redolent_scent_leadin(new_scent_type)
 			var/scent_prompt = "Describe the scent - a preview of the output in game is shown below:"
-			new_scent = tgui_input_text(usr, scent_prompt, "Redolent", redolent_scent, max_length = 100, multiline = TRUE, preview_leadin = scent_leadin)
+			new_scent = tgui_input_text(usr, scent_prompt, "Redolent", redolent_scent, max_length = 100, multiline = TRUE, encode = FALSE, preview_leadin = scent_leadin)
 			if(isnull(new_scent))
 				return
-			if(!length(trim(new_scent)))
+			// Native input does not enforce the TGUI length limit.
+			new_scent = trim(copytext_char(trim(new_scent), 1, 101))
+			if(!length(new_scent))
 				new_scent = get_default_redolent_scent(new_scent_type)
 
 		save_to_history()
@@ -2139,14 +2204,33 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 
 				open_vices_menu(usr)
 	
+	var/armor_field = href_list["edit_natural_armor"]
+	if(armor_field == "name" || armor_field == "description")
+		var/mob/editor = usr
+		if(!editor || editor.client != parent || !has_natural_armor_virtue())
+			return
+		var/editing_slot = default_slot
+		var/field_var = armor_field == "name" ? NAMEOF(src, natural_armor_name) : NAMEOF(src, natural_armor_desc)
+		var/previous_value = vars[field_var]
+		var/title = armor_field == "name" ? "Natural Armor Name" : "Natural Armor Description"
+		var/new_value = tgui_input_text(editor, "Enter a [armor_field] for your Natural Armor. Leave blank to choose one at spawn.", title, previous_value, max_length = 200, encode = FALSE)
+		if(isnull(new_value) || editor.client != parent || default_slot != editing_slot || vars[field_var] != previous_value || !has_natural_armor_virtue())
+			return
+		save_to_history()
+		vars[field_var] = sanitize_natural_armor_text(new_value)
+		open_vices_menu(editor)
+		return
+
 	if(href_list["loadout_action"])
+		if(usr?.client != parent)
+			return
 		// Save state before any loadout change
 		save_to_history()
 		
 		var/action = href_list["loadout_action"]
 		var/slot = text2num(href_list["slot"])
 		
-		if(!slot || slot < 1 || slot > 10)
+		if(!slot || slot < 1 || slot > 10 || slot != round(slot))
 			return
 		
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"
@@ -2161,54 +2245,57 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				vars["loadout_[slot]_name"] = null
 				vars["loadout_[slot]_desc"] = null
 				vars["loadout_[slot]_hex"] = null
+				loadout_markdown_fields -= "loadout_[slot]_name"
+				loadout_markdown_fields -= "loadout_[slot]_desc"
 				open_vices_menu(usr)
 				return
 			
-			if("rename")
+			if("rename", "describe")
 				var/datum/loadout_item/current = vars[slot_var]
-				if(!current)
+				if(!istype(current))
 					return
-				
-				var/new_name = tgui_input_text(usr, "Enter a custom name for this item (leave blank to use default):", "Rename Item", html_decode(vars["loadout_[slot]_name"]), MAX_NAME_LEN)
-				
-				if(new_name != null) // Allow empty string to clear
-					vars["loadout_[slot]_name"] = new_name
-					open_vices_menu(usr)
-				return
-			
-			if("describe")
-				var/datum/loadout_item/current = vars[slot_var]
-				if(!current)
+				var/mob/editor = usr
+				var/editing_slot = default_slot
+				var/is_name = action == "rename"
+				var/field = "loadout_[slot]_[is_name ? "name" : "desc"]"
+				var/original_text = vars[field]
+				var/prompt = is_name ? "Enter a custom name (Markdown supported: *italics*, **bold**, -=ffcc00colored text=-. Start a name with \\improper to enable articles. leave blank for default):" : "Enter a custom description (Markdown supported: *italics*, **bold**, -=ffcc00colored text=-):"
+				var/new_text = tgui_input_text(editor, prompt, is_name ? "Rename Item" : "Describe Item", html_decode(original_text), max_length = is_name ? MAX_NAME_LEN : 500, multiline = !is_name, encode = FALSE)
+				// Dialogs can outlive their character, selected item, editor or original field.
+				if(!editor || editor.client != parent || default_slot != editing_slot || vars[slot_var] != current || vars[field] != original_text)
 					return
-				
-				var/new_desc = tgui_input_text(usr, "Enter a custom description for this item (leave blank to use default):", "Describe Item", html_decode(vars["loadout_[slot]_desc"]), max_length = 500, multiline = TRUE)
-				
-				if(new_desc != null) // Allow empty string to clear
-					vars["loadout_[slot]_desc"] = new_desc
-					open_vices_menu(usr)
+				if(set_loadout_custom_text(slot, is_name, new_text))
+					open_vices_menu(editor)
 				return
 			
 			if("color")
 				var/datum/loadout_item/current = vars[slot_var]
-				if(!current)
+				if(!istype(current))
 					return
-				
-				// Use dye bin colors for more variety
-				var/list/color_choices = list("None")
-				for(var/color_name in GLOB.colorlist)
-					color_choices += color_name
-				
-				var/new_color = tgui_input_list(usr, "Choose a color for this item:", "Item Color", color_choices, vars["loadout_[slot]_hex"])
-				
-				if(new_color)
-					if(new_color == "None")
-						vars["loadout_[slot]_hex"] = null
-					else
-						// Look up the hex value from GLOB.colorlist
-						vars["loadout_[slot]_hex"] = GLOB.colorlist[new_color]
-					open_vices_menu(usr)
+				var/mob/editor = usr
+				var/editing_slot = default_slot
+				var/field = "loadout_[slot]_hex"
+				var/original_color = vars[field]
+				var/choice = tgui_input_list(editor, "Choose how to color this item:", "Item Color", list("Custom Color", "Preset Color", "None"))
+				if(!choice)
+					return
+				var/new_color
+				if(choice == "Custom Color")
+					new_color = color_pick_sanitized(editor, "Choose your item color:", "Item Color", original_color || "#ffffff")
+					if(!new_color)
+						return
+					new_color = sanitize_hexcolor(new_color, 6, TRUE)
+				else if(choice == "Preset Color")
+					var/preset = tgui_input_list(editor, "Choose a color for this item:", "Item Color", GLOB.colorlist)
+					if(!preset)
+						return
+					new_color = GLOB.colorlist[preset]
+				if(!editor || editor.client != parent || default_slot != editing_slot || vars[slot_var] != current || vars[field] != original_color)
+					return
+				vars[field] = new_color
+				open_vices_menu(editor)
 				return
-	
+
 	if(href_list["language_action"])
 		// Save state before any language change
 		save_to_history()

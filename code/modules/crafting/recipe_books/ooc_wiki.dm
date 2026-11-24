@@ -303,7 +303,26 @@ GLOBAL_DATUM(recipe_wiki, /datum/recipe_wiki)
 /mob/living/carbon/human/proc/show_getting_started_reminder(player_ckey)
 	if(!client || client.ckey != player_ckey || advsetup || stat == DEAD)
 		return
+	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_GETTING_STARTED)
+		return
 	if(get_playerquality(client.ckey) > 5)
 		return
 	to_chat(src, span_notice("New to the game? Read the <a href='byond://winset?command=Getting-Started'><b>Getting Started</b></a> chapter of the Encyclopedia for essential information and instructions to help you begin."))
 	playsound_local(src, 'sound/misc/looc_smol.ogg', 30, TRUE)
+
+/// Chapter links from static race descriptions; only concrete racial guide entries are accepted.
+/client/verb/racial_features_guide(chapter as text)
+	set name = "Racial-Features"
+	set category = "OOC"
+	set hidden = TRUE
+
+	var/entry = get_racial_features_chapter(chapter)
+	var/datum/recipe_wiki/wiki = get_recipe_wiki()
+	wiki.show_to_user(mob, list(/datum/book_entry/racial_features), "Racial Features", /obj/item/recipe_book/racial_features, entry)
+
+/// Resolve untrusted link arguments without opening arbitrary datum types.
+/proc/get_racial_features_chapter(chapter)
+	var/entry = text2path("/datum/book_entry/racial_features/[chapter]")
+	if(!ispath(entry, /datum/book_entry/racial_features) || is_abstract(entry))
+		return /datum/book_entry/racial_features/overview
+	return entry

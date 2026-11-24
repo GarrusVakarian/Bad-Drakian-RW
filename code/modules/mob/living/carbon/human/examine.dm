@@ -137,6 +137,8 @@
 
 	. += get_redolent_examine_lines(user)
 	. += stuffed_examine_line(user)
+	if(has_status_effect(/datum/status_effect/quivering) || has_status_effect(/datum/status_effect/knot_gaped) || has_status_effect(/datum/status_effect/knot_fucked_stupid))
+		. += "<span style='color:#d8cf8a'>They are walking funny, their legs shaky.</span>"
 	var/gaze_examine = hypnotic_gaze_examine(user)
 	if(gaze_examine)
 		. += gaze_examine
@@ -375,6 +377,11 @@
 		if(is_stupid)
 			str = "[m3] some shoes on [m2] feet!"
 		. += str
+
+	else if(!(SLOT_SHOES in obscured))
+		var/obj/item/clothing/decoration = get_talon_decoration()
+		if(decoration)
+			. += "[m3] [get_examine_item_name_with_hover(user, decoration)] decorating [m2] talons."
 
 	//mask
 	if(wear_mask && !(SLOT_WEAR_MASK in obscured))
@@ -859,8 +866,11 @@
 					brand_text = "[brand_text], a mark of ownership"
 			else if(branded_bodypart.enslavement_mark && !is_surface_handled_separately)
 				brand_text = "a mark of ownership"
-			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone))
-				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been branded with ") + "[span_boldwarning(brand_text)]."
+			if(length(brand_text))
+				// Head brands are facial: use current concealment, not surgical head access.
+				var/brand_visible = branded_bodypart.body_zone == BODY_ZONE_HEAD ? (!skipface && !(wear_neck && (wear_neck.flags_inv & HIDEFACE))) : get_location_accessible(src, branded_bodypart.body_zone)
+				if(brand_visible)
+					. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been branded with ") + "[span_boldwarning(brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(brand_text))]"
 			if(istype(branded_bodypart, /obj/item/bodypart/chest))
 				var/obj/item/bodypart/chest/chest = branded_bodypart
 				var/chest_brand_text = ""
@@ -869,14 +879,14 @@
 					if(chest.enslavement_mark)
 						chest_brand_text = "[chest_brand_text], a mark of ownership"
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been branded with ") + "[span_boldwarning(chest_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(chest_brand_text))]"
 				var/stomach_brand_text = ""
 				if(length(chest.branded_writing_on_stomach))
 					stomach_brand_text = chest.branded_writing_on_stomach
 					if(chest.enslavement_mark)
 						stomach_brand_text = "[stomach_brand_text], a mark of ownership"
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
-					. += span_info("[capitalize(m2)] stomach has been branded with ") + "[span_boldwarning(stomach_brand_text)]."
+					. += span_info("[capitalize(m2)] stomach has been branded with ") + "[span_boldwarning(stomach_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(stomach_brand_text))]"
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
 				var/obj/item/bodypart/head/neck = branded_bodypart
 				var/neck_brand_text = ""
@@ -887,39 +897,39 @@
 				else if(neck.enslavement_mark)
 					neck_brand_text = "a mark of ownership"
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
-					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)]."
+					. += span_info("[capitalize(m2)] neck has been branded with ") + "[span_boldwarning(neck_brand_text)][descriptor_sentence_period(mob_descriptor_visible_text(neck_brand_text))]"
 
 	if(bodywritten) // our body has been written on, now check what body-writings we've got. genital body-writings handled separately.
 		for(var/obj/item/bodypart/branded_bodypart as anything in bodyparts)
 			var/brand_text = ""
 			if(length(branded_bodypart.body_writing))
 				brand_text = branded_bodypart.body_writing
-			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone))
-				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + "[span_beautiful_fem(brand_text)]."
+			if(length(brand_text) && get_location_accessible(src, branded_bodypart.body_zone, ignored_item = branded_bodypart.body_zone == BODY_ZONE_HEAD ? mouth : null))
+				. += span_info("[capitalize(m2)] [LOWER_TEXT(branded_bodypart.name)] has been written on: ") + span_beautiful_fem(brand_text)
 			if(istype(branded_bodypart, /obj/item/bodypart/chest))
 				var/obj/item/bodypart/chest/chest = branded_bodypart
 				var/chest_brand_text = ""
 				if(length(chest.body_writing_on_buttocks))
 					chest_brand_text = chest.body_writing_on_buttocks
 				if(length(chest_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_GROIN))
-					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + "[span_beautiful_fem(chest_brand_text)]."
+					. += span_info("[capitalize(m2)] hindquarters have been written on: ") + span_beautiful_fem(chest_brand_text)
 				var/stomach_brand_text = ""
 				if(length(chest.body_writing_on_stomach))
 					stomach_brand_text = chest.body_writing_on_stomach
 				if(length(stomach_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_STOMACH))
-					. += span_info("[capitalize(m2)] stomach has been written on: ") + "[span_beautiful_fem(stomach_brand_text)]."
+					. += span_info("[capitalize(m2)] stomach has been written on: ") + span_beautiful_fem(stomach_brand_text)
 			else if(istype(branded_bodypart, /obj/item/bodypart/head))
 				var/obj/item/bodypart/head/head = branded_bodypart
 				var/neck_brand_text = ""
 				if(length(head.body_writing_on_neck))
 					neck_brand_text = head.body_writing_on_neck
 				if(length(neck_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_NECK))
-					. += span_info("[capitalize(m2)] neck has been written on: ") + "[span_beautiful_fem(neck_brand_text)]."
+					. += span_info("[capitalize(m2)] neck has been written on: ") + span_beautiful_fem(neck_brand_text)
 				var/mouth_brand_text = ""
 				if(length(head.body_writing_on_mouth))
 					mouth_brand_text = head.body_writing_on_mouth
 				if(length(mouth_brand_text) && get_location_accessible(src, BODY_ZONE_PRECISE_MOUTH))
-					. += span_info("[capitalize(m2)] mouth has been written on: ") + "[span_beautiful_fem(mouth_brand_text)]."
+					. += span_info("[capitalize(m2)] mouth has been written on: ") + span_beautiful_fem(mouth_brand_text)
 
 	// Characters with the marked for death flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
@@ -937,7 +947,7 @@
 	if(!isnull(trait_exam))
 		. += trait_exam
 
-	if(temporary_flavortext) //should be kept at the bottom always if possible, since someone could change the spans to trick people if it's on other places
+	if(temporary_flavortext && !is_species(src, /datum/species/dragon)) //should be kept at the bottom always if possible, since someone could change the spans to trick people if it's on other places
 		var/max_temp_ft_length = 100 //Proably a good idea to fine-tune this later
 		if(length_char(temporary_flavortext) > max_temp_ft_length)
 			. += " <span class='info' style='color: #eaeaea'> ø ------------ ø\n [copytext_char(temporary_flavortext, 1, max_temp_ft_length + 1)]</span>" + "<a href='?src=[REF(src)];task=show_temp_ft;'>...</a>"
@@ -1060,7 +1070,7 @@
 		if(family_datum)
 			social_strata = "<a href='?src=[REF(src)];social_strata=1'><font color='#[rank_color]'>⛯</font></A>"
 		var/display1
-		var/display2 = "[(!HAS_TRAIT(usr, TRAIT_OUTLANDER) && src.social_rank) ? "[social_strata]" : " "]"
+		var/display2 = "[(!HAS_TRAIT(user, TRAIT_OUTLANDER) && src.social_rank) ? "[social_strata]" : " "]"
 		if(migrant_type)
 			used_title = MIGRANT_ROLE(migrant_type)
 			display1 += span_info("This is <EM>[used_name]</EM>, the wandering [race_name] [used_title].")
@@ -1272,6 +1282,12 @@
 		var/heretic_text = get_heretic_text(user)
 		if(heretic_text)
 			. += span_notice(heretic_text)
+		if(user != src && ishuman(user) && HAS_TRAIT(user, TRAIT_CLERGYRADICAL) && HAS_TRAIT(src, TRAIT_CLERGYRADICAL))
+			var/mob/living/carbon/human/examiner = user
+			if(istype(patron, /datum/patron/divine) && istype(examiner.patron, /datum/patron/divine))
+				. += span_notice("A fellow Tennite Eclectic. I recognize the signs.")
+			else if(istype(patron, /datum/patron/inhumen) && istype(examiner.patron, /datum/patron/inhumen))
+				. += span_notice("A fellow Ascendant Eclectic. I recognize the signs.")
 		var/inquisition_text = get_inquisition_text(user)
 		if(inquisition_text)
 			. +=span_notice(inquisition_text)

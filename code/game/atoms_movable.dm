@@ -198,16 +198,18 @@
 	if(pulling)
 		testing("stoppull2")
 		if(pulling != src)
-			pulling.pulledby = null
-			var/mob/living/ex_pulled = pulling
+			var/atom/movable/ex_pulled = pulling
 			pulling = null
-			if(isliving(ex_pulled))
-				var/mob/living/L = ex_pulled
-				L.update_mobility()// mob gets up if it was lyng down in a chokehold
-				if(ex_pulled.hud_used)
-					var/atom/movable/screen/inventory/hand/H = ex_pulled.hud_used.hand_slots["[ex_pulled.active_hand_index]"]
-					if(H)
-						H.update_icon()
+			// Releasing an old hold must not clear the victim's newer puller.
+			if(ex_pulled.pulledby == src)
+				ex_pulled.pulledby = null
+				if(isliving(ex_pulled))
+					var/mob/living/L = ex_pulled
+					L.update_mobility()
+					if(L.hud_used)
+						var/atom/movable/screen/inventory/hand/H = L.hud_used.hand_slots["[L.active_hand_index]"]
+						if(H)
+							H.update_icon()
 	setGrabState(0)
 
 /atom/movable/proc/Move_Pulled(atom/A)
@@ -559,7 +561,10 @@
 
 	if(destination)
 		if(pulledby)
-			pulledby.stop_pulling()
+			// Keep the grab when a rider moves onto their own carrier's tile.
+			var/mob/living/rider = src
+			if(!istype(rider) || rider.buckled != pulledby || pulledby.loc != destination)
+				pulledby.stop_pulling()
 		var/same_loc = oldloc == destination
 		var/area/old_area = get_area(oldloc)
 		var/area/destarea = get_area(destination)
@@ -625,9 +630,12 @@
 		step(src, AM.dir)
 	..()
 
-/atom/movable/proc/safe_throw_at(atom/target, range, speed, mob/thrower, spin = FALSE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG)
+/atom/movable/proc/safe_throw_at(atom/target, range, speed, mob/thrower, spin = FALSE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, mob/living/preserve_pull = null)
 	if((force < (move_resist * MOVE_FORCE_THROW_RATIO)) || (move_resist == INFINITY))
 		return
+	if(isliving(src) && preserve_pull)
+		var/mob/living/L = src
+		return L.throw_at(target, range, speed, thrower, spin, diagonals_first, callback, force, preserve_pull = preserve_pull)
 	return throw_at(target, range, speed, thrower, spin, diagonals_first, callback, force)
 
 /atom/movable/proc/throw_at(atom/target, range, speed, mob/thrower, spin = FALSE, diagonals_first = FALSE, datum/callback/callback, force = MOVE_FORCE_STRONG, extra = FALSE, jumping = FALSE) //If this returns FALSE then callback will not be called.
@@ -1333,3 +1341,7 @@ GLOBAL_VAR_INIT(pixel_diff_time, 1)
 			SSspatial_grid.remove_grid_awareness(movable_loc, SPATIAL_GRID_CONTENTS_TYPE_CLIENTS)
 		ASSOC_UNSETEMPTY(recursive_contents, RECURSIVE_CONTENTS_CLIENT_MOBS)
 		UNSETEMPTY(movable_loc.important_recursive_contents)
+
+/// Directly accessible crafting materials exposed by structures such as carts.
+/atom/movable/proc/get_crafting_contents()
+	return null

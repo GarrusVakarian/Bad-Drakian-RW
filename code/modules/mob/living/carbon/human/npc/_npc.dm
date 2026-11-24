@@ -892,13 +892,13 @@
 	// we always try to move our grab into our offhand where possible, so no need to worry about main-hand weapons
 	var/obj/item/grabbing/the_grab = OffWeapon
 	if(istype(the_grab)) // if we already have a grab in our offhand, we might want to use it
-		if(prob(use_grab_chance) && the_grab.grabbee == victim) // already pulling, fuck with them a bit
+		if(the_grab.grabbed == victim && the_grab.grabbee == src && prob(use_grab_chance))
 			swap_hand() // switch to grab
-			if(grab_state < GRAB_AGGRESSIVE && prob(upgrade_grab_chance)) // upgrade!
+			if(the_grab.grab_state < GRAB_AGGRESSIVE && prob(upgrade_grab_chance)) // upgrade!
 				stamina_add(rand(7,15))
 				victim.grippedby(src)
-				return TRUE // used our turn
-			npc_try_use_grab(victim, the_grab) // twist, smash, choke, whatever
+			else
+				npc_try_use_grab(victim, the_grab) // twist, smash, choke, whatever
 			swap_hand() // switch back to mainhand to avoid fucking up the rest of combat
 			return TRUE // and end turn
 	else if(!OffWeapon && !Weapon?.wielded && prob(make_grab_chance)) // grab with our empty offhand instead of attack

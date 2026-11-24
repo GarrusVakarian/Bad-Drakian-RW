@@ -49,6 +49,10 @@
 	var/datum/dna/dna = null //Carbon
 	///last mind to control this mob, for blood-based cloning
 	var/datum/mind/last_mind = null
+	/// Account controlling this body when it died, even if its mind later leaves.
+	var/corpse_player_ckey
+	/// The account's character spawn generation when this body died.
+	var/corpse_player_spawn_generation
 
 	///This is used to determine if the mob failed a breath. If they did fail a brath, they will attempt to breathe each tick, otherwise just once per 4 ticks.
 	var/failed_last_breath = 0

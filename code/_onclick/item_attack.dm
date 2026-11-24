@@ -259,6 +259,8 @@
 							span_boldwarning("I'm disarmed by [user]!"))
 			return
 
+	var/turf/enchantment_hit_origin = get_turf(M)
+	var/health_before_hit = M.health
 	if(M.attacked_by(src, user))
 		if(user.used_intent == cached_intent)
 			var/tempsound = user.used_intent.hitsound
@@ -267,9 +269,11 @@
 			else
 				playsound(M.loc,  "nodmg", 100, FALSE, -1)
 
+	if(!QDELETED(M) && M.health < health_before_hit)
+		SEND_SIGNAL(src, COMSIG_ITEM_ENCHANTMENT_HIT, M, user)
 	log_combat(user, M, "attacked", src.name, "(INTENT: [uppertext(user.used_intent.name)]) (DAMTYPE: [uppertext(damtype)]) (AIMED: [uppertext(parse_zone(user.zone_selected))])")
 
-	execute_cleave(user, get_turf(M), M)
+	execute_cleave(user, enchantment_hit_origin, M)
 
 	add_fingerprint(user)
 
@@ -333,12 +337,15 @@
 		if(L.mind)
 			L.mind.attackedme[user.real_name] = world.time
 
+		var/health_before_hit = L.health
 		if(L.attacked_by(src, user))
 			cleave_targets_hit++
 			var/tempsound = user.used_intent?.hitsound
 			if(tempsound)
 				playsound(L.loc, tempsound, 100, FALSE, -1)
 			log_combat(user, L, "cleaved", src.name, zone = user.zone_selected, intent = user.used_intent.name)
+		if(!QDELETED(L) && L.health < health_before_hit)
+			SEND_SIGNAL(src, COMSIG_ITEM_ENCHANTMENT_HIT, L, user)
 	cleave_sharpness_mult = 1
 
 /atom/movable/proc/attacked_by()

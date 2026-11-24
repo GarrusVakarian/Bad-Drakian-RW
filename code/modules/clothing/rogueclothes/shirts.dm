@@ -819,11 +819,6 @@
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
 
-/obj/item/clothing/suit/roguetown/shirt/undershirt/easttats/examine(mob/user)
-	. = ..()
-	. -= span_info("This object can be repaired using <b>Sewing</b> and a needle.")
-	. += span_info("These tattoos slowly mend themselves after a minute without taking damage.")
-
 /obj/item/clothing/suit/roguetown/shirt/undershirt/easttats/dropped(mob/living/carbon/human/user)
 	. = ..()
 	if(QDELETED(src))

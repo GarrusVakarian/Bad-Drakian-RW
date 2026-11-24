@@ -508,6 +508,63 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 		to_chat(completer, span_notice("The reward is credited to [owner_name]."))
 		to_chat(receiver, span_notice("+[amount] Favor from a completed quest token you created."))
 
+	if(!HAS_TRAIT(receiver, TRAIT_CLERGYRADICAL))
+		return
+
+	var/patron_group
+	if(istype(receiver.patron, /datum/patron/divine))
+		patron_group = /datum/patron/divine
+	else if(istype(receiver.patron, /datum/patron/inhumen))
+		patron_group = /datum/patron/inhumen
+	else
+		return
+
+	var/shared_favor = round(amount / 3)
+	if(shared_favor < 1)
+		return
+
+	var/patron_label = _eclectic_quest_patron_label(receiver.patron)
+	for(var/mob/living/carbon/human/H as anything in GLOB.human_list)
+		if(H == receiver || QDELETED(H) || !HAS_TRAIT(H, TRAIT_CLERGYRADICAL) || !istype(H.patron, patron_group))
+			continue
+		if(H.mind?.current != H || !H.mind.key || ckey(H.mind.key) == owner_ckey)
+			continue
+		H.church_favor += shared_favor
+		if(H.client)
+			to_chat(H, span_notice("[patron_label] Eclectic completed a quest. I gain [shared_favor] Favor."))
+
+/proc/_eclectic_quest_patron_label(datum/patron/patron)
+	switch(patron.type)
+		if(/datum/patron/divine/astrata)
+			return "An Astratan"
+		if(/datum/patron/divine/noc)
+			return "A Noccian"
+		if(/datum/patron/divine/dendor)
+			return "A Dendorite"
+		if(/datum/patron/divine/abyssor)
+			return "An Abyssorite"
+		if(/datum/patron/divine/ravox)
+			return "A Ravoxian"
+		if(/datum/patron/divine/necra)
+			return "A Necran"
+		if(/datum/patron/divine/xylix)
+			return "A Xylixian"
+		if(/datum/patron/divine/pestra)
+			return "A Pestran"
+		if(/datum/patron/divine/malum)
+			return "A Malumite"
+		if(/datum/patron/divine/eora)
+			return "An Eoran"
+		if(/datum/patron/inhumen/zizo)
+			return "A Zizite"
+		if(/datum/patron/inhumen/matthios)
+			return "A Matthiosan"
+		if(/datum/patron/inhumen/graggar)
+			return "A Graggarite"
+		if(/datum/patron/inhumen/baotha)
+			return "A Baothan"
+	return "A fellow"
+
 /obj/item/quest_token/proc/_ensure_attacker(user)
 	if(!istype(user, /mob/living/carbon/human))
 		return FALSE
@@ -516,6 +573,9 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 	return TRUE
 
 /obj/item/quest_token/proc/_ensure_target_player(H, user)
+	if(H == user)
+		to_chat(user, span_warning("Choose another player for this quest."))
+		return FALSE
 	if(!istype(H, /mob/living/carbon/human))
 		to_chat(user, span_warning("Target must be a person."))
 		return FALSE
@@ -524,7 +584,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 		to_chat(user, span_warning("Target must be a player."))
 		return FALSE
 	if(HAS_TRAIT(HH, TRAIT_CLERGYRADICAL))
-		to_chat(user, span_warning("Radical clergy cannot be used as quest targets."))
+		to_chat(user, span_warning("Eclectic clergy cannot be used as quest targets."))
 		return FALSE
 	if(_has_quest_target_mark(HH))
 		to_chat(user, span_warning("This target is already marked by a previous quest."))
@@ -542,7 +602,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 /obj/item/quest_token/proc/_complete_target_quest(mob/living/carbon/human/H, mob/living/carbon/human/user)
 	if(!istype(H, /mob/living/carbon/human)) return FALSE
 	if(!istype(user, /mob/living/carbon/human)) return FALSE
-	if(QDELETED(src)) return FALSE
+	if(QDELETED(src) || H == user) return FALSE
 
 	if(!_check_distance(user, H))
 		return FALSE
@@ -550,12 +610,6 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 	if(_has_quest_target_mark(H))
 		to_chat(user, span_warning("This target is already marked by a previous quest."))
 		return FALSE
-
-	if(H == user)
-		_apply_parish_boon(H)
-		_payout(reward_amount, user)
-		qdel(src)
-		return TRUE
 
 	if(_quest_user_in_combat_mode(user))
 		user.visible_message(
@@ -675,37 +729,47 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 /obj/item/quest_token/coin_chest
 	name = "tithe chest"
-	desc = "Feed it with mammon. It is consumed only when the tithe is completed."
+	desc = "Collect mammon for the tithe. At least one other player must contribute."
 	icon_state = "questbox"
 	var/sum = 0
 	var/required_sum = 250
+	var/has_outside_donation = FALSE
 
 /obj/item/quest_token/coin_chest/attackby(I, user, params)
-	if(!I) return
-	if(!_ensure_attacker(user)) return
+	if(!I || !_ensure_attacker(user))
+		return
+	if(istype(I, /obj/item/roguecoin/gilbranze) || istype(I, /obj/item/roguecoin/inqcoin))
+		return
+	if(!istype(I, /obj/item/roguecoin))
+		return ..()
 	var/mob/living/carbon/human/U = user
-
-	if(_has_quest_target_mark(U))
-		to_chat(U, span_warning("You are already marked by a previous quest."))
+	if(!U.client || !length(owner_ckey))
 		return
 
-	if(istype(I, /obj/item/roguecoin/gilbranze)) return
-	if(istype(I, /obj/item/roguecoin/inqcoin)) return
-
-	if(istype(I, /obj/item/roguecoin))
-		var/obj/item/roguecoin/C = I
-		sum += C.get_real_price()
-		qdel(C)
-
-		to_chat(U, span_notice("Deposited. Current tithe: [sum]."))
-
-		if(sum >= required_sum)
-			to_chat(U, span_notice("The chest accepts the tithe."))
-			_payout(reward_amount, U)
-			qdel(src)
+	var/outside_donation = U.client.ckey != owner_ckey
+	if(sum >= required_sum && !outside_donation)
+		to_chat(U, span_notice("The tithe has enough mammon. Ask another player to contribute."))
 		return
 
-	..()
+	var/obj/item/roguecoin/C = I
+	var/value = C.get_real_price()
+	if(value <= 0)
+		return
+	var/complete = sum + value >= required_sum && (has_outside_donation || outside_donation)
+	if(complete && !_find_owner_mob())
+		to_chat(U, span_warning("Wait for [owner_name] to return before completing the tithe."))
+		return
+
+	sum += value
+	has_outside_donation = has_outside_donation || outside_donation
+	qdel(C)
+	to_chat(U, span_notice("Deposited. Current tithe: [sum]."))
+	if(complete)
+		to_chat(U, span_notice("The chest accepts the tithe."))
+		_payout(reward_amount, U)
+		qdel(src)
+	else if(sum >= required_sum)
+		to_chat(U, span_notice("Ask another player to contribute to complete the tithe."))
 
 /obj/item/quest_token/reliquary
 	name = "sealed reliquary"
@@ -880,7 +944,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 /obj/item/quest_token/donation_box
 	name = "offering coffer"
-	desc = "Accepts one designated offering."
+	desc = "Ask another player to place a requested offering inside."
 	icon_state = "questbox"
 	var/list/need_types = list()
 	var/collected = FALSE
@@ -890,14 +954,19 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 	if(!_ensure_attacker(user)) return
 
 	var/mob/living/carbon/human/U = user
-	if(_has_quest_target_mark(U))
-		to_chat(U, span_warning("You are already marked by a previous quest."))
+	if(!U.client || !length(owner_ckey))
+		return
+	if(U.client.ckey == owner_ckey)
+		to_chat(U, span_notice("Ask another player to place the offering in the coffer."))
 		return
 
 	for(var/T in need_types)
 		if(istype(I, T))
-			qdel(I)
+			if(!_find_owner_mob())
+				to_chat(U, span_warning("Wait for [owner_name] to return before making the offering."))
+				return
 			collected = TRUE
+			qdel(I)
 			to_chat(U, span_notice("The offering is accepted."))
 			_payout(reward_amount, U)
 			qdel(src)
@@ -1149,7 +1218,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 		tithe_diffs[dn4] = list(
 			"diff"       = dn4,
-			"desc"       = "Donate at least [need_sum] mammon into the chest.",
+			"desc"       = "Collect at least [need_sum] mammon in the chest, with a donation from another player.",
 			"reward"     = rew4,
 			"token_path" = /obj/item/quest_token/coin_chest,
 			"params"     = list("required_sum" = need_sum),
@@ -1272,7 +1341,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 		donate_diffs[dn7] = list(
 			"diff"       = dn7,
-			"desc"       = "Place ONE offering into the coffer - ANY of: [items_desc_txt].",
+			"desc"       = "Ask another player to place one of these offerings into the coffer: [items_desc_txt].",
 			"reward"     = rew7,
 			"token_path" = /obj/item/quest_token/donation_box,
 			"params"     = list("need_types" = picked_types),

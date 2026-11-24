@@ -57,6 +57,15 @@ There are several things that need to be remembered:
 			jazz += 2
 	return jazz
 
+/// Choose clothing variants per wearer without mutating shared species settings.
+/mob/living/carbon/proc/get_custom_clothing_id()
+	var/datum/species/species = dna?.species
+	if(!istype(species) || !species.custom_clothes)
+		return null
+	if(istype(species, /datum/species/arachnid) && !bodyparts_by_zone[BODY_ZONE_TAUR])
+		return null
+	return species.clothes_id
+
 /mob/living/carbon/human/update_body()
 	var/obj/item/bodypart/head/HD = get_bodypart(BODY_ZONE_HEAD)
 	var/new_cache_key = "[HD ? HD.skeletonized : "nohead"]|[HAS_TRAIT(src, TRAIT_HUSK)]|[lip_style]|[lip_color]|[gender]|[dna?.species?.hairyness]|[hair_color]"
@@ -94,6 +103,8 @@ There are several things that need to be remembered:
 		return ..("Generic_mob_burning")
 	else
 		var/burning = dna.species.enflamed_icon
+		if(isarachnid(src) && !bodyparts_by_zone[BODY_ZONE_TAUR])
+			burning = "Standing"
 		if(!burning)
 			return ..("widefire")
 		return ..(burning)
@@ -465,8 +476,7 @@ There are several things that need to be remembered:
 		if(dna && dna.species.sexes)
 			var/racecustom
 			var/mutable_appearance/gloves_overlay
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			var/armsindex = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
 			if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
 				gloves_overlay = gloves.build_worn_icon(default_layer = GLOVES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, sleeveindex = armsindex)
@@ -519,8 +529,7 @@ There are several things that need to be remembered:
 		update_observer_view(wear_wrists,1)
 		if(dna && dna.species.sexes)
 			var/racecustom
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			var/armsindex = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
 			var/mutable_appearance/wrists_overlay
 			if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
@@ -636,37 +645,95 @@ There are several things that need to be remembered:
 			if(hud_used.inventory_shown)			//if the inventory is open
 				client.screen += shoes					//add it to client's screen
 		update_observer_view(shoes,1)
-		if(dna && dna.species.sexes)
-			var/footindex = get_limbloss_index(LEG_RIGHT, LEG_LEFT)
-			var/racecustom
-			var/mutable_appearance/shoes_overlay
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
-			if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
-				shoes_overlay = shoes.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = footindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
-			else
-				shoes_overlay = shoes.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, sleeveindex = footindex, clip_mask = c_mask)
+	var/obj/item/clothing/decoration = get_talon_decoration()
+	var/obj/item/clothing/shoes/visible_footwear = istype(decoration, /obj/item/clothing/shoes) ? decoration : null
+	if(shoes && dna && !(DIGITIGRADE in dna.species.species_traits))
+		visible_footwear = shoes
+	if(visible_footwear && dna && dna.species.sexes)
+		var/footindex = get_limbloss_index(LEG_RIGHT, LEG_LEFT)
+		var/racecustom
+		var/mutable_appearance/shoes_overlay
+		racecustom = get_custom_clothing_id()
+		if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
+			shoes_overlay = visible_footwear.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = footindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
+		else
+			shoes_overlay = visible_footwear.build_worn_icon(default_layer = SHOES_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = FALSE, customi = racecustom, sleeveindex = footindex, clip_mask = c_mask)
 
-			if(OFFSET_SHOES in dna.species.offset_features)
-				shoes_overlay.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
-				shoes_overlay.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
+		if(OFFSET_SHOES in dna.species.offset_features)
+			shoes_overlay.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
+			shoes_overlay.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
+		var/datum/status_effect/tied_laces/laces
+		if(visible_footwear == shoes)
+			laces = has_status_effect(/datum/status_effect/tied_laces)
+		if(laces)
+			overlays_standing[SHOES_LAYER] = list(shoes_overlay, laces.get_overlay())
+		else
 			overlays_standing[SHOES_LAYER] = shoes_overlay
 
-			//add sleeve overlays, then offset
-			var/list/sleeves = list()
-			if(shoes.sleeved && footindex > 0 && !should_hide_sleeves_for_layer(SHOESLEEVE_LAYER))
-				sleeves = get_sleeves_layer(shoes,footindex,SHOESLEEVE_LAYER)
-			if(sleeves)
-				for(var/mutable_appearance/S as anything in sleeves)
-					if(OFFSET_SHOES in dna.species.offset_features)
-						S.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
-						S.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
+		//add sleeve overlays, then offset
+		var/list/sleeves = list()
+		if(visible_footwear.sleeved && footindex > 0 && !should_hide_sleeves_for_layer(SHOESLEEVE_LAYER))
+			sleeves = get_sleeves_layer(visible_footwear,footindex,SHOESLEEVE_LAYER)
+		if(sleeves)
+			for(var/mutable_appearance/S as anything in sleeves)
+				if(OFFSET_SHOES in dna.species.offset_features)
+					S.pixel_x += dna.species.offset_features[OFFSET_SHOES][1]
+					S.pixel_y += dna.species.offset_features[OFFSET_SHOES][2]
 
-				overlays_standing[SHOESLEEVE_LAYER] = sleeves
+			overlays_standing[SHOESLEEVE_LAYER] = sleeves
+	else if(istype(decoration, /obj/item/clothing/neck/roguetown) && dna?.species?.sexes)
+		overlays_standing[SHOES_LAYER] = build_talon_amulet_overlays(decoration)
 
 	rebuild_obscured_flags()
 	apply_overlay(SHOES_LAYER)
 	apply_overlay(SHOESLEEVE_LAYER)
+
+/mob/living/carbon/human/proc/update_talon_amulet_for_arm_change()
+	var/obj/item/clothing/neck/roguetown/psicross/amulet = get_talon_decoration()
+	if(istype(amulet) && amulet.uses_talon_wrist_sprite())
+		update_inv_shoes()
+
+/// Cache the decoration with the footwear overlays so removing it also clears its visible sprite.
+/mob/living/carbon/human/proc/build_talon_amulet_overlays(obj/item/clothing/neck/roguetown/amulet)
+	var/obj/item/clothing/neck/roguetown/psicross/cross = amulet
+	var/on_wrist = istype(cross) && cross.uses_talon_wrist_sprite()
+	if(istype(cross))
+		cross.set_wrist_sprite(on_wrist)
+
+	var/mutable_appearance/jewelry
+	var/list/sleeves
+	var/offset
+	if(on_wrist)
+		var/arms = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
+		if(arms == 1) // The limb index starts at one even when no limbs remain.
+			return null
+		var/female_sprite = ((gender == FEMALE && !dna.species.use_m) || dna.species.use_f) && icon_exists(amulet.mob_overlay_icon, "[amulet.icon_state]_f")
+		var/wrist_state
+		if(arms < 4)
+			var/side = arms == 2 ? "r" : "l"
+			wrist_state = "[side]_[amulet.icon_state]"
+			if(female_sprite && icon_exists(amulet.mob_overlay_icon, "[wrist_state]_f"))
+				wrist_state += "_f"
+			if(!icon_exists(amulet.mob_overlay_icon, wrist_state))
+				return null
+		jewelry = amulet.build_worn_icon(default_layer = WRISTS_LAYER, override_state = wrist_state, female = female_sprite, sleeveindex = arms)
+		jewelry.layer = -WRISTS_LAYER
+		if(amulet.sleeved && !should_hide_sleeves_for_layer(WRISTSLEEVE_LAYER))
+			sleeves = get_sleeves_layer(amulet, arms, WRISTSLEEVE_LAYER)
+		offset = gender == MALE ? OFFSET_WRISTS : OFFSET_WRISTS_F
+	else
+		jewelry = amulet.build_worn_icon(default_layer = NECK_LAYER)
+		offset = gender == MALE ? OFFSET_NECK : OFFSET_NECK_F
+
+	var/list/appearance_parts = list(jewelry)
+	if(length(sleeves))
+		appearance_parts += sleeves
+	var/list/position = dna.species.offset_features[offset]
+	if(position)
+		for(var/mutable_appearance/part as anything in appearance_parts)
+			part.pixel_x += position[1]
+			part.pixel_y += position[2]
+	return appearance_parts
 
 /mob/living/carbon/human/update_inv_s_store()
 /*
@@ -883,13 +950,12 @@ There are several things that need to be remembered:
 			if(dna && dna.species.sexes)
 				var/racecustom
 				var/mutable_appearance/mbeltoverlay
-				if(dna.species.custom_clothes)
-					racecustom = dna.species.clothes_id
+				racecustom = get_custom_clothing_id()
 				if((gender == FEMALE && !dna.species.use_m) || dna.species.use_f)
 					mbeltoverlay = belt.build_worn_icon(default_layer = BELT_LAYER, default_icon_file = 'icons/roguetown/clothing/onmob/belts.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay())
 				else
 					mbeltoverlay = belt.build_worn_icon(default_layer = BELT_LAYER, default_icon_file = 'icons/roguetown/clothing/onmob/belts.dmi', female = FALSE, customi = racecustom)
-				if(mbeltoverlay && !dna.species.custom_clothes)
+				if(mbeltoverlay && !racecustom)
 					if(gender == MALE)
 						if(OFFSET_BELT in dna.species.offset_features)
 							mbeltoverlay.pixel_x += dna.species.offset_features[OFFSET_BELT][1]
@@ -1182,8 +1248,7 @@ There are several things that need to be remembered:
 		if(dna && dna.species.sexes)
 			var/racecustom
 			var/mutable_appearance/cloak_overlay
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			if(gender == FEMALE && !dna.species.use_m)
 				cloak_overlay = cloak.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = worn_cloak_mask)
 			else
@@ -1247,8 +1312,7 @@ There are several things that need to be remembered:
 		if(dna && dna.species.sexes)
 			var/racecustom
 			var/mutable_appearance/cloak_overlay
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			if(gender == FEMALE && !dna.species.use_m)
 				cloak_overlay = backr.build_worn_icon(default_layer = CLOAK_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
 			else
@@ -1326,8 +1390,7 @@ There are several things that need to be remembered:
 			var/mutable_appearance/shirt_overlay
 			var/armsindex = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
 			var/racecustom
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			if(dna.species.use_f || (gender == FEMALE && !dna.species.use_m))
 				shirt_overlay = wear_shirt.build_worn_icon(default_layer = SHIRT_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = armsindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
 			else
@@ -1425,8 +1488,7 @@ There are several things that need to be remembered:
 			var/racecustom
 			var/armsindex = get_limbloss_index(ARM_RIGHT, ARM_LEFT)
 			var/mutable_appearance/armor_overlay
-			if(dna.species.custom_clothes)
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			var/desired_gender_render = gender
 			if(dna.species.use_f)
 				desired_gender_render = FEMALE
@@ -1528,8 +1590,7 @@ There are several things that need to be remembered:
 			if(isharpy(src))
 				clip_mask_init = icon(icon = 'icons/roguetown/mob/bodies/f/harpy.dmi', icon_state = "harpy_clipmask")
 				c_mask = clip_mask_init
-			if(dna.species.custom_clothes) // should prolly make it a separate limb or just use clipmask then
-				racecustom = dna.species.clothes_id
+			racecustom = get_custom_clothing_id()
 			if(gender == FEMALE && !dna.species.use_m)
 				pants_overlay = wear_pants.build_worn_icon(default_layer = PANTS_LAYER, default_icon_file = 'icons/mob/clothing/feet.dmi', female = TRUE, customi = racecustom, sleeveindex = legsindex, boobed_overlay = has_boobed_overlay(), clip_mask = c_mask)
 			else
@@ -1914,8 +1975,7 @@ generate/load female uniform sprites matching all previously decided variables
 			sleeveindex -= 2
 
 	var/racecustom
-	if(dna.species.custom_clothes)
-		racecustom = dna.species.clothes_id
+	racecustom = get_custom_clothing_id()
 	var/index = "[I.icon_state][((gender == FEMALE && !dna.species.use_m)|| dna.species.use_f) ? "_f" : ""][racecustom ? "_[racecustom]" : ""]"
 	var/static/list/bloody_r = list()
 	var/static/list/bloody_l = list()
@@ -2032,6 +2092,10 @@ generate/load female uniform sprites matching all previously decided variables
 
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		. += BP.generate_limb_cache_key(hideaux = should_hide_bodypart_aux(BP))
+
+	// Tail organs and tail features both select their sprite from this state.
+	var/obj/item/organ/tail/tail = getorganslot(ORGAN_SLOT_TAIL)
+	. += "tail-wag:[!!tail?.wagging]"
 
 	. += "[obscured_flags]"	//features are drawn through is_visible(), which reads this
 	// These change organ visibility/layers without changing clothing or organ appearance keys.

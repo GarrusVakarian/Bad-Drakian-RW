@@ -57,7 +57,7 @@
 	..()
 	H.adjust_blindness(-3)
 	belt = /obj/item/storage/belt/rogue/leather
-	beltl = /obj/item/roguekey/tavern
+	belt_contents = list(/obj/item/roguekey/tavern = 1)
 	beltr = /obj/item/rogueweapon/huntingknife/cleaver
 	backr = /obj/item/storage/backpack/rogue/satchel
 	cloak = /obj/item/clothing/cloak/apron/cook
@@ -77,12 +77,6 @@
 		/obj/item/recipe_book/survival,
 		/obj/item/mini_flagpole/innkeeper,
 	)
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
 
 /datum/outfit/job/roguetown/cook/choose_loadout(mob/living/carbon/human/H)
 	. = ..()

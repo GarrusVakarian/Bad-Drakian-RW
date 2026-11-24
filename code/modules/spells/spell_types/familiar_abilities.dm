@@ -41,16 +41,23 @@
 
 	if(!summoner || !isliving(summoner) || !summoner.mind)
 		to_chat(user, span_warning("You cannot sense your summoner's mind."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 
-	var/message = sanitize(input(user, "You make a connection. What are you trying to say?"))
+	var/raw_message = input(user, "You make a connection. What are you trying to say?") as text|null
+	var/message = sanitize(raw_message)
+	if(QDELETED(user))
+		return FALSE
 	if(!message)
-		revert_cast()
+		revert_cast(user)
+		return FALSE
+	if(QDELETED(summoner) || user.familiar_summoner != summoner || !summoner.mind)
+		to_chat(user, span_warning("You cannot sense your summoner's mind."))
+		revert_cast(user)
 		return FALSE
 	to_chat_immediate(summoner, "Arcane whispers fill the back of my head, resolving into [user.real_name]'s voice: <font color=#7246ff>[message]</font>")
 	user.visible_message("[user.name] mutters an incantation and their mouth briefly flashes white.")
-	user.whisper(message)
+	user.whisper(raw_message)
 	log_game("[key_name(user)] sent a message to [key_name(summoner)] with contents [message]")
 	return TRUE
 

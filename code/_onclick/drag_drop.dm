@@ -74,6 +74,8 @@
 	var/show_lobby_ooc = TRUE // Admin preference: see lobby OOC even when not in lobby
 	var/charge_start_time = 0
 	var/charge_start_timeofday = 0
+	/// Spell that earned the current mouse charge, retained until release is handled.
+	var/obj/effect/proc_holder/spell/charging_spell
 	var/last_cooldown_warn = 0
 	var/charge_was_blocked_by_cooldown = FALSE
 
@@ -82,6 +84,7 @@
 
 /client/MouseDown(object, location, control, params)
 	charge_was_blocked_by_cooldown = FALSE
+	charging_spell = null
 	var/list/modifiers = params2list(params)
 
 	if(mob.incapacitated())
@@ -109,6 +112,8 @@
 	mob.atkswinging = null
 	charging = 0
 	chargedprog = 0
+	progress = 0
+	goal = 0
 
 	if(was_charging)
 		STOP_PROCESSING(SSmousecharge, src)
@@ -167,6 +172,9 @@
 		mob.used_intent = mob.mmb_intent
 		if(mob.used_intent.type == INTENT_SPELL && mob.ranged_ability)
 			var/obj/effect/proc_holder/spell/S = mob.ranged_ability
+			// Mouse-up handles a revival rite's self-target as private instructions.
+			if(object == mob && istype(S, /obj/effect/proc_holder/spell/invoked/revival_rite))
+				return
 			if(!S.cast_check(TRUE, mob))
 				return
 
@@ -198,6 +206,9 @@
 
 /mob
 	var/datum/intent/curplaying
+
+/atom/proc/should_click_on_mouse_up(atom/original_object)
+	return TRUE
 
 /client/MouseUp(object, location, control, params)
 	var/was_charging
@@ -248,7 +259,8 @@
 
 	if(tcompare)
 		var/atom/target_atom = object
-		if(istype(target_atom) && tcompare != mob && (mob.atkswinging == "middle" || mob.used_intent?.tranged || (mob.atkswinging && object != tcompare)))
+		var/is_spell_release = mob.atkswinging == "middle" && mob.used_intent?.type == INTENT_SPELL && istype(mob.ranged_ability, /obj/effect/proc_holder/spell/invoked)
+		if(istype(target_atom) && target_atom.should_click_on_mouse_up(tcompare) && (tcompare != mob || is_spell_release) && (mob.atkswinging == "middle" || mob.used_intent?.tranged || (mob.atkswinging && object != tcompare)))
 			target_atom.Click(location, control, params)
 		tcompare = null
 
@@ -278,6 +290,8 @@
 		charge_start_timeofday = world.timeofday
 		sections = null //commented //From what I can tell, this used to be for the mouse icon changing per % of the cast.
 		goal = L.used_intent.get_chargetime() //How much charge to get in order to cast
+		if(L.used_intent.type == INTENT_SPELL)
+			charging_spell = L.ranged_ability
 		part = 1
 		lastplayed = 0
 		doneset = 0

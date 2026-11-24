@@ -25,6 +25,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		// Apply the stuff if we dont have a job for some reason
 		apply_character_post_equipment(character, player)
 		character.schedule_getting_started_reminder()
+		character.add_credit()
 		return
 	if(length(job.advclass_cat_rolls))
 		// Dont apply the stuff, let adv class handler do it later
@@ -32,6 +33,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	// Apply the stuff if we have a job that has no adv classes
 	apply_character_post_equipment(character, player)
 	character.schedule_getting_started_reminder()
+	character.add_credit()
 
 /proc/apply_character_post_equipment(mob/living/carbon/human/character, client/player)
 	if(!player)
@@ -52,8 +54,10 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		var/datum/loadout_item/item = player.prefs.vars[slot == 1 ? "loadout" : "loadout[slot]"]
 		if(!item)
 			continue
-		var/custom_name = player.prefs.vars["loadout_[slot]_name"]
-		var/display_name = custom_name ? custom_name : item.name
+		var/custom_name = player.prefs.get_loadout_text(slot, is_name = TRUE, preview = TRUE)
+		if(custom_name)
+			custom_name = trim(html_decode(GLOB.html_tags.Replace(custom_name, "")))
+		var/display_name = custom_name ? custom_name : format_text(item.name)
 		var/stash_key = display_name
 		var/suffix = 2
 		while(character.mind.special_items[stash_key])
@@ -65,6 +69,8 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 
 /proc/apply_voicepacks(mob/living/carbon/human/character, client/player)
 	if(!player?.prefs)
+		return
+	if(istype(character.dna?.species, /datum/species/dragon))
 		return
 	if(player.prefs.voice_pack != "Default")
 		var/datum/voicepack/VP = GLOB.voice_packs_list[player.prefs.voice_pack]

@@ -6,7 +6,9 @@
 	id = "arachnid"
 	clothes_id = "lamia"
 	desc = "<b>Arachnid</b><br>\
-	(+1 Strength, -1 Speed, Webwalk Trait, Longstrider Trait, Venomous Trait)"
+	Among shaded forests and quiet caverns, Arachnids weave homes of silk and patiently tend their broods. Many venture beyond these secluded places, seeking livelihoods among people who regard their many-legged neighbours with equal measures of curiosity and suspicion.<br>\
+	(+1 Strength, -1 Speed)<br>\
+	<a href='byond://winset?command=Racial-Features%20arachnid'>Racial Features: Arachnids</a><br>"
 
 	expanded_desc = ""
 
@@ -65,8 +67,13 @@
 		/datum/customizer/bodypart_feature/accessory,
 		/datum/customizer/bodypart_feature/face_detail,
 		/datum/customizer/bodypart_feature/underwear,
+		/datum/customizer/organ/tail/arachnid,
 		/datum/customizer/organ/tail_feature/anthro,
+		/datum/customizer/organ/tail/manticore/tailed,
+		/datum/customizer/organ/snout/anthro,
+		/datum/customizer/organ/ears/anthro,
 		/datum/customizer/organ/frills/anthro,
+		/datum/customizer/organ/neck_feature/anthro,
 		/datum/customizer/organ/testicles/anthro,
 		/datum/customizer_choice/organ/horns/anthro,
 		/datum/customizer/organ/penis/anthro,
@@ -140,7 +147,7 @@
 		/obj/item/bodypart/taur/ant,
 		/obj/item/bodypart/taur/wasp
 	)
-	forced_taur = TRUE
+	default_taur = TRUE
 
 /datum/species/arachnid/check_roundstart_eligible()
 	return TRUE
@@ -154,8 +161,9 @@
 	give_web_spells(arachnidcarbon)
 
 /datum/species/arachnid/proc/give_web_spells(mob/living/carbon/arachnidcarbon)
-	arachnidcarbon.AddSpell(new /obj/effect/proc_holder/spell/self/spin_web/thin)
-	arachnidcarbon.AddSpell(new /obj/effect/proc_holder/spell/self/spin_web/dense)
+	arachnidcarbon.AddSpell(new /obj/effect/proc_holder/spell/self/spin_web)
+	arachnidcarbon.AddSpell(new /obj/effect/proc_holder/spell/self/spin_silk_bed)
+	arachnidcarbon.AddSpell(new /obj/effect/proc_holder/spell/targeted/weave_rescue_cocoon)
 
 /datum/species/arachnid/on_species_loss(mob/living/carbon/arachnidcarbon) // one of those auto-appends a dot at the end of player speech
 	. = ..()
@@ -163,8 +171,9 @@
 	remove_web_spells(arachnidcarbon)
 
 /datum/species/arachnid/proc/remove_web_spells(mob/living/carbon/arachnidcarbon)
-	arachnidcarbon.RemoveSpell(/obj/effect/proc_holder/spell/self/spin_web/thin)
-	arachnidcarbon.RemoveSpell(/obj/effect/proc_holder/spell/self/spin_web/dense)
+	arachnidcarbon.RemoveSpell(/obj/effect/proc_holder/spell/self/spin_web)
+	arachnidcarbon.RemoveSpell(/obj/effect/proc_holder/spell/self/spin_silk_bed)
+	arachnidcarbon.RemoveSpell(/obj/effect/proc_holder/spell/targeted/weave_rescue_cocoon)
 
 /datum/species/arachnid/get_random_features()
 	var/list/returned = MANDATORY_FEATURE_LIST

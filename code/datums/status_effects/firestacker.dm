@@ -126,6 +126,7 @@
 
 	/// If we're on fire
 	var/on_fire = FALSE
+	var/last_stack_decay_at
 	/// Reference to the mob light emitter itself
 	var/obj/effect/dummy/lighting_obj/moblight
 	/// Type of mob light emitter we use when on fire
@@ -151,7 +152,8 @@
 	pass()
 
 /datum/status_effect/fire_handler/fire_stacks/tick(wait)
-	if(stacks <= 0)
+	// End negligible flames before their fixed damage can keep an owner incapacitated.
+	if(stacks <= 0.1)
 		qdel(src)
 		return TRUE
 
@@ -165,9 +167,14 @@
 	if(!(owner.mobility_flags & MOBILITY_STAND))
 		decay_multiplier *= STACK_DECAY_PRONE_MULTIPLIER
 
-	adjust_stacks(decay_multiplier * owner.fire_stack_decay_rate * STACK_DECAY_MULTIPLIER * wait * 0.1)
+	var/elapsed = world.time - last_stack_decay_at
+	last_stack_decay_at = world.time
+	var/stack_decay = decay_multiplier * owner.fire_stack_decay_rate * STACK_DECAY_MULTIPLIER * wait * 0.1
+	if(owner.stat == DEAD || owner.incapacitated(ignore_restraints = TRUE, ignore_grab = TRUE, ignore_stasis = TRUE))
+		stack_decay = min(stack_decay, -0.25 * elapsed * 0.1) // At least 0.5 stacks per two seconds.
+	adjust_stacks(stack_decay)
 
-	if(stacks <= 0)
+	if(stacks <= 0.1)
 		qdel(src)
 		return TRUE
 
@@ -213,9 +220,14 @@
  */
 
 /datum/status_effect/fire_handler/fire_stacks/proc/ignite(silent = FALSE)
+	// Hellspawn blocks ordinary ignition, not the magical fire subtypes.
+	if(type == /datum/status_effect/fire_handler/fire_stacks && HAS_TRAIT(owner, TRAIT_HELLSPAWN))
+		return FALSE
 	if(HAS_TRAIT(owner, TRAIT_NOFIRE))
 		return FALSE
 
+	if(!on_fire)
+		last_stack_decay_at = world.time
 	on_fire = TRUE
 	if(!silent)
 		owner.visible_message(span_warning("[owner] catches fire!"), span_userdanger("You're set on fire!"))

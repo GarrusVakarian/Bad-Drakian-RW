@@ -274,10 +274,6 @@
 	force = 5
 	throwforce = 10
 
-/obj/item/reagent_containers/glass/cup/ceramic/examine()
-	. = ..()
-	. += span_info("It can be brushed with a dye brush to glaze it.")
-
 /obj/item/reagent_containers/glass/cup/ceramic/attackby(obj/item/I, mob/living/carbon/human/user)
 	. = ..()
 	if(istype(I, /obj/item/dye_brush))

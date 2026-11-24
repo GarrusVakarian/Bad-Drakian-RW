@@ -71,7 +71,8 @@
 	Q.quest_scroll_ref = WEAKREF(spawned_scroll)
 	spawned_scroll.update_quest_text()
 
-	SStreasury.burn(SStreasury.get_account(user), deposit, "quest deposit")
+	if(deposit > 0)
+		SStreasury.burn(SStreasury.get_account(user), deposit, "quest deposit")
 
 /obj/structure/roguemachine/contractledger/proc/resolve_turnin_mode(mob/user, obj/item/quest_writ/scroll, mob/living/holder)
 	if(user in scroll.get_quest_assignees(user, TRUE))
@@ -114,6 +115,14 @@
 	var/deposit_return = completed_quest.calculate_deposit()
 	var/gross_reward = base_reward + deposit_return
 
+	var/datum/fund/rumor_referral_account
+	if(completed_quest.source == QUEST_SOURCE_RUMOR)
+		if(completed_quest.rumor_referral_issuer)
+			var/mob/issuer = completed_quest.rumor_referral_issuer.resolve()
+			rumor_referral_account = SStreasury.get_account(issuer)
+		else
+			rumor_referral_account = SStreasury.innkeeper_fund
+
 	var/quest_levy_exempt = completed_quest.levy_exempt
 	if(completed_quest.source == QUEST_SOURCE_TOWNER && hascall(completed_quest, "on_turn_in_pay_giver"))
 		call(completed_quest, "on_turn_in_pay_giver")(user, get_turf(src))
@@ -134,7 +143,7 @@
 		var/levy_rate = SStreasury.get_tax_rate(TAX_CATEGORY_CONTRACT_LEVY)
 		SStreasury.record_tax_exemption(TAX_CATEGORY_CONTRACT_LEVY, FLOOR(base_reward * levy_rate, 1))
 
-	var/guild_fee_paid = pay_innkeeper_referral_fees(benef_account, completed_quest, gross_reward)
+	var/guild_fee_paid = pay_innkeeper_referral_fees(benef_account, completed_quest, gross_reward, rumor_referral_account)
 
 	var/take_home = gross_reward - tax_amt - guild_fee_paid
 	SSquestpool.record_completion(user, completed_quest, take_home, tax_amt)
@@ -178,7 +187,8 @@
 	var/forfeited = matched_quest.calculate_deposit()
 	log_quest(user.ckey, user.mind, user, "Abandon [matched_quest.quest_type]")
 	SSquestpool.mark_abandoned(user, matched_quest, forfeited)
-	to_chat(user, span_warning("The contract is voided. Your deposit of [forfeited] mammon is forfeit."))
+	var/message = forfeited ? "The contract is voided. Your deposit of [forfeited] mammon is forfeit." : "The contract is voided."
+	to_chat(user, span_warning(message))
 	matched_scroll.assigned_quest = null
 	qdel(matched_quest)
 	qdel(matched_scroll)

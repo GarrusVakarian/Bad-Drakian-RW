@@ -157,10 +157,31 @@
  * * /turf/Initialize
  * * /turf/open/space/Initialize
  */
-/// Mechanics help lines for the extended examine of machines (ported roguemachines override this).
-/// Not yet surfaced anywhere in Ratwood's examine flow; overrides compile and can be wired later.
+/// Optional usage instructions displayed in the collapsed Mechanics section of examine.
 /atom/proc/get_mechanics_examine(mob/user)
 	return list()
+
+/// Build a private examine list; do not mutate lists cached by an examine override.
+/atom/proc/examine_with_mechanics(mob/user)
+	if(QDELETED(src) || !istype(user) || QDELETED(user))
+		return list()
+	var/list/result = examine(user)
+	if(!islist(result) || !length(result))
+		return list()
+	if(QDELETED(src) || QDELETED(user))
+		return result
+	var/list/mechanics = get_mechanics_examine(user)
+	if(!islist(mechanics) || !length(mechanics))
+		return result
+	var/list/lines = list()
+	for(var/line in mechanics)
+		if(istext(line) && length(line))
+			lines += "<span class='smallnotice'> - </span>[line]"
+	if(!length(lines))
+		return result
+	result = result.Copy()
+	result += "<details class='examine-mechanics'><summary><span class='smallnotice'>Mechanics</span></summary>[lines.Join("<br>")]</details>"
+	return result
 
 /atom/proc/Initialize(mapload, ...)
 	SHOULD_NOT_SLEEP(TRUE)

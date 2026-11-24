@@ -7,6 +7,8 @@
 	var/list/allowed_sexes
 	var/list/allowed_races = RACES_ALL_KINDS
 	var/list/disallowed_races = null
+	/// Dedicated combat subclasses use the shared species blacklist.
+	var/combat_role = FALSE
 	var/list/allowed_patrons
 	var/list/allowed_ages
 	var/pickprob = 100
@@ -71,6 +73,19 @@
 	set waitfor = FALSE
 	if(!H)
 		return FALSE
+	H.begin_armor_warning_setup()
+	try
+		. = equipme_with_deferred_armor_warning(H, dummy)
+	catch(var/exception/error)
+		if(!QDELETED(H))
+			H.end_armor_warning_setup(FALSE)
+		throw error
+	if(!QDELETED(H))
+		H.end_armor_warning_setup(!dummy)
+
+/datum/advclass/proc/equipme_with_deferred_armor_warning(mob/living/carbon/human/H, dummy = FALSE)
+	if(!dummy)
+		H.begin_credits_setup()
 
 	if(outfit)
 		H.equipOutfit(outfit, dummy)
@@ -135,6 +150,9 @@
 		if(H.dna?.species?.id == "gnoll")
 			// Gnolls should be built only from gnoll-specific prefs, not base-slot virtue/flaw/race bonus state.
 			H.apply_gnoll_preferences(FALSE)
+		else if(H.dna?.species?.id == "dragon")
+			// Dragons should also be built only from dragon-specific prefs, not base-slot virtue/flaw/race bonus state.
+			H.apply_dragon_preferences(FALSE)
 		else
 			apply_character_post_equipment(H)
 
@@ -151,9 +169,9 @@
 
 	if(!dummy)
 		H.schedule_getting_started_reminder()
+		H.add_credit()
 
 /datum/advclass/proc/post_equip(mob/living/carbon/human/H)
-	addtimer(CALLBACK(H,TYPE_PROC_REF(/mob/living/carbon/human, add_credit), TRUE), 20)
 	if(cmode_music)
 		H.cmode_music = cmode_music
 
@@ -181,6 +199,9 @@
 			local_allowed_sexes -= FEMALE
 			local_allowed_sexes += MALE
 	if(length(local_allowed_sexes) && !(H.gender in local_allowed_sexes))
+		return FALSE
+
+	if(combat_role && (H.dna.species.type in NO_COMBAT_RACES))
 		return FALSE
 
 	if(length(allowed_races) && !(H.dna.species.type in allowed_races))

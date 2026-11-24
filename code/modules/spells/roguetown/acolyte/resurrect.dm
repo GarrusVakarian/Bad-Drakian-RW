@@ -1,4 +1,109 @@
+/// Shared setup and read-only instructions for corpse revival rites.
+/obj/effect/proc_holder/spell/invoked/revival_rite
+	base_action = /datum/action/spell_action/spell/revival_rite
+	var/required_structure = /obj/structure/fluff/psycross
+	var/ritual_site_name = "a placed cross"
+	var/structure_range = 2
+	var/ritual_site_near_caster = FALSE
+	var/list/required_items
+	var/list/alt_required_items
+	var/item_radius = 1
+	var/ritual_offering_note
+
+/datum/action/spell_action/spell/revival_rite/Trigger()
+	var/obj/effect/proc_holder/spell/invoked/revival_rite/rite = target
+	if(owner && istype(rite) && !QDELETED(rite) && !IsAvailable())
+		rite.show_rite_instructions(owner)
+		return TRUE
+	return ..()
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/InterceptClickOn(mob/living/caller, params, atom/target)
+	if(target == caller && caller.ranged_ability == src && ranged_ability_user == caller)
+		var/list/modifiers = params2list(params)
+		if(modifiers["middle"])
+			show_rite_instructions(caller)
+			return TRUE
+	return ..()
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/get_current_required_items()
+	if(length(alt_required_items) && SSchimeric_tech.has_revival_cost_reduction())
+		return alt_required_items
+	return required_items
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/format_rite_offerings(list/recipe)
+	var/list/lines = list()
+	for(var/item_type in recipe)
+		var/count = recipe[item_type]
+		if(count > 0)
+			var/obj/item/offering = item_type
+			lines += "[count] × [initial(offering.name)]"
+	return lines.Join(", ")
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/show_rite_instructions(mob/user)
+	to_chat(user, span_notice(get_rite_instructions()))
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/get_rite_instructions()
+	var/list/lines = list("<b>[name] — Rite instructions</b>")
+	lines += length(req_items) ? "Carry a psycross and stand beside the corpse." : "Stand beside the corpse. No carried psycross is required."
+	if(ritual_site_near_caster)
+		lines += "Stand within [structure_range] tiles of [ritual_site_name], in line of sight."
+	else
+		lines += "Bring the corpse within [structure_range] tiles of [ritual_site_name], in line of sight."
+	var/list/recipe = get_current_required_items()
+	if(length(recipe))
+		lines += "<b>Offerings:</b> [format_rite_offerings(recipe)]."
+		if(ritual_offering_note)
+			lines += ritual_offering_note
+		lines += "Place the offerings on the floor on or next to the corpse. The rite consumes them on a successful revival."
+		if(recipe == alt_required_items)
+			lines += "<i>Enhance divine resurrection is active.</i>"
+	else
+		lines += "No offerings are required."
+	return lines.Join("<br>")
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/find_ritual_site(atom/center)
+	var/turf/origin = get_turf(center)
+	if(!origin)
+		return FALSE
+	// Center the visibility check on the corpse's tile, not its facing or vision.
+	for(var/atom/site in view(structure_range, origin))
+		if(istype(site, required_structure) && !QDELETED(site) && (isturf(site) || isturf(site.loc)))
+			return TRUE
+	return FALSE
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/matches_required_item(obj/item/offering, item_type)
+	return offering.type == item_type
+
+/// Select exact offerings from visible floor tiles. The caller consumes them only after revival.
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/check_rite_setup(mob/living/patient, mob/living/caster, list/offerings)
+	var/turf/origin = get_turf(patient)
+	if(!origin || !find_ritual_site(patient))
+		to_chat(caster, span_warning("I need [ritual_site_name] within [structure_range] tiles of [patient], in line of sight."))
+		return FALSE
+	var/list/recipe = get_current_required_items()
+	if(!length(recipe))
+		return TRUE
+	var/list/missing = recipe.Copy()
+	var/remaining = 0
+	for(var/item_type in missing)
+		remaining += missing[item_type]
+	for(var/obj/item/offering in view(item_radius, origin))
+		if(QDELETED(offering) || !isturf(offering.loc))
+			continue
+		for(var/item_type in missing)
+			if(missing[item_type] <= 0 || !matches_required_item(offering, item_type))
+				continue
+			offerings += offering
+			missing[item_type]--
+			remaining--
+			if(!remaining)
+				return TRUE
+			break
+	to_chat(caster, span_warning("Missing offerings: [format_rite_offerings(missing)]. Place them on the floor on or next to [patient], in line of sight."))
+	return FALSE
+
 /obj/effect/proc_holder/spell/invoked/resurrect
+	parent_type = /obj/effect/proc_holder/spell/invoked/revival_rite
 	name = "Anastasis"
 	overlay_state = "revive"
 	releasedrain = 90
@@ -17,12 +122,9 @@
 	miracle = TRUE
 	devotion_cost = 250
 	var/revive_pq = PQ_GAIN_REVIVE
-	var/required_structure = /obj/structure/fluff/psycross
-	var/required_items = list(/obj/item/clothing/neck/roguetown/psicross = 1)
-	var/alt_required_items = list(/obj/item/clothing/neck/roguetown/psicross = 1)
-	var/item_radius = 1
+	required_items = list(/obj/item/clothing/neck/roguetown/psicross = 1)
+	alt_required_items = list(/obj/item/clothing/neck/roguetown/psicross = 1)
 	var/debuff_type = /datum/status_effect/debuff/revived
-	var/structure_range = 1
 	var/harms_undead = TRUE
 	priest_excluded = TRUE
 	var/pestrian_freaks = FALSE
@@ -35,76 +137,49 @@
 		charge_counter = recharge_time
 	. = ..()
 
-/obj/effect/proc_holder/spell/invoked/resurrect/proc/get_current_required_items()
-	if(SSchimeric_tech.has_revival_cost_reduction() && length(alt_required_items))
-		return alt_required_items
-	return required_items
-
 /obj/effect/proc_holder/spell/invoked/resurrect/cast(list/targets, mob/living/user)
 	. = ..()
 	if(isliving(targets[1]))
 		var/mob/living/target = targets[1]
 
-		var/validation_result = validate_items(target)
-		if(validation_result != "")
-			to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
-			revert_cast()
+		var/list/offerings = list()
+		if(!check_rite_setup(target, user, offerings))
+			revert_cast(user)
 			return FALSE
-
-		var/found_structure = FALSE
-		var/list/search_area = oview(structure_range, target)
-
-		for(var/atom/A in search_area)
-			// Check if the atom itself is the required structure type
-			if(istype(A, required_structure))
-				found_structure = TRUE
-				break
-
-			if(istype(A, /turf))
-				var/turf/T = A
-				for(var/obj/O in T.contents)
-					if(istype(O, required_structure))
-						found_structure = TRUE
-						break // Found it in the turf, no need to check further
-			if(found_structure)
-				break
-
-		if(!found_structure)
-			var/atom/temp_structure = required_structure
-			to_chat(user, span_warning("I need a holy [initial(temp_structure.name)] near [target]."))
-			revert_cast()
-			return FALSE
-			//OV edit
-		if(istype(target, /mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob/suffering))
-			target.revive()
-			return TRUE
-		//OV edit
-		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-		if(underworld_spirit)
-			var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-			qdel(underworld_spirit)
-			ghost.mind.transfer_to(target, TRUE)
-		target.grab_ghost(force = TRUE)
+		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+		if(!ooze)
+			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+			if(underworld_spirit)
+				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+				qdel(underworld_spirit)
+				ghost.mind.transfer_to(target, TRUE)
+			target.grab_ghost(force = TRUE)
 		var/precheck_error = get_revival_precheck_error(target, user)
 		if(precheck_error)
 			to_chat(user, span_warning(precheck_error))
-			revert_cast()
+			revert_cast(user)
 			return FALSE
-		if(!target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
-			revert_cast()
+		if(!ooze && !target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
+			revert_cast(user)
 			return FALSE
-		if(target.mob_biotypes & MOB_UNDEAD && harms_undead) //positive energy harms the undead
+		if(!ooze && (target.mob_biotypes & MOB_UNDEAD) && harms_undead) //positive energy harms the undead
 			target.visible_message(
 				span_danger("[target] is unmade by divine magic!"),
 				span_userdanger("I'm unmade by divine magic!")
 			)
 			target.gib()
 			return TRUE
-		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
-		if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
-			to_chat(user, span_warning(get_revival_failure_message(target)))
-			revert_cast()
-			return FALSE
+		if(ooze)
+			target = ooze.revive_patient(targets)
+			if(!target)
+				revert_cast(user)
+				return FALSE
+		else
+			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
+			if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
+				to_chat(user, span_warning(get_revival_failure_message(target)))
+				revert_cast(user)
+				return FALSE
 		target.emote("breathgasp")
 		target.Jitter(100)
 		target.update_body()
@@ -112,15 +187,14 @@
 		if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
 			adjust_playerquality(revive_pq, user.ckey)
 			ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
-		target.mind.remove_antag_datum(/datum/antagonist/zombie)
+		target.mind?.remove_antag_datum(/datum/antagonist/zombie)
 		target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
-		if(debuff_type)
-			target.apply_status_effect(debuff_type)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
-		//Due to an increased cost and cooldown, these revival types heal quite a bit.
+		QDEL_LIST(offerings)
+		apply_revival_aftereffect(target)
+		// Due to the increased cost and cooldown, these revival types heal quite a bit.
 		target.apply_status_effect(/datum/status_effect/buff/healing, 14)
-		consume_items(target)
 		return TRUE
-	revert_cast()
+	revert_cast(user)
 	return FALSE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/cast_check(skipcharge,mob/user = usr)
@@ -129,61 +203,20 @@
 		return FALSE
 	return TRUE
 
-// Defaults retain the requirements and feedback of other resurrection miracles.
-/obj/effect/proc_holder/spell/invoked/resurrect/proc/matches_required_item(obj/item/I, item_type)
-	return I.type == item_type
-
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_precheck_error(mob/living/target, mob/living/user)
 	return null
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_failure_message(mob/living/target)
-	return "Nothing happens."
+	return "The body could not sustain revival. Check its injuries and vital organs."
 
-/obj/effect/proc_holder/spell/invoked/resurrect/proc/validate_items(atom/center)
-	var/list/current_required_items = get_current_required_items()
-	var/list/available_items = list()
-	var/list/missing_items = list()
-
-	// Scan for items in radius
-	for(var/obj/item/I in range(item_radius, center))
-		for(var/item_type in current_required_items)
-			if(matches_required_item(I, item_type))
-				available_items[item_type] += 1
-				break
-
-	// Check quantities and compile missing list
-	for(var/item_type in current_required_items)
-		var/needed = current_required_items[item_type]
-		var/have = available_items[item_type] || 0
-
-		if(have < needed) {
-			var/obj/item/I = item_type
-			var/amount_needed = needed - have
-			missing_items += "[amount_needed] [initial(I.name)][amount_needed > 1 ? "s" : ""] "
-		}
-
-	if(length(missing_items))
-		var/string = ""
-		for(var/item in missing_items)
-			string += item
-		return "Missing components: [string]."
-	return ""
-
-/obj/effect/proc_holder/spell/invoked/resurrect/proc/consume_items(atom/center)
-	var/list/current_required_items = get_current_required_items()
-	for(var/item_type in current_required_items)
-		var/needed = current_required_items[item_type]
-
-		for(var/obj/item/I in range(item_radius, center))
-			if(needed <= 0)
-				break
-			if(matches_required_item(I, item_type))
-				needed--
-				qdel(I)
+/obj/effect/proc_holder/spell/invoked/resurrect/proc/apply_revival_aftereffect(mob/living/target)
+	if(debuff_type)
+		target.apply_status_effect(debuff_type)
 
 /obj/effect/proc_holder/spell/invoked/resurrect/abyssor
 	name = "Abyssal Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>a dreamfiend will stalk the target and sap their stats until confronted by them."
+	desc = "Abyssor gives back what the deep has taken. Raise the dead beside ocean water with an offering from the catch. A dreamfiend will sap the one you revive until they summon and confront it.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	ritual_site_name = "ocean water"
 	overlay_icon = 'icons/mob/actions/abyssormiracles.dmi'
 	action_icon = 'icons/mob/actions/abyssormiracles.dmi'
 	overlay_state = "resurrect"
@@ -290,7 +323,7 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/pestra
 	name = "Putrid Revival"
-	desc = "Revive the target by consuming heartblood. Self cast for more information."
+	desc = "Pestra knits life back into dead flesh with an offering of heartblood. She can even bind a soul to a body with a transplanted brain.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	overlay_icon = 'icons/mob/actions/pestramiracles.dmi'
 	action_icon = 'icons/mob/actions/pestramiracles.dmi'
 	overlay_state = "resurrect"
@@ -308,7 +341,7 @@
 /obj/effect/proc_holder/spell/invoked/resurrect/eora
 	//Does heartfelt even exist?
 	name = "Heartfelt Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>The target will get hungry faster for a time."
+	desc = "Eora warms a stilled heart with an offering of bread. The one you bring back is frailer for a time, and their renewed body burns through food faster. Those who never hunger lose blood instead.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	overlay_icon = 'icons/mob/actions/eoramiracles.dmi'
 	action_icon = 'icons/mob/actions/eoramiracles.dmi'
 	overlay_state = "resurrect"
@@ -355,35 +388,13 @@
 	return ..()
 
 /obj/effect/proc_holder/spell/invoked/resurrect/xylix
-	//Cheap, but wildly unpretictable with possibly far worse effects than other methods.
 	name = "Anastasis?"
-	desc = "Revives the target? Grants them a random debuff from other revivals, small change to be worse or better."
-	debuff_type = /datum/status_effect/debuff/random_revival
-	alt_required_items = list(
-		/obj/item/clothing/neck/roguetown/psicross/wood = 1
-	)
+	desc = "Xylix gives the dead another throw of the dice. The one you raise returns with one unpredictable aftereffect borrowed from another revival rite.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	debuff_type = null
+	ritual_offering_note = "Set out a separate psycross as the offering and keep your casting focus on you."
+	alt_required_items = list(/obj/item/clothing/neck/roguetown/psicross/wood = 1)
 
-/datum/status_effect/debuff/random_revival
-	id = "random_revival_debuff"
-	duration = 2 SECONDS
-	alert_type = /atom/movable/screen/alert/status_effect/random_revival
-
-/datum/status_effect/debuff/random_revival/on_apply()
-	. = ..()
-	// 10% chance for special teleport effect
-	if(prob(10))
-		apply_teleport_effect()
-	else
-		// 90% chance for normal debuff
-		apply_random_debuff()
-		if(prob(33))
-			apply_random_debuff()
-		if(prob(20))
-			apply_random_debuff()
-
-	return TRUE
-
-/datum/status_effect/debuff/random_revival/proc/apply_random_debuff()
+/obj/effect/proc_holder/spell/invoked/resurrect/xylix/apply_revival_aftereffect(mob/living/target)
 	var/static/list/possible_debuffs = list(
 		/datum/status_effect/debuff/revived,
 		/datum/status_effect/debuff/dreamfiend_curse,
@@ -393,56 +404,7 @@
 		/datum/status_effect/debuff/dendor_revival,
 		/datum/status_effect/debuff/noc_revival,
 	)
-	var/debuff_type = pick(possible_debuffs)
-	owner.apply_status_effect(debuff_type)
-
-/datum/status_effect/debuff/random_revival/proc/apply_teleport_effect()
-	var/area/target_area = locate(/area/rogue/indoors/town/manor) in GLOB.sortedAreas
-	if(!target_area)
-		apply_random_debuff() // Fallback if manor doesn't exist
-		return
-
-	// Find valid turf in manor
-	var/turf/target_turf
-	var/attempts = 0
-	var/max_attempts = 5
-
-	while(attempts < max_attempts && !target_turf)
-		attempts++
-
-		// Get all turfs in manor area
-		var/list/area_turfs = get_area_turfs(target_area.type)
-		if(!length(area_turfs))
-			break
-
-		var/list/valid_turfs = list()
-		for(var/turf/T in area_turfs)
-			if(T.density)
-				continue
-			if(istransparentturf(T))
-				continue
-			if(T.teleport_restricted)
-				continue
-			valid_turfs += T
-
-		if(length(valid_turfs))
-			target_turf = pick(valid_turfs)
-
-	if(target_turf)
-		// Unequip everything before teleporting
-		owner.unequip_everything()
-
-		// Teleport to manor
-		owner.forceMove(target_turf)
-		to_chat(owner, span_userdanger("You wake up in an unfamiliar place, stripped of your belongings!"))
-		owner.Jitter(30)
-	else
-		// Fallback to random debuff if no valid turf found
-		apply_random_debuff()
-
-/atom/movable/screen/alert/status_effect/random_revival
-	name = "Strange Aftereffects"
-	desc = "The revival has left you with unexpected consequences..."
+	target.apply_status_effect(pick(possible_debuffs))
 
 //Dendor, Malum, Ravox, Noc
 //Fairly generic for now, I might give these more unique effects later!
@@ -560,7 +522,7 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/malum
 	name = "Diligent Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets willpower and strength will be sapped for a time."
+	desc = "Malum puts the dead back to work. Offer metal to kindle life anew. The one who rises will have less strength and willpower for a time.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	overlay_icon = 'icons/mob/actions/malummiracles.dmi'
 	action_icon = 'icons/mob/actions/malummiracles.dmi'
 	overlay_state = "resurrect"
@@ -575,7 +537,7 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/ravox
 	name = "Just Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets strength and speed will be sapped for a time."
+	desc = "Ravox grants the fallen another chance to see justice done. Raise them with an offering of bones. They return weaker and slower for a time.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	overlay_icon = 'icons/mob/actions/ravoxmiracles.dmi'
 	action_icon = 'icons/mob/actions/ravoxmiracles.dmi'
 	overlay_state = "resurrect"
@@ -591,7 +553,8 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/dendor
 	name = "Wild Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Requires a wise tree or sanctified tree nearby. Targets speed and constitution will be sapped for a time."
+	desc = "At a wise or sanctified tree, offer herbs and call the dead back to the living world. Those who rise are slower and frailer for a time. Beasts rise whole.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	ritual_site_name = "a wise tree or sanctified tree"
 	//Herbs that have to do with intelligence mostly. Easier to remember.
 	required_items = list(
 		/obj/item/reagent_containers/food/snacks/grown/manabloom = 3,
@@ -608,47 +571,29 @@
 
 // Wild Revival can also revive simple animal mobs (no debuff applied, full heal).
 /obj/effect/proc_holder/spell/invoked/resurrect/dendor/cast(list/targets, mob/living/user)
-	if(!isanimal(targets[1]))
+	var/mob/living/patient = targets[1]
+	if(!isanimal(patient) || patient.get_ooze_revival_holder())
 		return ..()
-	var/mob/living/simple_animal/target = targets[1]
+	var/mob/living/simple_animal/target = patient
 	if(target.stat != DEAD)
 		to_chat(user, span_warning("[target] is not dead."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
-	var/validation_result = validate_items(target)
-	if(validation_result != "")
-		to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
-		revert_cast()
-		return FALSE
-	var/found_structure = FALSE
-	for(var/atom/A in oview(structure_range, target))
-		if(istype(A, required_structure))
-			found_structure = TRUE
-			break
-		if(istype(A, /turf))
-			var/turf/T = A
-			for(var/obj/O in T.contents)
-				if(istype(O, required_structure))
-					found_structure = TRUE
-					break
-		if(found_structure)
-			break
-	if(!found_structure)
-		var/atom/temp_structure = required_structure
-		to_chat(user, span_warning("I need a [initial(temp_structure.name)] near [target]."))
-		revert_cast()
+	var/list/offerings = list()
+	if(!check_rite_setup(target, user, offerings))
+		revert_cast(user)
 		return FALSE
 	if(!target.revive(full_heal = TRUE))
 		to_chat(user, span_warning("Nothing happens."))
-		revert_cast()
+		revert_cast(user)
 		return FALSE
 	target.visible_message(span_notice("[target] is roused by the wild magic!"))
-	consume_items(target)
+	QDEL_LIST(offerings)
 	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/noc
 	name = "Moonlit Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets intelligence will be sapped for a time, in addition they will be burned by moonlight."
+	desc = "Noc reads a life back into the world from an offering of scrolls. The one you raise returns with a clouded mind, and for a time even moonlight burns them.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	overlay_icon = 'icons/mob/actions/nocmiracles.dmi'
 	action_icon = 'icons/mob/actions/nocmiracles.dmi'
 	overlay_state = "resurrect"

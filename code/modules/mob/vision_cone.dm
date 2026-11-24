@@ -97,6 +97,15 @@
 	if(mob)
 		mob.update_cone()
 
+/mob/living
+	/// Populated only while twirling; FOV copies this directly without searching hands.
+	var/list/active_twirl_visuals
+
+/// image(src, src) copies the body appearance, but not its animated vis_contents.
+/mob/living/proc/add_twirl_visuals(image/body_image)
+	if(active_twirl_visuals)
+		body_image.vis_contents += active_twirl_visuals
+
 /mob/living/update_cone()
 	for(var/hidden_hud in client.hidden_images)
 		client.images -= hidden_hud
@@ -113,6 +122,7 @@
 	client.images += I
 	client.hidden_images += I
 	I.appearance_flags = RESET_TRANSFORM|KEEP_TOGETHER|PIXEL_SCALE
+	add_twirl_visuals(I)
 	if(buckled)
 		var/image/IB = image(buckled, buckled)
 		IB.override = 1
@@ -133,6 +143,9 @@
 		IB.appearance_flags = RESET_TRANSFORM|KEEP_TOGETHER
 		client.hidden_images += IB
 		client.images += IB
+		if(isliving(pulling))
+			var/mob/living/pulled_mob = pulling
+			pulled_mob.add_twirl_visuals(IB)
 /*	if(hud_used && hud_used.fov_blocker)
 		fov_blocker
 

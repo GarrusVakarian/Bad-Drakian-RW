@@ -879,6 +879,7 @@
 	return TRUE
 
 /mob/living/start_pulling(atom/movable/AM, state, force = pull_force, supress_message = FALSE, obj/item/item_override)
+	var/obj/item/grabbing/new_grab
 	if(!AM || !src)
 		return FALSE
 	if(!(AM.can_be_pulled(src, state, force)))
@@ -983,9 +984,10 @@
 				C.mark_zone_selector_hud_dirty()
 			put_in_hands(O)
 			O.update_hands(src)
+			new_grab = O
 			if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER) || item_override)
 				supress_message = TRUE
-				C.grippedby(src)
+				C.grippedby(src, show_balloon = FALSE)
 			if(!supress_message)
 				send_pull_message(target)
 			var/signal_result = SEND_SIGNAL(target, COMSIG_LIVING_GRAB_SELF_ATTEMPT, target, used_limb)
@@ -1002,9 +1004,10 @@
 				O.sublimb_grabbed = target.simple_limb_hit(zone_selected)
 			put_in_hands(O)
 			O.update_hands(src)
+			new_grab = O
 			if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER) || item_override)
 				supress_message = TRUE
-				target.grippedby(src)
+				target.grippedby(src, show_balloon = FALSE)
 			if(!supress_message)
 				send_pull_message(target)
 			var/signal_result = SEND_SIGNAL(target, COMSIG_LIVING_GRAB_SELF_ATTEMPT, target, zone_selected)
@@ -1038,6 +1041,8 @@
 			if(M.cmode && M.stat == CONSCIOUS && !M.restrained(ignore_grab = TRUE))
 				if(M.get_skill_level(/datum/skill/combat/wrestling) >= 5 || src.get_skill_level(/datum/skill/combat/wrestling) <= 3)
 					M.resist_grab(freeresist = TRUE) //Automatically attempt to break a passive grab if defender's combat mode is on. Anti-grabspam measure.
+	if(!QDELETED(new_grab))
+		new_grab.show_grab_balloon()
 
 /mob/living/proc/is_limb_covered(obj/item/bodypart/limb)
 	if(!limb)
@@ -1122,9 +1127,32 @@
 	else
 		stop_pulling()
 
+/// Repair a broken incoming pull before it can block client movement.
+/mob/living/proc/recover_stale_pull()
+	var/mob/puller = pulledby
+	if(!puller || puller == src)
+		return
+
+	if(!QDELETED(puller) && puller.pulling == src)
+		var/turf/our_turf = get_turf(src)
+		var/turf/puller_turf = get_turf(puller)
+		// A buckled rider can briefly be on a different floor from their carrier.
+		if(our_turf && puller_turf && (our_turf.z == puller_turf.z || buckled == puller))
+			return
+		puller.stop_pulling()
+
+	// The normal release may already have cleared this grip.
+	if(pulledby == puller)
+		pulledby = null
+		if(mob_offsets["pulledby"])
+			reset_offsets("pulledby")
+			if(!is_shifted && !buckled)
+				layer = MOB_LAYER
+		update_mobility()
+
 /mob/living/stop_pulling(forced = TRUE)
 	if(pulling)
-		if(ismob(pulling))
+		if(ismob(pulling) && pulling.pulledby == src)
 			var/mob/living/M = pulling
 			M.reset_offsets("pulledby")
 			if(!M.is_shifted)
@@ -1453,6 +1481,8 @@
 	update_mobility()
 	update_sight()
 	reload_fullscreen()
+	if(!QDELETED(src) && stat != DEAD)
+		SEND_SIGNAL(src, COMSIG_LIVING_BECAME_ALIVE)
 	return TRUE // death() already re-swapped the lists if the updatehealth above re-killed us
 
 //Proc used to resuscitate a mob, for full_heal see fully_heal()
@@ -1811,6 +1841,9 @@
 	if(client)
 		client.charging = 0
 		client.chargedprog = 0
+		client.progress = 0
+		client.goal = 0
+		client.charging_spell = null
 		client.tcompare = null //so we don't shoot the attack off
 		client.mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'
 		STOP_PROCESSING(SSmousecharge, client)
@@ -2251,9 +2284,11 @@
 /mob/living/proc/check_weakness(obj/item/weapon, mob/living/attacker)
 	return 1 //This is not a boolean, it's the multiplier for the damage the weapon does.
 
-/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force, extra = FALSE, jumping = FALSE)
-	stop_pulling()
-	. = ..()
+/mob/living/throw_at(atom/target, range, speed, mob/thrower, spin=1, diagonals_first = 0, datum/callback/callback, force, extra = FALSE, jumping = FALSE, mob/living/preserve_pull = null)
+	// Spell knockback may carry its caster along using ordinary collision-aware pulling.
+	if(!preserve_pull || QDELETED(preserve_pull) || preserve_pull == src || pulling != preserve_pull || preserve_pull.pulledby != src)
+		stop_pulling()
+	. = ..(target, range, speed, thrower, spin, diagonals_first, callback, force, extra, jumping)
 
 // Called when we are hit by a bolt of polymorph and changed
 // Generally the mob we are currently in is about to be deleted

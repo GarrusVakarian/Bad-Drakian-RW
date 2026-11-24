@@ -782,10 +782,13 @@
 	return TRUE
 
 /mob/living/carbon/human/vomit(lost_nutrition = 10, blood = 0, stun = 1, distance = 0, message = 1, toxic = 0)
+	if(mind?.has_antag_datum(/datum/antagonist/skeleton)) // Skeletons don't have stomachs.
+		return 0
+
 	if(blood && (NOBLOOD in dna.species.species_traits) && !HAS_TRAIT(src, TRAIT_TOXINLOVER))
 		if(message)
 			visible_message(span_warning("[src] dry heaves!"), \
-							span_danger("I try to throw up, but there's nothing in your stomach!"))
+							span_danger("I try to throw up, but there's nothing in my stomach!"))
 		if(stun)
 			Immobilize(200)
 		return 1
@@ -1422,6 +1425,7 @@
 	vocal_pitch = client.prefs.bark_pitch
 	vocal_pitch_range = client.prefs.bark_variance
 	apply_voicepacks(src, client)
+	apply_dragon_bark()
 	return TRUE
 
 /mob/living/carbon/human/Topic(href, href_list)

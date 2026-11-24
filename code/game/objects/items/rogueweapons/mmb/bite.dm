@@ -131,6 +131,9 @@
 			if(istype(user.dna.species, /datum/species/gnoll))
 				if(prob(30))
 					user.gnoll_feed(bite_victim, 10)
+			if(istype(user.dna.species, /datum/species/dragon))
+				if(prob(30))
+					user.dragon_feed(bite_victim, 30)
 			/*
 				ZOMBIE INFECTION VIA BITE
 			*/
@@ -150,6 +153,8 @@
 		B.limb_grabbed = BP
 		B.sublimb_grabbed = used_limb
 		B.update_grabbed_spell_hud()
+		if(user.npc_ai_active())
+			B.show_grab_balloon()
 
 		lastattacker = user.real_name
 		lastattackerckey = user.ckey

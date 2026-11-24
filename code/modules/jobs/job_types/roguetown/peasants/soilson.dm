@@ -71,7 +71,7 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
 	belt = /obj/item/storage/belt/rogue/leather/rope
-	beltr = /obj/item/storage/keyring/soilson
+	belt_contents = list(/obj/item/storage/keyring/soilson = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel
 	id = /obj/item/scomstone/bad
 	backpack_contents = list(

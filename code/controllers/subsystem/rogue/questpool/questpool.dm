@@ -261,6 +261,8 @@ SUBSYSTEM_DEF(questpool)
 	Q.issued_day = GLOB.dayspassed
 	if(innkeeper)
 		Q.quest_giver_name = innkeeper.real_name
+		if(innkeeper.job == "Towner")
+			Q.rumor_referral_issuer = WEAKREF(innkeeper)
 	Q.deposit_amount = Q.calculate_deposit()
 	if(override_destination && istype(Q, /datum/quest/kill/recovery))
 		var/datum/quest/kill/recovery/RQ = Q
@@ -572,8 +574,8 @@ SUBSYSTEM_DEF(questpool)
 		return FALSE
 	if(!Q.can_claim(user))
 		return FALSE
-	var/obj/effect/landmark/quest_spawner/landmark = resolve_or_repick_landmark(Q)
-	if(!landmark)
+	var/obj/effect/landmark/quest_spawner/landmark = Q.requires_spawn_landmark ? resolve_or_repick_landmark(Q) : null
+	if(Q.requires_spawn_landmark && !landmark)
 		log_event("claim_failed", "no landmark available for [Q.quest_difficulty] [Q.quest_type]")
 		return FALSE
 	// Remove from pool BEFORE materialize — materialize can sleep (spawn_kill_mobs contains

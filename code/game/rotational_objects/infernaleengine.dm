@@ -14,11 +14,6 @@
 	initialize_dirs = CONN_DIR_FORWARD | CONN_DIR_FLIP
 	debris = list(/obj/item/magic/infernal/core = 1)
 
-/obj/structure/infernalengine/examine(mob/user)
-	. = ..()
-	. += span_info("This engine generates rotational power continuously for connected machinery while it remains active.")
-	. += span_info("Keep it out of wet terrain. Water can extinguish it and stop the engine.")
-
 /obj/structure/infernalengine/find_rotation_network()
 	. = ..()
 	setup_rotation(get_turf(src))

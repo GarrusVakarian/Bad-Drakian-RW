@@ -12,7 +12,8 @@
 	Axians are a proud, shark-like people that have a heritage founded in maritime trade, tax evasion, and piracy. \
 	While known for being strong in spirit and promoting robust commercial practices, they have gained infamy for \
 	possessing an intense distaste for both the nobility and taxes, making them a prime target of discrimination and suspicion.<br>\
-	(+1 Constitution, +1 Willpower, Waterbreathing, Sea Water Drinking Trait)"
+	(+1 Constitution, +1 Willpower)<br>\
+	<a href='byond://winset?command=Racial-Features%20axian'>Racial Features: Axians</a><br>"
 	expanded_desc =	"Axians are a proud, shark-like people that have a heritage founded in maritime trade, tax evasion, and piracy. While known for \
 	being strong in spirit and promoting robust commercial practices, they have gained infamy for possessing an intense distaste for \
 	both the nobility and taxes, making them a prime target of discrimination and suspicion. They are oftentimes scapegoats for crime \

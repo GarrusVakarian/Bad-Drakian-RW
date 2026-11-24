@@ -94,7 +94,7 @@
 			)
 		belt = /obj/item/storage/belt/rogue/leather
 		beltl = /obj/item/storage/belt/rogue/pouch/coins/rich
-		beltr = /obj/item/storage/keyring/guildmaster
+		belt_contents = list(/obj/item/storage/keyring/guildmaster = 1)
 	ADD_TRAIT(H, TRAIT_MASTER_CARPENTER, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_MASTER_MASON, TRAIT_GENERIC)
 

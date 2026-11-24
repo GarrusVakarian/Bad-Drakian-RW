@@ -88,23 +88,13 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	var/static/list/one_character_prefix = list(MODE_HEADSET = TRUE, MODE_ROBOT = TRUE, MODE_WHISPER = TRUE, MODE_SING = TRUE)
 
-	var/ic_blocked = FALSE
-	if(client && !forced)
-		// Remove the accent-escape brackets before filtering so a split word like "\[f\]\[orbidden\]" can't evade the IC filter and reassemble in the displayed message.
-		var/static/regex/escape_bracket_regex = regex(@"\[([^\]]*)\]?", "g")
-		var/filtered_message = findtext(message, "\[") ? replacetext(message, escape_bracket_regex, "$1") : message
-		if(CHAT_FILTER_CHECK(filtered_message))
-			ic_blocked = TRUE
-
+	var/unfiltered_message = message
 	if(sanitize)
 		message = trim(copytext(sanitize(message), 1, MAX_MESSAGE_LEN))
 	if(!message || message == "")
 		return
 
-	if(ic_blocked)
-		//The filter warning message shows the sanitized message though.
-		to_chat(src, span_warning("That message contained a word prohibited in IC chat! Consider reviewing the server rules.\n<span replaceRegex='show_filtered_ic_chat'>\"[message]\"</span>"))
-		SSblackbox.record_feedback("tally", "ic_blocked_words", 1, LOWER_TEXT(config.ic_filter_regex.match))
+	if(client && !forced && !passes_ic_speech_filter(unfiltered_message, message))
 		return
 
 	var/datum/saymode/saymode = SSradio.saymodes[talk_key]
@@ -179,7 +169,17 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(saymode && !saymode.handle_message(src, message, language))
 		return
 
-	message = treat_message(message, language) // unfortunately we still need this
+	var/roleplay_slur = FALSE
+	if(client && !forced && !saymode && (!message_mode || message_mode == MODE_WHISPER) && !(language && (initial(language.flags) & TONGUELESS_SPEECH)))
+		var/slur_text = get_roleplay_slur_text(message)
+		if(slur_text)
+			// Check the original words again, with the wrapper removed, before applying the slur.
+			if(!passes_ic_speech_filter(sanitize ? html_decode(slur_text) : slur_text, slur_text))
+				return
+			message = slur_text
+			roleplay_slur = TRUE
+
+	message = treat_message(message, language, roleplay_slur)
 	var/swallowed_message = message
 	var/sigreturn = SEND_SIGNAL(src, COMSIG_MOB_SAY, args)
 	if (sigreturn & COMPONENT_UPPERCASE_SPEECH)
@@ -595,6 +595,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(findtext(message, regex("yield|give\\s*up|surrender|stop\\s*resisting","i")))
 		play_overhead_private_rclickemote(heard_message, "yield")
 		for(var/mob/living/carbon/human in heard_message)
+			if(human == src)
+				continue
 			human.apply_status_effect(/datum/status_effect/debuff/yield_prompt)
 
 	//speech bubble
@@ -667,7 +669,25 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 				return LD
 	return null
 
-/mob/living/proc/treat_message(message, language)
+/mob/living/proc/passes_ic_speech_filter(message, sanitized_message)
+	// Strip accent escapes so brackets cannot split a prohibited word.
+	var/static/regex/escape_bracket_regex = regex(@"\[([^\]]*)\]?", "g")
+	var/filtered_message = findtext(message, "\[") ? replacetext(message, escape_bracket_regex, "$1") : message
+	if(!CHAT_FILTER_CHECK(filtered_message))
+		return TRUE
+	to_chat(src, span_warning("That message contained a word prohibited in IC chat! Consider reviewing the server rules.\n<span replaceRegex='show_filtered_ic_chat'>\"[sanitized_message]\"</span>"))
+	SSblackbox.record_feedback("tally", "ic_blocked_words", 1, LOWER_TEXT(config.ic_filter_regex.match))
+	return FALSE
+
+/// Recognize a whole utterance wrapped in tildes. Leave plain or unmatched tildes alone.
+/mob/living/proc/get_roleplay_slur_text(message)
+	var/end = length(message)
+	if(end < 3 || copytext(message, 1, 2) != "~" || copytext(message, end) != "~")
+		return null
+	var/body = trim(copytext(message, 2, end))
+	return length(body) ? body : null
+
+/mob/living/proc/treat_message(message, language, roleplay_slur = FALSE)
 	if(HAS_TRAIT(src, TRAIT_ZOMBIE_SPEECH) && !ispath(language, /datum/language/undead))
 		message = pick(
 		"[repeat_string(rand(1, 3), "U")][repeat_string(rand(1, 6), "H")]...",
@@ -687,7 +707,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(stuttering)
 		message = stutter(message)
 
-	if(slurring)
+	if(slurring || roleplay_slur)
 		message = slur(message)
 
 	if(cultslurring)

@@ -46,7 +46,7 @@
 
 /datum/outfit/job/roguetown/arbalist/pre_equip(mob/living/carbon/human/H, visualsOnly)
 	..()
-	head = /obj/item/clothing/head/roguetown/headband/bloodied
+	head = /obj/item/clothing/head/roguetown/helmet/heavy/volfplate/psydonic
 	armor = /obj/item/clothing/suit/roguetown/armor/brigandine/light
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/inq
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/arbalest//Tool of the trade.
@@ -60,10 +60,9 @@
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/silver/stake/preblessed/psy//Your ticket to fame, brother.
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan
 	shoes = /obj/item/clothing/shoes/roguetown/boots/psydonboots
-	mask = /obj/item/clothing/mask/rogue/sack/psy
 	id = /obj/item/clothing/ring/signet/silver/inqscomm
+	belt_contents = list(/obj/item/roguekey/inquisition = 1)
 	backpack_contents = list(
-		/obj/item/roguekey/inquisition = 1,
 		/obj/item/grapplinghook = 1,
 		/obj/item/paper/inqslip/arrival/ortho = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/mid = 1,
@@ -75,6 +74,14 @@
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/psydonic_inviolability)//A shield against the undead.
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/psydonic_lux_bolt)//Take a guess. Exclusive to arbalist.
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/psydonic_sacrosanctity)//To get your blood back, m'lord.
+
+/datum/outfit/job/roguetown/arbalist/post_equip(mob/living/carbon/human/H, visualsOnly)
+	..()
+	if(!istype(H.head, /obj/item/clothing/head/roguetown/helmet/heavy/volfplate/psydonic))
+		return
+	var/obj/item/clothing/head/roguetown/headband/red/headband = new(H.loc)
+	if(!SEND_SIGNAL(H.head, COMSIG_TRY_STORAGE_INSERT, headband, null, TRUE))
+		qdel(headband)
 
 //Stake belt. Here because nothing else uses it. It's just a throwing knife belt, but for stake bolts.
 //A better way to carry them, since these are unobtanium.

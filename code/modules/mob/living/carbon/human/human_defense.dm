@@ -244,7 +244,7 @@
 
 	return ..()
 
-/mob/living/carbon/human/grippedby(mob/living/user, instant = FALSE)
+/mob/living/carbon/human/grippedby(mob/living/user, instant = FALSE, show_balloon = TRUE)
 	if(wear_pants)
 		wear_pants.add_fingerprint(user)
 	retaliate(user)
@@ -288,6 +288,9 @@
 			var/stealthy = (m_intent == MOVE_INTENT_SNEAK)
 			if(H.try_accept_offered_item(src, offered_item, stealthy))
 				return TRUE
+
+	if(try_free_laces(user))
+		return TRUE
 
 	if(..())	//to allow surgery to return properly.
 		return

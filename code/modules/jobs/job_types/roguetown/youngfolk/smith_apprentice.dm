@@ -58,7 +58,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/simpleshoes
 	gloves = /obj/item/clothing/gloves/roguetown/leather
 	belt = /obj/item/storage/belt/rogue/leather/rope
-	beltr = /obj/item/roguekey/crafterguild
+	belt_contents = list(/obj/item/roguekey/crafterguild = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(
 		/obj/item/rogueweapon/hammer/iron = 1,

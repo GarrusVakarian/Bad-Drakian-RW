@@ -36,15 +36,6 @@
 	name = "Bathhouse Attendant"
 	// This is just a base outfit, the actual outfits are defined in the advclasses
 
-/datum/outfit/job/roguetown/nightmaiden/pre_equip(mob/living/carbon/human/H)
-	..()
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
-
 /datum/advclass/nightmaiden
 	allowed_races = list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE, /datum/species/seelie)
 	name = "Bath Attendant"
@@ -79,7 +70,7 @@
 	..()
 	head = /obj/item/clothing/head/roguetown/armingcap
 	neck = /obj/item/clothing/neck/roguetown/collar/leather
-	beltl = /obj/item/roguekey/nightmaiden
+	belt_contents = list(/obj/item/roguekey/nightmaiden = 1)
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	backl = /obj/item/storage/backpack/rogue/satchel
 	shoes = /obj/item/clothing/shoes/roguetown/sandals
@@ -126,7 +117,7 @@
 
 /datum/outfit/job/roguetown/nightmaiden/concubine/pre_equip(mob/living/carbon/human/H)
 	..()
-	beltl = /obj/item/roguekey/nightmaiden
+	belt_contents = list(/obj/item/roguekey/nightmaiden = 1)
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(
@@ -209,7 +200,7 @@
 	beltl = /obj/item/rogueweapon/whip
 	backl = /obj/item/storage/backpack/rogue/satchel
 	head = /obj/item/clothing/head/roguetown/menacing
-	neck = /obj/item/roguekey/nightmaiden
+	belt_contents = list(/obj/item/roguekey/nightmaiden = 1)
 	backpack_contents = list(
 		/obj/item/rope = 1,
 		/obj/item/clothing/mask/rogue/blindfold = 1,
@@ -282,7 +273,7 @@
 			id = /obj/item/clothing/ring/silver
 		if(96 to 100)
 			id = /obj/item/clothing/ring/diamond
-	beltl = /obj/item/roguekey/nightmaiden
+	belt_contents = list(/obj/item/roguekey/nightmaiden = 1)
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(

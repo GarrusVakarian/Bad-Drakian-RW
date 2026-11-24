@@ -90,6 +90,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/anthromorphsmall,\
 	/datum/species/kobold,\
 	/datum/species/tieberian,\
+	/datum/species/seelie,\
 	/datum/species/ooze\
 
 #define RACES_SHUNNED \
@@ -134,6 +135,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/dwarf/gnome,\
 	/datum/species/harpy,\
 	/datum/species/arachnid,\
+	/datum/species/seelie,\
 )
 #define ALL_BUT_BLOODLESS list(\
 	/datum/species/human/northern,\
@@ -160,6 +162,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/lamia,\
 	/datum/species/dwarf/gnome,\
 	/datum/species/harpy,\
+	/datum/species/seelie,\
 	/datum/species/arachnid\
 )
 
@@ -185,12 +188,15 @@ Balloon Alert / Floating Text defines
 	/datum/species/construct/metal/porcelain,\
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
+	/datum/species/seelie,\
 	/datum/species/arachnid,\
 )
 
-#define RACES_ALL_KINDS list(RACES_DESPISED, RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)	//Truely no restrictions
+#define RACES_ALL_KINDS list(RACES_DESPISED, RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)
 
-#define ACCEPTED_RACES list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)	//Allows all races except dallahun
+#define NO_COMBAT_RACES list(/datum/species/seelie)
+
+#define ACCEPTED_RACES list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED, RACES_CONSTRUCT, RACES_OOZE)
 
 #define RACES_NO_CONSTRUCT list(RACES_SHUNNED, RACES_TOLERATED, RACES_RESPECTED)
 
@@ -417,13 +423,14 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define CTAG_LICKER_WRETCH  "CAT_LICKER_WRETCH" // Licker wretch. Nuff said.
 #define CTAG_GNOLL			"CAT_GNOLL"			// Wretch-esque gnolls, graggar's chosen.
 #define CTAG_GNOLL_IMPURE	"CAT_GNOLL_IMPURE"	// Reward for beating enough gnolls.
+#define CTAG_DRAGON			"CAT_DRAGON"		// Literally a dragon.
 
-#define CTAG_TRIBAL				"CAT_TRIBAL"			// 
-#define CTAG_TRIBALCHIEFTAIN	"CAT_TRIBALCHIEFTAIN"	// 
-#define CTAG_TRIBALSHAMAN		"CAT_TRIBALSHAMAN"		// 
-#define CTAG_TRIBALGUARD		"CAT_TRIBALGUARD"		// 
-#define CTAG_TRIBALRABBLE		"CAT_TRIBALRABBLE"		// 
-#define CTAG_TRIBALVILLAGER		"CAT_TRIBALVILLAGER"	// 
+#define CTAG_TRIBAL				"CAT_TRIBAL"			//
+#define CTAG_TRIBALCHIEFTAIN	"CAT_TRIBALCHIEFTAIN"	//
+#define CTAG_TRIBALSHAMAN		"CAT_TRIBALSHAMAN"		//
+#define CTAG_TRIBALGUARD		"CAT_TRIBALGUARD"		//
+#define CTAG_TRIBALRABBLE		"CAT_TRIBALRABBLE"		//
+#define CTAG_TRIBALVILLAGER		"CAT_TRIBALVILLAGER"	//
 
 #define CTAG_WARDEN			"CAT_WARDEN"		// Warden class - Handles warden class selector.
 #define CTAG_VANGUARD		"CAT_VANGUARD"		// Vanguard class - Handles vanguard class selector.
@@ -511,6 +518,7 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define TRIUMPH_CAT_CHARACTER "CHARACTER"
 #define TRIUMPH_CAT_MISC "MISC!"
 #define TRIUMPH_CAT_ACTIVE_DATUMS "ACTIVE"
+#define NO_FLAW_TRIUMPH_COST 3
 
 #define ARMOR_CLASS_NONE 0
 #define ARMOR_CLASS_LIGHT 1

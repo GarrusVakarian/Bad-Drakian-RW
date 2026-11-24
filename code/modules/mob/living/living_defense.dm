@@ -61,6 +61,7 @@
 
 	var/on_hit_state = P.on_hit(src, armor)
 	var/nodmg = FALSE
+	var/health_before_projectile = health
 	if(!P.nodamage && on_hit_state != BULLET_ACT_BLOCK)
 		if(!apply_damage(P.damage, P.damage_type, def_zone, armor))
 			nodmg = TRUE
@@ -99,6 +100,8 @@
 	next_attack_msg.Cut()
 
 
+	if(!QDELETED(src) && health < health_before_projectile && !QDELETED(P) && P.fired_from)
+		SEND_SIGNAL(P.fired_from, COMSIG_PROJECTILE_ENCHANTMENT_HIT, P.firer, src, P.Angle)
 	return on_hit_state ? BULLET_ACT_HIT : BULLET_ACT_BLOCK
 
 /mob/living/proc/check_projectile_dismemberment(obj/projectile/P, def_zone)
@@ -190,7 +193,11 @@
 	grippedby(user)*/
 
 //proc to upgrade a simple pull into a more aggressive grab.
-/mob/living/proc/grippedby(mob/living/carbon/user, instant = FALSE)
+/mob/living/proc/grippedby(mob/living/carbon/user, instant = FALSE, show_balloon = TRUE)
+	var/obj/item/grabbing/active_grab = user.get_active_held_item()
+	if(!istype(active_grab) || active_grab.grabbed != src)
+		active_grab = null
+	var/previous_grab_state = active_grab?.grab_state
 	user.changeNext_move(CLICK_CD_GRABBING * 2 - user.STASPD)
 	var/skill_diff = 0
 	var/combat_modifier = 1
@@ -265,6 +272,8 @@
 		if(!is_shifted)
 			user.set_pull_offsets(src, user.grab_state)
 	log_combat(user, src, "grabbed", addition="aggressive grab[add_log]")
+	if(show_balloon && !QDELETED(active_grab) && previous_grab_state < GRAB_AGGRESSIVE && active_grab.grab_state >= GRAB_AGGRESSIVE)
+		active_grab.show_grab_balloon()
 	return 1
 
 /mob/living/proc/update_grab_intents(mob/living/target)

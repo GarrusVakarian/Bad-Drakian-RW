@@ -415,11 +415,6 @@
 	desc = "An impossibly light metal that seems to grow harder and heavier when pressured. Nothing seems to be able to shape this metal."
 
 // Add extra examine text for dreamwalkers
-/obj/item/ingot/sylveric/examine(mob/user)
-	. = ..()
-	if(HAS_TRAIT(user, TRAIT_DREAMWALKER))
-		. += span_notice("You can feel the metal resonate with your dream energy. If you strike another sylveric ingot with this one, you can shape it into a weapon.")
-
 // Handle attacking one sylveric ingot with another
 /obj/item/ingot/sylveric/attackby(obj/item/I, mob/living/user, params)
 	if(istype(I, /obj/item/ingot/sylveric))

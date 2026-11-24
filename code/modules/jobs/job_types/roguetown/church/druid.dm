@@ -88,16 +88,11 @@
 	head = /obj/item/clothing/head/roguetown/dendormask
 	id = /obj/item/clothing/neck/roguetown/psicross/dendor //Ring slot amulet for wildform so it is not dropping on the ground.
 	shirt = /obj/item/clothing/suit/roguetown/shirt/robe/dendor
-	backpack_contents = list(/obj/item/ritechalk, /obj/item/storage/keyring/churchie, /obj/item/seeds/treesap)
+	belt_contents = list(/obj/item/storage/keyring/churchie = 1)
+	backpack_contents = list(/obj/item/ritechalk, /obj/item/seeds/treesap)
 	if(H.age == AGE_OLD)
 		H.adjust_skillrank_up_to(/datum/skill/magic/holy, 5, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/magic/druidic, 5, TRUE)
-	if(isseelie(H) && H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/seelie_dust)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/summon_rat)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/strip)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/splash)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/roustame)
 	H.ambushable = FALSE
 
 /datum/job/roguetown/druid/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
@@ -118,7 +113,7 @@
 
 	REMOVE_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
 	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	to_chat(H, span_notice("I remain on the old path of devotion."))
+	to_chat(H, span_notice("I follow the Orthodox path."))
 
 /datum/job/roguetown/druid/proc/grant_radical_path(mob/living/carbon/human/H)
 	if(!H || !H.mind || !H.patron)
@@ -128,15 +123,15 @@
 	H.miracle_points += 3
 	H.church_favor += 1600
 	H.reset_clergy_devotion(CLERIC_T4, CLERIC_REGEN_MAJOR, TRUE, CLERIC_REQ_4)
-	to_chat(H, span_notice("I embrace the radical path."))
+	to_chat(H, span_notice("I follow the Eclectic path."))
 
 /datum/job/roguetown/druid/proc/_delayed_path_choice(mob/living/carbon/human/H)
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Druidic Doctrine", "Loyalist", "Radical")
+	var/choice = alert(H, CLERGY_DOCTRINE_PROMPT, "Druidic Doctrine", "Orthodox", "Eclectic")
 
-	if(choice == "Radical")
+	if(choice == "Eclectic")
 		grant_radical_path(H)
 	else
 		grant_old_path(H)

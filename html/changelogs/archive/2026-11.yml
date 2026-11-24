@@ -533,3 +533,389 @@
   _Rarity:
   - bugfix: Fixed Character Sheet sprites drifting when other players preview characters
       of a different species and size.
+  - bugfix: Fix HERMES mail notifications not sending.
+  - bugfix: Fireman carries keep their original grip on stairs, and piggyback riders
+      stay mounted.
+  - qol: "Map ballots now respect each map\u2019s population limits when voting opens."
+  - balance: Dun World requires 30 connected players to appear on the ballot and at
+      least 24 when voting closes to win.
+  - qol: You can now save your Natural Armor's name and description in character setup.
+  - rscadd: Towners can post rumors, earn referral fees, and commission Blockade Defense
+      writs.
+  - qol: Notorious Bounties and contracts can now be signed solo. Don't die.
+  - rscadd: (Kaolin1234) Arachnids can weave silk beds and rescue cocoons.
+  - qol: (Kaolin1234) Arachnid web weaving automatically continues from thin webbing
+      to reinforcement.
+  - qol: Anyone can now pick custom colors at dye bins.
+  - rscadd: Lanterns can now hold two Seelies.
+  - bugfix: Fixed lantern reach checks, occupant ejection on destruction, and Seelie
+      glow consuming fuel or igniting items.
+  - bugfix: Rous must be tamed before mounting, and Seelie verbs are removed on species
+      loss.
+  - bugfix: Seelie size-mismatch injuries respect Extreme ERP preferences and fracture
+      protection.
+  mypingishuge:
+  - balance: "Reduced Stuffed\u2019s Speed penalty from 6 to 3."
+  - bugfix: Stat debuffs no longer disappear when applied at minimum stats.
+  - bugfix: Corrected stat overflow bookkeeping when overlapping modifiers are applied
+      and removed.
+  - bugfix: "Removed the duplicated Speed sentence from Stuffed\u2019s tooltip."
+  - balance: "Non-utility arcane spells have a 1.5-second minimum cast time after\
+      \ reductions; minor utility spells, Lesser Shapeshift and Magician\u2019s Brick\
+      \ retain their existing casting behavior."
+  - balance: Blink and Shadowstep cannot be cast while grabbed.
+  - balance: Repel and Repulse drag you along when they knock back the person pulling
+      you.
+2026-11-17:
+  _Rarity:
+  - balance: Reduced the minimum cast time for affected arcane spells from 1.5 seconds
+      to 0.5 seconds.
+  - balance: Arcyne Bolt casts instantly again.
+  - qol: Sun Blinded glare is fainter and limited to the corners of the screen. Also
+      reduced the massive -5 PER debuff.
+  - bugfix: Fixed raw article and color codes appearing in stash item names.
+  - bugfix: Qualifying face-slot clothing now protects against Sun Blinded.
+  - rscadd: Added a Lava Immunity trait that protects against damage and ignition
+      from standing in lava.
+  mypingishuge:
+  - rscadd: Foresters can choose a bronze warclub with an iron shield or a Goedendag,
+      with Expert Maces.
+  - spellcheck: Updated the Forester description to reflect its role as a frontliner,
+      removing the enforced woodsman background.
+  - rscadd: Arachnids can choose None as their taur body type while new Arachnids
+      still default to a taur form.
+  - bugfix: Biped Arachnids use appropriate clothing and fire sprites.
+  - bugfix: Old taur-selection dialogs no longer overwrite a different character or
+      race after switching.
+2026-11-18:
+  GarrusVakarian:
+  - rscadd: There's a dragon now. It exists on Smollhill and on Rockhill. You can
+      only queue up for dragon as a Drakian.
+  - map: The dragon has a lair.
+  - rscadd: The dragon now has a spell to open and close the hoard gate.
+  - balance: Gave the dragon master tracking.
+  - map: The merchant building on Smollhill gets a bell.
+  _Rarity:
+  - qol: Items automatically rotate to fit into containers when needed.
+  - bugfix: Spell-button updates no longer display false cooldown or empty-charge
+      warnings.
+  - rscadd: Added verb OOC -> Set Credits Mugshot allowing updating your credits mugshot.
+  - bugfix: Credits portraits now queue after character equipment is ready, including
+      migrant and event arrivals.
+  - bugfix: Credits portraits now frame different sprite sizes proportionally.
+  - bugfix: The Villains selection window now closes when spawning.
+  - bugfix: Corrected minimum fire decay timing for incapacitated characters.
+  - bugfix: Critical recovery reminders now account for deadite eligibility.
+  - qol: The Blindness vice now grants night vision.
+  - rscadd: Blindness vice holders can see nearby typing indicators.
+  mypingishuge:
+  - bugfix: Class-selection windows now load their intended fonts directly from the
+      game.
+  - rscadd: Emote boxes and Say starting with * or @ now show a green typing bubble,
+      including live updates in the new Say popup that stretches automatically for
+      long say messages.
+  - bugfix: Closing an older chat popup no longer clears a newer typing bubble.
+  - rscadd: Otherwise silent emotes and normal custom emotes play the Talk cue for
+      visible nearby listeners, with a saved Hear Emote Sent Sound toggle.
+  - rscadd: Loadout item colors can use a custom color picker.
+  - rscadd: Added a front-facing Lips head marking.
+  - rscadd: Added an Improvised Surgery Saw loadout option for 1 point.
+  - balance: Milk provides twice as much nutrition and can be chosen as a favorite
+      drink.
+  - bugfix: Milk leaks caused by rubbing now notify nearby players at the appropriate
+      normal or subtle range.
+  - bugfix: Bows and slings accept hits and hammer repairs; repairable ranged weapons
+      survive ordinary breakage on the ground.
+  - bugfix: Twirl visuals are included in the foreground body used for field-of-view
+      rendering, while preserving the normal foreground/background hand positions.
+  - rscadd: 'Tailmaw customization can choose its fluid: Default, Emberwine or Honey.'
+  - qol: Chairs no longer topple when someone walks through them.
+  - balance: Increased Rookie slots from 1 to 4; Smollhill keeps the role disabled.
+  - bugfix: Restored the native Say popup following reports of slow input.
+  - rscdel: Removed text-emote notification sounds and their audio toggle.
+  - qol: Twirl visuals update through events instead of searching held items during
+      FOV updates.
+  - bugfix: Turning during a twirl updates its directional sprite and layering without
+      extending its duration.
+  - balance: Increased the XP bonus for finishing wound sewing, while keeping larger
+      wounds more rewarding.
+  - bugfix: The final stitch and wound-closing XP now appear as one combined reward
+      instead of the small stitch popup hiding the bonus.
+  - bugfix: Drying racks now accept Cut intent variants, including the Wardens' seax's
+      Heavy Cut.
+  - bugfix: Ordinary and magical fire reliably burn out, with a minimum decay rate
+      for incapacitated victims.
+  - qol: Players stuck in critical condition for two minutes receive guidance about
+      Embrace Necra and, where applicable, deadite recovery.
+  - bugfix: Restored ammunition loading for repairable bows and slings, including
+      loading through quivers.
+  - bugfix: Prefilled and manually inserted ammunition is properly contained in quivers
+      and pouches. Rejected loads retain their ammunition, and hotkeys ignore rounds
+      outside their container.
+  - bugfix: Corrected loose-stone loading, unloading and consumption in slings.
+  - bugfix: Crossbows support normal repair interactions, and invalid launchers avoid
+      missing-magazine chambering errors.
+  - rscadd: Mace-class weapons and tools can now be twirled.
+  - rscadd: Repair hammers and mallets use your highest Maces, Blacksmithing, Weaponsmithing,
+      Armorsmithing or Carpentry skill when twirling.
+  - bugfix: Mouth-held items no longer block head bodywriting or hide its examine
+      text.
+  - bugfix: Putting on headgear during a writing attempt prevents writing through
+      the covering.
+2026-11-19:
+  GarrusVakarian:
+  - bugfix: Moved an admin-only verb that had its own tab into an already existing
+      admin tab.
+  - map: The backdoor to the smithy on Smollhill now starts locked.
+  Khanivore:
+  - sound: Dragons feet got heavier with werewolf footstep noise
+  _Rarity:
+  - bugfix: Fixed switching spells allowing instant casts using leftover charge.
+  - bugfix: Fixed duplicate spell fizzle messages when releasing before fully charged.
+  - bugfix: Fixed bags spilling their contents at spawn and refusing to take items
+      back.
+  - bugfix: Cannon, cannonball, and grapeshot recipes now appear in the encyclopedia.
+      FAFO
+  - bugfix: Wooden and metal limbs no longer bleed from embedded weapons.
+  - qol: The character sheet now shows your numeric triumph total alongside the Roman
+      numeral.
+  - qol: Added a warning when readying up or latejoining with insufficient Triumphs
+      for your character setup.
+  - bugfix: Fixed caparisons being invisible on mares
+  - bugfix: Face-hiding hoods equipped in the mask slot now conceal your identity
+      at spawn without needing to be lowered and raised again.
+  - rscadd: Arachnids can now choose an optional Tentacle tail.
+  - balance: Arbalists now start with a Psydonic volfskulle bascinet and cosmetic
+      red headband instead of a sack mask and armored bloodied headband.
+  - bugfix: Fixed Seelie sprite layering when riding a rous.
+  - bugfix: Fixed weather runtimes when no clients have initialized the weather display.
+  - rscadd: All Seelie now receive their six innate spells regardless of role or class.
+  - balance: Reduced Seelie spell cooldowns.
+  - bugfix: Losing Seelie wings now removes hovering benefits and species fall protection.
+  - bugfix: Overlapping Seelie luck auras use the strongest Willpower, with opposing
+      ties cancelling.
+  - bugfix: Strip Clothes selects eligible clothing and refunds unsuccessful casts.
+  - bugfix: Tame Rous consistently affects a two-tile area and refunds casts when
+      no Rous are nearby.
+  mypingishuge:
+  - rscadd: Grabs and reinforced grabs show private balloons to both participants.
+      Combat Aware adds the grabbed body part.
+  - bugfix: Switching out of alternate grip now retains two-handed wielding on weapons
+      that support it.
+  - qol: Wound-sewing bonus XP is awarded when stitching stops the bleeding, with
+      a completion fallback for wounds that still bleed.
+  - bugfix: Hats and open-faced helmets no longer hide head brands when the face remains
+      visible.
+  - rscadd: Added Shift+N to stash items in your cloak or draw its latest stored item.
+      The shortcut can be changed in Keybinds.
+2026-11-20:
+  Guidesu:
+  - rscadd: You can tie someone's laces together with a needle using the new tie laces
+      intent. Running or walking too fast with your laces tied makes you trip. Untie
+      them with an open hand or cut them with a knife.
+  - rscadd: Trying to tie the laces of someone barefoot pricks their foot instead.
+  - image: Added a tied laces overlay for footwear.
+  _Rarity:
+  - rscadd: Seelie can now take jobs that are not dedicated combat jobs/subclasses
+  - qol: Classes with belts now start with their keys and keyrings inside them.
+  - qol: Right-click your selected Origin in character setup to reset it to None.
+  - qol: Character customization pickers highlight and scroll to your saved choices.
+  - bugfix: Fixed Gnoll and Dragon sprites appearing behind later characters in credits
+      portraits.
+  mypingishuge:
+  - rscadd: Arachnids gain the full Tailmaw appearance selection and Wild-Kin muzzle
+      and ear customization, with any lower body.
+  - bugfix: Construct skill exhibitors now accept every eligible skill and reset properly
+      when cancelled.
+  - bugfix: Skill exhibitor installations safely reject selections that are no longer
+      valid.
+  - qol: Added a one-time chat reminder explaining how to yield when your character
+      becomes critically injured.
+  - bugfix: Starting armor no longer produces premature training warnings before your
+      class finishes loading. Genuinely untrained characters still receive a warning.
+  - balance: Forester Wardens buff changed to Stalwart Forester (+2CON, +3WIL & Longstrider)
+      and Ranger Wardens buff renamed to Wilderness Ranger with the same buffs (+1SPD,
+      +3PER & Longstrider). A warden must have made this pr.
+  - bugfix: Dragons now have Expert Reading, use Werewolf emote sounds, and have a
+      set low speech bark instead of the loaded character's.
+  - rscadd: The Encyclopedia now has a Racial Features guide, with direct chapter
+      links in race descriptions. Arachnids get a short lore paragraph as well.
+  - rscadd: A new border and style for racial and patron selection text, with a more
+      readable color for the likely worshippers lists.
+  - bugfix: Revival miracles can restore suffering Oozes while retaining their usual
+      requirements.
+2026-11-21:
+  GarrusVakarian:
+  - rscadd: Buccaneer, a swashbuckling pirate wretch. It isn't very strong, but it
+      gets a gun for shooting people (and for ERP purposes).
+  - bugfix: Buccaneers now have fusilier to prevent them from hurting themselves when
+      firing their pistol.
+  _Rarity:
+  - bugfix: Honey and Emberwine tailmaw fluids now deliver correctly during oral activities.
+      uwu
+  - bugfix: Charged spells no longer fizzle just because you started charging over
+      yourself.
+  - qol: Organized the Loadout Menu into eight category tabs with search for the active
+      tab. Loadout item descriptions now wrap onto multiple lines.
+  - bugfix: Ground and standing stone lanterns no longer disappear when holding an
+      unlit torch.
+  - balance: Dragon is now available only when the Dragons round modifier is selected.
+  mypingishuge:
+  - qol: Carts can bulk-load with middle-click or drag-and-drop, unload one chosen
+      item, and supply nearby crafting materials.
+  - qol: Cart examine shows cargo and capacity, with concise controls in a Mechanics
+      drop-down.
+  - rscadd: Woodcutters can craft wheelbrace cart upgrades, mutually exclusive with
+      artificer gears.
+  - bugfix: Cart passengers, cargo removal and stockpile selling correctly update
+      capacity, with safer loading and unloading checks.
+  - bugfix: Hellspawn prevents ignition from ordinary fire while leaving burn damage
+      and magical flames unchanged.
+  - rscadd: Examining supported items and structures (almost everything!) now shows
+      a collapsible Mechanics section with usage instructions. Item contents, page
+      counts, spellbook bonuses, repair materials, contextual prompts, on/off statuses
+      and navigator settings stay visible outside Mechanics.
+  - rscadd: (Ollanius) Added item and structure tutorials from Azure Peak, adapted
+      to BD's controls and mechanics.
+  - rscadd: Arachnids can choose Bee, Insect, Scorpion and Scolipede tails alongside
+      Tentacle.
+  - spellcheck: Corrected the Scorpion tail's display name.
+2026-11-22:
+  GarrusVakarian:
+  - rscadd: Adventurer thieves can now choose to spawn with skimpy, studded leather
+      armor.
+  _Rarity:
+  - bugfix: The round-end Chronicle now shows how many mammons the Magnate was carrying
+      when they earned the title.
+  - rscadd: Eligible latejoiners who opt into Werewolf can become one if the Verevolf
+      roll picks nobody at roundstart.
+  - bugfix: Compliant no longer forces you to yield to your own spoken commands.
+  - bugfix: Removed duplicate character customization options.
+  - rscadd: Wooden and iron gloryholes now support placing and retrieving liquid containers.
+  aKromatopzia:
+  - rscadd: '''IC'' verb to change your character''s speech mannerism.'
+  mypingishuge:
+  - bugfix: Rosewall adverts in the Bathhouse and Slaves tabs display punctuation
+      correctly.
+  - rscadd: High Milk Production is a free quirk that lets you choose your effective
+      chest size for milk storage and release without changing your appearance.
+  - bugfix: Humanoid NPCs check for pain collapse on the player schedule and skip
+      wound scans during the cooldown.
+  - bugfix: The lobby ready list shows Gnoll names for players readied as Gnolls.
+  - rscadd: (SatinIsle) Added Open ERP panel under IC to choose yourself or a nearby
+      player.
+  - bugfix: Hypnotic suggestions strip speech formatting markers while keeping their
+      purple styling.
+  - rscadd: Dragons can post or withdraw a featured Notorious hoard challenge for
+      a fellowship of at least two on Neuhill and Smollhill.
+  - rscadd: Quest ledgers announce new hoard challenges. Stewards and Clerks receive
+      a private notice and the Dragon is warned when the contract is accepted.
+  - rscadd: Dragons sense visitors entering the cave and can use Roar to the Realm
+      to broadcast an announcement from the lair.
+  - qol: Any character race can select an available Dragon slot. Dragons use their
+      own physical descriptors and hide player-written descriptions while in Dragon
+      form.
+  - balance: Dragons resist grabs in combat mode and knock targets down and back with
+      Strong Kick.
+  - rscadd: Dragons gain Secular Appraise and a Covetous Crown in their lair.
+  - qol: "The hoard writ lists Dragon\u2019s Lair as its locale and alerts its holder\
+      \ on withdrawal."
+  - balance: The Dragon cannot withdraw a hoard challenge while someone carries the
+      objective gem or post another after a challenge is completed that round.
+  - rscadd: Arachnids can customize their chest fluff in character setup.
+  - bugfix: Gnolls no longer broadcast the white-mouth casting emotes when using Message.
+  - balance: Xylix's confetti burst now has a 5% chance to trigger, or 10% under Emberwine's
+      effect.
+  - balance: Lamia and Harpy feet now have regenerating natural armor equivalent to
+      the Natural Armor virtue.
+  - qol: Digitigrade legs can wear footwear without displaying incompatible boot sprites
+      or dropping footwear when changing leg shape.
+  - qol: Shift-left-click the footwear slot to inspect Lamia or Harpy scales. Harpies
+      can decorate their talons with anklets or footwraps.
+  - bugfix: The Bed of Onyx consistently appears at its intended size.
+  - bugfix: Redolent scents display apostrophes and other punctuation correctly, including
+      saved and inherited scents.
+  - bugfix: Redolent examines no longer add a period after existing sentence punctuation.
+  - rscadd: Added Instant Transform, a 2-point quirk that lets you edit your appearance
+      and anatomy without a mirror.
+  - bugfix: Offensive weapon enchantments no longer activate or consume cooldown on
+      ordinary clicks and unsuccessful attacks.
+  - bugfix: Failed enchantment effects no longer consume their cooldown.
+  - qol: Revival miracles explain their effects on the description and show their
+      current ritual requirements when cast on yourself.
+  - qol: Revival ritual sites can be up to two tiles from the corpse in line of sight.
+  - rscadd: Restored Xylix's tier-four revival with one random aftereffect, without
+      the chance to teleport naked.
+  - rscadd: Barbarians and Wretch Berserkers can enter Rage, gaining strength and
+      automatically unlocking energy recovery, physical regeneration and dismemberment
+      resistance as injuries increase.
+  - rscadd: Hired Thugs and town Thugs who choose Muscle gain a simpler Rage that
+      temporarily increases strength.
+  - balance: Gronn's warcry buff now lasts five minutes instead of one.
+  - bugfix: Custom brands no longer get an extra period after existing punctuation,
+      and body writing displays without added punctuation.
+  - bugfix: Stale grabs no longer leave players unable to move after their grabber
+      falls to another floor.
+  - rscadd: Wrap a Say or Whisper message in tildes to slur your words for that line.
+  - rscadd: Non-Psydonite Paladins, Monks, Court Chaplains, Cantors and Missionaries
+      can now also choose Orthodox or Eclectic while keeping their existing miracle
+      tier limits.
+  - bugfix: Inhumen Eclectic clergy can no longer access Tennite miracle research,
+      relations or their bonuses.
+  - bugfix: Targeted church quests can no longer be completed on yourself.
+  - rscadd: Tennite and Ascendant Eclectics receive a third of quest rewards earned
+      by other Eclectics of their faith.
+  - rscadd: Tennite and Ascendant Eclectics recognize others of their faith on examine.
+  - rscdel: Instant Transform's menu is now limited to chest and genital type and
+      size options.
+  - bugfix: The massage consent popup shows Yes before No and defaults to No when
+      you press Enter.
+  mypingishuge (port), SatinIsle:
+  - rscadd: Added Fate's Fool, an adventurer with random stats, skills, traits and
+      a chance of magic or miracles. Starting gear follows their training.
+2026-11-23:
+  GarrusVakarian:
+  - balance: Player skeletons (checked for by antag datum) no longer get stunned for
+      twenty seconds when they try to throw. They don't have a stomach to begin with.
+  - map: Adds a statue to the Dun World warden armory.
+  - rscadd: Added a dog clicker so I can train Nash and Mana to drool at the sight
+      of Fenrir's feet.
+  - rscadd: Berserker gnolls have wrestling moves now.
+  - map: The gnoll cave now has two dog clickers in it. I am going to use them to
+      train the gnolls themselves.
+  _Rarity:
+  - rscadd: Ported AP's Bandolier. Its added to the Cloaks loadout tab, leatherworking,
+      and the wardrobe merchant.
+  - bugfix: "Enchanter\u2019s Apprentice no longer unlocks Tier 2 Arcyne spells."
+  - bugfix: The Lobby countdown now closes at roundstart.
+  - qol: Added "Close All Windows" verb under Options.
+  - bugfix: Seelies no longer slow larger characters carrying them.
+  - qol: Added a Guidance Notifications window under Toggles to disable optional tips
+      and reminders.
+  - rscadd: Shovels can now sift for clay and stone or dig for bait. Right-click the
+      shovel in your inactive hand to change modes.
+  mypingishuge:
+  - bugfix: NPC bite holds and tightened hand grabs show private grab balloons.
+  - bugfix: Fireball, Greater Fireball, Artillery Fireball, Spitfire and Fetch keep
+      the caster in their grabber's grip.
+  - rscadd: Instant Transform can now recolor genitals and chest and change hairstyle
+      without changing hair color.
+  - balance: Instant Transform now costs 1 quirk point.
+  - bugfix: Instant Transform now applies default colors when creating a penis without
+      a previous palette.
+  - balance: Milk now provides twice as much nutrition.
+  - bugfix: The oven's Mechanics tip now gives the correct control for taking items
+      out.
+  - balance: Adventurer and Refugee now require 0 PQ on every map again.
+  - bugfix: Removed the Bandit, Maniac, and Lich toggles from villain preferences.
+  - bugfix: Fixed a typo in the Net debuff tooltip.
+  - bugfix: Fire no longer skeletonizes your body before you respawn, preserving a
+      chance to recover after death in lava.
+  - qol: "The Embrace Necra reminder appears sooner if you\u2019re stuck in hard critical\
+      \ in lava or acid."
+  - bugfix: Message and Message Summoner whispers now display apostrophes and other
+      punctuation correctly.
+  - qol: Forester Warden loadouts now show the Expert weapon skill they add in the
+      selection popup.
+  - qol: Harpies can attach amulets to their talons. The footwear preview now recognizes
+      eligible decorations.

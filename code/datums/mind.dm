@@ -38,6 +38,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	var/ghostname			//replaces name for observers name if set
 	var/mob/living/current
 	var/active = 0
+	/// One critical-condition yielding tutorial per character, including across body transfers.
+	var/critical_yield_reminded = FALSE
 
 	var/memory
 
@@ -1079,13 +1081,13 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						var/custom_name = user.client?.prefs.resolve_loadout_to_name(path2item)
 						if (custom_name)
 							I.original_name = I.name // Store original name before renaming
-							I.name = sanitize(html_decode(custom_name))
+							I.name = custom_name // Resolved and escaped by the shared loadout formatter.
 							// Log to game log
 							log_game("[key_name(user)] retrieved loadout item with custom name: '[custom_name]' (original: '[I.original_name]')")
 						// Apply custom description if set
 						var/custom_desc = user.client?.prefs.resolve_loadout_to_desc(path2item)
 						if (custom_desc)
-							I.desc = replacetext(html_encode(html_decode(custom_desc)), "\n", "<br>")
+							I.desc = custom_desc // Same safe markup as the customization preview.
 							I.loadout_desc_html = I.desc
 
 						user.put_in_hands(I)

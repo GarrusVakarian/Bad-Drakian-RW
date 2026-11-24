@@ -78,6 +78,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	var/toxic_food = TOXIC
 	/// slots the race can't equip stuff to
 	var/list/no_equip = list()
+	/// Regenerating skin for species whose anatomy leaves specific areas unarmored.
+	var/natural_armor_type = null
 	/// this is sorta... weird. it basically lets you equip stuff that usually needs jumpsuits without one, like belts and pockets and ids
 	var/nojumpsuit = 0
 	/// affects the speech message
@@ -184,6 +186,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 	var/list/allowed_taur_types = list()
 	var/forced_taur = FALSE
+	/// Default when newly selecting this race; does not override saved body choices.
+	var/default_taur = FALSE
 
 	/// List of descriptor choices this species gets in preferences customization
 	var/list/descriptor_choices = list(
@@ -233,6 +237,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	/// WARNING - This is a very simple implementation. Not meant for carbons composed of limbs!
 	var/custom_rotation_icon = null
 	var/custom_base_icon = null
+	/// Optional credits head rectangle: left, bottom, right, top; 1-based native body-canvas pixels.
+	/// Null uses the upper half of the canvas. Keep overrides within the canvas bounds.
+	var/list/credits_portrait_crop = null
 
 //Used for expanded lore blurbs on species.
 	var/expanded_desc
@@ -589,10 +596,18 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 	SEND_SIGNAL(C, COMSIG_SPECIES_GAIN, src, old_species)
 
+	if(natural_armor_type && ishuman(C))
+		var/mob/living/carbon/human/H = C
+		if(!istype(H.skin_armor, natural_armor_type))
+			QDEL_NULL(H.skin_armor)
+			H.skin_armor = new natural_armor_type(H)
+
 	properly_gained = TRUE
 
 
 /datum/species/proc/on_species_loss(mob/living/carbon/human/C, datum/species/new_species, pref_load)
+	if(natural_armor_type && ishuman(C) && istype(C.skin_armor, natural_armor_type))
+		QDEL_NULL(C.skin_armor)
 	if(C.dna.species.exotic_bloodtype)
 		C.dna.blood_type = random_blood_type()
 	if(DIGITIGRADE in species_traits)
@@ -805,10 +820,6 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			if( !(I.slot_flags & ITEM_SLOT_SHOES) )
 				return FALSE
 			if(num_legs < 1)
-				return FALSE
-			if(DIGITIGRADE in species_traits)
-				if(!disable_warning)
-					to_chat(H, span_warning("The footwear around here isn't compatible with my feet!"))
 				return FALSE
 			return equip_delay_self_check(I, H, bypass_equip_delay_self)
 		if(SLOT_BELT)
@@ -1079,13 +1090,15 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			H.adjust_nutrition(-hunger_rate)
 
 		var/obj/item/organ/breasts/breasts = H.has_breasts()
-		if(breasts)
-			if(H.nutrition > NUTRITION_LEVEL_HUNGRY && breasts.lactating && breasts.milk_max > breasts.milk_stored) //Vrell - numbers may need to be tweaked for balance but hey this works for now.
-				var/milk_to_make = min(hunger_rate, breasts.milk_max - breasts.milk_stored)
-				breasts.milk_stored += milk_to_make
-				H.adjust_nutrition(-milk_to_make)
+		if(istype(breasts) && breasts.lactating)
+			if(H.nutrition > NUTRITION_LEVEL_HUNGRY)
+				var/milk_space = breasts.get_milk_capacity() - breasts.milk_stored
+				if(milk_space > 0)
+					var/milk_to_make = min(hunger_rate, milk_space)
+					breasts.milk_stored += milk_to_make
+					H.adjust_nutrition(-milk_to_make)
 
-			else if(H.nutrition < NUTRITION_LEVEL_STARVING && breasts.lactating) //Vrell - If starving, your milk drains automatically to slow your starvation.
+			else if(H.nutrition < NUTRITION_LEVEL_STARVING) // Stored milk slows starvation.
 				var/milk_to_take = min(hunger_rate, breasts.milk_stored)
 				breasts.milk_stored -= milk_to_take
 				H.adjust_nutrition(milk_to_take)
@@ -2245,7 +2258,7 @@ GLOBAL_VAR_INIT(cold_breath_overlay, mutable_appearance(
 		var/sunlit = GLOB.tod == "day" && cur_turf.outdoor_effect?.state
 		if(sunlit)
 			H.add_stress(/datum/stressevent/sunlit)
-		if(sunlit && !(H.head?.block2add & FOV_BEHIND))
+		if(sunlit && !((H.head?.block2add | H.wear_mask?.block2add) & FOV_BEHIND))
 			H.apply_status_effect(/datum/status_effect/debuff/sun_blinded)
 		else
 			H.remove_status_effect(/datum/status_effect/debuff/sun_blinded)

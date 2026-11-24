@@ -8,6 +8,7 @@
 	)
 	name = "Harpy"
 	id = "harpy"
+	natural_armor_type = /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
 	desc = "<b>Harpy</b></br>\
 	Harpies, often called \"songbirds\" or \"Magpies\" by some, resemble the half-kin in appearance at first glance. \
 	However, the exact nature of the creatures is a much more complicated, debated topic, with many unknown details. \
@@ -15,12 +16,9 @@
 	Mistrusted by many for their wily and possessive nature, yet admired by others for their intelligence and beauty, these nomads are oft welcomed at a distance by most new cities they travel to. </br>\
 	<u>Standard stats</u></br>\
 	<span style='color: #cc0f0f;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>-2 CON | -1 STR</span> |<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'> +1 PER | +1 INT | +2 SPD</b></span> </br> \
-	<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>Flight | Innate Singing | Strong Bites</b></span> </br> \
-	<span style='color: #cc0f0f;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>Can't wear boots</span> | <span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #00０;'>Slight Fall Damage Reduction </span></b> </br>\
 	<u>Flightless stats</u></br>\
 	<span style='color: #cc0f0f;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>-1 INT | -2 WIL</span> |<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'> +1 STR | +1 SPD</b></span> </br> \
-	<span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>Innate Singing | Strong Bites | Talon Kicks</b></span> </br> \
-	<span style='color: #cc0f0f;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>Can't wear boots</span> | <span style='color: #6a8cb7;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #00０;'>Slight Fall Damage Reduction </span></b>"
+	<a href='byond://winset?command=Racial-Features%20harpy'>Racial Features: Harpies</a><br>"
 
 
 	expanded_desc = "<b>Harpy</b><br>\
@@ -228,31 +226,3 @@
 		"Kazengun <span style='border: 1px solid #161616; background-color: #[SKIN_COLOR_KAZENGUN];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" = SKIN_COLOR_KAZENGUN,
 		"Naledi <span style='border: 1px solid #161616; background-color: #[SKIN_COLOR_NALEDI];'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" = SKIN_COLOR_NALEDI
 	)
-
-/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin
-	slot_flags = null
-	name = "harpy's feet skin"
-	desc = ""
-	icon_state = null
-	body_parts_covered = FEET|LEGS
-	body_parts_inherent = FEET|LEGS
-	armor = list("blunt" = 90, "slash" = 90, "stab" = 50, "piercing" = 20, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST)
-	blocksound = SOFTHIT
-	blade_dulling = DULLING_BASHCHOP
-	sewrepair = FALSE
-	max_integrity = 75
-	resistance_flags = FIRE_PROOF
-
-/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin/Initialize(mapload)
-	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-
-/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-
-/obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin/obj_destruction()
-	visible_message("The skin on the feet is torn!", span_bloody("<b>THE SKIN ON MY FEET IS TORN!!</b>"))

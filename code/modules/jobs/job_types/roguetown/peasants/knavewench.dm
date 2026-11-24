@@ -61,7 +61,7 @@
 	..()
 	H.adjust_blindness(-3)
 	belt = /obj/item/storage/belt/rogue/leather
-	beltl = /obj/item/roguekey/tavern
+	belt_contents = list(/obj/item/roguekey/tavern = 1)
 	backr = /obj/item/storage/backpack/rogue/satchel
 	cloak = /obj/item/clothing/cloak/apron/waist
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor

@@ -186,9 +186,11 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 					return
 
 			if(ready != tready)
+				if(tready == PLAYER_READY_TO_PLAY)
+					warn_triumph_shortfall()
 				ready = tready
 		//if it's post initialisation and they're trying to observe we do the needful
-		
+
 		if(!SSticker.current_state < GAME_STATE_PREGAME && tready == PLAYER_READY_TO_OBSERVE)
 			ready = tready
 			make_me_an_observer()
@@ -475,9 +477,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			return JOB_UNAVAILABLE_PQ
 	#endif
 	var/datum/species/pref_species = client.prefs.pref_species
-	if(length(job.allowed_races) && !(pref_species.type in job.allowed_races))
-		return JOB_UNAVAILABLE_RACE
-	if(length(job.disallowed_races) && (pref_species.type in job.disallowed_races))
+	if(!job.is_species_allowed(pref_species.type))
 		return JOB_UNAVAILABLE_RACE
 	var/list/allowed_sexes = list()
 	if(length(job.allowed_sexes))
@@ -584,6 +584,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/mob/living/carbon/human/humanc
 	if(ishuman(character))
 		humanc = character	//Let's retypecast the var to be human,
+		SSgamemode.try_assign_latejoin_werewolf(humanc, job)
 /*
 	if(humanc)	//These procs all expect humans
 		GLOB.data_core.manifest_inject(humanc)
@@ -637,9 +638,41 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(character.client)
 		character.client.update_ooc_verb_visibility()
 
+/mob/dead/new_player/proc/warn_triumph_shortfall()
+	var/datum/preferences/prefs = client?.prefs
+	if(!prefs)
+		return
+
+	// Estimate the cost of the saved build before role and trait restrictions are applied.
+	var/required_triumphs = prefs.get_triumph_collateral()
+	var/heretic = istype(prefs.selected_patron, /datum/patron/inhumen)
+	if(virtue_check(prefs.virtue, heretic))
+		required_triumphs += prefs.virtue.triumph_cost
+	if(prefs.statpack?.name == "Virtuous" && virtue_check(prefs.virtuetwo, heretic))
+		required_triumphs += prefs.virtuetwo.triumph_cost
+	if(background_check(prefs.virtue_background))
+		required_triumphs += prefs.virtue_background.triumph_cost
+
+	var/list/vices = list()
+	for(var/i = 1 to 6)
+		var/datum/charflaw/vice = prefs.vars["vice[i]"]
+		if(vice)
+			vices += vice
+	if(!length(vices) && prefs.charflaw)
+		vices += prefs.charflaw
+	for(var/datum/charflaw/noflaw/no_flaw in vices)
+		required_triumphs += NO_FLAW_TRIUMPH_COST
+
+	if(required_triumphs <= 0)
+		return
+	var/available_triumphs = get_triumphs()
+	if(available_triumphs < required_triumphs)
+		to_chat(src, span_boldwarning("Your character setup costs [required_triumphs] Triumphs, and you have [available_triumphs]. You can still play, but some paid choices may be skipped. You can change them in Character Setup."))
+
 /mob/dead/new_player/proc/LateChoices()
 	if(!client)
 		return
+	warn_triumph_shortfall()
 	var/list/dat = list("<div class='notice' style='font-style: normal; font-size: 14px; margin-bottom: 2px; padding-bottom: 0px'>Round Duration: [DisplayTimeText(world.time - SSticker.round_start_time, 1)]</div>")
 	for(var/datum/job/prioritized_job in SSjob.prioritized_jobs)
 		if(prioritized_job.current_positions >= prioritized_job.total_positions)
@@ -764,8 +797,9 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(mind in GLOB.pre_setup_antags)
 		is_antag = TRUE
 	var/is_gnoll = (mind?.assigned_role == "Gnoll")
+	var/is_dragon = (mind?.assigned_role == "Dragon")
 
-	client.prefs.copy_to(H, antagonist = is_antag, skip_normal_prefs = is_gnoll)
+	client.prefs.copy_to(H, antagonist = is_antag, skip_normal_prefs = is_gnoll, dragon_special_race = is_dragon)
 	H.dna.update_dna_identity()
 	if(mind)
 		if(transfer_after)
@@ -803,6 +837,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	. = new_character
 	if(.)
 		new_character.key = key		//Manually transfer the key to log them in
+		record_character_spawn(new_character.ckey)
 		new_character.stop_sound_channel(CHANNEL_LOBBYMUSIC)
 		var/area/joined_area = get_area(new_character.loc)
 		if(joined_area)
@@ -831,6 +866,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 /mob/dead/new_player/proc/close_spawn_windows()
 
 	src << browse(null, "window=latechoices") //closes late choices window
+	src << browse(null, "window=villainchoices") //closes villain selection
 	src << browse(null, "window=playersetup") //closes the player setup window
 	src << browse(null, "window=preferences") //closes job selection
 	src << browse(null, "window=mob_occupation")

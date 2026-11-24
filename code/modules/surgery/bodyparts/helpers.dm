@@ -215,8 +215,7 @@
 				else
 					U.adjusted = DIGITIGRADE_STYLE
 				H.update_inv_w_uniform()
-		if(H.shoes && !swap_back)
-			H.dropItemToGround(H.shoes)
+		H.update_inv_shoes()
 
 /mob/living/carbon/proc/ensure_not_taur()
 	SHOULD_NOT_SLEEP(TRUE)

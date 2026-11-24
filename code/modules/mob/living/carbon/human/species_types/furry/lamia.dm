@@ -4,10 +4,12 @@
 /datum/species/lamia
 	name = "Lamia"
 	id = "lamia"
+	natural_armor_type = /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/lamia
 	desc = "<b>Lamia</b><br>\
 	The monstrous spawn of Abyssor, snake and humen conjoined together, the deepkin and merfolk. \
 	Sirens, mermaids, nagas and many others fall into lamia categorization. While one could consider them to be of Dendor, he had no hand in their creation. \
-	(+1 Strength, -1 Speed, Strong Kicks, Longstrider Trait, Venomous Trait)"
+	(+1 Strength, -1 Speed)<br>\
+	<a href='byond://winset?command=Racial-Features%20lamia'>Racial Features: Lamias</a><br>"
 
 	expanded_desc = "The monstrous spawn of Abyssor, snake and humen conjoined together, the deepkin and merfolk. \
 	Sirens, mermaids, nagas and many others fall into lamia categorization. While one could consider them to be of Dendor, he had no hand in their creation. \

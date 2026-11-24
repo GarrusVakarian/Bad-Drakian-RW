@@ -29,13 +29,6 @@
 	if(locate(/obj/structure/minecart_rail) in loc)
 		update_rail_state(TRUE)
 
-/obj/structure/closet/crate/miningcar/examine(mob/user)
-	. = ..()
-	if(on_rails)
-		. += span_notice("You can give this a bump to send it on its way, or drag it off the rails to drag it around.")
-	else
-		. += span_notice("Drag this onto a mine cart rail to set it on the rails.")
-
 /obj/structure/closet/crate/miningcar/Move(atom/newloc, direct, glide_size_override, update_dir)
 	if(isnull(newloc))
 		return ..()
@@ -483,3 +476,10 @@
 		movement_type |= FLYING // this along with zFall(force = TRUE) only allows the cart to fall one z level
 	current_turf.zFall(src, force = TRUE)
 	movement_type &= ~FLYING
+
+/obj/structure/closet/crate/miningcar/examine(mob/user)
+	. = ..()
+	if(on_rails)
+		. += span_notice("You can give this a bump to send it on its way, or drag it off the rails to drag it around.")
+	else
+		. += span_notice("Drag this onto a mine cart rail to set it on the rails.")

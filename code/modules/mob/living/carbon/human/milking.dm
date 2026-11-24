@@ -41,7 +41,7 @@
 		B = has_breasts()
 		if(!istype(B) || !B.lactating || B.milk_stored < 1)
 			return
-		var/size_limit = max(B.breast_size, 1)
+		var/size_limit = B.get_milk_release_limit()
 		var/free_space = container.reagents.maximum_volume - container.reagents.total_volume
 		var/milk_to_take = max(min(free_space, B.milk_stored, size_limit), 0)
 		if(milk_to_take <= 0 || !container.reagents.add_reagent(/datum/reagent/consumable/milk, milk_to_take))

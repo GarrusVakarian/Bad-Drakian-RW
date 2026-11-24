@@ -54,10 +54,10 @@
 				H.change_stat(STATKEY_SPD, -1)
 				H.change_stat(STATKEY_INT, -1)
 
+	belt_contents = list(/obj/item/storage/keyring/guardcastle = 1)
 	backpack_contents = list(//Iron dagger and ale instead of red.
 		/obj/item/rogueweapon/huntingknife/idagger = 1,
 		/obj/item/rope/chain = 1,
-		/obj/item/storage/keyring/guardcastle = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/beer = 1,
 		)

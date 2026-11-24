@@ -34,6 +34,8 @@
 	var/obj/item/bodypart/taur/taur_parts = get_taur_tail()
 	if(istype(taur_parts))
 		multiplier += 0.5
+	if(isseelie(src))
+		multiplier /= 3
 	return multiplier
 
 /// Called only when new fluid/leakage arrives or the preference is enabled, not by metabolism.
@@ -101,7 +103,7 @@
 	duration = 15 MINUTES
 	tick_interval = 15 MINUTES
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/stuffed
-	effectedstats = list(STATKEY_SPD = -6)
+	effectedstats = list(STATKEY_SPD = -3)
 
 /datum/status_effect/debuff/stuffed/on_apply()
 	if(!cumflation_content_enabled(owner))
@@ -134,7 +136,7 @@
 /atom/movable/screen/alert/status_effect/debuff/stuffed
 	name = "Stuffed"
 	icon = 'icons/mob/stuffed.dmi'
-	desc = "Your body feels overfull. Speed is reduced by 6. Washing your body clears this effect."
+	desc = "Your body feels overfull. Washing your body clears this effect."
 	icon_state = "stuffed"
 
 /client/verb/toggle_cumflation_content()

@@ -366,7 +366,7 @@
 /datum/status_effect/buff/cum_consumed
 	id = "cum_consumed"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/cum_consumed
-	duration = 10 MINUTES
+	duration = 15 MINUTES
 
 /datum/status_effect/buff/cum_consumed/on_apply()
 	. = ..()
@@ -513,6 +513,21 @@
 	name = "Woodsman"
 	desc = "I've trekked these woods for some time now. I find traversal easier here."
 	icon_state = "guardsman"
+
+/datum/status_effect/buff/wardenbuff/ranger
+	alert_type = /atom/movable/screen/alert/status_effect/buff/wardenbuff/ranger
+
+/atom/movable/screen/alert/status_effect/buff/wardenbuff/ranger
+	name = "Wilderness Ranger"
+	desc = "I know these woods well. Familiar paths quicken my steps, and movement among the trees never escapes my sharp eyes."
+
+/datum/status_effect/buff/wardenbuff/forester
+	alert_type = /atom/movable/screen/alert/status_effect/buff/wardenbuff/forester
+	effectedstats = list(STATKEY_CON = 2, STATKEY_WIL = 3)
+
+/atom/movable/screen/alert/status_effect/buff/wardenbuff/forester
+	name = "Stalwart Forester"
+	desc = "I have fought among these trees for years. On familiar ground, my footing is sure, my stance steady, and my resolve hardened."
 
 // Innkeeper area buff
 /datum/status_effect/buff/barkeepbuff
@@ -2459,5 +2474,5 @@
 /datum/status_effect/buff/battle_cry
 	id = "battle_cry"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/battle_cry
-	duration = 1 MINUTES
+	duration = 5 MINUTES
 	status_type = STATUS_EFFECT_REFRESH

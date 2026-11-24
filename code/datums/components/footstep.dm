@@ -100,7 +100,7 @@
 		return
 	var/mob/living/carbon/human/human_parent = parent
 	//TODO: Look into implementing soft fluttering sounds instead, and prevent this check that will happen for every footstep ever
-	if(isseelie(human_parent))	//Need to look into a wing check for wingless seelie too
+	if(is_seelie_hovering(human_parent))
 		return
 	var/feetCover = (human_parent.wear_armor?.body_parts_covered | human_parent.wear_pants?.body_parts_covered) & FEET
 	var/used_sound
@@ -109,7 +109,14 @@
 	var/used_volume = 0
 	var/used_extra_range = 0
 	var/do_vary = FALSE
-	if(istype(human_parent.get_taur_tail(), /obj/item/bodypart/taur/equine))
+	if(istype(human_parent.dna.species, /datum/species/dragon))
+		var/list/step_data = GLOB.heavyfootstep[step_location.heavyfootstep]
+		if(!step_data)
+			return
+		used_footsteps = step_data[1]
+		used_volume = step_data[2]
+		used_extra_range = step_data[3]
+	else if(istype(human_parent.get_taur_tail(), /obj/item/bodypart/taur/equine))
 		var/static/list/horse_walk_footsteps = list(
 			'sound/foley/footsteps/hoof/horsewalk (1).ogg',
 			'sound/foley/footsteps/hoof/horsewalk (2).ogg',

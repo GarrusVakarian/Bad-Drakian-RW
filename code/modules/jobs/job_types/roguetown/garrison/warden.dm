@@ -63,6 +63,31 @@
 		if(!SEND_SIGNAL(H.belt, COMSIG_TRY_STORAGE_INSERT, spare, null, TRUE, TRUE))
 			spare.forceMove(get_turf(H))
 
+/mob/living/carbon/human/proc/get_warden_wilderness_buff(class_name)
+	if(job == "Warden")
+		if(isnull(class_name))
+			class_name = advjob
+		switch(class_name)
+			if("Ranger")
+				return /datum/status_effect/buff/wardenbuff/ranger
+			if("Forester")
+				return /datum/status_effect/buff/wardenbuff/forester
+	return /datum/status_effect/buff/wardenbuff
+
+/datum/advclass/warden/post_equip(mob/living/carbon/human/H)
+	. = ..()
+	if(H.job != "Warden" || !HAS_TRAIT(H, TRAIT_WOODSMAN))
+		return
+	var/area/rogue/our_area = get_area(H)
+	if(!istype(our_area) || !our_area.warden_area)
+		return
+	var/buff_type = H.get_warden_wilderness_buff(name)
+	var/datum/status_effect/current_buff = H.has_status_effect(/datum/status_effect/buff/wardenbuff)
+	if(current_buff && current_buff.type == buff_type)
+		return
+	H.remove_status_effect(/datum/status_effect/buff/wardenbuff)
+	H.apply_status_effect(buff_type)
+
 /datum/advclass/warden/ranger
 	name = "Ranger"
 	tutorial = "You are a ranger, a hunter who volunteered to become a part of the wardens. You have great experience using bows."
@@ -107,8 +132,8 @@
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve/warden
 	beltr = /obj/item/quiver/arrows
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/warden_machete
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 1,
@@ -141,7 +166,7 @@
 
 /datum/advclass/warden/forester
 	name = "Forester"
-	tutorial = "You are a forester, a woodsman who volunteered to become a part of the wardens. You have experience in the axe and the spear."
+	tutorial = "You are a forester, a frontline scout of the Wardens. Skilled in close combat, you venture ahead of civilization to find its threats and hold them at bay."
 	outfit = /datum/outfit/job/roguetown/warden/forester
 	category_tags = list(CTAG_WARDEN)
 	traits_applied = list(TRAIT_MEDIUMARMOR)
@@ -188,8 +213,8 @@
 	beltr = /obj/item/rogueweapon/stoneaxe/woodcut/wardenpick
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/warden_machete
 	r_hand = /obj/item/rogueweapon/spear
+	belt_contents = list(/obj/item/storage/keyring/guard = 1)
 	backpack_contents = list(
-		/obj/item/storage/keyring/guard = 1,
 		/obj/item/flashlight/flare/torch/lantern = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/signal_horn = 1
@@ -198,18 +223,27 @@
 	H.set_blindness(0)
 
 	if(H.mind)
-		var/weapons = list("Billhook", "Steel Messer and Iron Shield", "Kriegsmesser", "Bronze War Axe and Iron Shield", "Iron Greataxe")
-		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
+		var/list/weapons = list(
+			"Billhook (Axes)" = "Billhook",
+			"Steel Messer and Iron Shield (Swords)" = "Steel Messer and Iron Shield",
+			"Kriegsmesser (Swords)" = "Kriegsmesser",
+			"Bronze Warclub and Iron Shield (Maces)" = "Bronze Warclub and Iron Shield",
+			"Goedendag (Maces)" = "Goedendag",
+			"Bronze War Axe and Iron Shield (Axes)" = "Bronze War Axe and Iron Shield",
+			"Iron Greataxe (Axes)" = "Iron Greataxe",
+		)
+		var/weapon_label = input(H, "Choose your EXPERTISE, beyond Polearms.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_choice = weapons[weapon_label]
 		switch(weapon_choice)
 			if("Billhook", "Iron Greataxe")
 				r_hand = weapon_choice == "Billhook" ? /obj/item/rogueweapon/spear/billhook : /obj/item/rogueweapon/greataxe
 				H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_EXPERT, TRUE)
-			if("Steel Messer and Iron Shield", "Kriegsmesser", "Bronze War Axe and Iron Shield")
+			if("Steel Messer and Iron Shield", "Kriegsmesser", "Bronze War Axe and Iron Shield", "Bronze Warclub and Iron Shield", "Goedendag")
 				backl = /obj/item/rogueweapon/shield/iron
 				beltl = /obj/item/rogueweapon/scabbard/sword
 				r_hand = /obj/item/rogueweapon/sword/short/messer
+				belt_contents = list(/obj/item/storage/keyring/guard = 1)
 				backpack_contents = list(
-					/obj/item/storage/keyring/guard = 1,
 					/obj/item/flashlight/flare/torch/lantern = 1,
 					/obj/item/rogueweapon/scabbard/sheath = 1,
 					/obj/item/rogueweapon/huntingknife/idagger/warden_machete = 1,
@@ -217,6 +251,8 @@
 					)
 				if(weapon_choice == "Bronze War Axe and Iron Shield")
 					H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_EXPERT, TRUE)
+				else if(weapon_choice == "Bronze Warclub and Iron Shield" || weapon_choice == "Goedendag")
+					H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_EXPERT, TRUE)
 				else
 					H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 				if(weapon_choice == "Kriegsmesser")
@@ -225,6 +261,13 @@
 					r_hand = null
 				else if(weapon_choice == "Bronze War Axe and Iron Shield")
 					beltl = /obj/item/rogueweapon/stoneaxe/woodcut/bronzebattleaxe
+					r_hand = null
+				else if(weapon_choice == "Bronze Warclub and Iron Shield")
+					beltl = /obj/item/rogueweapon/mace/warhammer/bronze
+					r_hand = null
+				else if(weapon_choice == "Goedendag")
+					backl = /obj/item/rogueweapon/scabbard/gwstrap/forester_goedendag
+					beltl = null
 					r_hand = null
 
 		var/helmets = list(
@@ -250,4 +293,9 @@
 /obj/item/rogueweapon/scabbard/gwstrap/forester_kriegsmesser/Initialize(mapload)
 	. = ..()
 	sheathed = new /obj/item/rogueweapon/sword/long/kriegmesser(src)
+	update_icon()
+
+/obj/item/rogueweapon/scabbard/gwstrap/forester_goedendag/Initialize(mapload)
+	. = ..()
+	sheathed = new /obj/item/rogueweapon/mace/goden(src)
 	update_icon()

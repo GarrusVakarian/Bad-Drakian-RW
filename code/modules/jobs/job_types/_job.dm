@@ -72,6 +72,8 @@
 	var/list/allowed_sexes = list(MALE, FEMALE)
 	var/list/allowed_races = RACES_ALL_KINDS
 	var/list/disallowed_races = null
+	/// Apply NO_COMBAT_RACES in addition to this job's existing race restrictions.
+	var/combat_role = FALSE
 	var/list/allowed_patrons
 	var/list/allowed_ages = ALL_AGES_LIST
 
@@ -274,9 +276,6 @@
 			SStreasury.noble_incomes[H] = noble_income
 			SStreasury.grant_estate_income(H, noble_income, TRUE)
 
-	if(show_in_credits)
-		SScrediticons.processing += H
-
 	if(cmode_music)
 		H.cmode_music = cmode_music
 
@@ -305,34 +304,6 @@
 		hugboxify_for_class_selection(H)
 
 	log_admin("[department] >> [H.key]/([H.real_name]) has joined as [H.mind.assigned_role].")
-
-/mob/living/carbon/human/proc/add_credit(generate_for_adv_class = FALSE) //Evil code to get the proper image for adv classes after they spawn in.
-	if(!mind || !client)
-		return
-	var/thename = "[real_name]"
-	var/datum/job/J = SSjob.GetJob(mind.assigned_role)
-	var/used_title = get_role_title()
-
-	var/client/C = client
-	var/datum/preferences/P = C.prefs
-	if(!P)
-		return
-	var/datum/mind/credit_mind = mind
-	var/credit_slot = P.default_slot
-	var/icon/I
-	if(generate_for_adv_class)
-		I = get_flat_human_icon(null, J, P, DUMMY_HUMAN_SLOT_MANIFEST, list(SOUTH), human_gear_override = src, hide_portrait_headgear = TRUE)
-	else if (P)
-		I = get_flat_human_icon(null, J, P, DUMMY_HUMAN_SLOT_MANIFEST, list(SOUTH), hide_portrait_headgear = TRUE)
-	// Acquiring the shared mannequin can sleep; do not publish a stale character's portrait.
-	if(QDELETED(src) || client != C || C.prefs != P || P.default_slot != credit_slot || mind != credit_mind || real_name != thename)
-		return
-	if(I)
-		I = crop_credit_headshot(I)
-		GLOB.credits_icons[thename] = list()
-		GLOB.credits_icons[thename]["title"] = used_title
-		GLOB.credits_icons[thename]["icon"] = I
-		GLOB.credits_icons[thename]["vc"] = voice_color
 
 /datum/job/proc/announce(mob/living/carbon/human/H)
 
@@ -692,3 +663,13 @@
 		if(initial(subclass.maximum_possible_slots) != -1)
 			return TRUE
 	return FALSE
+
+/// One race eligibility check for roundstart, latejoin, and final assignment.
+/datum/job/proc/is_species_allowed(species_type)
+	if(combat_role && (species_type in NO_COMBAT_RACES))
+		return FALSE
+	if(length(allowed_races) && !(species_type in allowed_races))
+		return FALSE
+	if(length(disallowed_races) && (species_type in disallowed_races))
+		return FALSE
+	return TRUE

@@ -53,6 +53,7 @@
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.update_tongue_noise_verbs()
+		H.update_seelie_wings()
 
 /obj/item/organ/wings/Remove(mob/living/carbon/M, special = FALSE, drop_if_replaced = TRUE)
 	if(ishuman(M))
@@ -63,6 +64,7 @@
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.update_tongue_noise_verbs()
+		H.update_seelie_wings()
 
 //TODO: Well you know what this flight stuff is a bit complicated and hardcoded, this is enough for now
 
@@ -135,7 +137,6 @@
 			if(!harpydna.flightless)
 				M.mind.AddSpell(new /obj/effect/proc_holder/spell/self/harpy_flight)
 			src.nullspace_items += new /obj/item/rogueweapon/huntingknife/idagger/harpy_talons
-			M.skin_armor = new /obj/item/clothing/suit/roguetown/armor/skin_armor/harpy_skin
 		else
 			to_chat(M, span_bloody("I have the wings, yes... BUT HOW THE FARK DO I USE THEM?!!"))
 

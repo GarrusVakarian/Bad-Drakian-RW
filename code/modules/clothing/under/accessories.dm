@@ -77,9 +77,3 @@
 		if(initial(above_suit))
 			above_suit = !above_suit
 			to_chat(user, "[src] will be worn [above_suit ? "above" : "below"] my suit.")
-
-/obj/item/clothing/accessory/examine(mob/user)
-	. = ..()
-	. += "<span class='notice'>\The [src] can be attached to a uniform. Alt-click to remove it once attached.</span>"
-	if(initial(above_suit))
-		. += "<span class='notice'>\The [src] can be worn above or below my suit. Alt-click to toggle.</span>"

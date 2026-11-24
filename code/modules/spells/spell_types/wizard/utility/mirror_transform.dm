@@ -42,17 +42,49 @@
 		REMOVE_TRAIT(H, TRAIT_MIRROR_MAGIC, TRAIT_GENERIC)
 		to_chat(H, span_warning("Your connection to mirrors fades away."))
 
-/proc/perform_mirror_transform(mob/living/carbon/human/H)
+/proc/perform_mirror_transform(mob/living/carbon/human/H, datum/instant_transform_session/session)
 	// Handles the actual appearance changing part of the spell. For reasons unknown to man, this previously lived exclusively on the mirror object.
-	if (!H)
+	var/guarded = !isnull(session)
+	if(!H || (guarded && (QDELETED(session) || !session.is_valid(H))))
 		return
 	var/should_update = FALSE
 	var/force_bodypart_update = FALSE
 	var/list/choices = list("reset appearance", "hairstyle", "facial hairstyle", "accessory", "pubes", "pits", "face detail", "crest", "horns", "horn color", "ears", "ear color one", "ear color two", "tail", "tail color one", "tail color two", "tail feature", "tail feature color", "wings", "wing color one", "wing color two", "frills", "frill color", "antennas", "antenna color", "snout", "snout color", "head feature", "head feature color", "neck feature", "neck feature color", "back feature", "back feature color", "descriptors", "hair color", "facial hair color", "eye color", "skin color", "mutant color", "mutant color 2", "mutant color 3", "natural gradient", "natural gradient color", "dye gradient", "dye gradient color", "penis", "penis color", "penis color 2", "testicles", "testicles color", "breasts", "breasts color", "vagina", "vagina color", "breast size", "penis size", "testicle size")
+	if(session)
+		choices = list(
+			"penis", "penis size", "penis color", "penis color 2",
+			"testicles", "testicle size", "testicles color",
+			"vagina", "vagina color", "breasts", "breast size", "breasts color", "hairstyle",
+		)
 	var/chosen = input(H, "Change what?", "Appearance") as null|anything in choices
-
-	if(!chosen)
+	if(guarded && (QDELETED(session) || !session.is_valid(H)))
 		return
+
+	if(!(chosen in choices))
+		return
+
+	if(guarded)
+		var/static/list/organ_slots = list(
+			"penis" = ORGAN_SLOT_PENIS,
+			"penis size" = ORGAN_SLOT_PENIS,
+			"penis color" = ORGAN_SLOT_PENIS,
+			"penis color 2" = ORGAN_SLOT_PENIS,
+			"testicles" = ORGAN_SLOT_TESTICLES,
+			"testicle size" = ORGAN_SLOT_TESTICLES,
+			"testicles color" = ORGAN_SLOT_TESTICLES,
+			"vagina" = ORGAN_SLOT_VAGINA,
+			"vagina color" = ORGAN_SLOT_VAGINA,
+			"breasts" = ORGAN_SLOT_BREASTS,
+			"breast size" = ORGAN_SLOT_BREASTS,
+			"breasts color" = ORGAN_SLOT_BREASTS,
+		)
+		var/slot = organ_slots[chosen]
+		if(slot)
+			session.watch_organ(slot)
+		var/static/list/color_channels = list("penis color" = 1, "penis color 2" = 2, "testicles color" = 1, "vagina color" = 1, "breasts color" = 1)
+		if(color_channels[chosen])
+			instant_transform_organ_color(H, session, chosen, color_channels[chosen])
+			return
 
 	switch(chosen)
 		if("reset appearance")
@@ -102,6 +134,7 @@
 			should_update = TRUE
 
 		if("hairstyle")
+			var/obj/item/bodypart/original_head = guarded ? H.get_bodypart(BODY_ZONE_HEAD) : null
 			var/datum/customizer_choice/bodypart_feature/hair/head/humanoid/hair_choice = CUSTOMIZER_CHOICE(/datum/customizer_choice/bodypart_feature/hair/head/humanoid)
 			var/list/valid_hairstyles = list()
 			for(var/hair_type in hair_choice.sprite_accessories)
@@ -109,15 +142,24 @@
 				valid_hairstyles[hair.name] = hair_type
 
 			var/new_style = input(H, "Choose your hairstyle", "Hair Styling") as null|anything in valid_hairstyles
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
+				if(guarded && head != original_head)
+					return
 				if(head && head.bodypart_features)
 					var/datum/bodypart_feature/hair/head/current_hair = null
 					for(var/datum/bodypart_feature/hair/head/hair_feature in head.bodypart_features)
 						current_hair = hair_feature
 						break
 
-					if(current_hair)
+					if(guarded && current_hair)
+						// Retain the existing hair feature and its entire palette.
+						current_hair.accessory_type = valid_hairstyles[new_style]
+						should_update = TRUE
+						force_bodypart_update = TRUE
+					else if(current_hair)
 						var/datum/customizer_entry/hair/hair_entry = new()
 						hair_entry.hair_color = current_hair.hair_color
 
@@ -141,6 +183,8 @@
 
 		if("hair color")
 			var/new_hair_color = color_pick_sanitized(H, "Choose your hair color", "Hair Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_hair_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -175,6 +219,8 @@
 
 		if("facial hair color")
 			var/new_facial_hair_color = color_pick_sanitized(H, "Choose your facial hair color", "Facial Hair Color", H.facial_hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_facial_hair_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -203,21 +249,29 @@
 
 		if("eye color")
 			var/new_eye_color = color_pick_sanitized(H, "Choose your eye color", "Eye Color", H.eye_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_eye_color)
 				new_eye_color = sanitize_hexcolor(new_eye_color, 6, TRUE)
 				var/obj/item/organ/eyes/eyes = H.getorganslot(ORGAN_SLOT_EYES)
 				if(eyes)
-					eyes.Remove(H)
+					if(!guarded)
+						eyes.Remove(H)
 					eyes.eye_color = new_eye_color
-					eyes.Insert(H, TRUE, FALSE)
+					if(!guarded)
+						eyes.Insert(H, TRUE, FALSE)
 				H.eye_color = new_eye_color
 				H.dna.features["eye_color"] = new_eye_color
 				H.dna.update_ui_block(DNA_EYE_COLOR_BLOCK)
+				if(guarded)
+					H.dna.species.handle_body(H)
 				H.update_body_parts()
 				should_update = TRUE
 
 		if("skin color")
 			var/new_color = color_pick_sanitized(H, "Choose your skin color", "Skin Color", H.skin_tone)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.skin_tone = new_color
 				H.update_body()
@@ -225,6 +279,8 @@
 
 		if("mutant color")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color", "Mutant Color", H.dna.features["mcolor"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor"] = new_color
 				H.update_body()
@@ -232,6 +288,8 @@
 
 		if("mutant color 2")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color 2", "Mutant Color 2", H.dna.features["mcolor2"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor2"] = new_color
 				H.update_body()
@@ -239,6 +297,8 @@
 
 		if("mutant color 3")
 			var/new_color = color_pick_sanitized(H, "Choose your mutant color 3", "Mutant Color 3", H.dna.features["mcolor3"] || "#FFFFFF")
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_color)
 				H.dna.features["mcolor3"] = new_color
 				H.update_body()
@@ -251,6 +311,8 @@
 				valid_gradients[gradient_type] = gradient_type
 
 			var/new_style = input(H, "Choose your natural gradient", "Hair Gradient") as null|anything in valid_gradients
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -278,6 +340,8 @@
 
 		if("natural gradient color")
 			var/new_gradient_color = color_pick_sanitized(H, "Choose your natural gradient color", "Natural Gradient Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_gradient_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -313,6 +377,8 @@
 				valid_gradients[gradient_type] = gradient_type
 
 			var/new_style = input(H, "Choose your dye gradient", "Hair Gradient") as null|anything in valid_gradients
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -340,6 +406,8 @@
 
 		if("dye gradient color")
 			var/new_gradient_color = color_pick_sanitized(H, "Choose your dye gradient color", "Dye Gradient Color", H.hair_color)
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_gradient_color)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -376,6 +444,8 @@
 				valid_facial_hairstyles[facial.name] = facial_type
 
 			var/new_style = input(H, "Choose your facial hairstyle", "Hair Styling") as null|anything in valid_facial_hairstyles
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -409,6 +479,8 @@
 				valid_accessories[acc.name] = accessory_type
 
 			var/new_style = input(H, "Choose your accessory", "Accessory Styling") as null|anything in valid_accessories
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -432,6 +504,8 @@
 				valid_details[detail.name] = detail_type
 
 			var/new_detail = input(H, "Choose your face detail", "Face Detail") as null|anything in valid_details
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_detail)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 				if(head && head.bodypart_features)
@@ -554,6 +628,8 @@
 				)
 
 			var/new_style = input(H, "Choose your penis type", "Penis Customization") as null|anything in valid_penis_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				if(new_style == "none")
 					var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
@@ -583,10 +659,13 @@
 						penis.accessory_type = new_accessory_type
 					if(new_colors)
 						penis.accessory_colors = new_colors
-					else
+					else if(!guarded)
 						// Use build_colors_for_accessory to properly set colors from character
 						penis.build_colors_for_accessory(null)
 					penis.Insert(H, TRUE, FALSE)
+					if(guarded)
+						// Default palette resolution needs the installed organ's owner.
+						penis.set_accessory_type(penis.accessory_type, new_colors)
 					H.update_body()
 					should_update = TRUE
 
@@ -635,6 +714,8 @@
 				valid_testicle_types[testicles.name] = testicle_path
 
 			var/new_style = input(H, "Choose your testicles type", "Testicles Customization") as null|anything in valid_testicle_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_style)
 				if(new_style == "none")
 					var/obj/item/organ/testicles/testicles = H.getorganslot(ORGAN_SLOT_TESTICLES)
@@ -648,9 +729,12 @@
 					if(!testicles)
 						testicles = new()
 						testicles.Insert(H, TRUE, FALSE)
-					testicles.accessory_type = valid_testicle_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					testicles.build_colors_for_accessory(null)
+					if(guarded)
+						testicles.set_accessory_type(valid_testicle_types[new_style], testicles.accessory_colors)
+					else
+						testicles.accessory_type = valid_testicle_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						testicles.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -680,6 +764,8 @@
 				valid_breast_types[breasts.name] = breast_path
 
 			var/new_style = input(H, "Choose your breast type", "Breast Customization") as null|anything in valid_breast_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 
 			if(new_style)
 				if(new_style == "none")
@@ -695,9 +781,12 @@
 						breasts = new()
 						breasts.Insert(H, TRUE, FALSE)
 
-					breasts.accessory_type = valid_breast_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					breasts.build_colors_for_accessory(null)
+					if(guarded)
+						breasts.set_accessory_type(valid_breast_types[new_style], breasts.accessory_colors)
+					else
+						breasts.accessory_type = valid_breast_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						breasts.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -727,6 +816,8 @@
 				valid_vagina_types[vagina.name] = vagina_path
 
 			var/new_style = input(H, "Choose your vagina type", "Vagina Customization") as null|anything in valid_vagina_types
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 
 			if(new_style)
 				if(new_style == "none")
@@ -741,9 +832,12 @@
 					if(!vagina)
 						vagina = new()
 						vagina.Insert(H, TRUE, FALSE)
-					vagina.accessory_type = valid_vagina_types[new_style]
-					// Use build_colors_for_accessory to properly set colors from character
-					vagina.build_colors_for_accessory(null)
+					if(guarded)
+						vagina.set_accessory_type(valid_vagina_types[new_style], vagina.accessory_colors)
+					else
+						vagina.accessory_type = valid_vagina_types[new_style]
+						// Use build_colors_for_accessory to properly set colors from character
+						vagina.build_colors_for_accessory(null)
 					H.update_body()
 					should_update = TRUE
 
@@ -769,6 +863,8 @@
 		if("breast size")
 			var/list/breast_sizes = list("Flat", "Slight", "Small", "Moderate", "Large", "Generous", "Heavy", "Massive", "Heaping", "Obscene")
 			var/new_size = input(H, "Choose your breast size", "Breast Size") as null|anything in breast_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
 				if(breasts)
@@ -801,6 +897,8 @@
 
 		if("penis size")
 			var/new_size = input(H, "Choose your penis size", "Penis Size") as null|anything in GLOB.named_penis_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
 				if(penis)
@@ -811,6 +909,8 @@
 		if("testicle size")
 			var/list/testicle_sizes = list("small", "average", "large")
 			var/new_size = input(H, "Choose your testicle size", "Testicle Size") as null|anything in testicle_sizes
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(new_size)
 				var/obj/item/organ/testicles/testicles = H.getorganslot(ORGAN_SLOT_TESTICLES)
 				if(testicles)
@@ -1373,6 +1473,8 @@
 				descriptor_categories[choice.name] = choice_type
 			
 			var/chosen_category = input(H, "Which descriptor category?", "Descriptor Category") as null|anything in descriptor_categories
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(!chosen_category)
 				return
 			
@@ -1387,6 +1489,8 @@
 				descriptor_options[desc.name] = desc_type
 			
 			var/chosen_descriptor_name = input(H, "Choose your [chosen_category]", "[chosen_category] Selection") as null|anything in descriptor_options
+			if(guarded && (QDELETED(session) || !session.is_valid(H)))
+				return
 			if(!chosen_descriptor_name)
 				return
 			
@@ -1457,3 +1561,21 @@
 		H.update_body_parts(force_bodypart_update)
 		if(H.sexcon)
 			H.sexcon.update_erect_state()
+
+/proc/instant_transform_organ_color(mob/living/carbon/human/human, datum/instant_transform_session/session, choice, channel)
+	var/obj/item/organ/organ = session.expected_organ
+	if(!organ)
+		to_chat(human, span_warning("There is nothing to recolor there."))
+		return
+	var/datum/sprite_accessory/accessory = SPRITE_ACCESSORY(organ.accessory_type)
+	if(!accessory || accessory.color_disabled || channel > accessory.color_keys)
+		return
+	var/current_palette = accessory.validate_color_keys_for_owner(human, organ.accessory_colors)
+	var/list/colors = color_string_to_list(current_palette)
+	var/new_color = color_pick_sanitized(human, "Choose your [choice]", capitalize(choice), colors[channel])
+	if(!new_color || QDELETED(session) || !session.is_valid(human))
+		return
+	colors[channel] = sanitize_hexcolor(new_color, 6, TRUE)
+	organ.set_accessory_type(organ.accessory_type, color_list_to_string(colors))
+	human.update_body()
+	human.update_body_parts(TRUE)
