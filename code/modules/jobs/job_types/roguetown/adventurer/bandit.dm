@@ -81,13 +81,13 @@
 	var/recognition = BOUNTY_RECOGNITION_NONE
 	switch(bounty_severity)
 		if("Small Game")
-			bounty_total = rand(200, 300)
+			bounty_total = rand(100, 200)
 			description_level = choose_bounty_body_description(H) ? BOUNTY_DESCRIPTION_BODY : BOUNTY_DESCRIPTION_BUILD
 			recognition = BOUNTY_RECOGNITION_FACE
 		if("Highwayman")
-			bounty_total = rand(300, 400)
+			bounty_total = rand(200, 300)
 		if("Realm Boogeyman")
-			bounty_total = rand(500, 600)
+			bounty_total = rand(300, 400)
 			recognition = BOUNTY_RECOGNITION_ALWAYS
 		else
 			return
