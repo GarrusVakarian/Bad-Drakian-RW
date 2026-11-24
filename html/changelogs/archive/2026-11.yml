@@ -931,3 +931,7 @@
       the round.
   - rscadd: Players with 5 PQ or less have a small sapling beside their mouse-over
       name and in examine.
+  - rscadd: Added two more character loadout slots.
+  - rscadd: Smollhill now has one slot each for Knight, Squire, Magicians Associate
+      and Bathhouse Attendant.
+  - bugfix: Meathooks require two small logs and one rope to build.
