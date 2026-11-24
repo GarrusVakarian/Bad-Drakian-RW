@@ -386,8 +386,12 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	//Note for future: Potentionally add a new C.dna.species() to build a template species for more accurate limb replacement
 
 	var/list/final_bodypart_overrides = new_species.bodypart_overrides.Copy()
+	var/mob/living/carbon/human/dummy/loadout_preview/preview = target
+	var/checkpoint = istype(preview) ? preview.render_checkpoint : null
 
 	for(var/obj/item/bodypart/old_part as anything in target.bodyparts)
+		if(checkpoint)
+			call(checkpoint)()
 
 		var/path = final_bodypart_overrides?[old_part.body_zone]
 		var/obj/item/bodypart/new_part
@@ -399,6 +403,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 //Will regenerate missing organs
 /datum/species/proc/regenerate_organs(mob/living/carbon/C, datum/species/old_species, replace_current=TRUE, list/excluded_zones, datum/preferences/pref_load)
+	var/mob/living/carbon/human/dummy/loadout_preview/preview = C
+	var/checkpoint = istype(preview) ? preview.render_checkpoint : null
 	/// Add DNA and create organs from prefs
 	if(pref_load)
 		/// Clear the dna
@@ -426,6 +432,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		QDEL_NULL(organ)
 	var/list/source_key_list = color_key_source_list_from_carbon(C)
 	for(var/slot in slots_to_iterate)
+		if(checkpoint)
+			call(checkpoint)()
 		var/obj/item/organ/oldorgan = C.getorganslot(slot) //used in removing
 		var/obj/item/organ/neworgan
 

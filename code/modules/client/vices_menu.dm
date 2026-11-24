@@ -1023,6 +1023,11 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				flex-wrap: wrap;
 				gap: 3px;
 			}
+			.loadout-actions .btn {
+				padding: 3px 4px;
+				margin: 0;
+				white-space: nowrap;
+			}
 			.statpack-section {
 				background: [theme["button_hover"]];
 				border: 2px solid [theme["border"]];
@@ -1537,11 +1542,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "</div>"
 			html += "</div>"
 			
-			html += "<div class='actions'>"
+			html += "<div class='actions loadout-actions'>"
 			html += "<a class='btn btn-select' href='byond://?src=\ref[src];loadout_action=item;slot=[i]'>Change Item</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=rename;slot=[i]'>Rename</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=describe;slot=[i]'>Description</a>"
 			html += "<a class='btn btn-color' href='byond://?src=\ref[src];loadout_action=color;slot=[i]'>Color</a>"
+			if(get_loadout_preview_wear_slots(initial(sample.slot_flags)))
+				html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=preview;slot=[i]'>Preview</a>"
 			html += "<a class='btn btn-clear' href='byond://?src=\ref[src];loadout_action=clear;slot=[i]'>Clear</a>"
 			html += "</div>"
 		else
@@ -2257,9 +2264,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	if(href_list["loadout_action"])
 		if(usr?.client != parent)
 			return
-		// Save state before any loadout change
-		save_to_history()
-		
+
 		var/action = href_list["loadout_action"]
 		var/slot = text2num(href_list["slot"])
 		
@@ -2267,6 +2272,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			return
 		
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"
+
+		if(action == "preview")
+			show_loadout_equipped_preview(usr, slot, slot_var)
+			return
+
+		// Only edits belong in the undo history.
+		save_to_history()
 
 		switch(action)
 			if("item")

@@ -3808,8 +3808,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 
 	fix_duplicate_vices()
 
-	// Bandaid to undo no arm flaw prosthesis
-	if(charflaw)
+	// A freshly allocated preview has no prosthesis left over from another character.
+	if(charflaw && !istype(character, /mob/living/carbon/human/dummy/loadout_preview))
 		var/obj/item/bodypart/O = character.get_bodypart(BODY_ZONE_R_ARM)
 		if(O)
 			O.drop_limb(TRUE)
