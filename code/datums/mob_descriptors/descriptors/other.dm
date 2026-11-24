@@ -279,7 +279,7 @@
 	var/mob/living/carbon/human/H = described
 	var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
 	var/size_name = find_key_by_value(GLOB.named_breast_sizes, breasts.breast_size)
-	var/adjective = size_name ? lowertext(size_name) : "normal"
+	var/adjective = size_name ? LOWER_TEXT(size_name) : "normal"
 	var/article = (copytext(adjective, 1, 2) in list("a", "e", "i", "o", "u")) ? "an" : "a"
 
 	var/branded = ""
