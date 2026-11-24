@@ -61,16 +61,16 @@
 	name = "explorer's vest"
 	path = /obj/item/clothing/suit/roguetown/armor/gambeson/explorer
 	sort_category = "Armor"
-	triumph_cost = 3
+	triumph_cost = 4
 
 /datum/loadout_item/explorer_pants
 	name = "explorer's trousers"
 	path = /obj/item/clothing/under/roguetown/trou/leather/explorer
 	sort_category = "Armor"
-	triumph_cost = 3
+	triumph_cost = 4
 
 /datum/loadout_item/explorer_helmet
 	name = "explorer's hat"
 	path = /obj/item/clothing/head/roguetown/explorer
 	sort_category = "Armor"
-	triumph_cost = 3
+	triumph_cost = 1

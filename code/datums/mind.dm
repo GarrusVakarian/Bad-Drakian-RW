@@ -1039,8 +1039,11 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 								// Only modify items that actually have armor protection
 								if(has_armor)
-									// Remove crit protection
-									C.prevent_crits = null
+									// Preserve cut crit protection and keep blunt only if the original blocked both.
+									if(BCLASS_CUT in C.prevent_crits)
+										C.prevent_crits = (BCLASS_BLUNT in C.prevent_crits) ? list(BCLASS_CUT, BCLASS_BLUNT) : list(BCLASS_CUT)
+									else
+										C.prevent_crits = null
 									// Set armor class to LIGHT for all loadout armor
 									if(C.armor_class != ARMOR_CLASS_NONE)
 										C.armor_class = ARMOR_CLASS_LIGHT

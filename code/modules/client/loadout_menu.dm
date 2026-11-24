@@ -264,7 +264,7 @@
 			
 			<div class="info-box">
 				<h3>⚠ Loadout Item Modifications ⚠</h3>
-				<p><b>ARMOR & HELMETS:</b> Armor rating reduced by 90% • Crit prevention removed</p>
+				<p><b>ARMOR & HELMETS:</b> Loadout armor has low damage protection and slightly variable durability. Armor with a class becomes Light. Armor costs 1 point with no crit protection, 2 with cut crit protection, or 4 with both cut and blunt crit protection. Reproductions only keep these protections if the original had them.</p>
 				<p><b>WEAPONS:</b> Damage reduced by 25%</p>
 				<p><b>ALL ITEMS:</b> Sell price set to 0</p>
 			</div>
