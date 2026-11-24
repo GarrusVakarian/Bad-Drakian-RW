@@ -72,6 +72,7 @@
 		button.icon_state = background_icon_state
 		overlay_state = initial(overlay_state)
 	ApplyIcon(button, TRUE)
+	button.color = owner?.hud_used?.action_buttons_rearranging ? button.rearrange_tint(owner.hud_used) : null
 
 	if(!IsAvailable())
 		button.update_maptext(coven.current_power.get_cooldown())
@@ -183,7 +184,7 @@
 	targeting = TRUE
 
 /atom/movable/screen/movable/action_button/Click(location, control, params)
-	if(istype(linked_action, /datum/action/coven))
+	if(istype(linked_action, /datum/action/coven) && can_use(usr) && !usr.hud_used?.action_buttons_rearranging)
 		var/list/modifiers = params2list(params)
 
 		//increase on right click, decrease on shift right click

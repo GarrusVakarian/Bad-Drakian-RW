@@ -336,6 +336,8 @@
 	if(!iscarbon(user.mob))
 		return FALSE
 	var/mob/living/carbon/C = user.mob
+	if(C.hud_used?.action_buttons_rearranging && C.hud_used.hud_shown == HUD_STYLE_STANDARD)
+		return TRUE
 	var/list/datum/action/actions = C.actions
 	if(actions.len < action_taken) // Dodge a runtime
 		return FALSE

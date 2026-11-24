@@ -396,6 +396,11 @@
 	if(mob.incapacitated())
 		return
 
+	if(mob.hud_used?.action_buttons_rearranging && istype(src_object, /atom/movable/screen/movable/action_button))
+		var/atom/movable/screen/movable/action_button/dragged_button = src_object
+		dragged_button.update_action_drag_target(mob, over_object)
+		return
+
 	var/list/L = params2list(params)
 	// Opening or moving storage must not also click the drag's release target.
 	if(tcompare && L["left"] && !L["middle"] && !L["right"] && src_object != over_object)
