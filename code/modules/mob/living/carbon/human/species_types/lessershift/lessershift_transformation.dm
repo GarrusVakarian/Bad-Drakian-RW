@@ -119,7 +119,7 @@
 	var/obj/item/organ/breasts/old_breasts = getorganslot(ORGAN_SLOT_BREASTS)
 	if(old_breasts)
 		var/obj/item/organ/breasts/new_breasts = new old_breasts.type()
-		new_breasts.breast_size = old_breasts.breast_size
+		new_breasts.set_breast_size(old_breasts.breast_size)
 		new_breasts.lactating = old_breasts.lactating
 		new_breasts.milk_stored = old_breasts.milk_stored
 		new_breasts.milk_max = old_breasts.milk_max

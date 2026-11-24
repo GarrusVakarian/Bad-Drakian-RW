@@ -278,34 +278,9 @@
 /datum/mob_descriptor/breasts/get_description(mob/living/described)
 	var/mob/living/carbon/human/H = described
 	var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
-	var/adjective
-	switch(breasts.breast_size)
-		if(0)
-			adjective = "a flat chest"
-		if(1)
-			adjective = "a slight"
-		if(2)
-			adjective = "a small"
-		if(3)
-			adjective = "a moderate"
-		if(4)
-			adjective = "a large"
-		if(5)
-			adjective = "a generous"
-		if(6)
-			adjective = "a heavy"
-		if(7)
-			adjective = "a massive"
-		if(8)
-			adjective = "a heaping"
-		if(9)
-			adjective = "an obscene"
-		if(10)
-			adjective = "a backbreaking"
-		if(11)
-			adjective = "a stomach-hiding"
-		if(12)
-			adjective = "a torso-sized"
+	var/size_name = find_key_by_value(GLOB.named_breast_sizes, breasts.breast_size)
+	var/adjective = size_name ? lowertext(size_name) : "normal"
+	var/article = (copytext(adjective, 1, 2) in list("a", "e", "i", "o", "u")) ? "an" : "a"
 
 	var/branded = ""
 	var/brand_text = ""
@@ -326,10 +301,10 @@
 		body_written = ", with <span style='font-size:125%;'>[span_beautiful_fem(body_writing_text)]</span> written on them"
 
 	if(breasts.breast_size == 0)
-		return "[adjective][branded][body_written]"
+		return "a flat chest[branded][body_written]"
 	if(breasts.is_pecs())
-		return "[adjective] pair of pecs[branded][body_written]"
-	return "[adjective] pair of breasts[branded][body_written]"
+		return "[article] [adjective] pair of pecs[branded][body_written]"
+	return "[article] [adjective] pair of breasts[branded][body_written]"
 
 /datum/mob_descriptor/pubes
 	name = "pubes"

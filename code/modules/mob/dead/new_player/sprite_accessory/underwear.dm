@@ -37,10 +37,8 @@
 
 /datum/sprite_accessory/underwear/bikini/get_icon_state(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	var/obj/item/organ/breasts/breasts = owner.getorganslot(ORGAN_SLOT_BREASTS)
-	if(!breasts || breasts.breast_size < 0 || breasts.breast_size > 9)
-		return "bikini_f_0"
-
-	return "bikini_f_" + "[breasts.breast_size]"
+	var/size = breasts ? clamp(breasts.breast_size, 0, 9) : 0
+	return "bikini_f_[size]"
 
 /datum/sprite_accessory/underwear/panties
 	name = "Panties"
@@ -54,24 +52,10 @@
 	hides_breasts = TRUE
 
 /datum/sprite_accessory/underwear/leotard/get_icon_state(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
-	if(owner.getorganslot(ORGAN_SLOT_BREASTS))
-		var/obj/item/organ/breasts/breasts = owner.getorganslot(ORGAN_SLOT_BREASTS)
-		var/tag = "female_leotard"
-		if(breasts.breast_size == 0)
-			tag = tag + "_0"
-		if(breasts.breast_size == 1)
-			tag = tag + "_1"
-		if(breasts.breast_size == 2)
-			tag = tag + "_2"
-		if(breasts.breast_size == 3)
-			tag = tag + "_3"
-		if(breasts.breast_size == 4)
-			tag = tag + "_4"
-		if(breasts.breast_size == 5)
-			tag = tag + "_5"
-		return tag
-	else
+	var/obj/item/organ/breasts/breasts = owner.getorganslot(ORGAN_SLOT_BREASTS)
+	if(!breasts)
 		return "male_leotard"
+	return "female_leotard_[clamp(breasts.breast_size, 0, 5)]"
 
 /datum/sprite_accessory/underwear/athletic_leotard
 	name = "Athletic Leotard"
