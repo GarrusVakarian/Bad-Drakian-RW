@@ -943,6 +943,7 @@
   - bugfix: Fixed underwear bottoms drawing over overlapping breast sprites.
   - bugfix: The lobby changelog now opens automatically only when you have unread
       changes.
+  - bugfix: Thirst debuffs no longer overlap when you drink water.
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
   - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
@@ -986,3 +987,5 @@
   - qol: Dead players can use standard LOOC from their bodies or as ghosts.
   - rscadd: Set bounty presets for each character under Villains and apply them automatically
       when you spawn.
+  - qol: Preview wearable loadout items on your character from the front and back,
+      with their custom dye applied.
