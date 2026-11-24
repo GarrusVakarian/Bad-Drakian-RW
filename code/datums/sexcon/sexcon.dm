@@ -1939,15 +1939,17 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	while(panel_action_still_active(session))
 		if(!target?.client?.prefs?.sexable) // no prefs/sexability means we should safely stop the loop
 			break
-		var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
 		var/athletics_xp = 0
-		// Supply normal Athletics XP when the shared stamina system won't award it.
-		if(stamina_cost > 0 && user.mind && !HAS_TRAIT(user, TRAIT_INFINITE_STAMINA) && !HAS_TRAIT(user, TRAIT_INFINITE_ENERGY))
-			if(!(user.m_intent == MOVE_INTENT_RUN && (user.mobility_flags & MOBILITY_STAND) && isnull(user.buckled)))
-				athletics_xp = user.STAINT * 0.02
-		// Bad Drakian adjustment: halve panel stamina costs.
-		if(!user.stamina_add(stamina_cost * 0.5, show_xp_popup = FALSE))
-			break
+		// Tackle upkeep already manages stamina and recovery for this pin.
+		if(!panel_tackle_pin)
+			var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
+			// Supply normal Athletics XP when the shared stamina system won't award it.
+			if(stamina_cost > 0 && user.mind && !HAS_TRAIT(user, TRAIT_INFINITE_STAMINA) && !HAS_TRAIT(user, TRAIT_INFINITE_ENERGY))
+				if(!(user.m_intent == MOVE_INTENT_RUN && (user.mobility_flags & MOBILITY_STAND) && isnull(user.buckled)))
+					athletics_xp = user.STAINT * 0.02
+			// Bad Drakian adjustment: halve panel stamina costs.
+			if(!user.stamina_add(stamina_cost * 0.5, show_xp_popup = FALSE))
+				break
 		var/action_delay = action.do_time / get_speed_multiplier()
 		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
 		if(!do_after(user, action_delay, target = target, progress = show_progress, extra_checks = action_checks, use_action_lock = !panel_tackle_pin))
