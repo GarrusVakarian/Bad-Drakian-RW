@@ -18,6 +18,10 @@
 /obj/item/organ/penis/Initialize(mapload)
 	. = ..()
 
+/// The gameplay effects apply only to an endowed owner with a Large pintle.
+/obj/item/organ/penis/proc/is_massive()
+	return penis_size == MAX_PENIS_SIZE && owner && HAS_TRAIT(owner, TRAIT_MASSIVE_PINTLE)
+
 /obj/item/organ/penis/proc/get_size_arousal_multiplier(mob/living/carbon/human/receiver)
 	if(penis_size != MIN_PENIS_SIZE)
 		return 1
