@@ -14,7 +14,7 @@
 
 	base_antags = 1
 	maximum_antags = 2
-	min_players = 40
+	min_players = 20
 
 	weight = 18
 	max_occurrences = 2
@@ -25,5 +25,20 @@
 	antag_datum = /datum/antagonist/dreamwalker
 
 	restricted_roles = DEFAULT_ANTAG_BLACKLISTED_ROLES
+
+/datum/round_event_control/antagonist/solo/dreamwalker/trim_candidates(list/candidates)
+	. = ..()
+	for(var/mob/candidate as anything in .)
+		if(isseelie(candidate))
+			. -= candidate
+			continue
+		var/datum/mind/candidate_mind = candidate.mind
+		var/datum/job/candidate_job = SSjob.GetJob(candidate_mind.assigned_role)
+		if(candidate_job?.antag_job)
+			. -= candidate
+			continue
+		// The shared antagonist filter exempts these roles because they carry FLAG_FAKE_ANTAG.
+		if(candidate_mind.has_antag_datum(/datum/antagonist/assassin) || candidate_mind.has_antag_datum(/datum/antagonist/aspirant) || candidate_mind.has_antag_datum(/datum/antagonist/zombie))
+			. -= candidate
 
 /datum/round_event/antagonist/solo/dreamwalker

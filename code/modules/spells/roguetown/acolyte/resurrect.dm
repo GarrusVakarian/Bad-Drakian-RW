@@ -140,62 +140,60 @@
 /obj/effect/proc_holder/spell/invoked/resurrect/cast(list/targets, mob/living/user)
 	. = ..()
 	if(isliving(targets[1]))
-		var/mob/living/target = targets[1]
-
 		var/list/offerings = list()
-		if(!check_rite_setup(target, user, offerings))
-			revert_cast(user)
-			return FALSE
-		var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
-		if(!ooze)
-			var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-			if(underworld_spirit)
-				var/mob/dead/observer/ghost = underworld_spirit.ghostize()
-				qdel(underworld_spirit)
-				ghost.mind.transfer_to(target, TRUE)
-			target.grab_ghost(force = TRUE)
-		var/precheck_error = get_revival_precheck_error(target, user)
-		if(precheck_error)
-			to_chat(user, span_warning(precheck_error))
-			revert_cast(user)
-			return FALSE
-		if(!ooze && !target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
-			revert_cast(user)
-			return FALSE
-		if(!ooze && (target.mob_biotypes & MOB_UNDEAD) && harms_undead) //positive energy harms the undead
-			target.visible_message(
-				span_danger("[target] is unmade by divine magic!"),
-				span_userdanger("I'm unmade by divine magic!")
-			)
-			target.gib()
+		if(check_rite_setup(targets[1], user, offerings) && perform_revival(targets, user, offerings))
 			return TRUE
-		if(ooze)
-			target = ooze.revive_patient(targets)
-			if(!target)
-				revert_cast(user)
-				return FALSE
-		else
-			target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
-			if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
-				to_chat(user, span_warning(get_revival_failure_message(target)))
-				revert_cast(user)
-				return FALSE
-		target.emote("breathgasp")
-		target.Jitter(100)
-		target.update_body()
-		target.visible_message(span_notice("[target] is revived by divine magic!"), span_green("I awake from the void."))
-		if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
-			adjust_playerquality(revive_pq, user.ckey)
-			ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
-		target.mind?.remove_antag_datum(/datum/antagonist/zombie)
-		target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
-		QDEL_LIST(offerings)
-		apply_revival_aftereffect(target)
-		// Due to the increased cost and cooldown, these revival types heal quite a bit.
-		target.apply_status_effect(/datum/status_effect/buff/healing, 14)
-		return TRUE
 	revert_cast(user)
 	return FALSE
+
+/// Apply the miracle after the caller has resolved its casting costs and ritual setup.
+/obj/effect/proc_holder/spell/invoked/resurrect/proc/perform_revival(list/targets, mob/living/user, list/offerings)
+	var/mob/living/target = targets[1]
+	var/obj/shapeshift_holder/ooze_death/ooze = target.get_ooze_revival_holder()
+	if(!ooze)
+		var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
+		if(underworld_spirit?.client)
+			var/mob/dead/observer/ghost = underworld_spirit.ghostize()
+			if(ghost?.mind)
+				qdel(underworld_spirit)
+				ghost.mind.transfer_to(target, TRUE)
+		target.grab_ghost(force = TRUE)
+	var/precheck_error = get_revival_precheck_error(target, user)
+	if(precheck_error)
+		to_chat(user, span_warning(precheck_error))
+		return FALSE
+	if(!ooze && !target.check_revive(user, bypass_foreign_brain_check = pestrian_freaks))
+		return FALSE
+	if(!ooze && (target.mob_biotypes & MOB_UNDEAD) && harms_undead) //positive energy harms the undead
+		target.visible_message(
+			span_danger("[target] is unmade by divine magic!"),
+			span_userdanger("I'm unmade by divine magic!")
+		)
+		target.gib()
+		return TRUE
+	if(ooze)
+		target = ooze.revive_patient(targets)
+		if(!target)
+			return FALSE
+	else
+		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
+		if(!target.revive(full_heal = FALSE, bypass_foreign_brain_check = pestrian_freaks)) // Pestrians get to revive people with foreign brains, flesh abominations are their thing
+			to_chat(user, span_warning(get_revival_failure_message(target)))
+			return FALSE
+	target.emote("breathgasp")
+	target.Jitter(100)
+	target.update_body()
+	target.visible_message(span_notice("[target] is revived by divine magic!"), span_green("I awake from the void."))
+	if(revive_pq && !HAS_TRAIT(target, TRAIT_IWASREVIVED) && user?.ckey)
+		adjust_playerquality(revive_pq, user.ckey)
+		ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
+	target.mind?.remove_antag_datum(/datum/antagonist/zombie)
+	target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
+	QDEL_LIST(offerings)
+	apply_revival_aftereffect(target)
+	// Due to the increased cost and cooldown, these revival types heal quite a bit.
+	target.apply_status_effect(/datum/status_effect/buff/healing, 14)
+	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/cast_check(skipcharge,mob/user = usr)
 	if(!..())
@@ -256,7 +254,6 @@
 	effectedstats = list(
 		STATKEY_STR = 1,
 		STATKEY_INT = -5,
-		STATKEY_LCK = -5,
 		STATKEY_SPD = -2,
 		STATKEY_PER = -5
 	)
@@ -273,17 +270,17 @@
 	switch(dreamfiend_type)
 		if(/mob/living/simple_animal/hostile/rogue/dreamfiend/ancient)
 			linked_alert.icon_state = "dreamfiend_ancient"
-			linked_alert.name = "Grand Abyssal Curse."
+			linked_alert.name = "Grand Abyssal Curse"
 			linked_alert.desc = "A terrifying presence if felt fraying the edges of my mind. This is a threat I cannot face alone."
 		if(/mob/living/simple_animal/hostile/rogue/dreamfiend/major)
 			linked_alert.icon_state = "dreamfiend_major"
-			linked_alert.name = "Major Abyssal Curse."
+			linked_alert.name = "Major Abyssal Curse"
 			linked_alert.desc = "A great daemon is sapping my mind, a dangerous foe which I must summon to regain my faculties."
 		if(/mob/living/simple_animal/hostile/rogue/dreamfiend)
 			linked_alert.icon_state = "dreamfiend"
 
 /atom/movable/screen/alert/status_effect/dreamfiend_curse
-	name = "Abyssal Curse."
+	name = "Abyssal Curse"
 	desc = "A nightmare entity has revived you, but now it is draining your vitality. Summon it to confront it."
 
 /obj/effect/proc_holder/spell/invoked/summon_dreamfiend_curse

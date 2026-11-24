@@ -1783,9 +1783,10 @@
 	if(surrendering || stat == DEAD)
 		return
 	if(!instant)
-		if(alert(src, "Do you yield?", "SURRENDER", "Yes", "No") == "No")
+		if(alert(src, "Do you yield?", "SURRENDER", "Yes", "No") != "Yes" || surrendering || stat == DEAD)
 			return
 	surrendering = 1
+	SEND_SIGNAL(src, COMSIG_LIVING_YIELDED)
 	record_round_statistic(STATS_YIELDS)
 	toggle_cmode()
 	changeNext_move(CLICK_CD_EXHAUSTED)

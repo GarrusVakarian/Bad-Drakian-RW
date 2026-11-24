@@ -11,3 +11,6 @@
 
 /// After carbon/update_stat() changes consciousness: (old_stat, new_stat)
 #define COMSIG_LIVING_CONSCIOUSNESS_CHANGED "living_consciousness_changed"
+
+/// Sent after a mob commits to yielding, before it drops held items.
+#define COMSIG_LIVING_YIELDED "living_yielded"
