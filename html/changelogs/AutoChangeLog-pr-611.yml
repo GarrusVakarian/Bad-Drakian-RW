@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Orison and Prestidigitation now name what each floating-hand intent does."
+  - qol: "Orison and Prestidigitation now show the functions of each intent when shift-clicking the spell and the intents themselves."
