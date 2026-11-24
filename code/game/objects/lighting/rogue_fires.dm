@@ -1,6 +1,5 @@
 #define MIN_STEW_TEMPERATURE 374 // For cooking
-#define VOLUME_PER_STEW_COOK 29 // Volume to cook per ingredient
-#define VOLUME_PER_STEW_COOK_AFTER 1 // Volume to deduct after the sleep is over
+#define VOLUME_PER_STEW_COOK 30 // Water used per ingredient
 #define DEEP_FRY_TIME 5 SECONDS // Default deep fry time
 #define OIL_CONSUMED 5 // Amount of oil consumed per deep fry (1 fat = 4 fry)
 
@@ -529,6 +528,8 @@
 	var/obj/item/food = null
 	var/mob/living/carbon/human/lastuser
 	var/datum/looping_sound/boilloop/boilloop
+	var/list/pending_stew_ingredients
+	var/stew_generation = 0
 
 /obj/machinery/light/rogue/hearth/Initialize(mapload)
 	boilloop = new(src, FALSE)
@@ -660,43 +661,69 @@
 
 //////////////////////////////////
 
-/obj/machinery/light/rogue/hearth/proc/cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, datum/stew_recipe/recipe, obj/item/ingredient, mob/living/user, cooktime_divisor)
-	var/recipe_volume = VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER
-	if(!pot.reagents.has_reagent(/datum/reagent/water, recipe_volume + pot.pending_hearth_stews * VOLUME_PER_STEW_COOK_AFTER))
+/obj/machinery/light/rogue/hearth/proc/can_start_stew(obj/item/reagent_containers/glass/bucket/pot/pot, mob/living/user)
+	if(!on)
+		to_chat(user, span_notice("The fire needs to be lit."))
+		return FALSE
+	if(!pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK * (length(pending_stew_ingredients) + 1)))
 		to_chat(user, span_notice("Not enough water."))
-		return
+		return FALSE
 	if(pot.reagents.chem_temp < MIN_STEW_TEMPERATURE)
 		to_chat(user, span_notice("[pot] isn't boiling!"))
+		return FALSE
+	return TRUE
+
+/obj/machinery/light/rogue/hearth/proc/cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, datum/stew_recipe/recipe, obj/item/ingredient, mob/living/user, cooktime_divisor)
+	if(!can_start_stew(pot, user))
 		return
+	var/generation = stew_generation
 	if(!do_after(user, 2 SECONDS / cooktime_divisor, target = src))
 		return
-	if(QDELETED(pot) || QDELETED(ingredient) || pot != attachment || pot.loc != src || ingredient.loc != user)
+	if(QDELETED(src) || QDELETED(pot) || QDELETED(ingredient) || pot != attachment || pot.loc != src || ingredient.loc != user || generation != stew_generation)
 		return
-	if(!pot.reagents.has_reagent(/datum/reagent/water, recipe_volume + pot.pending_hearth_stews * VOLUME_PER_STEW_COOK_AFTER))
-		to_chat(user, span_notice("Not enough water."))
+	if(!can_start_stew(pot, user) || !user.transferItemToLoc(ingredient, src))
 		return
 
+	LAZYADD(pending_stew_ingredients, ingredient)
 	user.visible_message(span_info("[user] places [ingredient] into the pot."))
-	if(user.mind)
-		add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
-	qdel(ingredient)
 	playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
-	pot.pending_hearth_stews++
-	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
 	sleep(recipe.cooktime / cooktime_divisor)
-	if(QDELETED(pot))
+	if(QDELETED(src) || generation != stew_generation)
 		return
 
-	pot.pending_hearth_stews--
+	LAZYREMOVE(pending_stew_ingredients, ingredient)
+	if(QDELETED(ingredient) || ingredient.loc != src)
+		return
+	if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || pot.reagents.chem_temp < MIN_STEW_TEMPERATURE || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
+		ingredient.forceMove(drop_location())
+		visible_message(span_notice("The batch stops cooking."))
+		return
+
+	var/temperature = pot.reagents.chem_temp
+	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
+	pot.reagents.add_reagent(recipe.output, VOLUME_PER_STEW_COOK, reagtemp = temperature)
+	qdel(ingredient)
+	if(!QDELETED(user) && user.mind)
+		add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
 	playsound(pot, "bubbles", 30, TRUE)
-	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK_AFTER)
-	if(pot.reagents.add_reagent(recipe.output, recipe_volume, reagtemp = pot.reagents.chem_temp))
-		if(!pot.pending_hearth_stews && !pot.reagents.has_reagent(/datum/reagent/water, recipe_volume))
-			pot.visible_message(span_notice("It smells ready..."))
+	if(!length(pending_stew_ingredients) && !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
+		pot.visible_message(span_notice("It smells ready..."))
+
+/obj/machinery/light/rogue/hearth/proc/cancel_stews()
+	stew_generation++
+	if(!length(pending_stew_ingredients))
+		return
+	for(var/obj/item/ingredient as anything in pending_stew_ingredients)
+		if(!QDELETED(ingredient) && ingredient.loc == src)
+			ingredient.forceMove(drop_location())
+	pending_stew_ingredients = null
+	visible_message(span_notice("The batches stop cooking."))
 
 /obj/machinery/light/rogue/hearth/update_icon()
-	if(!on && boilloop?.loop_started)
-		boilloop.stop()
+	if(!on)
+		cancel_stews()
+		if(boilloop?.loop_started)
+			boilloop.stop()
 	cut_overlays()
 	icon_state = "[base_state][on]"
 	if(attachment)
@@ -791,7 +818,16 @@
 		user.visible_message(span_info("[user] snuffs [src]."))
 		burn_out()
 
+/obj/machinery/light/rogue/hearth/Exited(atom/movable/gone, direction)
+	. = ..()
+	if(gone == attachment && istype(gone, /obj/item/reagent_containers/glass/bucket/pot))
+		attachment = null
+		cancel_stews()
+		boilloop?.stop()
+		update_icon()
+
 /obj/machinery/light/rogue/hearth/Destroy()
+	cancel_stews()
 	QDEL_NULL(boilloop)
 	. = ..()
 
@@ -1070,7 +1106,7 @@
 			for(var/input in recipe.inputs)
 				if(istype(food, input))
 					reagent_needed = /datum/reagent/water
-					amount_needed = VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER
+					amount_needed = VOLUME_PER_STEW_COOK
 					reagent_output = recipe.output
 					cooking_time = recipe.cooktime / divisor
 					break
@@ -1267,7 +1303,6 @@
 
 #undef MIN_STEW_TEMPERATURE
 #undef VOLUME_PER_STEW_COOK
-#undef VOLUME_PER_STEW_COOK_AFTER
 
 //Prestidigitation wisps are fun to decorate with!
 

@@ -16,8 +16,6 @@
 	throwforce = 10
 	dropshrink = 1 // Override for bucket
 	volume = 240
-	/// Hearth recipes still cooking, each with one unit of water held for completion.
-	var/pending_hearth_stews = 0
 
 /obj/item/reagent_containers/glass/bucket/get_mechanics_examine(mob/user)
 	. = ..()
