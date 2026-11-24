@@ -88,6 +88,7 @@
 	if(ckey in GLOB.anonymize)
 		player_name = "[adjectives] Spectator"
 
+	var/message_html = emoji_parse(msg)
 	for(var/mob/M in GLOB.player_list)
 		var/client/recipient = M.client
 		if(!recipient || !(recipient.prefs.chat_toggles & CHAT_DSAY))
@@ -100,5 +101,5 @@
 		if(admin_recipient)
 			prefix += "([mob.ckey]) <A href='?_src_=holder;[HrefToken()];adminplayeropts=[REF(mob)]]'>\[PP\]</font></a>"
 
-		var/rendered = span_gamedeadsay("<span class='prefix'>[prefix]</span> <span class='name'>[rank_name ? "([rank_name])" : ""][player_name]</span> [deadbarks], <span class='message'>\"[emoji_parse(msg)]\"</span>")
+		var/rendered = span_gamedeadsay("<span class='prefix'>[prefix]</span> <span class='name'>[rank_name ? "([rank_name])" : ""][player_name]</span> [deadbarks], <span class='message'>\"[message_html]\"</span>")
 		to_chat(recipient, rendered)
