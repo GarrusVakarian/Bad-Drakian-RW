@@ -12,12 +12,10 @@
 	var/client/input_client = client
 	switch(get_say_hotkey_channel())
 		if("ooc")
-			var/ooc_message = input(input_client, "", "ooc") as text|null
-			if(length(ooc_message) && client == input_client && get_say_hotkey_channel() == "ooc")
-				input_client.ooc(ooc_message)
+			winset(input_client, null, "command=OOC")
 			return
 		if("dsay")
-			return input_client.get_dead_say(from_say_hotkey = TRUE)
+			return input_client.get_dead_say()
 
 	display_typing_indicator()
 	var/mutable_appearance/indicator = typing_indicator_current
@@ -29,7 +27,7 @@
 	return send_say_message(message, FALSE)
 
 /mob/proc/get_say_hotkey_channel()
-	if(isnewplayer(src) || SSticker.current_state >= GAME_STATE_FINISHED)
+	if(isnewplayer(src))
 		return "ooc"
 	if(is_deadchat_participant())
 		return "dsay"

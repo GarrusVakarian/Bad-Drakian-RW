@@ -14,7 +14,7 @@
 /mob/proc/is_deadchat_participant()
 	return isobserver(src) || (isliving(src) && stat == DEAD)
 
-/client/proc/get_dead_say(from_say_hotkey = FALSE)
+/client/proc/get_dead_say()
 	var/mob/speaker = mob
 	if(!holder && !speaker?.is_deadchat_participant())
 		to_chat(src, span_danger("I need to be dead to use deadchat!"))
@@ -23,8 +23,6 @@
 	var/msg = input(src, null, "dsay \"text\"") as text|null
 
 	if(isnull(msg) || QDELETED(speaker) || mob != speaker)
-		return
-	if(from_say_hotkey && speaker.get_say_hotkey_channel() != "dsay")
 		return
 
 	do_dsay(msg)
