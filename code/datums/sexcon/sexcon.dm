@@ -1743,22 +1743,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return
 
 /datum/sex_controller/Topic(href, href_list)
-	if(href_list["task"] == "allow_pinned_panel" || href_list["task"] == "stop_pinned_panel")
-		var/mob/living/carbon/human/recipient = usr
+	if(href_list["task"] == "stop_pinned_panel")
 		var/obj/item/grabbing/pin = locate(href_list["pin"])
-		if(!istype(recipient) || !istype(pin) || pin.tackle_pin_id != text2num(href_list["pin_id"]))
-			return
-		if(href_list["task"] == "allow_pinned_panel")
-			if(pin.pinned_panel_requested && pin.pinned_panel_holder == user?.client && !pin.pinned_panel_recipient && pin.is_active_chest_pin(user, recipient) && user.erp_panel_enabled() && recipient.erp_panel_enabled())
-				pin.pinned_panel_recipient = recipient.client
-				to_chat(user, span_notice("[recipient] accepted ERP panel interaction for this pin. Select an action to start."))
-				to_chat(recipient, span_notice("You accepted ERP panel interaction for this pin. <a href='?src=[REF(src)];task=stop_pinned_panel;pin=[REF(pin)];pin_id=[pin.tackle_pin_id]'>Stop and withdraw permission</a>."))
-		else if(pin.grabbed == recipient && pin.pinned_panel_recipient && recipient.client == pin.pinned_panel_recipient)
-			pin.pinned_panel_holder = null
-			pin.pinned_panel_recipient = null
-			if(panel_tackle_pin == pin)
-				try_stop_current_action()
-			to_chat(recipient, span_notice("You withdrew permission for ERP panel interaction during this pin."))
+		stop_pinned_panel(usr, pin, text2num(href_list["pin_id"]))
 		return
 	if(usr != user)
 		return
@@ -1835,6 +1822,14 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return
 	desire_stop = TRUE
 
+/datum/sex_controller/proc/stop_pinned_panel(mob/recipient, obj/item/grabbing/pin, pin_id)
+	if(!current_action || (desire_stop && !next_pinned_action))
+		return
+	if(QDELETED(recipient) || recipient != panel_pinned_target || QDELETED(pin) || pin != panel_tackle_pin || pin_id != panel_tackle_pin_id || pin_id != pin.tackle_pin_id)
+		return
+	try_stop_current_action()
+	to_chat(recipient, span_notice("You stopped the ERP panel action."))
+
 /datum/sex_controller/proc/find_panel_tackle_pin()
 	if(QDELETED(user) || QDELETED(target) || user == target)
 		return null
@@ -1848,7 +1843,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		return FALSE
 	if(!panel_tackle_pin)
 		return TRUE
-	return !QDELETED(panel_tackle_pin) && target == panel_pinned_target && panel_tackle_pin.tackle_pin_id == panel_tackle_pin_id && panel_tackle_pin.has_pinned_panel_permission(user, target)
+	return !QDELETED(panel_tackle_pin) && target == panel_pinned_target && panel_tackle_pin.tackle_pin_id == panel_tackle_pin_id && panel_tackle_pin.can_use_panel_while_pinned(user, target)
 
 /// Recover abandoned loops even when no completion is currently pending.
 /datum/sex_controller/proc/expire_panel_action()
@@ -1887,7 +1882,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	// Clear state first: a failed finish callback must not strand this session.
 	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(finish_target) && !QDELETED(finish_target))
 		action.on_finish(user, finish_target)
-	if(followup_action && !current_action && !QDELETED(finished_pin) && target == finish_target && finished_pin.tackle_pin_id == finished_pin_id && finished_pin.has_pinned_panel_permission(user, target))
+	if(followup_action && !current_action && !QDELETED(finished_pin) && target == finish_target && finished_pin.tackle_pin_id == finished_pin_id && finished_pin.can_use_panel_while_pinned(user, target))
 		try_start_action(followup_action)
 
 /datum/sex_controller/proc/try_start_action(action_type)
@@ -1895,8 +1890,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		try_stop_current_action()
 		return
 	if(current_action != null)
+		var/can_switch = panel_tackle_pin && (!desire_stop || next_pinned_action)
 		try_stop_current_action()
-		if(panel_tackle_pin && action_type)
+		if(can_switch && action_type)
 			next_pinned_action = action_type
 		return
 	if(!action_type)
@@ -1906,12 +1902,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/obj/item/grabbing/pin = find_panel_tackle_pin()
 	if(user.doing && !pin)
 		return
-	if(pin && !pin.has_pinned_panel_permission(user, target))
-		if(!pin.pinned_panel_requested && user.erp_panel_enabled() && target.erp_panel_enabled())
-			pin.pinned_panel_requested = TRUE
-			pin.pinned_panel_holder = user.client
-			to_chat(target, span_notice("[user] requests ERP panel interaction during this pin. <a href='?src=[REF(src)];task=allow_pinned_panel;pin=[REF(pin)];pin_id=[pin.tackle_pin_id]'>Accept for this pin</a>."))
-			to_chat(user, span_notice("You asked [target] to allow ERP panel interaction during this pin."))
+	if(pin && !pin.can_use_panel_while_pinned(user, target))
 		return
 	knot_check_remove(action_type)
 	// Set vars
@@ -1921,6 +1912,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	panel_tackle_pin = pin
 	panel_tackle_pin_id = pin?.tackle_pin_id
 	panel_pinned_target = pin ? target : null
+	if(pin)
+		to_chat(target, span_notice("<a href='?src=[REF(src)];task=stop_pinned_panel;pin=[REF(pin)];pin_id=[panel_tackle_pin_id]'>Stop ERP panel action</a>"))
 	bed = null
 	target_on_bed = FALSE
 	table_or_pillory = null

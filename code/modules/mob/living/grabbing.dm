@@ -38,9 +38,6 @@
 	/// Changes every time this grab begins a new tackle pin.
 	var/tackle_pin_id = 0
 	var/tackle_pin_active = FALSE
-	var/pinned_panel_requested = FALSE
-	var/client/pinned_panel_holder
-	var/client/pinned_panel_recipient
 
 /obj/item/grabbing/proc/is_active_chest_pin(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
 	if(!tackle_pin_active || QDELETED(src) || QDELETED(holder) || QDELETED(recipient) || holder == recipient || grabbee != holder || grabbed != recipient)
@@ -51,8 +48,8 @@
 		return FALSE
 	return holder.stat == CONSCIOUS && recipient.stat == CONSCIOUS && (holder.mobility_flags & MOBILITY_STAND) && !(recipient.mobility_flags & MOBILITY_STAND) && !holder.buckled && !holder.incapacitated()
 
-/obj/item/grabbing/proc/has_pinned_panel_permission(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
-	return is_active_chest_pin(holder, recipient) && pinned_panel_holder && holder.client == pinned_panel_holder && pinned_panel_recipient && recipient.client == pinned_panel_recipient && holder.erp_panel_enabled() && recipient.erp_panel_enabled()
+/obj/item/grabbing/proc/can_use_panel_while_pinned(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
+	return is_active_chest_pin(holder, recipient) && holder.erp_panel_enabled() && recipient.erp_panel_enabled()
 
 /// One private, viewer-specific balloon over the victim for each participant.
 /obj/item/grabbing/proc/show_grab_balloon()
@@ -144,8 +141,6 @@
 
 /obj/item/grabbing/Destroy()
 	tackle_pin_active = FALSE
-	pinned_panel_holder = null
-	pinned_panel_recipient = null
 	STOP_PROCESSING(SSfastprocess, src)
 	if(isobj(grabbed))
 		var/obj/I = grabbed
@@ -394,7 +389,6 @@
 				if(tackle_pin_active)
 					return
 				tackle_pin_id++
-				pinned_panel_requested = FALSE
 				var/stun_dur = max(((65 + (skill_diff * 10) + (user.STASTR * 5) - (M.STASTR * 5)) * combat_modifier), 20)
 				var/pincount = 0
 				var/list/pin_hold
@@ -417,8 +411,6 @@
 						M.visible_message(span_danger("[user] pins [M] to the ground!"), \
 							span_userdanger("[user] pins me to the ground!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
 				tackle_pin_active = FALSE
-				pinned_panel_holder = null
-				pinned_panel_recipient = null
 				if(!QDELETED(M))
 					M.release_pin_hold(pin_hold)
 			else
