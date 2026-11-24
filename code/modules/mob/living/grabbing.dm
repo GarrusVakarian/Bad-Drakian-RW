@@ -35,6 +35,21 @@
 	var/handaction
 	var/bleed_suppressing = 0.75 //multiplier for how much we suppress bleeding, can accumulate so two grabs means 50% less bleeding; each grab being 25% basically.
 	var/chokehold = FALSE
+	/// Changes every time this grab begins a new tackle pin.
+	var/tackle_pin_id = 0
+	var/tackle_pin_active = FALSE
+
+/obj/item/grabbing/proc/is_active_chest_pin(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
+	if(!tackle_pin_active || QDELETED(src) || QDELETED(holder) || QDELETED(recipient) || holder == recipient || grabbee != holder || grabbed != recipient)
+		return FALSE
+	if(grab_state < GRAB_AGGRESSIVE || limb_grabbed?.body_zone != BODY_ZONE_CHEST || isitem(sublimb_grabbed))
+		return FALSE
+	if(!(src in holder.held_items) || !(src in recipient.grabbedby) || !isturf(holder.loc) || holder.loc != recipient.loc)
+		return FALSE
+	return holder.stat == CONSCIOUS && recipient.stat == CONSCIOUS && (holder.mobility_flags & MOBILITY_STAND) && !(recipient.mobility_flags & MOBILITY_STAND) && !holder.buckled && !holder.incapacitated()
+
+/obj/item/grabbing/proc/can_use_panel_while_pinned(mob/living/carbon/human/holder, mob/living/carbon/human/recipient)
+	return is_active_chest_pin(holder, recipient) && holder.erp_panel_enabled() && recipient.erp_panel_enabled()
 
 /// One private, viewer-specific balloon over the victim for each participant.
 /obj/item/grabbing/proc/show_grab_balloon()

@@ -39,6 +39,10 @@
 	/// Identity and progress deadline of the current action loop.
 	var/panel_action_session = 0
 	var/panel_action_deadline = 0
+	var/obj/item/grabbing/panel_tackle_pin
+	var/panel_tackle_pin_id
+	var/mob/living/carbon/human/panel_pinned_target
+	var/next_pinned_action
 	/// Invalidates oxygen-healing callbacks when a make-out action stops or restarts.
 	var/kissing_oxygen_session = 0
 	/// Recipient-side cooldown shared by every initiator; base recovery cannot stack.
@@ -126,6 +130,8 @@
 	charge = get_max_charge()
 
 /datum/sex_controller/Destroy()
+	next_panel_switch = null
+	panel_switch_target = null
 	clear_panel_triumph_action()
 	for(var/datum/sex_controller/action_controller in panel_triumph_actions?.Copy())
 		action_controller.clear_panel_triumph_action()
@@ -1698,7 +1704,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		dat += "<center>Doing unto yourself</center>"
 	else
 		dat += "<center>Doing unto [target]'s</center>"
-	if(current_action && !desire_stop)
+	if((current_action && !desire_stop) || next_panel_switch)
 		dat += "<center><a href='?src=[REF(src)];task=stop'>Stop</a></center>"
 	else
 		dat += "<br>"
@@ -1723,7 +1729,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		var/link = ""
 		if(!can_perform_action(action_type, user_is_incapacitated))
 			link = "linkOff"
-		if(current_action == action_type)
+		if((next_panel_switch ? next_panel_switch["type"] : current_action) == action_type)
 			link = "linkOn"
 		dat += "<center><a class='[link]' href='?src=[REF(src)];task=action;action_type=[action_type]'>[action.get_display_name(user, target)]</a></center>"
 		dat += "</td>"
@@ -1747,7 +1753,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			var/datum/sex_action/action = SEX_ACTION(action_path)
 			if(!action)
 				return
-			try_start_action(action_path)
+			select_panel_action(action_path)
 		if("stop")
 			try_stop_current_action()
 		if("speed_up")
@@ -1808,15 +1814,32 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	show_ui()
 
 /datum/sex_controller/proc/try_stop_current_action()
+	next_panel_switch = null
 	clear_panel_triumph_action()
+	next_pinned_action = null
 	if(!current_action)
 		return
 	desire_stop = TRUE
-	user.doing = FALSE
+
+/datum/sex_controller/proc/find_panel_tackle_pin()
+	if(QDELETED(user) || QDELETED(target) || user == target)
+		return null
+	for(var/obj/item/grabbing/pin in user.held_items)
+		if(pin.is_active_chest_pin(user, target))
+			return pin
+	return null
+
+/datum/sex_controller/proc/panel_action_still_active(session)
+	if(QDELETED(src) || QDELETED(user) || QDELETED(target) || user.sexcon != src || session != panel_action_session || !current_action || desire_stop)
+		return FALSE
+	if(!panel_tackle_pin)
+		return TRUE
+	return !QDELETED(panel_tackle_pin) && target == panel_pinned_target && panel_tackle_pin.tackle_pin_id == panel_tackle_pin_id && panel_tackle_pin.can_use_panel_while_pinned(user, target)
 
 /// Recover abandoned loops even when no completion is currently pending.
 /datum/sex_controller/proc/expire_panel_action()
 	if(current_action && world.time >= panel_action_deadline)
+		next_panel_switch = null
 		stop_current_action()
 
 /datum/sex_controller/proc/stop_current_action(session = null)
@@ -1826,12 +1849,18 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(!current_action)
 		return
 	var/datum/sex_action/action = SEX_ACTION(current_action)
+	var/obj/item/grabbing/finished_pin = panel_tackle_pin
+	var/finished_pin_id = panel_tackle_pin_id
+	var/mob/living/carbon/human/finish_target = finished_pin ? panel_pinned_target : target
+	var/followup_action = next_pinned_action
 	panel_action_session++
 	panel_action_deadline = 0
+	panel_tackle_pin = null
+	panel_tackle_pin_id = null
+	panel_pinned_target = null
+	next_pinned_action = null
 	suppress_action_messages = FALSE
 	desire_stop = FALSE
-	if(ishuman(user) && !QDELETED(user))
-		user.doing = FALSE
 	orison_indulgence_notice_shown = FALSE
 	current_action = null
 	bed = null
@@ -1842,9 +1871,14 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	collar_bell_target = FALSE
 	popwarning = FALSE
 	using_zones = list()
+	if(!finished_pin && panel_switch_target)
+		finish_target = panel_switch_target
+	panel_switch_target = null
 	// Clear state first: a failed finish callback must not strand this session.
-	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(target) && !QDELETED(target))
-		action.on_finish(user, target)
+	if(istype(action) && ishuman(user) && !QDELETED(user) && user.sexcon == src && !knotted_status && ishuman(finish_target) && !QDELETED(finish_target))
+		action.on_finish(user, finish_target)
+	if(followup_action && !current_action && !QDELETED(finished_pin) && target == finish_target && finished_pin.tackle_pin_id == finished_pin_id && finished_pin.can_use_panel_while_pinned(user, target))
+		try_start_action(followup_action)
 
 /datum/sex_controller/proc/try_start_action(action_type)
 	if(action_type == current_action)
@@ -1856,6 +1890,11 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(!action_type)
 		return
 	if(!can_perform_action(action_type, user.incapacitated()))
+		return
+	var/obj/item/grabbing/pin = find_panel_tackle_pin()
+	if(user.doing && !pin)
+		return
+	if(pin && !pin.can_use_panel_while_pinned(user, target))
 		return
 	knot_check_remove(action_type)
 	// Set vars
@@ -1873,13 +1912,20 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		panel_triumph_target = target
 		LAZYOR(target.sexcon.panel_triumph_actions, src)
 	log_combat(user, target, "Started sex action: [action.name]")
+	panel_switch_target = panel_tackle_pin ? null : target
 	panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
 	INVOKE_ASYNC(src, PROC_REF(sex_action_loop), ++panel_action_session)
 
 /datum/sex_controller/proc/sex_action_loop(session)
 	if(session != panel_action_session)
 		return
+	if(!panel_action_still_active(session))
+		stop_current_action(session)
+		return
 	// Do action loop
+	if(!panel_tackle_pin && !panel_switch_still_active(session))
+		finish_panel_switch(session)
+		return
 	var/performed_action_type = current_action
 	var/datum/sex_action/action = SEX_ACTION(current_action)
 	var/base_speed = -1
@@ -1890,10 +1936,15 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/virgin_reaction_checked = FALSE
 	show_progress = 1
 	suppress_moan = FALSE
+	var/datum/callback/action_checks = CALLBACK(src, PROC_REF(panel_action_still_active), session)
+	var/datum/callback/pinned_action_checks = panel_tackle_pin ? action_checks : null
 	action.on_start(user, target)
+	if(!panel_tackle_pin)
+		action_checks = CALLBACK(src, PROC_REF(panel_switch_still_active), session)
+		pinned_action_checks = action_checks
 	find_occupying_furniture()
 	find_occupying_grass()
-	while(session == panel_action_session)
+	while(panel_action_still_active(session))
 		if(!target?.client?.prefs?.sexable) // no prefs/sexability means we should safely stop the loop
 			break
 		var/stamina_cost = action.stamina_cost * get_stamina_cost_multiplier()
@@ -1907,10 +1958,12 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			break
 		var/action_delay = action.do_time / get_speed_multiplier()
 		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
-		if(!do_after(user, action_delay, target = target, progress = show_progress))
+		if(!do_after(user, action_delay, target = target, progress = show_progress, extra_checks = action_checks, use_action_lock = !panel_tackle_pin))
 			break
 		if(session != panel_action_session)
 			return
+		if(!panel_action_still_active(session))
+			break
 		if(current_action == null || performed_action_type != current_action)
 			break
 		if(!can_perform_action(current_action, user.incapacitated()))
@@ -1955,10 +2008,14 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				target.react_to_virgin_affection(user)
 		// Existing delivery routines can sleep for up to ten one-second bursts.
 		panel_action_deadline = world.time + SEX_ACTION_PROGRESS_GRACE
-		action.on_perform(user, target)
+		action.on_perform(user, target, pinned_action_checks)
 		if(session != panel_action_session)
 			return
+		if(!panel_action_still_active(session))
+			break
 		refresh_completed_panel_effects(action)
+		if(!panel_tackle_pin && !action_checks.Invoke())
+			break
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
 		// It could want to finish afterwards the performed action
@@ -1966,7 +2023,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 			break
 		if(!action.continous)
 			break
-	stop_current_action(session)
+	finish_panel_switch(session)
 
 /datum/sex_controller/proc/can_perform_action(action_type, incapacitated)
 	if(!action_type)
@@ -2062,7 +2119,13 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 
 /datum/sex_controller/proc/set_target(mob/living/carbon/human/new_target)
 	if(new_target != target)
+		if(panel_tackle_pin)
+			try_stop_current_action()
 		clear_panel_triumph_action()
+	if(new_target != target)
+		next_panel_switch = null
+		if(current_action && !panel_tackle_pin)
+			try_stop_current_action()
 	//remove_from_target_receiving()
 	target = new_target
 	//var/datum/sex_controller/target_con = new_target.sexcon
@@ -2232,6 +2295,8 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return TRUE
 
 /datum/sex_controller/proc/refresh_completed_panel_effects(datum/sex_action/action)
+	if(!panel_tackle_pin && !panel_switch_still_active(panel_action_session))
+		return
 	if(!istype(action) || !action.knot_on_finish || QDELETED(user) || QDELETED(target))
 		return
 	// Delivery callbacks can sleep; do not sustain an effect after the pair separates.
@@ -2384,3 +2449,54 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 /datum/sex_controller/proc/get_tailmaw_fluid()
 	var/obj/item/organ/tail/manticore/tail = get_manticore_tail(user)
 	return istype(tail) ? tail.get_fluid_reagent() : /datum/reagent/erpjuice/femcum
+
+/datum/sex_controller
+	var/list/next_panel_switch
+	var/mob/living/carbon/human/panel_switch_target
+	var/panel_switch_finishing = FALSE
+
+/datum/sex_controller/proc/panel_switch_pair_available()
+	return !QDELETED(src) && !QDELETED(user) && !QDELETED(target) && user.sexcon == src && !QDELETED(target.sexcon) && user.erp_panel_enabled() && target.erp_panel_enabled()
+
+/datum/sex_controller/proc/panel_switch_still_active(session)
+	return session == panel_action_session && current_action && !desire_stop && target == panel_switch_target && panel_switch_pair_available()
+
+/datum/sex_controller/proc/select_panel_action(action_type)
+	if(action_type == current_action)
+		try_stop_current_action()
+		return
+	if(panel_switch_finishing || !SEX_ACTION(action_type) || !panel_switch_pair_available() || !can_perform_action(action_type, user.incapacitated()))
+		return
+	if(panel_tackle_pin)
+		try_start_action(action_type)
+		return
+	if(!current_action)
+		try_start_action(action_type)
+		return
+	if(target != panel_switch_target || (desire_stop && !next_panel_switch))
+		return
+	try_stop_current_action()
+	next_panel_switch = list("type" = action_type, "user_location" = user.loc, "target_location" = target.loc)
+
+/datum/sex_controller/proc/finish_panel_switch(session)
+	if(session != panel_action_session || !current_action)
+		return
+	if(panel_tackle_pin)
+		stop_current_action(session)
+		return
+	var/mob/living/carbon/human/previous_target = panel_switch_target
+	panel_switch_finishing = TRUE
+	try
+		stop_current_action(session)
+	catch(var/exception/error)
+		panel_switch_finishing = FALSE
+		panel_switch_target = null
+		next_panel_switch = null
+		throw error
+	panel_switch_finishing = FALSE
+	panel_switch_target = null
+	var/list/followup = next_panel_switch
+	next_panel_switch = null
+	if(!followup || target != previous_target || !panel_switch_pair_available() || user.doing || user.loc != followup["user_location"] || target.loc != followup["target_location"])
+		return
+	select_panel_action(followup["type"])
