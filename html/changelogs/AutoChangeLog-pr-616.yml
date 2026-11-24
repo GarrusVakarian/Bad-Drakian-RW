@@ -1,0 +1,8 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Class Selection groups roles by department and makes priorities and eligibility requirements easier to see."
+  - qol: "Virtue, background, and statpack pickers highlight and scroll to your saved choice."
+  - bugfix: "Warden Rangers and Foresters can equip a shroud without a helmet."
+  - bugfix: "The Chronicle clears the Magnate entry when nobody qualifies."
+  - server: "Server revision logs now include the compiled game's SHA-256 so we can tell if the thing was rebuilt!"
