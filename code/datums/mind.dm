@@ -996,14 +996,18 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 						// Check if this is a loadout item and reduce armor if applicable
 						var/is_loadout_item = FALSE
+						var/is_loadout_armor = FALSE
 						var/keep_stats = FALSE
+						var/keep_weapon_stats = FALSE
 						if(user.client?.prefs)
 							for(var/i in 1 to LOADOUT_SLOT_COUNT)
 								var/slot = i == 1 ? "loadout" : "loadout[i]"
 								var/datum/loadout_item/loadout_datum = user.client.prefs.vars[slot]
 								if(loadout_datum && loadout_datum.path == path2item)
 									is_loadout_item = TRUE
+									is_loadout_armor = loadout_datum.sort_category == "Armor"
 									keep_stats = loadout_datum.keep_loadout_stats
+									keep_weapon_stats = loadout_datum.keep_loadout_weapon_stats
 									break
 
 						// Apply modifications for loadout items (unless keep_loadout_stats is TRUE)
@@ -1011,11 +1015,11 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 							// Mark as loadout item to prevent crafting usage
 							I.loadout_item = TRUE
 
-							// Add subtle examination text to indicate this is a loadout reproduction
-							if(I.desc)
-								I.desc += " The overall look and feel of the item suggests this may be a mere reproduction."
-							else
-								I.desc = "The overall look and feel of the item suggests this may be a mere reproduction."
+							if(is_loadout_armor)
+								if(I.desc)
+									I.desc += " The overall look and feel of the item suggests this may be a mere reproduction."
+								else
+									I.desc = "The overall look and feel of the item suggests this may be a mere reproduction."
 
 							// Set sellprice to 0
 							I.sellprice = 0
@@ -1036,8 +1040,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 								// Only modify items that actually have armor protection
 								if(has_armor)
-									// Remove crit protection
-									C.prevent_crits = null
+									C.prevent_crits = length(C.prevent_crits) ? (C.prevent_crits & list(BCLASS_CUT, BCLASS_BLUNT)) : null
 									// Set armor class to LIGHT for all loadout armor
 									if(C.armor_class != ARMOR_CLASS_NONE)
 										C.armor_class = ARMOR_CLASS_LIGHT
@@ -1058,14 +1061,14 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 									C.max_integrity = _base_int + rand(-_variance, _variance)
 									C.obj_integrity = C.max_integrity
 
-							// Reduce weapon damage by 30% (rounded down)
-							if(I.force > 0)
+							// Reduce item force unless this loadout option preserves it.
+							if(!keep_weapon_stats && I.force > 0)
 								I.force = round(I.force * 0.7)
 							// Ensure non-clothing loadout items start at full integrity as well
 							I.obj_integrity = I.max_integrity
 
-							// Halve weapon defense (wdefense) values
-							if(I.wdefense > 0)
+							// Halve base weapon defense for other reproductions.
+							if(!keep_weapon_stats && I.wdefense > 0)
 								I.wdefense = round(I.wdefense * 0.5)
 
 						// Apply custom color if set (for clothing and weapons) - BEFORE putting in hands

@@ -1475,9 +1475,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				<div style='background: rgba(123, 83, 83, 0.2); border: 1px solid [theme["border"]]; padding: 8px; margin-top: 8px; font-size: 0.7em;'>
 					<div style='font-weight: bold; color: [theme["text"]]; margin-bottom: 4px;'>⚠ Loadout Item Modifications:</div>
 					<div style='color: [theme["label"]]; line-height: 1.4;'>
-						<b>ARMOR:</b> Set to armour minor protection (15 armor to all damage types) • Crit prevention removed • Armor class set to Light<br>
-						<b>WEAPONS:</b> Damage reduced by 30% • Weapon defense reduced by 50%<br>
-						<b>ALL ITEMS:</b> Sell price set to 0
+						<b>ARMOR:</b> Loadout armor has 25 blunt, 25 slash, 15 stab and 5 pierce resistance before slight random variation. Armor with a class becomes Light. It costs 1 point with neither cut nor blunt crit protection, 2 with either one, or 3 with both. Reproductions only keep those crit protections if the original had them.<br>
+						<b>WEAPONS:</b> Dedicated weapons keep their normal damage and defense.<br>
+						<b>ALL ITEMS:</b> Sell price set to 0.
 					</div>
 				</div>
 			</div>
