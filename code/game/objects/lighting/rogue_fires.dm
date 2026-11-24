@@ -3,6 +3,10 @@
 #define DEEP_FRY_TIME 5 SECONDS // Default deep fry time
 #define OIL_CONSUMED 5 // Amount of oil consumed per deep fry (1 fat = 4 fry)
 
+/obj/machinery/light/rogue
+	var/list/pending_stew_ingredients
+	var/stew_generation = 0
+
 /obj/machinery/light/rogue/firebowl
 	name = "brazier"
 	desc = "A solid stone brazier. It's as sturdy as the mountains themselves."
@@ -528,8 +532,6 @@
 	var/obj/item/food = null
 	var/mob/living/carbon/human/lastuser
 	var/datum/looping_sound/boilloop/boilloop
-	var/list/pending_stew_ingredients
-	var/stew_generation = 0
 
 /obj/machinery/light/rogue/hearth/Initialize(mapload)
 	boilloop = new(src, FALSE)
@@ -652,16 +654,31 @@
 						qdel(S)
 						pot.reagents.remove_reagent(/datum/reagent/consumable/oil/tallow, OIL_CONSUMED)
 						return
-			for(var/datum/stew_recipe/R in GLOB.stew_recipes)
-				for(var/I in R.inputs)
-					if(istype(W, I))
-						cook_stew(pot, R, W, user, cooktime_divisor)
-						return
+			if(try_cook_stew(pot, W, user, cooktime_divisor))
+				return
 	. = ..()
 
 //////////////////////////////////
 
-/obj/machinery/light/rogue/hearth/proc/can_start_stew(obj/item/reagent_containers/glass/bucket/pot/pot, mob/living/user)
+/obj/machinery/light/rogue/hearth/get_stew_pot()
+	if(istype(attachment, /obj/item/reagent_containers/glass/bucket/pot))
+		return attachment
+
+/obj/machinery/light/rogue/proc/get_stew_pot()
+	return null
+
+/obj/machinery/light/rogue/proc/try_cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, obj/item/ingredient, mob/living/user, cooktime_divisor, oil_cooking = FALSE)
+	for(var/datum/stew_recipe/recipe in GLOB.stew_recipes)
+		for(var/input in recipe.inputs)
+			if(istype(ingredient, input))
+				if(oil_cooking)
+					to_chat(user, span_notice("Something is already cooking."))
+				else
+					cook_stew(pot, recipe, ingredient, user, cooktime_divisor)
+				return TRUE
+	return FALSE
+
+/obj/machinery/light/rogue/proc/can_start_stew(obj/item/reagent_containers/glass/bucket/pot/pot, mob/living/user)
 	if(!on)
 		to_chat(user, span_notice("The fire needs to be lit."))
 		return FALSE
@@ -673,13 +690,13 @@
 		return FALSE
 	return TRUE
 
-/obj/machinery/light/rogue/hearth/proc/cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, datum/stew_recipe/recipe, obj/item/ingredient, mob/living/user, cooktime_divisor)
+/obj/machinery/light/rogue/proc/cook_stew(obj/item/reagent_containers/glass/bucket/pot/pot, datum/stew_recipe/recipe, obj/item/ingredient, mob/living/user, cooktime_divisor)
 	if(!can_start_stew(pot, user))
 		return
 	var/generation = stew_generation
 	if(!do_after(user, 2 SECONDS / cooktime_divisor, target = src))
 		return
-	if(QDELETED(src) || QDELETED(pot) || QDELETED(ingredient) || pot != attachment || pot.loc != src || ingredient.loc != user || generation != stew_generation)
+	if(QDELETED(src) || QDELETED(pot) || QDELETED(ingredient) || pot != get_stew_pot() || pot.loc != src || ingredient.loc != user || generation != stew_generation)
 		return
 	if(!can_start_stew(pot, user) || !user.transferItemToLoc(ingredient, src))
 		return
@@ -693,7 +710,7 @@
 	if(QDELETED(ingredient) || ingredient.loc != src)
 		LAZYREMOVE(pending_stew_ingredients, ingredient)
 		return
-	if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || pot.reagents.chem_temp < MIN_STEW_TEMPERATURE || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
+	if(!on || QDELETED(pot) || pot != get_stew_pot() || pot.loc != src || pot.reagents.chem_temp < MIN_STEW_TEMPERATURE || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
 		release_stew_ingredient(ingredient)
 		visible_message(span_notice("The batch stops cooking."))
 		return
@@ -709,10 +726,11 @@
 	if(!QDELETED(user) && user.mind)
 		add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
 	playsound(pot, "bubbles", 30, TRUE)
+	update_icon()
 	if(!length(pending_stew_ingredients) && !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
 		pot.visible_message(span_notice("It smells ready..."))
 
-/obj/machinery/light/rogue/hearth/proc/cancel_stews()
+/obj/machinery/light/rogue/proc/cancel_stews()
 	stew_generation++
 	if(!length(pending_stew_ingredients))
 		return
@@ -723,7 +741,7 @@
 			release_stew_ingredient(ingredient)
 	visible_message(span_notice("The batches stop cooking."))
 
-/obj/machinery/light/rogue/hearth/proc/release_stew_ingredient(obj/item/ingredient)
+/obj/machinery/light/rogue/proc/release_stew_ingredient(obj/item/ingredient)
 	LAZYREMOVE(pending_stew_ingredients, ingredient)
 	var/atom/destination = drop_location()
 	if(destination)
@@ -967,15 +985,20 @@
 	var/pot_cooking = FALSE
 	var/cooking_generation = 0
 
+/obj/machinery/light/rogue/campfire/get_stew_pot()
+	return pot
+
 /obj/machinery/light/rogue/campfire/Destroy()
+	cancel_stews()
 	QDEL_NULL(boilloop)
 	if(pan_food)
 		pan_food.forceMove(get_turf(src))
 	if(pan)
 		pan.forceMove(get_turf(src))
 	if(pot)
-		pot.forceMove(get_turf(src))
+		var/obj/item/removed_pot = pot
 		pot = null
+		removed_pot.forceMove(get_turf(src))
 	return ..()
 
 /obj/machinery/light/rogue/campfire/Exited(atom/movable/gone, direction)
@@ -987,6 +1010,13 @@
 		update_icon()
 	if(gone == pan_food)
 		pan_food = null
+		update_icon()
+	if(gone == pot)
+		pot = null
+		cooking_generation++
+		cancel_stews()
+		if(boilloop?.loop_started)
+			boilloop.stop()
 		update_icon()
 
 /obj/machinery/light/rogue/campfire/examine(mob/user)
@@ -1000,8 +1030,10 @@
 	. = ..()
 	cut_overlays()
 	if(!on)
-		boilloop?.stop()
+		if(boilloop?.loop_started)
+			boilloop.stop()
 		cooking_generation++
+		cancel_stews()
 	if(pot)
 		var/mutable_appearance/pot_overlay = mutable_appearance(pot)
 		pot_overlay.transform *= 0.85
@@ -1042,16 +1074,17 @@
 	update_icon()
 
 /obj/machinery/light/rogue/campfire/proc/heat_pot()
-	if(!pot?.reagents || !on)
-		boilloop?.stop()
+	if(QDELETED(pot) || pot.loc != src || !pot.reagents || !on)
+		if(boilloop?.loop_started)
+			boilloop.stop()
 		return
-	if(!boilloop)
-		boilloop = new(src, FALSE)
 	pot.reagents.expose_temperature(400, 0.033)
-	if(pot.reagents.chem_temp > MIN_STEW_TEMPERATURE)
+	if(pot.reagents.total_volume && pot.reagents.chem_temp >= MIN_STEW_TEMPERATURE)
+		if(!boilloop)
+			boilloop = new(src, FALSE)
 		if(!boilloop.loop_started)
 			boilloop.start()
-	else
+	else if(boilloop?.loop_started)
 		boilloop.stop()
 
 /obj/machinery/light/rogue/campfire/attackby(obj/item/W, mob/living/user, params)
@@ -1100,7 +1133,6 @@
 	var/amount_needed
 	var/reagent_output
 	var/item_output
-	var/cooking_time = 0
 	var/obj/item/reagent_containers/food/snacks/snack = istype(food, /obj/item/reagent_containers/food/snacks) ? food : null
 	if(snack?.fat_yield)
 		if(cooking_pot.reagents.has_reagent(/datum/reagent/water))
@@ -1115,35 +1147,21 @@
 		amount_needed = OIL_CONSUMED
 		item_output = snack.deep_fried_type
 	else
-		for(var/datum/stew_recipe/recipe in GLOB.stew_recipes)
-			for(var/input in recipe.inputs)
-				if(istype(food, input))
-					reagent_needed = /datum/reagent/water
-					amount_needed = VOLUME_PER_STEW_COOK
-					reagent_output = recipe.output
-					cooking_time = recipe.cooktime / divisor
-					break
-			if(reagent_output)
-				break
-	if(!reagent_output && !item_output)
-		return FALSE
+		return try_cook_stew(cooking_pot, food, user, divisor, oil_cooking = pot_cooking)
 	if(!on)
 		to_chat(user, span_warning("The fire is not lit."))
 		return TRUE
-	if(pot_cooking)
+	if(pot_cooking || length(pending_stew_ingredients))
 		to_chat(user, span_notice("Something is already cooking."))
 		return TRUE
 	pot_cooking = TRUE
-	finish_pot_cooking(food, user, cooking_pot, generation, divisor, reagent_needed, amount_needed, reagent_output, item_output, cooking_time, snack?.fat_yield)
+	finish_pot_cooking(food, user, cooking_pot, generation, divisor, reagent_needed, amount_needed, reagent_output, item_output, snack?.fat_yield)
 	pot_cooking = FALSE
 	return TRUE
 
-/obj/machinery/light/rogue/campfire/proc/finish_pot_cooking(obj/item/food, mob/living/user, obj/item/reagent_containers/glass/bucket/pot/cooking_pot, generation, divisor, reagent_needed, amount_needed, reagent_output, item_output, cooking_time, fat_yield)
+/obj/machinery/light/rogue/campfire/proc/finish_pot_cooking(obj/item/food, mob/living/user, obj/item/reagent_containers/glass/bucket/pot/cooking_pot, generation, divisor, reagent_needed, amount_needed, reagent_output, item_output, fat_yield)
 	if(reagent_needed && !cooking_pot.reagents.has_reagent(reagent_needed, amount_needed))
-		to_chat(user, span_warning("The pot needs more [reagent_needed == /datum/reagent/water ? "water" : "tallow"]."))
-		return TRUE
-	if(reagent_needed == /datum/reagent/water && cooking_pot.reagents.chem_temp < MIN_STEW_TEMPERATURE)
-		to_chat(user, span_warning("[cooking_pot] isn't boiling!"))
+		to_chat(user, span_warning("The pot needs more tallow."))
 		return TRUE
 	var/action_time = item_output ? DEEP_FRY_TIME : 2 SECONDS
 	if(!do_after(user, action_time / divisor, target = src))
@@ -1152,9 +1170,6 @@
 		return TRUE
 	if(food.loc != user || !user.transferItemToLoc(food, cooking_pot))
 		return TRUE
-	if(cooking_time)
-		user.visible_message(span_info("[user] places [food] into [cooking_pot] to cook."))
-		sleep(cooking_time)
 	if(QDELETED(food) || food.loc != cooking_pot)
 		return TRUE
 	if(QDELETED(src) || QDELETED(cooking_pot) || !on || pot != cooking_pot || cooking_pot.loc != src || generation != cooking_generation || (reagent_needed && !cooking_pot.reagents.has_reagent(reagent_needed, amount_needed)))
@@ -1168,7 +1183,7 @@
 		cooking_pot.reagents.add_reagent(reagent_output, reagent_needed ? amount_needed : fat_yield)
 	if(!QDELETED(user))
 		user.visible_message(span_info("[user] finishes cooking [food] in [cooking_pot]."))
-		if(reagent_needed)
+		if(reagent_needed && user.mind)
 			add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
 	qdel(food)
 	update_icon()
@@ -1226,12 +1241,9 @@
 	if(pot)
 		if(!user.CanReach(src))
 			return TRUE
-		if(!user.put_in_active_hand(pot))
-			pot.forceMove(get_turf(user))
-		pot = null
-		cooking_generation++
-		boilloop?.stop()
-		update_icon()
+		var/obj/item/removing = pot
+		if(!user.put_in_active_hand(removing))
+			removing.forceMove(get_turf(user))
 		return TRUE
 
 	. = ..()
