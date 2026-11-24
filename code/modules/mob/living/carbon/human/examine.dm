@@ -1083,8 +1083,10 @@
 		else
 			display1 = span_info("This is the <EM>[used_name]</EM>, the [race_name].")
 		if(can_show_pq_sapling(user) && user.client)
-			var/sapling_asset = icon2html('icons/pq-sapling.png', user.client, sourceonly = TRUE)
-			display2 += {" <img src="[sapling_asset]" width="12" height="12" style="vertical-align:middle" title="They're new to these lands." alt="They're new to these lands.">"}
+			var/datum/asset/badge = get_asset_datum(/datum/asset/simple/pq_sapling)
+			badge.send(user.client)
+			var/sapling_asset = SSassets.transport.get_asset_url("pq-sapling.png")
+			display2 += {" <img data-examine-icon src="[sapling_asset]" width="12" height="12" style="vertical-align:middle" title="They're new to these lands." alt="They're new to these lands.">"}
 		. += "[display1] [display2]"
 
 		if(HAS_TRAIT(src, TRAIT_WITCH))
