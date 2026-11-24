@@ -997,7 +997,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						// Check if this is a loadout item and reduce armor if applicable
 						var/is_loadout_item = FALSE
 						var/keep_stats = FALSE
-						var/keep_force = FALSE
+						var/keep_weapon_stats = FALSE
 						if(user.client?.prefs)
 							var/list/loadout_slots = list(
 								"loadout", "loadout2", "loadout3", "loadout4", "loadout5",
@@ -1008,7 +1008,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 								if(loadout_datum && loadout_datum.path == path2item)
 									is_loadout_item = TRUE
 									keep_stats = loadout_datum.keep_loadout_stats
-									keep_force = loadout_datum.keep_loadout_force
+									keep_weapon_stats = loadout_datum.keep_loadout_weapon_stats
 									break
 
 						// Apply modifications for loadout items (unless keep_loadout_stats is TRUE)
@@ -1063,13 +1063,13 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 									C.obj_integrity = C.max_integrity
 
 							// Reduce item force unless this loadout option preserves it.
-							if(!keep_force && I.force > 0)
+							if(!keep_weapon_stats && I.force > 0)
 								I.force = round(I.force * 0.7)
 							// Ensure non-clothing loadout items start at full integrity as well
 							I.obj_integrity = I.max_integrity
 
-							// Halve weapon defense (wdefense) values
-							if(I.wdefense > 0)
+							// Halve base weapon defense for other reproductions.
+							if(!keep_weapon_stats && I.wdefense > 0)
 								I.wdefense = round(I.wdefense * 0.5)
 
 						// Apply custom color if set (for clothing and weapons) - BEFORE putting in hands

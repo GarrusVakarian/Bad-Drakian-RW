@@ -18,8 +18,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	var/donoritem			//autoset on new if null
 	var/list/ckeywhitelist
 	var/triumph_cost
-	/// Keep normal force while applying all other reproduction adjustments.
-	var/keep_loadout_force = FALSE
+	/// Keep normal force and weapon defense while applying other reproduction adjustments.
+	var/keep_loadout_weapon_stats = FALSE
 	var/keep_loadout_stats = FALSE	// If TRUE, item keeps default values (not nerfed)
 	var/requires_nobility = FALSE	// If TRUE, it will check whether the player has the nobility quirk or noble job preference on high
 
@@ -117,7 +117,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Bauernwehr"
 	path = /obj/item/rogueweapon/huntingknife/throwingknife/bauernwehr
 	triumph_cost = 2
-	keep_loadout_force = TRUE
+	keep_loadout_weapon_stats = TRUE
 
 /datum/loadout_item/broom
 	name = "broom"
@@ -1672,8 +1672,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 // - ARMOR CLASS: Armor with a class becomes Light.
 // - SELL PRICE: Set to 0 (cannot be sold for profit)
 // - CRIT PREVENTION: Retains cut and blunt only if the original offered those protections.
-// - FORCE: Reduced by 30% unless keep_loadout_force is TRUE.
-// - WEAPON DEFENSE: Reduced by 50% (wdefense halved)
+// - FORCE: Reduced by 30% unless keep_loadout_weapon_stats is TRUE.
+// - WEAPON DEFENSE: Reduced by 50% unless keep_loadout_weapon_stats is TRUE.
 // - SMELT RESULT: Set to ash (cannot be smelted for materials)
 // - EXAMINATION: Items show as reproductions when examined
 //
@@ -1713,7 +1713,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Axe"
 	path = /obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient
 	triumph_cost = 4
-	keep_loadout_force = TRUE
+	keep_loadout_weapon_stats = TRUE
 
 // SWORDS
 /datum/loadout_item/tri_stone_sword
@@ -1726,13 +1726,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Gladius"
 	path = /obj/item/rogueweapon/sword/short/gladius/ancient
 	triumph_cost = 4
-	keep_loadout_force = TRUE
+	keep_loadout_weapon_stats = TRUE
 
 /datum/loadout_item/ancient_khopesh
 	name = "Ancient Khopesh"
 	path = /obj/item/rogueweapon/sword/sabre/ancient
-	triumph_cost = 4
-	keep_loadout_force = TRUE
+	triumph_cost = 5
+	keep_loadout_weapon_stats = TRUE
 
 // DAGGERS & KNIVES
 /datum/loadout_item/tri_stone_knife
@@ -1746,7 +1746,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Mace"
 	path = /obj/item/rogueweapon/mace/goden/steel/ancient
 	triumph_cost = 3
-	keep_loadout_force = TRUE
+	keep_loadout_weapon_stats = TRUE
 
 // POLEARMS & SPEARS
 /datum/loadout_item/tri_stone_spear
@@ -1764,8 +1764,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/ancient_spear
 	name = "Ancient Spear"
 	path = /obj/item/rogueweapon/spear/ancient/decrepit
-	triumph_cost = 3
-	keep_loadout_force = TRUE
+	triumph_cost = 4
+	keep_loadout_weapon_stats = TRUE
 
 // ARMOR & CLOTHING
 /datum/loadout_item/ancient_mask
