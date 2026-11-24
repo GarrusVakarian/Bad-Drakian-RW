@@ -579,3 +579,13 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define ORIGIN_GRONN "Gronn"
 #define ORIGIN_ETRUSCA "Etrusca"
 #define ORIGIN_KAZENGUN "Kazengun"
+
+// Public examine recognition from an active bounty.
+#define BOUNTY_RECOGNITION_NONE 0
+#define BOUNTY_RECOGNITION_FACE 1
+#define BOUNTY_RECOGNITION_ALWAYS 2
+
+// Details included in a public bounty notice.
+#define BOUNTY_DESCRIPTION_BUILD 0
+#define BOUNTY_DESCRIPTION_BODY 1
+#define BOUNTY_DESCRIPTION_FULL 2

@@ -1007,6 +1007,11 @@
 		else
 			. += "ø ------------ ø"
 
+	var/face_recognizable = !obscure_name && !(name in unknown_names)
+	var/outlaw_status_text = get_outlaw_status_text(face_recognizable)
+	if(!face_recognizable && outlaw_status_text)
+		. += outlaw_status_text
+
 	if(name in unknown_names)
 		. += span_info("This is <EM>[name]</EM>.")
 		if(HAS_TRAIT(user, TRAIT_HERETIC_SEER))
@@ -1219,7 +1224,6 @@
 				if (istype(H.patron, /datum/patron/old_god))
 					. += span_userdanger("HEATHEN! SHAME!")
 */
-		var/outlaw_status_text = get_outlaw_status_text()
 		if(outlaw_status_text)
 			. += outlaw_status_text
 
@@ -1474,11 +1478,16 @@
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = get_item_by_slot(SLOT_NECK)
 	return istype(collar) && !QDELETED(collar) && collar.active_item && collar.collar_wearer == src
 
-/mob/living/proc/get_outlaw_status_text()
+/mob/living/proc/get_outlaw_status_text(face_recognizable)
 	if(is_serving_penance())
-		return span_notice("SERVING PENANCE")
-	if(name in GLOB.outlawed_players)
+		return face_recognizable ? span_notice("SERVING PENANCE") : null
+	if(face_recognizable && (name in GLOB.outlawed_players))
 		return get_outlaw_label()
+
+	var/required_recognition = face_recognizable ? BOUNTY_RECOGNITION_FACE : BOUNTY_RECOGNITION_ALWAYS
+	for(var/datum/bounty/bounty as anything in GLOB.head_bounties)
+		if(!QDELETED(bounty) && bounty.target == real_name && bounty.recognition >= required_recognition)
+			return get_outlaw_label()
 
 /mob/living/proc/get_outlaw_label()
 	var/datum/castifico_penance_record/record = get_castifico_penance_record()
@@ -1492,9 +1501,6 @@
 		if(mind.special_role == "Bandit")
 			if(HAS_TRAIT(examiner, TRAIT_COMMIE))
 				villain_text = span_notice("Free man!")
-			if(HAS_TRAIT(src, TRAIT_KNOWNCRIMINAL) && HAS_TRAIT(src, TRAIT_OUTLAW))
-				// Penance replaces the label; the public list supplies it otherwise.
-				villain_text = (is_serving_penance() || (name in GLOB.outlawed_players)) ? null : get_outlaw_label()
 		if(mind.special_role == "Vampire Lord")
 			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))

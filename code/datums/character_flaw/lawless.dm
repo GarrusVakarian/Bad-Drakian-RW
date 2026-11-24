@@ -26,15 +26,9 @@
 		attempts_left--
 		addtimer(CALLBACK(src, PROC_REF(set_up), H), 30 SECONDS)
 		return
-	var/face_known = input(H, "Is your face known to the authorities?", "Visbility Status") as anything in list ("They know my face", "They know only my features")
+	var/face_known = input(H, "Is your face known to the authorities?", "Visibility Status") as anything in list("They know my face", "They know only my features", "They know only my name and overall build")
 	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See", "The Otavan Orthodoxy")
 	var/bounty_severity = input(H, "How severe are your crimes?", "Bounty Amount") as anything in list("Misdeed", "Harm towards lyfe", "Horrific atrocities")
-	var/race = H.dna.species
-	var/gender = H.gender
-	var/list/d_list = H.get_mob_descriptors()
-	var/descriptor_height = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
-	var/descriptor_body = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
-	var/descriptor_voice = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
 	var/bounty_total = rand(100, 200)
 	switch(bounty_severity)
 		if("Misdeed")
@@ -46,7 +40,10 @@
 	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
 	if (!my_crime)
 		my_crime = "crimes against the Crown"
-	add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, bounty_poster)
+	if(QDELETED(H))
+		return
+	var/description_level = face_known == "They know only my name and overall build" ? BOUNTY_DESCRIPTION_BUILD : BOUNTY_DESCRIPTION_FULL
+	add_character_bounty(H, bounty_total, FALSE, my_crime, bounty_poster, description_level)
 	if(HAS_TRAIT(H, TRAIT_NOBLE))
 		REMOVE_TRAIT(H, TRAIT_NOBLE, JOB_TRAIT)
 		REMOVE_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)

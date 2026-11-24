@@ -41,20 +41,17 @@
 			my_crime = "crimes against the Crown"
 		var/list/bounty_cats = list("Meager", "Moderate", "Massive")
 		var/bounty_amount = input(H, "How ample is your bounty?", "Blooded Gold") as anything in bounty_cats
-		var/race = H.dna.species
-		var/gender = H.gender
-		var/list/d_list = H.get_mob_descriptors()
-		var/descriptor_height = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
-		var/descriptor_body = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
-		var/descriptor_voice = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
-		var/bounty_total = rand(51, 200)
-		switch (bounty_amount)
-			if ("Meager")
+		var/bounty_total
+		var/recognition = BOUNTY_RECOGNITION_FACE
+		switch(bounty_amount)
+			if("Meager")
 				bounty_total = rand(51, 100)
-			if ("Moderate")
+				recognition = BOUNTY_RECOGNITION_NONE
+			if("Moderate")
 				bounty_total = rand(101, 150)
-			if ("Massive")
+			if("Massive")
 				bounty_total = rand(150, 200)
-	
-		add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, "The Justiciary of [SSmapping.map_adjustment.realm_name]")
+			else
+				return
+		add_character_bounty(H, bounty_total, FALSE, my_crime, "The Justiciary of [SSmapping.map_adjustment.realm_name]", bounty_amount == "Massive" ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD, recognition)
 		to_chat(H, span_notice("I'm on the run from the law, and there's a [LOWER_TEXT(bounty_amount)] sum of mammons out on my head... better lay low."))
