@@ -66,14 +66,6 @@
 	min_chaos = 1
 	villain_events = list(/datum/round_event_control/antagonist/solo/werewolf)
 
-/datum/round_modifier/dragons
-	name = "Dragons"
-	desc = "Ancient wings stir above a guarded hoard."
-	cost = 2
-	weight = 10
-	min_chaos = 1
-	job_slots = list("Dragon" = 1)
-
 /datum/round_modifier/vampire
 	name = "Vampyres"
 	desc = "Astrata's cursed spawn blights the land!"
