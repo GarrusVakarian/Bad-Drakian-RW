@@ -329,7 +329,16 @@
 			should_update = fleshcraft_change_organ_color(H, chooser, ORGAN_SLOT_BREASTS, "Choose breasts color", "Breasts Color", 1)
 
 		if("breast size")
-			should_update = fleshcraft_change_size(H, chooser, ORGAN_SLOT_BREASTS, "Choose breast size", "Breast Size", "breast_size", list("Flat" = 0, "Slight" = 1, "Small" = 2, "Moderate" = 3, "Large" = 4, "Generous" = 5, "Heavy" = 6, "Massive" = 7, "Heaping" = 8, "Obscene" = 9))
+			var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
+			if(!breasts)
+				to_chat(chooser, span_warning("[H] does not have that organ."))
+				return
+			var/accessory_type = breasts.accessory_type
+			var/list/sizes = get_breast_size_options(accessory_type)
+			var/new_size = input(chooser, "Choose breast size for [H]", "Breast Size", find_key_by_value(sizes, breasts.breast_size)) as null|anything in sizes
+			if((new_size in sizes) && H.getorganslot(ORGAN_SLOT_BREASTS) == breasts && breasts.accessory_type == accessory_type)
+				should_update = breasts.set_breast_size(sizes[new_size])
+				H.update_body()
 
 		if("vagina")
 			should_update = fleshcraft_change_accessory_organ(H, chooser, ORGAN_SLOT_VAGINA, /obj/item/organ/vagina, /datum/sprite_accessory/vagina, "Choose vagina type", "Vagina Customization")
@@ -716,7 +725,9 @@
 /proc/fleshcraft_change_accessory_organ(mob/living/carbon/human/H, mob/living/carbon/human/chooser, organ_slot, organ_path, accessory_root, prompt, title)
 	var/list/valid_types = list("none")
 	for(var/accessory_path in subtypesof(accessory_root))
-		var/datum/sprite_accessory/A = new accessory_path()
+		if(is_abstract(accessory_path))
+			continue
+		var/datum/sprite_accessory/A = SPRITE_ACCESSORY(accessory_path)
 		valid_types[A.name] = accessory_path
 
 	var/new_style = input(chooser, "[prompt] for [H]", title) as null|anything in valid_types
@@ -745,6 +756,11 @@
 		O.Insert(H, TRUE, FALSE)
 
 	O.accessory_type = new_accessory_type
+	if(organ_slot == ORGAN_SLOT_BREASTS)
+		var/obj/item/organ/breasts/breasts = O
+		var/datum/sprite_accessory/breasts/style = SPRITE_ACCESSORY(new_accessory_type)
+		if(breasts.breast_size > MAX_STANDARD_BREASTS_SIZE && breasts.breast_size > style.max_size)
+			breasts.set_breast_size(style.max_size)
 	O.build_colors_for_accessory(null)
 	H.update_body()
 	return TRUE

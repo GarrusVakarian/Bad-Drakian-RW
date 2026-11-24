@@ -760,7 +760,9 @@
 		if("breasts")
 			var/list/valid_breast_types = list("none")
 			for(var/breast_path in subtypesof(/datum/sprite_accessory/breasts))
-				var/datum/sprite_accessory/breasts/breasts = new breast_path()
+				if(is_abstract(breast_path))
+					continue
+				var/datum/sprite_accessory/breasts/breasts = SPRITE_ACCESSORY(breast_path)
 				valid_breast_types[breasts.name] = breast_path
 
 			var/new_style = input(H, "Choose your breast type", "Breast Customization") as null|anything in valid_breast_types
@@ -787,6 +789,9 @@
 						breasts.accessory_type = valid_breast_types[new_style]
 						// Use build_colors_for_accessory to properly set colors from character
 						breasts.build_colors_for_accessory(null)
+					var/datum/sprite_accessory/breasts/style = SPRITE_ACCESSORY(breasts.accessory_type)
+					if(breasts.breast_size > MAX_STANDARD_BREASTS_SIZE && breasts.breast_size > style.max_size)
+						breasts.set_breast_size(style.max_size)
 					H.update_body()
 					should_update = TRUE
 
@@ -861,39 +866,18 @@
 				to_chat(H, span_warning("You don't have a vagina!"))
 
 		if("breast size")
-			var/list/breast_sizes = list("Flat", "Slight", "Small", "Moderate", "Large", "Generous", "Heavy", "Massive", "Heaping", "Obscene")
-			var/new_size = input(H, "Choose your breast size", "Breast Size") as null|anything in breast_sizes
+			var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
+			if(!breasts)
+				return
+			var/accessory_type = breasts.accessory_type
+			var/list/sizes = get_breast_size_options(accessory_type)
+			var/new_size = input(H, "Choose your breast size", "Breast Size", find_key_by_value(sizes, breasts.breast_size)) as null|anything in sizes
 			if(guarded && (QDELETED(session) || !session.is_valid(H)))
 				return
-			if(new_size)
-				var/obj/item/organ/breasts/breasts = H.getorganslot(ORGAN_SLOT_BREASTS)
-				if(breasts)
-					var/size_num
-					switch(new_size)
-						if("Flat")
-							size_num = 0
-						if("Slight")
-							size_num = 1
-						if("Small")
-							size_num = 2
-						if("Moderate")
-							size_num = 3
-						if("Large")
-							size_num = 4
-						if("Generous")
-							size_num = 5
-						if("Heavy")
-							size_num = 6
-						if("Massive")
-							size_num = 7
-						if("Heaping")
-							size_num = 8
-						if("Obscene")
-							size_num = 9
-
-					breasts.breast_size = size_num
-					H.update_body()
-					should_update = TRUE
+			if((new_size in sizes) && H.getorganslot(ORGAN_SLOT_BREASTS) == breasts && breasts.accessory_type == accessory_type)
+				breasts.set_breast_size(sizes[new_size])
+				H.update_body()
+				should_update = TRUE
 
 		if("penis size")
 			var/new_size = input(H, "Choose your penis size", "Penis Size") as null|anything in GLOB.named_penis_sizes

@@ -486,7 +486,13 @@
 /datum/customizer_choice/organ/breasts/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
 	..()
 	var/datum/customizer_entry/organ/breasts/breasts_entry = entry
-	breasts_entry.breast_size = sanitize_integer(breasts_entry.breast_size, MIN_BREASTS_SIZE, MAX_BREASTS_SIZE, DEFAULT_BREASTS_SIZE)
+	if(!is_valid_breast_size(breasts_entry.breast_size))
+		breasts_entry.breast_size = DEFAULT_BREASTS_SIZE
+	// Keep legacy values even when a style previously had missing sprites.
+	if(breasts_entry.breast_size > MAX_STANDARD_BREASTS_SIZE)
+		var/datum/sprite_accessory/breasts/style = SPRITE_ACCESSORY(breasts_entry.accessory_type)
+		if(style && style.max_size < breasts_entry.breast_size)
+			breasts_entry.breast_size = style.max_size
 	breasts_entry.lactating = sanitize_integer(breasts_entry.lactating, LACTATION_DISABLED, LACTATION_AFTER_IMPREGNATION, LACTATION_DISABLED)
 
 /datum/customizer_choice/organ/breasts/imprint_organ_dna(datum/organ_dna/organ_dna, datum/customizer_entry/entry, datum/preferences/prefs)
@@ -505,7 +511,7 @@
 			lactation_label = "Enabled"
 		if(LACTATION_AFTER_IMPREGNATION)
 			lactation_label = "After Impregnation"
-	dat += "<br>Breast size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=breast_size''>[find_key_by_value(GLOB.named_breast_sizes, breasts_entry.breast_size)]</a>"
+	dat += "<br>Breast size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=breast_size'>[find_key_by_value(GLOB.named_breast_sizes, breasts_entry.breast_size)]</a>"
 	dat += "<br>Lactation: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=lactating''>[lactation_label]</a>"
 
 /datum/customizer_choice/organ/breasts/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
@@ -513,11 +519,13 @@
 	var/datum/customizer_entry/organ/breasts/breasts_entry = entry
 	switch(href_list["customizer_task"])
 		if("breast_size")
-			var/named_size = input(user, "Choose your breast size:", "Character Preference", find_key_by_value(GLOB.named_breast_sizes, breasts_entry.breast_size)) as anything in GLOB.named_breast_sizes
-			if(isnull(named_size))
-				return
-			var/new_size = GLOB.named_breast_sizes[named_size]
-			breasts_entry.breast_size = sanitize_integer(new_size, MIN_BREASTS_SIZE, MAX_BREASTS_SIZE, DEFAULT_BREASTS_SIZE)
+			var/accessory_type = breasts_entry.accessory_type
+			var/list/sizes = get_breast_size_options(accessory_type)
+			var/named_size = input(user, "Choose your breast size:", "Character Preference", find_key_by_value(sizes, breasts_entry.breast_size)) as null|anything in sizes
+			if((named_size in sizes) && breasts_entry.accessory_type == accessory_type)
+				breasts_entry.breast_size = sizes[named_size]
+		if("choose_acc", "rotate")
+			validate_entry(prefs, entry)
 		if("lactating")
 			switch(breasts_entry.lactating)
 				if(LACTATION_DISABLED)
@@ -536,7 +544,12 @@
 	customizer_choices = list(/datum/customizer_choice/organ/breasts/human)
 
 /datum/customizer_choice/organ/breasts/human
-	sprite_accessories = list(/datum/sprite_accessory/breasts/pair, /datum/sprite_accessory/breasts/pecs, /datum/sprite_accessory/breasts/pecs/nippleless)
+	sprite_accessories = list(
+		/datum/sprite_accessory/breasts/pair,
+		/datum/sprite_accessory/breasts/hyper/pair,
+		/datum/sprite_accessory/breasts/pecs,
+		/datum/sprite_accessory/breasts/pecs/nippleless,
+	)
 	allows_accessory_color_customization = FALSE
 
 /datum/customizer/organ/breasts/animal
@@ -547,6 +560,9 @@
 		/datum/sprite_accessory/breasts/pair,
 		/datum/sprite_accessory/breasts/quad,
 		/datum/sprite_accessory/breasts/sextuple,
+		/datum/sprite_accessory/breasts/hyper/pair,
+		/datum/sprite_accessory/breasts/hyper/quad,
+		/datum/sprite_accessory/breasts/hyper/sextuple,
 		/datum/sprite_accessory/breasts/pecs,
 		/datum/sprite_accessory/breasts/pecs/nippleless,
 		)
