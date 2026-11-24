@@ -858,6 +858,14 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 			A.Grant(new_character)
 	transfer_mindbound_actions(new_character)
 
+/// Preserve the active order of mind-owned spells when their buttons are granted again.
+/datum/mind/proc/sync_spell_order_from_actions()
+	var/list/sorted_spells = list()
+	for(var/datum/action/spell_action/A in current.actions)
+		if(A.target in spell_list)
+			sorted_spells += A.target
+	spell_list = sorted_spells | spell_list
+
 /datum/mind/proc/transfer_mindbound_actions(mob/living/new_character)
 	// a spell destroyed while its action had no owner cannot remove itself from spell_list, so drop it here
 	for(var/obj/effect/proc_holder/spell/S as anything in spell_list.Copy())
