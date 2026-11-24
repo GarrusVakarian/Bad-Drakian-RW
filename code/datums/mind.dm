@@ -997,6 +997,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						// Check if this is a loadout item and reduce armor if applicable
 						var/is_loadout_item = FALSE
 						var/keep_stats = FALSE
+						var/keep_force = FALSE
 						if(user.client?.prefs)
 							var/list/loadout_slots = list(
 								"loadout", "loadout2", "loadout3", "loadout4", "loadout5",
@@ -1007,6 +1008,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 								if(loadout_datum && loadout_datum.path == path2item)
 									is_loadout_item = TRUE
 									keep_stats = loadout_datum.keep_loadout_stats
+									keep_force = loadout_datum.keep_loadout_force
 									break
 
 						// Apply modifications for loadout items (unless keep_loadout_stats is TRUE)
@@ -1039,11 +1041,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 								// Only modify items that actually have armor protection
 								if(has_armor)
-									// Preserve cut crit protection and keep blunt only if the original blocked both.
-									if(BCLASS_CUT in C.prevent_crits)
-										C.prevent_crits = (BCLASS_BLUNT in C.prevent_crits) ? list(BCLASS_CUT, BCLASS_BLUNT) : list(BCLASS_CUT)
-									else
-										C.prevent_crits = null
+									C.prevent_crits = length(C.prevent_crits) ? (C.prevent_crits & list(BCLASS_CUT, BCLASS_BLUNT)) : null
 									// Set armor class to LIGHT for all loadout armor
 									if(C.armor_class != ARMOR_CLASS_NONE)
 										C.armor_class = ARMOR_CLASS_LIGHT
@@ -1064,8 +1062,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 									C.max_integrity = _base_int + rand(-_variance, _variance)
 									C.obj_integrity = C.max_integrity
 
-							// Reduce weapon damage by 30% (rounded down)
-							if(I.force > 0)
+							// Reduce item force unless this loadout option preserves it.
+							if(!keep_force && I.force > 0)
 								I.force = round(I.force * 0.7)
 							// Ensure non-clothing loadout items start at full integrity as well
 							I.obj_integrity = I.max_integrity

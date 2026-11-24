@@ -18,6 +18,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	var/donoritem			//autoset on new if null
 	var/list/ckeywhitelist
 	var/triumph_cost
+	/// Keep normal force while applying all other reproduction adjustments.
+	var/keep_loadout_force = FALSE
 	var/keep_loadout_stats = FALSE	// If TRUE, item keeps default values (not nerfed)
 	var/requires_nobility = FALSE	// If TRUE, it will check whether the player has the nobility quirk or noble job preference on high
 
@@ -115,6 +117,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Bauernwehr"
 	path = /obj/item/rogueweapon/huntingknife/throwingknife/bauernwehr
 	triumph_cost = 2
+	keep_loadout_force = TRUE
 
 /datum/loadout_item/broom
 	name = "broom"
@@ -342,7 +345,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Tricorn Hat"
 	path = /obj/item/clothing/head/roguetown/helmet/tricorn
 	sort_category = "Armor"
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/maidband
 	name = "Maid's Headband"
@@ -1668,8 +1671,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 // - ARMOR: Uses ARMOR_MIND_PROTECTION and ARMOR_INT_CHEST_LIGHT_BASE, both with slight variation.
 // - ARMOR CLASS: Armor with a class becomes Light.
 // - SELL PRICE: Set to 0 (cannot be sold for profit)
-// - CRIT PREVENTION: Retains cut if present. Retains blunt only when the original blocked both.
-// - WEAPON DAMAGE: Reduced by 30% (force reduced to 70% of original)
+// - CRIT PREVENTION: Retains cut and blunt only if the original offered those protections.
+// - FORCE: Reduced by 30% unless keep_loadout_force is TRUE.
 // - WEAPON DEFENSE: Reduced by 50% (wdefense halved)
 // - SMELT RESULT: Set to ash (cannot be smelted for materials)
 // - EXAMINATION: Items show as reproductions when examined
@@ -1710,6 +1713,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Axe"
 	path = /obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient
 	triumph_cost = 4
+	keep_loadout_force = TRUE
 
 // SWORDS
 /datum/loadout_item/tri_stone_sword
@@ -1722,11 +1726,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Ancient Gladius"
 	path = /obj/item/rogueweapon/sword/short/gladius/ancient
 	triumph_cost = 4
+	keep_loadout_force = TRUE
 
 /datum/loadout_item/ancient_khopesh
 	name = "Ancient Khopesh"
 	path = /obj/item/rogueweapon/sword/sabre/ancient
 	triumph_cost = 4
+	keep_loadout_force = TRUE
 
 // DAGGERS & KNIVES
 /datum/loadout_item/tri_stone_knife
@@ -1739,7 +1745,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/ancient_mace
 	name = "Ancient Mace"
 	path = /obj/item/rogueweapon/mace/goden/steel/ancient
-	triumph_cost = 4
+	triumph_cost = 3
+	keep_loadout_force = TRUE
 
 // POLEARMS & SPEARS
 /datum/loadout_item/tri_stone_spear
@@ -1757,7 +1764,8 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/ancient_spear
 	name = "Ancient Spear"
 	path = /obj/item/rogueweapon/spear/ancient/decrepit
-	triumph_cost = 4
+	triumph_cost = 3
+	keep_loadout_force = TRUE
 
 // ARMOR & CLOTHING
 /datum/loadout_item/ancient_mask
@@ -1890,13 +1898,13 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Volf Helm"
 	path = /obj/item/clothing/head/roguetown/helmet/leather/volfhelm
 	sort_category = "Armor"
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/tri_saiga
 	name = "Saiga Helm"
 	path = /obj/item/clothing/head/roguetown/helmet/leather/saiga
 	sort_category = "Armor"
-	triumph_cost = 1
+	triumph_cost = 2
 
 // CLOTHING - JEWELRY & ACCESSORIES
 /datum/loadout_item/tri_noble_amulet
@@ -2053,7 +2061,7 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Moose Hood (Shaman)"
 	path = /obj/item/clothing/head/roguetown/helmet/leather/shaman_hood
 	sort_category = "Armor"
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/tri_newmoon_hood
 	name = "New Moon Hood"
