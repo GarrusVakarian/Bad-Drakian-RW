@@ -951,3 +951,5 @@
   - qol: Orison and Prestidigitation now name what each floating-hand intent does.
   - qol: Orison and Prestidigitation now show the functions of each intent when shift-clicking
       the spell and the intents themselves.
+  - bugfix: The Assassin event can no longer grant Assassin status to an ineligible
+      character.
