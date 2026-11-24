@@ -294,6 +294,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8,
 		"loadout9" = loadout9,
 		"loadout10" = loadout10,
+		"loadout11" = loadout11,
+		"loadout12" = loadout12,
 		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
@@ -305,6 +307,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_name" = loadout_8_name,
 		"loadout_9_name" = loadout_9_name,
 		"loadout_10_name" = loadout_10_name,
+		"loadout_11_name" = loadout_11_name,
+		"loadout_12_name" = loadout_12_name,
 		"loadout_1_desc" = loadout_1_desc,
 		"loadout_2_desc" = loadout_2_desc,
 		"loadout_3_desc" = loadout_3_desc,
@@ -315,6 +319,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_desc" = loadout_8_desc,
 		"loadout_9_desc" = loadout_9_desc,
 		"loadout_10_desc" = loadout_10_desc,
+		"loadout_11_desc" = loadout_11_desc,
+		"loadout_12_desc" = loadout_12_desc,
 		"loadout_1_hex" = loadout_1_hex,
 		"loadout_2_hex" = loadout_2_hex,
 		"loadout_3_hex" = loadout_3_hex,
@@ -325,6 +331,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_hex" = loadout_8_hex,
 		"loadout_9_hex" = loadout_9_hex,
 		"loadout_10_hex" = loadout_10_hex,
+		"loadout_11_hex" = loadout_11_hex,
+		"loadout_12_hex" = loadout_12_hex,
 		"extra_language" = extra_language,
 		"extra_language_1" = extra_language_1,
 		"extra_language_2" = extra_language_2
@@ -379,6 +387,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout8 = snapshot["loadout8"]
 	loadout9 = snapshot["loadout9"]
 	loadout10 = snapshot["loadout10"]
+	loadout11 = snapshot["loadout11"]
+	loadout12 = snapshot["loadout12"]
 	loadout_markdown_fields = normalize_loadout_markdown_fields(snapshot["loadout_markdown_fields"])
 	loadout_1_name = snapshot["loadout_1_name"]
 	loadout_2_name = snapshot["loadout_2_name"]
@@ -390,6 +400,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_name = snapshot["loadout_8_name"]
 	loadout_9_name = snapshot["loadout_9_name"]
 	loadout_10_name = snapshot["loadout_10_name"]
+	loadout_11_name = snapshot["loadout_11_name"]
+	loadout_12_name = snapshot["loadout_12_name"]
 	loadout_1_desc = snapshot["loadout_1_desc"]
 	loadout_2_desc = snapshot["loadout_2_desc"]
 	loadout_3_desc = snapshot["loadout_3_desc"]
@@ -400,6 +412,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_desc = snapshot["loadout_8_desc"]
 	loadout_9_desc = snapshot["loadout_9_desc"]
 	loadout_10_desc = snapshot["loadout_10_desc"]
+	loadout_11_desc = snapshot["loadout_11_desc"]
+	loadout_12_desc = snapshot["loadout_12_desc"]
 	loadout_1_hex = snapshot["loadout_1_hex"]
 	loadout_2_hex = snapshot["loadout_2_hex"]
 	loadout_3_hex = snapshot["loadout_3_hex"]
@@ -410,6 +424,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_hex = snapshot["loadout_8_hex"]
 	loadout_9_hex = snapshot["loadout_9_hex"]
 	loadout_10_hex = snapshot["loadout_10_hex"]
+	loadout_11_hex = snapshot["loadout_11_hex"]
+	loadout_12_hex = snapshot["loadout_12_hex"]
 	extra_language = snapshot["extra_language"]
 	extra_language_1 = snapshot["extra_language_1"]
 	extra_language_2 = snapshot["extra_language_2"]
@@ -457,6 +473,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8?.type,
 		"loadout9" = loadout9?.type,
 		"loadout10" = loadout10?.type,
+		"loadout11" = loadout11?.type,
+		"loadout12" = loadout12?.type,
 		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
@@ -468,6 +486,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_name" = loadout_8_name,
 		"loadout_9_name" = loadout_9_name,
 		"loadout_10_name" = loadout_10_name,
+		"loadout_11_name" = loadout_11_name,
+		"loadout_12_name" = loadout_12_name,
 		"loadout_1_desc" = loadout_1_desc,
 		"loadout_2_desc" = loadout_2_desc,
 		"loadout_3_desc" = loadout_3_desc,
@@ -478,6 +498,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_desc" = loadout_8_desc,
 		"loadout_9_desc" = loadout_9_desc,
 		"loadout_10_desc" = loadout_10_desc,
+		"loadout_11_desc" = loadout_11_desc,
+		"loadout_12_desc" = loadout_12_desc,
 		"loadout_1_hex" = loadout_1_hex,
 		"loadout_2_hex" = loadout_2_hex,
 		"loadout_3_hex" = loadout_3_hex,
@@ -488,6 +510,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_hex" = loadout_8_hex,
 		"loadout_9_hex" = loadout_9_hex,
 		"loadout_10_hex" = loadout_10_hex,
+		"loadout_11_hex" = loadout_11_hex,
+		"loadout_12_hex" = loadout_12_hex,
 		"extra_language" = extra_language,
 		"extra_language_1" = extra_language_1,
 		"extra_language_2" = extra_language_2
@@ -649,11 +673,14 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		loadout9 = null
 	
 	var/loadout_type10 = string_to_typepath(preset["loadout10"])
-	if(loadout_type10 && ispath(loadout_type10, /datum/loadout_item))
-		loadout10 = new loadout_type10()
-	else
-		loadout10 = null
-	
+	loadout10 = ispath(loadout_type10, /datum/loadout_item) ? new loadout_type10() : null
+
+	var/loadout_type11 = string_to_typepath(preset["loadout11"])
+	loadout11 = ispath(loadout_type11, /datum/loadout_item) ? new loadout_type11() : null
+
+	var/loadout_type12 = string_to_typepath(preset["loadout12"])
+	loadout12 = ispath(loadout_type12, /datum/loadout_item) ? new loadout_type12() : null
+
 	// Always restore all string values from preset (including null/empty values)
 	loadout_markdown_fields = normalize_loadout_markdown_fields(preset["loadout_markdown_fields"])
 	loadout_1_name = preset["loadout_1_name"]
@@ -666,6 +693,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_name = preset["loadout_8_name"]
 	loadout_9_name = preset["loadout_9_name"]
 	loadout_10_name = preset["loadout_10_name"]
+	loadout_11_name = preset["loadout_11_name"]
+	loadout_12_name = preset["loadout_12_name"]
 	
 	loadout_1_desc = preset["loadout_1_desc"]
 	loadout_2_desc = preset["loadout_2_desc"]
@@ -677,6 +706,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_desc = preset["loadout_8_desc"]
 	loadout_9_desc = preset["loadout_9_desc"]
 	loadout_10_desc = preset["loadout_10_desc"]
+	loadout_11_desc = preset["loadout_11_desc"]
+	loadout_12_desc = preset["loadout_12_desc"]
 	
 	loadout_1_hex = preset["loadout_1_hex"]
 	loadout_2_hex = preset["loadout_2_hex"]
@@ -688,6 +719,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_hex = preset["loadout_8_hex"]
 	loadout_9_hex = preset["loadout_9_hex"]
 	loadout_10_hex = preset["loadout_10_hex"]
+	loadout_11_hex = preset["loadout_11_hex"]
+	loadout_12_hex = preset["loadout_12_hex"]
 	
 	// JSON turns type paths into strings; restore and validate every language slot.
 	for(var/language_slot in list("extra_language", "extra_language_1", "extra_language_2"))
@@ -756,7 +789,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	
 	// Count loadout items
 	var/loadout_count = 0
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/loadout_var = i == 1 ? "loadout" : "loadout[i]"
 		var/loadout_path = string_to_typepath(preset[loadout_var])
 		if(ispath(loadout_path, /datum/loadout_item))
@@ -1424,7 +1457,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	// Calculate point costs for loadout
 	var/total_points = get_total_points()
 	var/loadout_spent = 0
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/datum/loadout_item/loadout_slot = vars[i == 1 ? "loadout" : "loadout[i]"]
 		if(loadout_slot && loadout_slot.triumph_cost)
 			loadout_spent += loadout_slot.triumph_cost
@@ -1452,7 +1485,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	"}
 	
 	// Generate loadout slots with original styling
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/slot_var = i == 1 ? "loadout" : "loadout[i]"
 		var/datum/loadout_item/current_item = vars[slot_var]
 		var/custom_name = vars["loadout_[i]_name"]
@@ -1681,7 +1714,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/list/items = selection_data["items"]
 		var/datum/loadout_item/selected = items[item_id]
 		
-		if(!selected || !slot)
+		if(!selected || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot))
 			temp_loadout_selection = null
 			usr << browse(null, "window=loadout_select")
 			return
@@ -1689,7 +1722,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"
 		
 		// Check if this item is already selected in another slot
-		for(var/i = 1 to 10)
+		for(var/i = 1 to LOADOUT_SLOT_COUNT)
 			if(i == slot)
 				continue
 			var/datum/loadout_item/other_item = vars[i == 1 ? "loadout" : "loadout[i]"]
@@ -1705,7 +1738,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/spent_points = 0
 			
 			// Calculate current loadout spent (excluding this slot if changing)
-			for(var/i = 1 to 10)
+			for(var/i = 1 to LOADOUT_SLOT_COUNT)
 				if(i == slot)
 					continue
 				var/datum/loadout_item/other_slot = vars[i == 1 ? "loadout" : "loadout[i]"]
@@ -2230,7 +2263,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/action = href_list["loadout_action"]
 		var/slot = text2num(href_list["slot"])
 		
-		if(!slot || slot < 1 || slot > 10 || slot != round(slot))
+		if(!slot || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot))
 			return
 		
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"

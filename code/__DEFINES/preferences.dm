@@ -1,3 +1,6 @@
+/// Number of item slots in a character loadout.
+#define LOADOUT_SLOT_COUNT 12
+
 // Configurable; BD retains its existing default of no minimum.
 #define MINIMUM_FLAVOR_TEXT CONFIG_GET(number/minimum_flavor_text)
 #define MINIMUM_OOC_NOTES CONFIG_GET(number/minimum_ooc_notes)

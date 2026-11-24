@@ -130,7 +130,7 @@
 	if(.)
 		return
 
-	if(!current_slot || current_slot < 1 || current_slot > 10) // taken from vices_menu.dm
+	if(!isnum(current_slot) || current_slot < 1 || current_slot > LOADOUT_SLOT_COUNT || current_slot != round(current_slot))
 		ui.close()
 		return
 
@@ -149,7 +149,7 @@
 				return TRUE
 			var/total_points = prefs.get_total_points()
 			var/spent_points = 0
-			for(var/slot = 1 to 10)
+			for(var/slot = 1 to LOADOUT_SLOT_COUNT)
 				if(slot == current_slot)
 					continue
 				var/datum/loadout_item/other_item = prefs.vars[slot == 1 ? "loadout" : "loadout[slot]"]

@@ -708,55 +708,32 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			quirks += new quirk_type()
 	normalize_hypnotic_quirks()
 
-/datum/preferences/proc/_load_loadout(S)
-	var/loadout_type
-	S["loadout"] >> loadout_type
-	loadout = (loadout_type && ispath(loadout_type)) ? new loadout_type() : null
+/datum/preferences/proc/_load_loadout_slots(savefile/S)
+	for(var/slot in 1 to LOADOUT_SLOT_COUNT)
+		// Slot 1 keeps its original unsuffixed save key.
+		var/item_key = slot == 1 ? "loadout" : "loadout[slot]"
+		var/item_type = null
+		S[item_key] >> item_type
+		vars[item_key] = ispath(item_type, /datum/loadout_item) ? new item_type() : null
+		for(var/field in list("hex", "name", "desc"))
+			var/field_key = "loadout_[slot]_[field]"
+			var/saved_value = null
+			S[field_key] >> saved_value
+			vars[field_key] = saved_value
 
-/datum/preferences/proc/_load_loadout2(S)
-	var/loadout_type2
-	S["loadout2"] >> loadout_type2
-	loadout2 = (loadout_type2 && ispath(loadout_type2)) ? new loadout_type2() : null
+	var/list/loaded_markdown_fields
+	S["loadout_markdown_fields"] >> loaded_markdown_fields
+	loadout_markdown_fields = normalize_loadout_markdown_fields(loaded_markdown_fields)
 
-/datum/preferences/proc/_load_loadout3(S)
-	var/loadout_type3
-	S["loadout3"] >> loadout_type3
-	loadout3 = (loadout_type3 && ispath(loadout_type3)) ? new loadout_type3() : null
+/datum/preferences/proc/_save_loadout_slots(savefile/S)
+	for(var/slot in 1 to LOADOUT_SLOT_COUNT)
+		var/item_key = slot == 1 ? "loadout" : "loadout[slot]"
+		WRITE_FILE(S[item_key], preferences_typepath_or_null(vars[item_key]))
+		for(var/field in list("hex", "name", "desc"))
+			var/field_key = "loadout_[slot]_[field]"
+			WRITE_FILE(S[field_key], vars[field_key])
 
-/datum/preferences/proc/_load_loadout4(S)
-	var/loadout_type4
-	S["loadout4"] >> loadout_type4
-	loadout4 = (loadout_type4 && ispath(loadout_type4)) ? new loadout_type4() : null
-
-/datum/preferences/proc/_load_loadout5(S)
-	var/loadout_type5
-	S["loadout5"] >> loadout_type5
-	loadout5 = (loadout_type5 && ispath(loadout_type5)) ? new loadout_type5() : null
-
-/datum/preferences/proc/_load_loadout6(S)
-	var/loadout_type6
-	S["loadout6"] >> loadout_type6
-	loadout6 = (loadout_type6 && ispath(loadout_type6)) ? new loadout_type6() : null
-
-/datum/preferences/proc/_load_loadout7(S)
-	var/loadout_type7
-	S["loadout7"] >> loadout_type7
-	loadout7 = (loadout_type7 && ispath(loadout_type7)) ? new loadout_type7() : null
-
-/datum/preferences/proc/_load_loadout8(S)
-	var/loadout_type8
-	S["loadout8"] >> loadout_type8
-	loadout8 = (loadout_type8 && ispath(loadout_type8)) ? new loadout_type8() : null
-
-/datum/preferences/proc/_load_loadout9(S)
-	var/loadout_type9
-	S["loadout9"] >> loadout_type9
-	loadout9 = (loadout_type9 && ispath(loadout_type9)) ? new loadout_type9() : null
-
-/datum/preferences/proc/_load_loadout10(S)
-	var/loadout_type10
-	S["loadout10"] >> loadout_type10
-	loadout10 = (loadout_type10 && ispath(loadout_type10)) ? new loadout_type10() : null
+	WRITE_FILE(S["loadout_markdown_fields"], normalize_loadout_markdown_fields(loadout_markdown_fields))
 
 /datum/preferences/proc/_load_loadout_presets(S)
 	var/preset1_json
@@ -812,44 +789,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		WRITE_FILE(S["loadout_preset_3"], json_encode(loadout_preset_3))
 	else
 		WRITE_FILE(S["loadout_preset_3"], null)
-
-
-/datum/preferences/proc/_load_loadout_colours(S)
-	var/list/loaded_markdown_fields
-	S["loadout_markdown_fields"] >> loaded_markdown_fields
-	loadout_markdown_fields = normalize_loadout_markdown_fields(loaded_markdown_fields)
-	S["loadout_1_hex"] >> loadout_1_hex
-	S["loadout_2_hex"] >> loadout_2_hex
-	S["loadout_3_hex"] >> loadout_3_hex
-	S["loadout_4_hex"] >> loadout_4_hex
-	S["loadout_5_hex"] >> loadout_5_hex
-	S["loadout_6_hex"] >> loadout_6_hex
-	S["loadout_7_hex"] >> loadout_7_hex
-	S["loadout_8_hex"] >> loadout_8_hex
-	S["loadout_9_hex"] >> loadout_9_hex
-	S["loadout_10_hex"] >> loadout_10_hex
-	// Load custom names
-	S["loadout_1_name"] >> loadout_1_name
-	S["loadout_2_name"] >> loadout_2_name
-	S["loadout_3_name"] >> loadout_3_name
-	S["loadout_4_name"] >> loadout_4_name
-	S["loadout_5_name"] >> loadout_5_name
-	S["loadout_6_name"] >> loadout_6_name
-	S["loadout_7_name"] >> loadout_7_name
-	S["loadout_8_name"] >> loadout_8_name
-	S["loadout_9_name"] >> loadout_9_name
-	S["loadout_10_name"] >> loadout_10_name
-	// Load custom descriptions
-	S["loadout_1_desc"] >> loadout_1_desc
-	S["loadout_2_desc"] >> loadout_2_desc
-	S["loadout_3_desc"] >> loadout_3_desc
-	S["loadout_4_desc"] >> loadout_4_desc
-	S["loadout_5_desc"] >> loadout_5_desc
-	S["loadout_6_desc"] >> loadout_6_desc
-	S["loadout_7_desc"] >> loadout_7_desc
-	S["loadout_8_desc"] >> loadout_8_desc
-	S["loadout_9_desc"] >> loadout_9_desc
-	S["loadout_10_desc"] >> loadout_10_desc
 
 
 /datum/preferences/proc/_load_height(S)
@@ -969,17 +908,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	// LETHALSTONE edit: jank-ass load our statpack choice
 	_load_statpack(S)
 
-	_load_loadout(S)
-	_load_loadout2(S)
-	_load_loadout3(S)
-	_load_loadout4(S)
-	_load_loadout5(S)
-	_load_loadout6(S)
-	_load_loadout7(S)
-	_load_loadout8(S)
-	_load_loadout9(S)
-	_load_loadout10(S)
-	_load_loadout_colours(S)
+	_load_loadout_slots(S)
 	_load_loadout_presets(S)
 
 	_load_combat_music(S)
@@ -1402,53 +1331,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["erpprefs"] , html_decode(erpprefs))
 	WRITE_FILE(S["img_gallery"] , img_gallery)
 	WRITE_FILE(S["nsfw_img_gallery"] , nsfw_img_gallery)
-	WRITE_FILE(S["loadout"] , preferences_typepath_or_null(loadout))
-	WRITE_FILE(S["loadout2"] , preferences_typepath_or_null(loadout2))
-	WRITE_FILE(S["loadout3"] , preferences_typepath_or_null(loadout3))
-	WRITE_FILE(S["loadout4"] , preferences_typepath_or_null(loadout4))
-	WRITE_FILE(S["loadout5"] , preferences_typepath_or_null(loadout5))
-	WRITE_FILE(S["loadout6"] , preferences_typepath_or_null(loadout6))
-	WRITE_FILE(S["loadout7"] , preferences_typepath_or_null(loadout7))
-	WRITE_FILE(S["loadout8"] , preferences_typepath_or_null(loadout8))
-	WRITE_FILE(S["loadout9"] , preferences_typepath_or_null(loadout9))
-	WRITE_FILE(S["loadout10"] , preferences_typepath_or_null(loadout10))
-
+	_save_loadout_slots(S)
 	_save_loadout_presets(S)
-
-
-	WRITE_FILE(S["loadout_1_hex"], loadout_1_hex)
-	WRITE_FILE(S["loadout_2_hex"], loadout_2_hex)
-	WRITE_FILE(S["loadout_3_hex"], loadout_3_hex)
-	WRITE_FILE(S["loadout_4_hex"], loadout_4_hex)
-	WRITE_FILE(S["loadout_5_hex"], loadout_5_hex)
-	WRITE_FILE(S["loadout_6_hex"], loadout_6_hex)
-	WRITE_FILE(S["loadout_7_hex"], loadout_7_hex)
-	WRITE_FILE(S["loadout_8_hex"], loadout_8_hex)
-	WRITE_FILE(S["loadout_9_hex"], loadout_9_hex)
-	WRITE_FILE(S["loadout_10_hex"], loadout_10_hex)
-	WRITE_FILE(S["loadout_markdown_fields"], normalize_loadout_markdown_fields(loadout_markdown_fields))
-	// Save custom names
-	WRITE_FILE(S["loadout_1_name"], loadout_1_name)
-	WRITE_FILE(S["loadout_2_name"], loadout_2_name)
-	WRITE_FILE(S["loadout_3_name"], loadout_3_name)
-	WRITE_FILE(S["loadout_4_name"], loadout_4_name)
-	WRITE_FILE(S["loadout_5_name"], loadout_5_name)
-	WRITE_FILE(S["loadout_6_name"], loadout_6_name)
-	WRITE_FILE(S["loadout_7_name"], loadout_7_name)
-	WRITE_FILE(S["loadout_8_name"], loadout_8_name)
-	WRITE_FILE(S["loadout_9_name"], loadout_9_name)
-	WRITE_FILE(S["loadout_10_name"], loadout_10_name)
-	// Save custom descriptions
-	WRITE_FILE(S["loadout_1_desc"], loadout_1_desc)
-	WRITE_FILE(S["loadout_2_desc"], loadout_2_desc)
-	WRITE_FILE(S["loadout_3_desc"], loadout_3_desc)
-	WRITE_FILE(S["loadout_4_desc"], loadout_4_desc)
-	WRITE_FILE(S["loadout_5_desc"], loadout_5_desc)
-	WRITE_FILE(S["loadout_6_desc"], loadout_6_desc)
-	WRITE_FILE(S["loadout_7_desc"], loadout_7_desc)
-	WRITE_FILE(S["loadout_8_desc"], loadout_8_desc)
-	WRITE_FILE(S["loadout_9_desc"], loadout_9_desc)
-	WRITE_FILE(S["loadout_10_desc"], loadout_10_desc)
 
 	// External pref datums have their save/load moved to local procs, to avoid constant reference access
 
