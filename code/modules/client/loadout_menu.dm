@@ -350,8 +350,53 @@
 // Old Topic handler removed - now handled in vices_menu.dm
 
 /datum/preferences
-	var/loadout_preview_busy = FALSE
+	var/datum/loadout_preview_request/loadout_preview_pending
 	var/loadout_preview_available_at = 0
+
+SUBSYSTEM_DEF(loadout_previews)
+	name = "Loadout previews"
+	flags = SS_NO_INIT | SS_NO_FIRE
+	var/list/preview_queue = list()
+	var/worker_running = FALSE
+
+/datum/controller/subsystem/loadout_previews/proc/queue_preview(datum/loadout_preview_request/request)
+	preview_queue += request
+	if(!worker_running)
+		worker_running = TRUE
+		INVOKE_ASYNC(src, PROC_REF(run_queue))
+
+/datum/controller/subsystem/loadout_previews/proc/run_queue()
+	while(length(preview_queue))
+		var/datum/loadout_preview_request/request = preview_queue[1]
+		preview_queue.Cut(1, 2)
+		// Keep one worker across yields so requests from different players cannot pile up in a tick.
+		loadout_preview_next_tick()
+		try
+			request.generate()
+		catch(var/exception/error)
+			log_runtime("Loadout preview generation failed: [error]")
+		qdel(request)
+	worker_running = FALSE
+
+// Start each substantial phase with room left in the tick for the rest of the game.
+#define LOADOUT_PREVIEW_TICK_BUDGET 30
+
+/proc/loadout_preview_next_tick()
+	do
+		sleep(world.tick_lag)
+	while(TICK_USAGE >= LOADOUT_PREVIEW_TICK_BUDGET)
+
+/proc/loadout_preview_check_tick()
+	if(TICK_USAGE >= LOADOUT_PREVIEW_TICK_BUDGET)
+		loadout_preview_next_tick()
+
+/mob/living/carbon/human/dummy/loadout_preview
+	// Set after initialization. Only private preview mannequins have a yielding proc path.
+	var/render_checkpoint
+
+/mob/living/carbon/human/dummy/loadout_preview/queue_icon_update(update_type)
+	// The private worker flushes these after equipping, once the body is complete.
+	pending_icon_updates |= update_type
 
 /// Wear positions that can be used without a second item, in preferred order.
 /proc/get_loadout_preview_wear_slots(slot_flags)
@@ -374,7 +419,7 @@
 	return supported
 
 /datum/preferences/proc/show_loadout_equipped_preview(mob/user, slot, slot_var)
-	if(!parent || user?.client != parent || parent.prefs != src || loadout_preview_busy || world.time < loadout_preview_available_at)
+	if(!parent || user?.client != parent || parent.prefs != src || loadout_preview_pending || world.time < loadout_preview_available_at)
 		return
 	var/datum/loadout_item/selected = vars[slot_var]
 	if(!istype(selected) || !ispath(selected.path, /obj/item))
@@ -383,32 +428,54 @@
 	if(!get_loadout_preview_wear_slots(initial(item_type.slot_flags)) || !spec_check(user))
 		return
 
-	var/client/viewer = parent
-	var/character_slot = default_slot
-	var/color_field = "loadout_[slot]_hex"
-	var/dye = vars[color_field]
-	var/size_multiplier = get_preview_customization_scale()
-	loadout_preview_busy = TRUE
+	loadout_preview_pending = new(src, user, slot, slot_var, selected)
 	loadout_preview_available_at = world.time + 2 SECONDS
-	var/mob/living/carbon/human/dummy/mannequin
-	var/list/rendered
-	try
-		// A private nullspace mannequin cannot share gear, overlays or anatomy with
-		// another request or with an existing character-sheet/portrait mannequin.
-		mannequin = new(null)
-		if(!QDELETED(user) && user.client == viewer && viewer.prefs == src && default_slot == character_slot && vars[slot_var] == selected && vars[color_field] == dye)
-			rendered = render_loadout_equipped_preview(mannequin, item_type, dye, size_multiplier)
-	catch(var/exception/error)
-		loadout_preview_busy = FALSE
-		if(mannequin)
-			qdel(mannequin)
-		throw error
-	if(mannequin)
-		qdel(mannequin)
-	loadout_preview_busy = FALSE
+	SSloadout_previews.queue_preview(loadout_preview_pending)
 
-	if(QDELETED(user) || user.client != viewer || viewer.prefs != src || default_slot != character_slot || vars[slot_var] != selected || vars[color_field] != dye)
+/datum/loadout_preview_request
+	var/datum/preferences/preferences
+	var/mob/user
+	var/client/viewer
+	var/character_slot
+	var/slot_var
+	var/datum/loadout_item/selected
+	var/color_field
+	var/dye
+	var/mob/living/carbon/human/dummy/loadout_preview/mannequin
+
+/datum/loadout_preview_request/New(datum/preferences/preferences, mob/user, slot, slot_var, datum/loadout_item/selected)
+	src.preferences = preferences
+	src.user = user
+	src.slot_var = slot_var
+	src.selected = selected
+	viewer = user.client
+	character_slot = preferences.default_slot
+	color_field = "loadout_[slot]_hex"
+	dye = preferences.vars[color_field]
+
+/datum/loadout_preview_request/Destroy()
+	QDEL_NULL(mannequin)
+	if(!QDELETED(preferences) && preferences.loadout_preview_pending == src)
+		preferences.loadout_preview_pending = null
+	return ..()
+
+/datum/loadout_preview_request/proc/valid()
+	return !QDELETED(preferences) && !QDELETED(user) && viewer && user.client == viewer && viewer.prefs == preferences && preferences.loadout_preview_pending == src && preferences.default_slot == character_slot && preferences.vars[slot_var] == selected && preferences.vars[color_field] == dye
+
+/datum/loadout_preview_request/proc/generate()
+	if(!valid())
 		return
+	// The job owns this nullspace mannequin for its entire lifetime, including across ticks.
+	mannequin = new(null)
+	loadout_preview_next_tick()
+	if(!valid() || !preferences.spec_check(user))
+		return
+	var/list/rendered = preferences.render_loadout_equipped_preview(mannequin, selected.path, dye, preferences.get_preview_customization_scale(), src)
+	if(!valid())
+		return
+	show_result(rendered)
+
+/datum/loadout_preview_request/proc/show_result(list/rendered)
 	if(!rendered)
 		to_chat(user, span_notice("This item can't be worn by this character on its own."))
 		return
@@ -426,8 +493,12 @@
 	popup.open(FALSE)
 
 /// Render only on request. The caller owns the mannequin and discards it even on failure.
-/datum/preferences/proc/render_loadout_equipped_preview(mob/living/carbon/human/dummy/mannequin, obj/item/item_type, dye, size_multiplier)
+/datum/preferences/proc/render_loadout_equipped_preview(mob/living/carbon/human/dummy/loadout_preview/mannequin, obj/item/item_type, dye, size_multiplier, datum/loadout_preview_request/request)
+	mannequin.render_checkpoint = GLOBAL_PROC_REF(loadout_preview_check_tick)
 	copy_to(mannequin, FALSE, FALSE, TRUE)
+	loadout_preview_next_tick()
+	if(request && !request.valid())
+		return
 	mannequin.delete_equipment()
 	var/obj/item/sample = new item_type(mannequin)
 	if(QDELETED(sample))
@@ -464,8 +535,16 @@
 	var/view_width = 0
 	var/view_height = 0
 	for(var/direction in list(SOUTH, NORTH))
+		loadout_preview_next_tick()
+		if(request && !request.valid())
+			return
 		mannequin.setDir(direction)
-		var/icon/view = getFlatIcon(mannequin, no_anim = TRUE)
+		var/icon/view = getFlatIcon(mannequin, no_anim = TRUE, between_layers = mannequin.render_checkpoint, fit_canvas = TRUE)
+		if(!view || !view.Width() || !view.Height())
+			return
+		loadout_preview_next_tick()
+		if(request && !request.valid())
+			return
 		var/encoded = icon2base64(view)
 		if(!encoded)
 			return
@@ -478,3 +557,5 @@
 	rendered["width"] = view_width
 	rendered["height"] = view_height
 	return rendered
+
+#undef LOADOUT_PREVIEW_TICK_BUDGET
