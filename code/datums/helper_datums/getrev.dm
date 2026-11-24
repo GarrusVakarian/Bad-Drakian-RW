@@ -1,10 +1,14 @@
 /datum/getrev
 	var/commit  // git rev-parse HEAD
 	var/date
+	/// SHA-256 of the compiled server binary present when this server started.
+	var/dmb_hash
 	var/originmastercommit  // git rev-parse origin/master
 	var/list/testmerge = list()
 
 /datum/getrev/New()
+	if(fexists("roguetown.dmb"))
+		dmb_hash = rustg_hash_file(RUSTG_HASH_SHA256, "roguetown.dmb")
 	testmerge = world.TgsTestMerges()
 	var/datum/tgs_revision_information/revinfo = world.TgsRevision()
 	if(revinfo)
@@ -34,6 +38,8 @@
 		msg += "HEAD: [commit]"
 	else if(!originmastercommit)
 		msg += "No commit information"
+
+	msg += "roguetown.dmb SHA-256: [dmb_hash || "unavailable"]"
 
 	return msg.Join("\n")
 

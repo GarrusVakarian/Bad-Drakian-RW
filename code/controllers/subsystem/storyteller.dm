@@ -1357,6 +1357,10 @@ SUBSYSTEM_DEF(gamemode)
 
 			force_set_round_statistic(STATS_MAMMONS_HELD, total_wealth)
 
+	if(highest_wealth < 0)
+		magnate_wealth = 0
+		GLOB.chronicle_stats -= CHRONICLE_STATS_RICHEST_PERSON
+
 /// Returns total follower influence for the given storyteller
 /datum/controller/subsystem/gamemode/proc/get_follower_influence(datum/storyteller/chosen_storyteller)
 	var/datum/storyteller/initialized_storyteller = storytellers[chosen_storyteller]
