@@ -1,0 +1,12 @@
+author: "R3Nomon, JackSage, Khanivore"
+delete-after: True
+changes:
+  - rscadd: "R3Nomon: Wild Witch wretch class, stronger the older your character."
+  - rscadd: "R3Nomon: Additional Wretch classes to the Wretch door so they can properly claim the houses in the forest and bog."
+  - rscadd: "JackSage: ERP Stat Drain Quirk, given to gnolls as well. Allows you to drain a subs stats to nothing. Credit to SR and Xander3359"
+  - rscadd: "JackSage: Pref for Stat Drain"
+  - rscadd: "Khanivore: Flying ability for dragons!"
+  - sound: "Khanivore: Dragon takeoff uses wing wind-up and launch sounds."
+  - bugfix: "Khanivore: Dragon speech, text, sound, casting, and progress indicators are centered."
+  - bugfix: "Khanivore: Dragon scale regeneration messages now refer to scales."
+  - bugfix: "Khanivore: Dragons no longer display humanoid bloody-hand or Baothan mark overlays."
