@@ -68,31 +68,32 @@
 /proc/bandit_select_bounty(mob/living/carbon/human/H)
 	if(QDELETED(H) || !H.client)
 		return
-	var/wanted_choice = input(H, "Are you wanted by the kingdom?", "Bounty") as anything in list("Yes", "No")
+	var/list/preset = H.bounty_presets?["Bandit"]
+	var/wanted_choice = preset ? (preset["declined"] ? "No" : "Yes") : input(H, "Are you wanted by the kingdom?", "Bounty") as anything in list("Yes", "No")
 	if(wanted_choice != "Yes")
 		to_chat(H, span_warning("I am still relatively new to the gang. My crimes have gone unnoticed so far, but I lack experience."))
 		return
-	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See")
-	if(QDELETED(H) || !H.client || !bounty_poster)
-		return
-	var/bounty_severity = choose_bounty_tier(H, "How notorious are you?", "Bounty Amount", list("Small Game", "Highwayman", "Realm Boogeyman"))
-	var/bounty_total
-	var/description_level = BOUNTY_DESCRIPTION_FULL
-	var/recognition = BOUNTY_RECOGNITION_FACE
-	switch(bounty_severity)
-		if("Small Game")
-			bounty_total = rand(100, 200)
-			description_level = choose_bounty_full_description(H) ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD
-		if("Highwayman")
-			bounty_total = rand(200, 300)
-		if("Realm Boogeyman")
-			bounty_total = rand(300, 400)
-			recognition = BOUNTY_RECOGNITION_ALWAYS
-		else
-			return
 	if(QDELETED(H) || !H.client)
 		return
-	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
+	var/issuer = preset ? preset["issuer"] : choose_character_bounty_issuer(H, "Bandit")
+	var/bounty_poster = character_bounty_issuer(issuer)
+	if(QDELETED(H) || !H.client || !bounty_poster)
+		return
+	var/bounty_severity = preset ? preset["tier"] : choose_character_bounty_tier(H, "Bandit")
+	var/bounty_total = roll_character_bounty_reward("Bandit", bounty_severity)
+	if(!bounty_total || QDELETED(H) || !H.client)
+		return
+	var/description_level = BOUNTY_DESCRIPTION_FULL
+	var/recognition = BOUNTY_RECOGNITION_FACE
+	if(bounty_severity == "Small Game")
+		var/visibility = preset ? preset["visibility"] : choose_bounty_description(H, "Bandit")
+		if(visibility != "full")
+			description_level = BOUNTY_DESCRIPTION_BUILD
+	else if(bounty_severity == "Realm Boogeyman")
+		recognition = BOUNTY_RECOGNITION_ALWAYS
+	if(QDELETED(H) || !H.client)
+		return
+	var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null
 	if(QDELETED(H))
 		return
 	if(!my_crime)

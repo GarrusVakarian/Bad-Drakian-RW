@@ -72,30 +72,28 @@
 /proc/wretch_select_bounty(mob/living/carbon/human/H)
 	if(QDELETED(H) || !H.client)
 		return
-	var/justiciary = "The Justiciary of [SSmapping.map_adjustment.realm_name]"
-	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list(justiciary, "The Grenzelhoftian Holy See", "The Otavan Orthodoxy")
+	var/list/preset = H.bounty_presets?["Wretch"]
+	var/justiciary = character_bounty_issuer("justiciary")
+	var/issuer = preset ? preset["issuer"] : choose_character_bounty_issuer(H, "Wretch")
+	var/bounty_poster = character_bounty_issuer(issuer)
 	if(QDELETED(H) || !H.client || !bounty_poster)
 		return
-	var/bounty_severity = choose_bounty_tier(H, "How severe are your crimes?", "Bounty Amount", list("Misdeed", "Harm towards lyfe", "Horrific atrocities"), minor_notice_requires_description = TRUE)
-	var/bounty_total
+	var/bounty_severity = preset ? preset["tier"] : choose_character_bounty_tier(H, "Wretch")
+	var/bounty_total = roll_character_bounty_reward("Wretch", bounty_severity)
+	if(!bounty_total || QDELETED(H) || !H.client)
+		return
 	var/description_level = BOUNTY_DESCRIPTION_FULL
 	var/recognition = BOUNTY_RECOGNITION_FACE
-	switch(bounty_severity)
-		if("Misdeed")
-			bounty_total = rand(100, 200)
-			description_level = choose_bounty_full_description(H) ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD
-			if(description_level == BOUNTY_DESCRIPTION_BUILD)
-				recognition = BOUNTY_RECOGNITION_NONE
-		if("Harm towards lyfe")
-			bounty_total = rand(200, 300)
-		if("Horrific atrocities")
-			bounty_total = rand(300, 400)
-			recognition = BOUNTY_RECOGNITION_ALWAYS
-		else
-			return
+	if(bounty_severity == "Misdeed")
+		var/visibility = preset ? preset["visibility"] : choose_bounty_description(H, "Wretch")
+		if(visibility != "full")
+			description_level = BOUNTY_DESCRIPTION_BUILD
+			recognition = BOUNTY_RECOGNITION_NONE
+	else if(bounty_severity == "Horrific atrocities")
+		recognition = BOUNTY_RECOGNITION_ALWAYS
 	if(QDELETED(H) || !H.client)
 		return
-	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
+	var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null
 	if(QDELETED(H))
 		return
 	if(!my_crime)

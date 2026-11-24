@@ -335,6 +335,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/nickname = "Please Change Me"
 	var/highlight_color = "#FF0000"
 	var/datum/charflaw/charflaw
+	var/list/bounty_presets = list()
+	/// Invalidates preset dialogs when switching away from a character slot.
+	var/bounty_preset_slot_revision = 0
 	// Multiple vice selection (up to 6, slot 1 falls back to No Flaw if cleared)
 	var/datum/charflaw/vice1
 	var/datum/charflaw/vice2
@@ -3904,6 +3907,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	character.restricted_species = restricted_species_pref
 
 	character.jumpsuit_style = jumpsuit_style
+	if(!character_setup)
+		character.bounty_presets = length(bounty_presets) ? sanitize_character_bounty_presets(bounty_presets) : null
 
 	// Apply multiple vices system
 	character.vices = list()

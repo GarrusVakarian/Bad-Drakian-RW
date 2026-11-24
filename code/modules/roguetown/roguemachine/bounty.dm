@@ -290,42 +290,195 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 
 	message_admins("[ADMIN_LOOKUPFLW(user)] has set a bounty on [ADMIN_LOOKUPFLW(target)] with the reason of: '[reason]'")
 
-/// Show the same tier details in the expanded picker and its classic input fallback.
-/proc/choose_bounty_tier(mob/living/carbon/human/target, prompt, title, list/tiers, wanted_vagabond = FALSE, minor_notice_requires_description = FALSE)
-	if(!target.client)
+/// Character bounty presets store issuer keys so the Justiciary follows the current map.
+/proc/character_bounty_issuer(issuer)
+	switch(issuer)
+		if("justiciary")
+			var/realm = SSmapping?.map_adjustment?.realm_name
+			return realm ? "The Justiciary of [realm]" : "The local Justiciary"
+		if("holy_see")
+			return "The Grenzelhoftian Holy See"
+		if("orthodoxy")
+			return "The Otavan Orthodoxy"
+
+/proc/character_bounty_issuer_keys(profile)
+	if(profile == "Wanted vagabond")
+		return list("justiciary")
+	if(profile == "Bandit")
+		return list("justiciary", "holy_see")
+	return list("justiciary", "holy_see", "orthodoxy")
+
+/proc/choose_character_bounty_issuer(mob/user, profile)
+	var/list/choices = list()
+	for(var/issuer in character_bounty_issuer_keys(profile))
+		choices[character_bounty_issuer(issuer)] = issuer
+	var/prompt = "Who placed a bounty on you?\n\nThe Justiciary marks recognized characters OUTLAW! Church bounties mark them HERETIC!"
+	var/choice = input(user, prompt, "Bounty Poster") as null|anything in choices
+	return choices[choice]
+
+/proc/character_bounty_tiers(profile)
+	switch(profile)
+		if("Wretch")
+			return list("Misdeed", "Harm towards lyfe", "Horrific atrocities")
+		if("Bandit")
+			return list("Small Game", "Highwayman", "Realm Boogeyman")
+		if("Wanted vagabond", "Lawless")
+			return list("Meager", "Moderate", "Massive")
+	return list()
+
+/proc/character_bounty_reward_range(profile, tier)
+	var/list/tiers = character_bounty_tiers(profile)
+	var/index = tiers.Find(tier)
+	if(!index)
+		return null
+	var/static/list/large_rewards = list(list(100, 200), list(200, 300), list(300, 400))
+	var/static/list/wanted_rewards = list(list(51, 100), list(101, 150), list(150, 200))
+	var/static/list/lawless_rewards = list(list(50, 100), list(100, 150), list(150, 200))
+	switch(profile)
+		if("Wanted vagabond")
+			return wanted_rewards[index]
+		if("Lawless")
+			return lawless_rewards[index]
+	return large_rewards[index]
+
+/proc/roll_character_bounty_reward(profile, tier)
+	var/list/reward = character_bounty_reward_range(profile, tier)
+	return reward ? rand(reward[1], reward[2]) : null
+
+/// Show the same tier details in character setup, at spawn and in the classic input fallback.
+/proc/choose_character_bounty_tier(mob/user, profile)
+	if(!user.client)
 		return
+	var/list/tiers = character_bounty_tiers(profile)
+	var/prompt
+	var/title = "Bounty Amount"
 	var/list/descriptions
-	var/list/rewards
-	if(wanted_vagabond)
-		descriptions = list(
-			"Bounty lists your name and build. No face recognition.",
-			"Bounty lists your name and build. Recognized only with face exposed.",
-			"Bounty lists a full description, including voice. Recognized only with face exposed.",
-		)
-		rewards = list("51–100 mammons", "101–150 mammons", "150–200 mammons")
-	else
-		var/minor_recognition = minor_notice_requires_description ? "Recognized only if body features are listed." : "Recognized only with face exposed."
-		descriptions = list(
-			"Bounty lists your name and build. You can opt to also list body features. [minor_recognition]",
-			"Bounty lists a full description, including voice. Recognized only with face exposed.",
-			"Bounty lists a full description, including voice. Recognized even while masked!",
-		)
-		rewards = list("100–200 mammons", "200–300 mammons", "300–400 mammons")
+	switch(profile)
+		if("Wanted vagabond")
+			prompt = "How ample is your bounty?"
+			title = "Blooded Gold"
+			descriptions = list(
+				"Bounty lists your name and build. No face recognition.",
+				"Bounty lists your name and build. Recognized only with face exposed.",
+				"Bounty lists a full description, including voice. Recognized only with face exposed.",
+			)
+		if("Lawless")
+			prompt = "How ample is your bounty?"
+			var/description = "Your visibility choice controls the description and whether you are recognized. Masks hide any examine alert."
+			descriptions = list(description, description, description)
+		else
+			prompt = profile == "Wretch" ? "How severe are your crimes?" : "How notorious are you?"
+			var/minor_recognition = profile == "Wretch" ? "Recognized only if body features are listed." : "Recognized only with face exposed."
+			descriptions = list(
+				"Bounty lists your name and build. You can opt to also list body features. [minor_recognition]",
+				"Bounty lists a full description, including voice. Recognized only with face exposed.",
+				"Bounty lists a full description, including voice. Recognized even while masked!",
+			)
 
 	var/list/details = list()
-	var/classic_input = !target.client.prefs.tgui_pref
+	var/classic_input = !user.client.prefs.tgui_pref
 	for(var/i in 1 to length(tiers))
 		var/tier = tiers[i]
+		var/list/reward = character_bounty_reward_range(profile, tier)
+		var/reward_text = "[reward[1]]–[reward[2]] mammons"
 		if(classic_input)
-			prompt += "\n\n[tier] ([rewards[i]])\n[descriptions[i]]"
+			prompt += "\n\n[tier] ([reward_text])\n[descriptions[i]]"
 		else
-			details[tier] = list("description" = descriptions[i], "cost" = rewards[i])
-	return tgui_input_list(target, prompt, title, tiers, option_details = details, window_width = 620, window_height = 378)
+			details[tier] = list("description" = descriptions[i], "cost" = reward_text)
+	return tgui_input_list(user, prompt, title, tiers, option_details = details, window_width = 620, window_height = 378)
 
 /// Ask whether the law has more than a name and overall build for a minor bounty.
-/proc/choose_bounty_full_description(mob/living/carbon/human/target)
-	var/choice = input(target, "What does the law know about your appearance and voice?", "Bounty Description") as null|anything in list("They know only my name and overall build", "They know my body features and voice")
-	return choice == "They know my body features and voice"
+/proc/choose_bounty_description(mob/user, profile)
+	var/list/choices = list("They know only my name and overall build" = "build", "They know my body features and voice" = "full")
+	var/prompt = "What does the law know about your appearance and voice?"
+	if(profile == "Wretch")
+		prompt += "\n\nListing body features and voice also lets people recognize your exposed face."
+	else
+		prompt += "\n\nAn exposed face is recognizable with either listing."
+	var/choice = input(user, prompt, "Bounty Description") as null|anything in choices
+	return choices[choice]
+
+/proc/choose_lawless_bounty_visibility(mob/user)
+	var/list/choices = list("They know my face" = "face", "They know only my features" = "full", "They know only my name and overall build" = "build")
+	var/prompt = "Is your face known to the authorities?\n\nThey know my face: Full description, including voice. Recognized only with face exposed.\nThey know only my features: Full description, including voice. No face recognition.\nThey know only my name and overall build: No face recognition."
+	var/choice = input(user, prompt, "Visibility Status") as null|anything in choices
+	return choices[choice]
+
+/proc/prompt_bounty_preset(mob/user, profile, list/previous)
+	if(profile == "Bandit")
+		var/choice = tgui_input_list(user, "Do you want a bounty when you spawn as a Bandit?", "Bandit Bounty", list("Set bounty", "No bounty"))
+		if(choice == "No bounty")
+			return list("declined" = TRUE)
+		if(choice != "Set bounty" || !user.client)
+			return null
+
+	var/issuer = profile == "Wanted vagabond" ? "justiciary" : choose_character_bounty_issuer(user, profile)
+	if(!issuer || !user.client)
+		return null
+
+	var/visibility
+	if(profile == "Lawless")
+		visibility = choose_lawless_bounty_visibility(user)
+		if(!visibility || !user.client)
+			return null
+
+	var/tier = choose_character_bounty_tier(user, profile)
+	if(!tier || !user.client)
+		return null
+	if(tier == "Misdeed" || tier == "Small Game")
+		visibility = choose_bounty_description(user, profile)
+		if(!visibility || !user.client)
+			return null
+
+	var/old_crime = previous ? previous["crime"] : ""
+	var/crime = input(user, "What is your crime? Leave blank to use the default. The notice shows up to 200 characters.", "Crime", old_crime) as null|text
+	if(isnull(crime))
+		return null
+	return list("issuer" = issuer, "tier" = tier, "visibility" = visibility, "crime" = crime)
+
+GLOBAL_LIST_INIT(bounty_preset_labels, list(
+	"Wretch" = "Wretch",
+	"Lawless" = "Lawless vice",
+	"Wanted vagabond" = "Wanted vagabond",
+	"Bandit" = "Bandit",
+))
+
+/proc/bounty_preset_visibility(profile, visibility)
+	switch(visibility)
+		if("build")
+			return "Name and overall build only"
+		if("full")
+			return profile == "Lawless" ? "They know only my features" : "Body features and voice"
+		if("face")
+			return "They know my face"
+
+/// Validate each role separately so an invalid preset falls back to the spawn prompts.
+/proc/sanitize_character_bounty_presets(raw_presets)
+	var/list/result = list()
+	if(!islist(raw_presets))
+		return result
+	var/list/presets = raw_presets
+	for(var/profile in GLOB.bounty_preset_labels)
+		var/list/preset = presets[profile]
+		if(!islist(preset))
+			continue
+		if(profile == "Bandit" && preset["declined"] == TRUE)
+			result[profile] = list("declined" = TRUE)
+			continue
+		var/tier = preset["tier"]
+		var/issuer = preset["issuer"]
+		var/visibility = preset["visibility"]
+		if(!(tier in character_bounty_tiers(profile)) || !(issuer in character_bounty_issuer_keys(profile)))
+			continue
+		if(profile == "Lawless" && !(visibility in list("face", "full", "build")))
+			continue
+		if((tier == "Misdeed" || tier == "Small Game") && !(visibility in list("full", "build")))
+			continue
+		var/crime = preset["crime"]
+		result[profile] = list("tier" = tier, "issuer" = issuer, "visibility" = visibility, "crime" = istext(crime) ? copytext_char(crime, 1, 201) : null)
+	return result
+
+/mob/living/carbon/human/var/list/bounty_presets
 
 /// Record a character bounty, taking a snapshot of any publicly listed features.
 /proc/add_character_bounty(mob/living/carbon/human/target, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_FACE)

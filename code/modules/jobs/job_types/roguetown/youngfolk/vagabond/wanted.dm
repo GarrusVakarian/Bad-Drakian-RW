@@ -36,20 +36,17 @@
 
 	if (H.mind)
 		H.change_stat(STATKEY_LCK, rand(-2, 2))
-		var/my_crime = input(H, "What is your crime?", "Crime") as text|null
-		if (!my_crime)
+		if(!H.client)
+			return
+		var/list/preset = H.bounty_presets?["Wanted vagabond"]
+		var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null
+		if(QDELETED(H) || !H.client)
+			return
+		if(!my_crime)
 			my_crime = "crimes against the Crown"
-		var/list/bounty_cats = list("Meager", "Moderate", "Massive")
-		var/bounty_amount = choose_bounty_tier(H, "How ample is your bounty?", "Blooded Gold", bounty_cats, wanted_vagabond = TRUE)
-		var/bounty_total
-		switch(bounty_amount)
-			if("Meager")
-				bounty_total = rand(51, 100)
-			if("Moderate")
-				bounty_total = rand(101, 150)
-			if("Massive")
-				bounty_total = rand(150, 200)
-			else
-				return
-		add_character_bounty(H, bounty_total, FALSE, my_crime, "The Justiciary of [SSmapping.map_adjustment.realm_name]", bounty_amount == "Massive" ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD, bounty_amount == "Meager" ? BOUNTY_RECOGNITION_NONE : BOUNTY_RECOGNITION_FACE)
+		var/bounty_amount = preset ? preset["tier"] : choose_character_bounty_tier(H, "Wanted vagabond")
+		var/bounty_total = roll_character_bounty_reward("Wanted vagabond", bounty_amount)
+		if(!bounty_total || QDELETED(H) || !H.client)
+			return
+		add_character_bounty(H, bounty_total, FALSE, my_crime, character_bounty_issuer("justiciary"), bounty_amount == "Massive" ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD, bounty_amount == "Meager" ? BOUNTY_RECOGNITION_NONE : BOUNTY_RECOGNITION_FACE)
 		to_chat(H, span_notice("I'm on the run from the law, and there's a [LOWER_TEXT(bounty_amount)] sum of mammons out on my head... better lay low."))
