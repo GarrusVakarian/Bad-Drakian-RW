@@ -37,9 +37,11 @@
 	var/list/bars = user.progressbars[bar.loc]
 	bars.Add(src)
 	listindex = bars.len
-	bar.pixel_y = 0
+	var/list/indicator_offset = get_mob_indicator_offset(target)
+	bar.pixel_x = indicator_offset[1]
+	bar.pixel_y = indicator_offset[2]
 	bar.alpha = 0
-	animate(bar, pixel_y = 32 + (PROGRESSBAR_HEIGHT * (listindex - 1)), alpha = 255, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
+	animate(bar, pixel_y = 32 + indicator_offset[2] + (PROGRESSBAR_HEIGHT * (listindex - 1)), alpha = 255, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
 
 /datum/progressbar/proc/update(progress)
 	progress = CLAMP(progress, 0, goal)
@@ -50,8 +52,9 @@
 
 /datum/progressbar/proc/shiftDown()
 	--listindex
-	bar.pixel_y = 32 + (PROGRESSBAR_HEIGHT * (listindex - 1))
-	var/dist_to_travel = 32 + (PROGRESSBAR_HEIGHT * (listindex - 1)) - PROGRESSBAR_HEIGHT
+	var/list/indicator_offset = get_mob_indicator_offset(bar.loc)
+	bar.pixel_y = 32 + indicator_offset[2] + (PROGRESSBAR_HEIGHT * (listindex - 1))
+	var/dist_to_travel = 32 + indicator_offset[2] + (PROGRESSBAR_HEIGHT * (listindex - 1)) - PROGRESSBAR_HEIGHT
 	animate(bar, pixel_y = dist_to_travel, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
 
 /datum/progressbar/Destroy()

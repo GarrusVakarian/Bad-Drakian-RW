@@ -326,6 +326,9 @@
 	if(glow_color && glow_intensity)
 		mob_light = mastermob.mob_light(glow_color, glow_intensity, FLASH_LIGHT_SPELLGLOW)
 	if(mob_charge_effect)
+		var/list/indicator_offset = get_mob_indicator_offset(mastermob)
+		mob_charge_effect.pixel_x = initial(mob_charge_effect.pixel_x) + indicator_offset[1]
+		mob_charge_effect.pixel_y = initial(mob_charge_effect.pixel_y) + indicator_offset[2]
 		mastermob.vis_contents += mob_charge_effect
 
 /datum/intent/proc/on_mouse_up()

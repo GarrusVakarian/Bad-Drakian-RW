@@ -674,6 +674,14 @@ will handle it, but:
 		((icon_dimensions["height"] / ICON_SIZE_Y) - 1) * (ICON_SIZE_Y * 0.5),
 	)
 
+// Other species keep their existing indicator placement.
+/proc/get_mob_indicator_offset(atom/target)
+	if(ishuman(target))
+		var/mob/living/carbon/human/human = target
+		if(human.dna?.species?.id == "dragon")
+			return get_icon_centering_offset(human)
+	return list(0, 0)
+
 //Finds the distance between two atoms, in pixels
 //centered = FALSE counts from turf edge to edge
 //centered = TRUE counts from turf center to turf center

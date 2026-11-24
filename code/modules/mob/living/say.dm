@@ -375,6 +375,9 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 				speech_bubble_recipients.Add(M.client)
 	var/image/I = image('icons/mob/talk.dmi', src, "[bubble_type][say_test(message)]", FLY_LAYER)
 	I.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
+	var/list/indicator_offset = get_mob_indicator_offset(src)
+	I.pixel_x += indicator_offset[1]
+	I.pixel_y += indicator_offset[2]
 	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(flick_overlay), I, speech_bubble_recipients, 30)
 
 /datum/species/proc/get_span_language(datum/language/message_language)
@@ -607,6 +610,9 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 				speech_bubble_recipients.Add(M.client)
 	var/image/I = image('icons/mob/talk.dmi', src, "[bubble_type][say_test(message)]", FLY_LAYER)
 	I.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
+	var/list/indicator_offset = get_mob_indicator_offset(src)
+	I.pixel_x += indicator_offset[1]
+	I.pixel_y += indicator_offset[2]
 	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(flick_overlay), I, speech_bubble_recipients, 30)
 
 	//Listening gets trimmed here if a vocal bark's present. If anyone ever makes this proc return listening, make sure to instead initialize a copy of listening in here to avoid wonkiness

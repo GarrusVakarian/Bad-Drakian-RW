@@ -82,7 +82,9 @@
 	var/image/I = image(icon = 'icons/effects/effects.dmi', loc = A, icon_state = "emote", layer = ABOVE_MOB_LAYER)
 	if(!I)
 		return
-	I.pixel_y = 6
+	var/list/indicator_offset = get_mob_indicator_offset(A)
+	I.pixel_x = indicator_offset[1]
+	I.pixel_y = 6 + indicator_offset[2]
 	I.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	flick_overlay(I, GLOB.clients, 6)
 

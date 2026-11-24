@@ -49,6 +49,7 @@
 
 	/// Mobility spells that cannot escape an existing grab.
 	var/blocked_while_grabbed = FALSE
+	var/ignores_combat_action_restrictions = FALSE
 	var/skipcharge = FALSE
 
 /obj/effect/proc_holder/Initialize(mapload)
@@ -285,6 +286,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 /// Rechecked during channels without testing or spending the reserved spell charge.
 /obj/effect/proc_holder/spell/proc/arcane_channel_allowed(mob/living/user)
+	if(user && !ignores_combat_action_restrictions && !user.can_perform_combat_action())
+		return FALSE
 	return !QDELETED(src) && !grab_blocks_cast(user) && arcane_speech_allowed(user)
 
 /obj/effect/proc_holder/spell/proc/arcane_speech_allowed(mob/living/user, show_message = FALSE)
@@ -498,6 +501,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 /// Recheck a delayed cast without testing or spending its already-reserved charge.
 /obj/effect/proc_holder/spell/proc/check_cast_requirements(skipcharge, mob/user, check_charge = TRUE)
+	if(user && !ignores_combat_action_restrictions && !user.can_perform_combat_action())
+		return FALSE
 	if(player_lock)
 		if(!user.mind || !(src in user.mind.spell_list) && !(src in user.mob_spell_list))
 			to_chat(user, span_warning("I shouldn't have this spell! Something's wrong..."))
@@ -764,6 +769,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			action.button.update_maptext(recharge_time - charge_counter)
 
 /obj/effect/proc_holder/spell/proc/perform(list/targets, recharge = TRUE, mob/user = usr) //if recharge is started is important for the trigger spells
+	if(user && !ignores_combat_action_restrictions && !user.can_perform_combat_action())
+		return FALSE
 	if(grab_blocks_cast(user, TRUE))
 		return FALSE
 	if(!arcane_speech_allowed(user, TRUE))
