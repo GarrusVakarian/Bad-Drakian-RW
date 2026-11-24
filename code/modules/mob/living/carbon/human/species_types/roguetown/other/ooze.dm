@@ -68,6 +68,7 @@
 		/obj/item/bodypart/taur/tiger,
 		/obj/item/bodypart/taur/spider,
 		/obj/item/bodypart/taur/centipede,
+		/obj/item/bodypart/taur/tentacle,
 		/obj/item/bodypart/taur/sloog,
 		/obj/item/bodypart/taur/ant,
 		/obj/item/bodypart/taur/wasp,
