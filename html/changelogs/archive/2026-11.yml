@@ -920,6 +920,8 @@
   - qol: Harpies can attach amulets to their talons. The footwear preview now recognizes
       eligible decorations.
 2026-11-24:
+  GarrusVakarian:
+  - bugfix: Making a cannon no longer causes a runtime.
   _Rarity:
   - bugfix: Fixed an error when examining outlaws without a penance record.
   mypingishuge:
@@ -943,3 +945,6 @@
   - qol: Pots can cook several batches at once if there is enough water.
   - qol: Hearth and campfire pots announce when the final batch is ready and there
       is too little water left to cook another.
+  - bugfix: Sort protective loadout wearables under Armor and move unprotective garments
+      to their clothing categories.
+  - rscadd: Added a Cost only filter to the loadout menu.
