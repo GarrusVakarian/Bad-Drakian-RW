@@ -688,19 +688,15 @@
 	user.visible_message(span_info("[user] places [ingredient] into the pot."))
 	playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
 	sleep(recipe.cooktime / cooktime_divisor)
-	while(TRUE)
-		if(QDELETED(src) || generation != stew_generation)
-			return
-		if(QDELETED(ingredient) || ingredient.loc != src)
-			LAZYREMOVE(pending_stew_ingredients, ingredient)
-			return
-		if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
-			release_stew_ingredient(ingredient)
-			visible_message(span_notice("The batch stops cooking."))
-			return
-		if(pot.reagents.chem_temp >= MIN_STEW_TEMPERATURE)
-			break
-		sleep(2 SECONDS)
+	if(QDELETED(src) || generation != stew_generation)
+		return
+	if(QDELETED(ingredient) || ingredient.loc != src)
+		LAZYREMOVE(pending_stew_ingredients, ingredient)
+		return
+	if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || pot.reagents.chem_temp < MIN_STEW_TEMPERATURE || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
+		release_stew_ingredient(ingredient)
+		visible_message(span_notice("The batch stops cooking."))
+		return
 
 	var/temperature = pot.reagents.chem_temp
 	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK, safety = TRUE)
