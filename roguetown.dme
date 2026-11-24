@@ -917,7 +917,6 @@
 #include "code\datums\sexcon\sexcon_helpers.dm"
 #include "code\datums\sexcon\sexcon_knotting.dm"
 #include "code\datums\sexcon\sexcon_reagents.dm"
-#include "code\datums\sexcon\cumflation.dm"
 #include "code\datums\sexcon\sex_actions\deviant\aural.dm"
 #include "code\datums\sexcon\sex_actions\deviant\buttjob.dm"
 #include "code\datums\sexcon\sex_actions\deviant\crossbowjob.dm"

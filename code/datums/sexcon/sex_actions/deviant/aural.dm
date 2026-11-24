@@ -94,13 +94,3 @@
 	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE
-	
-		
-/* TODO: largely copy sex stuff from like. buttsex?
- 		size sensitive integration; outright DEATH
-		extreme erp; skullcrack (can you get ear deafened specifically?)
-		^ you can, /datum/wound/facial/ears. LMFAO. ok cool so that as well.
-		or wait does it *drop* your ears? thats dumb. hrmn. 
-		cumbrain debuff; -x int, slurred speech ? maybe add the deaf as part of this
-		will need to add 'leaking from their ears!'
-*/

@@ -2315,7 +2315,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 				target.OffBalance(30 SECONDS)
 			if(!HAS_TRAIT(target, TRAIT_RESILIENT_LOVER))
 				if(popwarning == FALSE)
-					to_chat(user, span_danger("I can feel [target]'s brain squishing around my shaft; i may <b><i>END</i></b> them if I keep going."))
+					to_chat(user, span_danger("I can feel [target]'s brain squishing around my shaft; I may <b><i>END</i></b> them if I keep going."))
 					to_chat(target, span_danger("My... mind feels... fuzzy... [user] needs to... stop..."))
 					popwarning = TRUE
 				if(prob(1))
