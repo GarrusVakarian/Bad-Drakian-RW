@@ -540,13 +540,20 @@
 		user.put_in_hands(new_weapon)
 		to_chat(user, span_warning("The dream solidifies into a [choice]!"))
 
+		var/datum/antagonist/dreamwalker/dreamwalker = user.mind?.has_antag_datum(/datum/antagonist/dreamwalker)
 		var/current_skill = user.get_skill_level(skill_to_teach)
 		var/current_athletics = user.get_skill_level(/datum/skill/misc/athletics)
 		if(current_skill < 4)
-			user.adjust_skillrank_up_to(skill_to_teach, 4)
+			if(istype(dreamwalker))
+				dreamwalker.grant_dreamcraft_skill(user, skill_to_teach, 4)
+			else
+				user.adjust_skillrank_up_to(skill_to_teach, 4)
 			to_chat(user, span_notice("Knowledge of [skill_to_teach.name] floods your mind!"))
 		if(current_athletics < 6)
-			user.adjust_skillrank_up_to(/datum/skill/misc/athletics, 6)
+			if(istype(dreamwalker))
+				dreamwalker.grant_dreamcraft_skill(user, /datum/skill/misc/athletics, 6)
+			else
+				user.adjust_skillrank_up_to(/datum/skill/misc/athletics, 6)
 			to_chat(user, span_notice("Your endurance swells!"))
 	else
 		to_chat(user, span_warning("The dream fails to take shape."))
@@ -2258,9 +2265,10 @@
 			device.forceMove(get_turf(H))
 
 /obj/structure/ritualcircle/abyssor_alt_inactive/proc/dreamarmor_stage2(mob/living/carbon/human/target)
+	if(QDELETED(target) || !HAS_TRAIT(target, TRAIT_DREAMWALKER))
+		return
 	playsound(loc, 'sound/combat/hits/onmetal/grille (2).ogg', 50)
 	target.equipOutfit(/datum/outfit/job/roguetown/dreamwalker_armorrite)
-	target.apply_status_effect(/datum/status_effect/debuff/devitalised)
 	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(to_chat), target, span_purple("Reality is but a fragile dream. You are the dreamer, and your will is law.")), 40)
 
 /obj/structure/ritualcircle/eora/proc/eoranaura_stage2(mob/living/carbon/human/target)

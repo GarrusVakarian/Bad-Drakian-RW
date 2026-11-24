@@ -38,6 +38,25 @@
 	var/STAPER = 12
 	var/STALUC = 10
 
+	var/mob/living/carbon/human/dream_body
+	var/list/original_spells = list()
+	var/list/dream_spells = list()
+	var/list/removed_arcyne_traits = list()
+	var/list/dreamcraft_experience = list()
+	var/list/forged_weapons = list()
+	var/datum/devotion/original_devotion
+	var/devotion_was_processing = FALSE
+	var/original_ambushable
+	var/had_dream_faction = FALSE
+	var/forged_empowered_weapon = FALSE
+	var/has_awakened = FALSE
+	var/static/list/arcyne_traits = list(TRAIT_ARCYNE_T1, TRAIT_ARCYNE_T2, TRAIT_ARCYNE_T3, TRAIT_ARCYNE_T4)
+	var/static/list/dream_stat_keys = list(STATKEY_STR, STATKEY_PER, STATKEY_INT, STATKEY_CON, STATKEY_WIL, STATKEY_SPD, STATKEY_LCK)
+
+/datum/antagonist/dreamwalker/can_be_owned(datum/mind/new_owner)
+	var/datum/mind/candidate = new_owner || owner
+	return !QDELETED(candidate?.current) && !isseelie(candidate.current) && ..()
+
 /datum/antagonist/dreamwalker/on_gain()
 	SSmapping.retainer.dreamwalkers |= owner
 	. = ..()
@@ -48,42 +67,180 @@
 	return ..()
 
 /datum/antagonist/dreamwalker/greet()
-	to_chat(owner.current, span_notice("I feel a rare ability awaken within me. I am someone coveted as a champion by most gods. A dreamwalker. Not merely touched by Abyssor's dream, but able to pull materia and power from his realm effortlessly. I shall bring glory to my patron. My mind frays under the influence of dream entities, but surely my resolve is stronger than theirs."))
-	to_chat(owner.current, span_notice("I manifest a piece of ritual chalk... It seems potent. I shall forge a great weapon, one with such power it shall dwarf all others. I must find a target to begin... It should be easy enough if I focus."))
+	to_chat(owner.current, "<span style='color:#C8A4E0'>I feel a rare ability awaken within me. I am someone coveted as a champion by most gods. A dreamwalker. Not merely touched by Abyssor's dream, but able to pull materia and power from his realm effortlessly. I shall bring glory to my patron. My mind frays under the influence of dream entities, but surely my resolve is stronger than theirs.</span>")
+	to_chat(owner.current, span_notice("I manifest a piece of ritual chalk. I can draw a Rune of Stirring for armor and a basic dream weapon. My goal is to forge an empowered dream weapon."))
+	to_chat(owner.current, span_notice("Mark Target seeks a dead player of any job first. Stand next to a dead mark and cast Track Marked Target to revive them and gain Sylveric. If no dead players are eligible, Mark Target chooses a living mark. Stand next to the living mark and cast Track Marked Target while they are downed. They must survive the extraction."))
+	to_chat(owner.current, span_notice("Gather two Sylveric ingots. Hold both and use one on the other, then choose a weapon to forge. The ingots are consumed and the finished weapon is placed in your hands."))
+	to_chat(owner.current, span_notice("After forging your first empowered weapon, you can cast Wake from the Dream to return to your old life and keep the weapon as a trophy. You can also choose to remain a Dreamwalker. If you yield or fall into life-threatening critical condition, you wake automatically even if you have not forged a weapon."))
 	owner.announce_objectives()
 	..()
 
 /datum/antagonist/dreamwalker/proc/reset_stats()
-	owner.current.STASTR = src.STASTR
-	owner.current.STAPER = src.STAPER
-	owner.current.STAINT = src.STAINT
-	owner.current.STASPD = src.STASPD
-	owner.current.STAWIL = src.STAWIL
-	owner.current.STACON = src.STACON
-	owner.current.STALUC = src.STALUC
-	//Dreamfiends fear them up close.
-	var/mob/living/carbon/human/body = owner.current 
+	var/mob/living/carbon/human/body = owner.current
+	if(!istype(body) || dream_body || has_awakened)
+		return
+	dream_body = body
+	RegisterSignal(body, COMSIG_LIVING_YIELDED, PROC_REF(on_dreamwalker_yielded))
+	RegisterSignal(body, list(COMSIG_LIVING_CONSCIOUSNESS_CHANGED, COMSIG_LIVING_HEALTH_UPDATE), PROC_REF(on_dreamwalker_critical))
+	var/list/dream_stats = list(STATKEY_STR = STASTR, STATKEY_PER = STAPER, STATKEY_INT = STAINT, STATKEY_CON = STACON, STATKEY_WIL = STAWIL, STATKEY_SPD = STASPD, STATKEY_LCK = STALUC)
+	for(var/stat in dream_stats)
+		body.change_stat(stat, dream_stats[stat] - body.get_stat(stat), "[REF(src)]_[stat]")
+
+	had_dream_faction = ("dream" in body.faction)
 	body.faction |= "dream"
-	for (var/trait in traits_dreamwalker)
+	for(var/trait in traits_dreamwalker)
 		ADD_TRAIT(body, trait, "[type]")
-	if(body.mind)
-		body.mind.RemoveAllSpells()
-		body.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/blink)
-		body.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/mark_target)
-		body.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/jaunt)
-		body.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/dream_bind)
-		body.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/dream_trance)
+
+	original_spells = owner.spell_list.Copy()
+	for(var/obj/effect/proc_holder/spell/spell as anything in original_spells)
+		spell.remove_ranged_ability()
+		spell.action?.Grant(null)
+	owner.spell_list.Cut()
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/blink)
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/mark_target)
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/jaunt)
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/dream_bind)
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/dream_trance)
+
+	original_ambushable = body.ambushable
 	body.ambushable = FALSE
 	body.AddComponent(/datum/component/dreamwalker_repair)
 	body.AddComponent(/datum/component/dreamwalker_mark)
-	var/obj/item/ritechalk/chalk = new()
-	body.put_in_hands(chalk)
+	body.put_in_hands(new /obj/item/ritechalk())
 	to_chat(body, span_danger("I feel my connection to the arcyne and divine weaken as dream energies assert themselves..."))
-	REMOVE_TRAIT(body, TRAIT_ARCYNE_T1, TRAIT_GENERIC)
-	REMOVE_TRAIT(body, TRAIT_ARCYNE_T2, TRAIT_GENERIC)
-	REMOVE_TRAIT(body, TRAIT_ARCYNE_T3, TRAIT_GENERIC)
-	REMOVE_TRAIT(body, TRAIT_ARCYNE_T4, TRAIT_GENERIC)
-	body.devotion = null
+	for(var/trait in arcyne_traits)
+		if(HAS_TRAIT_FROM(body, trait, TRAIT_GENERIC))
+			removed_arcyne_traits += trait
+			REMOVE_TRAIT(body, trait, TRAIT_GENERIC)
+
+	original_devotion = body.devotion
+	if(original_devotion)
+		devotion_was_processing = original_devotion.datum_flags & SSobj.processing_flag
+		STOP_PROCESSING(SSobj, original_devotion)
+		body.devotion = null
+		body.hud_used?.shutdown_bloodpool()
+
+/datum/antagonist/dreamwalker/proc/grant_dream_spell(spell_type)
+	var/obj/effect/proc_holder/spell/spell = new spell_type
+	dream_spells += spell
+	owner.AddSpell(spell)
+
+/datum/antagonist/dreamwalker/proc/record_forged_weapon(mob/living/user, obj/item/weapon)
+	if(user != dream_body || has_awakened)
+		return
+	forged_weapons += weapon
+	if(forged_empowered_weapon)
+		return
+	forged_empowered_weapon = TRUE
+	grant_dream_spell(/obj/effect/proc_holder/spell/self/wake_from_dream)
+	to_chat(user, span_notice("You can now Wake from the Dream and return to your old life. Your weapon will be yours to keep as a trophy."))
+
+/datum/antagonist/dreamwalker/proc/grant_dreamcraft_skill(mob/living/user, skill, rank)
+	var/datum/skill_holder/skills = user.ensure_skills()
+	var/datum/skill/skill_ref = GetSkillRef(skill)
+	var/previous_experience = skills.skill_experience[skill_ref] || 0
+	user.adjust_skillrank_up_to(skill, rank)
+	dreamcraft_experience[skill] += (skills.skill_experience[skill_ref] || 0) - previous_experience
+
+/datum/antagonist/dreamwalker/proc/on_dreamwalker_yielded(mob/living/carbon/human/body)
+	SIGNAL_HANDLER
+	wake_from_dream(body, forced = TRUE)
+
+/datum/antagonist/dreamwalker/proc/on_dreamwalker_critical(mob/living/carbon/human/body)
+	SIGNAL_HANDLER
+	if(body.stat != UNCONSCIOUS)
+		return
+	if(body.InFullCritical() || body.getOxyLoss() > 75 || (body.blood_volume <= BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(body, TRAIT_BLOODLOSS_IMMUNE)))
+		// Let the current health or consciousness update finish before restoring the character.
+		addtimer(CALLBACK(src, PROC_REF(wake_from_dream), body, TRUE), 0, TIMER_UNIQUE)
+
+/datum/antagonist/dreamwalker/proc/wake_from_dream(mob/living/carbon/human/body, forced = FALSE)
+	if(QDELETED(body) || body != dream_body || owner?.current != body || has_awakened || body.stat == DEAD || (!forced && !forged_empowered_weapon))
+		return
+	has_awakened = TRUE
+	antag_flags |= FLAG_ANTAG_CAP_IGNORE
+	SSmapping.retainer.dreamwalkers -= owner
+	restore_character(body)
+	to_chat(body, span_notice("The dream releases you. You return to your old self."))
+
+/datum/antagonist/dreamwalker/on_removal()
+	if(dream_body)
+		SSmapping.retainer.dreamwalkers -= owner
+		restore_character(dream_body)
+	return ..()
+
+/datum/antagonist/dreamwalker/proc/restore_character(mob/living/carbon/human/body)
+	dream_body = null
+	if(!QDELETED(body))
+		UnregisterSignal(body, list(COMSIG_LIVING_YIELDED, COMSIG_LIVING_CONSCIOUSNESS_CHANGED, COMSIG_LIVING_HEALTH_UPDATE))
+		var/datum/component/dreamwalker_mark/mark = body.GetComponent(/datum/component/dreamwalker_mark)
+		if(mark)
+			mark.set_marked_target(null)
+			dream_spells |= mark.summon_spell
+			qdel(mark)
+		qdel(body.GetComponent(/datum/component/dreamwalker_repair))
+
+	for(var/obj/effect/proc_holder/spell/spell as anything in dream_spells)
+		if(QDELETED(spell))
+			continue
+		if(istype(spell, /obj/effect/proc_holder/spell/invoked/mark_target))
+			var/obj/effect/proc_holder/spell/invoked/mark_target/mark_spell = spell
+			mark_spell.remove_mark(owner)
+		owner.spell_list -= spell
+		qdel(spell)
+	dream_spells.Cut()
+
+	if(cmptext(owner.special_role, ROLE_DREAMWALKER))
+		owner.special_role = null
+	for(var/obj/effect/proc_holder/spell/spell as anything in original_spells)
+		if(!QDELETED(spell) && !(spell in owner.spell_list))
+			owner.AddSpell(spell)
+	original_spells.Cut()
+	if(QDELETED(body))
+		return
+
+	for(var/stat in dream_stat_keys)
+		body.change_stat(stat, 0, "[REF(src)]_[stat]")
+	for(var/trait in traits_dreamwalker)
+		REMOVE_TRAIT(body, trait, "[type]")
+	for(var/trait in removed_arcyne_traits)
+		ADD_TRAIT(body, trait, TRAIT_GENERIC)
+	removed_arcyne_traits.Cut()
+	for(var/skill in dreamcraft_experience)
+		body.ensure_skills().adjust_experience(skill, -dreamcraft_experience[skill], silent = TRUE)
+	dreamcraft_experience.Cut()
+	if(!had_dream_faction)
+		body.faction -= "dream"
+	body.ambushable = original_ambushable
+
+	if(!QDELETED(original_devotion) && !body.devotion)
+		body.devotion = original_devotion
+		original_devotion.patron = body.patron
+		if(body.hud_used && !body.hud_used.bloodpool)
+			body.hud_used.initialize_bloodpool()
+			body.hud_used.bloodpool.set_fill_color("#3C41A4")
+		if(body.hud_used?.bloodpool)
+			original_devotion.update_devotion(0, 0, silent = TRUE)
+		if(devotion_was_processing)
+			START_PROCESSING(SSobj, original_devotion)
+	original_devotion = null
+
+	var/turf/drop_turf = get_turf(body)
+	for(var/obj/item/weapon as anything in forged_weapons)
+		if(QDELETED(weapon) || get_atom_on_turf(weapon, /mob/living) != body)
+			continue
+		var/atom/old_location = weapon.loc
+		var/was_held = (weapon in body.held_items)
+		var/obj/item/dream_weapon_trophy/trophy = new(drop_turf, weapon)
+		qdel(weapon)
+		if(was_held)
+			body.put_in_hands(trophy)
+		else if(old_location != body)
+			trophy.forceMove(old_location)
+	forged_weapons.Cut()
+	for(var/obj/item/item in body.get_equipped_items(TRUE) | body.held_items)
+		if(item.item_flags & DREAM_ITEM)
+			body.dropItemToGround(item, TRUE)
 
 /datum/outfit/job/roguetown/dreamwalker/pre_equip(mob/living/carbon/human/H) //Equipment is located below
 	..()
@@ -441,7 +598,7 @@
 			return
 
 		to_chat(user, span_notice("You begin focusing your dream energy to shape the sylveric ingots into a [choice]..."))
-		if(do_after(user, 10 SECONDS, target = src))
+		if(do_after(user, 10 SECONDS, target = src) && !QDELETED(I) && !QDELETED(src) && HAS_TRAIT(user, TRAIT_DREAMWALKER))
 			var/obj/item/new_weapon
 			switch(choice)
 				if("Dreamreaver Greataxe")
@@ -455,11 +612,28 @@
 
 			if(new_weapon)
 				to_chat(user, span_notice("You shape the sylveric ingots into a [choice]."))
-				user.put_in_hands(new_weapon)
 				qdel(I)
+				user.put_in_hands(new_weapon)
+				var/datum/antagonist/dreamwalker/dreamwalker = user.mind?.has_antag_datum(/datum/antagonist/dreamwalker)
+				if(istype(dreamwalker))
+					dreamwalker.record_forged_weapon(user, new_weapon)
 				qdel(src)
 		return
 	return ..()
+
+/obj/item/dream_weapon_trophy
+	name = "dream weapon trophy"
+	desc = "An otherworldly weapon, now still and powerless."
+
+/obj/item/dream_weapon_trophy/Initialize(mapload, obj/item/weapon)
+	. = ..()
+	if(!weapon)
+		return
+	name = "[weapon.name] trophy"
+	icon = weapon.icon
+	icon_state = weapon.icon_state
+	color = weapon.color
+	w_class = weapon.w_class
 
 // Component for dream weapon special properties
 /datum/component/dream_weapon
