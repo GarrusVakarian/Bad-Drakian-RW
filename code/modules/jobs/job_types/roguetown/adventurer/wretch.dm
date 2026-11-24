@@ -78,19 +78,18 @@
 	var/bounty_severity = input(H, "How severe are your crimes?", "Bounty Amount") as anything in list("Misdeed", "Harm towards lyfe", "Horrific atrocities")
 	var/bounty_total
 	var/description_level = BOUNTY_DESCRIPTION_FULL
-	var/recognition = BOUNTY_RECOGNITION_NONE
+	var/recognition = BOUNTY_RECOGNITION_FACE
 	switch(bounty_severity)
 		if("Misdeed")
 			bounty_total = rand(100, 200)
 			description_level = choose_bounty_body_description(H) ? BOUNTY_DESCRIPTION_BODY : BOUNTY_DESCRIPTION_BUILD
-			if(bounty_poster == justiciary)
-				recognition = BOUNTY_RECOGNITION_FACE
 		if("Harm towards lyfe")
 			bounty_total = rand(200, 300)
+			if(!is_church_bounty_issuer(bounty_poster))
+				recognition = BOUNTY_RECOGNITION_NONE
 		if("Horrific atrocities")
 			bounty_total = rand(300, 400)
-			if(bounty_poster == justiciary)
-				recognition = BOUNTY_RECOGNITION_ALWAYS
+			recognition = BOUNTY_RECOGNITION_ALWAYS
 		else
 			return
 	if(QDELETED(H) || !H.client)

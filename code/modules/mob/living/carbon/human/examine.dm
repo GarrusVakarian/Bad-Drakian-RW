@@ -1008,9 +1008,9 @@
 			. += "ø ------------ ø"
 
 	var/face_recognizable = !obscure_name && !(name in unknown_names)
-	var/outlaw_status_text = get_outlaw_status_text(face_recognizable)
-	if(!face_recognizable && outlaw_status_text)
-		. += outlaw_status_text
+	var/list/wanted_status_lines = get_wanted_status_lines(face_recognizable)
+	if(!face_recognizable && length(wanted_status_lines))
+		. += wanted_status_lines
 
 	if(name in unknown_names)
 		. += span_info("This is <EM>[name]</EM>.")
@@ -1208,24 +1208,8 @@
 		if (gang_message)
 			. += gang_message
 
-		if(name in GLOB.excommunicated_players)
-			. += span_userdanger("HERETIC! SHAME!")
-
-		if(HAS_TRAIT(src, TRAIT_EXCOMMUNICATED))
-			. += span_userdanger("EXCOMMUNICATED! SHAME!")//Temporary, probably going to get rid of the trait since it doesn't fit for us.
-/*
-		if(name in GLOB.excommunicated_players)
-			var/mob/living/carbon/human/H = src
-			switch (H.patron)
-				if (istype(H.patron, /datum/patron/divine))
-					. += span_userdanger("EXCOMMUNICATED! SHAME!")
-				if (istype(H.patron, /datum/patron/inhumen))
-					. += span_userdanger("HERETIC! SHAME!")
-				if (istype(H.patron, /datum/patron/old_god))
-					. += span_userdanger("HEATHEN! SHAME!")
-*/
-		if(outlaw_status_text)
-			. += outlaw_status_text
+		if(length(wanted_status_lines))
+			. += wanted_status_lines
 
 		if(HAS_TRAIT(user, TRAIT_JUSTICARSIGHT) && !HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS))
 			for(var/datum/bounty/b in GLOB.head_bounties) //I hate this.
@@ -1478,21 +1462,43 @@
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/collar = get_item_by_slot(SLOT_NECK)
 	return istype(collar) && !QDELETED(collar) && collar.active_item && collar.collar_wearer == src
 
-/mob/living/proc/get_outlaw_status_text(face_recognizable)
-	if(is_serving_penance())
-		return face_recognizable ? span_notice("SERVING PENANCE") : null
-	if(face_recognizable && (name in GLOB.outlawed_players))
-		return get_outlaw_label()
-
+/mob/living/proc/get_wanted_status_lines(face_recognizable)
 	var/required_recognition = face_recognizable ? BOUNTY_RECOGNITION_FACE : BOUNTY_RECOGNITION_ALWAYS
+	var/bounty_outlaw = FALSE
+	var/bounty_heretic = FALSE
 	for(var/datum/bounty/bounty as anything in GLOB.head_bounties)
-		if(!QDELETED(bounty) && bounty.target == real_name && bounty.recognition >= required_recognition)
-			return get_outlaw_label()
+		if(QDELETED(bounty) || bounty.target != real_name || bounty.recognition < required_recognition)
+			continue
+		if(bounty.church_issued)
+			bounty_heretic = TRUE
+		else
+			bounty_outlaw = TRUE
+		if(bounty_outlaw && bounty_heretic)
+			break
 
-/mob/living/proc/get_outlaw_label()
 	var/datum/castifico_penance_record/record = get_castifico_penance_record()
-	var/label = record?.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!"
-	return span_userdanger(label)
+	var/recognized_heretic_sentence = record && record.heretic_recognition >= required_recognition
+	if(is_serving_penance())
+		if(face_recognizable || bounty_heretic || recognized_heretic_sentence)
+			return list(span_notice("SERVING PENANCE"))
+		return
+
+	var/list/status_lines
+	var/escaped_heretic = recognized_heretic_sentence && record.escaped
+	if(escaped_heretic)
+		LAZYADD(status_lines, span_userdanger("ESCAPED HERETIC!"))
+	else if(bounty_heretic)
+		LAZYADD(status_lines, span_userdanger("HERETIC!"))
+	else if(face_recognizable)
+		if(name in GLOB.excommunicated_players)
+			LAZYADD(status_lines, span_userdanger("HERETIC! SHAME!"))
+		if(HAS_TRAIT(src, TRAIT_EXCOMMUNICATED))
+			LAZYADD(status_lines, span_userdanger("EXCOMMUNICATED! SHAME!"))
+
+	if(!escaped_heretic && (bounty_outlaw || (face_recognizable && (name in GLOB.outlawed_players))))
+		var/label = record?.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!"
+		LAZYADD(status_lines, span_userdanger(label))
+	return status_lines
 
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)

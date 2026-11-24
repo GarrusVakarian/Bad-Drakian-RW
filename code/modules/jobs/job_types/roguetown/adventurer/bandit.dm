@@ -86,6 +86,8 @@
 			recognition = BOUNTY_RECOGNITION_FACE
 		if("Highwayman")
 			bounty_total = rand(200, 300)
+			if(is_church_bounty_issuer(bounty_poster))
+				recognition = BOUNTY_RECOGNITION_FACE
 		if("Realm Boogeyman")
 			bounty_total = rand(300, 400)
 			recognition = BOUNTY_RECOGNITION_ALWAYS

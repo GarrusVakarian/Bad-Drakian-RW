@@ -7,6 +7,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/paid_amount = 0
 	var/remaining_duration = 0
 	var/escaped = FALSE
+	var/heretic_recognition = BOUNTY_RECOGNITION_NONE
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/active_collar
 
 /datum/castifico_penance_record/Destroy()
@@ -16,14 +17,31 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	active_collar = null
 	return ..()
 
+/// Retain the public identification of the claimed crimes while their sentence is pending.
+/datum/castifico_penance_record/proc/archive_bounties(mob/living/subject, list/bounties)
+	if((subject.real_name in GLOB.excommunicated_players) || HAS_TRAIT(subject, TRAIT_EXCOMMUNICATED))
+		heretic_recognition = max(heretic_recognition, BOUNTY_RECOGNITION_FACE)
+	for(var/datum/bounty/claimed_bounty as anything in bounties)
+		crime_banners += claimed_bounty.banner
+		if(claimed_bounty.church_issued)
+			heretic_recognition = max(heretic_recognition, claimed_bounty.recognition)
+
+/proc/is_church_bounty_issuer(issuer)
+	return issuer == "The Grenzelhoftian Holy See" || issuer == "The Otavan Orthodoxy"
+
 /proc/get_incomplete_penance_listings()
 	var/list/entries = list()
 	for(var/subject_name in GLOB.castifico_penance_records)
 		var/datum/castifico_penance_record/record = GLOB.castifico_penance_records[subject_name]
 		if(!istype(record) || QDELETED(record))
 			continue
+		var/status = "PENANCE INCOMPLETE"
+		if(!QDELETED(record.active_collar))
+			status = "PENANCE ONGOING"
+		else if(record.escaped && record.heretic_recognition)
+			status = "ESCAPED HERETIC &mdash; PENANCE INCOMPLETE"
 		for(var/banner in record.crime_banners)
-			entries += "<b>REWARD CLAIMED &mdash; PENANCE INCOMPLETE</b><br>[banner]<br>"
+			entries += "<b>REWARD CLAIMED &mdash; [status]</b><br>[banner]<br>"
 	return jointext(entries, "")
 
 /mob/living/proc/get_castifico_penance_record()
@@ -77,6 +95,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/description_level = BOUNTY_DESCRIPTION_FULL
 	/// Whether an active bounty identifies its target on examine.
 	var/recognition = BOUNTY_RECOGNITION_NONE
+	var/church_issued = FALSE
 
 /obj/structure/roguemachine/bounty/attack_hand(mob/user)
 
@@ -287,13 +306,14 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		descriptor_body = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
 		if(description_level == BOUNTY_DESCRIPTION_FULL)
 			descriptor_voice = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
-	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition)
+	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition, is_church_bounty_issuer(employer_name))
 
-/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE)
+/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE, church_issued = FALSE)
 	var/datum/bounty/new_bounty = new /datum/bounty
 	new_bounty.amount = amount
 	new_bounty.description_level = description_level
 	new_bounty.recognition = recognition
+	new_bounty.church_issued = church_issued
 	new_bounty.target = target_realname
 	new_bounty.bandit = bandit_status
 	new_bounty.reason = html_encode(reason)
@@ -691,8 +711,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	if(!record)
 		record = new
 		record.subject_name = M.real_name
-	for(var/datum/bounty/claimed_bounty as anything in bounties)
-		record.crime_banners += claimed_bounty.banner
+	record.archive_bounties(M, bounties)
 	record.paid_amount += reward
 	record.remaining_duration = max(1, collar.sentence_end_time - world.time)
 	record.escaped = FALSE
