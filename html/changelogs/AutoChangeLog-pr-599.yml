@@ -1,0 +1,13 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - balance: "Dreamwalker Marks chosen alive must stay alive during extraction. A living mark who dies is replaced and excluded from that reroll."
+  - rscadd: "Dreamwalkers mark dead players of any job first and can revive them without ritual prerequisites to earn Sylveric. A failed revival or a dead mark revived by someone else triggers a reroll."
+  - balance: "Dreamwalkers can also mark Adventurers, Rookies, and Vanguards."
+  - balance: "Dreamwalkers can now wake up, ending their antagonism and reverting to normal, after crafting one empowered weapon from Sylveric. They can keep the weapon as an inert trophy. Yielding or falling into life-threatening critical condition also forces them to wake."
+  - bugfix: "The storyteller can no longer select Seelies or existing villains to become Dreamwalkers."
+  - balance: "The Dreamwalker event now requires at least 20 players instead of 40."
+  - balance: "The Rite of Dreamcraft no longer applies Devitalised."
+  - balance: "Dreamwalker extraction and dead-mark revival take 10 seconds and reset Mark Target on success."
+  - balance: "All Abyssal Curse variants no longer reduce Fortune."
+  - bugfix: "Removed the trailing periods from the Abyssal Curse names."
