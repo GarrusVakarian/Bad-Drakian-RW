@@ -1475,3 +1475,56 @@
 	. = ..()
 	owner.clear_fullscreen("sunlight")
 	owner.update_fov_angles()
+
+/// BAOTHA STAT DRAIN
+
+#define STAT_DRAIN_CYCLES_PER_RANK 18
+#define STAT_DRAIN_MAX_RANK 3
+
+/atom/movable/screen/alert/status_effect/debuff/baothadrained
+	name = "Vitality Drain Warning"
+	desc = "My vitality is being drawn away. I will be weakened if this continues..."
+	icon_state = "baothadrained"
+
+/datum/status_effect/debuff/baothadrained
+	id = "baothadrained"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/baothadrained
+	duration = 15 MINUTES
+	status_type = STATUS_EFFECT_REFRESH
+	/// Progress is independent of the time left on the status effect.
+	var/completed_cycles = 1
+	var/rank = 0
+
+/datum/status_effect/debuff/baothadrained/on_creation(mob/living/new_owner, mob/living/drainer)
+	. = ..()
+	if(. && !QDELETED(owner))
+		owner.playsound_local(owner, 'sound/misc/mat/lvldown.ogg', 100)
+		if(!QDELETED(drainer))
+			to_chat(drainer, span_love("I can feel my draining ability weakening them..."))
+
+/datum/status_effect/debuff/baothadrained/refresh(mob/living/current_owner, mob/living/drainer)
+	var/restarting = duration <= world.time
+	if(restarting)
+		completed_cycles = 0
+		if(!QDELETED(drainer))
+			to_chat(drainer, span_love("I can feel my draining ability weakening them..."))
+	..()
+	completed_cycles = min(completed_cycles + 1, STAT_DRAIN_CYCLES_PER_RANK * STAT_DRAIN_MAX_RANK)
+	var/new_rank = floor(completed_cycles / STAT_DRAIN_CYCLES_PER_RANK)
+	if(new_rank == rank)
+		return
+	// BD already displays a minimum of one and retains underflow for overlapping modifiers.
+	for(var/stat in MOBSTATS - STATKEY_LCK)
+		owner.change_stat(stat, rank - new_rank)
+		effectedstats[stat] = -new_rank
+	rank = new_rank
+	if(rank)
+		owner.playsound_local(owner, 'sound/misc/mat/lvldown.ogg', 100)
+		if(!QDELETED(drainer))
+			to_chat(drainer, span_love("My draining ability weakens them further."))
+	if(istype(linked_alert))
+		linked_alert.name = rank ? "Vitality Drained (\Roman[rank])" : initial(linked_alert.name)
+		linked_alert.desc = rank ? "I feel weakened by the drain." : initial(linked_alert.desc)
+
+#undef STAT_DRAIN_CYCLES_PER_RANK
+#undef STAT_DRAIN_MAX_RANK

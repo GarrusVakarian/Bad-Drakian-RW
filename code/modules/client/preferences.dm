@@ -148,6 +148,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/cursed_collarable = FALSE
 	/// Allow container milking by others and lactation from the two hand-panel breast-rubbing actions.
 	var/milkable = FALSE
+	/// If we are participating in stat draining, requires both parties to have it enabled for it to work
+	var/stat_drainable = FALSE
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE
@@ -666,7 +668,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /datum/character_sheet_feature/hypnosis_consent
 	id = "hypnosis_consent"
-	revision = 2
+	revision = 3
 	label = "Content Toggles"
 	explanation = "New consent toggles are available. Open Content Toggles to review your content preferences."
 	location = "in the character sheet's upper-right corner, below Keybinds"

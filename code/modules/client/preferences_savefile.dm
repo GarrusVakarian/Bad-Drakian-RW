@@ -284,6 +284,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["descriptor_color"]	>> descriptor_color
 	S["cursed_collarable"] 	>> cursed_collarable
 	S["milkable"]			>> milkable
+	S["stat_drainable"] >> stat_drainable
+	stat_drainable = sanitize_integer(stat_drainable, 0, 1, FALSE)
 	S["manticore_tail_messages"]	>> manticore_tail_messages
 	S["hypnosis_content"] >> hypnosis_content
 	hypnosis_content = sanitize_integer(hypnosis_content, 0, 1, FALSE)
@@ -489,6 +491,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["descriptor_color"], descriptor_color)
 	WRITE_FILE(S["cursed_collarable"], cursed_collarable)
 	WRITE_FILE(S["milkable"], milkable)
+	WRITE_FILE(S["stat_drainable"], stat_drainable)
 	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
 	WRITE_FILE(S["hypnosis_content"], hypnosis_content)
 	WRITE_FILE(S["cumflation_content"], cumflation_content)

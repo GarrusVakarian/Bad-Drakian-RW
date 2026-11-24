@@ -411,6 +411,8 @@
 #define TRAIT_ROYAL_SUBSIDY "Royal Subsidy"
 
 #define TRAIT_TRIBAL "Island Tribe-member"
+#define TRAIT_EVIL_DRAINER "Erotic Drainer"
+#define TRAIT_EROTIC_ENERGY_DRAINER "Erotic Energy Drainer"
 
 // If you want description to show up you gotta have the trait name defined BEFORE this lol
 
@@ -563,6 +565,8 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_FORTITUDE = span_info("The typical drain I feel from day to day life is lessened, my athleticism greater."),
 	TRAIT_GUIDANCE = span_info("The arcyne aides me in battle."),
 	TRAIT_DEPRAVED = span_info("The languid scent of Her debauchery is known to me."),
+	TRAIT_EVIL_DRAINER = span_info("Erotic actions in combat mode severely reduce my partner's attributes for up to 15 minutes."),
+	TRAIT_EROTIC_ENERGY_DRAINER = span_info("Erotic actions in combat mode let me drain my partner's energy to restore my own."),
 	TRAIT_SILVER_BLESSED = span_info("I have been baptized in fire. Blessed silverdust flows through my blood, protecting me from both vampyrism and lycanthropy."),
 	TRAIT_UNLYCKERABLE = span_info("My kind cannot bear the Sun curse for it already has another."),
 	TRAIT_GOODTRAINER = span_info("I am a good teacher, and when it comes to weaponry I can train others to be just as skilled as I am."),

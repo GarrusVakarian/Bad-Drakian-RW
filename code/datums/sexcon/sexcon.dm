@@ -1888,6 +1888,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	var/subtle_message_tick_counter = 0
 	var/was_subtle_mode = do_subtle_action // By default, we set it to the same value as the panel toggle
 	var/virgin_reaction_checked = FALSE
+	var/energy_drain_start_pending = !action.solo
 	show_progress = 1
 	suppress_moan = FALSE
 	action.on_start(user, target)
@@ -1905,9 +1906,13 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		// Bad Drakian adjustment: halve panel stamina costs.
 		if(!user.stamina_add(stamina_cost * 0.5, show_xp_popup = FALSE))
 			break
+		if(energy_drain_start_pending)
+			energy_drain_start_pending = FALSE
+			notify_energy_drain_start(target)
 		var/action_delay = action.do_time / get_speed_multiplier()
 		panel_action_deadline = world.time + action_delay * user.do_after_coefficent() + SEX_ACTION_PROGRESS_GRACE
-		if(!do_after(user, action_delay, target = target, progress = show_progress))
+		var/mob/living/carbon/human/cycle_target = target
+		if(!do_after(user, action_delay, target = cycle_target, progress = show_progress))
 			break
 		if(session != panel_action_session)
 			return
@@ -1961,12 +1966,68 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 		refresh_completed_panel_effects(action)
 		do_visual_effects(target, action)
 		suppress_action_messages = FALSE
+
+		if(!action.solo && cycle_target == target)
+			apply_completed_cycle_drain(cycle_target)
+
 		// It could want to finish afterwards the performed action
 		if(action.is_finished(user, target))
 			break
 		if(!action.continous)
 			break
 	stop_current_action(session)
+
+/datum/sex_controller/proc/can_drain_partner(mob/living/carbon/human/partner)
+	if(QDELETED(user) || QDELETED(partner) || user == partner)
+		return FALSE
+	return user.client?.prefs?.stat_drainable && partner.client?.prefs?.stat_drainable
+
+/datum/sex_controller/proc/notify_energy_drain_start(mob/living/carbon/human/partner)
+	if(!can_drain_partner(partner))
+		return
+	var/net_gain = get_net_cycle_energy_drain(partner)
+	if(!net_gain)
+		return
+	var/mob/living/carbon/human/drainer = net_gain > 0 ? user : partner
+	var/mob/living/carbon/human/drained = net_gain > 0 ? partner : user
+	to_chat(drained, span_love("I feel my body getting tired..."))
+	to_chat(drainer, span_love("My draining ability weakens them and restores my energy."))
+
+/datum/sex_controller/proc/apply_completed_cycle_drain(mob/living/carbon/human/partner)
+	if(!can_drain_partner(partner))
+		return
+	if(user.cmode && HAS_TRAIT(user, TRAIT_EVIL_DRAINER))
+		partner.apply_status_effect(/datum/status_effect/debuff/baothadrained, user)
+	if(partner.cmode && HAS_TRAIT(partner, TRAIT_EVIL_DRAINER))
+		user.apply_status_effect(/datum/status_effect/debuff/baothadrained, partner)
+
+	var/net_gain = get_net_cycle_energy_drain(partner)
+	if(net_gain > 0)
+		transfer_cycle_energy(partner, user, net_gain)
+	else if(net_gain < 0)
+		transfer_cycle_energy(user, partner, -net_gain)
+
+/datum/sex_controller/proc/get_net_cycle_energy_drain(mob/living/carbon/human/partner)
+	// Measure both offers before transferring either so the cycle initiator doesn't affect the result.
+	return get_cycle_energy_amount(partner, user) - get_cycle_energy_amount(user, partner)
+
+/datum/sex_controller/proc/get_cycle_energy_amount(mob/living/carbon/human/donor, mob/living/carbon/human/recipient)
+	if(!recipient.cmode || !HAS_TRAIT(recipient, TRAIT_EROTIC_ENERGY_DRAINER) || HAS_TRAIT(recipient, TRAIT_EVIL_DRAINER))
+		return 0
+	if(HAS_TRAIT(donor, TRAIT_INFINITE_ENERGY) || HAS_TRAIT(donor, TRAIT_INFINITE_STAMINA) || HAS_TRAIT(recipient, TRAIT_INFINITE_ENERGY) || HAS_TRAIT(recipient, TRAIT_INFINITE_STAMINA))
+		return 0
+	// A change in max energy can temporarily leave the pool above its new maximum.
+	// Let the normal energy code settle it before measuring a transfer.
+	if(donor.energy > donor.max_energy)
+		return 0
+	return max(0, min(donor.max_energy * 0.01, donor.energy, recipient.max_energy - recipient.energy))
+
+/datum/sex_controller/proc/transfer_cycle_energy(mob/living/carbon/human/donor, mob/living/carbon/human/recipient, amount)
+	var/energy_before = donor.energy
+	donor.energy_add(-amount, award_athletics_xp = FALSE)
+	var/energy_lost = energy_before - donor.energy
+	if(energy_lost > 0)
+		recipient.energy_add(energy_lost, award_athletics_xp = FALSE)
 
 /datum/sex_controller/proc/can_perform_action(action_type, incapacitated)
 	if(!action_type)
