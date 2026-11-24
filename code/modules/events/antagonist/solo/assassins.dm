@@ -56,8 +56,11 @@
 	. = ..()
 	var/datum/job/assassin_job = SSjob.GetJob("Assassin")
 	for(var/mob/candidate as anything in .)
-		if(!is_assassin_species_allowed(candidate, assassin_job))
+		if(!is_assassin_species_allowed(candidate, assassin_job) || is_already_assassin(candidate.mind))
 			. -= candidate
+
+/datum/round_event_control/antagonist/solo/assassins/proc/is_already_assassin(datum/mind/candidate)
+	return candidate?.assigned_role == "Assassin" || candidate?.has_antag_datum(/datum/antagonist/assassin)
 
 /datum/round_event_control/antagonist/solo/assassins/proc/is_assassin_species_allowed(mob/candidate, datum/job/assassin_job)
 	if(QDELETED(candidate) || !assassin_job)
@@ -73,6 +76,9 @@
 	var/datum/round_event_control/antagonist/solo/assassins/assassin_control = control
 	var/datum/job/assassin_job = SSjob.GetJob("Assassin")
 	for(var/datum/mind/antag_mind as anything in setup_minds)
+		if(assassin_control.is_already_assassin(antag_mind))
+			antag_mind.picking = FALSE
+			continue
 		var/mob/living/carbon/human/character = antag_mind.current
 		var/datum/job/original_job = SSjob.GetJob(antag_mind.assigned_role)
 		if(!ishuman(character) || !assassin_control.is_assassin_species_allowed(character, assassin_job) || !SSjob.AssignRole(character, "Assassin"))
