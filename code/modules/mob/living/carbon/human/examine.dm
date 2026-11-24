@@ -1482,7 +1482,8 @@
 
 /mob/living/proc/get_outlaw_label()
 	var/datum/castifico_penance_record/record = get_castifico_penance_record()
-	return span_userdanger(record && record.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!")
+	var/label = record?.escaped ? "ESCAPED OUTLAW!" : "OUTLAW!"
+	return span_userdanger(label)
 
 /// Returns antagonist-related examine text for the mob, if any. Can return null.
 /mob/living/proc/get_villain_text(mob/examiner)
