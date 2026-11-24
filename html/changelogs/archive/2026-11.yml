@@ -929,3 +929,5 @@
   - qol: The Dog Clicker is now the Toys category for 0 loadout points. Use it on
       an adjacent character outside combat mode to offer them Clicker-Trained for
       the round.
+  - rscadd: Players with 5 PQ or less have a small sapling beside their mouse-over
+      name and in examine.
