@@ -1,0 +1,7 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Hearth pots keep bubbling while boiling. Finishing a batch of stew or brew no longer cools hearth or campfire pots."
+  - qol: "Hearth and campfire stews and brews need a lit fire. Interrupted batches return the ingredients and leave the water in the pot."
+  - qol: "Pots can cook several batches at once if there is enough water."
+  - qol: "Hearth and campfire pots announce when the final batch is ready and there is too little water left to cook another."
