@@ -45,9 +45,7 @@
 	var/description_level = face_known == "They know only my name and overall build" ? BOUNTY_DESCRIPTION_BUILD : BOUNTY_DESCRIPTION_FULL
 	var/recognition = BOUNTY_RECOGNITION_NONE
 	if(face_known == "They know my face")
-		recognition = BOUNTY_RECOGNITION_FACE
-		if(bounty_severity == "Horrific atrocities" && is_church_bounty_issuer(bounty_poster))
-			recognition = BOUNTY_RECOGNITION_ALWAYS
+		recognition = bounty_severity == "Horrific atrocities" ? BOUNTY_RECOGNITION_ALWAYS : BOUNTY_RECOGNITION_FACE
 	add_character_bounty(H, bounty_total, FALSE, my_crime, bounty_poster, description_level, recognition)
 	if(HAS_TRAIT(H, TRAIT_NOBLE))
 		REMOVE_TRAIT(H, TRAIT_NOBLE, JOB_TRAIT)
