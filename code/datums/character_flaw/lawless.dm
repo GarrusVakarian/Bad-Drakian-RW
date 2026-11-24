@@ -9,6 +9,8 @@
 	addtimer(CALLBACK(src, PROC_REF(set_up), H), 30 SECONDS)
 
 /datum/charflaw/lawless/proc/set_up(mob/living/carbon/human/H)
+	if(QDELETED(H))
+		return
 	if (has_bounty(H) || (H.job && H.job == "Wretch") || (H.advjob && H.advjob == "Wanted") || (H.job && H.job == "Bandit"))
 		// no doubling up on this stuff, you just get a random flaw instead.
 		var/list/flaws_without_random = GLOB.character_flaws.Copy()
@@ -26,25 +28,30 @@
 		attempts_left--
 		addtimer(CALLBACK(src, PROC_REF(set_up), H), 30 SECONDS)
 		return
-	var/face_known = input(H, "Is your face known to the authorities?", "Visibility Status") as anything in list("They know my face", "They know only my features", "They know only my name and overall build")
-	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See", "The Otavan Orthodoxy")
-	var/bounty_size = input(H, "How ample is your bounty?", "Bounty Amount") as anything in list("Meager", "Moderate", "Massive")
-	var/bounty_total = rand(100, 200)
-	switch(bounty_size)
-		if("Meager")
-			bounty_total = rand(50, 100)
-		if("Moderate")
-			bounty_total = rand(100, 150)
-		if("Massive")
-			bounty_total = rand(150, 200)
-	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
+	var/list/preset = H.bounty_presets?["Lawless"]
+	var/visibility = preset ? preset["visibility"] : choose_lawless_bounty_visibility(H)
+	if(QDELETED(H) || !H.client)
+		return
+	var/issuer = preset ? preset["issuer"] : choose_character_bounty_issuer(H, "Lawless")
+	if(QDELETED(H) || !H.client)
+		return
+	if(!issuer)
+		issuer = "justiciary"
+	var/bounty_poster = character_bounty_issuer(issuer)
+	var/bounty_size = preset ? preset["tier"] : choose_character_bounty_tier(H, "Lawless")
+	if(QDELETED(H) || !H.client)
+		return
+	var/bounty_total = roll_character_bounty_reward("Lawless", bounty_size)
+	if(!bounty_total)
+		bounty_total = rand(100, 200)
+	var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null
 	if (!my_crime)
 		my_crime = "crimes against the Crown"
 	if(QDELETED(H))
 		return
-	var/description_level = face_known == "They know only my name and overall build" ? BOUNTY_DESCRIPTION_BUILD : BOUNTY_DESCRIPTION_FULL
+	var/description_level = visibility == "build" ? BOUNTY_DESCRIPTION_BUILD : BOUNTY_DESCRIPTION_FULL
 	var/recognition = BOUNTY_RECOGNITION_NONE
-	if(face_known == "They know my face")
+	if(visibility == "face")
 		recognition = BOUNTY_RECOGNITION_FACE
 	add_character_bounty(H, bounty_total, FALSE, my_crime, bounty_poster, description_level, recognition)
 	if(HAS_TRAIT(H, TRAIT_NOBLE))
@@ -53,8 +60,8 @@
 		REMOVE_TRAIT(H, TRAIT_NOBLE, ADVENTURER_TRAIT)
 		ADD_TRAIT(H, TRAIT_DISGRACED_NOBLE, TRAIT_GENERIC)
 		H.is_noble()
-	if (face_known == "They know my face")
-		if(bounty_poster == "The Justiciary of [SSmapping.map_adjustment.realm_name]")
+	if (visibility == "face")
+		if(issuer == "justiciary")
 			GLOB.outlawed_players += H.real_name
 		else
 			GLOB.excommunicated_players += H.real_name

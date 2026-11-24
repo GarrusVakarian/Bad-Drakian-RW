@@ -929,6 +929,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 
 /datum/preferences/proc/load_character(slot)
+	bounty_preset_slot_revision++
 	// Invalidate queued portraits even if the player switches away and back.
 	credits_revision++
 	if(!path)
@@ -947,6 +948,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		WRITE_FILE(S["default_slot"] , slot)
 
 	S.cd = "/character[slot]"
+	bounty_presets = list()
 	var/needs_update = savefile_needs_update(S)
 	if(needs_update == -2)		//fatal, can't load any data
 		return FALSE
@@ -963,6 +965,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	natural_armor_desc = sanitize_natural_armor_text(saved_natural_armor_desc)
 	_load_quirks(S)
 	_load_flaw(S)
+	var/saved_bounty_presets
+	S["bounty_presets"] >> saved_bounty_presets
+	bounty_presets = sanitize_character_bounty_presets(saved_bounty_presets)
 
 	_load_culinary_preferences(S)
 
@@ -1241,6 +1246,21 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	fluff.accessory_colors = wings.wings_color
 	fluff.disabled = FALSE
 
+/// Persist the preset without writing unsaved character customization.
+/datum/preferences/proc/save_bounty_presets(list/presets, slot)
+	if(!path || !fexists(path) || slot != default_slot || slot < 1 || slot > max_save_slots)
+		return FALSE
+	var/savefile/S = new /savefile(path)
+	if(!S)
+		return FALSE
+	S.cd = "/character[slot]"
+	var/version
+	S["version"] >> version
+	if(!isnum(version) || version < SAVEFILE_VERSION_MIN)
+		return FALSE
+	WRITE_FILE(S["bounty_presets"], presets)
+	return TRUE
+
 /datum/preferences/proc/save_character()
 	if(!path)
 		return FALSE
@@ -1282,6 +1302,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["species"]				, pref_species?.name)
 	WRITE_FILE(S["charflaw"]				, preferences_typepath_or_null(charflaw))
 	WRITE_FILE(S["family"], family)
+	WRITE_FILE(S["bounty_presets"], bounty_presets)
 	WRITE_FILE(S["gender_choice"], gender_choice)
 	WRITE_FILE(S["setspouse"], setspouse)
 	WRITE_FILE(S["xenophobe_pref"], xenophobe_pref)

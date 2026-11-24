@@ -83,10 +83,80 @@
 		if(!found)
 			dat += "No villain roles this round."
 
+	if(can_edit_bounty_presets())
+		dat += bounty_preset_menu()
+
 	var/datum/browser/popup = new(src, "villainchoices", "Villains", 340, 400)
 	popup.add_stylesheet("playeroptions", 'html/browser/playeroptions.css')
 	popup.set_content(jointext(dat, ""))
 	popup.open(FALSE)
+
+/mob/dead/new_player/var/editing_bounty_preset = FALSE
+
+/mob/dead/new_player/proc/can_edit_bounty_presets()
+	return !QDELETED(src) && client?.prefs && !spawning && SSticker.current_state < GAME_STATE_FINISHED
+
+/mob/dead/new_player/proc/bounty_preset_menu()
+	var/list/html = list("<br><b>Bounty Presets:</b><br>")
+	var/list/presets = client.prefs.bounty_presets
+	for(var/profile in GLOB.bounty_preset_labels)
+		var/label = GLOB.bounty_preset_labels[profile]
+		var/list/preset = presets[profile]
+		html += "<div style='margin-bottom:0.5em; word-wrap:break-word; overflow-wrap:anywhere'><a href='byond://?src=[REF(src)];bounty_presets=[url_encode(profile)]'><b>[label]</b></a>"
+		if(!preset)
+			html += " &nbsp; Ask at spawn</div>"
+			continue
+		if(preset["declined"])
+			html += " &nbsp; No bounty</div>"
+			continue
+		var/issuer = html_encode(character_bounty_issuer(preset["issuer"]))
+		html += " &nbsp; [html_encode(preset["tier"])]<br>[issuer]"
+		var/visibility = bounty_preset_visibility(profile, preset["visibility"])
+		if(visibility)
+			html += "<br>[visibility]"
+		var/crime = preset["crime"]
+		var/reason = crime ? html_encode(crime) : "Default reason"
+		html += "<br>Reason: [reason]</div>"
+	return jointext(html, "")
+
+/mob/dead/new_player/proc/open_bounty_presets(profile)
+	if(editing_bounty_preset || !can_edit_bounty_presets() || !GLOB.bounty_preset_labels[profile])
+		return
+	var/datum/preferences/prefs = client.prefs
+	var/slot = prefs.default_slot
+	var/revision = prefs.bounty_preset_slot_revision
+	editing_bounty_preset = TRUE
+	edit_bounty_preset(prefs, slot, revision, profile)
+	editing_bounty_preset = FALSE
+	if(can_edit_bounty_presets())
+		VillainChoices()
+
+/mob/dead/new_player/proc/edit_bounty_preset(datum/preferences/prefs, slot, revision, profile)
+	var/label = GLOB.bounty_preset_labels[profile]
+	var/mode = tgui_input_list(src, "How should [prefs.real_name]'s [label] bounty be set?", "[label] Bounty Preset", list("Set preset", "Ask at spawn"))
+	if(!mode || !can_save_bounty_preset(prefs, slot, revision))
+		return
+
+	var/list/updated = prefs.bounty_presets.Copy()
+	if(mode == "Ask at spawn")
+		updated -= profile
+	else
+		var/list/preset = prompt_bounty_preset(src, profile, updated[profile])
+		if(!preset || !can_save_bounty_preset(prefs, slot, revision))
+			return
+		updated[profile] = preset
+		updated = sanitize_character_bounty_presets(updated)
+		if(!updated[profile])
+			return
+
+	if(!prefs.save_bounty_presets(updated, slot))
+		to_chat(src, span_warning("Your bounty preset could not be saved."))
+		return
+	prefs.bounty_presets = updated
+	to_chat(src, span_notice(mode == "Ask at spawn" ? "[profile] bounty choices will be asked at spawn." : "[profile] bounty preset saved."))
+
+/mob/dead/new_player/proc/can_save_bounty_preset(datum/preferences/prefs, slot, revision)
+	return can_edit_bounty_presets() && client.prefs == prefs && prefs.default_slot == slot && prefs.bounty_preset_slot_revision == revision
 
 // this menu allows players 2 boost their stats to wretch tier (+12 weight) & choose between DE / Heavy Armor
 /mob/living/carbon/human/var/datum/antag_setup/antag_setup

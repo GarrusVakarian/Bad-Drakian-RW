@@ -263,6 +263,10 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		VillainChoices()
 		return
 
+	if(href_list["bounty_presets"] && usr == src)
+		open_bounty_presets(href_list["bounty_presets"])
+		return
+
 	if(href_list["villain_pref"])
 		if(SSticker.current_state > GAME_STATE_PREGAME)
 			return
