@@ -922,8 +922,25 @@
 2026-11-24:
   GarrusVakarian:
   - bugfix: Making a cannon no longer causes a runtime.
+  R3Nomon, JackSage, Khanivore:
+  - rscadd: 'R3Nomon: Wild Witch wretch class, stronger the older your character.'
+  - rscadd: 'R3Nomon: Additional Wretch classes to the Wretch door so they can properly
+      claim the houses in the forest and bog.'
+  - rscadd: 'JackSage: ERP Stat Drain Quirk, given to gnolls as well. Allows you to
+      drain a subs stats to nothing. Credit to SR and Xander3359'
+  - rscadd: 'JackSage: Pref for Stat Drain'
+  - rscadd: 'Khanivore: Flying ability for dragons!'
+  - sound: 'Khanivore: Dragon takeoff uses wing wind-up and launch sounds.'
+  - bugfix: 'Khanivore: Dragon speech, text, sound, casting, and progress indicators
+      are centered.'
+  - bugfix: 'Khanivore: Dragon scale regeneration messages now refer to scales.'
+  - bugfix: 'Khanivore: Dragons no longer display humanoid bloody-hand or Baothan
+      mark overlays.'
   _Rarity:
   - bugfix: Fixed an error when examining outlaws without a penance record.
+  - rscadd: Added Ochre Valley breast sizes. Tell Meows we should allow bigger pintle
+      sizes too!
+  - bugfix: Fixed underwear bottoms drawing over overlapping breast sprites.
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
   - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
@@ -955,3 +972,7 @@
       character.
   - rscadd: You can now use the ERP panel during a tackle pin when both players have
       it enabled. Use the panel's Stop button to end the action and keep the pin active.
+  - rscadd: Single cloth and bandages can gag another character when targeting Mouth.
+      Both show the cloth gag sprite and a clickable restraint link in examine.
+  - rscadd: Gags take 10 seconds to remove yourself or 5 seconds with help. Use Cut
+      or Chop to remove one in 1 second.

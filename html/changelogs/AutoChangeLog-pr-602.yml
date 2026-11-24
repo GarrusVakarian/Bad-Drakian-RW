@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Single cloth and bandages can gag another character when targeting Mouth. Both show the cloth gag sprite and a clickable restraint link in examine."
-  - rscadd: "Gags take 10 seconds to remove yourself or 5 seconds with help. Use Cut or Chop to remove one in 1 second."
