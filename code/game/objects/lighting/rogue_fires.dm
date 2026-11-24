@@ -688,20 +688,27 @@
 	user.visible_message(span_info("[user] places [ingredient] into the pot."))
 	playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
 	sleep(recipe.cooktime / cooktime_divisor)
-	if(QDELETED(src) || generation != stew_generation)
-		return
-
-	LAZYREMOVE(pending_stew_ingredients, ingredient)
-	if(QDELETED(ingredient) || ingredient.loc != src)
-		return
-	if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || pot.reagents.chem_temp < MIN_STEW_TEMPERATURE || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
-		ingredient.forceMove(drop_location())
-		visible_message(span_notice("The batch stops cooking."))
-		return
+	while(TRUE)
+		if(QDELETED(src) || generation != stew_generation)
+			return
+		if(QDELETED(ingredient) || ingredient.loc != src)
+			LAZYREMOVE(pending_stew_ingredients, ingredient)
+			return
+		if(!on || QDELETED(pot) || pot != attachment || pot.loc != src || !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
+			release_stew_ingredient(ingredient)
+			visible_message(span_notice("The batch stops cooking."))
+			return
+		if(pot.reagents.chem_temp >= MIN_STEW_TEMPERATURE)
+			break
+		sleep(2 SECONDS)
 
 	var/temperature = pot.reagents.chem_temp
-	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
-	pot.reagents.add_reagent(recipe.output, VOLUME_PER_STEW_COOK, reagtemp = temperature)
+	pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK, safety = TRUE)
+	if(!pot.reagents.add_reagent(recipe.output, VOLUME_PER_STEW_COOK, reagtemp = temperature))
+		pot.reagents.add_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK, reagtemp = temperature)
+		release_stew_ingredient(ingredient)
+		return
+	LAZYREMOVE(pending_stew_ingredients, ingredient)
 	qdel(ingredient)
 	if(!QDELETED(user) && user.mind)
 		add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
@@ -713,11 +720,20 @@
 	stew_generation++
 	if(!length(pending_stew_ingredients))
 		return
-	for(var/obj/item/ingredient as anything in pending_stew_ingredients)
-		if(!QDELETED(ingredient) && ingredient.loc == src)
-			ingredient.forceMove(drop_location())
+	var/list/canceled = pending_stew_ingredients
 	pending_stew_ingredients = null
+	for(var/obj/item/ingredient as anything in canceled)
+		if(!QDELETED(ingredient) && ingredient.loc == src)
+			release_stew_ingredient(ingredient)
 	visible_message(span_notice("The batches stop cooking."))
+
+/obj/machinery/light/rogue/hearth/proc/release_stew_ingredient(obj/item/ingredient)
+	LAZYREMOVE(pending_stew_ingredients, ingredient)
+	var/atom/destination = drop_location()
+	if(destination)
+		ingredient.forceMove(destination)
+	else
+		ingredient.moveToNullspace()
 
 /obj/machinery/light/rogue/hearth/update_icon()
 	if(!on)
@@ -823,7 +839,8 @@
 	if(gone == attachment && istype(gone, /obj/item/reagent_containers/glass/bucket/pot))
 		attachment = null
 		cancel_stews()
-		boilloop?.stop()
+		if(boilloop?.loop_started)
+			boilloop.stop()
 		update_icon()
 
 /obj/machinery/light/rogue/hearth/Destroy()
