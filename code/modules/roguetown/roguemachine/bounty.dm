@@ -320,7 +320,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 			prompt += "\n\n[tier] ([rewards[i]])\n[descriptions[i]]"
 		else
 			details[tier] = list("description" = descriptions[i], "cost" = rewards[i])
-	return tgui_input_list(target, prompt, title, tiers, option_details = details, window_width = 600)
+	return tgui_input_list(target, prompt, title, tiers, option_details = details, window_width = 620, window_height = 378)
 
 /// Ask whether the law has more than a name and overall build for a minor bounty.
 /proc/choose_bounty_full_description(mob/living/carbon/human/target)
