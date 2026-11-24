@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "The Assassin event can no longer grant Assassin status to an ineligible character."
