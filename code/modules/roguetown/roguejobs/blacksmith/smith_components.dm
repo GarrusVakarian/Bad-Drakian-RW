@@ -243,6 +243,12 @@
 	// Create all the items
 	for(var/i = 1 to current_recipe.createditem_num)
 		var/obj/item/I = new current_recipe.created_item(create_turf)
+
+		// A cannon is a structure, so it will cause a runtime if it goes through this code.
+		// Let's just move on if something isn't an item.
+		if(!istype(I))
+			continue
+
 		// Apply the quality to each item
 		I.name = initial(I.name) // Reset the name first
 		I.was_crafted = TRUE
