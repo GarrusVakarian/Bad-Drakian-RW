@@ -119,9 +119,31 @@ export const ListInputModal = (props) => {
   const filteredItems = items.filter((item) =>
     item?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-  // Dynamically changes the window height based on the message.
-  const windowHeight =
-    325 + Math.ceil(message.length / 3) + (large_buttons ? 5 : 0);
+  const windowWidth = window_width ?? (expandedWindow ? 900 : 325);
+  const messageHeight = Math.ceil(message.length / 3) + (large_buttons ? 5 : 0);
+  let windowHeight = 325 + messageHeight;
+  if (expandedWindow) {
+    // Reserve space for the title, controls, and the fixed-width option names.
+    const descriptionChars = Math.max(20, Math.floor((windowWidth - 240) / 7));
+    windowHeight = 120 + messageHeight;
+    for (const item of items) {
+      if (hasDetails) {
+        const description = option_details[item]?.description || '';
+        const lines = description
+          .split('\n')
+          .reduce(
+            (total, line) =>
+              total + Math.max(1, Math.ceil(line.length / descriptionChars)),
+            0,
+          );
+        windowHeight += Math.max(48, 16 + 20 * lines);
+      } else {
+        windowHeight += 28;
+      }
+      if (windowHeight >= 900) break;
+    }
+    windowHeight = Math.min(900, Math.max(275, windowHeight));
+  }
   // Grabs the cursor when no search bar is visible.
   if (!searchBarVisible) {
     setTimeout(() => document!.getElementById(selected.toString())?.focus(), 1);
@@ -148,11 +170,7 @@ export const ListInputModal = (props) => {
   }
 
   return (
-    <Window
-      title={title}
-      width={window_width ?? (expandedWindow ? 900 : 325)}
-      height={expandedWindow ? 900 : windowHeight}
-    >
+    <Window title={title} width={windowWidth} height={windowHeight}>
       {timeout && <Loader value={timeout} />}
       <Window.Content
         onKeyDown={(event) => {
