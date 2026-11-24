@@ -296,7 +296,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	return choice == "They know my body features"
 
 /// Record a character bounty, taking a snapshot of any publicly listed features.
-/proc/add_character_bounty(mob/living/carbon/human/target, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE)
+/proc/add_character_bounty(mob/living/carbon/human/target, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_FACE)
 	var/descriptor_height
 	var/descriptor_body
 	var/descriptor_voice

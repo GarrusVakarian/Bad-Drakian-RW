@@ -42,16 +42,14 @@
 		var/list/bounty_cats = list("Meager", "Moderate", "Massive")
 		var/bounty_amount = input(H, "How ample is your bounty?", "Blooded Gold") as anything in bounty_cats
 		var/bounty_total
-		var/recognition = BOUNTY_RECOGNITION_FACE
 		switch(bounty_amount)
 			if("Meager")
 				bounty_total = rand(51, 100)
-				recognition = BOUNTY_RECOGNITION_NONE
 			if("Moderate")
 				bounty_total = rand(101, 150)
 			if("Massive")
 				bounty_total = rand(150, 200)
 			else
 				return
-		add_character_bounty(H, bounty_total, FALSE, my_crime, "The Justiciary of [SSmapping.map_adjustment.realm_name]", bounty_amount == "Massive" ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD, recognition)
+		add_character_bounty(H, bounty_total, FALSE, my_crime, "The Justiciary of [SSmapping.map_adjustment.realm_name]", bounty_amount == "Massive" ? BOUNTY_DESCRIPTION_FULL : BOUNTY_DESCRIPTION_BUILD)
 		to_chat(H, span_notice("I'm on the run from the law, and there's a [LOWER_TEXT(bounty_amount)] sum of mammons out on my head... better lay low."))

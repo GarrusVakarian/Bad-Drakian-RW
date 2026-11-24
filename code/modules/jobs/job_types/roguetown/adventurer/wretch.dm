@@ -85,8 +85,6 @@
 			description_level = choose_bounty_body_description(H) ? BOUNTY_DESCRIPTION_BODY : BOUNTY_DESCRIPTION_BUILD
 		if("Harm towards lyfe")
 			bounty_total = rand(200, 300)
-			if(!is_church_bounty_issuer(bounty_poster))
-				recognition = BOUNTY_RECOGNITION_NONE
 		if("Horrific atrocities")
 			bounty_total = rand(300, 400)
 			recognition = BOUNTY_RECOGNITION_ALWAYS
