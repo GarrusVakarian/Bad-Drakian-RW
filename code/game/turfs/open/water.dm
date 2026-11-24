@@ -693,8 +693,9 @@
 			if(istype(Living.buckled, /obj/vehicle/ridden))
 				continue
 		if(!A.anchored)
+			// Keep processing while an item is in flight so it can drift after landing.
 			found_movable = TRUE
-			if(A.loc == src)
+			if(A.loc == src && !(A.throwing && isitem(A)))
 				A.ConveyorMove(dir)
 	if(!found_movable)
 		STOP_PROCESSING(SSrivers, src)
