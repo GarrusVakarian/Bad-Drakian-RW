@@ -1,3 +1,8 @@
+#define ORISON_FILL_DESCRIPTION "Beseech your Divine to create a small quantity of water in a container that you touch for some devotion."
+#define ORISON_VOICE_DESCRIPTION "Direct a sliver of divine thaumaturgy into your being, causing your voice to become LOUD when you next speak. Known to sometimes scare the rats inside the SCOMlines. Can be used on light sources at range, and it will cause them flicker."
+#define ORISON_LIGHT_DESCRIPTION "Issue a prayer for illumination, causing you or another living creature to begin glowing with light for five minutes - this stacks each time you cast it, with no upper limit. Using Voice on a person will remove this blessing from them, and MMB on your praying hand will remove any light blessings from yourself."
+#define ORISON_LAY_HANDS_DESCRIPTION "Lay hands upon an adjacent creature to channel divine restorative power through your touch. Both you and your target must remain still for the channeling to continue."
+
 /obj/effect/proc_holder/spell/targeted/touch/orison
 	name = "Orison"
 	overlay_icon = 'icons/mob/actions/genericmiracles.dmi'
@@ -17,14 +22,15 @@
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/holy
 	hand_path = /obj/item/melee/touch_attack/orison
+	show_hand_intent_descriptions = TRUE
 
 /obj/item/melee/touch_attack/orison
 	name = "\improper lesser prayer"
 	desc = "The fundamental teachings of theology return to you:\n \
-		<b>Fill</b>: Beseech your Divine to create a small quantity of water in a container that you touch for some devotion.\n \
-		<b>Touch</b>: Direct a sliver of divine thaumaturgy into your being, causing your voice to become LOUD when you next speak. Known to sometimes scare the rats inside the SCOMlines. Can be used on light sources at range, and it will cause them flicker.\n \
-		<b>Use</b>: Issue a prayer for illumination, causing you or another living creature to begin glowing with light for five minutes - this stacks each time you cast it, with no upper limit. Using thaumaturgy on a person will remove this blessing from them, and MMB on your praying hand will remove any light blessings from yourself.\n \
-		<b>Shove</b>: Lay hands upon an adjacent creature to channel divine restorative power through your touch. Both you and your target must remain still for the channeling to continue."
+		<b>Fill</b>: " + ORISON_FILL_DESCRIPTION + "\n \
+		<b>Voice</b>: " + ORISON_VOICE_DESCRIPTION + "\n \
+		<b>Light</b>: " + ORISON_LIGHT_DESCRIPTION + "\n \
+		<b>Lay Hands</b>: " + ORISON_LAY_HANDS_DESCRIPTION
 	catchphrase = null
 	possible_item_intents = list(/datum/intent/fill, INTENT_HELP, /datum/intent/use, INTENT_DISARM)
 	icon = 'icons/mob/roguehudgrabs.dmi'
@@ -38,6 +44,40 @@
 	var/light_devotion = 5
 	var/water_moisten = 2
 	var/lay_hands_devotion = 10
+
+/obj/item/melee/touch_attack/orison/get_intent_display_name(datum/intent/intent)
+	switch(intent.type)
+		if(/datum/intent/fill)
+			return "Fill"
+		if(INTENT_HELP)
+			return "Voice"
+		if(/datum/intent/use)
+			return "Light"
+		if(INTENT_DISARM)
+			return "Lay Hands"
+	return ..()
+
+/obj/item/melee/touch_attack/orison/get_intent_display_description(datum/intent/intent)
+	switch(intent.type)
+		if(/datum/intent/fill)
+			return ORISON_FILL_DESCRIPTION
+		if(INTENT_HELP)
+			return ORISON_VOICE_DESCRIPTION
+		if(/datum/intent/use)
+			return ORISON_LIGHT_DESCRIPTION
+		if(INTENT_DISARM)
+			return ORISON_LAY_HANDS_DESCRIPTION
+	return ..()
+
+/obj/item/melee/touch_attack/orison/get_intent_hud_icon_state(datum/intent/intent)
+	switch(intent.type)
+		if(INTENT_HELP)
+			return "invoice"
+		if(/datum/intent/use)
+			return "inlight"
+		if(INTENT_DISARM)
+			return "intouch"
+	return ..()
 
 /obj/item/melee/touch_attack/orison/attack_self()
 	qdel(src)
@@ -482,3 +522,8 @@
 		return water_moisten
 	else
 		to_chat(user, span_info("I'll need to find a container that can hold water."))
+
+#undef ORISON_FILL_DESCRIPTION
+#undef ORISON_VOICE_DESCRIPTION
+#undef ORISON_LIGHT_DESCRIPTION
+#undef ORISON_LAY_HANDS_DESCRIPTION

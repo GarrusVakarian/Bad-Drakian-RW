@@ -139,9 +139,14 @@
 
 /datum/intent/proc/examine(mob/user)
 	var/list/inspec = list("----------------------")
-	inspec += "<br><span class='notice'><b>[name]</b> intent</span>"
-	if(desc)
-		inspec += "\n[desc]"
+	var/display_name = name
+	var/display_description = desc
+	if(!QDELETED(masteritem))
+		display_name = masteritem.get_intent_display_name(src)
+		display_description = masteritem.get_intent_display_description(src)
+	inspec += "<br><span class='notice'><b>[display_name]</b> intent</span>"
+	if(display_description)
+		inspec += "\n[display_description]"
 	if(reach != 1)
 		inspec += "\n<b>Reach:</b> [reach] paces"
 	if(effective_range)
