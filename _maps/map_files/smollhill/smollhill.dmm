@@ -52924,6 +52924,35 @@
 /obj/item/ingot/sylveric,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cavewet/dragon_lair)
+"aaB" = (
+/obj/effect/landmark/start/knight{
+	delete_after_roundstart = 0;
+	jobspawn_override = list("Knight")
+	},
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/manor/rockhill)
+"aaS" = (
+/obj/effect/landmark/start/squire{
+	delete_after_roundstart = 0;
+	jobspawn_override = list("Squire")
+	},
+/obj/structure/curtain/red,
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/manor/rockhill)
+"aba" = (
+/obj/effect/landmark/start/wapprentice{
+	delete_after_roundstart = 0;
+	jobspawn_override = list("Magicians Associate")
+	},
+/turf/open/floor/rogue/ruinedwood/spiral,
+/area/rogue/indoors/town/manor/rockhill)
+"abb" = (
+/obj/effect/landmark/start/nightmaiden{
+	delete_after_roundstart = 0;
+	jobspawn_override = list("Bathhouse Attendant")
+	},
+/turf/open/floor/rogue/dirt/road,
+/area/rogue/outdoors/town/grove)
 
 (1,1,1) = {"
 pMX
@@ -118779,7 +118808,7 @@ koB
 lPs
 sfx
 qeG
-qeG
+abb
 ydF
 hkU
 aRL
@@ -164415,7 +164444,7 @@ asT
 nBs
 fQy
 gcr
-dgb
+aaS
 taO
 mss
 gTB
@@ -164714,11 +164743,11 @@ wSn
 fxx
 bLB
 xOv
-tZu
+aba
 fQy
 qzr
 fWV
-tZu
+aaB
 tEK
 fWV
 sYw
