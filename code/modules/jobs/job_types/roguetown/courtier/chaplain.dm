@@ -60,6 +60,7 @@
 /datum/outfit/job/roguetown/chaplain
 	name = "Court Chaplain"
 	jobtype = /datum/job/roguetown/chaplain
+	unique_belt_contents = list(/obj/item/storage/keyring/chaplain)
 	has_loadout = TRUE
 	job_bitflag = BITFLAG_HOLY_WARRIOR
 
