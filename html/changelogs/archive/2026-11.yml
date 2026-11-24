@@ -954,6 +954,9 @@
   - bugfix: The Chronicle clears the Magnate entry when nobody qualifies.
   - server: Server revision logs now include the compiled game's SHA-256 so we can
       tell if the thing was rebuilt!
+  - bugfix: Large pintles now display their existing Large sprites on standard bodies.
+  - rscadd: Added Endowed by Baotha, a free quirk that is a port of Ratwoods "Massive"
+      option. It grants extra ERP interactions, pain, and effects to Large pintles.
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
   - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
