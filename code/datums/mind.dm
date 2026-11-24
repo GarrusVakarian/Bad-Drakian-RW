@@ -996,6 +996,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 						// Check if this is a loadout item and reduce armor if applicable
 						var/is_loadout_item = FALSE
+						var/is_loadout_armor = FALSE
 						var/keep_stats = FALSE
 						var/keep_weapon_stats = FALSE
 						if(user.client?.prefs)
@@ -1007,6 +1008,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 								var/datum/loadout_item/loadout_datum = user.client.prefs.vars[slot]
 								if(loadout_datum && loadout_datum.path == path2item)
 									is_loadout_item = TRUE
+									is_loadout_armor = loadout_datum.sort_category == "Armor"
 									keep_stats = loadout_datum.keep_loadout_stats
 									keep_weapon_stats = loadout_datum.keep_loadout_weapon_stats
 									break
@@ -1016,11 +1018,11 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 							// Mark as loadout item to prevent crafting usage
 							I.loadout_item = TRUE
 
-							// Add subtle examination text to indicate this is a loadout reproduction
-							if(I.desc)
-								I.desc += " The overall look and feel of the item suggests this may be a mere reproduction."
-							else
-								I.desc = "The overall look and feel of the item suggests this may be a mere reproduction."
+							if(is_loadout_armor)
+								if(I.desc)
+									I.desc += " The overall look and feel of the item suggests this may be a mere reproduction."
+								else
+									I.desc = "The overall look and feel of the item suggests this may be a mere reproduction."
 
 							// Set sellprice to 0
 							I.sellprice = 0
