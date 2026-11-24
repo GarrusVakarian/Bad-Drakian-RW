@@ -150,7 +150,7 @@
 	SIGNAL_HANDLER
 	if(body.stat != UNCONSCIOUS)
 		return
-	if(body.InFullCritical() || body.getOxyLoss() > 75 || (body.blood_volume <= BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(body, TRAIT_BLOODLOSS_IMMUNE)))
+	if(body.InFullCritical() || body.getOxyLoss() > 75 || (body.get_blood_volume() <= BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(body, TRAIT_BLOODLOSS_IMMUNE)))
 		// Let the current health or consciousness update finish before restoring the character.
 		addtimer(CALLBACK(src, PROC_REF(wake_from_dream), body, TRUE), 0, TIMER_UNIQUE)
 
