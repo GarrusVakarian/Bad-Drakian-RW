@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Set bounty presets for each character under Villains and apply them automatically when you spawn."

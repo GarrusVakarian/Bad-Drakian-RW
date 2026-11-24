@@ -941,6 +941,8 @@
   - rscadd: Added Ochre Valley breast sizes. Tell Meows we should allow bigger pintle
       sizes too!
   - bugfix: Fixed underwear bottoms drawing over overlapping breast sprites.
+  - bugfix: The lobby changelog now opens automatically only when you have unread
+      changes.
   mypingishuge:
   - bugfix: River currents carry thrown items only after they land.
   - rscadd: Added Clicker-Trained, a 0-point quirk that makes your character drop
@@ -976,3 +978,11 @@
       Both show the cloth gag sprite and a clickable restraint link in examine.
   - rscadd: Gags take 10 seconds to remove yourself or 5 seconds with help. Use Cut
       or Chop to remove one in 1 second.
+  - rscadd: Lawless characters can choose to list just their name and overall build.
+      Wanted vagabond bounties now only reveal full information at the highest tier,
+      and their faces aren't known at the lowest tier.
+  - bugfix: Bounty pickers and other detailed choice windows now fit short lists.
+  - qol: The Say hotkey opens OOC in the lobby and DSay while dead.
+  - qol: Dead players can use standard LOOC from their bodies or as ghosts.
+  - rscadd: Set bounty presets for each character under Villains and apply them automatically
+      when you spawn.

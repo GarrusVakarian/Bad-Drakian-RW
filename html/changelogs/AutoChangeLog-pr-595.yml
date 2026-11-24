@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Lawless characters can choose to list just their name and overall build. Wanted vagabond bounties now only reveal full information at the highest tier, and their faces aren't known at the lowest tier."
-  - bugfix: "Bounty pickers and other detailed choice windows now fit short lists."
