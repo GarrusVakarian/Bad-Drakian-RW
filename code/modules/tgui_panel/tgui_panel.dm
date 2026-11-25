@@ -75,6 +75,7 @@
 /datum/tgui_panel/proc/on_message(type, payload)
 	if(type == "ready")
 		broken = FALSE
+		client.prefs?.send_pending_patron_virtue_warnings()
 		window.send_message("update", list(
 			"config" = list(
 				"client" = list(

@@ -89,6 +89,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/statpack/statpack	= new /datum/statpack/wildcard/fated // LETHALSTONE EDIT: the statpack we're giving our char instead of racial bonuses
 	var/datum/virtue/virtue = new /datum/virtue/none // LETHALSTONE EDIT: the virtue we get for not picking a statpack
 	var/datum/virtue/virtuetwo = new /datum/virtue/none
+	/// Warnings from character loading may precede the chat panel's ready message.
+	var/list/pending_patron_virtue_warnings
 	var/natural_armor_name = ""
 	var/natural_armor_desc = ""
 	// Backgrounds: a virtue-like pick (skills + a starting equipment kit) in its own free slot
@@ -916,16 +918,27 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	selected_patron = new_patron
 	clear_ineligible_patron_virtues()
 
-/datum/preferences/proc/clear_ineligible_patron_virtues()
+/datum/preferences/proc/clear_ineligible_patron_virtues(savefile/character_save)
 	if(istype(selected_patron, /datum/patron/inhumen))
 		return
-	for(var/slot in list("virtue", "virtuetwo"))
+	var/static/list/virtue_slots = list("virtue", "virtuetwo")
+	for(var/slot in virtue_slots)
 		var/datum/virtue/selected = vars[slot]
 		if(!selected || virtue_check(selected, FALSE))
 			continue
 		vars[slot] = GLOB.virtues[/datum/virtue/none]
-		if(parent)
-			to_chat(parent, span_warning("[selected.name] was deselected. It requires an Ascendant patron."))
+		if(character_save)
+			WRITE_FILE(character_save[slot], /datum/virtue/none)
+		LAZYADD(pending_patron_virtue_warnings, selected.name)
+	send_pending_patron_virtue_warnings()
+
+/datum/preferences/proc/send_pending_patron_virtue_warnings()
+	if(!length(pending_patron_virtue_warnings) || !parent?.tgui_panel?.is_ready())
+		return
+	var/list/warnings = pending_patron_virtue_warnings
+	pending_patron_virtue_warnings = null
+	for(var/virtue_name in warnings)
+		to_chat(parent, span_warning("[virtue_name] was deselected. It requires an Ascendant patron."))
 
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
 	var/client/viewer = user?.client
