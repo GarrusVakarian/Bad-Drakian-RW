@@ -5,6 +5,9 @@ GLOBAL_LIST_INIT(sex_actions, build_sex_actions())
 #define STAT_DRAIN_MIN_LOSS 1
 #define STAT_DRAIN_DEFAULT_LOSS 3
 #define STAT_DRAIN_MAX_LOSS 19
+#define GNOLL_DRAIN_ENERGY "Energy drain"
+#define GNOLL_DRAIN_STAT "Stat drain"
+#define GNOLL_DRAIN_TRAIT "gnoll_drain"
 
 #define MAX_AROUSAL 150
 #define PASSIVE_EJAC_THRESHOLD 108

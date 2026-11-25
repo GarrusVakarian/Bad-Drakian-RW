@@ -19,6 +19,7 @@
 	id = "gnoll"
 	custom_rotation_icon = TRUE
 	custom_base_icon = "firepelt"
+	var/drain_trait
 	species_traits = list(NO_UNDERWEAR, NO_ORGAN_FEATURES, NO_BODYPART_FEATURES)
 	inherent_traits = list(
 		TRAIT_ORGASM_DENIER,
@@ -45,7 +46,6 @@
 		TRAIT_EXTREME_TEMPERATURE_IMMUNE,
 		TRAIT_UNLYCKERABLE, //Just stop
 		TRAIT_DEATHBYSNUSNU,
-		TRAIT_EROTIC_ENERGY_DRAINER,
 		TRAIT_MASTERFUL_HUNTER
 	)
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | RACE_SWAP | SLIME_EXTRACT
@@ -102,8 +102,13 @@
 	H.update_inv_armor_special()
 	return TRUE
 
-/datum/species/gnoll/on_species_gain(mob/living/carbon/C, datum/species/old_species)
+/datum/species/gnoll/on_species_gain(mob/living/carbon/C, datum/species/old_species, datum/preferences/pref_load)
 	. = ..()
+	var/datum/species/gnoll/previous_gnoll = old_species
+	var/drain_choice = pref_load?.gnoll_drain_type || C.client?.prefs?.gnoll_drain_type
+	if(!drain_choice && istype(previous_gnoll) && previous_gnoll.drain_trait == TRAIT_EVIL_DRAINER)
+		drain_choice = GNOLL_DRAIN_STAT
+	set_drain_type(C, drain_choice)
 	C.remove_status_effect(/datum/status_effect/buff/adrenaline_rush)
 	REMOVE_TRAIT(C, TRAIT_ADRENALINE_RUSH, INNATE_TRAIT)
 	RegisterSignal(C, COMSIG_MOB_SAY, PROC_REF(handle_speech))
@@ -121,8 +126,19 @@
 
 /datum/species/gnoll/on_species_loss(mob/living/carbon/C)
 	. = ..()
+	if(drain_trait)
+		REMOVE_TRAIT(C, drain_trait, GNOLL_DRAIN_TRAIT)
 	UnregisterSignal(C, COMSIG_MOB_SAY)
 	UnregisterSignal(C, COMSIG_MOVABLE_BARK)
+
+/datum/species/gnoll/proc/set_drain_type(mob/living/carbon/character, choice)
+	var/new_trait = choice == GNOLL_DRAIN_STAT ? TRAIT_EVIL_DRAINER : TRAIT_EROTIC_ENERGY_DRAINER
+	if(drain_trait == new_trait && HAS_TRAIT_FROM(character, new_trait, GNOLL_DRAIN_TRAIT))
+		return
+	if(drain_trait)
+		REMOVE_TRAIT(character, drain_trait, GNOLL_DRAIN_TRAIT)
+	drain_trait = new_trait
+	ADD_TRAIT(character, drain_trait, GNOLL_DRAIN_TRAIT)
 
 /datum/species/gnoll/update_damage_overlays(mob/living/carbon/human/H)
 	clear_extremity_overlays(H, FALSE)

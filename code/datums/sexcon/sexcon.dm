@@ -1996,9 +1996,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 /datum/sex_controller/proc/apply_completed_cycle_drain(mob/living/carbon/human/partner)
 	if(!can_drain_partner(partner))
 		return
-	if(user.cmode && HAS_TRAIT(user, TRAIT_EVIL_DRAINER))
+	if(user.cmode && HAS_TRAIT(user, TRAIT_EVIL_DRAINER) && !HAS_TRAIT_FROM(user, TRAIT_EROTIC_ENERGY_DRAINER, GNOLL_DRAIN_TRAIT))
 		partner.advance_panel_stat_drain(user, partner.client.prefs.stat_drain_max_loss)
-	if(partner.cmode && HAS_TRAIT(partner, TRAIT_EVIL_DRAINER))
+	if(partner.cmode && HAS_TRAIT(partner, TRAIT_EVIL_DRAINER) && !HAS_TRAIT_FROM(partner, TRAIT_EROTIC_ENERGY_DRAINER, GNOLL_DRAIN_TRAIT))
 		user.advance_panel_stat_drain(partner, user.client.prefs.stat_drain_max_loss)
 
 	var/net_gain = get_net_cycle_energy_drain(partner)
@@ -2012,7 +2012,10 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	return get_cycle_energy_amount(partner, user) - get_cycle_energy_amount(user, partner)
 
 /datum/sex_controller/proc/get_cycle_energy_amount(mob/living/carbon/human/donor, mob/living/carbon/human/recipient)
-	if(!recipient.cmode || !HAS_TRAIT(recipient, TRAIT_EROTIC_ENERGY_DRAINER) || HAS_TRAIT(recipient, TRAIT_EVIL_DRAINER))
+	if(!recipient.cmode || !HAS_TRAIT(recipient, TRAIT_EROTIC_ENERGY_DRAINER))
+		return 0
+	// The Gnoll's active species grant takes precedence over a personal quirk from a prior form.
+	if(HAS_TRAIT(recipient, TRAIT_EVIL_DRAINER) && !HAS_TRAIT_FROM(recipient, TRAIT_EROTIC_ENERGY_DRAINER, GNOLL_DRAIN_TRAIT))
 		return 0
 	if(HAS_TRAIT(donor, TRAIT_INFINITE_ENERGY) || HAS_TRAIT(donor, TRAIT_INFINITE_STAMINA) || HAS_TRAIT(recipient, TRAIT_INFINITE_ENERGY) || HAS_TRAIT(recipient, TRAIT_INFINITE_STAMINA))
 		return 0

@@ -151,6 +151,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// If we are participating in stat draining, requires both parties to have it enabled for it to work
 	var/stat_drainable = FALSE
 	var/stat_drain_max_loss = STAT_DRAIN_DEFAULT_LOSS
+	var/gnoll_drain_type = GNOLL_DRAIN_ENERGY
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE
@@ -3795,6 +3796,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		// For gnolls spawning from a non-gnoll base slot, we must not apply any base-slot state.
 		// Set species to gnoll immediately so advclass check_requirements can read dna.species.type.
 		character.set_species(/datum/species/gnoll, icon_update = FALSE)
+		var/datum/species/gnoll/gnoll_species = character.dna.species
+		gnoll_species.set_drain_type(character, gnoll_drain_type)
 		// Set gender to MALE as a neutral default; gnoll pronouns override the displayed pronoun.
 		character.gender = MALE
 		if(gnoll_prefs?.gnoll_pronouns)

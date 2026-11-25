@@ -288,6 +288,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	stat_drainable = sanitize_integer(stat_drainable, 0, 1, FALSE)
 	S["stat_drain_max_loss"] >> stat_drain_max_loss
 	stat_drain_max_loss = sanitize_integer(stat_drain_max_loss, STAT_DRAIN_MIN_LOSS, STAT_DRAIN_MAX_LOSS, STAT_DRAIN_DEFAULT_LOSS)
+	S["gnoll_drain_type"] >> gnoll_drain_type
+	if(gnoll_drain_type != GNOLL_DRAIN_STAT)
+		gnoll_drain_type = GNOLL_DRAIN_ENERGY
 	S["manticore_tail_messages"]	>> manticore_tail_messages
 	S["hypnosis_content"] >> hypnosis_content
 	hypnosis_content = sanitize_integer(hypnosis_content, 0, 1, FALSE)
@@ -495,6 +498,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["milkable"], milkable)
 	WRITE_FILE(S["stat_drainable"], stat_drainable)
 	WRITE_FILE(S["stat_drain_max_loss"], stat_drain_max_loss)
+	WRITE_FILE(S["gnoll_drain_type"], gnoll_drain_type)
 	WRITE_FILE(S["manticore_tail_messages"], manticore_tail_messages)
 	WRITE_FILE(S["hypnosis_content"], hypnosis_content)
 	WRITE_FILE(S["cumflation_content"], cumflation_content)

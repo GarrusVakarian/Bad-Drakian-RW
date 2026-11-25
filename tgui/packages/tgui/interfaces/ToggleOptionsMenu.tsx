@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  Dropdown,
   Input,
   Section,
   Stack,
@@ -19,6 +20,7 @@ type ToggleEntry = {
   desc: string;
   disabled?: BooleanLike;
   stat_loss_limit?: number | null;
+  gnoll_drain_type?: string;
 };
 
 type SelectOption = {
@@ -109,16 +111,25 @@ const ToggleEntryRow = ({ entry }: { entry: ToggleEntry }) => {
         </Table.Cell>
       </Table.Row>
       {!!entry.enabled && entry.stat_loss_limit != null && (
-        <StatLossLimitRow
+        <DrainOptionsRow
           key={entry.stat_loss_limit}
           value={entry.stat_loss_limit}
+          gnollDrain={entry.gnoll_drain_type ?? 'Energy drain'}
         />
       )}
     </>
   );
 };
 
-const StatLossLimitRow = ({ value }: { value: number }) => {
+const gnollDrainOptions = ['Energy drain', 'Stat drain'];
+
+const DrainOptionsRow = ({
+  value,
+  gnollDrain,
+}: {
+  value: number;
+  gnollDrain: string;
+}) => {
   const { act } = useBackend<Data>();
   const [text, setText] = useState(String(value));
   const valid = /^(?:[1-9]|1[0-9])$/.test(text);
@@ -133,7 +144,11 @@ const StatLossLimitRow = ({ value }: { value: number }) => {
     <Table.Row className="candystripe">
       <Table.Cell>
         <Stack align="center" ml={2}>
-          <Stack.Item grow>Maximum stat loss (1–19 per stat)</Stack.Item>
+          <Stack.Item>
+            <Tooltip content="1–19 points per affected stat." position="bottom">
+              <span>Max stat loss</span>
+            </Tooltip>
+          </Stack.Item>
           <Stack.Item>
             <Input width={4} value={text} onChange={setText} onEnter={save} />
           </Stack.Item>
@@ -141,6 +156,22 @@ const StatLossLimitRow = ({ value }: { value: number }) => {
             <Button disabled={!canSave} onClick={save}>
               Save
             </Button>
+          </Stack.Item>
+          <Stack.Item ml="auto">
+            <Tooltip
+              content="Applies the next time you become a Gnoll."
+              position="bottom"
+            >
+              <span>Gnoll drain:</span>
+            </Tooltip>
+          </Stack.Item>
+          <Stack.Item>
+            <Dropdown
+              width="110px"
+              options={gnollDrainOptions}
+              selected={gnollDrain}
+              onSelected={(value) => act('set_gnoll_drain_type', { value })}
+            />
           </Stack.Item>
         </Stack>
       </Table.Cell>
