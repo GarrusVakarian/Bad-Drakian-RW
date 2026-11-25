@@ -372,7 +372,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 			descriptions = list(
 				"Bounty lists your name and build. You can opt to also list body features. [minor_recognition]",
 				"Bounty lists a full description, including voice. Recognized only with face exposed.",
-				"Bounty lists a full description, including voice. Recognized even while masked!",
+				"Bounty lists a full description, including voice. Choose whether you are recognized while masked.",
 			)
 
 	var/list/details = list()
@@ -386,6 +386,14 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		else
 			details[tier] = list("description" = descriptions[i], "cost" = reward_text)
 	return tgui_input_list(user, prompt, title, tiers, option_details = details, window_width = 620, window_height = 378)
+
+/// Return the chosen recognition level, or null if the picker is closed.
+/proc/choose_bounty_recognition(mob/user)
+	if(QDELETED(user) || !user.client)
+		return null
+	var/list/choices = list("Only with my face exposed" = BOUNTY_RECOGNITION_FACE, "Even while masked" = BOUNTY_RECOGNITION_ALWAYS)
+	var/choice = input(user, "When should people recognize you from this bounty?", "Bounty Recognition") as null|anything in choices
+	return choices[choice]
 
 /// Ask whether the law has more than a name and overall build for a minor bounty.
 /proc/choose_bounty_description(mob/user, profile)
@@ -403,6 +411,9 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/prompt = "Is your face known to the authorities?\n\nThey know my face: Full description, including voice. Recognized only with face exposed.\nThey know only my features: Full description, including voice. No face recognition.\nThey know only my name and overall build: No face recognition."
 	var/choice = input(user, prompt, "Visibility Status") as null|anything in choices
 	return choices[choice]
+
+/proc/is_highest_character_bounty_tier(tier)
+	return tier == "Horrific atrocities" || tier == "Realm Boogeyman"
 
 /proc/prompt_bounty_preset(mob/user, profile, list/previous)
 	if(profile == "Bandit")
@@ -425,16 +436,21 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/tier = choose_character_bounty_tier(user, profile)
 	if(!tier || !user.client)
 		return null
+	var/recognition
 	if(tier == "Misdeed" || tier == "Small Game")
 		visibility = choose_bounty_description(user, profile)
 		if(!visibility || !user.client)
+			return null
+	else if(is_highest_character_bounty_tier(tier))
+		recognition = choose_bounty_recognition(user)
+		if(isnull(recognition) || !user.client)
 			return null
 
 	var/old_crime = previous ? previous["crime"] : ""
 	var/crime = input(user, "What is your crime? Leave blank to use the default. The notice shows up to 200 characters.", "Crime", old_crime) as null|text
 	if(isnull(crime))
 		return null
-	return list("issuer" = issuer, "tier" = tier, "visibility" = visibility, "crime" = crime)
+	return list("issuer" = issuer, "tier" = tier, "visibility" = visibility, "recognition" = recognition, "crime" = crime)
 
 GLOBAL_LIST_INIT(bounty_preset_labels, list(
 	"Wretch" = "Wretch",
@@ -474,8 +490,16 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 			continue
 		if((tier == "Misdeed" || tier == "Small Game") && !(visibility in list("full", "build")))
 			continue
+		var/recognition
+		if(is_highest_character_bounty_tier(tier))
+			recognition = preset["recognition"]
+			// Presets saved before this choice identified the character through masks.
+			if(isnull(recognition))
+				recognition = BOUNTY_RECOGNITION_ALWAYS
+			if(!(recognition in list(BOUNTY_RECOGNITION_FACE, BOUNTY_RECOGNITION_ALWAYS)))
+				continue
 		var/crime = preset["crime"]
-		result[profile] = list("tier" = tier, "issuer" = issuer, "visibility" = visibility, "crime" = istext(crime) ? copytext_char(crime, 1, 201) : null)
+		result[profile] = list("tier" = tier, "issuer" = issuer, "visibility" = visibility, "recognition" = recognition, "crime" = istext(crime) ? copytext_char(crime, 1, 201) : null)
 	return result
 
 /mob/living/carbon/human/var/list/bounty_presets
