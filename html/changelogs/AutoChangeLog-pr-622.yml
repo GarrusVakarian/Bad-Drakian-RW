@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Armor readouts now name the areas protected by gear with partial face coverage."
