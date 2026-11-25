@@ -1028,3 +1028,7 @@
   _Rarity:
   - qol: "The new-player sapling now appears only in Shift-click examine, where it\u2019\
       s twice as wide and tall."
+  - bugfix: Armor readouts now name the areas protected by gear with partial face
+      coverage.
+  mypingishuge:
+  - bugfix: Eclectic miracle descriptions display bold text and line breaks correctly.

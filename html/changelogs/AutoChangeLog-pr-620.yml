@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Eclectic miracle descriptions display bold text and line breaks correctly."
