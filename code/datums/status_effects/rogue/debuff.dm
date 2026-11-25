@@ -1547,13 +1547,13 @@
 	var/highest_loss = 0
 	for(var/stat in drain_stats)
 		var/prior_loss = -(effectedstats[stat] || 0)
-		var/previous = owner.get_stat_level(stat)
-		var/new_loss = min(1, previous - 1, max_loss - prior_loss)
-		if(new_loss > 0)
-			owner.change_stat(stat, -new_loss)
-			prior_loss += new_loss
+		// Seelie Strength is fixed. For other stats, change_stat keeps penalties below the visible floor.
+		if(prior_loss < max_loss && (stat != STATKEY_STR || !isseelie(owner)))
+			var/previous = stat_dropped ? 0 : owner.get_stat_level(stat)
+			owner.change_stat(stat, -1)
+			prior_loss++
 			effectedstats[stat] = -prior_loss
-			if(!stat_dropped && owner.get_stat_level(stat) < previous)
+			if(previous > 1 && owner.get_stat_level(stat) < previous)
 				stat_dropped = TRUE
 		highest_loss = max(highest_loss, prior_loss)
 	update_stat_drain_alert(highest_loss)
