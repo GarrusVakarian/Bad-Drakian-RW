@@ -33,3 +33,4 @@
 		)
 	skillcraft = /datum/skill/magic/druidic
 	craftdiff = 4
+	
