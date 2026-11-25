@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - qol: "Made selected options easier to see in list pickers (for real this time)."
