@@ -1022,3 +1022,7 @@
       Mark Target on success.
   - balance: All Abyssal Curse variants no longer reduce Fortune.
   - bugfix: Removed the trailing periods from the Abyssal Curse names.
+2026-11-25:
+  _Rarity:
+  - qol: "The new-player sapling now appears only in Shift-click examine, where it\u2019\
+      s twice as wide and tall."
