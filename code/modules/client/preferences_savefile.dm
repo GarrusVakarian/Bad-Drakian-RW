@@ -961,7 +961,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		// No patron saved, set default
 		selected_patron = GLOB.patronlist[default_patron]
-	clear_ineligible_patron_virtues(S)
 
 	S["polytheist_patron"] >> patron_typepath
 	if(patron_typepath)

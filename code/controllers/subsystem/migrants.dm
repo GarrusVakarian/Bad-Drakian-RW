@@ -264,6 +264,8 @@ SUBSYSTEM_DEF(migrants)
 /datum/controller/subsystem/migrants/proc/spawn_migrant(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text)
 	var/rank = "Migrant"
 	var/mob/dead/new_player/newplayer = assignment.client.mob
+	if(!istype(newplayer) || !assignment.client.prefs.can_join_with_patron_virtues())
+		return
 
 	SSjob.AssignRole(newplayer, rank, TRUE)
 

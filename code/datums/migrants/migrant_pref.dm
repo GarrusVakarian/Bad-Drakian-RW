@@ -17,6 +17,8 @@
 	// Hidden waves are only queueable while an admin has them forced and forming.
 	if(wave.hidden && !SSmigrants.is_forced_forming(wave_type))
 		return
+	if(!prefs.can_join_with_patron_virtues())
+		return
 	if(role_type && !SSmigrants.can_be_role(prefs.parent, role_type))
 		to_chat(prefs.parent, span_warning("You can't be this role. (Wrong species, gender, or age.)"))
 		return

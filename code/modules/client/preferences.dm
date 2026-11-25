@@ -89,8 +89,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/datum/statpack/statpack	= new /datum/statpack/wildcard/fated // LETHALSTONE EDIT: the statpack we're giving our char instead of racial bonuses
 	var/datum/virtue/virtue = new /datum/virtue/none // LETHALSTONE EDIT: the virtue we get for not picking a statpack
 	var/datum/virtue/virtuetwo = new /datum/virtue/none
-	/// Warnings from character loading may precede the chat panel's ready message.
-	var/list/pending_patron_virtue_warnings
 	var/natural_armor_name = ""
 	var/natural_armor_desc = ""
 	// Backgrounds: a virtue-like pick (skills + a starting equipment kit) in its own free slot
@@ -918,27 +916,31 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	selected_patron = new_patron
 	clear_ineligible_patron_virtues()
 
-/datum/preferences/proc/clear_ineligible_patron_virtues(savefile/character_save)
+/datum/preferences/proc/get_ineligible_patron_virtue_slots()
 	if(istype(selected_patron, /datum/patron/inhumen))
 		return
+	var/list/ineligible_slots
 	var/static/list/virtue_slots = list("virtue", "virtuetwo")
 	for(var/slot in virtue_slots)
 		var/datum/virtue/selected = vars[slot]
-		if(!selected || virtue_check(selected, FALSE))
-			continue
-		vars[slot] = GLOB.virtues[/datum/virtue/none]
-		if(character_save)
-			WRITE_FILE(character_save[slot], /datum/virtue/none)
-		LAZYADD(pending_patron_virtue_warnings, selected.name)
-	send_pending_patron_virtue_warnings()
+		if(selected && !virtue_check(selected, FALSE))
+			LAZYADD(ineligible_slots, slot)
+	return ineligible_slots
 
-/datum/preferences/proc/send_pending_patron_virtue_warnings()
-	if(!length(pending_patron_virtue_warnings) || !parent?.tgui_panel?.is_ready())
-		return
-	var/list/warnings = pending_patron_virtue_warnings
-	pending_patron_virtue_warnings = null
-	for(var/virtue_name in warnings)
-		to_chat(parent, span_warning("[virtue_name] was deselected. It requires an Ascendant patron."))
+/datum/preferences/proc/clear_ineligible_patron_virtues()
+	for(var/slot in get_ineligible_patron_virtue_slots())
+		var/datum/virtue/selected = vars[slot]
+		vars[slot] = GLOB.virtues[/datum/virtue/none]
+		to_chat(parent, span_warning("[selected.name] was deselected. It requires an Ascendant patron."))
+
+/datum/preferences/proc/can_join_with_patron_virtues()
+	var/list/ineligible_slots = get_ineligible_patron_virtue_slots()
+	if(!length(ineligible_slots))
+		return TRUE
+	for(var/slot in ineligible_slots)
+		var/datum/virtue/selected = vars[slot]
+		to_chat(parent, span_boldwarning("You can't join with [selected.name]. Remove it in Character Setup or choose an Ascendant patron."))
+	return FALSE
 
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
 	var/client/viewer = user?.client
