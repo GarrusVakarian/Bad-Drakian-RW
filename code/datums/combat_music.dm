@@ -401,6 +401,13 @@ GLOBAL_LIST_EMPTY(cmode_tracks_by_name)
 	credits = "T-87 SULFURHEAD - MANASURGE (https://www.youtube.com/@T87-Sulfurhead)"
 	musicpath = list('sound/music/cmode/nobility/combat_courtmage.ogg')
 
+/datum/combat_music/masquerade_violation
+	name = "Masquerade Violation"
+	desc = ""
+	shortname = "Masquerade"
+	credits = "T87-Sulfurhead - Masquerade Violation (https://www.youtube.com/@T87-Sulfurhead)"
+	musicpath = list('sound/music/cmode/antag/masquerade_violation.ogg')
+
 /datum/combat_music/monastic
 	name = "Monastic Zeal"
 	desc = ""
@@ -427,6 +434,13 @@ GLOBAL_LIST_EMPTY(cmode_tracks_by_name)
 	desc = ""
 	shortname = "Noble"
 	musicpath = list('sound/music/combat_noble.ogg')
+
+/datum/combat_music/open_season
+	name = "Open Season"
+	desc = ""
+	shortname = "Open Season"
+	credits = "T87-Sulfurhead - Open Season (https://www.youtube.com/@T87-Sulfurhead)"
+	musicpath = list('sound/music/cmode/antag/open_season.ogg')
 
 /datum/combat_music/ozium
 	name = "Ozium Abuse (loud!)"
