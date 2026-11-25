@@ -641,7 +641,8 @@
 			lol++
 			if(lol > length(intent_slots))
 				break
-			set_rogintent_slot(intent_slots[lol], intenty.icon_state, lol, 0.02, intenty.icon)
+			var/intent_icon_state = QDELETED(intenty.masteritem) ? intenty.icon_state : intenty.masteritem.get_intent_hud_icon_state(intenty)
+			set_rogintent_slot(intent_slots[lol], intent_icon_state, lol, 0.02, intenty.icon)
 		var/mob/living/owner = hud?.mymob
 		if(owner)
 			switch_intent(owner.r_index, owner.l_index, oactive)

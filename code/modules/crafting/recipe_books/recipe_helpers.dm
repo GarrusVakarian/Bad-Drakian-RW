@@ -279,6 +279,9 @@
 		      <strong>Requirements</strong>
 			  <br>"}
 
+	if(req_trait)
+		html += "Requires <b>[html_encode(req_trait)]</b><br>"
+
 	html += "[icon2html(req_bar, user)] Start with [initial(req_bar.name)] on an anvil.<br>"
 	html += "Hammer the material.<br>"
 	for(var/atom/path as anything in additional_items)

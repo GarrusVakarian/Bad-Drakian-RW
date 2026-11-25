@@ -108,6 +108,8 @@
 
 	/// Items explicitly placed inside the belt; uses the same path=count format.
 	var/list/belt_contents = null
+	/// Belt item types to skip when the character already carries an exact match.
+	var/list/unique_belt_contents
 
 	/// Internals box. Will be inserted at the start of backpack_contents
 	var/box
@@ -268,8 +270,17 @@
 //			backpack_contents.Insert(1, box)
 //			backpack_contents[box] = 1
 
+		var/list/carried_unique_items
+		if(length(unique_belt_contents))
+			carried_unique_items = list()
+			for(var/obj/item/carried in H.GetAllContents())
+				if(!QDELETED(carried) && (carried.type in unique_belt_contents))
+					carried_unique_items[carried.type] = TRUE
+
 		for(var/list/container_contents in list(belt_contents, backpack_contents))
 			for(var/path in container_contents)
+				if(container_contents == belt_contents && carried_unique_items?[path])
+					continue
 				var/number = container_contents[path]
 				if(!isnum(number))//Default to 1
 					number = 1

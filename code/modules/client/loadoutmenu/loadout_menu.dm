@@ -53,16 +53,6 @@
 
 /datum/loadout_menu/proc/get_item_category(item_path)
 	if(ispath(item_path, /obj/item/clothing))
-		var/obj/item/clothing/clothing = item_path
-		if( \
-			initial(clothing.armor_class) > ARMOR_CLASS_NONE || \
-			ispath(item_path, /obj/item/clothing/armor) || \
-			ispath(item_path, /obj/item/clothing/suit/roguetown/armor) || \
-			ispath(item_path, /obj/item/clothing/head/roguetown/helmet) || \
-			ispath(item_path, /obj/item/clothing/neck/roguetown/gorget) || \
-			ispath(item_path, /obj/item/clothing/suit/roguetown/shirt/freifechter) \
-		)
-			return "Armor"
 		if(ispath(item_path, /obj/item/clothing/cloak))
 			return "Cloaks"
 		if(ispath(item_path, /obj/item/clothing/mask/rogue/spectacles) || ispath(item_path, /obj/item/clothing/neck) || ispath(item_path, /obj/item/clothing/ring))
@@ -130,7 +120,7 @@
 	if(.)
 		return
 
-	if(!current_slot || current_slot < 1 || current_slot > 10) // taken from vices_menu.dm
+	if(!isnum(current_slot) || current_slot < 1 || current_slot > LOADOUT_SLOT_COUNT || current_slot != round(current_slot))
 		ui.close()
 		return
 
@@ -149,7 +139,7 @@
 				return TRUE
 			var/total_points = prefs.get_total_points()
 			var/spent_points = 0
-			for(var/slot = 1 to 10)
+			for(var/slot = 1 to LOADOUT_SLOT_COUNT)
 				if(slot == current_slot)
 					continue
 				var/datum/loadout_item/other_item = prefs.vars[slot == 1 ? "loadout" : "loadout[slot]"]

@@ -56,6 +56,9 @@
 			return "<span style='color: #ff00ff;'>Shitter</span>"
 		return "Normal"
 
+/proc/qualifies_for_pq_sapling(pq)
+	return isnum(pq) && pq <= 5
+
 /proc/adjust_playerquality(amt, key, admin, reason)
 	var/curpq = 0
 	var/json_file = file("data/player_saves/[copytext(key,1,2)]/[key]/pq_num.json")
@@ -69,6 +72,9 @@
 	json[key] = curpq
 	fdel(json_file)
 	WRITE_FILE(json_file, json_encode(json))
+	var/client/player = GLOB.directory[key]
+	if(player)
+		player.has_pq_sapling = qualifies_for_pq_sapling(curpq)
 
 	if(reason || admin)
 		var/thing = ""

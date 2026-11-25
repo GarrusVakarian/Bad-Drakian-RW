@@ -18,6 +18,10 @@
 /obj/item/organ/penis/Initialize(mapload)
 	. = ..()
 
+/// The gameplay effects apply only to an endowed owner with a Large pintle.
+/obj/item/organ/penis/proc/is_massive()
+	return penis_size == MAX_PENIS_SIZE && owner && HAS_TRAIT(owner, TRAIT_MASSIVE_PINTLE)
+
 /obj/item/organ/penis/proc/get_size_arousal_multiplier(mob/living/carbon/human/receiver)
 	if(penis_size != MIN_PENIS_SIZE)
 		return 1
@@ -261,6 +265,28 @@
 /obj/item/organ/breasts/New()
 	..()
 	milk_max = max(75, breast_size * 100)
+
+/obj/item/organ/breasts/proc/set_breast_size(size)
+	if(!is_valid_breast_size(size))
+		return FALSE
+	breast_size = size
+	milk_max = max(75, size * 100)
+	return TRUE
+
+/obj/item/organ/breasts/proc/step_breast_size(step)
+	var/size = breast_size + step
+	if(size > MAX_STANDARD_BREASTS_SIZE && size < MIN_OCHRE_BREASTS_SIZE)
+		size = step > 0 ? MIN_OCHRE_BREASTS_SIZE : MAX_STANDARD_BREASTS_SIZE
+	var/datum/sprite_accessory/breasts/style = SPRITE_ACCESSORY(accessory_type)
+	if(step > 0 && style && size > max(style.max_size, MAX_STANDARD_BREASTS_SIZE))
+		return FALSE
+	return set_breast_size(size)
+
+/obj/item/organ/breasts/imprint_organ_dna(datum/organ_dna/organ_dna)
+	..()
+	var/datum/organ_dna/breasts/breasts_dna = organ_dna
+	breasts_dna.breast_size = breast_size
+	breasts_dna.lactation_mode = lactates_on_impregnation ? LACTATION_AFTER_IMPREGNATION : (lactating ? LACTATION_ENABLED : LACTATION_DISABLED)
 
 /obj/item/organ/breasts/proc/get_milk_capacity()
 	var/mob/living/carbon/human/donor = owner

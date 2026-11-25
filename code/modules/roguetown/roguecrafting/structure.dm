@@ -288,7 +288,7 @@
 /datum/crafting_recipe/roguetown/structure/meathook
 	name = "meat hook"
 	result = /obj/structure/meathook
-	reqs = list(/obj/item/grown/log/tree = 2,
+	reqs = list(/obj/item/grown/log/tree/small = 2,
 				/obj/item/rope = 1)
 	skillcraft = /datum/skill/craft/crafting
 	craftdiff = 2

@@ -139,9 +139,14 @@
 
 /datum/intent/proc/examine(mob/user)
 	var/list/inspec = list("----------------------")
-	inspec += "<br><span class='notice'><b>[name]</b> intent</span>"
-	if(desc)
-		inspec += "\n[desc]"
+	var/display_name = name
+	var/display_description = desc
+	if(!QDELETED(masteritem))
+		display_name = masteritem.get_intent_display_name(src)
+		display_description = masteritem.get_intent_display_description(src)
+	inspec += "<br><span class='notice'><b>[display_name]</b> intent</span>"
+	if(display_description)
+		inspec += "\n[display_description]"
 	if(reach != 1)
 		inspec += "\n<b>Reach:</b> [reach] paces"
 	if(effective_range)
@@ -321,6 +326,9 @@
 	if(glow_color && glow_intensity)
 		mob_light = mastermob.mob_light(glow_color, glow_intensity, FLASH_LIGHT_SPELLGLOW)
 	if(mob_charge_effect)
+		var/list/indicator_offset = get_mob_indicator_offset(mastermob)
+		mob_charge_effect.pixel_x = initial(mob_charge_effect.pixel_x) + indicator_offset[1]
+		mob_charge_effect.pixel_y = initial(mob_charge_effect.pixel_y) + indicator_offset[2]
 		mastermob.vis_contents += mob_charge_effect
 
 /datum/intent/proc/on_mouse_up()

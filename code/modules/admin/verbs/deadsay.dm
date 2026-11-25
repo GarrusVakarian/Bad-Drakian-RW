@@ -4,21 +4,25 @@
 	hotkey_keys = list("U")
 	name = "DSAY"
 	full_name = "Dead Chat"
-	description = "Chat for ghosts."
+	description = "Chat for dead players."
 
 /datum/keybinding/dsay/down(client/user)
 	user.get_dead_say()
 	return TRUE
 
 
+/mob/proc/is_deadchat_participant()
+	return isobserver(src) || (isliving(src) && stat == DEAD)
+
 /client/proc/get_dead_say()
-	if (!isobserver(mob) && !holder)
-		to_chat(src, span_danger("I need to be a ghost to use dead-chat!"))
+	var/mob/speaker = mob
+	if(!holder && !speaker?.is_deadchat_participant())
+		to_chat(src, span_danger("I need to be dead to use deadchat!"))
 		return
 
 	var/msg = input(src, null, "dsay \"text\"") as text|null
 
-	if (isnull(msg))
+	if(isnull(msg) || QDELETED(speaker) || mob != speaker)
 		return
 
 	do_dsay(msg)
@@ -26,14 +30,15 @@
 
 /client/verb/dsay()
 	set name = "DSAY"
-	set desc = "Dead Chat. OOC chat visible only to ghosts."
+	set desc = "Dead Chat. OOC chat for dead players."
 	set category = "OOC"
 
 	get_dead_say()
 
 
 /client/proc/do_dsay(msg as text)
-	if(!mob)
+	var/mob/speaker = mob
+	if(QDELETED(speaker) || (!holder && !speaker.is_deadchat_participant()))
 		return
 
 	if(!holder)
@@ -52,6 +57,9 @@
 
 	if(is_banned_from(ckey, "Deadchat"))
 		to_chat(src, span_danger("I cannot use DSAY (perma muted)."))
+		return
+
+	if(QDELETED(speaker) || mob != speaker || (!holder && !speaker.is_deadchat_participant()))
 		return
 
 	if(handle_spam_prevention(msg, MUTE_DEADCHAT))
@@ -80,14 +88,18 @@
 	if(ckey in GLOB.anonymize)
 		player_name = "[adjectives] Spectator"
 
+	var/message_html = emoji_parse(msg)
 	for(var/mob/M in GLOB.player_list)
-		if(!(M.client.prefs.chat_toggles & CHAT_DSAY))
+		var/client/recipient = M.client
+		if(!recipient || !(recipient.prefs.chat_toggles & CHAT_DSAY))
+			continue
+		var/admin_recipient = (recipient in GLOB.admins)
+		if(!admin_recipient && !M.is_deadchat_participant())
 			continue
 
 		var/prefix = "DSAY: "
-		if(M.client in GLOB.admins)
+		if(admin_recipient)
 			prefix += "([mob.ckey]) <A href='?_src_=holder;[HrefToken()];adminplayeropts=[REF(mob)]]'>\[PP\]</font></a>"
 
-		var/rendered = span_gamedeadsay("<span class='prefix'>[prefix]</span> <span class='name'>[rank_name ? "([rank_name])" : ""][player_name]</span> [deadbarks], <span class='message'>\"[emoji_parse(msg)]\"</span>")
-		if(isobserver(M) || (M.client in GLOB.admins))
-			to_chat(M, rendered)
+		var/rendered = span_gamedeadsay("<span class='prefix'>[prefix]</span> <span class='name'>[rank_name ? "([rank_name])" : ""][player_name]</span> [deadbarks], <span class='message'>\"[message_html]\"</span>")
+		to_chat(recipient, rendered)

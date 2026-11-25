@@ -453,7 +453,7 @@ There are several things that need to be remembered:
 		var/atom/movable/screen/inventory/inv = hud_used.inv_slots[SLOT_GLOVES]
 		inv.update_icon()
 
-	if(!gloves && bloody_hands)
+	if(!gloves && bloody_hands && dna?.species?.id != "dragon")
 		var/mutable_appearance/bloody_overlay = mutable_appearance('icons/effects/blood.dmi', "bloodyhands", -GLOVES_LAYER)
 		if(get_num_arms(FALSE) < 2)
 			if(has_left_hand(FALSE))
@@ -1648,7 +1648,8 @@ There are several things that need to be remembered:
 
 	if(mouth)
 		if(!(SLOT_MOUTH in check_obscured_slots()))
-			overlays_standing[MOUTH_LAYER] = mouth.build_worn_icon(default_layer = MOUTH_LAYER, default_icon_file = 'icons/roguetown/clothing/onmob/mouth_items.dmi')
+			var/gag_state = istype(mouth, /obj/item/natural/cloth) ? "cloth" : null
+			overlays_standing[MOUTH_LAYER] = mouth.build_worn_icon(default_layer = MOUTH_LAYER, default_icon_file = 'icons/roguetown/clothing/onmob/mouth_items.dmi', override_state = gag_state)
 		update_hud_mouth(mouth)
 
 	var/mutable_appearance/mouth_overlay = overlays_standing[MOUTH_LAYER]

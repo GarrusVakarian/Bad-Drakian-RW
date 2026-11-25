@@ -5,6 +5,8 @@
 	Otherwise pretty standard.
 */
 /mob/living/carbon/UnarmedAttack(atom/A, proximity, params)
+	if(!can_perform_combat_action(A))
+		return
 
 	if(!has_active_hand()) //can't attack without a hand.
 		to_chat(src, span_warning("I lack working hands."))
@@ -174,6 +176,8 @@
 	user.offer_item(src, item_to_offer)
 
 /mob/living/MiddleClickOn(atom/A, params)
+	if(mmb_intent && !can_perform_combat_action(A))
+		return
 	..()
 	if(!mmb_intent)
 		if(!A.Adjacent(src))

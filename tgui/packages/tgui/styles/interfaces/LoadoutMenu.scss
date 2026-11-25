@@ -1,3 +1,9 @@
+.LoadoutMenu__category-rows {
+  display: inline-grid;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .LoadoutMenu__tabs {
   --tab-background: hsl(from var(--color-text) h s l / 0.16);
   --tab-color: var(--color-text);
@@ -12,6 +18,30 @@
     // Overlap adjacent borders so each seam is one pixel wide.
     margin-inline-end: -1px;
     margin-block-end: -1px;
+  }
+
+  .Tabs__Tab {
+    flex: 1 0 auto;
+
+    &:last-child {
+      box-sizing: border-box;
+      flex: 0 0 7.5em;
+    }
+  }
+
+  .LoadoutMenu__cost-toggle {
+    white-space: nowrap;
+
+    .Tab__text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    input {
+      margin: 0;
+    }
   }
 
   .Tab--selected {

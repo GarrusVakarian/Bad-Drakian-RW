@@ -289,6 +289,9 @@ Hotkey-Mode: (hotkey-mode must be on)
 		else
 			to_chat(src, "Headshot in chat Disabled")
 
+/client/proc/has_unread_changelog()
+	return GLOB.changelog_hash && prefs && prefs.lastchangelog != GLOB.changelog_hash
+
 /client/verb/changelog()
 	set name = "Changelog"
 	set category = "OOC"
@@ -296,8 +299,7 @@ Hotkey-Mode: (hotkey-mode must be on)
 	if(!GLOB.changelog_tgui)
 		GLOB.changelog_tgui = new /datum/changelog()
 
-	GLOB.changelog_tgui.ui_interact(mob)
-	if(prefs.lastchangelog != GLOB.changelog_hash)
+	if(GLOB.changelog_tgui.ui_interact(mob) && has_unread_changelog())
 		prefs.lastchangelog = GLOB.changelog_hash
 		prefs.save_preferences()
 		winset(src, "infobuttons.changelog", "font-style=;")

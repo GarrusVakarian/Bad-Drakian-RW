@@ -170,10 +170,7 @@
 					else
 						tmax = TRUE
 				if(breasts)
-					if(breasts.breast_size > MIN_BREASTS_SIZE )
-						breasts.breast_size--
-					else
-						bmax = TRUE
+					bmax = !breasts.step_breast_size(-1)
 				if(!penis && !testicles && !breasts) //nothing to change
 					arg = FALSE
 				if(!pmax && !tmax && !bmax) //nothing was able to change
@@ -199,10 +196,7 @@
 					else
 						tmax = TRUE
 				if(breasts)
-					if(breasts.breast_size < MAX_BREASTS_SIZE )
-						breasts.breast_size++
-					else
-						bmax = TRUE
+					bmax = !breasts.step_breast_size(1)
 				if(!penis && !testicles && !breasts) //nothing to change
 					arg = FALSE
 				if(!pmax && !tmax && !bmax) //nothing was able to change

@@ -1,4 +1,6 @@
 #define ACTION_BUTTON_DEFAULT_BACKGROUND "default"
+#define ACTION_BUTTON_REARRANGE_TINT "#96ff96"
+#define ACTION_BUTTON_DROP_TINT "#40ff40"
 
 /atom/movable/screen/movable/action_button
 	var/datum/action/linked_action
@@ -12,7 +14,7 @@
 	var/id
 	var/ordered = TRUE //If the button gets placed into the default bar
 	nomouseover = FALSE
-	var/rebinding = FALSE
+	var/atom/movable/screen/action_hotkey_label/hotkey_label
 
 	var/atom/movable/screen/maptext_holder/maptext_holder
 
@@ -23,6 +25,7 @@
 
 /atom/movable/screen/movable/action_button/Destroy()
 	QDEL_NULL(maptext_holder)
+	QDEL_NULL(hotkey_label)
 	return ..()
 
 /atom/movable/screen/movable/action_button/proc/can_use(mob/user)
@@ -34,53 +37,104 @@
 	else
 		return TRUE
 
-/atom/movable/screen/movable/action_button/MouseDrop(over_object)
-	if(!can_use(usr))
+/// The drag source and destination must both be current buttons belonging to the viewer.
+/atom/movable/screen/movable/action_button/proc/is_rearrange_button(mob/user)
+	return !QDELETED(user) && !QDELETED(src) && !QDELETED(linked_action) && linked_action.owner == user && linked_action.button == src
+
+/atom/movable/screen/movable/action_button/proc/update_action_drag_target(mob/user, atom/over_object)
+	var/datum/hud/hud = user?.hud_used
+	if(!hud?.action_buttons_rearranging || hud.mymob != user || hud.hud_shown != HUD_STYLE_STANDARD || !is_rearrange_button(user))
 		return
-	if((istype(over_object, /atom/movable/screen/movable/action_button) && !istype(over_object, /atom/movable/screen/movable/action_button/hide_toggle)))
-		if(locked)
-			to_chat(usr, span_warning("Action button \"[name]\" is locked, unlock it first."))
-			return
-		var/atom/movable/screen/movable/action_button/B = over_object
-		var/list/actions = usr.actions
-		actions.Swap(actions.Find(src.linked_action), actions.Find(B.linked_action))
-		moved = FALSE
-		ordered = TRUE
-		B.moved = FALSE
-		B.ordered = TRUE
-		usr.update_action_buttons()
+	var/atom/movable/screen/movable/action_button/target = over_object
+	if(!istype(target) || !target.screen_loc || target == src || !target.is_rearrange_button(user))
+		target = null
+	hud.set_action_drop_target(target)
+
+/atom/movable/screen/movable/action_button/MouseDrop(atom/over_object)
+	var/mob/user = usr
+	var/datum/hud/hud = user?.hud_used
+	if(!hud?.action_buttons_rearranging || hud.mymob != user || hud.hud_shown != HUD_STYLE_STANDARD || !is_rearrange_button(user))
+		return
+	hud.set_action_drop_target(null)
+	var/atom/movable/screen/movable/action_button/target = over_object
+	if(!istype(target) || !target.screen_loc)
+		return
+	if(swap_action_position(user, target))
+		user.update_action_buttons()
+
+/atom/movable/screen/movable/action_button/proc/swap_action_position(mob/user, atom/movable/screen/movable/action_button/target)
+	if(!target || target == src || !is_rearrange_button(user) || !target.is_rearrange_button(user))
+		return FALSE
+	var/list/current_actions = user.actions
+	var/from_index = current_actions.Find(linked_action)
+	var/to_index = current_actions.Find(target.linked_action)
+	if(!from_index || !to_index)
+		return FALSE
+	current_actions.Swap(from_index, to_index)
+	moved = FALSE
+	ordered = TRUE
+	target.moved = FALSE
+	target.ordered = TRUE
+	if(user.mind?.current == user)
+		user.mind.sync_spell_order_from_actions()
+	return TRUE
+
+/datum/hud/proc/set_action_drop_target(atom/movable/screen/movable/action_button/target)
+	var/atom/movable/screen/movable/action_button/previous = action_drop_target?.resolve()
+	if(previous == target)
+		return
+	action_drop_target = target ? WEAKREF(target) : null
+	previous?.linked_action?.UpdateButtonIcon(TRUE)
+	target?.linked_action?.UpdateButtonIcon(TRUE)
+
+/datum/hud/proc/toggle_action_rearranging(mob/user)
+	if(mymob != user || !user.client || action_buttons_hidden || hud_shown != HUD_STYLE_STANDARD)
+		return
+	action_buttons_rearranging = !action_buttons_rearranging
+	set_action_drop_target(null)
+	if(action_buttons_rearranging)
+		to_chat(user, span_notice("Drag one action button onto another to swap them. Ctrl-click again to finish."))
 	else
-		return ..()
+		to_chat(user, span_notice("Action button rearranging finished."))
+	user.update_action_buttons()
+
+/atom/movable/screen/movable/action_button/proc/rearrange_tint(datum/hud/hud)
+	return hud.action_drop_target?.resolve() == src ? ACTION_BUTTON_DROP_TINT : ACTION_BUTTON_REARRANGE_TINT
+
+/atom/movable/screen/movable/action_button/proc/set_hotkey_label(number)
+	if(!number)
+		if(hotkey_label)
+			hotkey_label.maptext = null
+		return
+	if(!hotkey_label)
+		hotkey_label = new(src)
+		vis_contents.Add(hotkey_label)
+	var/label = MAPTEXT("<span style='color:#ffe14d; -dm-text-outline:1 #000000; font-weight:bold;'>[number]</span>")
+	if(hotkey_label.maptext != label)
+		hotkey_label.maptext = label
+
+/atom/movable/screen/action_hotkey_label
+	layer = ABOVE_HUD_LAYER
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	maptext_x = 1
+	maptext_y = 20
+	maptext_width = 12
+	maptext_height = 11
 
 /atom/movable/screen/movable/action_button/Click(location,control,params)
 	if (!can_use(usr))
 		return
 
 	var/list/modifiers = params2list(params)
-	if(modifiers["middle"])
-		if(rebinding)		// No matter what I did it kept opening up two windows when I clicked one button so we're doing this instead
-			return TRUE		// THE PROC IS LOCKED
-		rebinding = TRUE 	// Lock the proc variable
-		var/new_slot = input(linked_action.owner, "Enter action slot number (1-9):", "Rebind Action", linked_action.slot) as num|null
-		if(new_slot && new_slot >= 1 && new_slot <= 9)
-			for(var/datum/action/A in linked_action.owner.actions)
-				if(A.slot == new_slot)
-					A.slot = 0
-			linked_action.slot = new_slot
-		rebinding = FALSE 	// Unlock the proc once we're done (I know it's not a proc)
-		return TRUE
 	if(modifiers["alt"])
-		if(locked)
-			to_chat(usr, span_warning("Action button \"[name]\" is locked, unlock it first."))
+		if(!usr.hud_used?.action_buttons_rearranging)
+			to_chat(usr, span_warning("Ctrl-click to rearrange action buttons first."))
 			return TRUE
-		moved = 0
-		usr.update_action_buttons() //redraw buttons that are no longer considered "moved"
+		moved = FALSE
+		usr.update_action_buttons()
 		return TRUE
 	if(modifiers["ctrl"])
-		locked = !locked
-		to_chat(usr, span_notice("Action button \"[name]\" [locked ? "" : "un"]locked."))
-		if(id && usr.client) //try to (un)remember position
-			usr.client.prefs.action_buttons_screen_locs["[name]_[id]"] = locked ? moved : null
+		usr.hud_used?.toggle_action_rearranging(usr)
 		return TRUE
 	if(modifiers["shift"])
 		var/datum/action/spell_action/SA = linked_action
@@ -88,7 +142,9 @@
 			SA.examine(usr)
 		else
 			examine_ui(usr)
-		to_chat(usr, "[span_medradio("Alt-click: Reset Position | Ctrl-click: Toggle lock | Middle-click: Rebind slot")]") // Yes I just stole the medical_radio color
+		to_chat(usr, "[span_medradio("Ctrl-click: Rearrange action buttons | Drag to swap buttons | Alt-click in rearrange mode: Reset position")]") // Yes I just stole the medical_radio color
+		return TRUE
+	if(usr.hud_used?.action_buttons_rearranging || modifiers["middle"] || !linked_action)
 		return TRUE
 	if(usr.next_click > world.time)
 		return
@@ -162,6 +218,9 @@
 		to_chat(usr, span_notice("Action button positions have been reset."))
 		return TRUE
 	usr.hud_used.action_buttons_hidden = !usr.hud_used.action_buttons_hidden
+	if(usr.hud_used.action_buttons_hidden)
+		usr.hud_used.action_buttons_rearranging = FALSE
+		usr.hud_used.set_action_drop_target(null)
 
 	hidden = usr.hud_used.action_buttons_hidden
 	if(hidden)
@@ -227,10 +286,12 @@
 		return
 
 	var/button_number = 0
+	var/hotkey_number = 0
 
 	if(hud_used.action_buttons_hidden)
 		for(var/datum/action/A in actions)
 			A.button.screen_loc = null
+			A.button.set_hotkey_label(null)
 			if(reload_screen)
 				client.screen += A.button
 	else
@@ -239,6 +300,8 @@
 			var/atom/movable/screen/movable/action_button/B = A.button
 			if(B.ordered)
 				button_number++
+			hotkey_number++
+			B.set_hotkey_label(hotkey_number <= 9 ? hotkey_number : null)
 			if(B.moved)
 				B.screen_loc = B.moved
 			else
@@ -305,3 +368,6 @@
 	color = color_cd
 
 #undef AB_MAX_COLUMNS
+
+#undef ACTION_BUTTON_REARRANGE_TINT
+#undef ACTION_BUTTON_DROP_TINT

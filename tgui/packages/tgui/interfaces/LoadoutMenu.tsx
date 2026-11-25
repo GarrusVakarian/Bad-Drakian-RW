@@ -4,24 +4,21 @@ import { Box, Button, Input, Section, Stack, Tabs } from 'tgui-core/components';
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
 
-const categories = [
-  'All',
-  'Armor',
-  'Clothing',
-  'Headwear',
-  'Cloaks',
-  'Accessories',
-  'Belts & Bags',
-  'Weapons',
-  'Tools',
-  'Books & Music',
-  'Toys',
-  'Personal Care',
-  'Misc',
-  'Point-Cost Items',
+const categoryRows = [
+  [
+    'All',
+    'Armor',
+    'Clothing',
+    'Headwear',
+    'Cloaks',
+    'Accessories',
+    'Belts & Bags',
+    'Weapons',
+  ],
+  ['Tools', 'Books & Music', 'Toys', 'Personal Care', 'Misc', 'Point-Cost Items'],
 ] as const;
 
-type Category = (typeof categories)[number];
+type Category = (typeof categoryRows)[number][number];
 
 type LoadoutItem = {
   name: string;
@@ -41,26 +38,34 @@ type Data = {
 
 export const LoadoutMenu = () => {
   const { act, data } = useBackend<Data>();
-  const [category, setCategory] = useState<Category>(categories[0]);
+  const [category, setCategory] = useState<Category>(categoryRows[0][0]);
   const [search, setSearch] = useState('');
+  const [pointCostOnly, setPointCostOnly] = useState(false);
   const query = search.trim().toLowerCase();
+  const activeCategory = query && !pointCostOnly ? 'All' : category;
 
   const availableItems = data.loadout_items
     .filter((item) => {
       if (!item.nobility_check || !item.donoritem) {
         return false;
       }
-      if (query) {
-        return (
-          item.name.toLowerCase().includes(query) ||
-          (item.triumph_cost || '').toLowerCase().includes(query)
-        );
+      if (
+        (pointCostOnly || activeCategory === 'Point-Cost Items') &&
+        item.point_cost <= 0
+      ) {
+        return false;
+      }
+      if (
+        activeCategory !== 'All' &&
+        activeCategory !== 'Point-Cost Items' &&
+        item.category !== activeCategory
+      ) {
+        return false;
       }
       return (
-        category === 'All' ||
-        (category === 'Point-Cost Items'
-          ? item.point_cost > 0
-          : item.category === category)
+        !query ||
+        item.name.toLowerCase().includes(query) ||
+        (item.triumph_cost || '').toLowerCase().includes(query)
       );
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -70,27 +75,49 @@ export const LoadoutMenu = () => {
       <Window.Content>
         <Stack vertical fill>
           <Stack.Item>
-            <Tabs className="LoadoutMenu__tabs">
-              {categories.map((tab) => (
-                <Tabs.Tab
-                  key={tab}
-                  selected={tab === (query ? 'All' : category)}
-                  onClick={() => {
-                    setCategory(tab);
-                    setSearch('');
-                  }}
-                >
-                  {tab}
-                </Tabs.Tab>
+            <div className="LoadoutMenu__category-rows">
+              {categoryRows.map((row) => (
+                <Tabs key={row[0]} className="LoadoutMenu__tabs">
+                  {row.map((tab) => (
+                    <Tabs.Tab
+                      key={tab}
+                      selected={tab === activeCategory}
+                      onClick={() => {
+                        setCategory(tab);
+                        setSearch('');
+                      }}
+                    >
+                      {tab}
+                    </Tabs.Tab>
+                  ))}
+                  {row === categoryRows[1] && (
+                    <label className="Tab Tabs__Tab LoadoutMenu__cost-toggle">
+                      <span className="Tab__text">
+                        <input
+                          type="checkbox"
+                          checked={pointCostOnly}
+                          onChange={(event) =>
+                            setPointCostOnly(event.currentTarget.checked)
+                          }
+                        />
+                        Cost only
+                      </span>
+                    </label>
+                  )}
+                </Tabs>
               ))}
-            </Tabs>
+            </div>
           </Stack.Item>
           <Stack.Item>
             <Stack align="center">
               <Stack.Item grow>
                 <Input
                   fluid
-                  placeholder="Search all items..."
+                  placeholder={
+                    pointCostOnly
+                      ? 'Search paid items in this category...'
+                      : 'Search all items...'
+                  }
                   value={search}
                   onChange={setSearch}
                 />
@@ -108,7 +135,8 @@ export const LoadoutMenu = () => {
           {query && (
             <Stack.Item>
               <Box color="label">
-                Searching all items ({availableItems.length})
+                Searching {pointCostOnly ? 'paid items' : 'all items'} (
+                {availableItems.length})
               </Box>
             </Stack.Item>
           )}

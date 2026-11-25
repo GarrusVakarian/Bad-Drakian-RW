@@ -7,6 +7,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/paid_amount = 0
 	var/remaining_duration = 0
 	var/escaped = FALSE
+	var/heretic_recognition = BOUNTY_RECOGNITION_NONE
 	var/obj/item/clothing/neck/roguetown/collar/prisoner/active_collar
 
 /datum/castifico_penance_record/Destroy()
@@ -16,14 +17,31 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	active_collar = null
 	return ..()
 
+/// Retain the public identification of the claimed crimes while their sentence is pending.
+/datum/castifico_penance_record/proc/archive_bounties(mob/living/subject, list/bounties)
+	if((subject.real_name in GLOB.excommunicated_players) || HAS_TRAIT(subject, TRAIT_EXCOMMUNICATED))
+		heretic_recognition = max(heretic_recognition, BOUNTY_RECOGNITION_FACE)
+	for(var/datum/bounty/claimed_bounty as anything in bounties)
+		crime_banners += claimed_bounty.banner
+		if(claimed_bounty.church_issued)
+			heretic_recognition = max(heretic_recognition, claimed_bounty.recognition)
+
+/proc/is_church_bounty_issuer(issuer)
+	return issuer == "The Grenzelhoftian Holy See" || issuer == "The Otavan Orthodoxy"
+
 /proc/get_incomplete_penance_listings()
 	var/list/entries = list()
 	for(var/subject_name in GLOB.castifico_penance_records)
 		var/datum/castifico_penance_record/record = GLOB.castifico_penance_records[subject_name]
 		if(!istype(record) || QDELETED(record))
 			continue
+		var/status = "PENANCE INCOMPLETE"
+		if(!QDELETED(record.active_collar))
+			status = "PENANCE ONGOING"
+		else if(record.escaped && record.heretic_recognition)
+			status = "ESCAPED HERETIC &mdash; PENANCE INCOMPLETE"
 		for(var/banner in record.crime_banners)
-			entries += "<b>REWARD CLAIMED &mdash; PENANCE INCOMPLETE</b><br>[banner]<br>"
+			entries += "<b>REWARD CLAIMED &mdash; [status]</b><br>[banner]<br>"
 	return jointext(entries, "")
 
 /mob/living/proc/get_castifico_penance_record()
@@ -73,6 +91,11 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/banner
 	///Is this a bandit bounty?
 	var/bandit
+	/// How much of the target description appears on the notice.
+	var/description_level = BOUNTY_DESCRIPTION_FULL
+	/// Whether an active bounty identifies its target on examine.
+	var/recognition = BOUNTY_RECOGNITION_NONE
+	var/church_issued = FALSE
 
 /obj/structure/roguemachine/bounty/attack_hand(mob/user)
 
@@ -267,28 +290,234 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 
 	message_admins("[ADMIN_LOOKUPFLW(user)] has set a bounty on [ADMIN_LOOKUPFLW(target)] with the reason of: '[reason]'")
 
-/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name)
+/// Character bounty presets store issuer keys so the Justiciary follows the current map.
+/proc/character_bounty_issuer(issuer)
+	switch(issuer)
+		if("justiciary")
+			var/realm = SSmapping?.map_adjustment?.realm_name
+			return realm ? "The Justiciary of [realm]" : "The local Justiciary"
+		if("holy_see")
+			return "The Grenzelhoftian Holy See"
+		if("orthodoxy")
+			return "The Otavan Orthodoxy"
+
+/proc/character_bounty_issuer_keys(profile)
+	if(profile == "Wanted vagabond")
+		return list("justiciary")
+	if(profile == "Bandit")
+		return list("justiciary", "holy_see")
+	return list("justiciary", "holy_see", "orthodoxy")
+
+/proc/choose_character_bounty_issuer(mob/user, profile)
+	var/list/choices = list()
+	for(var/issuer in character_bounty_issuer_keys(profile))
+		choices[character_bounty_issuer(issuer)] = issuer
+	var/prompt = "Who placed a bounty on you?\n\nThe Justiciary marks recognized characters OUTLAW! Church bounties mark them HERETIC!"
+	var/choice = input(user, prompt, "Bounty Poster") as null|anything in choices
+	return choices[choice]
+
+/proc/character_bounty_tiers(profile)
+	switch(profile)
+		if("Wretch")
+			return list("Misdeed", "Harm towards lyfe", "Horrific atrocities")
+		if("Bandit")
+			return list("Small Game", "Highwayman", "Realm Boogeyman")
+		if("Wanted vagabond", "Lawless")
+			return list("Meager", "Moderate", "Massive")
+	return list()
+
+/proc/character_bounty_reward_range(profile, tier)
+	var/list/tiers = character_bounty_tiers(profile)
+	var/index = tiers.Find(tier)
+	if(!index)
+		return null
+	var/static/list/large_rewards = list(list(100, 200), list(200, 300), list(300, 400))
+	var/static/list/wanted_rewards = list(list(51, 100), list(101, 150), list(150, 200))
+	var/static/list/lawless_rewards = list(list(50, 100), list(100, 150), list(150, 200))
+	switch(profile)
+		if("Wanted vagabond")
+			return wanted_rewards[index]
+		if("Lawless")
+			return lawless_rewards[index]
+	return large_rewards[index]
+
+/proc/roll_character_bounty_reward(profile, tier)
+	var/list/reward = character_bounty_reward_range(profile, tier)
+	return reward ? rand(reward[1], reward[2]) : null
+
+/// Show the same tier details in character setup, at spawn and in the classic input fallback.
+/proc/choose_character_bounty_tier(mob/user, profile)
+	if(!user.client)
+		return
+	var/list/tiers = character_bounty_tiers(profile)
+	var/prompt
+	var/title = "Bounty Amount"
+	var/list/descriptions
+	switch(profile)
+		if("Wanted vagabond")
+			prompt = "How ample is your bounty?"
+			title = "Blooded Gold"
+			descriptions = list(
+				"Bounty lists your name and build. No face recognition.",
+				"Bounty lists your name and build. Recognized only with face exposed.",
+				"Bounty lists a full description, including voice. Recognized only with face exposed.",
+			)
+		if("Lawless")
+			prompt = "How ample is your bounty?"
+			var/description = "Your visibility choice controls the description and whether you are recognized. Masks hide any examine alert."
+			descriptions = list(description, description, description)
+		else
+			prompt = profile == "Wretch" ? "How severe are your crimes?" : "How notorious are you?"
+			var/minor_recognition = profile == "Wretch" ? "Recognized only if body features are listed." : "Recognized only with face exposed."
+			descriptions = list(
+				"Bounty lists your name and build. You can opt to also list body features. [minor_recognition]",
+				"Bounty lists a full description, including voice. Recognized only with face exposed.",
+				"Bounty lists a full description, including voice. Recognized even while masked!",
+			)
+
+	var/list/details = list()
+	var/classic_input = !user.client.prefs.tgui_pref
+	for(var/i in 1 to length(tiers))
+		var/tier = tiers[i]
+		var/list/reward = character_bounty_reward_range(profile, tier)
+		var/reward_text = "[reward[1]]–[reward[2]] mammons"
+		if(classic_input)
+			prompt += "\n\n[tier] ([reward_text])\n[descriptions[i]]"
+		else
+			details[tier] = list("description" = descriptions[i], "cost" = reward_text)
+	return tgui_input_list(user, prompt, title, tiers, option_details = details, window_width = 620, window_height = 378)
+
+/// Ask whether the law has more than a name and overall build for a minor bounty.
+/proc/choose_bounty_description(mob/user, profile)
+	var/list/choices = list("They know only my name and overall build" = "build", "They know my body features and voice" = "full")
+	var/prompt = "What does the law know about your appearance and voice?"
+	if(profile == "Wretch")
+		prompt += "\n\nListing body features and voice also lets people recognize your exposed face."
+	else
+		prompt += "\n\nAn exposed face is recognizable with either listing."
+	var/choice = input(user, prompt, "Bounty Description") as null|anything in choices
+	return choices[choice]
+
+/proc/choose_lawless_bounty_visibility(mob/user)
+	var/list/choices = list("They know my face" = "face", "They know only my features" = "full", "They know only my name and overall build" = "build")
+	var/prompt = "Is your face known to the authorities?\n\nThey know my face: Full description, including voice. Recognized only with face exposed.\nThey know only my features: Full description, including voice. No face recognition.\nThey know only my name and overall build: No face recognition."
+	var/choice = input(user, prompt, "Visibility Status") as null|anything in choices
+	return choices[choice]
+
+/proc/prompt_bounty_preset(mob/user, profile, list/previous)
+	if(profile == "Bandit")
+		var/choice = tgui_input_list(user, "Do you want a bounty when you spawn as a Bandit?", "Bandit Bounty", list("Set bounty", "No bounty"))
+		if(choice == "No bounty")
+			return list("declined" = TRUE)
+		if(choice != "Set bounty" || !user.client)
+			return null
+
+	var/issuer = profile == "Wanted vagabond" ? "justiciary" : choose_character_bounty_issuer(user, profile)
+	if(!issuer || !user.client)
+		return null
+
+	var/visibility
+	if(profile == "Lawless")
+		visibility = choose_lawless_bounty_visibility(user)
+		if(!visibility || !user.client)
+			return null
+
+	var/tier = choose_character_bounty_tier(user, profile)
+	if(!tier || !user.client)
+		return null
+	if(tier == "Misdeed" || tier == "Small Game")
+		visibility = choose_bounty_description(user, profile)
+		if(!visibility || !user.client)
+			return null
+
+	var/old_crime = previous ? previous["crime"] : ""
+	var/crime = input(user, "What is your crime? Leave blank to use the default. The notice shows up to 200 characters.", "Crime", old_crime) as null|text
+	if(isnull(crime))
+		return null
+	return list("issuer" = issuer, "tier" = tier, "visibility" = visibility, "crime" = crime)
+
+GLOBAL_LIST_INIT(bounty_preset_labels, list(
+	"Wretch" = "Wretch",
+	"Lawless" = "Lawless vice",
+	"Wanted vagabond" = "Wanted vagabond",
+	"Bandit" = "Bandit",
+))
+
+/proc/bounty_preset_visibility(profile, visibility)
+	switch(visibility)
+		if("build")
+			return "Name and overall build only"
+		if("full")
+			return profile == "Lawless" ? "They know only my features" : "Body features and voice"
+		if("face")
+			return "They know my face"
+
+/// Validate each role separately so an invalid preset falls back to the spawn prompts.
+/proc/sanitize_character_bounty_presets(raw_presets)
+	var/list/result = list()
+	if(!islist(raw_presets))
+		return result
+	var/list/presets = raw_presets
+	for(var/profile in GLOB.bounty_preset_labels)
+		var/list/preset = presets[profile]
+		if(!islist(preset))
+			continue
+		if(profile == "Bandit" && preset["declined"] == TRUE)
+			result[profile] = list("declined" = TRUE)
+			continue
+		var/tier = preset["tier"]
+		var/issuer = preset["issuer"]
+		var/visibility = preset["visibility"]
+		if(!(tier in character_bounty_tiers(profile)) || !(issuer in character_bounty_issuer_keys(profile)))
+			continue
+		if(profile == "Lawless" && !(visibility in list("face", "full", "build")))
+			continue
+		if((tier == "Misdeed" || tier == "Small Game") && !(visibility in list("full", "build")))
+			continue
+		var/crime = preset["crime"]
+		result[profile] = list("tier" = tier, "issuer" = issuer, "visibility" = visibility, "crime" = istext(crime) ? copytext_char(crime, 1, 201) : null)
+	return result
+
+/mob/living/carbon/human/var/list/bounty_presets
+
+/// Record a character bounty, taking a snapshot of any publicly listed features.
+/proc/add_character_bounty(mob/living/carbon/human/target, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_FACE)
+	var/descriptor_height
+	var/descriptor_body
+	var/descriptor_voice
+	if(description_level == BOUNTY_DESCRIPTION_FULL)
+		var/list/descriptors = target.get_mob_descriptors()
+		descriptor_height = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
+		descriptor_body = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
+		descriptor_voice = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
+	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition, is_church_bounty_issuer(employer_name))
+
+/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE, church_issued = FALSE)
 	var/datum/bounty/new_bounty = new /datum/bounty
 	new_bounty.amount = amount
+	new_bounty.description_level = description_level
+	new_bounty.recognition = recognition
+	new_bounty.church_issued = church_issued
 	new_bounty.target = target_realname
 	new_bounty.bandit = bandit_status
 	new_bounty.reason = html_encode(reason)
 	new_bounty.employer = employer_name
-	new_bounty.target_race = race
-	new_bounty.target_height = LOWER_TEXT(descriptor_height)
-	new_bounty.target_body = LOWER_TEXT(descriptor_body)
-	if(descriptor_body == "Average" || descriptor_body == "Athletic")
-		var/bro_unreal = "an "
-		new_bounty.target_body_prefix = LOWER_TEXT(bro_unreal += descriptor_body)
-	else
-		var/bro_real = "a "
-		new_bounty.target_body_prefix = LOWER_TEXT(bro_real += descriptor_body)
-	if(descriptor_voice == "Ordinary" || descriptor_voice == "Androgynous")
-		var/bro_unreal = "an "
-		new_bounty.target_voice_prefix = LOWER_TEXT(bro_unreal += descriptor_voice)
-	else
-		var/bro_real = "a "
-		new_bounty.target_voice_prefix = LOWER_TEXT(bro_real += descriptor_voice)
+	if(description_level == BOUNTY_DESCRIPTION_FULL)
+		new_bounty.target_race = race
+		new_bounty.target_height = LOWER_TEXT(descriptor_height)
+		new_bounty.target_body = LOWER_TEXT(descriptor_body)
+		if(descriptor_body == "Average" || descriptor_body == "Athletic")
+			var/bro_unreal = "an "
+			new_bounty.target_body_prefix = LOWER_TEXT(bro_unreal += descriptor_body)
+		else
+			var/bro_real = "a "
+			new_bounty.target_body_prefix = LOWER_TEXT(bro_real += descriptor_body)
+		if(descriptor_voice == "Ordinary" || descriptor_voice == "Androgynous")
+			var/bro_unreal = "an "
+			new_bounty.target_voice_prefix = LOWER_TEXT(bro_unreal += descriptor_voice)
+		else
+			var/bro_real = "a "
+			new_bounty.target_voice_prefix = LOWER_TEXT(bro_real += descriptor_voice)
 	if(gender == MALE)
 		new_bounty.target_body_type = "masculine"
 	else
@@ -363,19 +592,32 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 ///Composes a random bounty banner based on the given bounty info.
 ///@param new_bounty:  The bounty datum.
 /proc/compose_bounty(datum/bounty/new_bounty)
+	var/short_description = "They are of a [new_bounty.target_body_type] build.<BR>"
 	switch(rand(1, 3))
 		if(1)
 			new_bounty.banner += "A dire bounty hangs upon the capture of [new_bounty.target], for '[new_bounty.reason]'.<BR>"
-			new_bounty.banner += "They are a criminal belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a criminal belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			else
+				new_bounty.banner += short_description
 			new_bounty.banner += "The patron, [new_bounty.employer], offers [new_bounty.amount] mammons for the task.<BR>"
 		if(2)
-			new_bounty.banner += "The capture of [new_bounty.target] is wanted for '[new_bounty.reason]''.<BR>"
-			new_bounty.banner += "They are a reprobate belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "The capture of [new_bounty.target] is wanted for '[new_bounty.reason]''.<BR>"
+			else
+				new_bounty.banner += "The capture of [new_bounty.target] is wanted for '[new_bounty.reason]'.<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a reprobate belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			else
+				new_bounty.banner += short_description
 			new_bounty.banner += "The employer, [new_bounty.employer], offers [new_bounty.amount] mammons for the deed.<BR>"
 		if(3)
 			new_bounty.banner += "[new_bounty.employer] hath offered to pay [new_bounty.amount] mammons for the capture of [new_bounty.target].<BR>"
 			new_bounty.banner += "By reason of the following: '[new_bounty.reason]'.<BR>"
-			new_bounty.banner += "They are a heathen belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			if(new_bounty.description_level == BOUNTY_DESCRIPTION_FULL)
+				new_bounty.banner += "They are a heathen belonging to the [new_bounty.target_race] race, going by the following description: they are [new_bounty.target_height], of a [new_bounty.target_body_type] build and they have [new_bounty.target_body_prefix] physique. They speak with [new_bounty.target_voice_prefix] voice.'.<BR>"
+			else
+				new_bounty.banner += short_description
 	new_bounty.banner += "--------------<BR>"
 
 /proc/compose_bounty_noface(datum/bounty/new_bounty_noface)
@@ -651,8 +893,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	if(!record)
 		record = new
 		record.subject_name = M.real_name
-	for(var/datum/bounty/claimed_bounty as anything in bounties)
-		record.crime_banners += claimed_bounty.banner
+	record.archive_bounties(M, bounties)
 	record.paid_amount += reward
 	record.remaining_duration = max(1, collar.sentence_end_time - world.time)
 	record.escaped = FALSE

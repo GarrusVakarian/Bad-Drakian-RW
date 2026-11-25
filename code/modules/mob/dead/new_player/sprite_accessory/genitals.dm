@@ -91,8 +91,8 @@
 					return "slit_2"
 
 	if(uses_size_sprites)
-		// Tiny shares sprites with small pintles, might add something later on
-		var/sprite_size = clamp(pp.penis_size, SMALL_PENIS_SIZE, DEFAULT_PENIS_SIZE)
+		// Tiny shares the Small sprite.
+		var/sprite_size = clamp(pp.penis_size, SMALL_PENIS_SIZE, MAX_PENIS_SIZE)
 		if(pp.erect_state == ERECT_STATE_HARD)
 			return "[icon_state]_2_[sprite_size]"
 		else
@@ -392,12 +392,15 @@
 	color_key_name = "Breasts"
 	relevant_layers = list(BODY_ADJ_LAYER, BODY_BEHIND_LAYER)
 	var/can_jiggle = FALSE
+	/// Largest size with artwork for this style.
+	var/max_size = 5
 
 /datum/sprite_accessory/breasts/get_icon_state(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	var/obj/item/organ/breasts/badonkers = organ
+	var/size = clamp(badonkers.breast_size, MIN_BREASTS_SIZE, max_size)
 	if(can_jiggle && owner && badonkers.is_jiggling)
-		return "[icon_state]_[badonkers.breast_size]_jiggle"
-	return "[icon_state]_[badonkers.breast_size]"
+		return "[icon_state]_[size]_jiggle"
+	return "[icon_state]_[size]"
 
 /datum/sprite_accessory/breasts/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
 	generic_gender_feature_adjust(appearance_list, organ, bodypart, owner, OFFSET_BREASTS, OFFSET_BREASTS_F)
@@ -408,6 +411,7 @@
 	return is_human_part_visible(owner, HIDEBOOB|HIDEJUMPSUIT)
 
 /datum/sprite_accessory/breasts/pair
+	max_size = MAX_STANDARD_BREASTS_SIZE
 	icon_state = "pair"
 	name = "Pair"
 	color_key_defaults = list(KEY_CHEST_COLOR)
@@ -426,6 +430,7 @@
 	can_jiggle = TRUE
 
 /datum/sprite_accessory/breasts/pecs
+	max_size = MAX_STANDARD_BREASTS_SIZE
 	icon_state = "pecs"
 	name = "Pecs"
 	color_key_defaults = list(KEY_CHEST_COLOR)
@@ -445,6 +450,30 @@
 	if(can_jiggle && owner && badonkers.is_jiggling)
 		return "[icon_state]_2_jiggle"
 	return "[icon_state]_2"
+
+// Caustic Cove / Ochre Valley artwork, CC BY-SA 3.0. States adapted to local layers.
+// https://github.com/Ochre-Valley/Ochre-Valley/commit/f52fa4941baee62614662e003c262ead5f42e9f0
+/datum/sprite_accessory/breasts/hyper
+	abstract_type = /datum/sprite_accessory/breasts/hyper
+	icon = 'icons/mob/sprite_accessory/genitals/breasts_hyper.dmi'
+	color_keys = 2
+	color_key_names = list("Breasts", "Nipples")
+	max_size = MAX_BREASTS_SIZE
+
+/datum/sprite_accessory/breasts/hyper/pair
+	name = "Pair (Hyper)"
+	icon_state = "pair"
+	color_key_defaults = list(KEY_CHEST_COLOR, KEY_CHEST_COLOR)
+
+/datum/sprite_accessory/breasts/hyper/quad
+	name = "Quad (Hyper)"
+	icon_state = "quad"
+	color_key_defaults = list(KEY_CHEST_COLOR, KEY_CHEST_COLOR)
+
+/datum/sprite_accessory/breasts/hyper/sextuple
+	name = "Sextuple (Hyper)"
+	icon_state = "sextuple"
+	color_key_defaults = list(KEY_CHEST_COLOR, KEY_CHEST_COLOR)
 
 /datum/sprite_accessory/vagina
 	/// Taur rendering reverses the selected sprite's north/south visibility.

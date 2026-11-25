@@ -6,6 +6,9 @@
 /obj/item/allow_attack_hand_drop(mob/user)
 	if(ishuman(user))
 		var/mob/living/carbon/human/C = user
+		if(C.mouth == src && istype(src, /obj/item/natural/cloth))
+			var/obj/item/natural/cloth/gag = src
+			return gag.wait_to_remove_mouth_gag(C, C)
 
 		if(!(src in C.held_items) && !allow_self_unequip)
 			to_chat(C, span_warning("I need help taking this off!"))
@@ -35,6 +38,12 @@
 
 	if(ishuman(usr))
 		var/mob/living/carbon/human/C = usr
+
+		if(C.mouth == src && istype(src, /obj/item/natural/cloth))
+			var/obj/item/natural/cloth/gag = src
+			if(gag.wait_to_remove_mouth_gag(C, C))
+				return ..()
+			return FALSE
 
 		if(!(src in C.held_items) && (!allow_self_unequip || HAS_TRAIT(C, TRAIT_CHUNKYFINGERS))) //Zombie fingers don't take things off.
 			to_chat(C, span_warning("I need help taking this off!"))

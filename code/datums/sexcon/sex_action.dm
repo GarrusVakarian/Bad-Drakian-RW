@@ -46,6 +46,15 @@
 	var/handles_target_climax = FALSE
 	/// Minimum arousal accepted by this action's completion handler.
 	var/climax_arousal_threshold = ACTIVE_EJAC_THRESHOLD
+	/// TRUE for acts that use both cocks of a double pintle. Only used for wording.
+	var/uses_both_cocks = FALSE
+
+/// TRUE if this action penetrates with the user's cock, or with the target's cock when cock_on_target is set.
+/datum/sex_action/proc/is_cock_penetration(cock_on_target = FALSE)
+	if(!(category & SEX_CATEGORY_PENETRATE))
+		return FALSE
+	var/cock_part = cock_on_target ? target_sex_part : user_sex_part
+	return (cock_part & SEX_PART_COCK) != 0
 
 /datum/sex_action/proc/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	if(solo)
@@ -60,7 +69,7 @@
 /datum/sex_action/proc/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
 	return
 
-/datum/sex_action/proc/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
+/datum/sex_action/proc/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target, datum/callback/still_active)
 	return
 
 /datum/sex_action/proc/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)

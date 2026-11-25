@@ -13,16 +13,35 @@ GLOBAL_LIST_INIT(named_ball_sizes, list(
 
 GLOBAL_LIST_INIT(named_breast_sizes, list(
 	"Flat" = 0,
-	"Slight" = 1,
+	"Very Small" = 1,
 	"Small" = 2,
-	"Moderate" = 3,
+	"Normal" = DEFAULT_BREASTS_SIZE,
 	"Large" = LARGE_BREASTS_SIZE,
-	"Generous" = 5,
-	"Heavy" = 6,
-	"Massive" = 7,
-	"Heaping" = 8,
-	"Obscene" = OBSCENE_BREASTS_SIZE
+	"Enormous" = 5,
+	"Towering" = 6,
+	"Huge" = 7,
+	"Gargantuan" = 8,
+	"Colossal" = OBSCENE_BREASTS_SIZE,
+	"Ungodly big" = 10,
+	"Gigantic" = 11,
+	"Titanic" = MAX_STANDARD_BREASTS_SIZE,
+	"Extra Baothan" = MIN_OCHRE_BREASTS_SIZE,
+	"Over-Baothan" = 18,
+	"Downright Incredible" = MAX_BREASTS_SIZE,
 ))
+
+/proc/is_valid_breast_size(size)
+	return isnum(size) && round(size) == size && ((size >= MIN_BREASTS_SIZE && size <= MAX_STANDARD_BREASTS_SIZE) || (size >= MIN_OCHRE_BREASTS_SIZE && size <= MAX_BREASTS_SIZE))
+
+/proc/get_breast_size_options(accessory_type)
+	var/datum/sprite_accessory/breasts/style = SPRITE_ACCESSORY(accessory_type)
+	var/max_size = style ? style.max_size : MAX_STANDARD_BREASTS_SIZE
+	var/list/options = list()
+	for(var/label in GLOB.named_breast_sizes)
+		var/size = GLOB.named_breast_sizes[label]
+		if(size <= max_size)
+			options[label] = size
+	return options
 
 GLOBAL_LIST_INIT(customizer_choices, build_customizer_choices())
 GLOBAL_LIST_INIT(customizers, build_customizers())

@@ -7,6 +7,14 @@
 	include_user = TRUE
 	range = -1
 	var/castdrain = FALSE // value for if you want a summonable weapon to cost stamina
+	/// Include the hand's intent descriptions when examining the spell button.
+	var/show_hand_intent_descriptions = FALSE
+
+/obj/effect/proc_holder/spell/targeted/touch/get_spell_statistics(mob/living/user)
+	. = ..()
+	if(show_hand_intent_descriptions)
+		var/obj/item/melee/touch_attack/hand_type = hand_path
+		. += replacetext(initial(hand_type.desc), "\n", "<br>")
 
 /obj/effect/proc_holder/spell/targeted/touch/Destroy()
 	remove_hand()

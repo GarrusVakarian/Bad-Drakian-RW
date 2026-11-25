@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBackend } from 'tgui/backend';
 import { Window } from 'tgui/layouts';
 import {
@@ -32,6 +32,7 @@ type ListInputData = {
   timeout: number;
   title: string;
   window_width?: number | null;
+  window_height?: number | null;
 };
 
 export const ListInputModal = (props) => {
@@ -48,12 +49,23 @@ export const ListInputModal = (props) => {
     enable_preview,
     previewing,
     window_width,
+    window_height,
   } = data;
   const hasDetails = Object.keys(option_details).length > 0;
   const expandedWindow = hasDetails || large_window;
-  const [selected, setSelected] = useState(items.indexOf(init_value));
+  const initialSelection = items.indexOf(init_value);
+  const [selected, setSelected] = useState(initialSelection);
   const [searchBarVisible, setSearchBarVisible] = useState(items.length > 9);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (initialSelection > 0) {
+      document
+        .getElementById(initialSelection.toString())
+        ?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [initialSelection]);
+
   // User presses up or down on keyboard
   // Simulates clicking an item
 
@@ -119,9 +131,31 @@ export const ListInputModal = (props) => {
   const filteredItems = items.filter((item) =>
     item?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-  // Dynamically changes the window height based on the message.
-  const windowHeight =
-    325 + Math.ceil(message.length / 3) + (large_buttons ? 5 : 0);
+  const windowWidth = window_width ?? (expandedWindow ? 900 : 325);
+  const messageHeight = Math.ceil(message.length / 3) + (large_buttons ? 5 : 0);
+  let windowHeight = 325 + messageHeight;
+  if (expandedWindow) {
+    // Reserve space for the title, controls, and the fixed-width option names.
+    const descriptionChars = Math.max(20, Math.floor((windowWidth - 240) / 7));
+    windowHeight = 120 + messageHeight;
+    for (const item of items) {
+      if (hasDetails) {
+        const description = option_details[item]?.description || '';
+        const lines = description
+          .split('\n')
+          .reduce(
+            (total, line) =>
+              total + Math.max(1, Math.ceil(line.length / descriptionChars)),
+            0,
+          );
+        windowHeight += Math.max(48, 16 + 20 * lines);
+      } else {
+        windowHeight += 28;
+      }
+      if (windowHeight >= 900) break;
+    }
+    windowHeight = Math.min(900, Math.max(275, windowHeight));
+  }
   // Grabs the cursor when no search bar is visible.
   if (!searchBarVisible) {
     setTimeout(() => document!.getElementById(selected.toString())?.focus(), 1);
@@ -150,8 +184,8 @@ export const ListInputModal = (props) => {
   return (
     <Window
       title={title}
-      width={window_width ?? (expandedWindow ? 900 : 325)}
-      height={expandedWindow ? 900 : windowHeight}
+      width={windowWidth}
+      height={window_height ?? windowHeight}
     >
       {timeout && <Loader value={timeout} />}
       <Window.Content

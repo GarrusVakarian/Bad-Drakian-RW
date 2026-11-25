@@ -15,6 +15,10 @@
 	item_flags = DROPDEL
 	repair_time = 30 SECONDS
 	combat_taggable = TRUE
+	repairmsg_begin = "My scales begin to slowly mend their damage.."
+	repairmsg_continue = "My scales mend some of their damage.."
+	repairmsg_stop = "My scales stop mending from the onslaught!"
+	repairmsg_end = "My scales are whole once more!"
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/skin/dragon_armor/Initialize(mapload)
 	. = ..()

@@ -166,6 +166,18 @@
 #define MAX_PENIS_SIZE 3
 #define DEFAULT_PENIS_SIZE 2
 
+// Gameplay effects of Endowed by Baotha and the Gnoll species trait.
+#define MASSIVE_PENIS_PAIN_MULTIPLIER 1.2
+#define MASSIVE_PENIS_DESCRIPTOR_COLOR "#d61a43"
+/// Percent chance that starting a penetration act with a massive pintle fails because it won't fit.
+#define MASSIVE_PENIS_INSERT_FAIL_CHANCE 20
+/// Percent chance per thrust that the receiver gets an overwhelmed line (low/mid force).
+#define MASSIVE_PENIS_LINE_CHANCE 10
+/// Percent chance per thrust that the receiver gets a panic line (high force and above).
+#define MASSIVE_PENIS_PANIC_LINE_CHANCE 20
+/// Extra cum bursts a massive pintle adds on orgasm.
+#define MASSIVE_PENIS_EXTRA_LOAD_BURSTS 1
+
 #define PENIS_TYPE_PLAIN 1
 #define PENIS_TYPE_KNOTTED 2
 #define PENIS_TYPE_EQUINE 3
@@ -191,7 +203,9 @@
 #define DEFAULT_TESTICLES_SIZE 2
 
 #define MIN_BREASTS_SIZE 0
-#define MAX_BREASTS_SIZE 12
+#define MAX_STANDARD_BREASTS_SIZE 12
+#define MIN_OCHRE_BREASTS_SIZE 17
+#define MAX_BREASTS_SIZE 19
 #define DEFAULT_BREASTS_SIZE 3
 #define LARGE_BREASTS_SIZE 4
 #define OBSCENE_BREASTS_SIZE 9

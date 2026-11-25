@@ -28,8 +28,6 @@
 	var/owner_has_control = TRUE
 	/// This can be the same as "target" but is not ALWAYS the same - this is set and unset with Grant() and Remove()
 	var/mob/owner
-	/// Spell slot number for quick keybinding (1-9)
-	var/slot = 0
 
 /datum/action/New(Target)
 	link_to(Target)
@@ -146,6 +144,9 @@
 
 			ApplyIcon(button, force)
 
+		if(owner?.hud_used?.action_buttons_rearranging)
+			button.color = button.rearrange_tint(owner.hud_used)
+			return TRUE
 		if(!IsAvailable())
 			button.color = transparent_when_unavailable ? rgb(128,0,0,128) : rgb(128,0,0)
 		else

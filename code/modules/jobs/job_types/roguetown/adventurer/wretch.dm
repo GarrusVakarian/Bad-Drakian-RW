@@ -45,6 +45,7 @@
 		/datum/advclass/wretch/outlaw,
 		/datum/advclass/wretch/outlaw/marauder,
 		/datum/advclass/wretch/buccaneer,
+		/datum/advclass/wretch/wildwitch,
 		/datum/advclass/wretch/lunacyembracer,
 		/datum/advclass/wretch/poacher,
 		/datum/advclass/wretch/plaguebearer,
@@ -69,37 +70,39 @@
 
 // Proc for wretch to select a bounty
 /proc/wretch_select_bounty(mob/living/carbon/human/H)
-	var/bounty_poster = input(H, "Who placed a bounty on you?", "Bounty Poster") as anything in list("The Justiciary of [SSmapping.map_adjustment.realm_name]", "The Grenzelhoftian Holy See", "The Otavan Orthodoxy")
-	// Felinid said we should gate it at 100 or so on at the lowest, so that wretch cannot ezmode it.
-	var/bounty_severity = input(H, "How severe are your crimes?", "Bounty Amount") as anything in list("Misdeed", "Harm towards lyfe (+1 FOR)", "Horrific atrocities (+1 ALL STATS)")
-	var/race = H.dna.species
-	var/gender = H.gender
-	var/list/d_list = H.get_mob_descriptors()
-	var/descriptor_height = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
-	var/descriptor_body = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
-	var/descriptor_voice = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
-	var/bounty_total = rand(100, 400) // Just in case
-	switch(bounty_severity)
-		if("Misdeed")
-			bounty_total = rand(100, 200)
-		if("Harm towards lyfe (+1 FOR)")
-			bounty_total = rand(200, 300)
-			H.change_stat("fortune", 1)
-		if("Horrific atrocities (+1 ALL STATS)")
-			bounty_total = rand(300, 400) // Let's not make it TOO profitable
-			H.change_stat("strength", 1)
-			H.change_stat("perception", 1)
-			H.change_stat("intelligence", 1)
-			H.change_stat("constitution", 1)
-			H.change_stat("willpower", 1)
-			H.change_stat("speed", 1)
-			H.change_stat("fortune", 1)
-			if(bounty_poster == "The Justiciary of [SSmapping.map_adjustment.realm_name]")
-				GLOB.outlawed_players += H.real_name
-			else
-				GLOB.excommunicated_players += H.real_name
-	var/my_crime = input(H, "What is your crime?", "Crime") as text|null
-	if (!my_crime)
+	if(QDELETED(H) || !H.client)
+		return
+	var/list/preset = H.bounty_presets?["Wretch"]
+	var/justiciary = character_bounty_issuer("justiciary")
+	var/issuer = preset ? preset["issuer"] : choose_character_bounty_issuer(H, "Wretch")
+	var/bounty_poster = character_bounty_issuer(issuer)
+	if(QDELETED(H) || !H.client || !bounty_poster)
+		return
+	var/bounty_severity = preset ? preset["tier"] : choose_character_bounty_tier(H, "Wretch")
+	var/bounty_total = roll_character_bounty_reward("Wretch", bounty_severity)
+	if(!bounty_total || QDELETED(H) || !H.client)
+		return
+	var/description_level = BOUNTY_DESCRIPTION_FULL
+	var/recognition = BOUNTY_RECOGNITION_FACE
+	if(bounty_severity == "Misdeed")
+		var/visibility = preset ? preset["visibility"] : choose_bounty_description(H, "Wretch")
+		if(visibility != "full")
+			description_level = BOUNTY_DESCRIPTION_BUILD
+			recognition = BOUNTY_RECOGNITION_NONE
+	else if(bounty_severity == "Horrific atrocities")
+		recognition = BOUNTY_RECOGNITION_ALWAYS
+	if(QDELETED(H) || !H.client)
+		return
+	var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null
+	if(QDELETED(H))
+		return
+	if(!my_crime)
 		my_crime = "crimes against the Crown"
-	add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, bounty_poster)
+	// Keep the existing legal or religious consequences of the highest tier.
+	if(bounty_severity == "Horrific atrocities")
+		if(bounty_poster == justiciary)
+			GLOB.outlawed_players |= H.real_name
+		else
+			GLOB.excommunicated_players |= H.real_name
+	add_character_bounty(H, bounty_total, FALSE, my_crime, bounty_poster, description_level, recognition)
 	H.playsound_local(get_turf(H), 'sound/music/traitor.ogg', 60, FALSE, pressure_affected = FALSE)

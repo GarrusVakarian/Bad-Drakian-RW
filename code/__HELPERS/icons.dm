@@ -712,7 +712,8 @@ world
 /// appearance system (overlays/underlays, etc.) is not available.
 ///
 /// Only the first argument is required.
-/proc/getFlatIcon(image/appearance, defdir, deficon, defstate, defblend, start = TRUE, no_anim = FALSE)
+/// Private off-map previews may pass a proc path to yield between layers.
+/proc/getFlatIcon(image/appearance, defdir, deficon, defstate, defblend, start = TRUE, no_anim = FALSE, between_layers, fit_canvas = FALSE)
 	// Loop through the underlays, then overlays, sorting them into the layers list
 	#define PROCESS_OVERLAYS_OR_UNDERLAYS(flat, process, base_layer) \
 		for (var/i in 1 to process.len) { \
@@ -825,12 +826,14 @@ world
 		for(var/image/layer_image as anything in layers)
 			if(layer_image.alpha == 0)
 				continue
+			if(between_layers)
+				call(between_layers)()
 
 			if(layer_image == copy) // 'layer_image' is an /image based on the object being flattened.
 				curblend = BLEND_OVERLAY
 				add = icon(layer_image.icon, layer_image.icon_state, base_icon_dir)
 			else // 'I' is an appearance object.
-				add = getFlatIcon(image(layer_image), curdir, curicon, curstate, curblend, FALSE, no_anim)
+				add = getFlatIcon(image(layer_image), curdir, curicon, curstate, curblend, FALSE, no_anim, between_layers, fit_canvas)
 			if(!add)
 				continue
 
@@ -840,12 +843,14 @@ world
 			addY1 = min(flatY1, layer_image.pixel_y + 1)
 			addY2 = max(flatY2, layer_image.pixel_y + add.Height())
 
-			if (
+			// Opt-in previews include overhangs on any edge of the canvas.
+			var/fit_changed_bounds = fit_canvas && (addX1 != flatX1 || addX2 != flatX2 || addY1 != flatY1 || addY2 != flatY2)
+			if (fit_changed_bounds || (
 				addX1 != flatX1 \
 				&& addX2 != flatX2 \
 				&& addY1 != flatY1 \
 				&& addY2 != flatY2 \
-			)
+			))
 				// Resize the flattened icon so the new icon fits
 				flat.Crop(
 					addX1 - flatX1 + 1,
@@ -855,8 +860,8 @@ world
 				)
 
 				flatX1 = addX1
-				flatX2 = addY1
-				flatY1 = addX2
+				flatX2 = fit_canvas ? addX2 : addY1
+				flatY1 = fit_canvas ? addY1 : addX2
 				flatY2 = addY2
 
 			// Blend the overlay into the flattened icon
@@ -872,6 +877,8 @@ world
 			flat.Blend(rgb(255, 255, 255, appearance.alpha), ICON_MULTIPLY)
 
 		if(no_anim)
+			if(fit_canvas)
+				return icon(flat, frame = 1)
 			//Clean up repeated frames
 			var/icon/cleaned = new /icon()
 			cleaned.Insert(flat, "", SOUTH, 1, 0)

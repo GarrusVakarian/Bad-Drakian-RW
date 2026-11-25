@@ -15,6 +15,8 @@
  *afterattack. The return value does not matter.
  */
 /obj/item/proc/melee_attack_chain(mob/user, atom/target, params)
+	if((force || isliving(target)) && !user.can_perform_combat_action(target))
+		return
 	if(user.check_arm_grabbed(user.active_hand_index))
 		to_chat(user, span_notice("I can't move my arm!"))
 		return
@@ -100,6 +102,8 @@
 #define ATTACK_OVERRIDE_NODEFENSE 2
 
 /obj/item/proc/attack(mob/living/M, mob/living/user)
+	if(!user.can_perform_combat_action(M))
+		return FALSE
 	var/override_status
 	//Item signal for override
 	if(SEND_SIGNAL(src, COMSIG_ITEM_ATTACK, M, user) & COMPONENT_ITEM_NO_ATTACK)

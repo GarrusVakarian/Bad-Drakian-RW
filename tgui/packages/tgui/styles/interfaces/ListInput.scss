@@ -14,6 +14,11 @@
   font-size: 1rem;
 }
 
+.ListInput__Section .Button.Button--color--transparent.Button--selected {
+  background-color: var(--button-background-selected, #526579);
+  box-shadow: inset 3px 0 var(--color-text, #fff);
+}
+
 .ListInput__Loader {
   position: relative;
   width: 100%;

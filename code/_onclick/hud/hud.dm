@@ -114,6 +114,8 @@ GLOBAL_LIST_INIT(available_ui_styles, sortList(list(
 
 	var/atom/movable/screen/movable/action_button/hide_toggle/hide_actions_toggle
 	var/action_buttons_hidden = FALSE
+	var/action_buttons_rearranging = FALSE
+	var/datum/weakref/action_drop_target
 
 	var/atom/movable/screen/healths
 	var/atom/movable/screen/bloods

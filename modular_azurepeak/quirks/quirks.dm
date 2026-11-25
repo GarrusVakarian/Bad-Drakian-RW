@@ -52,7 +52,7 @@
 	var/milk_production_size = LARGE_BREASTS_SIZE
 
 /proc/sanitize_milk_production_size(size)
-	if(!isnum(size) || size < MIN_BREASTS_SIZE || size > MAX_BREASTS_SIZE || round(size) != size)
+	if(!is_valid_breast_size(size))
 		return LARGE_BREASTS_SIZE
 	return size
 

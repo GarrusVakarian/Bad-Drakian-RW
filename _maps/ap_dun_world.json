@@ -1,0 +1,18 @@
+{
+	"map_name": "AP Dun World",
+	"map_path": "map_files/ap_dun_world",
+	"map_file": "ap_dun_world.dmm",
+	"traits": [{"Name": "AP Dun World", "Up": true}, {"Up": true, "Down": true}, {"Up": true, "Down": true}, {"Down": true}],
+	"other_z": [
+		"_maps/map_files/otherz/lichlair.json",
+		"_maps/map_files/ap_dun_world/ap_wretch_coast.json"
+	],
+	"space_empty_levels": 0,
+	"space_ruin_levels": 0,
+	"shuttles": {
+		"cargo": "cargo_rogue",
+		"ferry": "ferry_base",
+		"whiteship": "whiteship_box",
+		"emergency": "emergency_rogue"
+	}
+}

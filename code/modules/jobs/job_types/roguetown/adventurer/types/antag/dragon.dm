@@ -3,8 +3,8 @@
 	flag = DRAGON
 	antag_job = TRUE
 	faction = "Station"
-	total_positions = 0
-	spawn_positions = 0
+	total_positions = 1
+	spawn_positions = 1
 	allowed_races = null
 	tutorial = "You are an ancient dragon, guarding a hoard of treasure. Strike deals with mortals, protect your territory, and secure a future for your brood."
 	outfit = null
@@ -124,6 +124,7 @@
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/appraise/secular)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/message)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/claws/dragon)
+		H.AddSpell(new /obj/effect/proc_holder/spell/self/dragon_flight)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/spitfire)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball)
 		H.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball/greater)

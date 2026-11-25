@@ -294,6 +294,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8,
 		"loadout9" = loadout9,
 		"loadout10" = loadout10,
+		"loadout11" = loadout11,
+		"loadout12" = loadout12,
 		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
@@ -305,6 +307,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_name" = loadout_8_name,
 		"loadout_9_name" = loadout_9_name,
 		"loadout_10_name" = loadout_10_name,
+		"loadout_11_name" = loadout_11_name,
+		"loadout_12_name" = loadout_12_name,
 		"loadout_1_desc" = loadout_1_desc,
 		"loadout_2_desc" = loadout_2_desc,
 		"loadout_3_desc" = loadout_3_desc,
@@ -315,6 +319,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_desc" = loadout_8_desc,
 		"loadout_9_desc" = loadout_9_desc,
 		"loadout_10_desc" = loadout_10_desc,
+		"loadout_11_desc" = loadout_11_desc,
+		"loadout_12_desc" = loadout_12_desc,
 		"loadout_1_hex" = loadout_1_hex,
 		"loadout_2_hex" = loadout_2_hex,
 		"loadout_3_hex" = loadout_3_hex,
@@ -325,6 +331,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_hex" = loadout_8_hex,
 		"loadout_9_hex" = loadout_9_hex,
 		"loadout_10_hex" = loadout_10_hex,
+		"loadout_11_hex" = loadout_11_hex,
+		"loadout_12_hex" = loadout_12_hex,
 		"extra_language" = extra_language,
 		"extra_language_1" = extra_language_1,
 		"extra_language_2" = extra_language_2
@@ -379,6 +387,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout8 = snapshot["loadout8"]
 	loadout9 = snapshot["loadout9"]
 	loadout10 = snapshot["loadout10"]
+	loadout11 = snapshot["loadout11"]
+	loadout12 = snapshot["loadout12"]
 	loadout_markdown_fields = normalize_loadout_markdown_fields(snapshot["loadout_markdown_fields"])
 	loadout_1_name = snapshot["loadout_1_name"]
 	loadout_2_name = snapshot["loadout_2_name"]
@@ -390,6 +400,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_name = snapshot["loadout_8_name"]
 	loadout_9_name = snapshot["loadout_9_name"]
 	loadout_10_name = snapshot["loadout_10_name"]
+	loadout_11_name = snapshot["loadout_11_name"]
+	loadout_12_name = snapshot["loadout_12_name"]
 	loadout_1_desc = snapshot["loadout_1_desc"]
 	loadout_2_desc = snapshot["loadout_2_desc"]
 	loadout_3_desc = snapshot["loadout_3_desc"]
@@ -400,6 +412,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_desc = snapshot["loadout_8_desc"]
 	loadout_9_desc = snapshot["loadout_9_desc"]
 	loadout_10_desc = snapshot["loadout_10_desc"]
+	loadout_11_desc = snapshot["loadout_11_desc"]
+	loadout_12_desc = snapshot["loadout_12_desc"]
 	loadout_1_hex = snapshot["loadout_1_hex"]
 	loadout_2_hex = snapshot["loadout_2_hex"]
 	loadout_3_hex = snapshot["loadout_3_hex"]
@@ -410,6 +424,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_hex = snapshot["loadout_8_hex"]
 	loadout_9_hex = snapshot["loadout_9_hex"]
 	loadout_10_hex = snapshot["loadout_10_hex"]
+	loadout_11_hex = snapshot["loadout_11_hex"]
+	loadout_12_hex = snapshot["loadout_12_hex"]
 	extra_language = snapshot["extra_language"]
 	extra_language_1 = snapshot["extra_language_1"]
 	extra_language_2 = snapshot["extra_language_2"]
@@ -457,6 +473,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout8" = loadout8?.type,
 		"loadout9" = loadout9?.type,
 		"loadout10" = loadout10?.type,
+		"loadout11" = loadout11?.type,
+		"loadout12" = loadout12?.type,
 		"loadout_markdown_fields" = normalize_loadout_markdown_fields(loadout_markdown_fields),
 		"loadout_1_name" = loadout_1_name,
 		"loadout_2_name" = loadout_2_name,
@@ -468,6 +486,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_name" = loadout_8_name,
 		"loadout_9_name" = loadout_9_name,
 		"loadout_10_name" = loadout_10_name,
+		"loadout_11_name" = loadout_11_name,
+		"loadout_12_name" = loadout_12_name,
 		"loadout_1_desc" = loadout_1_desc,
 		"loadout_2_desc" = loadout_2_desc,
 		"loadout_3_desc" = loadout_3_desc,
@@ -478,6 +498,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_desc" = loadout_8_desc,
 		"loadout_9_desc" = loadout_9_desc,
 		"loadout_10_desc" = loadout_10_desc,
+		"loadout_11_desc" = loadout_11_desc,
+		"loadout_12_desc" = loadout_12_desc,
 		"loadout_1_hex" = loadout_1_hex,
 		"loadout_2_hex" = loadout_2_hex,
 		"loadout_3_hex" = loadout_3_hex,
@@ -488,6 +510,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		"loadout_8_hex" = loadout_8_hex,
 		"loadout_9_hex" = loadout_9_hex,
 		"loadout_10_hex" = loadout_10_hex,
+		"loadout_11_hex" = loadout_11_hex,
+		"loadout_12_hex" = loadout_12_hex,
 		"extra_language" = extra_language,
 		"extra_language_1" = extra_language_1,
 		"extra_language_2" = extra_language_2
@@ -649,11 +673,14 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		loadout9 = null
 	
 	var/loadout_type10 = string_to_typepath(preset["loadout10"])
-	if(loadout_type10 && ispath(loadout_type10, /datum/loadout_item))
-		loadout10 = new loadout_type10()
-	else
-		loadout10 = null
-	
+	loadout10 = ispath(loadout_type10, /datum/loadout_item) ? new loadout_type10() : null
+
+	var/loadout_type11 = string_to_typepath(preset["loadout11"])
+	loadout11 = ispath(loadout_type11, /datum/loadout_item) ? new loadout_type11() : null
+
+	var/loadout_type12 = string_to_typepath(preset["loadout12"])
+	loadout12 = ispath(loadout_type12, /datum/loadout_item) ? new loadout_type12() : null
+
 	// Always restore all string values from preset (including null/empty values)
 	loadout_markdown_fields = normalize_loadout_markdown_fields(preset["loadout_markdown_fields"])
 	loadout_1_name = preset["loadout_1_name"]
@@ -666,6 +693,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_name = preset["loadout_8_name"]
 	loadout_9_name = preset["loadout_9_name"]
 	loadout_10_name = preset["loadout_10_name"]
+	loadout_11_name = preset["loadout_11_name"]
+	loadout_12_name = preset["loadout_12_name"]
 	
 	loadout_1_desc = preset["loadout_1_desc"]
 	loadout_2_desc = preset["loadout_2_desc"]
@@ -677,6 +706,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_desc = preset["loadout_8_desc"]
 	loadout_9_desc = preset["loadout_9_desc"]
 	loadout_10_desc = preset["loadout_10_desc"]
+	loadout_11_desc = preset["loadout_11_desc"]
+	loadout_12_desc = preset["loadout_12_desc"]
 	
 	loadout_1_hex = preset["loadout_1_hex"]
 	loadout_2_hex = preset["loadout_2_hex"]
@@ -688,6 +719,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	loadout_8_hex = preset["loadout_8_hex"]
 	loadout_9_hex = preset["loadout_9_hex"]
 	loadout_10_hex = preset["loadout_10_hex"]
+	loadout_11_hex = preset["loadout_11_hex"]
+	loadout_12_hex = preset["loadout_12_hex"]
 	
 	// JSON turns type paths into strings; restore and validate every language slot.
 	for(var/language_slot in list("extra_language", "extra_language_1", "extra_language_2"))
@@ -756,7 +789,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	
 	// Count loadout items
 	var/loadout_count = 0
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/loadout_var = i == 1 ? "loadout" : "loadout[i]"
 		var/loadout_path = string_to_typepath(preset[loadout_var])
 		if(ispath(loadout_path, /datum/loadout_item))
@@ -989,6 +1022,11 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				display: flex;
 				flex-wrap: wrap;
 				gap: 3px;
+			}
+			.loadout-actions .btn {
+				padding: 3px 4px;
+				margin: 0;
+				white-space: nowrap;
 			}
 			.statpack-section {
 				background: [theme["button_hover"]];
@@ -1424,7 +1462,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	// Calculate point costs for loadout
 	var/total_points = get_total_points()
 	var/loadout_spent = 0
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/datum/loadout_item/loadout_slot = vars[i == 1 ? "loadout" : "loadout[i]"]
 		if(loadout_slot && loadout_slot.triumph_cost)
 			loadout_spent += loadout_slot.triumph_cost
@@ -1442,9 +1480,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				<div style='background: rgba(123, 83, 83, 0.2); border: 1px solid [theme["border"]]; padding: 8px; margin-top: 8px; font-size: 0.7em;'>
 					<div style='font-weight: bold; color: [theme["text"]]; margin-bottom: 4px;'>⚠ Loadout Item Modifications:</div>
 					<div style='color: [theme["label"]]; line-height: 1.4;'>
-						<b>ARMOR:</b> Set to armour minor protection (15 armor to all damage types) • Crit prevention removed • Armor class set to Light<br>
-						<b>WEAPONS:</b> Damage reduced by 30% • Weapon defense reduced by 50%<br>
-						<b>ALL ITEMS:</b> Sell price set to 0
+						<b>ARMOR:</b> Loadout armor has 25 blunt, 25 slash, 15 stab and 5 pierce resistance before slight random variation. Armor with a class becomes Light. It costs 1 point with neither cut nor blunt crit protection, 2 with either one, or 3 with both. Reproductions only keep those crit protections if the original had them.<br>
+						<b>WEAPONS:</b> Dedicated weapons keep their normal damage and defense.<br>
+						<b>ALL ITEMS:</b> Sell price set to 0.
 					</div>
 				</div>
 			</div>
@@ -1452,7 +1490,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	"}
 	
 	// Generate loadout slots with original styling
-	for(var/i = 1 to 10)
+	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/slot_var = i == 1 ? "loadout" : "loadout[i]"
 		var/datum/loadout_item/current_item = vars[slot_var]
 		var/custom_name = vars["loadout_[i]_name"]
@@ -1504,11 +1542,13 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			html += "</div>"
 			html += "</div>"
 			
-			html += "<div class='actions'>"
+			html += "<div class='actions loadout-actions'>"
 			html += "<a class='btn btn-select' href='byond://?src=\ref[src];loadout_action=item;slot=[i]'>Change Item</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=rename;slot=[i]'>Rename</a>"
 			html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=describe;slot=[i]'>Description</a>"
 			html += "<a class='btn btn-color' href='byond://?src=\ref[src];loadout_action=color;slot=[i]'>Color</a>"
+			if(get_loadout_preview_wear_slots(initial(sample.slot_flags)))
+				html += "<a class='btn btn-customize' href='byond://?src=\ref[src];loadout_action=preview;slot=[i]'>Preview</a>"
 			html += "<a class='btn btn-clear' href='byond://?src=\ref[src];loadout_action=clear;slot=[i]'>Clear</a>"
 			html += "</div>"
 		else
@@ -1681,7 +1721,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/list/items = selection_data["items"]
 		var/datum/loadout_item/selected = items[item_id]
 		
-		if(!selected || !slot)
+		if(!selected || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot))
 			temp_loadout_selection = null
 			usr << browse(null, "window=loadout_select")
 			return
@@ -1689,7 +1729,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"
 		
 		// Check if this item is already selected in another slot
-		for(var/i = 1 to 10)
+		for(var/i = 1 to LOADOUT_SLOT_COUNT)
 			if(i == slot)
 				continue
 			var/datum/loadout_item/other_item = vars[i == 1 ? "loadout" : "loadout[i]"]
@@ -1705,7 +1745,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			var/spent_points = 0
 			
 			// Calculate current loadout spent (excluding this slot if changing)
-			for(var/i = 1 to 10)
+			for(var/i = 1 to LOADOUT_SLOT_COUNT)
 				if(i == slot)
 					continue
 				var/datum/loadout_item/other_slot = vars[i == 1 ? "loadout" : "loadout[i]"]
@@ -1794,7 +1834,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
+			var/current_choice = get_customization_picker_default(virtues_available, virtue)
+			var/choice = tgui_input_list(usr, "Choose your primary virtue:", "Virtue Selection", virtues_available, default = current_choice, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1841,7 +1882,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				virtues_available[V.name] = V
 			
 			virtues_available = sort_list(virtues_available)
-			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, option_details = get_customization_picker_details(virtues_available))
+			var/current_choice = get_customization_picker_default(virtues_available, virtuetwo)
+			var/choice = tgui_input_list(usr, "Choose your second virtue:", "Second Virtue Selection", virtues_available, default = current_choice, option_details = get_customization_picker_details(virtues_available))
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
@@ -1890,7 +1932,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				return
 
 			backgrounds_available = sort_list(backgrounds_available)
-			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, option_details = get_customization_picker_details(backgrounds_available))
+			var/current_choice = get_customization_picker_default(backgrounds_available, virtue_background)
+			var/choice = tgui_input_list(usr, "What was my lyfe before?", "Background Selection (loadouts are placed within thy stash)", backgrounds_available, default = current_choice, option_details = get_customization_picker_details(backgrounds_available))
 
 			if(choice)
 				var/datum/virtue/background/selected = backgrounds_available[choice]
@@ -1998,7 +2041,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				statpacks_available[display_name] = SP
 			
 			statpacks_available = sort_list(statpacks_available)
-			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, large_window = TRUE)
+			var/current_choice = get_customization_picker_default(statpacks_available, statpack)
+			var/choice = tgui_input_list(usr, "Choose your statpack:", "Statpack Selection", statpacks_available, default = current_choice, large_window = TRUE)
 			
 			if(choice)
 				var/datum/statpack/selected = statpacks_available[choice]
@@ -2224,16 +2268,21 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	if(href_list["loadout_action"])
 		if(usr?.client != parent)
 			return
-		// Save state before any loadout change
-		save_to_history()
-		
+
 		var/action = href_list["loadout_action"]
 		var/slot = text2num(href_list["slot"])
 		
-		if(!slot || slot < 1 || slot > 10 || slot != round(slot))
+		if(!slot || slot < 1 || slot > LOADOUT_SLOT_COUNT || slot != round(slot))
 			return
 		
 		var/slot_var = (slot == 1) ? "loadout" : "loadout[slot]"
+
+		if(action == "preview")
+			show_loadout_equipped_preview(usr, slot, slot_var)
+			return
+
+		// Only edits belong in the undo history.
+		save_to_history()
 
 		switch(action)
 			if("item")
@@ -2426,6 +2475,16 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		return
 	save_to_history()
 	virgin_attraction = sanitize_virgin_attraction(choice)
+
+/// Find the option label for the saved pick, which may be a separate instance.
+/datum/preferences/proc/get_customization_picker_default(list/options, datum/current_pick)
+	if(!current_pick)
+		return null
+	for(var/option in options)
+		var/datum/pick = options[option]
+		if(pick.type == current_pick.type)
+			return option
+	return null
 
 /// Display metadata only; original names remain the authoritative return values.
 /datum/preferences/proc/get_customization_picker_details(list/options, vice_slot = 0)

@@ -145,6 +145,8 @@
 		handle_left_click(object, location, control, params, modifiers)
 
 /client/proc/handle_right_click(atom/object, location, control, params, list/modifiers)
+	if(!istype(object, /atom/movable/screen) && mob.oactive && !mob.can_perform_combat_action(object))
+		return
 	mob.face_atom(object, location, control, params)
 
 	mob.atkswinging = "right"
@@ -163,6 +165,8 @@
 		mouse_pointer_icon = 'icons/effects/mousemice/human_looking.dmi'
 
 /client/proc/handle_middle_click(atom/object, params, list/modifiers)
+	if(!istype(object, /atom/movable/screen) && mob.mmb_intent && !mob.can_perform_combat_action(object))
+		return
 	if(mob.next_move > world.time)
 		charge_was_blocked_by_cooldown = TRUE
 		return
@@ -187,6 +191,8 @@
 			mouse_pointer_icon = mob.mmb_intent.pointer
 
 /client/proc/handle_left_click(atom/object, location, control, params, list/modifiers)
+	if(!istype(object, /atom/movable/screen) && !mob.can_perform_combat_action(object))
+		return
 	if(!modifiers["shift"] || mob.BehindAtom(object, mob.dir))
 		mob.face_atom(object, location, control, params)
 	if(modifiers["right"])
@@ -394,6 +400,11 @@
 /client/MouseDrag(src_object,atom/over_object,src_location,over_location,src_control,over_control,params)
 
 	if(mob.incapacitated())
+		return
+
+	if(mob.hud_used?.action_buttons_rearranging && istype(src_object, /atom/movable/screen/movable/action_button))
+		var/atom/movable/screen/movable/action_button/dragged_button = src_object
+		dragged_button.update_action_drag_target(mob, over_object)
 		return
 
 	var/list/L = params2list(params)

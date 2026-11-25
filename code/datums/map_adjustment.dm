@@ -17,6 +17,8 @@
 	var/list/blacklist
 	/// Jobs that have slots changed /datum/job = num
 	var/list/slot_adjust
+	/// Job type -> additional key issued with that job's starting gear.
+	var/list/job_spawn_keys
 	/// Jobs that have minimum PQ adjustments /datum/job = number
 	var/list/min_pq_adjust
 	/// Jobs that have title adjustments. Don't adjust the title title, only display_title /datum/job = list(display_title = "Lord Commander", f_title = "Lady Commander"))
@@ -91,6 +93,19 @@
 	for(var/job as anything in ages_adjust)
 		var/datum/job/J = SSjob.GetJobType(job)
 		J?.allowed_ages = ages_adjust[job]
+
+/// Add the map's role key to the starting keyring where possible.
+/datum/map_adjustment/proc/issue_spawn_key(job_type, mob/living/carbon/human/character)
+	var/key_type = job_spawn_keys?[job_type]
+	if(!key_type)
+		return
+
+	var/obj/item/roguekey/key = new key_type(character)
+	for(var/obj/item/storage/keyring/ring in character.get_all_gear())
+		if(SEND_SIGNAL(ring, COMSIG_TRY_STORAGE_INSERT, key, null, TRUE, TRUE))
+			return
+	if(!character.equip_to_appropriate_slot(key))
+		character.put_in_hands(key)
 
 /**
  * job_type`</datum/job/J>`: Type of the job that's being adjusted \

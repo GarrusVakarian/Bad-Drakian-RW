@@ -130,6 +130,7 @@
 /obj/item/natural/cloth/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Use on an injured body part to bandage it and reduce bleeding. Soak cloth to clean stains.")
+	. += span_info("Target Mouth and use a single cloth or bandage on someone to gag them. Remove any mask or helmet covering their mouth first. Click the gag in examine to remove it. Use a Cut or Chop intent to cut it free faster.")
 	. += span_info("Severe wounds can bleed through bandages and need further treatment.")
 
 /obj/item/natural/thorn/get_mechanics_examine(mob/user)

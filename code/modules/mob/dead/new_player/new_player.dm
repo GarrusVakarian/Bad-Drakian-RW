@@ -161,11 +161,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		return 1
 
 	if(href_list["open_changelog"])
-		var/datum/changelog/changelog_ui = GLOB.changelog_tgui
-		if(!changelog_ui)
-			changelog_ui = new /datum/changelog
-			GLOB.changelog_tgui = changelog_ui
-		changelog_ui.ui_interact(src)
+		client.changelog()
 		return 1
 
 	if(href_list["ready"])
@@ -261,6 +257,10 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 
 	if(href_list["villains"])
 		VillainChoices()
+		return
+
+	if(href_list["bounty_presets"] && usr == src)
+		open_bounty_presets(href_list["bounty_presets"])
 		return
 
 	if(href_list["villain_pref"])
@@ -779,7 +779,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	popup.set_content(jointext(dat, ""))
 	popup.open(FALSE) // 0 is passed to open so that it doesn't use the onclose() proc
 
-/mob/dead/new_player/proc/create_character(transfer_after)
+/mob/dead/new_player/proc/create_character(transfer_after, gnoll_migrant = FALSE)
 	spawning = 1
 	close_spawn_windows()
 
@@ -796,7 +796,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/is_antag
 	if(mind in GLOB.pre_setup_antags)
 		is_antag = TRUE
-	var/is_gnoll = (mind?.assigned_role == "Gnoll")
+	var/is_gnoll = gnoll_migrant || (mind?.assigned_role == "Gnoll")
 	var/is_dragon = (mind?.assigned_role == "Dragon")
 
 	client.prefs.copy_to(H, antagonist = is_antag, skip_normal_prefs = is_gnoll, dragon_special_race = is_dragon)

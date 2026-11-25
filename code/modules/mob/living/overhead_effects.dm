@@ -65,11 +65,12 @@
 							H.playsound_local(T, soundin, 100, FALSE)
 
 ///A simplified version of the proc that adds an overlay to the src and returns a reference to the appearance.
-///Has no offset adjustment for bodies / sprite size. Make sure to account for that if using it on carbons!
+/// Only applies the shared indicator offset; callers supply any other body adjustments.
 /mob/living/proc/play_overhead_indicator_simple(icon_path, overlay_name, clear_time, overlay_layer = ABOVE_MOB_LAYER, soundin = null, y_offset = 0, x_offset = 0)
 	var/mutable_appearance/appearance = mutable_appearance(icon_path, overlay_name, overlay_layer)
-	appearance.pixel_x += x_offset
-	appearance.pixel_y += y_offset
+	var/list/indicator_offset = get_mob_indicator_offset(src)
+	appearance.pixel_x += x_offset + indicator_offset[1]
+	appearance.pixel_y += y_offset + indicator_offset[2]
 	appearance.appearance_flags = RESET_COLOR
 	overlays_standing[overlay_layer] = appearance
 	apply_overlay(overlay_layer)
@@ -82,8 +83,9 @@
 ///Flick variant that returns something that can be animated after being made.
 /mob/living/proc/play_overhead_indicator_flick(icon_path, overlay_name, clear_time, overlay_layer = ABOVE_MOB_LAYER, soundin = null, y_offset = 0, x_offset = 0)
 	var/mutable_appearance/appearance = mutable_appearance(icon_path, overlay_name, overlay_layer)
-	appearance.pixel_x += x_offset
-	appearance.pixel_y += y_offset
+	var/list/indicator_offset = get_mob_indicator_offset(src)
+	appearance.pixel_x += x_offset + indicator_offset[1]
+	appearance.pixel_y += y_offset + indicator_offset[2]
 	appearance.appearance_flags = RESET_COLOR
 	var/atom/visual = flick_overlay_view(appearance, clear_time)
 	if(soundin)
