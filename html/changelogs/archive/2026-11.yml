@@ -1033,3 +1033,4 @@
   - qol: Made selected options easier to see in list pickers (for real this time).
   mypingishuge:
   - bugfix: Eclectic miracle descriptions display bold text and line breaks correctly.
+  - sound: Added Masquerade Violation and Open Season to the Combat Mode Music picker.
