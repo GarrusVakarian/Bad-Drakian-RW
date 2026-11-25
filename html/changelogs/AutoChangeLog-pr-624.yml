@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Choose whether masks hide your highest-tier Wretch or Bandit bounty alert. Bounty Presets can save the choice."

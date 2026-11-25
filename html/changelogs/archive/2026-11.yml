@@ -1048,3 +1048,7 @@
   - qol: One opt-in toggle setting covers both drains. Turning it off clears active
       stat drain.
   - qol: Content Toggles shows NEW again for returning players.
+  - bugfix: '"Until I''m Finished" ERP panel option only stops actions started by
+      the player who enabled it.'
+  - rscadd: Choose whether masks hide your highest-tier Wretch or Bandit bounty alert.
+      Bounty Presets can save the choice.
