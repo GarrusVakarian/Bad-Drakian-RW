@@ -175,7 +175,7 @@
 	)
 	custom_text = "Grants two virtues for the city servant:\n\
 	- Resident: City residency, treasury account, home in the city\n\
-	- Cunning Provisioner: Cooking & Fishing skills, chef's or fisher's cooling backpack stashed (HOMESTEAD_EXPERT)"
+	- Cunning Provisioner: Cooking, Fishing, and Butchering skills, chef's or fisher's cooling backpack stashed (HOMESTEAD_EXPERT)"
 
 // Man in The Pub Pack: Resident + Pilgrim
 /datum/virtue/pack/pubman

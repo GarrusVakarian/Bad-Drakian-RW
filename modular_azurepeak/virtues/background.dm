@@ -563,11 +563,12 @@
 
 /datum/virtue/background/granary
 	name = "Cunning Provisioner"
-	desc = "You've worked in or around the docks enough to steal away a sack of supplies that no one would surely miss, just in case. You've picked up on some cooking and fishing tips in your spare time, as well."
+	desc = "You worked the docks long enough to know which sacks of supplies would go unmissed. Between shifts, you learned to catch fish, butcher game for meat, and cook whatever you could bring home."
 	background_desc = "Both come with a cooling backpack. Chef is equipped with a variety of foods + pan for cooking (and a chef's knife). Fisher has a fishing rod, bait, and supplies for making fishing traps."
 	added_traits = list(TRAIT_HOMESTEAD_EXPERT)
 	added_skills = list(list(/datum/skill/craft/cooking, 3, 6),
-						list(/datum/skill/labor/fishing, 2, 6))
+						list(/datum/skill/labor/fishing, 2, 6),
+						list(/datum/skill/labor/butchering, 2, 6))
 
 /datum/virtue/background/granary/apply_to_human(mob/living/carbon/human/H)
 	var/equip_choice = tgui_input_list(H, "My lyfe before, STASHed away ...", "TREES and STATUES hold my things.", list("Chef", "Fisher"))
