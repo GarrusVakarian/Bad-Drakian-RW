@@ -328,6 +328,22 @@
 	..()
 	extinguish()
 
+/obj/item/tntstick/pre_attack(atom/target, mob/living/user, params)
+	if(..())
+		return TRUE
+	var/obj/item/clothing/mask/cigarette/zigg = target
+	if(istype(zigg) && zigg.lit)
+		light()
+		return TRUE
+	return FALSE
+
+/obj/item/tntstick/attackby(obj/item/item, mob/user, params)
+	var/obj/item/clothing/mask/cigarette/zigg = item
+	if(istype(zigg) && zigg.lit)
+		light()
+		return TRUE
+	return ..()
+
 /obj/item/tntstick/extinguish()
 	snuff()
 
