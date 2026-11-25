@@ -146,7 +146,7 @@ const DrainOptionsRow = ({
         <Stack align="center" ml={2}>
           <Stack.Item>
             <Tooltip content="1–19 points per affected stat." position="bottom">
-              <span>Max stat loss</span>
+              <span>Max stat loss:</span>
             </Tooltip>
           </Stack.Item>
           <Stack.Item>

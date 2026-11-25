@@ -1492,6 +1492,8 @@
 	status_type = STATUS_EFFECT_REFRESH
 	/// Progress is independent of the time left on the status effect.
 	var/completed_cycles = 1
+	/// Counts toward the next blocked step. A negative value means the cap notice has already been sent.
+	var/cycles_at_cap = 0
 	var/static/list/drain_stats = list(STATKEY_STR, STATKEY_PER, STATKEY_INT, STATKEY_CON, STATKEY_WIL, STATKEY_SPD)
 
 /mob/living/proc/advance_panel_stat_drain(mob/living/drainer, max_loss)
@@ -1500,21 +1502,45 @@
 		// Reuse the indexed effect without building an application argument list each cycle.
 		drain.refresh(src, drainer, max_loss)
 	else
-		apply_status_effect(/datum/status_effect/debuff/baothadrained)
+		apply_status_effect(/datum/status_effect/debuff/baothadrained, drainer)
+
+/datum/status_effect/debuff/baothadrained/on_creation(mob/living/new_owner, mob/living/drainer)
+	. = ..()
+	if(.)
+		notify_drain_start(drainer)
+
+/datum/status_effect/debuff/baothadrained/proc/notify_drain_start(mob/living/drainer)
+	if(!QDELETED(drainer))
+		to_chat(drainer, span_love("I shall weaken them soon..."))
 
 /datum/status_effect/debuff/baothadrained/refresh(mob/living/current_owner, mob/living/drainer, max_loss = STAT_DRAIN_DEFAULT_LOSS)
 	if(duration <= world.time)
 		limit_stat_loss(0)
+		notify_drain_start(drainer)
 	..()
 	var/max_cycles = max_loss * STAT_DRAIN_CYCLES_PER_RANK
 	if(completed_cycles >= max_cycles)
 		if(completed_cycles > max_cycles)
 			limit_stat_loss(max_loss)
+		if(cycles_at_cap >= 0 && ++cycles_at_cap == STAT_DRAIN_CYCLES_PER_RANK)
+			notify_if_cap_blocks_loss(drainer)
 		return
+	cycles_at_cap = 0
 	completed_cycles++
 	if(completed_cycles % STAT_DRAIN_CYCLES_PER_RANK)
 		return
 	apply_stat_loss_step(drainer, max_loss)
+
+/datum/status_effect/debuff/baothadrained/proc/notify_if_cap_blocks_loss(mob/living/drainer)
+	cycles_at_cap = 0
+	for(var/stat in drain_stats)
+		if(owner.get_stat_level(stat) <= 1)
+			continue
+		cycles_at_cap = -1
+		to_chat(owner, span_love("I can't get any weaker than this..."))
+		if(!QDELETED(drainer))
+			to_chat(drainer, span_love("They can't get any weaker than this..."))
+		return
 
 /datum/status_effect/debuff/baothadrained/proc/apply_stat_loss_step(mob/living/drainer, max_loss)
 	var/stat_dropped = FALSE
@@ -1543,6 +1569,7 @@
 	if(completed_cycles <= max_cycles)
 		return
 	completed_cycles = max_cycles
+	cycles_at_cap = 0
 	var/highest_loss = 0
 	for(var/stat in effectedstats)
 		var/prior_loss = -effectedstats[stat]
