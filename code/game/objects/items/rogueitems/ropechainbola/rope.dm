@@ -70,7 +70,7 @@
 		return
 
 	if(C.cmode && C.mobility_flags & MOBILITY_STAND)
-		to_chat(user, span_warning("I can't tie them, they are too tense!"))
+		to_chat(user, span_warning("I need to get them down before I can tie them!"))
 		return
 
 	var/surrender_mod = 1
@@ -101,7 +101,7 @@
 		return
 
 	if(C.cmode && C.mobility_flags & MOBILITY_STAND)
-		to_chat(user, span_warning("I can't tie them, they are too tense!"))
+		to_chat(user, span_warning("I need to get them down before I can tie them!"))
 		return
 
 	var/surrender_mod = 1
