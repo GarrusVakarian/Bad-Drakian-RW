@@ -256,17 +256,17 @@
 	- Brawler's Apprentice: Skilled in hand-to-hand combat"
 
 // Volf In Sheep's Clothing Pack: Resident + Defiled Keyholder
-/datum/virtue/pack/volfsheep
-	name = "Volf In Sheep's Clothing (-4 TRI)"
-	desc = "They let me into their businesses, their taverns, their homes, never knowing what lies behind this fake smile. But when the others come to bring down the 10, they will have friends inside the walls."
-	triumph_cost = 4
-	granted_virtues = list(
-		/datum/virtue/utility/resident,
-		/datum/virtue/utility/zchurch_keyholder
-	)
-	custom_text = "Grants two virtues for the Volf In Sheep's Clothing:\n\
-	- Resident: City residency, treasury account, home in the city\n\
-	- Defiled Keyholder: Knows the location of the local heretic conclave and the bandit hideout"
+// /datum/virtue/pack/volfsheep
+	// name = "Volf In Sheep's Clothing (-4 TRI)"
+	// desc = "They let me into their businesses, their taverns, their homes, never knowing what lies behind this fake smile. But when the others come to bring down the 10, they will have friends inside the walls."
+	// triumph_cost = 4
+	// granted_virtues = list(
+		// /datum/virtue/utility/resident,
+		// /datum/virtue/utility/zchurch_keyholder
+	// )
+	// custom_text = "Grants two virtues for the Volf In Sheep's Clothing:\n\
+	// - Resident: City residency, treasury account, home in the city\n\
+	// - Defiled Keyholder: Knows the location of the local heretic conclave and the bandit hideout"
 
 // Street Fencer Pack: Resident + Duelist
 /datum/virtue/pack/streetfencer
