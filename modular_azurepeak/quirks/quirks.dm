@@ -160,11 +160,22 @@
 	incompatible_traits = list(TRAIT_EMPATH)
 
 /datum/quirk/erotic_drainer
-	name = "Erotic Drainer"
-	desc = "When making love, I am able to deplete my partner of their strength"
-	point_cost = 0
+	name = TRAIT_EVIL_DRAINER
+	desc = "I can slowly drain my partner's vitality."
+	point_cost = 1
+	custom_text = "Erotic actions in combat mode severely reduce your partner's attributes for up to 15 minutes. Cannot be combined with Erotic Energy Drainer."
 	added_traits = list(TRAIT_EVIL_DRAINER)
-	incompatible_traits = list(TRAIT_EVIL_DRAINER)
+	incompatible_quirks = list(/datum/quirk/erotic_energy_drainer)
+	incompatible_traits = list(TRAIT_EVIL_DRAINER, TRAIT_EROTIC_ENERGY_DRAINER)
+
+/datum/quirk/erotic_energy_drainer
+	name = TRAIT_EROTIC_ENERGY_DRAINER
+	desc = "I can draw on my partner's energy to replenish my own."
+	point_cost = 1
+	custom_text = "Erotic actions in combat mode drain your partner's energy to restore your own. Cannot be combined with Erotic Drainer."
+	added_traits = list(TRAIT_EROTIC_ENERGY_DRAINER)
+	incompatible_quirks = list(/datum/quirk/erotic_drainer)
+	incompatible_traits = list(TRAIT_EVIL_DRAINER, TRAIT_EROTIC_ENERGY_DRAINER)
 
 /datum/quirk/fabledlover
 	name = "Fabled Lover"

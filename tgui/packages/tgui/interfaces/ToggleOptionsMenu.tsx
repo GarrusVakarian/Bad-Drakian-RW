@@ -1,4 +1,13 @@
-import { Button, Section, Stack, Table, Tooltip } from 'tgui-core/components';
+import { useState } from 'react';
+import {
+  Button,
+  Dropdown,
+  Input,
+  Section,
+  Stack,
+  Table,
+  Tooltip,
+} from 'tgui-core/components';
 import { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
@@ -10,6 +19,8 @@ type ToggleEntry = {
   enabled: BooleanLike;
   desc: string;
   disabled?: BooleanLike;
+  stat_loss_limit?: number | null;
+  gnoll_drain_type?: string;
 };
 
 type SelectOption = {
@@ -84,18 +95,85 @@ const ToggleEntryRow = ({ entry }: { entry: ToggleEntry }) => {
   const { act } = useBackend<Data>();
 
   return (
+    <>
+      <Table.Row className="candystripe">
+        <Table.Cell>
+          <Tooltip content={entry.desc} position="bottom">
+            <Button.Checkbox
+              checked={entry.enabled}
+              disabled={!!entry.disabled}
+              fluid
+              onClick={() => act('toggle', { id: entry.id })}
+            >
+              {entry.label}
+            </Button.Checkbox>
+          </Tooltip>
+        </Table.Cell>
+      </Table.Row>
+      {!!entry.enabled && entry.stat_loss_limit != null && (
+        <DrainOptionsRow
+          key={entry.stat_loss_limit}
+          value={entry.stat_loss_limit}
+          gnollDrain={entry.gnoll_drain_type ?? 'Energy drain'}
+        />
+      )}
+    </>
+  );
+};
+
+const gnollDrainOptions = ['Energy drain', 'Stat drain'];
+
+const DrainOptionsRow = ({
+  value,
+  gnollDrain,
+}: {
+  value: number;
+  gnollDrain: string;
+}) => {
+  const { act } = useBackend<Data>();
+  const [text, setText] = useState(String(value));
+  const valid = /^(?:[1-9]|1[0-9])$/.test(text);
+  const canSave = valid && Number(text) !== value;
+  const save = () => {
+    if (canSave) {
+      act('set_stat_drain_max_loss', { value: Number(text) });
+    }
+  };
+
+  return (
     <Table.Row className="candystripe">
       <Table.Cell>
-        <Tooltip content={entry.desc} position="bottom">
-          <Button.Checkbox
-            checked={entry.enabled}
-            disabled={!!entry.disabled}
-            fluid
-            onClick={() => act('toggle', { id: entry.id })}
-          >
-            {entry.label}
-          </Button.Checkbox>
-        </Tooltip>
+        <Stack align="center" ml={2}>
+          <Stack.Item>
+            <Tooltip content="1–19 points per affected stat." position="bottom">
+              <span>Max stat loss:</span>
+            </Tooltip>
+          </Stack.Item>
+          <Stack.Item>
+            <Input width={4} value={text} onChange={setText} onEnter={save} />
+          </Stack.Item>
+          <Stack.Item>
+            <Button disabled={!canSave} onClick={save}>
+              Save
+            </Button>
+          </Stack.Item>
+          <Stack.Item ml="auto">
+            <Tooltip
+              content="Applies the next time you become a Gnoll."
+              position="bottom"
+            >
+              <span>Gnoll drain:</span>
+            </Tooltip>
+          </Stack.Item>
+          <Stack.Item>
+            <Dropdown
+              width="110px"
+              options={gnollDrainOptions}
+              selected={gnollDrain}
+              onSelected={(value) => act('set_gnoll_drain_type', { value })}
+            />
+          </Stack.Item>
+        </Stack>
       </Table.Cell>
     </Table.Row>
   );

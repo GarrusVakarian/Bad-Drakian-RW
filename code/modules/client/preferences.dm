@@ -150,6 +150,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/milkable = FALSE
 	/// If we are participating in stat draining, requires both parties to have it enabled for it to work
 	var/stat_drainable = FALSE
+	var/stat_drain_max_loss = STAT_DRAIN_DEFAULT_LOSS
+	var/gnoll_drain_type = GNOLL_DRAIN_ENERGY
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE
@@ -679,7 +681,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 /datum/character_sheet_feature/hypnosis_consent
 	id = "hypnosis_consent"
-	revision = 2
+	revision = 3
 	label = "Content Toggles"
 	explanation = "New consent toggles are available. Open Content Toggles to review your content preferences."
 	location = "in the character sheet's upper-right corner, below Keybinds"
@@ -3707,6 +3709,8 @@ function setJobPrefRedirect(link) {
 		// For gnolls spawning from a non-gnoll base slot, we must not apply any base-slot state.
 		// Set species to gnoll immediately so advclass check_requirements can read dna.species.type.
 		character.set_species(/datum/species/gnoll, icon_update = FALSE)
+		var/datum/species/gnoll/gnoll_species = character.dna.species
+		gnoll_species.set_drain_type(character, gnoll_drain_type)
 		// Set gender to MALE as a neutral default; gnoll pronouns override the displayed pronoun.
 		character.gender = MALE
 		if(gnoll_prefs?.gnoll_pronouns)

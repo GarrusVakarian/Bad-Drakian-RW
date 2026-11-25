@@ -54,15 +54,15 @@
 		energy_add(4) // Battle Ready now gives you a small amount of regeneration.
 		// This generally cover most reasonable in combat usage.
 
-/mob/proc/energy_add(added as num, show_xp_popup = TRUE)
+/mob/proc/energy_add(added as num, show_xp_popup = TRUE, award_athletics_xp = TRUE)
 	return
 
-/mob/living/energy_add(added as num, show_xp_popup = TRUE)
+/mob/living/energy_add(added as num, show_xp_popup = TRUE, award_athletics_xp = TRUE)
 	if(HAS_TRAIT(src, TRAIT_INFINITE_STAMINA))
 		return TRUE
 	if(HAS_TRAIT(src, TRAIT_INFINITE_ENERGY))
 		return TRUE
-	if(m_intent == MOVE_INTENT_RUN && (mobility_flags & MOBILITY_STAND))
+	if(award_athletics_xp && m_intent == MOVE_INTENT_RUN && (mobility_flags & MOBILITY_STAND))
 		if(isnull(buckled))
 			mind && mind.add_sleep_experience(/datum/skill/misc/athletics, (STAINT*0.02), show_xp_popup = show_xp_popup)
 	if(added < 0 && HAS_TRAIT(src, TRAIT_GOLD_AFFINITY))

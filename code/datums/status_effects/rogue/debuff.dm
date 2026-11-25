@@ -1478,49 +1478,114 @@
 
 /// BAOTHA STAT DRAIN
 
+#define STAT_DRAIN_CYCLES_PER_RANK 18
+
 /atom/movable/screen/alert/status_effect/debuff/baothadrained
-	name = "Vitality Drained (I)"
-	desc = "That was exhausting..."
+	name = "Vitality Drain Warning"
+	desc = "My vitality is being drawn away. More completed cycles can weaken me."
 	icon_state = "baothadrained"
 
 /datum/status_effect/debuff/baothadrained
 	id = "baothadrained"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/baothadrained
-	duration = 10 SECONDS
+	duration = 15 MINUTES
 	status_type = STATUS_EFFECT_REFRESH
-	effectedstats = list(
-		STATKEY_STR = -1,
-		STATKEY_PER = -1,
-		STATKEY_INT = -1,
-		STATKEY_CON = -1,
-		STATKEY_WIL = -1,
-		STATKEY_SPD = -1,
-		STATKEY_LCK = -1,
-	)
-	/// Simple tracker so that we know when we reached a new threshold
-	var/stats_lost = 0
+	/// Progress is independent of the time left on the status effect.
+	var/completed_cycles = 1
+	/// Counts toward the next blocked step. A negative value means the cap notice has already been sent.
+	var/cycles_at_cap = 0
+	var/static/list/drain_stats = list(STATKEY_STR, STATKEY_PER, STATKEY_INT, STATKEY_CON, STATKEY_WIL, STATKEY_SPD)
 
-/datum/status_effect/debuff/baothadrained/on_creation(mob/living/new_owner, amount_added)
+/mob/living/proc/advance_panel_stat_drain(mob/living/drainer, max_loss)
+	var/datum/status_effect/debuff/baothadrained/drain = has_status_effect(/datum/status_effect/debuff/baothadrained)
+	if(drain)
+		// Reuse the indexed effect without building an application argument list each cycle.
+		drain.refresh(src, drainer, max_loss)
+	else
+		apply_status_effect(/datum/status_effect/debuff/baothadrained, drainer)
+
+/datum/status_effect/debuff/baothadrained/on_creation(mob/living/new_owner, mob/living/drainer)
 	. = ..()
-	owner.playsound_local(owner, 'sound/misc/mat/lvldown.ogg', 100)
+	if(.)
+		notify_drain_start(drainer)
 
-/datum/status_effect/debuff/baothadrained/refresh(victim, amount_added)
-	if(isnum(amount_added))
-		duration += amount_added
-	var/new_loss = 0 - floor((duration - world.time) / (3 MINUTES))
-	if(stats_lost > abs(new_loss))
+/datum/status_effect/debuff/baothadrained/proc/notify_drain_start(mob/living/drainer)
+	if(!QDELETED(drainer))
+		to_chat(drainer, span_love("I shall weaken them soon..."))
+
+/datum/status_effect/debuff/baothadrained/refresh(mob/living/current_owner, mob/living/drainer, max_loss = STAT_DRAIN_DEFAULT_LOSS)
+	if(duration <= world.time)
+		limit_stat_loss(0)
+		notify_drain_start(drainer)
+	..()
+	var/max_cycles = max_loss * STAT_DRAIN_CYCLES_PER_RANK
+	if(completed_cycles >= max_cycles)
+		if(completed_cycles > max_cycles)
+			limit_stat_loss(max_loss)
+		if(cycles_at_cap >= 0 && ++cycles_at_cap == STAT_DRAIN_CYCLES_PER_RANK)
+			notify_if_cap_blocks_loss(drainer)
 		return
-	stats_lost++
+	cycles_at_cap = 0
+	completed_cycles++
+	if(completed_cycles % STAT_DRAIN_CYCLES_PER_RANK)
+		return
+	apply_stat_loss_step(drainer, max_loss)
+
+/datum/status_effect/debuff/baothadrained/proc/notify_if_cap_blocks_loss(mob/living/drainer)
+	cycles_at_cap = 0
+	for(var/stat in drain_stats)
+		if(owner.get_stat_level(stat) <= 1)
+			continue
+		cycles_at_cap = -1
+		to_chat(owner, span_love("I can't get any weaker than this..."))
+		if(!QDELETED(drainer))
+			to_chat(drainer, span_love("They can't get any weaker than this..."))
+		return
+
+/datum/status_effect/debuff/baothadrained/proc/apply_stat_loss_step(mob/living/drainer, max_loss)
+	var/stat_dropped = FALSE
+	var/highest_loss = 0
+	for(var/stat in drain_stats)
+		var/prior_loss = -(effectedstats[stat] || 0)
+		// Seelie Strength is fixed. For other stats, change_stat keeps penalties below the visible floor.
+		if(prior_loss < max_loss && (stat != STATKEY_STR || !isseelie(owner)))
+			var/previous = stat_dropped ? 0 : owner.get_stat_level(stat)
+			owner.change_stat(stat, -1)
+			prior_loss++
+			effectedstats[stat] = -prior_loss
+			if(previous > 1 && owner.get_stat_level(stat) < previous)
+				stat_dropped = TRUE
+		highest_loss = max(highest_loss, prior_loss)
+	update_stat_drain_alert(highest_loss)
+	if(!stat_dropped)
+		return
 	owner.playsound_local(owner, 'sound/misc/mat/lvldown.ogg', 100)
-	remove_stats()
-	effectedstats = list(
-		STATKEY_STR = new_loss,
-		STATKEY_PER = new_loss,
-		STATKEY_INT = new_loss,
-		STATKEY_CON = new_loss,
-		STATKEY_WIL = new_loss,
-		STATKEY_SPD = new_loss,
-		STATKEY_LCK = new_loss,
-	)
-	apply_stats()
-	linked_alert.name = "Vitality Drained (\Roman[abs(new_loss)])"
+	to_chat(owner, span_love("I feel my vitality weaken."))
+	if(!QDELETED(drainer))
+		to_chat(drainer, span_love("My draining ability weakens them."))
+
+/datum/status_effect/debuff/baothadrained/proc/limit_stat_loss(max_loss)
+	var/max_cycles = max_loss * STAT_DRAIN_CYCLES_PER_RANK
+	if(completed_cycles <= max_cycles)
+		return
+	completed_cycles = max_cycles
+	cycles_at_cap = 0
+	var/highest_loss = 0
+	for(var/stat in effectedstats)
+		var/prior_loss = -effectedstats[stat]
+		var/retained_loss = min(prior_loss, max_loss)
+		var/restored = prior_loss - retained_loss
+		if(restored > 0)
+			owner.change_stat(stat, restored)
+			effectedstats[stat] = -retained_loss
+		highest_loss = max(highest_loss, retained_loss)
+	if(!highest_loss)
+		effectedstats.Cut()
+	update_stat_drain_alert(highest_loss)
+
+/datum/status_effect/debuff/baothadrained/proc/update_stat_drain_alert(highest_loss)
+	if(istype(linked_alert))
+		linked_alert.name = highest_loss ? "Vitality Drained (\Roman[CEILING(highest_loss, 1)])" : initial(linked_alert.name)
+		linked_alert.desc = highest_loss ? "I feel weakened by the drain." : initial(linked_alert.desc)
+
+#undef STAT_DRAIN_CYCLES_PER_RANK
