@@ -1,4 +1,12 @@
-import { Button, Section, Stack, Table, Tooltip } from 'tgui-core/components';
+import { useState } from 'react';
+import {
+  Button,
+  Input,
+  Section,
+  Stack,
+  Table,
+  Tooltip,
+} from 'tgui-core/components';
 import { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
@@ -10,6 +18,7 @@ type ToggleEntry = {
   enabled: BooleanLike;
   desc: string;
   disabled?: BooleanLike;
+  stat_loss_limit?: number | null;
 };
 
 type SelectOption = {
@@ -84,18 +93,56 @@ const ToggleEntryRow = ({ entry }: { entry: ToggleEntry }) => {
   const { act } = useBackend<Data>();
 
   return (
+    <>
+      <Table.Row className="candystripe">
+        <Table.Cell>
+          <Tooltip content={entry.desc} position="bottom">
+            <Button.Checkbox
+              checked={entry.enabled}
+              disabled={!!entry.disabled}
+              fluid
+              onClick={() => act('toggle', { id: entry.id })}
+            >
+              {entry.label}
+            </Button.Checkbox>
+          </Tooltip>
+        </Table.Cell>
+      </Table.Row>
+      {!!entry.enabled && entry.stat_loss_limit != null && (
+        <StatLossLimitRow
+          key={entry.stat_loss_limit}
+          value={entry.stat_loss_limit}
+        />
+      )}
+    </>
+  );
+};
+
+const StatLossLimitRow = ({ value }: { value: number }) => {
+  const { act } = useBackend<Data>();
+  const [text, setText] = useState(String(value));
+  const valid = /^(?:[1-9]|1[0-9])$/.test(text);
+  const canSave = valid && Number(text) !== value;
+  const save = () => {
+    if (canSave) {
+      act('set_stat_drain_max_loss', { value: Number(text) });
+    }
+  };
+
+  return (
     <Table.Row className="candystripe">
       <Table.Cell>
-        <Tooltip content={entry.desc} position="bottom">
-          <Button.Checkbox
-            checked={entry.enabled}
-            disabled={!!entry.disabled}
-            fluid
-            onClick={() => act('toggle', { id: entry.id })}
-          >
-            {entry.label}
-          </Button.Checkbox>
-        </Tooltip>
+        <Stack align="center" ml={2}>
+          <Stack.Item grow>Maximum stat loss (1–19 per stat)</Stack.Item>
+          <Stack.Item>
+            <Input width={4} value={text} onChange={setText} onEnter={save} />
+          </Stack.Item>
+          <Stack.Item>
+            <Button disabled={!canSave} onClick={save}>
+              Save
+            </Button>
+          </Stack.Item>
+        </Stack>
       </Table.Cell>
     </Table.Row>
   );

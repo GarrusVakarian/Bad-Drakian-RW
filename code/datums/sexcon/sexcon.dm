@@ -1997,9 +1997,9 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	if(!can_drain_partner(partner))
 		return
 	if(user.cmode && HAS_TRAIT(user, TRAIT_EVIL_DRAINER))
-		partner.apply_status_effect(/datum/status_effect/debuff/baothadrained, user)
+		partner.advance_panel_stat_drain(user, partner.client.prefs.stat_drain_max_loss)
 	if(partner.cmode && HAS_TRAIT(partner, TRAIT_EVIL_DRAINER))
-		user.apply_status_effect(/datum/status_effect/debuff/baothadrained, partner)
+		user.advance_panel_stat_drain(partner, user.client.prefs.stat_drain_max_loss)
 
 	var/net_gain = get_net_cycle_energy_drain(partner)
 	if(net_gain > 0)

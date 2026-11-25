@@ -150,6 +150,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/milkable = FALSE
 	/// If we are participating in stat draining, requires both parties to have it enabled for it to work
 	var/stat_drainable = FALSE
+	var/stat_drain_max_loss = STAT_DRAIN_DEFAULT_LOSS
 	/// If manticore tail flavor messages are on by default
 	var/manticore_tail_messages = FALSE
 	var/hypnosis_content = FALSE

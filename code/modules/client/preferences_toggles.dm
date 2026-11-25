@@ -185,7 +185,7 @@
 		list("id" = "descriptor_color", "label" = "Enable Colored Descriptors", "enabled" = !!owner.prefs.descriptor_color, "desc" = "Color genital descriptors based on arousal and body hair descriptors based on hair color."),
 		list("id" = "cursed_collars", "label" = "Enable Cursed Collars", "enabled" = !!owner.prefs.cursed_collarable, "desc" = "Allow others to equip a cursed collar on you."),
 		list("id" = "milkable", "label" = "Enable Breast Milking", "enabled" = !!owner.prefs.milkable, "desc" = "Allow other players to milk your breasts if lactating. Also allow milk release during the Hands actions \"Rub breasts\" and \"Rub their breasts\", including when used on yourself. Direct self-milking with a container remains available when disabled."),
-		list("id" = "stat_drainable", "label" = "Enable Erotic Stat and Energy Drain", "enabled" = !!owner.prefs.stat_drainable, "desc" = "Allow giving and receiving stat or energy drain when both players enable it. Giving it requires the matching quirk or innate access. Turning it off clears active stat drain and stops future energy transfers."),
+		list("id" = "stat_drainable", "label" = "Enable Erotic Stat and Energy Drain", "enabled" = !!owner.prefs.stat_drainable, "stat_loss_limit" = owner.prefs.stat_drainable ? owner.prefs.stat_drain_max_loss : null, "desc" = "Allow giving and receiving stat or energy drain when both players enable it. Giving it requires the matching quirk or innate access. Turning it off clears active stat drain and stops future energy transfers."),
 		list("id" = "manticore_tail_messages", "label" = "Tailmaws", "enabled" = !!owner.prefs.manticore_tail_messages, "desc" = "Show flavor messages from your manticore tail when moving or during intimate actions, and see tail maw descriptions when examining others."),
 		list("id" = "hypnosis_content", "label" = "Enable Hypnosis Content", "enabled" = !!owner.prefs.hypnosis_content, "desc" = "Show hypnosis examine text and allow casting and receiving hypnotic spells. Disabling clears your current hypnosis effect."),
 		list("id" = "cumflation_content", "label" = "Enable Cumflation Content", "enabled" = !!owner.prefs.cumflation_content, "desc" = "Enable the Stuffed effect from accumulated leakage or Erotic Fluid, and see its examine text. Disabling clears your current Stuffed effect."),
@@ -207,6 +207,9 @@
 
 	if(!owner?.prefs)
 		return FALSE
+
+	if(action == "set_stat_drain_max_loss")
+		return usr?.client == owner && owner.set_stat_drain_max_loss(params["value"])
 
 	if(action == "guidance_notifications")
 		if(usr?.client != owner)
@@ -870,6 +873,21 @@
 	if(isliving(character) && (!character.client || character.client == src))
 		character.remove_status_effect(/datum/status_effect/debuff/baothadrained)
 	to_chat(src, "Stat and energy drain are now disabled.")
+
+/client/proc/set_stat_drain_max_loss(value)
+	if(!prefs?.stat_drainable || !isnum(value) || value != round(value) || value < STAT_DRAIN_MIN_LOSS || value > STAT_DRAIN_MAX_LOSS)
+		return FALSE
+	var/old_limit = prefs.stat_drain_max_loss
+	if(value == old_limit)
+		return TRUE
+	prefs.stat_drain_max_loss = value
+	if(value < old_limit)
+		var/mob/living/character = isliving(mob) ? mob : mob?.mind?.current
+		if(isliving(character) && (!character.client || character.client == src))
+			var/datum/status_effect/debuff/baothadrained/drain = character.has_status_effect(/datum/status_effect/debuff/baothadrained)
+			drain?.limit_stat_loss(value)
+	prefs.save_preferences()
+	return TRUE
 
 /client/verb/toggle_manticore_tail_messages_pref()
 	set category = "Options"
