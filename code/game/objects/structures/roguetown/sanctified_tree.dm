@@ -784,7 +784,7 @@
 //---- FLORAL CONJURATION
 /datum/druid_ritual/floral_conjuration
 	name = "Floral Conjuration"
-	unique_tree_rite = FALSE // It doesn't affect the tree whatsoever, don't need to make it one-tree per ritual
+	unique_tree_rite = FALSE // Removed unique so other druids can use your tree without messing you up
 	experience_payout = 25
 	druid_ritual_tier = SKILL_LEVEL_NOVICE
 	specific_offerings = list(
@@ -925,7 +925,7 @@
 
 //---- TREEFATHERS BULWARK
 #define BOULDER_AMOUNT 5
-#define STONE_AMOUNT 15
+#define STONE_AMOUNT 10
 
 /datum/druid_ritual/treefathers_bulwark
 	name = "Treefather's Bulwark"
@@ -936,7 +936,7 @@
 		/obj/item/natural/rock,
 		/obj/item/natural/stone,
 	) // Special handling
-	offering_description = "Boulders or small stones" // 5 Boulders or 15 Stones
+	offering_description = "Boulders or small stones" // 5 Boulders or 10 Stones
 
 /datum/druid_ritual/treefathers_bulwark/prepare_tracker()
 	offering_tracker = list(
@@ -995,8 +995,8 @@
 	experience_payout = 100
 	druid_ritual_tier = SKILL_LEVEL_JOURNEYMAN
 	specific_offerings = list(
-		/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence = 1,
-		list(/obj/item/natural/bone, /obj/item/alch/bone /obj/item/alch/sinew, /obj/item/alch/viscera, /obj/item/alch/bonemeal, /obj/item/skull) = 4,
+		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence) = 1,
+		list(/obj/item/natural/bone, /obj/item/alch/bone, /obj/item/alch/sinew, /obj/item/alch/viscera, /obj/item/alch/bonemeal, /obj/item/skull) = 4
 	)
 
 /datum/druid_ritual/soulbind/on_complete_rewards(mob/living/user)
@@ -1123,25 +1123,24 @@
 //---- Harvest Bloomstone
 /datum/druid_ritual/harvest_bloomstone
 	name = "Harvest Bloomstone"
-	unique_tree_rite = TRUE // One stone per tree
+	unique_tree_rite = FALSE // Doesn't benefit the tree, making it one tree per rite for a disposable tool is silly
 	experience_payout = 50
 	druid_ritual_tier = SKILL_LEVEL_JOURNEYMAN
 	specific_offerings = list(
-		/obj/item/natural/rock = 1,
-		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence, /obj/item/natural/stone) = 1, //XANTODO Custom handling on the stone
-		/obj/item/alch/blessedseedpowder = 1,
+		/obj/item/natural/stone = 1, //XANTODO Custom handling on the stone
+		/obj/item/alch/blessedseedpowder = 3,
 	)
 
 /datum/druid_ritual/harvest_bloomstone/accept_offering(obj/item/offering, mob/living/user, silent = FALSE)
 	if(istype(offering, /obj/item/natural/stone))
 		var/obj/item/natural/stone/offered_stone = offering
-		if(offered_stone.magic_power < 5)
-			to_chat(user, span_warning("The stone must be at least +5 or more to be accepted by the rite."))
+		if(offered_stone.magic_power < 1)
+			to_chat(user, span_warning("The stone must be at least glowing with magic to be accepted by the rite."))
 			return FALSE
 	return ..()
 
 /// Harvest Bloomstone: a 20-use blessed seed powder stone (once per tree).
-/// Offerings: 1 boulder + 1 enchanted stone (magic_power 10+) + 5 blessed seed powders.
+/// Offerings: 1 enchanted stone (magic_power 1+) + 3 blessed seed powders.
 /// Requires Expert Druidic Trickery to initiate (gated in open_ritual_menu).
 /datum/druid_ritual/harvest_bloomstone/on_complete_rewards(mob/living/user)
 	var/turf/user_turf = get_turf(user)
@@ -1227,7 +1226,7 @@
 
 /datum/druid_ritual/winged_rebirth
 	name = "Winged Rebirth"
-	unique_tree_rite = TRUE // One unlocked form per tree
+	unique_tree_rite = FALSE // Removed unique in case you get got by other druids
 	experience_payout = 100 // Added experience payout since we no longer need to put this shit all the way to Legendary
 	druid_ritual_tier = SKILL_LEVEL_EXPERT
 	specific_offerings = list(
