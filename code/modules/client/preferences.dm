@@ -912,6 +912,21 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	if(parent && user?.client == parent && current_tab == 0 && winget(user, "preferencess_window", "is-visible") == "true")
 		ShowChoices(user)
 
+/datum/preferences/proc/set_selected_patron(datum/patron/new_patron)
+	selected_patron = new_patron
+	clear_ineligible_patron_virtues()
+
+/datum/preferences/proc/clear_ineligible_patron_virtues()
+	if(istype(selected_patron, /datum/patron/inhumen))
+		return
+	for(var/slot in list("virtue", "virtuetwo"))
+		var/datum/virtue/selected = vars[slot]
+		if(!selected || virtue_check(selected, FALSE))
+			continue
+		vars[slot] = GLOB.virtues[/datum/virtue/none]
+		if(parent)
+			to_chat(parent, span_warning("[selected.name] was deselected. It requires an Ascendant patron."))
+
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
 	var/client/viewer = user?.client
 	if(!viewer)
@@ -2477,7 +2492,7 @@ function setJobPrefRedirect(link) {
 						var/faith_info = "Background: [faith.desc]<br><br>"
 						faith_info += "<font color='#c58cff'>Likely Worshippers: [faith.worshippers]</font>"
 						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
-						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
+						set_selected_patron(GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])])
 
 				if("patron")
 					var/list/patrons_named = list()
@@ -2490,7 +2505,7 @@ function setJobPrefRedirect(link) {
 						patrons_named[patron.name] = patron
 					var/god_input = tgui_input_list(user, "The first amongst many.", "PATRON", patrons_named)
 					if(god_input)
-						selected_patron = patrons_named[god_input]
+						set_selected_patron(patrons_named[god_input])
 						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
 						patron_info += "Background: [selected_patron.desc]<br><br>"
 						patron_info += "<font color='#c58cff'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
