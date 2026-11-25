@@ -90,7 +90,9 @@
 			description_level = BOUNTY_DESCRIPTION_BUILD
 			recognition = BOUNTY_RECOGNITION_NONE
 	else if(bounty_severity == "Horrific atrocities")
-		recognition = BOUNTY_RECOGNITION_ALWAYS
+		recognition = preset ? preset["recognition"] : choose_bounty_recognition(H)
+		if(isnull(recognition))
+			recognition = BOUNTY_RECOGNITION_FACE
 	if(QDELETED(H) || !H.client)
 		return
 	var/my_crime = preset ? preset["crime"] : input(H, "What is your crime?", "Crime") as text|null

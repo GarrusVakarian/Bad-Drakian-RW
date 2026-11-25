@@ -114,6 +114,11 @@
 		var/visibility = bounty_preset_visibility(profile, preset["visibility"])
 		if(visibility)
 			html += "<br>[visibility]"
+		switch(preset["recognition"])
+			if(BOUNTY_RECOGNITION_FACE)
+				html += "<br>Recognized only with face exposed"
+			if(BOUNTY_RECOGNITION_ALWAYS)
+				html += "<br>Recognized even while masked"
 		var/crime = preset["crime"]
 		var/reason = crime ? html_encode(crime) : "Default reason"
 		html += "<br>Reason: [reason]</div>"
