@@ -28,6 +28,6 @@
 	user.visible_message(span_warning("[user] stops sucking [target]'s nipples ..."))
 
 /datum/sex_action/suck_nipples/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE

@@ -22,6 +22,6 @@
 	user.visible_message(span_warning("[user] pulls [target.p_their()] cock out from between [user.p_their()]'s [user.get_chest_word()]."))
 
 /datum/sex_action/force_titjob/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE

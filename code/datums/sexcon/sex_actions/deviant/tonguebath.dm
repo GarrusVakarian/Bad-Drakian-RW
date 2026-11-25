@@ -44,6 +44,6 @@
 	user.visible_message(span_warning("[user] stops bathing [target]'s body ..."))
 
 /datum/sex_action/tonguebath/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE

@@ -51,7 +51,7 @@
 	user.visible_message(span_warning("[user] pulls out \the [dildo] from [target]'s cunt."))
 
 /datum/sex_action/toy_other_vagina/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE
 
