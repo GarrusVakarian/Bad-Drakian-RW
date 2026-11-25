@@ -314,9 +314,10 @@
 		covered_parts |= list(READABLE_ZONE_SKULL)
 	if(bpc & NECK)
 		covered_parts |= list(READABLE_ZONE_NECK)
-	if(bpc & FACE && !precise)
+	var/show_face = !precise && (bpc & FACE) == FACE
+	if(show_face)
 		covered_parts |= list(READABLE_ZONE_FACE)
-	if(verbose || precise || !(bpc & FACE))
+	if(verbose || !show_face)
 		if(bpc & MOUTH)
 			covered_parts |= list(READABLE_ZONE_MOUTH)
 		if(bpc & NOSE)

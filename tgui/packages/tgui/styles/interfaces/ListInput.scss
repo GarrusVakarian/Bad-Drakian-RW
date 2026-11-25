@@ -15,8 +15,17 @@
 }
 
 .ListInput__Section .Button.Button--color--transparent.Button--selected {
-  background-color: var(--button-background-selected, #526579);
-  box-shadow: inset 3px 0 var(--color-text, #fff);
+  background-color: var(
+    --list-input-selected-background,
+    var(--button-background-selected, #526579)
+  );
+  color: #fff;
+
+  .ListInput__OptionName,
+  .ListInput__OptionDescription,
+  &.ListInput__PlainExpandedRow > .Button__content {
+    color: inherit;
+  }
 }
 
 .ListInput__Loader {
