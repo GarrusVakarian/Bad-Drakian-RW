@@ -439,6 +439,12 @@
 	var/branded_writing = ""
 	var/body_writing = ""
 
+/obj/item/organ/testicles/imprint_organ_dna(datum/organ_dna/organ_dna)
+	..()
+	var/datum/organ_dna/testicles/testicles_dna = organ_dna
+	testicles_dna.ball_size = ball_size
+	testicles_dna.virility = virility
+
 /obj/item/organ/testicles/get_icon_cache_key(obj/item/bodypart/bodypart)
 	var/datum/sprite_accessory/testicles/accessory = SPRITE_ACCESSORY(accessory_type)
 	var/taur_state
