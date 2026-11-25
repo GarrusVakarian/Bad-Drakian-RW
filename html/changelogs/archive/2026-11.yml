@@ -1031,6 +1031,9 @@
   - bugfix: Armor readouts now name the areas protected by gear with partial face
       coverage.
   - qol: Made selected options easier to see in list pickers (for real this time).
+  - bugfix: The Heavy Bolts 10x recipe now produces usable heavy bolts.
+  - rscadd: Lit ziggs can now light blastpowder sticks.
+  - balance: Cunning Provisioner now grants +2 Butchering.
   mypingishuge:
   - bugfix: Eclectic miracle descriptions display bold text and line breaks correctly.
   - sound: Added Masquerade Violation and Open Season to the Combat Mode Music picker.
