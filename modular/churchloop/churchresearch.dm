@@ -94,6 +94,13 @@ var/global/list/PESTRA_ORGAN_KEYS = list(
 	s = replacetext(s, "'", "&#39;")
 	return s
 
+/// Learn Miracles descriptions use bold and line breaks. Escape the rest as text.
+/proc/_cr_miracle_description(description)
+	var/static/regex/bold = regex("&lt;b&gt;(.*?)&lt;/b&gt;", "gi")
+	var/static/regex/line_break = regex("&lt;br\\s*/?&gt;|\\r\\n?|\\n", "gi")
+	var/escaped_description = replacetext(_cr_html_attr(description), line_break, "<br>")
+	return replacetext(escaped_description, bold, "<b>$1</b>")
+
 /proc/status_yn(flag)
 	return flag ? "<span style='color:#2ecc71'>Unlocked</span>" : "<span style='color:#e67e22'>Locked</span>"
 
@@ -781,7 +788,7 @@ var/global/list/PESTRA_ORGAN_KEYS = list(
 
 				html += "<tr>"
 				html += "<td><b>[_cr_html_attr(nm2)]</b></td>"
-				html += "<td>[_cr_html_attr(desc2)]</td>"
+				html += "<td>[_cr_miracle_description(desc2)]</td>"
 				html += "<td align='center'>[tier2]</td>"
 				html += "<td align='center'>[cost3] MP</td>"
 				html += "<td align='center'>"
