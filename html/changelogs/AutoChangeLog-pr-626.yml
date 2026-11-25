@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "\"Until I'm Finished\" ERP panel option only stops actions started by the player who enabled it."
