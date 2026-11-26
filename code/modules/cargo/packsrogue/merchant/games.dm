@@ -53,3 +53,23 @@
 	name = "Dice Poker Dice Bag"
 	cost = 20
 	contains = list(/obj/item/storage/pill_bottle/dice/dice_poker)
+
+/datum/supply_pack/rogue/games/arlette_starter
+	name = "Arlette Starter Deck (Random Faction)"
+	cost = 30
+	contains = list(/obj/item/ccg_deck/starter/random)
+
+/datum/supply_pack/rogue/games/arlette_deckbox
+	name = "Empty Arlette Deck Box"
+	cost = 5
+	contains = list(/obj/item/ccg_deck)
+
+/datum/supply_pack/rogue/games/arlette_booster
+	name = "Arlette Card Booster"
+	cost = 15
+	contains = list(/obj/item/ccg_card_booster)
+
+/datum/supply_pack/rogue/games/arlette_booster_premium
+	name = "Premium Arlette Card Booster"
+	cost = 30
+	contains = list(/obj/item/ccg_card_booster/premium)

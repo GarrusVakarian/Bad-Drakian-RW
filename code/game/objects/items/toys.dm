@@ -118,6 +118,16 @@
 	grid_width = 32
 	grid_height = 32
 
+/obj/item/toy/cards/deck/examine(mob/user)
+	. = ..()
+	. += span_smallnotice("Use the deck in your hand to shuffle it. Click it with an empty hand to draw a card.")
+	if(istype(src, /obj/item/toy/cards/deck/tarot))
+		return
+	if(card_table_mode)
+		. += span_smallnotice("Click to play, or right-click to pack up once everyone has left.")
+	else
+		. += span_smallnotice("Right-click to set up a table for blackjack or poker.")
+
 /obj/item/toy/cards/deck/Initialize(mapload)
 	. = ..()
 	populate_deck()
@@ -135,6 +145,9 @@
 //ATTACK HAND IGNORING PARENT RETURN VALUE
 //ATTACK HAND NOT CALLING PARENT
 /obj/item/toy/cards/deck/attack_hand(mob/user)
+	if(card_table_mode)
+		ui_interact(user)
+		return TRUE
 	draw_card(user)
 
 /obj/item/toy/cards/deck/proc/draw_card(mob/user)
@@ -169,6 +182,9 @@
 		icon_state = "deck_[deckstyle]_empty"
 
 /obj/item/toy/cards/deck/attack_self(mob/user)
+	if(card_table_mode)
+		ui_interact(user)
+		return TRUE
 	if(cooldown < world.time - 25)
 		cards = shuffle(cards)
 		playsound(src, 'sound/items/cardshuffle.ogg', 100, TRUE)
@@ -204,6 +220,9 @@
 		return ..()
 
 /obj/item/toy/cards/deck/MouseDrop(atom/over_object)
+	if(card_table_mode)
+		to_chat(usr, span_warning("Pack up the card table before picking up the deck."))
+		return
 	. = ..()
 	var/mob/living/M = usr
 	if(!istype(M) || !(M.mobility_flags & MOBILITY_PICKUP))

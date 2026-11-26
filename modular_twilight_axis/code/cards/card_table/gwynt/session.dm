@@ -1,17 +1,3 @@
-GLOBAL_VAR_INIT(ccg_music_channel, null)
-
-/// Arlette's soundtrack gets its own sound channel, reserved from SSsounds the first time it's needed.
-/// Called by name so this compiles both before and after the sound system overhaul renamed the proc
-/// (reserve_sound_channel_datumless() became reserve_sound_channel()).
-/proc/ccg_music_channel()
-	if(!GLOB.ccg_music_channel)
-		if(hascall(SSsounds, "reserve_sound_channel_datumless"))
-			GLOB.ccg_music_channel = call(SSsounds, "reserve_sound_channel_datumless")()
-		else
-			GLOB.ccg_music_channel = call(SSsounds, "reserve_sound_channel")()
-	return GLOB.ccg_music_channel
-
-#define CHANNEL_GWYNT_MUSIC ccg_music_channel()
 #define CCG_SIDE_ONE "one"
 #define CCG_SIDE_TWO "two"
 #define CCG_HAND_SIZE 12
@@ -69,6 +55,7 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	var/list/leader_ids = list()
 	var/list/leader_used = list()
 	var/list/carryover_cards = list()
+	var/music_channel
 	var/list/soundtrack_timers = list()
 	var/list/soundtrack_files = list()
 	var/list/soundtrack_titles = list()
@@ -112,8 +99,8 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	leader_used[CCG_SIDE_TWO] = FALSE
 	carryover_cards[CCG_SIDE_ONE] = list()
 	carryover_cards[CCG_SIDE_TWO] = list()
-	select_soundtrack_for(p1, p1, p2)
-	select_soundtrack_for(p2, p1, p2)
+	select_soundtrack_for(p1)
+	select_soundtrack_for(p2)
 	start_round(TRUE)
 
 /datum/ccg_match/Destroy()
@@ -155,7 +142,7 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	soundtrack_repeats = null
 	return ..()
 
-/datum/ccg_match/proc/select_soundtrack_for(mob/listener, mob/player_one, mob/player_two)
+/datum/ccg_match/proc/select_soundtrack_for(mob/listener)
 	if(!listener?.ckey)
 		return
 	var/target_ckey = listener.ckey
@@ -164,47 +151,30 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	soundtrack_repeats[target_ckey] = TRUE
 	if(!prob(10))
 		return
-	if(ccg_soundtrack_has_antag(player_one, /datum/antagonist/lich) || ccg_soundtrack_has_antag(player_two, /datum/antagonist/lich))
-		soundtrack_files[target_ckey] = CCG_SOUNDTRACK_LAST_SIEGE
-		soundtrack_titles[target_ckey] = "Last Siege"
-		soundtrack_repeats[target_ckey] = FALSE
-		return
-	if(ccg_soundtrack_is_open_vampire_lord(player_one) || ccg_soundtrack_is_open_vampire_lord(player_two))
-		soundtrack_files[target_ckey] = CCG_SOUNDTRACK_VAMPIRE_NEGOTIATIONS
-		soundtrack_titles[target_ckey] = "Vampire Negotiations"
-		soundtrack_repeats[target_ckey] = FALSE
-		return
-	if(ccg_soundtrack_has_antag(player_one, /datum/antagonist/bandit) || ccg_soundtrack_has_antag(player_two, /datum/antagonist/bandit))
-		soundtrack_files[target_ckey] = CCG_SOUNDTRACK_BANDIT_CONFRONTATION
-		soundtrack_titles[target_ckey] = "Bandit Confrontation"
-		soundtrack_repeats[target_ckey] = FALSE
-		return
+	// Track selection must not reveal a participant's hidden antagonist role.
+	var/title = pick("Hard Cards", "Last Siege", "Vampire Negotiations", "Bandit Confrontation")
+	switch(title)
+		if("Hard Cards")
+			soundtrack_files[target_ckey] = CCG_SOUNDTRACK_HARD_CARDS
+		if("Last Siege")
+			soundtrack_files[target_ckey] = CCG_SOUNDTRACK_LAST_SIEGE
+		if("Vampire Negotiations")
+			soundtrack_files[target_ckey] = CCG_SOUNDTRACK_VAMPIRE_NEGOTIATIONS
+		if("Bandit Confrontation")
+			soundtrack_files[target_ckey] = CCG_SOUNDTRACK_BANDIT_CONFRONTATION
+	soundtrack_titles[target_ckey] = title
+	soundtrack_repeats[target_ckey] = FALSE
 
 /datum/ccg_match/proc/soundtrack_title_for(mob/user)
 	if(user?.ckey && soundtrack_titles[user.ckey])
 		return soundtrack_titles[user.ckey]
 	return "Combat Music"
 
-/proc/ccg_soundtrack_has_antag(mob/player, antag_path)
-	return !!player?.mind?.has_antag_datum(antag_path)
-
-/proc/ccg_soundtrack_is_open_vampire_lord(mob/player)
-	if(!player?.mind?.has_antag_datum(/datum/antagonist/vampire/lord))
-		return FALSE
-	var/datum/component/vampire_disguise/disguise_comp = player.GetComponent(/datum/component/vampire_disguise)
-	if(disguise_comp?.disguised)
-		return FALSE
-	return TRUE
-
 /datum/ccg_match/proc/update_deck_uis()
 	if(owner)
 		SStgui.update_uis(owner)
 	if(challenger)
 		SStgui.update_uis(challenger)
-	for(var/spectator_ckey in spectator_ckeys)
-		var/mob/spectator = ccg_find_mob_by_ckey(spectator_ckey)
-		if(spectator)
-			SStgui.update_user_uis(spectator)
 
 /datum/ccg_match/proc/is_participant(mob/user)
 	if(!user?.ckey)
@@ -240,8 +210,8 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 		deltimer(soundtrack_timers[target_ckey])
 		soundtrack_timers -= target_ckey
 	var/mob/player = ccg_find_mob_by_ckey(target_ckey)
-	if(player)
-		player.stop_sound_channel(CHANNEL_GWYNT_MUSIC)
+	if(player && music_channel)
+		player.stop_sound_channel(music_channel)
 
 /datum/ccg_match/proc/stop_soundtracks()
 	stop_soundtrack_for_ckey(player_ckeys[CCG_SIDE_ONE])
@@ -256,15 +226,17 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 		stop_soundtrack_for(user)
 		return
 	if(!soundtrack_files[user.ckey])
-		select_soundtrack_for(user, ccg_find_mob_by_ckey(player_ckeys[CCG_SIDE_ONE]), ccg_find_mob_by_ckey(player_ckeys[CCG_SIDE_TWO]))
+		select_soundtrack_for(user)
 	if(!soundtrack_files[user.ckey])
 		return
-	if(ccg_is_soundtrack_playing(user))
+	if(!music_channel)
+		music_channel = SSsounds.reserve_sound_channel(src)
+	if(!music_channel || ccg_is_soundtrack_playing(user))
 		return
 	stop_soundtrack_for(user)
 	var/soundtrack_file = soundtrack_files[user.ckey]
 	var/repeat_track = soundtrack_repeats[user.ckey] ? TRUE : FALSE
-	var/sound/track = sound(soundtrack_file, repeat = repeat_track, wait = 0, channel = CHANNEL_GWYNT_MUSIC, volume = ccg_soundtrack_volume(user))
+	var/sound/track = sound(soundtrack_file, repeat = repeat_track, wait = 0, channel = music_channel, volume = ccg_soundtrack_volume(user))
 	SEND_SOUND(user, track)
 	if(!repeat_track)
 		soundtrack_timers[user.ckey] = addtimer(CALLBACK(src, PROC_REF(restart_soundtrack_for_ckey), user.ckey), ccg_soundtrack_length(soundtrack_file), TIMER_STOPPABLE)
@@ -276,8 +248,8 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 		return
 	var/mob/player = ccg_find_mob_by_ckey(target_ckey)
 	if(player?.client?.prefs?.ccg_soundtrack_enabled)
-		player.stop_sound_channel(CHANNEL_GWYNT_MUSIC)
-		select_soundtrack_for(player, ccg_find_mob_by_ckey(player_ckeys[CCG_SIDE_ONE]), ccg_find_mob_by_ckey(player_ckeys[CCG_SIDE_TWO]))
+		player.stop_sound_channel(music_channel)
+		select_soundtrack_for(player)
 		sync_soundtrack_for(player)
 
 /proc/ccg_soundtrack_length(soundtrack_file)
@@ -292,11 +264,11 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 			return CCG_SOUNDTRACK_LAST_SIEGE_LENGTH
 	return CCG_SOUNDTRACK_DEFAULT_LENGTH
 
-/proc/ccg_is_soundtrack_playing(mob/user)
+/datum/ccg_match/proc/ccg_is_soundtrack_playing(mob/user)
 	if(!user?.client)
 		return FALSE
 	for(var/sound/S in user.client.SoundQuery())
-		if(S.channel == CHANNEL_GWYNT_MUSIC)
+		if(S.channel == music_channel)
 			return TRUE
 	return FALSE
 
@@ -314,7 +286,7 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 		soundtrack_file = ccg_pick_soundtrack_file(user?.cmode_music)
 	if(!soundtrack_file)
 		soundtrack_file = ccg_pick_soundtrack_file(user?.client?.prefs?.combat_music?.musicpath)
-	return soundtrack_file || CCG_SOUNDTRACK_DEFAULT
+	return soundtrack_file ? soundtrack_file : CCG_SOUNDTRACK_DEFAULT
 
 /proc/ccg_combat_soundtrack_title(mob/user)
 	if(isliving(user))
@@ -424,7 +396,7 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	return TRUE
 
 /datum/ccg_match/proc/side_for_user(mob/user, obj/item/ccg_deck/deck_context)
-	if(!user?.ckey)
+	if(!isliving(user) || !user.ckey)
 		return null
 	if(player_ckeys[CCG_SIDE_ONE] == player_ckeys[CCG_SIDE_TWO] && deck_context)
 		if(deck_context == owner)
@@ -1055,7 +1027,6 @@ GLOBAL_VAR_INIT(ccg_music_channel, null)
 	return out
 
 #undef CCG_SIDE_ONE
-#undef CHANNEL_GWYNT_MUSIC
 #undef CCG_SIDE_TWO
 #undef CCG_HAND_SIZE
 #undef CCG_MULLIGAN_COUNT

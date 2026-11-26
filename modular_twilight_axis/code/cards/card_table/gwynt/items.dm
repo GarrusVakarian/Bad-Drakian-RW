@@ -4,6 +4,8 @@
 	icon = 'modular_twilight_axis/icons/obj/gwynt_objs.dmi'
 	icon_state = "gwint_deck"
 	w_class = WEIGHT_CLASS_SMALL
+	grid_width = 32
+	grid_height = 32
 	var/list/card_ids = list()
 	var/faction_id = CCG_FACTION_AZURIA
 	var/leader_id = "azuria_ducal_marshal"
@@ -24,10 +26,8 @@
 
 /obj/item/ccg_deck/Destroy()
 	var/datum/ccg_match/active_match = get_active_match()
-	if(active_match?.owner == src)
-		qdel(active_match)
-	else if(active_match?.challenger == src)
-		active_match.challenger = null
+	if(active_match)
+		clear_match(active_match)
 	match = null
 	match_host = null
 	return ..()
@@ -74,7 +74,7 @@
 
 /obj/item/ccg_deck/proc/is_on_table()
 	var/turf/T = get_turf(src)
-	return T && locate(/obj/structure/table) in T
+	return isturf(loc) && T && (locate(/obj/structure/table) in T)
 
 /obj/item/ccg_deck/proc/in_active_match()
 	var/datum/ccg_match/active_match = get_active_match()
@@ -113,9 +113,10 @@
 	if(!choice || QDELETED(src) || !user.is_holding(src) || in_active_match())
 		return FALSE
 	var/card_id = choices[choice]
-	if(!(card_id in card_ids))
+	var/card_index = card_ids.Find(card_id)
+	if(!card_index)
 		return FALSE
-	card_ids -= card_id
+	card_ids.Cut(card_index, card_index + 1)
 	var/obj/item/ccg_card_single/single = new(get_turf(user))
 	single.set_card(card_id)
 	user.put_in_hands(single)
@@ -158,11 +159,11 @@
 		if(leader.faction != faction_id)
 			continue
 		choices[leader.name] = leader.id
-		descriptions[leader.name] = leader.desc
+		descriptions[leader.name] = list("description" = leader.desc)
 	if(!length(choices))
 		to_chat(user, span_warning("This faction has no leaders to choose from."))
 		return FALSE
-	var/choice = tgui_input_list(user, "Pick the deck's leader.", "[name]", sortList(choices), descriptions = descriptions)
+	var/choice = tgui_input_list(user, "Pick the deck's leader.", "[name]", sortList(choices), option_details = descriptions)
 	if(!choice || QDELETED(src) || !user.is_holding(src) || in_active_match())
 		return FALSE
 	set_faction(faction_id, choices[choice])
@@ -255,8 +256,7 @@
 		release_finished_match()
 	if(get_active_match())
 		return
-	var/turf/T = get_turf(src)
-	if(T && locate(/obj/structure/table) in T)
+	if(is_on_table())
 		inviter_ckey = user?.ckey
 		inviter_name = user?.real_name ? user.real_name : user?.name
 		if(user)
@@ -318,7 +318,7 @@
 	if(!deck || !ckey)
 		return FALSE
 	var/mob/living/player = ccg_find_mob_by_ckey(ckey)
-	if(!player)
+	if(!isliving(player) || !player.Adjacent(deck))
 		return FALSE
 	if(player.put_in_hands(deck))
 		return TRUE
@@ -367,12 +367,12 @@
 	return TRUE
 
 /obj/item/ccg_deck/proc/try_start_match(mob/user, obj/item/ccg_deck/challenger_deck)
-	if(!user || !challenger_deck || challenger_deck == src)
+	if(!isliving(user) || !user.client || !challenger_deck || challenger_deck == src || !user.is_holding(challenger_deck))
 		return FALSE
 	if(get_active_match() || challenger_deck.get_active_match())
 		to_chat(user, span_warning("One of these decks is already in a match."))
 		return FALSE
-	if(!inviter_ckey)
+	if(!inviter_ckey || !is_on_table())
 		to_chat(user, span_warning("This deck is not offering a match."))
 		return FALSE
 	if(inviter_ckey == user.ckey)
@@ -382,10 +382,10 @@
 		to_chat(user, span_warning("Both decks need at least [CCG_MIN_DECK_SIZE] cards to play."))
 		return FALSE
 	var/mob/player_one = ccg_find_mob_by_ckey(inviter_ckey)
-	if(!player_one)
+	if(!isliving(player_one) || !player_one.Adjacent(src))
 		to_chat(user, span_warning("The player who offered this match is not here."))
 		return FALSE
-	if(!user.dropItemToGround(challenger_deck))
+	if(!user.dropItemToGround(challenger_deck) || QDELETED(challenger_deck))
 		return FALSE
 	challenger_deck.forceMove(get_turf(src))
 	clear_invitation()
@@ -398,21 +398,23 @@
 	return TRUE
 
 /obj/item/ccg_deck/ui_state(mob/user)
-	return GLOB.always_state
+	return GLOB.hold_or_view_state
 
 /obj/item/ccg_deck/ui_assets(mob/user)
 	return list(get_asset_datum(/datum/asset/simple/ccg_cards))
 
 /obj/item/ccg_deck/ui_interact(mob/user, datum/tgui/ui)
 	var/datum/ccg_match/active_match = get_active_match()
-	if(!active_match)
+	if(!active_match || !user?.client)
 		return
-	active_match.add_spectator(user)
-	active_match.sync_soundtrack_for(user)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "GwyntTable", name)
-		ui.open()
+		ui.set_autoupdate(FALSE)
+		if(ui.open())
+			active_match.add_spectator(user)
+			active_match.sync_soundtrack_for(user)
+			active_match.update_deck_uis()
 
 /obj/item/ccg_deck/ui_close(mob/user)
 	var/datum/ccg_match/active_match = get_active_match()
@@ -430,9 +432,9 @@
 	if(.)
 		return
 	var/datum/ccg_match/active_match = get_active_match()
-	if(!active_match)
-		return FALSE
 	var/mob/user = ui.user
+	if(!active_match || !user?.client)
+		return FALSE
 	switch(action)
 		if("leave_spectator")
 			if(active_match.remove_spectator(user))
@@ -446,8 +448,17 @@
 				active_match.sync_soundtrack_for(user)
 				active_match.update_deck_uis()
 				return TRUE
+		if("concede")
+			var/side = active_match.side_for_user(user, src)
+			if(!side || active_match.result_text)
+				return FALSE
+			var/winner = active_match.opposite(side)
+			active_match.result_text = "[active_match.player_names[winner]] wins. [active_match.player_names[side]] concedes."
+			active_match.stop_soundtracks()
+			active_match.update_deck_uis()
+			return TRUE
 		if("collect")
-			if(!active_match.side_for_user(user, src))
+			if(!active_match.result_text || !active_match.side_for_user(user, src))
 				return FALSE
 			if(end_match_session(active_match))
 				return TRUE
@@ -528,6 +539,8 @@
 	icon = 'modular_twilight_axis/icons/obj/gwynt_objs.dmi'
 	icon_state = "gwint_card"
 	w_class = WEIGHT_CLASS_TINY
+	grid_width = 32
+	grid_height = 32
 	var/card_id
 
 /obj/item/ccg_card_single/proc/set_card(new_card_id)
@@ -568,6 +581,8 @@
 	icon = 'modular_twilight_axis/icons/obj/gwynt_objs.dmi'
 	icon_state = "gwint_card"
 	w_class = WEIGHT_CLASS_TINY
+	grid_width = 32
+	grid_height = 32
 	var/card_rarity = CCG_RARITY_RARE
 	var/limited_only = FALSE
 
@@ -609,10 +624,12 @@
 
 /obj/item/ccg_card_booster
 	name = "sealed card booster"
-	desc = "A sealed booster containing three random collectible cards."
+	desc = "A sealed booster containing five random collectible cards."
 	icon = 'modular_twilight_axis/icons/obj/gwynt_objs.dmi'
 	icon_state = "gwint_card"
 	w_class = WEIGHT_CLASS_SMALL
+	grid_width = 32
+	grid_height = 32
 	var/list/card_weights = list(
 		"common_repeatable" = 8,
 		"common_limited" = 5,
@@ -624,7 +641,7 @@
 	var/turf/drop_turf = get_turf(user)
 	if(!drop_turf)
 		return
-	for(var/i in 1 to 3)
+	for(var/i in 1 to 5)
 		var/card_id = pick_random_card()
 		if(!card_id)
 			continue
@@ -669,7 +686,7 @@
 
 /obj/item/ccg_card_booster/premium
 	name = "premium sealed card booster"
-	desc = "A premium sealed booster containing three random collectible cards."
+	desc = "A premium sealed booster containing five random collectible cards."
 	card_weights = list(
 		"common_repeatable" = 5,
 		"common_limited" = 8,

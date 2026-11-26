@@ -13,7 +13,6 @@ type Card = {
 };
 
 type Player = {
-  ckey: string;
   name: string;
   hand: Card[];
   hand_count: number;
@@ -32,24 +31,6 @@ type Player = {
   is_spirit?: boolean;
 };
 
-type FoolPair = {
-  index: number;
-  attack?: Card | null;
-  defense?: Card | null;
-};
-
-type SolitaireSelection = {
-  source: 'waste' | 'tableau';
-  column?: number;
-  cardIndex?: number;
-};
-
-type SolitaireFoundation = {
-  suit: string;
-  card?: Card | null;
-  count: number;
-};
-
 type XylixCheat = {
   enabled: boolean;
   tier: number;
@@ -60,16 +41,12 @@ type XylixCheat = {
 };
 
 type Data = {
-  game_type: 'none' | 'fool' | 'blackjack' | 'poker' | 'solitaire';
+  game_type: 'none' | 'blackjack' | 'poker';
   game_label: string;
-  fool_variant: string;
-  fool_variant_label: string;
   poker_variant: string;
   poker_variant_label: string;
   blackjack_variant: string;
   blackjack_variant_label: string;
-  solitaire_variant: string;
-  solitaire_variant_label: string;
   dealer_rotates: boolean;
   dealer_rotation_label: string;
   dealer_name?: string | null;
@@ -78,7 +55,7 @@ type Data = {
   message: string;
   players: Player[];
   observers: string[];
-  my_ckey?: string;
+  my_player_index?: number;
   is_player: boolean;
   is_host: boolean;
   is_observer: boolean;
@@ -92,28 +69,14 @@ type Data = {
   dealer_value?: number | null;
   community_cards: Card[];
   poker_turn?: string | null;
+  can_act_in_poker?: boolean;
   poker_current_bet?: number;
   poker_pot?: number;
   poker_betting_round?: number;
   blackjack_action_seq?: number;
   blackjack_action_player_index?: number;
   blackjack_action_bust?: boolean;
-  fool_action_seq?: number;
-  fool_action_kind?: string | null;
-  fool_action_player_index?: number;
-  fool_action_target_index?: number;
   my_value?: number | null;
-  solitaire_tableau?: { index: number; cards: Card[] }[];
-  solitaire_stock_count?: number;
-  solitaire_waste?: Card | null;
-  solitaire_foundations?: SolitaireFoundation[];
-  solitaire_completed_sets?: number;
-  attacker?: string | null;
-  defender?: string | null;
-  table_attack?: string | null;
-  table_defense?: string | null;
-  table_pairs?: FoolPair[];
-  trump?: string | null;
   xylix?: XylixCheat;
 };
 
@@ -130,8 +93,6 @@ const resultText: Record<string, string> = {
   Push: 'push',
   Winner: 'won',
   Lost: 'lost',
-  Out: 'won',
-  Fool: 'fool',
   Left: 'left the table',
   Dealer: 'dealer',
 };
@@ -264,47 +225,6 @@ type CardFlight = {
   toX: number;
   toY: number;
   label: string;
-};
-
-const solitaireBoardStyle: CSSProperties = {
-  position: 'absolute',
-  inset: '18px',
-  display: 'grid',
-  gridTemplateRows: '88px 1fr auto',
-  gap: '18px',
-};
-
-const solitaireHeaderStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr auto 1fr',
-  gap: '16px',
-  alignItems: 'start',
-};
-
-const foundationStyle: CSSProperties = {
-  width: '54px',
-  height: '70px',
-  border: '2px dashed rgba(255, 255, 255, 0.34)',
-  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  boxSizing: 'border-box',
-  display: 'grid',
-  placeItems: 'center',
-  color: 'rgba(255, 255, 255, 0.52)',
-  fontWeight: 700,
-};
-
-const solitaireTableauStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(7, minmax(64px, 1fr))',
-  gap: '12px',
-  alignItems: 'start',
-};
-
-const solitaireColumnStyle: CSSProperties = {
-  position: 'relative',
-  minHeight: '310px',
-  borderTop: '1px solid rgba(255, 255, 255, 0.14)',
-  paddingTop: '8px',
 };
 
 const getRankSuit = (label?: string | null, card?: Card) => {
@@ -618,9 +538,6 @@ const Seat = (props: {
   isMe: boolean;
   gameType: Data['game_type'];
   blackjackVariant: string;
-  attacker?: string | null;
-  defender?: string | null;
-  dealer?: string | null;
   selectedCardIndex?: number | null;
   getCardHighlight?: (card: Card) => string | undefined;
   onCardClick?: (card: Card) => void;
@@ -632,22 +549,12 @@ const Seat = (props: {
     isMe,
     gameType,
     blackjackVariant,
-    attacker,
-    defender,
-    dealer,
     selectedCardIndex,
     getCardHighlight,
     onCardClick,
   } = props;
   const label = player ? player.name : `Seat ${seatNumber}`;
-  const activeRole =
-    player && !player.left && player.name === attacker
-      ? 'Their turn'
-      : player && !player.left && player.name === defender
-        ? 'Defending'
-        : player && !player.left && player.name === dealer
-          ? 'Dealer'
-          : null;
+  const activeRole = player?.is_dealer && !player.left ? 'Dealer' : null;
   const hasVisibleHand = !!player?.hand?.some((card) => !card.hidden);
   const showCards = !!player?.hand?.length && (isMe || hasVisibleHand);
   const showBlackjackValues = gameType === 'blackjack' && showCards;
@@ -789,196 +696,6 @@ const XylixBlock = (props: {
   );
 };
 
-const SolitaireBoard = (props: {
-  gameLabel: string;
-  variantLabel: string;
-  variant: string;
-  stage: Data['stage'];
-  message: string;
-  stockCount: number;
-  discardCount: number;
-  waste?: Card | null;
-  foundations: SolitaireFoundation[];
-  completedSets: number;
-  tableau: { index: number; cards: Card[] }[];
-  selected?: SolitaireSelection | null;
-  onDraw: () => void;
-  onSelectWaste: () => void;
-  onSelectTableau: (column: number, cardIndex: number) => void;
-  onMoveToTableau: (column: number) => void;
-  onMoveToFoundation: (suit: string) => void;
-}) => {
-  const {
-    gameLabel,
-    variantLabel,
-    variant,
-    stage,
-    message,
-    stockCount,
-    discardCount,
-    waste,
-    foundations,
-    completedSets,
-    tableau,
-    selected,
-    onDraw,
-    onSelectWaste,
-    onSelectTableau,
-    onMoveToTableau,
-    onMoveToFoundation,
-  } = props;
-  const isSpider = variant === 'spider';
-  const tableauStyle = isSpider
-    ? {
-        ...solitaireTableauStyle,
-        gridTemplateColumns: 'repeat(10, minmax(48px, 1fr))',
-        gap: '6px',
-      }
-    : solitaireTableauStyle;
-  const columnStyle = isSpider
-    ? {
-        ...solitaireColumnStyle,
-        minHeight: '455px',
-      }
-    : solitaireColumnStyle;
-  const cardStep = isSpider ? 18 : 30;
-
-  return (
-    <div style={solitaireBoardStyle}>
-      <div style={solitaireHeaderStyle}>
-        <div style={{ ...rowStyle, alignItems: 'flex-start' }}>
-          <div style={{ textAlign: 'center' }}>
-            <CardFace label={stockCount ? '??' : ''} onClick={onDraw} />
-            <div style={{ marginTop: '4px', fontSize: '12px' }}>
-              Stock: {stockCount}
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <CardFace
-              card={waste || undefined}
-              label={!waste && discardCount ? '??' : ''}
-              selected={selected?.source === 'waste'}
-              onClick={waste ? onSelectWaste : undefined}
-            />
-            <div style={{ marginTop: '4px', fontSize: '12px' }}>
-              Discard: {discardCount}
-            </div>
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '20px', fontWeight: 800 }}>{gameLabel}</div>
-          <div style={{ opacity: 0.75 }}>
-            {variantLabel} · {stageText[stage]}
-          </div>
-        </div>
-
-        {isSpider ? (
-          <div style={{ textAlign: 'right', minWidth: '160px' }}>
-            <div style={{ fontSize: '12px', opacity: 0.78 }}>Completed</div>
-            <div style={{ fontSize: '20px', fontWeight: 800 }}>
-              {completedSets}/8
-            </div>
-          </div>
-        ) : (
-          <div style={{ ...rowStyle, justifyContent: 'flex-end' }}>
-            {foundations.map((foundation) => (
-              <div
-                key={foundation.suit}
-                style={foundationStyle}
-                onClick={() => onMoveToFoundation(foundation.suit)}
-              >
-                {foundation.card ? (
-                  <CardFace card={foundation.card} />
-                ) : (
-                  suitMap[foundation.suit]
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {tableau.length ? (
-        <div style={tableauStyle}>
-          {tableau.map((column) => (
-            <div
-              key={column.index}
-              style={{
-                ...columnStyle,
-                outline:
-                  selected?.source === 'tableau' &&
-                  selected.column === column.index
-                    ? '2px solid rgba(244, 207, 92, 0.9)'
-                    : 'none',
-              }}
-              onClick={() => onMoveToTableau(column.index)}
-            >
-              {column.cards.map((card, cardIndex) => (
-                <div
-                  key={`${column.index}-${cardIndex}`}
-                  style={{
-                    position: 'absolute',
-                    top: `${cardIndex * cardStep + 8}px`,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: cardIndex + 1,
-                  }}
-                >
-                  <CardFace
-                    card={card}
-                    small={isSpider}
-                    selected={
-                      selected?.source === 'tableau' &&
-                      selected.column === column.index &&
-                      !!selected.cardIndex &&
-                      cardIndex + 1 >= selected.cardIndex
-                    }
-                    onClick={
-                      !card.hidden
-                        ? () => {
-                            if (
-                              selected &&
-                              !(
-                                selected.source === 'tableau' &&
-                                selected.column === column.index &&
-                                selected.cardIndex === cardIndex + 1
-                              )
-                            ) {
-                              onMoveToTableau(column.index);
-                              return;
-                            }
-                            onSelectTableau(column.index, cardIndex + 1);
-                          }
-                        : undefined
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            placeItems: 'center',
-            minHeight: '360px',
-            opacity: 0.78,
-          }}
-        >
-          Start a round to deal the solitaire.
-        </div>
-      )}
-
-      {!!message && (
-        <div style={{ color: '#d5efb3', minHeight: '18px' }}>{message}</div>
-      )}
-    </div>
-  );
-};
-
-// eslint-disable-next-line complexity
 export const CardTable = () => {
   const { act, data } = useBackend<Data>();
   const [selectedPokerCard, setSelectedPokerCard] = useState<number | null>(
@@ -986,22 +703,15 @@ export const CardTable = () => {
   );
   const [pokerBetAmount, setPokerBetAmount] = useState(10);
   const lastBlackjackActionSeq = useRef(0);
-  const lastFoolActionSeq = useRef(0);
   const [cardFlight, setCardFlight] = useState<CardFlight | null>(null);
   const [tableShaking, setTableShaking] = useState(false);
-  const [selectedSolitaireCard, setSelectedSolitaireCard] =
-    useState<SolitaireSelection | null>(null);
   const {
     game_type,
     game_label,
-    fool_variant,
-    fool_variant_label,
     poker_variant,
     poker_variant_label,
     blackjack_variant,
     blackjack_variant_label,
-    solitaire_variant,
-    solitaire_variant_label,
     dealer_rotates,
     dealer_rotation_label,
     dealer_name,
@@ -1010,7 +720,7 @@ export const CardTable = () => {
     message,
     players = [],
     observers = [],
-    my_ckey,
+    my_player_index = 0,
     is_player,
     is_host,
     is_observer,
@@ -1026,29 +736,16 @@ export const CardTable = () => {
     poker_current_bet = 10,
     poker_pot = 0,
     poker_betting_round = 0,
+    can_act_in_poker = false,
+    can_pack,
     blackjack_action_seq = 0,
     blackjack_action_player_index = 0,
     blackjack_action_bust = false,
-    fool_action_seq = 0,
-    fool_action_kind,
-    fool_action_player_index = 0,
-    fool_action_target_index = 0,
     my_value,
-    solitaire_tableau = [],
-    solitaire_stock_count = 0,
-    solitaire_waste,
-    solitaire_foundations = [],
-    solitaire_completed_sets = 0,
-    attacker,
-    defender,
-    table_attack,
-    table_defense,
-    table_pairs = [],
-    trump,
     xylix,
   } = data;
 
-  const myPlayerIndex = players.findIndex((player) => player.ckey === my_ckey);
+  const myPlayerIndex = my_player_index - 1;
   const myPlayer = myPlayerIndex >= 0 ? players[myPlayerIndex] : undefined;
   const isLobby = stage === 'lobby';
   const isPlaying = stage === 'playing';
@@ -1092,7 +789,7 @@ export const CardTable = () => {
   const pointForPlayerIndex = (playerIndex: number) => {
     const player = players[playerIndex - 1];
     const screenEntry = screenSeatEntries.find(
-      (entry) => entry.player?.ckey === player?.ckey,
+      (entry) => entry.seatNumber === playerIndex,
     );
     return (
       seatFlightPoints[screenEntry?.positionIndex || 0] || seatFlightPoints[0]
@@ -1141,46 +838,9 @@ export const CardTable = () => {
     blackjack_action_player_index,
     blackjack_action_bust,
   ]);
-  useEffect(() => {
-    if (
-      fool_action_seq <= lastFoolActionSeq.current ||
-      !fool_action_player_index
-    ) {
-      return;
-    }
-    lastFoolActionSeq.current = fool_action_seq;
-    const from = pointForPlayerIndex(fool_action_player_index);
-    const to = fool_action_target_index
-      ? pointForPlayerIndex(fool_action_target_index)
-      : { x: 50, y: 45 };
-    startCardFlight(
-      from,
-      to,
-      fool_action_kind === 'defend'
-        ? table_defense || '??'
-        : table_attack || '??',
-    );
-    if (fool_action_kind === 'defend') {
-      shakeTable();
-    }
-  }, [
-    fool_action_seq,
-    fool_action_kind,
-    fool_action_player_index,
-    fool_action_target_index,
-    table_attack,
-    table_defense,
-  ]);
   const canUseDealerRotation =
     game_type === 'blackjack' || game_type === 'poker';
-  const canTransfer =
-    game_type === 'fool' &&
-    (fool_variant === 'transfer' || fool_variant === 'throw_transfer');
-  const canActInPoker =
-    game_type === 'poker' &&
-    isPlaying &&
-    !!myPlayer &&
-    myPlayer.name === poker_turn;
+  const canActInPoker = can_act_in_poker;
   const playerResultText = players
     .filter((player) => !!player.result)
     .map(
@@ -1194,34 +854,11 @@ export const CardTable = () => {
       : isFinished && game_type === 'blackjack'
         ? `Dealer: ${dealer_name || '-'}`
         : '';
-  const attackRank = getRankSuit(table_attack || '').rank;
-  const attackSuit = getRankSuit(table_attack || '').suit;
-  const tableRanks = new Set<string>();
-  table_pairs.forEach((pair) => {
-    if (pair.attack) {
-      tableRanks.add(getRankSuit(pair.attack.label, pair.attack).rank);
-    }
-    if (pair.defense) {
-      tableRanks.add(getRankSuit(pair.defense.label, pair.defense).rank);
-    }
-  });
-  const cardBeatsAttack = (card: Card) => {
-    if (!table_attack) {
-      return false;
-    }
-    const { rank, suit } = getRankSuit(card.label, card);
-    if (suit === attackSuit && rankValue(rank) > rankValue(attackRank)) {
-      return true;
-    }
-    return !!trump && suit === trump && attackSuit !== trump;
-  };
   const pokerHighlightForCard = (card: Card) => {
-    if (game_type !== 'poker') {
+    if (game_type !== 'poker' || poker_variant !== 'draw') {
       return undefined;
     }
-    const allCards = [...my_hand, ...community_cards].filter(
-      (entry) => !entry.hidden,
-    );
+    const allCards = my_hand.filter((entry) => !entry.hidden);
     const rankCounts: Record<string, number> = {};
     const suitCounts: Record<string, number> = {};
     allCards.forEach((entry) => {
@@ -1283,120 +920,17 @@ export const CardTable = () => {
     }
     return undefined;
   };
-  const getOwnCardHighlight = (card: Card) => {
-    if (!isPlaying || !myPlayer) {
-      return undefined;
-    }
-    if (game_type === 'poker') {
-      return pokerHighlightForCard(card);
-    }
-    if (game_type !== 'fool') {
-      return undefined;
-    }
-    const { rank } = getRankSuit(card.label, card);
-    if (myPlayer.name === attacker && !table_attack) {
-      return '#4fc36b';
-    }
-    if (
-      myPlayer.name === attacker &&
-      table_attack &&
-      table_defense &&
-      tableRanks.has(rank) &&
-      (fool_variant === 'throw_in' || fool_variant === 'throw_transfer')
-    ) {
-      return '#4fc36b';
-    }
-    if (myPlayer.name !== defender || !table_attack || table_defense) {
-      return undefined;
-    }
-    if (canTransfer && rank === attackRank) {
-      return '#4fc36b';
-    }
-    if (cardBeatsAttack(card)) {
-      return '#4fc36b';
-    }
-    return undefined;
-  };
   const clickOwnCard = (card: Card) => {
-    if (!isPlaying || !myPlayer || !card.index) {
-      return;
-    }
-    if (game_type === 'poker' && poker_variant === 'draw') {
-      if (!myPlayer.ready && myPlayer.draws_used < 1) {
-        setSelectedPokerCard(
-          selectedPokerCard === card.index ? null : card.index,
-        );
-      }
-      return;
-    }
-    if (game_type !== 'fool') {
-      return;
-    }
-    if (myPlayer.name === attacker && !table_attack) {
-      act('fool_attack', { card_index: card.index });
-      return;
-    }
     if (
-      myPlayer.name === attacker &&
-      table_attack &&
-      table_defense &&
-      tableRanks.has(getRankSuit(card.label, card).rank) &&
-      (fool_variant === 'throw_in' || fool_variant === 'throw_transfer')
+      canActInPoker &&
+      poker_variant === 'draw' &&
+      myPlayer?.draws_used === 0 &&
+      card.index
     ) {
-      act('fool_attack', { card_index: card.index });
-      return;
+      setSelectedPokerCard(
+        selectedPokerCard === card.index ? null : card.index,
+      );
     }
-    if (myPlayer.name === defender && table_attack && !table_defense) {
-      const cardRank = getRankSuit(card.label, card).rank;
-      if (
-        canTransfer &&
-        table_attack &&
-        !table_defense &&
-        cardRank === attackRank
-      ) {
-        act('fool_transfer', { card_index: card.index });
-      } else if (cardBeatsAttack(card)) {
-        act('fool_defend', { card_index: card.index });
-      }
-    }
-  };
-  const drawSolitaire = () => {
-    setSelectedSolitaireCard(null);
-    act('solitaire_draw');
-  };
-  const selectSolitaireWaste = () => {
-    setSelectedSolitaireCard(
-      selectedSolitaireCard?.source === 'waste' ? null : { source: 'waste' },
-    );
-  };
-  const selectSolitaireTableau = (column: number, cardIndex: number) => {
-    if (
-      selectedSolitaireCard?.source === 'tableau' &&
-      selectedSolitaireCard.column === column &&
-      selectedSolitaireCard.cardIndex === cardIndex
-    ) {
-      setSelectedSolitaireCard(null);
-      return;
-    }
-    setSelectedSolitaireCard({ source: 'tableau', column, cardIndex });
-  };
-  const moveSolitaire = (
-    targetType: 'tableau' | 'foundation',
-    targetColumn?: number,
-    targetSuit?: string,
-  ) => {
-    if (!selectedSolitaireCard) {
-      return;
-    }
-    act('solitaire_move', {
-      source_type: selectedSolitaireCard.source,
-      source_column: selectedSolitaireCard.column || 0,
-      source_index: selectedSolitaireCard.cardIndex || 0,
-      target_type: targetType,
-      target_column: targetColumn || 0,
-      target_suit: targetSuit || '',
-    });
-    setSelectedSolitaireCard(null);
   };
   const chooseXylixCard = (cardIndex: number) => {
     act('xylix_choose_card', { card_index: cardIndex });
@@ -1461,279 +995,193 @@ export const CardTable = () => {
                 <CardFace label={cardFlight.label} small />
               </div>
             )}
-            {game_type === 'solitaire' ? (
-              <SolitaireBoard
-                gameLabel={game_label}
-                variantLabel={solitaire_variant_label}
-                variant={solitaire_variant}
-                stage={stage}
-                message={message}
-                stockCount={solitaire_stock_count}
-                discardCount={discard_count}
-                waste={solitaire_waste}
-                foundations={solitaire_foundations}
-                completedSets={solitaire_completed_sets}
-                tableau={solitaire_tableau}
-                selected={selectedSolitaireCard}
-                onDraw={drawSolitaire}
-                onSelectWaste={selectSolitaireWaste}
-                onSelectTableau={selectSolitaireTableau}
-                onMoveToTableau={(column) => moveSolitaire('tableau', column)}
-                onMoveToFoundation={(suit) =>
-                  moveSolitaire('foundation', undefined, suit)
-                }
-              />
-            ) : (
-              <>
-                {screenSeatEntries.map(
-                  ({ player, positionIndex, seatNumber }) => {
-                    const displayPlayer =
-                      player && player.ckey === my_ckey
-                        ? {
-                            ...player,
-                            hand: my_hand,
-                          }
-                        : player;
-                    return (
-                      <Seat
-                        key={`${positionIndex}-${seatNumber}`}
-                        player={displayPlayer}
-                        positionIndex={positionIndex}
-                        seatNumber={seatNumber}
-                        isMe={!!player && player.ckey === my_ckey}
-                        gameType={game_type}
-                        blackjackVariant={blackjack_variant}
-                        attacker={attacker}
-                        defender={defender}
-                        dealer={dealer_name}
-                        selectedCardIndex={selectedPokerCard}
-                        getCardHighlight={getOwnCardHighlight}
-                        onCardClick={clickOwnCard}
-                      />
-                    );
-                  },
-                )}
+            {screenSeatEntries.map(({ player, positionIndex, seatNumber }) => {
+              const displayPlayer =
+                player && seatNumber === my_player_index
+                  ? {
+                      ...player,
+                      hand: my_hand,
+                    }
+                  : player;
+              return (
+                <Seat
+                  key={`${positionIndex}-${seatNumber}`}
+                  player={displayPlayer}
+                  positionIndex={positionIndex}
+                  seatNumber={seatNumber}
+                  isMe={!!player && seatNumber === my_player_index}
+                  gameType={game_type}
+                  blackjackVariant={blackjack_variant}
+                  selectedCardIndex={selectedPokerCard}
+                  getCardHighlight={pokerHighlightForCard}
+                  onCardClick={clickOwnCard}
+                />
+              );
+            })}
 
-                <div style={centerStyle}>
-                  <div style={{ ...rowStyle, justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ fontSize: '18px', fontWeight: 800 }}>
-                        {game_label}
-                      </div>
-                      <div style={{ opacity: 0.75 }}>
-                        {stageText[stage]} ·{' '}
-                        {game_type === 'fool'
-                          ? fool_variant_label
-                          : game_type === 'poker'
-                            ? poker_variant_label
-                            : game_type === 'blackjack'
-                              ? blackjack_variant_label
-                              : stageText[stage]}
-                      </div>
-                    </div>
-                    <div style={rowStyle}>
-                      <div style={{ textAlign: 'center' }}>
-                        <CardFace label="??" />
-                        <div style={{ fontSize: '11px' }}>{deck_count}</div>
-                      </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <CardFace label={discard_count ? '??' : ''} />
-                        <div style={{ fontSize: '11px' }}>{discard_count}</div>
-                      </div>
-                    </div>
+            <div style={centerStyle}>
+              <div style={{ ...rowStyle, justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: '18px', fontWeight: 800 }}>
+                    {game_label}
                   </div>
-
-                  {game_type === 'blackjack' && (
-                    <div>
-                      <div style={{ marginBottom: '6px', fontWeight: 700 }}>
-                        Dealer: {dealer_name || '-'}{' '}
-                        {isFinished && dealer_value ? `(${dealer_value})` : ''}
-                      </div>
-                      <div style={{ opacity: 0.76 }}>
-                        The dealer's hand is shown at their seat.{' '}
-                        {dealer_rotation_label}.
-                      </div>
-                    </div>
-                  )}
-
-                  {game_type === 'fool' && (
-                    <div>
-                      <div style={{ ...rowStyle, marginBottom: '8px' }}>
-                        <b>Trump:</b> {suitMap[trump || ''] || trump || '-'}
-                        <b>Attack:</b> {table_attack || '-'}
-                        <b>Defense:</b> {table_defense || '-'}
-                      </div>
-                      <div style={{ ...rowStyle, justifyContent: 'center' }}>
-                        {table_pairs.length ? (
-                          table_pairs.map((pair) => (
-                            <div
-                              key={pair.index}
-                              style={{
-                                position: 'relative',
-                                width: '70px',
-                                height: '106px',
-                              }}
-                            >
-                              <div
-                                style={{
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                }}
-                              >
-                                <CardFace card={pair.attack || undefined} />
-                              </div>
-                              {pair.defense && (
-                                <div
-                                  style={{
-                                    position: 'absolute',
-                                    left: '12px',
-                                    top: '34px',
-                                  }}
-                                >
-                                  <CardFace card={pair.defense} />
-                                </div>
-                              )}
-                            </div>
-                          ))
-                        ) : (
-                          <>
-                            <CardFace />
-                            <CardFace />
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {game_type === 'poker' && (
-                    <div>
-                      <div
-                        style={{
-                          marginBottom: '8px',
-                          fontWeight: 700,
-                          display:
-                            poker_variant === 'draw' ? 'none' : undefined,
-                        }}
-                      >
-                        Community cards
-                      </div>
-                      <div style={{ marginBottom: '4px', opacity: 0.82 }}>
-                        Round: {poker_betting_round || 1}
-                      </div>
-                      <div style={{ marginBottom: '6px', opacity: 0.82 }}>
-                        Turn: {poker_turn || '-'} | Pot: {poker_pot} | Current
-                        bet: {poker_current_bet}
-                      </div>
-                      {poker_variant !== 'draw' &&
-                        (community_cards.length ? (
-                          <CardRow cards={community_cards} />
-                        ) : null)}
-                    </div>
-                  )}
-
-                  {game_type === 'none' && (
-                    <div style={{ textAlign: 'center', opacity: 0.82 }}>
-                      Take a seat. The first player picks the game.
-                    </div>
-                  )}
-
-                  {!!message && (
-                    <div style={{ color: '#d5efb3', minHeight: '18px' }}>
-                      {message}
-                    </div>
-                  )}
-                  {!!finalText && (
-                    <div style={{ color: '#f4cf5c', fontWeight: 700 }}>
-                      Result: {finalText}
-                    </div>
-                  )}
-
-                  {isPlaying && is_player && game_type === 'blackjack' && (
-                    <div style={rowStyle}>
-                      <Button
-                        disabled={!!myPlayer?.standing}
-                        onClick={() => act('blackjack_hit')}
-                      >
-                        Hit
-                      </Button>
-                      <Button
-                        disabled={!!myPlayer?.standing}
-                        onClick={() => act('blackjack_stand')}
-                      >
-                        Stand
-                      </Button>
-                    </div>
-                  )}
-
-                  {isPlaying && is_player && game_type === 'poker' && (
-                    <div style={rowStyle}>
-                      <input
-                        type="number"
-                        min={10}
-                        value={pokerBetAmount}
-                        disabled={!canActInPoker}
-                        onChange={(event) =>
-                          setPokerBetAmount(
-                            Math.max(
-                              10,
-                              Number(event.currentTarget.value) || 10,
-                            ),
-                          )
-                        }
-                        style={{
-                          width: '54px',
-                          height: '22px',
-                          boxSizing: 'border-box',
-                          background: 'rgba(255,255,255,0.08)',
-                          border: '1px solid rgba(255,255,255,0.26)',
-                          color: '#f2f2f2',
-                        }}
-                      />
-                      <Button
-                        disabled={!canActInPoker}
-                        onClick={() =>
-                          pokerBetAmount > poker_current_bet
-                            ? act('poker_bet', { amount: pokerBetAmount })
-                            : act('poker_check')
-                        }
-                      >
-                        Bet
-                      </Button>
-                      <Button
-                        disabled={!canActInPoker}
-                        onClick={() => act('poker_all_in')}
-                      >
-                        All In
-                      </Button>
-                      <Button
-                        disabled={!canActInPoker}
-                        onClick={() => act('poker_fold')}
-                      >
-                        Fold
-                      </Button>
-                    </div>
-                  )}
-
-                  {isPlaying && is_player && game_type === 'fool' && (
-                    <div style={rowStyle}>
-                      <Button
-                        disabled={!table_attack}
-                        onClick={() => act('fool_take')}
-                      >
-                        Take
-                      </Button>
-                      <Button
-                        disabled={!table_attack || !table_defense}
-                        onClick={() => act('fool_end_attack')}
-                      >
-                        Done
-                      </Button>
-                    </div>
-                  )}
+                  <div style={{ opacity: 0.75 }}>
+                    {stageText[stage]} ·{' '}
+                    {game_type === 'poker'
+                      ? poker_variant_label
+                      : game_type === 'blackjack'
+                        ? blackjack_variant_label
+                        : ''}
+                  </div>
                 </div>
-              </>
-            )}
+                <div style={rowStyle}>
+                  <div style={{ textAlign: 'center' }}>
+                    <CardFace label="??" />
+                    <div style={{ fontSize: '11px' }}>{deck_count}</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <CardFace label={discard_count ? '??' : ''} />
+                    <div style={{ fontSize: '11px' }}>{discard_count}</div>
+                  </div>
+                </div>
+              </div>
+
+              {game_type === 'blackjack' && (
+                <div>
+                  <div style={{ marginBottom: '6px', fontWeight: 700 }}>
+                    Dealer: {dealer_name || '-'}{' '}
+                    {isFinished && dealer_value ? `(${dealer_value})` : ''}
+                  </div>
+                  <div style={{ opacity: 0.76 }}>
+                    The dealer's hand is shown at their seat.{' '}
+                    {dealer_rotation_label}.
+                  </div>
+                </div>
+              )}
+
+              {game_type === 'poker' && (
+                <div>
+                  <div
+                    style={{
+                      marginBottom: '8px',
+                      fontWeight: 700,
+                      display: poker_variant === 'draw' ? 'none' : undefined,
+                    }}
+                  >
+                    Community cards
+                  </div>
+                  <div style={{ marginBottom: '4px', opacity: 0.82 }}>
+                    Round: {poker_betting_round || 1}
+                  </div>
+                  <div style={{ marginBottom: '6px', opacity: 0.82 }}>
+                    Turn: {poker_turn || '-'} | Pot: {poker_pot} | Current bet:{' '}
+                    {poker_current_bet}
+                  </div>
+                  {poker_variant !== 'draw' &&
+                    (community_cards.length ? (
+                      <CardRow cards={community_cards} />
+                    ) : null)}
+                </div>
+              )}
+
+              {game_type === 'none' && (
+                <div style={{ textAlign: 'center', opacity: 0.82 }}>
+                  Take a seat. The first player picks the game.
+                </div>
+              )}
+
+              {!!message && (
+                <div style={{ color: '#d5efb3', minHeight: '18px' }}>
+                  {message}
+                </div>
+              )}
+              {!!finalText && (
+                <div style={{ color: '#f4cf5c', fontWeight: 700 }}>
+                  Result: {finalText}
+                </div>
+              )}
+
+              {isPlaying && is_player && game_type === 'blackjack' && (
+                <div style={rowStyle}>
+                  <Button
+                    disabled={!!myPlayer?.standing}
+                    onClick={() => act('blackjack_hit')}
+                  >
+                    Hit
+                  </Button>
+                  <Button
+                    disabled={!!myPlayer?.standing}
+                    onClick={() => act('blackjack_stand')}
+                  >
+                    Stand
+                  </Button>
+                </div>
+              )}
+
+              {isPlaying && is_player && game_type === 'poker' && (
+                <div style={rowStyle}>
+                  {poker_variant === 'draw' && (
+                    <Button
+                      disabled={
+                        !canActInPoker ||
+                        !selectedPokerCard ||
+                        !!myPlayer?.draws_used
+                      }
+                      onClick={() => {
+                        act('poker_discard', {
+                          card_index: selectedPokerCard,
+                        });
+                        setSelectedPokerCard(null);
+                      }}
+                    >
+                      Swap card
+                    </Button>
+                  )}
+                  <input
+                    type="number"
+                    min={10}
+                    max={100000}
+                    value={pokerBetAmount}
+                    disabled={!canActInPoker}
+                    onChange={(event) =>
+                      setPokerBetAmount(
+                        Math.max(10, Number(event.currentTarget.value) || 10),
+                      )
+                    }
+                    style={{
+                      width: '54px',
+                      height: '22px',
+                      boxSizing: 'border-box',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.26)',
+                      color: '#f2f2f2',
+                    }}
+                  />
+                  <Button
+                    disabled={!canActInPoker}
+                    onClick={() =>
+                      pokerBetAmount > poker_current_bet
+                        ? act('poker_bet', { amount: pokerBetAmount })
+                        : act('poker_check')
+                    }
+                  >
+                    Bet
+                  </Button>
+                  <Button
+                    disabled={!canActInPoker}
+                    onClick={() => act('poker_all_in')}
+                  >
+                    All In
+                  </Button>
+                  <Button
+                    disabled={!canActInPoker}
+                    onClick={() => act('poker_fold')}
+                  >
+                    Fold
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
           <Stack vertical>
@@ -1868,7 +1316,10 @@ export const CardTable = () => {
 
                 <div style={{ marginTop: '8px', opacity: 0.78 }}>
                   {game_type === 'none' ? (
-                    <>Seats: {players.length}/6. The first player picks the game.</>
+                    <>
+                      Seats: {players.length}/6. The first player picks the
+                      game.
+                    </>
                   ) : (
                     <>
                       Seats: {players.length}/{max_players}. Needed:{' '}
@@ -1912,7 +1363,7 @@ export const CardTable = () => {
                     Start
                   </Button>
                   <Button
-                    disabled={!isFinished && players.length > 0}
+                    disabled={!can_pack && !(isFinished && is_player)}
                     onClick={() => act('reset_lobby')}
                   >
                     Reset
@@ -1940,7 +1391,10 @@ export const CardTable = () => {
             {isFinished && (
               <Stack.Item>
                 <Section title="Game over">
-                  <Button onClick={() => act('reset_lobby')}>
+                  <Button
+                    disabled={!can_pack && !is_player}
+                    onClick={() => act('reset_lobby')}
+                  >
                     Back to lobby
                   </Button>
                 </Section>

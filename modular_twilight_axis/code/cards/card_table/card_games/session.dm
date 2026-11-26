@@ -129,7 +129,7 @@
 	return 0
 
 /datum/card_table_session/proc/can_pack()
-	return !players.len && !observers.len
+	return !active_real_players_count() && !observers.len
 
 /datum/card_table_session/proc/player_is_active(datum/card_table_player/player)
 	return player && !player.left && player.result != "Out"
@@ -155,7 +155,7 @@
 	return FALSE
 
 /datum/card_table_session/proc/player_for_user(mob/user)
-	if(!user || !user.ckey)
+	if(!isliving(user) || !user.ckey)
 		return null
 	for(var/datum/card_table_player/player in players)
 		if(!player.left && player.ckey == user.ckey)

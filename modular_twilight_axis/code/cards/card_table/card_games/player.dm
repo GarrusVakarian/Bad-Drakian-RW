@@ -14,36 +14,13 @@
 	var/left = FALSE
 	var/is_spirit = FALSE
 
-/datum/card_table_player/proc/to_public_data(show_hand = FALSE)
-	var/list/hand_data = list()
-	for(var/list/card in hand)
-		hand_data += list(list(
-			"label" = show_hand ? card_table_card_label(card) : "??",
-			"hidden" = !show_hand,
-		))
-	return list(
-		"ckey" = ckey,
-		"name" = name,
-		"hand" = hand_data,
-		"hand_count" = hand.len,
-		"standing" = standing,
-		"busted" = busted,
-		"ready" = ready,
-		"draws_used" = draws_used,
-		"poker_folded" = poker_folded,
-		"poker_all_in" = poker_all_in,
-		"poker_bet" = poker_bet,
-		"poker_total_bet" = poker_total_bet,
-		"result" = result,
-		"left" = left,
-		"is_spirit" = is_spirit,
-	)
-
-/datum/card_table_session/proc/player_public_data_for(datum/card_table_player/player, datum/card_table_player/viewer, mob/user)
+/datum/card_table_session/proc/player_public_data_for(datum/card_table_player/player, datum/card_table_player/viewer)
 	if(!player)
 		return list()
 	var/show_hand = (stage == CARD_TABLE_STAGE_FINISHED || player == viewer)
-	var/list/seen = (!show_hand && user && user.ckey && player.ckey) ? xylix_seen_for(user.ckey, player.ckey) : list()
+	var/list/seen
+	if(!show_hand && viewer && player.ckey)
+		seen = xylix_seen_cards[xylix_reveal_key(viewer.ckey, player.ckey)]
 	var/list/hand_data = list()
 	for(var/i = 1, i <= player.hand.len, i++)
 		var/list/card = player.hand[i]
@@ -56,7 +33,6 @@
 			"hidden" = !revealed,
 		))
 	return list(
-		"ckey" = player.ckey,
 		"name" = player.name,
 		"hand" = hand_data,
 		"hand_count" = player.hand.len,

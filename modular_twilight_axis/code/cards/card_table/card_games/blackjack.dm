@@ -147,7 +147,7 @@
 
 /datum/card_table_session/proc/blackjack_stand(mob/user)
 	var/datum/card_table_player/player = player_for_user(user)
-	if(stage != CARD_TABLE_STAGE_PLAYING || game_type != CARD_TABLE_GAME_BLACKJACK || !player)
+	if(stage != CARD_TABLE_STAGE_PLAYING || game_type != CARD_TABLE_GAME_BLACKJACK || !player || player.standing || player.busted)
 		return FALSE
 	player.standing = TRUE
 	message = "[player.name] stands."
@@ -164,7 +164,7 @@
 	if(game_type == CARD_TABLE_GAME_BLACKJACK && (player.standing || player.busted))
 		return FALSE
 	var/max_index = min(xylix_peek_count(user), deck.len)
-	if(card_index < 1 || card_index > max_index)
+	if(card_index != round(card_index) || card_index < 1 || card_index > max_index)
 		return FALSE
 	var/list/card = deck[card_index]
 	deck.Cut(card_index, card_index + 1)

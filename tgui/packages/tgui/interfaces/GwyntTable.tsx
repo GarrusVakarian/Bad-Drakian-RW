@@ -511,8 +511,7 @@ const effectDescriptions: Record<string, string> = {
   decoy: 'Decoy: returns your strongest card on the board to your hand.',
   berserk: 'Berserker: turns into a bear under Mardroeme.',
   mardroeme: 'Mardroeme: turns berserkers in the row into bears.',
-  avenger:
-    'Avenger: when destroyed, summons a strong card in its place.',
+  avenger: 'Avenger: when destroyed, summons a strong card in its place.',
   clear_weather: 'Clear Weather: removes all weather effects.',
   frost: 'Frost: reduces all infantry to 1 strength.',
   fog: 'Fog: reduces all archers to 1 strength.',
@@ -705,11 +704,7 @@ const CardView = ({
           width: '100%',
         }}
       >
-        <CardIconBadge
-          asset={typeIcon}
-          compact={compact}
-          title={typeTitle}
-        />
+        <CardIconBadge asset={typeIcon} compact={compact} title={typeTitle} />
         {!singleTypeIcon && (!!effectIcon || !!effectBadge) && (
           <CardIconBadge
             asset={effectIcon}
@@ -905,9 +900,7 @@ const RowView = ({
         overflow: 'visible',
       }}
     >
-      {weathered && (
-        <div className={`ccg-row-vfx ccg-row-weather--${row}`} />
-      )}
+      {weathered && <div className={`ccg-row-vfx ccg-row-weather--${row}`} />}
       {hasHorn && <div className="ccg-row-vfx ccg-row-horn" />}
       {hasMardroeme && <div className="ccg-row-vfx ccg-row-mardroeme" />}
       {weathered && (
@@ -1516,7 +1509,7 @@ export const GwyntTable = () => {
 
   if (data.waiting) {
     return (
-      <Window title="Card Battle" width={420} height={180}>
+      <Window title="Arlette" width={420} height={180}>
         <Window.Content>
           <Section title="Invitation">
             {data.offeredName || 'Someone'} is waiting for an opponent. Strike
@@ -1598,7 +1591,7 @@ export const GwyntTable = () => {
   };
 
   return (
-    <Window title="Card Battle" width={1280} height={840}>
+    <Window title="Arlette" width={1280} height={840}>
       <Window.Content scrollable>
         <GwyntVisualEffects />
         <div
@@ -1656,9 +1649,7 @@ export const GwyntTable = () => {
                 mb="8px"
               >
                 Soundtrack:{' '}
-                {data.soundtrackEnabled
-                  ? data.soundtrackTitle || 'On'
-                  : 'Off'}
+                {data.soundtrackEnabled ? data.soundtrackTitle || 'On' : 'Off'}
               </Button>
               <MatchInfoPanel data={data} phase={phase} weather={weather} />
               {isSpectator && (
@@ -1744,15 +1735,20 @@ export const GwyntTable = () => {
                   Ready
                 </Button>
               )}
-              <Button disabled={isSpectator || !myTurn} onClick={() => act('pass')}>
+              <Button
+                disabled={isSpectator || !myTurn}
+                onClick={() => act('pass')}
+              >
                 Pass
               </Button>
-              <Button
-                disabled={isSpectator}
-                onClick={() => act('collect')}
-              >
-                End Session
-              </Button>
+              {!!data.mySide &&
+                (data.result ? (
+                  <Button onClick={() => act('collect')}>Collect decks</Button>
+                ) : (
+                  <Button.Confirm onClick={() => act('concede')}>
+                    Concede
+                  </Button.Confirm>
+                ))}
               {isSpectator ? (
                 <Button color="bad" onClick={() => act('leave_spectator')}>
                   Leave

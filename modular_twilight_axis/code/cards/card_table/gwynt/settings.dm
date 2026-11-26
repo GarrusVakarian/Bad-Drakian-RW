@@ -117,7 +117,5 @@
 /proc/ccg_find_mob_by_ckey(ckey)
 	if(!ckey)
 		return null
-	for(var/client/C)
-		if(C.ckey == ckey)
-			return C.mob
-	return null
+	var/client/player_client = GLOB.directory[ckey]
+	return player_client?.mob

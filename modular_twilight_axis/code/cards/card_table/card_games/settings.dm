@@ -61,7 +61,7 @@
 	return player_is_active(player) ? player : null
 
 /datum/card_table_session/proc/join_player(mob/user)
-	if(!user || !user.ckey || stage != CARD_TABLE_STAGE_LOBBY)
+	if(!isliving(user) || !user.client || stage != CARD_TABLE_STAGE_LOBBY)
 		return FALSE
 	if(player_for_user(user))
 		return FALSE
@@ -99,6 +99,7 @@
 				else if(i < dealer_index)
 					dealer_index--
 				players.Cut(i, i + 1)
+				qdel(player)
 			else
 				player.left = TRUE
 				player.result = "Left"
@@ -116,6 +117,16 @@
 		stage = CARD_TABLE_STAGE_FINISHED
 		message = "The game ends: not enough active players."
 	clamp_turns()
+	if(stage != CARD_TABLE_STAGE_PLAYING)
+		return
+	if(game_type == CARD_TABLE_GAME_POKER)
+		if(poker_active_hands_count() <= 1 || !poker_current_player())
+			poker_next_turn()
+	else if(game_type == CARD_TABLE_GAME_BLACKJACK)
+		if(!dealer_player())
+			advance_dealer()
+		if(blackjack_all_done())
+			blackjack_finish()
 
 /datum/card_table_session/proc/release_user(mob/user, silent = FALSE)
 	if(!user || !user.ckey)
@@ -142,15 +153,25 @@
 	return changed
 
 /datum/card_table_session/proc/check_player_ranges()
-	if(!owner)
-		return
+	var/turf/table_turf = get_turf(owner)
+	if(!table_turf)
+		return FALSE
+	var/changed = FALSE
 	for(var/datum/card_table_player/player in players.Copy())
 		if(player.left || player.is_spirit)
 			continue
-		var/mob/M = card_table_find_mob_by_ckey(player.ckey)
-		var/dist = M ? get_dist(M, owner) : null
-		if(!M || isnull(dist) || dist > CARD_TABLE_LEAVE_RANGE)
-			release_ckey(player.ckey, "too far")
+		var/mob/player_mob = card_table_find_mob_by_ckey(player.ckey)
+		if(!isliving(player_mob) || !is_near_table(player_mob, table_turf))
+			changed |= release_ckey(player.ckey, "left the area")
+	for(var/observer_ckey in observers.Copy())
+		if(!is_near_table(card_table_find_mob_by_ckey(observer_ckey), table_turf))
+			observers -= observer_ckey
+			changed = TRUE
+	return changed
+
+/datum/card_table_session/proc/is_near_table(mob/user, turf/table_turf)
+	var/turf/user_turf = get_turf(user)
+	return user_turf && user_turf.z == table_turf.z && get_dist(user_turf, table_turf) <= CARD_TABLE_LEAVE_RANGE
 
 /datum/card_table_session/proc/clamp_turns()
 	if(!players.len || dealer_index > players.len)

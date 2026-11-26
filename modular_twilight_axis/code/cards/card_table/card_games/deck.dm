@@ -28,21 +28,22 @@
 	card_table_range_timer = null
 	if(!card_table_mode || QDELETED(src))
 		return
-	if(card_table)
-		card_table.check_player_ranges()
+	if(!card_table || card_table.can_pack())
+		return
+	if(card_table.check_player_ranges())
 		SStgui.update_uis(src)
-	start_card_table_range_loop()
+	if(!card_table.can_pack())
+		start_card_table_range_loop()
 
 /obj/item/toy/cards/deck/proc/enter_card_table_mode(mob/user)
-	if(user && user.is_holding(src))
-		user.dropItemToGround(src)
-	if(!isturf(loc) && user)
-		forceMove(get_turf(user))
+	if(user.is_holding(src) && !user.dropItemToGround(src))
+		return FALSE
+	if(QDELETED(src) || !isturf(loc))
+		return FALSE
 	card_table_mode = TRUE
 	ensure_card_table()
-	start_card_table_range_loop()
-	if(user)
-		user.visible_message(span_notice("[user] sets the deck up as a card table."), span_notice("I set the deck up as a card table."))
+	user.visible_message(span_notice("[user] sets the deck up as a card table."), span_notice("I set the deck up as a card table."))
+	return TRUE
 
 /obj/item/toy/cards/deck/proc/leave_card_table_mode(mob/user)
 	if(!card_table_mode)
@@ -61,15 +62,11 @@
 	return TRUE
 
 /obj/item/toy/cards/deck/attack_right(mob/user, params)
-	if(!user)
+	if(!isliving(user) || !user.canUseTopic(src, be_close = TRUE) || istype(src, /obj/item/toy/cards/deck/tarot))
 		return ..()
 	if(card_table_mode)
 		return leave_card_table_mode(user)
-	// Tarot decks aren't playing cards, so they can't become card tables.
-	if(istype(src, /obj/item/toy/cards/deck/tarot))
-		return ..()
-	enter_card_table_mode(user)
-	return TRUE
+	return enter_card_table_mode(user)
 
 /obj/item/toy/cards/deck/ui_state(mob/user)
 	return GLOB.hold_or_view_state
@@ -81,7 +78,12 @@
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "CardTable", "Card Table")
+		ui.set_autoupdate(FALSE)
 		ui.open()
+
+/obj/item/toy/cards/deck/ui_close(mob/user)
+	if(card_table_mode && card_table?.release_user(user, TRUE))
+		SStgui.update_uis(src)
 
 /obj/item/toy/cards/deck/ui_data(mob/user)
 	if(!card_table_mode)
@@ -94,8 +96,8 @@
 		return
 	if(!card_table_mode || !card_table)
 		return FALSE
-	var/mob/user = usr
-	if(!user || !user.canUseTopic(src, be_close = TRUE))
+	var/mob/user = ui.user
+	if(!user?.client || !user.canUseTopic(src, be_close = TRUE))
 		return FALSE
 	switch(action)
 		if("set_game")
@@ -115,7 +117,7 @@
 		if("start")
 			. = card_table.start_game(user)
 		if("reset_lobby")
-			if(card_table.stage == CARD_TABLE_STAGE_FINISHED || !card_table.players.len)
+			if(card_table.can_pack() || (card_table.stage == CARD_TABLE_STAGE_FINISHED && card_table.player_for_user(user)))
 				card_table.reset_to_lobby()
 				. = TRUE
 		if("blackjack_hit")
@@ -126,10 +128,6 @@
 			. = card_table.xylix_choose_deck_card(user, params["card_index"])
 		if("poker_discard")
 			. = card_table.poker_discard(user, params["card_index"])
-		if("poker_ready")
-			. = card_table.poker_ready(user)
-		if("poker_finish_turn")
-			. = card_table.poker_finish_turn(user, params["card_index"])
 		if("poker_check")
 			. = card_table.poker_check(user)
 		if("poker_bet")
@@ -138,6 +136,6 @@
 			. = card_table.poker_all_in(user)
 		if("poker_fold")
 			. = card_table.poker_fold(user)
-	if(.)
-		SStgui.update_uis(src)
+	if(. && !card_table.can_pack())
+		start_card_table_range_loop()
 	return .
