@@ -1343,72 +1343,79 @@
 
 /datum/status_effect/debuff/stinky_contact
 	id = "stinky_contact"
-	duration = -1 // Remains until washed off.
+	// Each scent expires independently. One effect owns the alert and the tick for this character.
+	duration = -1
 	tick_interval = 5 SECONDS
-	status_type = STATUS_EFFECT_REFRESH
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/stinky_contact
-	var/scent_type = "Gross"
-	var/scent = ""
-	var/last_aura_tick = 0
+	var/list/scents = list()
+	COOLDOWN_DECLARE(scent_pulse)
 
-/datum/status_effect/debuff/stinky_contact/on_creation(mob/living/new_owner, inherited_scent_type = "Gross", inherited_scent = "")
-	set_inherited_scent(inherited_scent_type, inherited_scent)
-	return ..()
-
-/datum/status_effect/debuff/stinky_contact/refresh(mob/living/new_owner, inherited_scent_type = "Gross", inherited_scent = "")
-	set_inherited_scent(inherited_scent_type, inherited_scent)
-	if(owner)
-		process_inherited_scent(TRUE)
-	return ..()
-
-/datum/status_effect/debuff/stinky_contact/proc/set_inherited_scent(inherited_scent_type, inherited_scent)
-	scent_type = inherited_scent_type
-	scent = inherited_scent
-	last_aura_tick = 0
-
-/datum/status_effect/debuff/stinky_contact/on_apply()
-	. = ..()
-	if(scent_type == "Pleasant")
-		to_chat(owner, span_notice("I share someone else's pleasant scent now!"))
-	else if(scent_type == "Neutral")
-		to_chat(owner, span_notice("I stink of someone else now..."))
-	else
-		to_chat(owner, span_warning("I reek of someone else's stench now...ew..."))
-	process_inherited_scent(TRUE)
+/datum/status_effect/debuff/stinky_contact/proc/add_scent(scent_type, scent)
+	var/key = "[scent_type]:[scent]"
+	var/list/scent_data = scents[key]
+	if(scent_data)
+		scent_data[3] = world.time + 15 MINUTES
+		return
+	// New exposures take precedence over the earliest-expiring scent if the list fills.
+	if(length(scents) >= 8)
+		var/earliest_key = scents[1]
+		for(var/candidate in scents)
+			if(scents[candidate][3] < scents[earliest_key][3])
+				earliest_key = candidate
+		scents -= earliest_key
+	scents[key] = list(scent_type, scent, world.time + 15 MINUTES)
+	switch(scent_type)
+		if("Pleasant")
+			to_chat(owner, span_notice("I share someone else's pleasant scent now!"))
+		if("Neutral")
+			to_chat(owner, span_notice("I smell like someone else now."))
+		else
+			to_chat(owner, span_warning("I reek of someone else's stench now!"))
+	tick()
 
 /datum/status_effect/debuff/stinky_contact/tick()
-	process_inherited_scent()
-
-/datum/status_effect/debuff/stinky_contact/proc/process_inherited_scent(force = FALSE)
-	if(!ishuman(owner))
+	var/list/active_types = list()
+	for(var/index = length(scents), index >= 1, index--)
+		var/key = scents[index]
+		var/list/scent_data = scents[key]
+		if(scent_data[3] <= world.time)
+			scents -= key
+		else
+			active_types |= scent_data[1]
+	if(!length(scents) || !ishuman(owner))
+		qdel(src)
 		return
-	var/mob/living/carbon/human/H = owner
-	if(!H.can_smell())
-		H.remove_status_effect(/datum/status_effect/debuff/redolent_stink)
+	var/mob/living/carbon/human/wearer = owner
+	var/can_smell = wearer.can_smell()
+	var/visible = can_smell && (("Gross" in active_types) || ("Neutral" in active_types))
+	if(wearer.redolent_contact_visible != visible)
+		wearer.redolent_contact_visible = visible
+		wearer.handle_redolent_scent()
+	if(!can_smell || !COOLDOWN_FINISHED(src, scent_pulse))
 		return
-	if(scent_type != "Pleasant")
-		if(!H.has_status_effect(/datum/status_effect/debuff/redolent_stink))
-			H.apply_status_effect(/datum/status_effect/debuff/redolent_stink)
-	else if(H.has_status_effect(/datum/status_effect/debuff/redolent_stink))
-		H.remove_status_effect(/datum/status_effect/debuff/redolent_stink)
-	if(!force && world.time < last_aura_tick + redolent_aura_tick_delay(scent_type))
-		return
-	last_aura_tick = world.time
-	redolent_visual_effect(H, scent_type)
-	redolent_stink_aura(H, scent_type)
+	COOLDOWN_START(src, scent_pulse, 30 SECONDS)
+	for(var/scent_type in active_types)
+		redolent_visual_effect(wearer, scent_type)
+		redolent_stink_aura(wearer, scent_type)
 
 /datum/status_effect/debuff/stinky_contact/on_remove()
-	to_chat(owner, span_notice("The lingering scent finally fades off me."))
-	if(!HAS_TRAIT(owner, TRAIT_REDOLENT))
-		owner.remove_status_effect(/datum/status_effect/debuff/redolent_stink)
+	if(!QDELETED(owner) && ishuman(owner))
+		var/mob/living/carbon/human/wearer = owner
+		wearer.redolent_contact_visible = FALSE
+		wearer.handle_redolent_scent()
+		to_chat(wearer, span_notice("The borrowed scents have faded."))
 	return ..()
 
-/datum/status_effect/debuff/stinky_contact/proc/get_examine_text()
-	return redolent_examine_text(scent_type, scent)
+/datum/status_effect/debuff/stinky_contact/proc/get_examine_lines()
+	. = list()
+	for(var/key in scents)
+		var/list/scent_data = scents[key]
+		if(scent_data[3] > world.time)
+			. |= redolent_examine_text(scent_data[1], scent_data[2])
 
 /atom/movable/screen/alert/status_effect/debuff/stinky_contact
 	name = "Musked"
-	desc = "Someone's scent rubbed off on me. It will stay until I wash it off with soap and water"
+	desc = "Someone else's scent rubbed off on me. I can wash it off or wait for it to fade."
 	icon_state = "debuff"
 
 /datum/status_effect/debuff/enchantmenttriggered

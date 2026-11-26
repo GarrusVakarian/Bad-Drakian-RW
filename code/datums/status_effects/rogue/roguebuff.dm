@@ -645,6 +645,8 @@
 	examine_text = "SUBJECTPRONOUN is bathed in a restorative aura!"
 	var/healing_on_tick = 1
 	var/tech_healing_modifier = 1
+	/// Wound types this healing effect must leave untouched.
+	var/list/excluded_wound_types
 	/// Color of the outline applied during the heal
 	var/outline_colour = "#c42424"
 
@@ -680,11 +682,11 @@
 	if(owner.get_blood_volume() < BLOOD_VOLUME_NORMAL)
 		owner.set_blood_volume(min(owner.get_blood_volume()+healing_on_tick, BLOOD_VOLUME_NORMAL))
 	if(wCount.len > 0)
-		owner.heal_wounds(healing_on_tick)
+		owner.heal_wounds(healing_on_tick, excluded_types = excluded_wound_types)
 		owner.update_damage_overlays()
 	if(HAS_TRAIT(owner, TRAIT_SIMPLE_WOUNDS))
 		if(wCount.len > 0)
-			owner.heal_wounds(healing_on_tick * 2)
+			owner.heal_wounds(healing_on_tick * 2, excluded_types = excluded_wound_types)
 		owner.bleed_rate = owner.get_bleed_rate()
 		if(!length(owner.get_wounds()) && !length(owner.get_embedded_objects()))
 			owner.simple_bleeding = 0
@@ -779,6 +781,7 @@
 	alert_type = /atom/movable/screen/alert/status_effect/buff/healing/campfire
 	examine_text = null
 	duration = 10 SECONDS
+	excluded_wound_types = list(/datum/wound/slash/incision)
 
 /atom/movable/screen/alert/status_effect/buff/campfire_stamina
 	name = "Camp Rest"
@@ -841,7 +844,8 @@
 		owner.set_blood_volume(min(owner.get_blood_volume()+healing_on_tick, BLOOD_VOLUME_OKAY))
 	var/list/wCount = owner.get_wounds()
 	if(length(wCount))
-		owner.heal_wounds(healing_on_tick, list(/datum/wound/slash, /datum/wound/puncture, /datum/wound/bite, /datum/wound/bruise, /datum/wound/dynamic, /datum/wound/dislocation))
+		// Surgical openings must remain open until deliberately closed.
+		owner.heal_wounds(healing_on_tick, list(/datum/wound/slash, /datum/wound/puncture, /datum/wound/bite, /datum/wound/bruise, /datum/wound/dynamic, /datum/wound/dislocation), list(/datum/wound/slash/incision))
 		owner.update_damage_overlays()
 	owner.adjustBruteLoss(-healing_on_tick, 0)
 	owner.adjustFireLoss(-healing_on_tick, 0)
@@ -854,7 +858,7 @@
 
 //Self healing for Martyr.
 /datum/status_effect/buff/healing/prayer
-	id = "healing_prayers"
+	id = "healing_prayer_self"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/healing/prayer
 	examine_text = "SUBJECTPRONOUN is burning with divine radiance!"
 	outline_colour = "#b280df"
@@ -863,11 +867,10 @@
 /atom/movable/screen/alert/status_effect/buff/healing/prayer
 	name = "Conviction"
 	desc = "By faith alone, I will mend."
-	icon_state = "buff"
 
 //BY FAITH ALONE. When Martyr heals via another Tennite praying.
 /datum/status_effect/buff/healing/prayer_power
-	id = "healing_prayers"
+	id = "healing_prayer_received"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/healing/prayer_power
 	examine_text = "SUBJECTPRONOUN is lit by divine radiance!"
 	outline_colour = "#b280df"
@@ -876,7 +879,19 @@
 /atom/movable/screen/alert/status_effect/buff/healing/prayer_power
 	name = "Blessed Respite"
 	desc = "By faith, I lyve."
-	icon_state = "buff"
+
+/datum/status_effect/prayer_cooldown
+	id = "prayer_cooldown"
+	status_type = STATUS_EFFECT_REFRESH
+	duration = 1 MINUTES
+	tick_interval = -1
+	alert_type = /atom/movable/screen/alert/status_effect/prayer_cooldown
+
+/atom/movable/screen/alert/status_effect/prayer_cooldown
+	name = "Prayer Recovering"
+	desc = "I must wait before another prayer can be answered. Prayers from others can still heal me."
+	icon_state = "lesser_heal"
+	color = "#b280df"
 
 // Lay hands orison effect - gentle, slow healing
 #define LAY_HANDS_FILTER "lay_hands_glow"
@@ -2381,10 +2396,11 @@
 	effectedstats = list(STATKEY_WIL = 1)
 	status_type = STATUS_EFFECT_UNIQUE
 	duration = 30 MINUTES
-	tick_interval = -1
+	tick_interval = 2 SECONDS
 
-/datum/status_effect/buff/ravox_vow/proc/on_life()
-	owner.heal_wounds(0.6)
+/datum/status_effect/buff/ravox_vow/tick()
+	if(owner.stat != DEAD)
+		owner.heal_wounds(0.6)
 
 /atom/movable/screen/alert/status_effect/buff/ravox_vow
 	name = "Ravox Vow"

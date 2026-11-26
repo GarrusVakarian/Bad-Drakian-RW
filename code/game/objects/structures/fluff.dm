@@ -1181,11 +1181,14 @@
 /obj/structure/fluff/statue/tdummy/attack_hand(mob/user)
 	if(user.cmode || !user.mind || !isliving(user) || user.doing)
 		return ..()
-	if(user.used_intent.type != INTENT_HARM) //Gotta punch
+	if(user.used_intent?.type != INTENT_HARM) //Gotta punch
 		return ..()
 	var/mob/living/living_user = user
+	var/datum/mind/trainee = user.mind
 	user.visible_message(span_notice("[user] begins training on [src]..."))
 	while(do_after(user, 1 SECONDS, target = src))
+		if(QDELETED(src) || QDELETED(user) || user.mind != trainee || user.cmode || user.used_intent?.type != INTENT_HARM || !Adjacent(user))
+			break
 		if(!(living_user.mobility_flags & MOBILITY_STAND))
 			to_chat(user, span_warning("You are knocked down and stop training."))
 			break

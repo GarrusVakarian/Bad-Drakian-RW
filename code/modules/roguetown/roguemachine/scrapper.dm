@@ -238,7 +238,8 @@
 	. = ..()
 	if(.)
 		return
-	if(!is_keyholder(usr))
+	var/mob/user = ui.user
+	if(!user || !Adjacent(user) || !is_keyholder(user))
 		return
 	switch(action)
 		if("set_price")
@@ -270,7 +271,7 @@
 		if("dump_held")
 			var/path = text2path(params["path"])
 			if(path && (path in material_held))
-				var/turf/T = get_turf(src)
+				var/turf/T = get_turf(user)
 				for(var/obj/item/I in contents)
 					if(I.type == path || I.smeltresult == path || I.salvage_result == path)
 						I.forceMove(T)
@@ -278,7 +279,7 @@
 				bark_dirty = TRUE
 			return TRUE
 		if("dump_all")
-			var/turf/T = get_turf(src)
+			var/turf/T = get_turf(user)
 			for(var/obj/item/I in contents)
 				I.forceMove(T)
 			for(var/path in material_held)

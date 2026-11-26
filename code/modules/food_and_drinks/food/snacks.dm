@@ -265,6 +265,14 @@ All foods are distributed among various categories. Use common sense.
 	if(!eater)
 		return
 
+	if(HAS_TRAIT(eater, TRAIT_OVERWEIGHT))
+		var/datum/charflaw/addiction/corpulent/gluttony = eater.get_flaw(/datum/charflaw/addiction/corpulent)
+		if(gluttony && !gluttony.sated)
+			gluttony.bites += 1 + (faretype >= FARE_FINE)
+			if(gluttony.bites >= gluttony.bites_needed)
+				gluttony.bites = 0
+				eater.sate_addiction(/datum/charflaw/addiction/corpulent)
+
 	if(HAS_TRAIT(eater, TRAIT_HEMOPHAGE)) //trait desc states that normal food would make them ill, adjusted accordingly
 		eater.adjustToxLoss(2)
 		to_chat(eater, span_warning("This food makes me feel ill. Only blood can sustain me!"))

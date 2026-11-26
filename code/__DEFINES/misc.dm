@@ -45,6 +45,7 @@
 #define ARMOR_LAYER				31
 #define TABARD_LAYER			30
 #define BELT_LAYER				29		//only when looking south
+#define BODY_BELLY_LAYER		33.4
 #define UNDER_CLOAK_LAYER		28
 #define HANDS_PART_LAYER		27
 #define GLOVES_LAYER			26

@@ -52,12 +52,12 @@
 	H.set_blindness(-3)
 	shoes = /obj/item/clothing/shoes/roguetown/boots/elven_boots
 	cloak = /obj/item/clothing/cloak/forrestercloak
-	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
+	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather/heavy
 	gloves = /obj/item/clothing/gloves/roguetown/elven_gloves
 	belt = /obj/item/storage/belt/rogue/leather/black
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hatanga
-	pants = /obj/item/clothing/under/roguetown/trou/leather
+	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/heavy/coat/elven
 	neck = /obj/item/clothing/neck/roguetown/chaincoif
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/elvish

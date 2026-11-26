@@ -40,9 +40,12 @@
 /datum/element/tipped_item/proc/try_inject(obj/item/source, mob/living/user, obj/item/bodypart/affecting, intent, mob/living/victim, selzone, thrown = FALSE)
 	SIGNAL_HANDLER
 
-	if(thrown || !user?.used_intent || user.used_intent.blade_class == BCLASS_BLUNT)
+	if(thrown || !user)
 		return
-	if(!isliving(victim) || !source.reagents?.total_volume)
+	var/static/list/poisoning_intents = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_STAB, BCLASS_PICK)
+	if(!(user.used_intent?.blade_class in poisoning_intents))
+		return
+	if(!isliving(victim) || !victim.reagents || !source.reagents?.total_volume)
 		return
 	var/reagentlog2 = source.reagents
 	log_combat(user, victim, "poisoned", addition="with [reagentlog2]")

@@ -204,25 +204,26 @@
 	var/riteselection = input(user, "Rituals of Justice", src) as null|anything in ravoxrites
 	switch(riteselection)
 		if("Vow to Ravox") // Ideally stick to this style for rites. Early returns + negatives. Minimises the "pyramid" shape you can see in Astrata, which I've left untouched for now -- CODEATHON
-			var/target = user
-			if(!do_after(user, 5 SECONDS))
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
 				return
 			user.say("My steel is sharp, my heart is true!")
-			if(!do_after(user, 5 SECONDS))
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
 				return
 			user.say("For the weak, my blade I drew!")
-			if(!do_after(user, 5 SECONDS))
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
 				return
 			user.say("Let foes of justice face my might!")
-			if(!do_after(user, 3 SECONDS))
+			if(!do_after(user, 3 SECONDS, target = src))
+				return
+			if(!can_finish_vow(user))
 				return
 			user.say("Ravox, guide my hand in righteous fight!")
 			playsound(loc, 'sound/magic/holyshield.ogg', 80, FALSE, -1)
-			ravoxvow(target)
+			user.apply_status_effect(/datum/status_effect/buff/ravox_vow)
 			user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
 
-/obj/structure/ritualcircle/ravox/proc/ravoxvow(mob/living/carbon/human/target)
-	target.apply_status_effect(/datum/status_effect/buff/ravox_vow)
+/obj/structure/ritualcircle/ravox/proc/can_finish_vow(mob/living/user)
+	return !QDELETED(src) && !QDELETED(user) && user.Adjacent(src) && !user.incapacitated() && istype(user.patron, /datum/patron/divine/ravox) && HAS_TRAIT(user, TRAIT_RITUALIST) && !user.has_status_effect(/datum/status_effect/debuff/ritesexpended)
 
 /obj/structure/ritualcircle/pestra
 	name = "Rune of Plague"
