@@ -2313,7 +2313,7 @@ function setJobPrefRedirect(link) {
 
 				if("subclassoutfit")
 					var/list/choices = list("None")
-					var/datum/job/highest_pref = get_preview_job()
+					var/datum/job/highest_pref = get_highest_priority_job()
 					if(isnull(highest_pref))
 						to_chat(user, "<b>I don't have a Class set to High!</b>")
 					if(length(highest_pref?.job_subclasses))
