@@ -1143,3 +1143,6 @@
   - rscadd: The Spellsinger Robe and bronze wedding band are available in loadouts.
   - bugfix: The Fit Clothing tooltip explains how to target the item, and the casting
       message shows the duration when using an Essence of Wilderness.
+  - balance: "Defiled Keyholder and Volf In Sheep\u2019s Clothing require an Ascendant\
+      \ patron. Existing characters with an incompatible virtue must update their\
+      \ choices before joining a round."
