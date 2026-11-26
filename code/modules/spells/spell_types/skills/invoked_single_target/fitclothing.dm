@@ -3,8 +3,7 @@
 
 /obj/effect/proc_holder/spell/invoked/fittedclothing
 	name = "Fit Clothing"
-	desc = "Fit Clothing will allow you to fit a cloth or leather garment to an individual, allowing greater durability for a time \n\
-	You can increase this time with an essence of wilderness, seeping it into the material\n\ "
+	desc = "Activate Fit Clothing, then middle-click a piece of light armor that can be repaired by sewing. The fitting increases its durability for 15 minutes. Hold an Essence of Wilderness when casting to consume it and extend the fitting to 200 minutes."
 	releasedrain = 50
 	chargedrain = 0
 	chargetime = 0
@@ -30,8 +29,8 @@
 		var/enchant_type = DURABILITY_ENCHANT
 		var/enchant_duration = sacrifice ? ENCHANT_DURATION_WILDERNESS : ENCHANT_DURATION
 		if(sacrifice)
+			to_chat(user, "I use [sacrifice] to fit [clothingenchant] for [enchant_duration / (1 MINUTES)] minutes.")
 			qdel(sacrifice)
-			to_chat(user, "I consumes the [sacrifice] to enchant [clothingenchant] permanently.")
 		playsound(loc, 'sound/foley/sewflesh.ogg', 100, TRUE, -2)
 		if(clothingenchant.GetComponent(/datum/component/fit_clothing))
 			qdel(clothingenchant.GetComponent(/datum/component/fit_clothing))
