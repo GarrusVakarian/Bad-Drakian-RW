@@ -15,6 +15,8 @@
 #define OVI_HOST_MAX_EGGS 6
 /// Time an implanted egg takes to become ready to lay.
 #define OVI_INCUBATION_TIME (10 MINUTES)
+/// Nutrition drained per minute for each egg still incubating in a host.
+#define OVI_INCUBATION_NUTRITION_PER_MINUTE 3
 /// Time after ripening before the host's body pushes the eggs out on its own.
 #define OVI_OVERDUE_TIME (10 MINUTES)
 /// Time it takes to lay eggs by hand.

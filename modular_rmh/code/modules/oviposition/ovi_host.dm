@@ -8,12 +8,22 @@
 	/// Maximum total stored eggs to lay at one climax.
 	var/climax_egg_count = OVI_EGG_DEFAULT_CLUTCH
 
+/mob/living/carbon/human/proc/implanted_eggs_examine_line(mob/viewer)
+	if(!viewer?.client?.prefs?.accept_oviposition)
+		return null
+	var/datum/component/implanted_eggs/carried = GetComponent(/datum/component/implanted_eggs)
+	if(length(carried?.eggs) < 4)
+		return null
+	return "<span style='color:#d8cf8a'>Their stomach is bloated with round shapes...</span>"
+
 /datum/component/implanted_eggs
 	dupe_mode = COMPONENT_DUPE_UNIQUE
 	/// Each entry is an appearance list from get_oviposition_egg_appearance() plus "ripe_at".
 	var/list/eggs = list()
 	/// Whether the host has been told their eggs are ready.
 	var/announced_ripe = FALSE
+	/// The applied movement tier, with one tier for every pair of eggs.
+	var/slowdown_tier = 0
 
 /datum/component/implanted_eggs/Initialize()
 	if(!ishuman(parent))
@@ -23,14 +33,32 @@
 
 /datum/component/implanted_eggs/RegisterWithParent()
 	RegisterSignal(parent, COMSIG_LIVING_LIFE, PROC_REF(handle_life))
+	update_slowdown()
 
 /datum/component/implanted_eggs/UnregisterFromParent()
 	UnregisterSignal(parent, COMSIG_LIVING_LIFE)
+	var/mob/living/carbon/human/host = parent
+	if(slowdown_tier && !QDELETED(host))
+		host.remove_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS)
+	slowdown_tier = 0
 
 /datum/component/implanted_eggs/proc/add_egg(list/appearance)
 	appearance["ripe_at"] = world.time + OVI_INCUBATION_TIME
 	eggs += list(appearance)
 	announced_ripe = FALSE
+	update_slowdown()
+
+/datum/component/implanted_eggs/proc/update_slowdown()
+	var/tier = FLOOR(length(eggs) / 2, 1)
+	if(tier == slowdown_tier)
+		return
+	slowdown_tier = tier
+	var/mob/living/carbon/human/host = parent
+	if(tier)
+		// Movement delay equivalent to losing 2, 3, or 4 Speed.
+		host.add_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS, override = TRUE, multiplicative_slowdown = (tier + 1) * MOVESPEED_DELAY_PER_SPEED_POINT)
+	else
+		host.remove_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS)
 
 /datum/component/implanted_eggs/proc/get_ripe_eggs()
 	. = list()
@@ -44,6 +72,15 @@
 	var/mob/living/carbon/human/host = parent
 	if(host.stat == DEAD)
 		return
+	var/now = world.time
+	var/interval_start = now - seconds SECONDS
+	var/incubation_time = 0
+	for(var/list/egg as anything in eggs)
+		var/ripe_at = egg["ripe_at"]
+		// Only charge for the part of this Life interval the egg spent incubating.
+		incubation_time += max(0, min(now, ripe_at) - max(interval_start, ripe_at - OVI_INCUBATION_TIME))
+	if(incubation_time)
+		host.adjust_nutrition(-OVI_INCUBATION_NUTRITION_PER_MINUTE * incubation_time / (1 MINUTES))
 	var/list/ripe = get_ripe_eggs()
 	if(!length(ripe))
 		return
@@ -69,6 +106,8 @@
 	. = spawn_oviposition_eggs(parent, ripe)
 	if(!length(eggs))
 		qdel(src)
+	else
+		update_slowdown()
 
 /mob/living/carbon/human/proc/grant_egg_verbs()
 	if(/mob/living/carbon/human/proc/lay_eggs in verbs)

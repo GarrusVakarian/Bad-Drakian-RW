@@ -7,6 +7,9 @@
 
 #define MOVESPEED_DATA_INDEX_MAX 6
 
+/// Movement delay per point of Speed, in deciseconds before caps.
+#define MOVESPEED_DELAY_PER_SPEED_POINT 0.1
+
 //flags
 #define IGNORE_NOSLOW	(1 << 0)
 
@@ -68,6 +71,7 @@
 
 #define MOVESPEED_ID_SHOVE                              "SHOVE"
 #define MOVESPEED_ID_BULKY_DRAGGING                     "BULKY_DRAG"
+#define MOVESPEED_ID_IMPLANTED_EGGS                     "IMPLANTED_EGGS"
 #define MOVESPEED_ID_HUMAN_CARRYING                     "HUMAN_CARRY"
 #define MOVESPEED_ID_SHRINK_RAY							"SHRUNKEN_SPEED_MODIFIER"
 #define MOVESPEED_ID_PEPPER_SPRAY                       "PEPPER_SPRAYED"
