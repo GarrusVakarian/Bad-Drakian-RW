@@ -7,6 +7,8 @@
 #define OVI_EGG_DEFAULT_CLUTCH 3
 /// Time for an organ to form one egg.
 #define OVI_EGG_FORM_TIME (8 MINUTES)
+/// Egg formation speed multiplier for Quick Egg Production.
+#define OVI_QUICK_EGG_FORM_MULTIPLIER 4
 /// Nutrition spent forming a single egg.
 #define OVI_EGG_NUTRITION_COST 40
 /// Most implanted eggs a host can carry at once.

@@ -29,7 +29,7 @@
 	if(world.time < next_egg_time)
 		return
 	var/was_forming = next_egg_time > 0
-	var/formation_time = HAS_TRAIT(owner, TRAIT_QUICK_EGG_PRODUCTION) ? OVI_EGG_FORM_TIME / 4 : OVI_EGG_FORM_TIME
+	var/formation_time = HAS_TRAIT(owner, TRAIT_QUICK_EGG_PRODUCTION) ? OVI_EGG_FORM_TIME / OVI_QUICK_EGG_FORM_MULTIPLIER : OVI_EGG_FORM_TIME
 	next_egg_time = world.time + formation_time
 	if(!was_forming)
 		return

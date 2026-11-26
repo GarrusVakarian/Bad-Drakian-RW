@@ -8,6 +8,16 @@
 	custom_text = "Your ovipositor or egg-laying womb forms an egg every 2 minutes instead of every 8."
 	added_traits = list(TRAIT_QUICK_EGG_PRODUCTION)
 
+/datum/quirk/quick_egg_production/apply_to_human(mob/living/carbon/human/recipient)
+	if(HAS_TRAIT(recipient, TRAIT_QUICK_EGG_PRODUCTION))
+		return
+	// The role setup can apply quirks after an organ has started its first timer.
+	var/now = world.time
+	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
+		var/obj/item/organ/egg_organ = recipient.getorganslot(slot)
+		if(egg_organ?.egg_settings && egg_organ.next_egg_time > now)
+			egg_organ.next_egg_time = now + (egg_organ.next_egg_time - now) / OVI_QUICK_EGG_FORM_MULTIPLIER
+
 /proc/default_oviposition_settings()
 	return list(
 		"name" = "",
