@@ -1092,3 +1092,12 @@
       \ pouch-fitted."
   - bugfix: Removing a knot no longer counts as taking another load or adds an extra
       oral cumshot.
+  - qol: The Dog Clicker now gives you a private chat notice when you send a training
+      offer.
+  - rscadd: Right-click a playing-card deck to play Blackjack or Poker.
+  - rscadd: Collect Arlette cards, build faction decks, and challenge another player
+      to a match.
+  - balance: Metal neck armor halves unarmed choke damage. Padded cloth and leather
+      armor reduce it by a quarter. Gnoll hide still blocks unarmed chokes.
+  - qol: "Xylix\u2019s revive explains which psycross to offer, allows Xylix's amulet\
+      \ and gives clearer feedback when a body cannot be revived."

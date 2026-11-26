@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Right-click a playing-card deck to play Blackjack or Poker."
-  - rscadd: "Collect Arlette cards, build faction decks, and challenge another player to a match."
