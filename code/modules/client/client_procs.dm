@@ -603,6 +603,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 
 /client/Del()
 	log_access("Logout: [key_name(src)]")
+	clear_wanted_poster_view(src)
 
 	if(holder)
 		for(var/I in GLOB.clients)

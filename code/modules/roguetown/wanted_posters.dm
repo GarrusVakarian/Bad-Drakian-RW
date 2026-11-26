@@ -2,6 +2,7 @@
 /datum/wanted_poster
 	var/name
 	var/amount = 0
+	var/has_active_bounty = FALSE
 	var/list/crimes
 	var/penance_status
 	var/list/claimed_crimes
@@ -26,6 +27,7 @@
 			posters[target_name] = poster
 		if(isnum(bounty.amount))
 			poster.amount += bounty.amount
+		poster.has_active_bounty = TRUE
 		if(bounty.reason)
 			LAZYINITLIST(poster.crimes)
 			poster.crimes |= bounty.reason
@@ -51,27 +53,54 @@
 	for(var/subject_name in posters)
 		. += posters[subject_name]
 
-/// Bounties name subjects without storing a reference. Prefer a unique player over an NPC namesake.
+/// Resolve uncached names in one pass. A unique player takes priority over any NPC namesakes.
+/proc/find_wanted_portrait_targets(list/subject_names)
+	var/list/players = list()
+	var/list/npcs = list()
+	for(var/mob/living/carbon/human/candidate as anything in GLOB.human_list)
+		if(QDELETED(candidate) || !subject_names[candidate.real_name])
+			continue
+		var/list/matches = candidate.mind?.key ? players : npcs
+		var/subject_name = candidate.real_name
+		matches[subject_name] = isnull(matches[subject_name]) ? candidate : FALSE
+	. = list()
+	for(var/subject_name in subject_names)
+		var/mob/living/carbon/human/target = isnull(players[subject_name]) ? npcs[subject_name] : players[subject_name]
+		if(istype(target))
+			.[subject_name] = target
+
+/datum/controller/subsystem/crediticons/proc/prepare_wanted_portraits(list/posters)
+	var/list/missing
+	for(var/datum/wanted_poster/poster as anything in posters)
+		if(!wanted_portraits[poster.name] && !(poster.name in wanted_portrait_queue))
+			LAZYINITLIST(missing)
+			missing[poster.name] = TRUE
+	if(!length(missing))
+		return
+	var/list/targets = find_wanted_portrait_targets(missing)
+	for(var/subject_name in targets)
+		queue_wanted_portrait(subject_name, targets[subject_name])
+
 /datum/controller/subsystem/crediticons/proc/queue_wanted_portrait(subject_name, mob/living/carbon/human/target)
-	if(!subject_name || wanted_portraits[subject_name] || wanted_portrait_queue[subject_name])
+	if(!subject_name)
 		return
 	if(!target)
-		var/mob/living/carbon/human/player_match
-		var/mob/living/carbon/human/npc_match
-		var/ambiguous_npc = FALSE
-		for(var/mob/living/carbon/human/candidate in GLOB.human_list)
-			if(QDELETED(candidate) || candidate.real_name != subject_name)
-				continue
-			if(candidate.mind?.key)
-				if(player_match)
-					return
-				player_match = candidate
-			else
-				ambiguous_npc = !!npc_match
-				npc_match = candidate
-		target = player_match || (ambiguous_npc ? null : npc_match)
+		if(wanted_portraits[subject_name] || (subject_name in wanted_portrait_queue))
+			return
+		var/list/missing = list()
+		missing[subject_name] = TRUE
+		var/list/targets = find_wanted_portrait_targets(missing)
+		target = targets[subject_name]
 	if(QDELETED(target) || target.real_name != subject_name)
 		return
+	if(wanted_portrait_queue[subject_name] == target)
+		return
+	if(wanted_portraits[subject_name])
+		var/datum/weakref/owner = wanted_portrait_owners[subject_name]
+		if(owner?.resolve() == target)
+			return
+		wanted_portraits -= subject_name
+		wanted_portrait_owners -= subject_name
 	wanted_portrait_queue[subject_name] = target
 	if(!wanted_worker_running)
 		wanted_worker_running = TRUE
@@ -81,11 +110,18 @@
 	while(length(wanted_portrait_queue))
 		var/subject_name = wanted_portrait_queue[1]
 		var/mob/living/carbon/human/target = wanted_portrait_queue[subject_name]
+		var/portrait
 		if(!QDELETED(target) && target.real_name == subject_name)
 			try
-				wanted_portraits[subject_name] = make_wanted_portrait(target, subject_name)
+				portrait = make_wanted_portrait(target, subject_name)
 			catch(var/exception/error)
 				log_runtime("Wanted portrait generation failed: [error]")
+		// A new warrant can replace the target while icon generation yields.
+		if(wanted_portrait_queue[subject_name] != target)
+			continue
+		if(portrait && !QDELETED(target))
+			wanted_portraits[subject_name] = portrait
+			wanted_portrait_owners[subject_name] = WEAKREF(target)
 		wanted_portrait_queue -= subject_name
 		for(var/datum/wanted_poster_view/page as anything in GLOB.wanted_poster_views.Copy())
 			if(page.ready && (subject_name in page.pending))
@@ -171,10 +207,11 @@ GLOBAL_LIST_EMPTY(wanted_poster_views)
 		qdel(src)
 
 /proc/clear_wanted_poster_view(client/viewer, window_id)
-	for(var/datum/wanted_poster_view/page as anything in GLOB.wanted_poster_views)
-		if(page.viewer == viewer && page.window_id == window_id)
+	for(var/datum/wanted_poster_view/page as anything in GLOB.wanted_poster_views.Copy())
+		if(page.viewer == viewer && (!window_id || page.window_id == window_id))
 			qdel(page)
-			return
+			if(window_id)
+				return
 
 /proc/wanted_poster_page_ready(client/viewer, token)
 	for(var/datum/wanted_poster_view/page as anything in GLOB.wanted_poster_views)
@@ -182,7 +219,7 @@ GLOBAL_LIST_EMPTY(wanted_poster_views)
 			continue
 		page.ready = TRUE
 		for(var/subject_name in page.pending.Copy())
-			if(!SScrediticons.wanted_portrait_queue[subject_name])
+			if(!(subject_name in SScrediticons.wanted_portrait_queue))
 				page.deliver(subject_name)
 		return
 
@@ -190,6 +227,8 @@ GLOBAL_LIST_EMPTY(wanted_poster_views)
 	clear_wanted_poster_view(viewer, window_id)
 	if(!length(posters))
 		return "<div style='text-align: center; color: #999; font-style: italic;'>[empty_text]</div>"
+	if(viewer)
+		SScrediticons.prepare_wanted_portraits(posters)
 
 	var/datum/wanted_poster_view/page
 	var/list/html = list({"
@@ -296,15 +335,13 @@ GLOBAL_LIST_EMPTY(wanted_poster_views)
 		var/icon_html = "<div class='wanted-icon'></div>"
 		if(base64)
 			icon_html = "<img class='wanted-icon' src='data:image/png;base64,[base64]' alt=''>"
-		else if(viewer)
-			SScrediticons.queue_wanted_portrait(poster.name)
-			if(SScrediticons.wanted_portrait_queue[poster.name])
-				if(!page)
-					page = new(viewer, window_id)
-				var/element_id = "[page.token]-[md5(poster.name)]"
-				page.pending[poster.name] = element_id
-				icon_html = "<div class='wanted-icon' id='[element_id]'></div>"
-		var/footer = (poster.penance_status && poster.amount <= 0) ? poster.penance_status : "DEAD OR ALIVE"
+		else if(viewer && (poster.name in SScrediticons.wanted_portrait_queue))
+			if(!page)
+				page = new(viewer, window_id)
+			var/element_id = "[page.token]-[md5(poster.name)]"
+			page.pending[poster.name] = element_id
+			icon_html = "<div class='wanted-icon' id='[element_id]'></div>"
+		var/footer = (poster.penance_status && !poster.has_active_bounty) ? poster.penance_status : "DEAD OR ALIVE"
 		html += {"
 		<div class='wanted-poster'>
 			<div class='wanted-header'>WANTED</div>
@@ -319,7 +356,7 @@ GLOBAL_LIST_EMPTY(wanted_poster_views)
 			html += "<div class='wanted-bounty'>[poster.amount] MAMMONS</div>"
 		for(var/crime in poster.crimes)
 			html += "<div class='wanted-crime'>[crime]</div>"
-		if(length(poster.claimed_crimes))
+		if(poster.penance_status)
 			html += "<div class='wanted-status'>REWARD CLAIMED &mdash; [poster.penance_status]</div>"
 			for(var/crime in poster.claimed_crimes)
 				html += "<div class='wanted-crime'>[crime]</div>"

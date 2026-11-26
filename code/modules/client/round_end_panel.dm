@@ -232,7 +232,8 @@
 /client/proc/show_chronicle(tab = "The Realm")
 	if(SSticker.current_state != GAME_STATE_FINISHED && !check_rights(R_ADMIN|R_DEBUG))
 		return
-	clear_wanted_poster_view(src, "azure_roundend")
+	if(tab != "Outlaws")
+		clear_wanted_poster_view(src, "azure_roundend")
 
 	var/list/data = list()
 

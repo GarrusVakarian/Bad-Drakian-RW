@@ -42,6 +42,7 @@ SUBSYSTEM_DEF(crediticons)
 	var/list/portrait_queue = list()
 	var/worker_running = FALSE
 	var/list/wanted_portraits = list()
+	var/list/wanted_portrait_owners = list()
 	var/list/wanted_portrait_queue = list()
 	var/wanted_worker_running = FALSE
 

@@ -292,7 +292,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	var/descriptor_voice = build_coalesce_description_nofluff(d_list, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
 
 	// Finally create bounty
-	add_bounty(target.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, FALSE, reason, user.real_name)
+	add_bounty(target.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, FALSE, reason, user.real_name, portrait_target = target)
 
 	//Announce it locally and on scomm
 	playsound(src, 'sound/misc/machinetalk.ogg', 100, FALSE, -1)
@@ -526,9 +526,9 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 		descriptor_height = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
 		descriptor_body = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
 		descriptor_voice = build_coalesce_description_nofluff(descriptors, target, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
-	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition, is_church_bounty_issuer(employer_name))
+	add_bounty(target.real_name, target.dna.species, target.gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level, recognition, is_church_bounty_issuer(employer_name), target)
 
-/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE, church_issued = FALSE)
+/proc/add_bounty(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name, description_level = BOUNTY_DESCRIPTION_FULL, recognition = BOUNTY_RECOGNITION_NONE, church_issued = FALSE, mob/living/carbon/human/portrait_target)
 	var/datum/bounty/new_bounty = new /datum/bounty
 	new_bounty.amount = amount
 	new_bounty.description_level = description_level
@@ -560,7 +560,7 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 		new_bounty.target_body_type = "feminine"
 	compose_bounty(new_bounty)
 	GLOB.head_bounties += new_bounty
-	SScrediticons.queue_wanted_portrait(target_realname)
+	SScrediticons.queue_wanted_portrait(target_realname, portrait_target)
 
 /proc/add_bounty_noface(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name)
 	var/datum/bounty/new_bounty_noface = new /datum/bounty
