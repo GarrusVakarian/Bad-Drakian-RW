@@ -719,14 +719,6 @@
 	. = ..()
 	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
 
-/obj/item/clothing/cloak/holysee/dropped(mob/living/carbon/human/user)
-	..()
-	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	if(STR)
-		var/list/things = STR.contents()
-		for(var/obj/item/I in things)
-			STR.remove_from_storage(I, get_turf(src))
-
 /obj/item/clothing/cloak/holysee/MiddleClick(mob/user)
 	if(cycle_taur_wear_position(user))
 		return

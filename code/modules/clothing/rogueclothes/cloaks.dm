@@ -109,14 +109,6 @@
 	. = ..()
 	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
 
-/obj/item/clothing/cloak/dropped(mob/living/carbon/human/user)
-	..()
-	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	if(STR)
-		var/list/things = STR.contents()
-		for(var/obj/item/I in things)
-			STR.remove_from_storage(I, get_turf(src))
-
 /obj/item/clothing/cloak/abyssortabard
 	name = "abyssorite tabard"
 	desc = "A tabard worn by Abyssorite devouts."
