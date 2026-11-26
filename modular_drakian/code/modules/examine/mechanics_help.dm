@@ -627,6 +627,7 @@
 	. = ..()
 	. += span_info("Left-click empty-handed to browse and buy goods. Retrieve change through the stored-coin option.")
 	. += span_info("Owners can unlock the peddler to restock it and collect earnings.")
+	. += span_info("While unlocked, right-click with a bag to stock it from the bag, or empty-handed to load items off the ground.")
 
 /obj/item/scomstone/get_mechanics_examine(mob/user)
 	. = ..()

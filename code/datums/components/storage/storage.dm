@@ -74,6 +74,8 @@
 	var/intercept_parent_attack = TRUE
 	var/intercept_parent_mousedrop = TRUE
 
+	/// An explicit bulk removal will refresh views once after the batch.
+	var/defer_exit_refresh = FALSE
 	var/does_not_spill = FALSE						// Suppresses liquid spilling behavior for reagent containers held within
 
 /datum/component/storage/Initialize(datum/component/storage/concrete/master)
@@ -488,7 +490,8 @@
 
 /datum/component/storage/proc/_remove_and_refresh(datum/source, atom/movable/thing)
 	_removal_reset(thing)
-	refresh_mob_views()
+	if(!defer_exit_refresh)
+		refresh_mob_views()
 
 //Call this proc to handle the removal of an item from the storage item. The item will be moved to the new_location target, if that is null it's being deleted
 /datum/component/storage/proc/remove_from_storage(atom/movable/AM, atom/new_location)

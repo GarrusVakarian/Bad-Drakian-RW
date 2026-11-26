@@ -188,6 +188,7 @@
 	altdetail_color = "#c08955"
 	detail_tag = "_detail"
 	altdetail_tag = "_detailalt"
+	resistance_flags = FIRE_PROOF
 	var/shiftable = FALSE
 	var/picked = FALSE
 	armor = ARMOR_PADDED_GOOD
@@ -195,6 +196,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_CHOP)
 	sellprice = 25
 	blocksound = SOFTUNDERHIT
+	boobed = FALSE
 	blade_dulling = DULLING_BASHCHOP
 	pickup_sound = 'sound/foley/equip/equip_armor.ogg'
 	equip_sound = 'sound/foley/equip/equip_armor.ogg'

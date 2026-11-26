@@ -40,15 +40,24 @@
 	return ..()
 
 /obj/item/clothing/shoes/roguetown/boots/deconstruct(disassembled)
-	if(holdingknife)
-		holdingknife.forceMove(get_turf(src))
-		holdingknife = null
-	if(holdinglockpick)
-		holdinglockpick.forceMove(get_turf(src))
-		holdinglockpick = null
+	empty_for_salvage()
 	return ..()
 
+/obj/item/clothing/shoes/roguetown/boots/empty_for_salvage()
+	var/turf/destination = get_turf(src)
+	if(!destination)
+		return
+	if(!QDELETED(holdingknife))
+		holdingknife.forceMove(destination)
+		holdingknife = null
+	if(!QDELETED(holdinglockpick))
+		holdinglockpick.forceMove(destination)
+		holdinglockpick = null
+
 /obj/item/clothing/shoes/roguetown/boots/attackby(obj/item/storing_item, mob/living/carbon/user, params)
+	if(user.used_intent?.type == /datum/intent/snip)
+		return ..()
+
 	if(istype(storing_item, /obj/item/rogueweapon/huntingknife))
 		if(!isnull(holdingknife))
 			to_chat(user, span_warning("My boot already holds a knife."))
