@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - qol: "Rope and chain warnings tell you to get standing targets in combat mode down before tying them."
