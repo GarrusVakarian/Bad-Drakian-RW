@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Gnolls keep their racial emote sounds when spawning or refreshing voice settings."
