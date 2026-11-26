@@ -218,6 +218,9 @@
 	stop_soundtrack_for_ckey(player_ckeys[CCG_SIDE_TWO])
 	for(var/spectator_ckey in spectator_ckeys)
 		stop_soundtrack_for_ckey(spectator_ckey)
+	if(music_channel)
+		SSsounds.free_datum_channels(src)
+		music_channel = null
 
 /datum/ccg_match/proc/sync_soundtrack_for(mob/user)
 	if(!user?.client?.prefs)
