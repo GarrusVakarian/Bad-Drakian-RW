@@ -41,6 +41,9 @@ SUBSYSTEM_DEF(crediticons)
 	flags = SS_NO_INIT | SS_NO_FIRE
 	var/list/portrait_queue = list()
 	var/worker_running = FALSE
+	var/list/wanted_portraits = list()
+	var/list/wanted_portrait_queue = list()
+	var/wanted_worker_running = FALSE
 
 /datum/mind
 	var/credits_manual_updates = 0
@@ -202,20 +205,3 @@ SUBSYSTEM_DEF(crediticons)
 	player = null
 	preferences = null
 	return ..()
-
-/datum/controller/subsystem/crediticons/proc/get_credit_icon(mob/living/carbon/human/target, crop_to_upper_half = FALSE)
-	if(!target || !istype(target) || !target.mind || !target.client)
-		return null
-
-	var/credit_name = REF(target.mind)
-	if(!GLOB.credits_icons[credit_name]?["icon"])
-		return null
-
-	var/icon/credit_icon = GLOB.credits_icons[credit_name]["icon"]
-
-	if(crop_to_upper_half)
-		var/icon/cropped_icon = icon(credit_icon)
-		cropped_icon.Crop(1, 49, 96, 96)
-		return cropped_icon
-
-	return credit_icon

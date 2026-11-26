@@ -4,6 +4,8 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 /datum/castifico_penance_record
 	var/subject_name
 	var/list/crime_banners = list()
+	var/list/public_wanted_crimes
+	var/list/hidden_wanted_crimes
 	var/paid_amount = 0
 	var/remaining_duration = 0
 	var/escaped = FALSE
@@ -14,6 +16,8 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 	if(subject_name && GLOB.castifico_penance_records[subject_name] == src)
 		GLOB.castifico_penance_records -= subject_name
 	crime_banners = null
+	public_wanted_crimes = null
+	hidden_wanted_crimes = null
 	active_collar = null
 	return ..()
 
@@ -23,6 +27,14 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		heretic_recognition = max(heretic_recognition, BOUNTY_RECOGNITION_FACE)
 	for(var/datum/bounty/claimed_bounty as anything in bounties)
 		crime_banners += claimed_bounty.banner
+		if(claimed_bounty.target)
+			LAZYINITLIST(public_wanted_crimes)
+			if(claimed_bounty.reason)
+				public_wanted_crimes |= claimed_bounty.reason
+		else if(claimed_bounty.target_hidden)
+			LAZYINITLIST(hidden_wanted_crimes)
+			if(claimed_bounty.reason)
+				hidden_wanted_crimes |= claimed_bounty.reason
 		if(claimed_bounty.church_issued)
 			heretic_recognition = max(heretic_recognition, claimed_bounty.recognition)
 
@@ -548,6 +560,7 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 		new_bounty.target_body_type = "feminine"
 	compose_bounty(new_bounty)
 	GLOB.head_bounties += new_bounty
+	SScrediticons.queue_wanted_portrait(target_realname)
 
 /proc/add_bounty_noface(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name)
 	var/datum/bounty/new_bounty_noface = new /datum/bounty
@@ -575,11 +588,12 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 	new_bounty_noface.target_body = LOWER_TEXT(descriptor_body)
 	//new_bounty_noface.target_voice = LOWER_TEXT(descriptor_voice)
 	new_bounty_noface.bandit = bandit_status
-	new_bounty_noface.reason = reason
+	new_bounty_noface.reason = html_encode(reason)
 	new_bounty_noface.employer = employer_name
 	//var/list/lines = build_cool_description(get_mob_descriptors(obscure_name, user), target)
 	compose_bounty_noface(new_bounty_noface)
 	GLOB.head_bounties += new_bounty_noface
+	SScrediticons.queue_wanted_portrait(target_realname)
 
 /proc/add_bounty_obscure(target_realname, race, gender, descriptor_height, descriptor_body, descriptor_voice, amount, bandit_status, reason, employer_name)
 	var/datum/bounty/new_bounty_obscure = new /datum/bounty
@@ -607,11 +621,12 @@ GLOBAL_LIST_INIT(bounty_preset_labels, list(
 	new_bounty_obscure.target_body = LOWER_TEXT(descriptor_body)
 	//new_bounty_obscure.target_voice = LOWER_TEXT(descriptor_voice)
 	new_bounty_obscure.bandit = bandit_status
-	new_bounty_obscure.reason = reason
+	new_bounty_obscure.reason = html_encode(reason)
 	new_bounty_obscure.employer = employer_name
 	//var/list/lines = build_cool_description(get_mob_descriptors(obscure_name, user), target)
 	compose_bounty_obscure(new_bounty_obscure)
 	GLOB.head_bounties += new_bounty_obscure
+	SScrediticons.queue_wanted_portrait(target_realname)
 
 ///Composes a random bounty banner based on the given bounty info.
 ///@param new_bounty:  The bounty datum.

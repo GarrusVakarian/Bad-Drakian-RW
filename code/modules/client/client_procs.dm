@@ -165,6 +165,10 @@ GLOBAL_LIST_EMPTY(respawncounts)
 		chronicle.ui_interact(mob)
 		return
 
+	if(href_list["wanted_posters_ready"])
+		wanted_poster_page_ready(src, href_list["wanted_posters_ready"])
+		return
+
 	if(href_list["viewchronicle"])
 		var/tab = href_list["chronicletab"] || "The Realm"
 		show_chronicle(tab)

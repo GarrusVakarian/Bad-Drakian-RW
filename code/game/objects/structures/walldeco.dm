@@ -26,8 +26,8 @@
 	return
 
 /obj/structure/fluff/walldeco/wantedposter
-	name = "bandit notice"
-	desc = "A place for posters displaying the faces of roving bandits. Let's see if there are any this week..."
+	name = "wanted board"
+	desc = "A board of notices naming the realm's outlaws and the bounties on their heads."
 	icon_state = "wanted1"
 	layer = BELOW_MOB_LAYER
 	pixel_y = 32
@@ -52,6 +52,19 @@
 			user.playsound_local(user, 'sound/misc/notice (2).ogg', 100, FALSE)
 		else
 			. += span_bold("There doesn't seem to be any reports of bandit activity.")
+		. += "<a href='byond://?src=[REF(src)];read_wanted_notices=1'>Read the wanted notices.</a>"
+
+/obj/structure/fluff/walldeco/wantedposter/Topic(href, href_list)
+	. = ..()
+	if(. || !href_list["read_wanted_notices"])
+		return
+	var/mob/user = usr
+	if(!user?.client || !user.Adjacent(src) || !user.canUseTopic(src, BE_CLOSE, NO_DEXTERITY))
+		return
+	var/datum/browser/popup = new(user, "wanted_notices", "<center>Wanted</center>", 680, 620, src)
+	popup.set_content(render_wanted_posters(collect_wanted_posters(), "The board is bare. No one is wanted, for now.", user.client, "wanted_notices"))
+	popup.open()
+	return TRUE
 
 /obj/structure/fluff/walldeco/innsign
 	name = "tavern sign"
