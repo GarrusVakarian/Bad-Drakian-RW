@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Clicking to hide in or leave a bush no longer starts foraging."
