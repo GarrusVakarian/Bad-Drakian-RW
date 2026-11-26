@@ -26,6 +26,11 @@
 	var/max_range = 5
 	var/phase = /obj/effect/temp_visual/blink
 
+/obj/effect/proc_holder/spell/invoked/blink/dreamstep
+	name = "Dreamstep"
+	desc = "Teleport to a visible location up to 5 tiles away on the same plane, even while grabbed."
+	blocked_while_grabbed = FALSE
+
 /obj/effect/temp_visual/blink
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "hierophant_blast"
