@@ -424,6 +424,9 @@
 	if(!selected_ritual.can_start_ritual(user))
 		to_chat(user, span_info("That ritual can no longer be started."))
 		return
+	selected_ritual.initiator = user.mind
+	if(!selected_ritual.get_reward_recipient(user))
+		return
 	tree_data.active_ritual = selected_ritual
 	to_chat(user, span_notice("I begin the ritual. Offer items by clicking the tree while holding them. Use the amulet only if I need to cancel."))
 
@@ -442,6 +445,11 @@
 		to_chat(user, span_warning("I am not holding anything to offer."))
 		return FALSE
 
+	var/datum/druid_ritual/ritual = tree_data.active_ritual
+	var/mob/living/recipient = ritual.get_reward_recipient(user)
+	if(!recipient)
+		return FALSE
+
 	// Support taking items from a held storage container (sack, satchel, bag).
 	if(held.GetComponent(/datum/component/storage))
 		// Bulk mode: for every unfulfilled key, drain all matching items from the sack at once.
@@ -449,17 +457,17 @@
 		// Snapshot contents so deletions during iteration are safe.
 		var/list/sack_contents = held.contents.Copy()
 		for(var/obj/item/sack_item in sack_contents)
-			if(tree_data.active_ritual.accept_offering(sack_item, user, silent = TRUE))
+			if(ritual.accept_offering(sack_item, user, silent = TRUE))
 				any_taken = TRUE
 		if(!any_taken)
 			to_chat(user, span_warning("The tree does not need anything from that container right now."))
 			return FALSE
 		playsound(get_turf(src), 'sound/magic/churn.ogg', 40, FALSE)
-		tree_data.active_ritual.check_ritual_complete(user)
+		ritual.check_ritual_complete(recipient)
 		return TRUE
 
-	if(tree_data.active_ritual.accept_offering(held, user, silent = FALSE))
-		tree_data.active_ritual.check_ritual_complete(user)
+	if(ritual.accept_offering(held, user, silent = FALSE))
+		ritual.check_ritual_complete(recipient)
 		return TRUE
 	return FALSE
 
@@ -477,6 +485,8 @@
 	abstract_type = /datum/druid_ritual
 	/// Reference to the tree that this ritual is a part of
 	var/datum/sanctified_tree_data/ritual_holder
+	/// Mind of the player who began this ritual.
+	var/datum/mind/initiator
 	/// Name of the ritual, how it shows up in the UI
 	var/name = "Abstract Ritual"
 	/// Tier of the ritual, you need equal or greater skill to be elligible to start/complete the ritual
@@ -527,6 +537,10 @@
 			to_chat(druid, span_warning("The Treefather's floral gift is already within me — I cannot receive this blessing twice."))
 			return FALSE
 	return TRUE
+
+/// Returns the player who receives the ritual rewards, or null if the rite cannot proceed.
+/datum/druid_ritual/proc/get_reward_recipient(mob/living/user)
+	return user
 
 /// Copies our list of requirements once the ritual actually begins
 /datum/druid_ritual/proc/prepare_tracker()
@@ -1235,6 +1249,23 @@
 		/obj/item/alch/bloomstone = 1,
 	)
 
+/datum/druid_ritual/winged_rebirth/get_reward_recipient(mob/living/user)
+	var/mob/living/carbon/human/druid = initiator?.current
+	if(QDELETED(druid) || !ishuman(druid) || druid.mind != initiator)
+		to_chat(user, span_warning("The one who began this rite cannot receive the Treefather's blessing."))
+		return null
+
+	var/obj/effect/proc_holder/spell/self/wildshape/ws = initiator.get_spell(/obj/effect/proc_holder/spell/self/wildshape)
+	if(!ws)
+		to_chat(user, span_warning("The one who began this rite must know the Beast Form miracle."))
+		return null
+
+	if((/mob/living/carbon/human/species/wildshape/bat in ws.possible_shapes) && (/mob/living/carbon/human/species/wildshape/crow in ws.possible_shapes))
+		to_chat(user, span_notice("The one who began this rite already knows both winged guises."))
+		return null
+
+	return druid
+
 /datum/druid_ritual/winged_rebirth/accept_offering(obj/item/offering, mob/living/user, silent)
 	// Special handling, make sure to delete the bloomstone
 	if(istype(offering, /obj/item/alch/bloomstone) && (offering_tracker[/obj/item/alch/bloomstone] > 0))
@@ -1242,7 +1273,7 @@
 		bloom_offering.charges = 0
 	return ..()
 
-/// Winged Rebirth: choose a winged form and add it to Beast Form choices (once per tree).
+/// Winged Rebirth: adds bat and crow to the initiator's Beast Form choices.
 /// Offerings: 5 feathers OR bonedust, 1 essence of either types, 1 harvest bloomstone.
 /datum/druid_ritual/winged_rebirth/on_complete_rewards(mob/living/carbon/human/user)
 	if(!ishuman(user))
