@@ -95,7 +95,6 @@
 	user.sexcon.knotted_owner = user
 	user.sexcon.knotted_recipient = btm
 	user.sexcon.knotted_status = KNOTTED_AS_TOP
-	user.sexcon.tugging_knot_blocked = FALSE
 	user.sexcon.knotted_part = top_knotted_part
 	user.sexcon.knotted_part_partner = bottom_knotted_part // we store the action bitflags so we can later apply damage based on area, and exclusive status unique to each orifice
 	user.sexcon.knotted_forced_by_bottom = FALSE
@@ -245,11 +244,6 @@
 	if(!large_knot && top.sexcon.considered_limp())
 		knot_remove()
 		return
-	if(top.sexcon.tugging_knot_check == 0) // check clothes layer connection every 5 steps and update tugging_knot_blocked
-		top.sexcon.tugging_knot_blocked = !get_location_accessible(top, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE)
-		top.sexcon.tugging_knot_check = 5
-	else
-		top.sexcon.tugging_knot_check--
 	var/lupineisop = top.STASTR > (btm.STACON + 3) // if the stat difference is too great, don't attempt to disconnect on run
 	if(!large_knot && !lupineisop && top.m_intent == MOVE_INTENT_RUN && (top.mobility_flags & MOBILITY_STAND)) // pop it
 		knot_remove(forceful_removal = TRUE)
@@ -291,14 +285,9 @@
 			return
 	btm.face_atom(top)
 	top.set_pull_offsets(btm, GRAB_AGGRESSIVE)
-	if(!top.IsStun()) // randomly stun our top so they cannot simply drag without any penality (combat mode doubles the chances)
-		if(prob(!top.cmode && !top.sexcon.tugging_knot_blocked ? 7 : 20))
+	if(!top.IsStun()) // Dragging can cause a stun, especially in combat mode.
+		if(prob(top.cmode ? 20 : 7))
 			top.sexcon.try_do_pain_effect(PAIN_MILD_EFFECT, FALSE)
-			if(top.sexcon.tugging_knot_blocked && (top.mobility_flags & MOBILITY_STAND)) // only knock down if standing and knot area is blocked
-				top.Knockdown(10)
-				to_chat(top, span_warning("I trip trying to move while my [top.sexcon.get_knot_synonym()] is covered."))
-				top.sexcon.tugging_knot_blocked = FALSE // reset blocked state in the case either character stip off again
-				top.sexcon.tugging_knot_check = 0 // check clothes again on the next step
 			top.Stun(15)
 	if(!btm.IsStun())
 		if(prob(5))
