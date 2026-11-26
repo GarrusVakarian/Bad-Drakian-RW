@@ -1056,6 +1056,14 @@
   - rscadd: Choose whether masks hide your highest-tier Wretch or Bandit bounty alert.
       Bounty Presets can save the choice.
 2026-11-26:
+  SMoto95:
+  - qol: Made Sanctified tree rites a lot easier to work with, less requirements and
+      earlier to unlock.
+  - rscadd: Added an alternate fertilizer recipe for dedicated dendorite roles with
+      access to druidic trickery knowledge
+  - qol: Buffed druids' non-combat skills, stronger non-combat skill buffs depending
+      on how old they are.
   _Rarity:
   - bugfix: "Admin revival preserves gnolls\u2019 selected pintle, testicles, vagina,\
       \ and breasts."
+  - bugfix: Sawing blessed long logs now grants their bonus timber.

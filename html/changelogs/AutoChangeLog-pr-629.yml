@@ -1,6 +1,0 @@
-author: "SMoto95"
-delete-after: True
-changes:
-  - qol: "Made Sanctified tree rites a lot easier to work with, less requirements and earlier to unlock."
-  - rscadd: "Added an alternate fertilizer recipe for dedicated dendorite roles with access to druidic trickery knowledge"
-  - qol: "Buffed druids' non-combat skills, stronger non-combat skill buffs depending on how old they are."
