@@ -59,6 +59,7 @@
 		return
 	var/client/trainer_client = user.client
 	var/client/trainee_client = client
+	to_chat(user, span_notice("I attempt to bind [src] to this hellish device..."))
 	var/answer = tgui_alert(src, "Become clicker-trained?", "Dog Clicker", list("No", "Yes"), timeout = 20 SECONDS, autofocus = FALSE, force_tgui = TRUE)
 	if(QDELETED(src))
 		return
