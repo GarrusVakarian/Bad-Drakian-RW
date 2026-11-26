@@ -94,6 +94,19 @@
 /obj/item/organ/vagina/get_oviposition_location_name()
 	return "womb"
 
+/mob/living/carbon/human/proc/refill_egg_clutches()
+	var/refilled = FALSE
+	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
+		var/obj/item/organ/egg_organ = getorganslot(slot)
+		if(!egg_organ?.egg_settings)
+			continue
+		var/clutch = egg_organ.egg_settings["clutch"]
+		if(egg_organ.eggs_stored < clutch)
+			egg_organ.eggs_stored = clutch
+			refilled = TRUE
+	if(refilled)
+		to_chat(src, span_notice("My eggs are replenished."))
+
 /// Called from cum_into() once per climax. Ovipositors implant into whoever took the load.
 /datum/sex_controller/proc/modular_try_oviposit(mob/living/carbon/human/receiver, oral, orifice)
 	if(oral || !orifice || !istype(receiver) || receiver == user)
