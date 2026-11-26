@@ -258,6 +258,7 @@
 // Volf In Sheep's Clothing Pack: Resident + Defiled Keyholder
 /datum/virtue/pack/volfsheep
 	name = "Volf In Sheep's Clothing (-4 TRI)"
+	requires_ascendant_patron = TRUE
 	desc = "They let me into their businesses, their taverns, their homes, never knowing what lies behind this fake smile. But when the others come to bring down the 10, they will have friends inside the walls."
 	triumph_cost = 4
 	granted_virtues = list(
