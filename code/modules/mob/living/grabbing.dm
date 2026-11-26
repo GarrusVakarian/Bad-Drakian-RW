@@ -289,13 +289,8 @@
 				if(iscarbon(M) && M != user)
 					user.stamina_add(rand(1,3))
 					var/mob/living/carbon/C = M
-					var/obj/item/clothing/suit/roguetown/armor/regenerating/skin/gnoll_armor/skin
-					if(ishuman(C))
-						var/mob/living/carbon/human/H = C
-						if(istype(H.skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/gnoll_armor))
-							skin = H.skin_armor
-					var/protected_by_skin = skin && !skin.obj_broken && skin.obj_integrity > 0 && (skin.body_parts_covered_dynamic & NECK)
-					if(!protected_by_skin && get_location_accessible(C, BODY_ZONE_PRECISE_NECK))
+					var/damage_multiplier = C.get_neck_choke_damage_multiplier()
+					if(damage_multiplier)
 						if(prob(25))
 							C.emote("choke")
 						var/choke_damage
@@ -308,7 +303,7 @@
 						if(C.pulling == user && C.grab_state >= GRAB_AGGRESSIVE)
 							choke_damage *= 0.95	//Slight malice
 						cancel_deadite_grace(user)
-						C.adjustOxyLoss(choke_damage)
+						C.adjustOxyLoss(choke_damage * damage_multiplier)
 						C.visible_message(span_danger("[user] [pick("chokes", "strangles")] [C][chokehold ? " with a chokehold" : ""]!"), \
 								span_userdanger("[user] [pick("chokes", "strangles")] me[chokehold ? " with a chokehold" : ""]!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE, user)
 						to_chat(user, span_danger("I [pick("choke", "strangle")] [C][chokehold ? " with a chokehold" : ""]!"))
@@ -479,6 +474,22 @@
 			else
 				to_chat(user, span_warning("They aren't holding anything on that hand!"))
 				return
+
+/// Uses the strongest intact worn layer covering the neck. Only intact Gnoll hide blocks the grip.
+/mob/living/carbon/proc/get_neck_choke_damage_multiplier()
+	if(ishuman(src))
+		var/mob/living/carbon/human/human = src
+		var/obj/item/clothing/skin = human.skin_armor
+		if(istype(skin, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/gnoll_armor) && !skin.obj_broken && skin.obj_integrity > 0 && (skin.body_parts_covered_dynamic & NECK))
+			return 0
+
+	. = 1
+	for(var/obj/item/clothing/layer in get_equipped_items(include_beltslots = FALSE))
+		if(layer.neck_choke_damage_multiplier >= . || layer.obj_broken || layer.obj_integrity <= 0 || !(layer.body_parts_covered_dynamic & NECK))
+			continue
+		. = layer.neck_choke_damage_multiplier
+		if(. == 0.5)
+			break
 
 /obj/item/grabbing/proc/cancel_deadite_grace(mob/living/user)
 	var/mob/living/victim = grabbed

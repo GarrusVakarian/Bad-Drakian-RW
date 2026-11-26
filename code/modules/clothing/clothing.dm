@@ -10,6 +10,8 @@
 	sewrepair = TRUE
 	dropshrink = 0.85
 	has_item_quality = TRUE
+	/// Unarmed choke damage taken while this intact piece covers the neck. Clothing defaults to full damage.
+	var/neck_choke_damage_multiplier = 1
 	///What level of bright light protection item has.
 	var/flash_protect = FLASH_PROTECTION_NONE
 	var/tint = 0				//Sets the item's level of visual impairment tint, normally set to the same as flash_protect

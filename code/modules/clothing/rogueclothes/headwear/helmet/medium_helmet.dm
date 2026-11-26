@@ -213,6 +213,7 @@
 	color = "#323232"
 
 /obj/item/clothing/head/roguetown/helmet/sallet/shishak
+	neck_choke_damage_multiplier = 0.5
 	name = "steel shishak"
 	desc = "A flat decorated steel helmet of Aavnic make with a spike at the top end. A hanging layer of chainmail protects the sides of the head and even the neck."
 	body_parts_covered = HEAD|EARS|HAIR|NECK
@@ -227,6 +228,7 @@
 	icon_state = "shishak"
 
 /obj/item/clothing/head/roguetown/helmet/sallet/hussarhelm
+	neck_choke_damage_multiplier = 0.5
 	name = "Hussar's Helmet"
 	desc = "A helm worn by the Czwarteki Hussars, ornate in its design and made to protect the user from stray bolts and arrows during charge."
 	body_parts_covered = HEAD|EARS|HAIR|NECK
@@ -866,6 +868,7 @@
 
 //Gronn
 /obj/item/clothing/head/roguetown/helmet/nomadhelmet
+	neck_choke_damage_multiplier = 0.75
 	name = "nomad helmet"
 	desc = "An iron helmet with leather to help protect the neck."
 	icon_state = "nomadhelmet"
