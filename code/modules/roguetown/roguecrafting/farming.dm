@@ -26,9 +26,10 @@
 
 /datum/crafting_recipe/roguetown/farming/druidic
 	name = "fertilizer (via druidic trickery)"
+	always_availible = TRUE
 	result = /obj/item/fertilizer
 	reqs = list(
-		/obj/item/compost = 1, 
+		/obj/item/compost = 1,
 		/obj/item/alch/blessedseedpowder = 1
 		)
 	skillcraft = /datum/skill/magic/druidic

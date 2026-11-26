@@ -1,3 +1,5 @@
+#define BULWARK_INTEGRITY_BONUS 100
+
 //==============================================================================
 // Blessed Druid Armor
 //==============================================================================
@@ -42,7 +44,7 @@
 	var/awaiting_soulbind_ckey
 
 	// ---- Ritual state -------------------------------------------------------
-	/// Currently active ritual category string, or null if none.
+	/// Currently active ritual, or null if none.
 	var/datum/druid_ritual/active_ritual
 	/// Armor held for nature's temper. Stored inside the tree until completion.
 	var/obj/item/ritual_armor
@@ -114,9 +116,7 @@
 			curse_soulbound_players()
 		// Clean up aura slow on destroy.
 		for(var/mob/living/slowed_mob in tree_data.slowed_mobs)
-			if(!QDELETED(slowed_mob))
-				slowed_mob.remove_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
-		tree_data.slowed_mobs = list()
+			remove_ward_from(slowed_mob)
 		// Return any stored ritual armor to the ground.
 		if(tree_data.ritual_armor && !QDELETED(tree_data.ritual_armor))
 			tree_data.ritual_armor.forceMove(get_turf(src))
@@ -341,7 +341,12 @@
 	if(new_bonus == integrity_bonus)
 		return
 	integrity_bonus = new_bonus
-	max_integrity = 400 + integrity_bonus
+	update_max_integrity()
+
+/obj/structure/flora/roguetree/wise/sanctified/proc/update_max_integrity()
+	max_integrity = initial(max_integrity) + integrity_bonus
+	if(/datum/druid_ritual/treefathers_bulwark in tree_data.rituals_completed)
+		max_integrity += BULWARK_INTEGRITY_BONUS
 	obj_integrity = min(obj_integrity, max_integrity)
 
 //==============================================================================
@@ -384,12 +389,15 @@
 
 	if(tree_data.active_ritual)
 		// Show progress and only allow cancellation from the amulet menu.
-		var/text = "[tree_data.active_ritual.name] is active.\n\nOffer items by clicking the tree while holding them."
-		for(var/line in tree_data.active_ritual.get_plaintext_examine())
+		var/datum/druid_ritual/active_ritual = tree_data.active_ritual
+		var/text = "[active_ritual.name] is active.\nRecipient: [active_ritual.get_recipient_name()]\n\nOffer items by clicking the tree while holding them."
+		for(var/line in active_ritual.get_plaintext_examine())
 			text += "\n[line]"
 		text += "\n\nCancel this ritual?"
 		var/choice = alert(user, text, "Sanctified Tree", "Keep Ritual", "Cancel Ritual")
 		if(choice != "Cancel Ritual" || QDELETED(src) || QDELETED(user))
+			return
+		if(tree_data?.active_ritual != active_ritual || !Adjacent(user) || user.patron?.type != /datum/patron/divine/dendor)
 			return
 		cancel_ritual(user)
 		return
@@ -409,26 +417,22 @@
 
 	var/choice = tgui_input_list(user, "Choose a ritual to perform:", "Sanctified Tree Rituals", possible_rituals)
 	var/datum/druid_ritual/selected_ritual = ritual_names[choice]
-	if(isnull(selected_ritual) || QDELETED(src) || QDELETED(user))
+	if(isnull(selected_ritual) || QDELETED(src) || QDELETED(user) || !Adjacent(user))
 		return
 
-	if(!selected_ritual.can_start_ritual(user))
-		to_chat(user, span_info("That ritual has already been completed on this tree and cannot be repeated."))
+	selected_ritual.initiator_ref = WEAKREF(user.mind)
+	if(selected_ritual.get_reward_recipient(user) != user)
 		return
 
 	selected_ritual.prepare_tracker()
 	if(!confirm_start_ritual(user, selected_ritual))
 		return
-	if(QDELETED(src) || QDELETED(user) || !tree_data || tree_data.active_ritual || tree_data.wedding_active)
+	if(QDELETED(src) || QDELETED(user) || !Adjacent(user) || !tree_data || tree_data.active_ritual || tree_data.wedding_active)
 		return
-	if(!selected_ritual.can_start_ritual(user))
-		to_chat(user, span_info("That ritual can no longer be started."))
-		return
-	selected_ritual.initiator = user.mind
-	if(!selected_ritual.get_reward_recipient(user))
+	if(selected_ritual.get_reward_recipient(user) != user)
 		return
 	tree_data.active_ritual = selected_ritual
-	to_chat(user, span_notice("I begin the ritual. Offer items by clicking the tree while holding them. Use the amulet only if I need to cancel."))
+	to_chat(user, span_notice("I begin the ritual. Any follower of Dendor can help by clicking the tree with an offering. I receive the ritual's personal rewards when it is complete."))
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/confirm_start_ritual(mob/living/user, datum/druid_ritual/selected_ritual)
 	var/text = "Begin [selected_ritual.name]?\n\nRequired offerings:"
@@ -438,27 +442,31 @@
 	return (choice == "Begin")
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/offer_item(mob/living/user)
-	if(!tree_data?.active_ritual)
+	var/datum/druid_ritual/ritual = tree_data?.active_ritual
+	if(!ritual)
 		return FALSE
 	var/obj/item/held = user.get_active_held_item()
 	if(!held)
 		to_chat(user, span_warning("I am not holding anything to offer."))
 		return FALSE
 
-	var/datum/druid_ritual/ritual = tree_data.active_ritual
 	var/mob/living/recipient = ritual.get_reward_recipient(user)
 	if(!recipient)
-		return FALSE
+		return TRUE
 
 	// Support taking items from a held storage container (sack, satchel, bag).
 	if(held.GetComponent(/datum/component/storage))
-		// Bulk mode: for every unfulfilled key, drain all matching items from the sack at once.
 		var/any_taken = FALSE
 		// Snapshot contents so deletions during iteration are safe.
 		var/list/sack_contents = held.contents.Copy()
+		var/offering_type = ritual.get_sack_offering_type(sack_contents)
 		for(var/obj/item/sack_item in sack_contents)
+			if(QDELETED(sack_item) || (offering_type && sack_item.type != offering_type))
+				continue
 			if(ritual.accept_offering(sack_item, user, silent = TRUE))
 				any_taken = TRUE
+				if(ritual.is_ready())
+					break
 		if(!any_taken)
 			to_chat(user, span_warning("The tree does not need anything from that container right now."))
 			return FALSE
@@ -485,8 +493,8 @@
 	abstract_type = /datum/druid_ritual
 	/// Reference to the tree that this ritual is a part of
 	var/datum/sanctified_tree_data/ritual_holder
-	/// Mind of the player who began this ritual.
-	var/datum/mind/initiator
+	/// Mind of the character who began the ritual and receives its personal rewards.
+	var/datum/weakref/initiator_ref
 	/// Name of the ritual, how it shows up in the UI
 	var/name = "Abstract Ritual"
 	/// Tier of the ritual, you need equal or greater skill to be elligible to start/complete the ritual
@@ -523,24 +531,35 @@
 		return TRUE
 	return FALSE
 
-/// Checks if the user is elligible to even start the ritual. Returns TRUE if elligible
-/datum/druid_ritual/proc/can_start_ritual(mob/druid)
-	if(!druid.mind)
-		return FALSE
-	if(unique_tree_rite && (type in ritual_holder?.rituals_completed))
-		return FALSE
-	var/druidic_level = druid.get_skill_level(/datum/skill/magic/druidic)
-	if(druidic_level < druid_ritual_tier)
-		return FALSE
-	if(granted_spell)
-		if(locate(granted_spell) in druid.mind.spell_list)
-			to_chat(druid, span_warning("The Treefather's floral gift is already within me — I cannot receive this blessing twice."))
-			return FALSE
-	return TRUE
+/datum/druid_ritual/proc/get_recipient_name()
+	var/datum/mind/initiator = initiator_ref?.resolve()
+	if(!QDELETED(initiator?.current))
+		return initiator.current.real_name
+	return initiator?.name || "Unavailable"
 
 /// Returns the player who receives the ritual rewards, or null if the rite cannot proceed.
 /datum/druid_ritual/proc/get_reward_recipient(mob/living/user)
-	return user
+	var/datum/mind/initiator = initiator_ref?.resolve()
+	var/mob/living/recipient = initiator?.current
+	if(recipient?.mind != initiator)
+		recipient = null
+	var/eligibility_error = get_eligibility_error(recipient)
+	if(eligibility_error)
+		to_chat(user, span_warning("The tree accepts no offerings. [eligibility_error]"))
+		return null
+	return recipient
+
+/// Returns the reason the recipient is ineligible, or null if the rite can proceed.
+/datum/druid_ritual/proc/get_eligibility_error(mob/living/druid)
+	if(QDELETED(druid) || !ishuman(druid) || druid.stat == DEAD || !druid.mind || druid.mind.current != druid || druid.patron?.type != /datum/patron/divine/dendor)
+		return "The ritual's recipient must be a living follower of Dendor."
+	if(unique_tree_rite && (type in ritual_holder?.rituals_completed))
+		return "That ritual has already been completed on this tree."
+	if(druid.get_skill_level(/datum/skill/magic/druidic) < druid_ritual_tier)
+		return "The ritual's recipient needs more skill in Druidic Trickery."
+	if(granted_spell && druid.mind.has_spell(granted_spell))
+		return "The ritual's recipient already knows this miracle."
+	return null
 
 /// Copies our list of requirements once the ritual actually begins
 /datum/druid_ritual/proc/prepare_tracker()
@@ -600,18 +619,28 @@
 			return TRUE
 	return FALSE
 
-/// Checks if all the criteria are fulfilled, and calls on_complete once elligible
+/// Optionally restricts a sack to one offering type when requirements are alternatives.
+/datum/druid_ritual/proc/get_sack_offering_type(list/sack_contents)
+	return null
+
+/// Completes the rite once its offering requirements are satisfied.
 /datum/druid_ritual/proc/check_ritual_complete(mob/living/user)
+	if(is_ready())
+		on_complete(user)
+
+/datum/druid_ritual/proc/is_ready()
 	for(var/key in offering_tracker)
 		if(offering_tracker[key] > 0)
-			return FALSE // Unfulfilled requirement
-	on_complete(user)
+			return FALSE
+	return TRUE
 
 /// Grants rewards when the ritual is completed
 /datum/druid_ritual/proc/on_complete(mob/living/user)
-	playsound(get_turf(user), 'sound/ambience/noises/mystical (4).ogg', 70, TRUE)
-	user.visible_message(span_green("The [name] blazes with golden light as [user.name] completes a sacred ritual!"))
-	ritual_holder.rituals_completed |= type
+	var/obj/structure/tree = ritual_holder.tree
+	playsound(get_turf(tree), 'sound/ambience/noises/mystical (4).ogg', 70, TRUE)
+	tree.visible_message(span_green("[tree] blazes with golden light as the [name] ritual is completed for [user.name]!"))
+	if(unique_tree_rite)
+		ritual_holder.rituals_completed |= type
 	ritual_holder.active_ritual = null
 	if(experience_payout > 0 && user.mind)
 		user.mind.add_sleep_experience(/datum/skill/magic/druidic, experience_payout)
@@ -707,10 +736,6 @@
 		playsound(get_turf(user), 'sound/magic/churn.ogg', 40, FALSE)
 	return TRUE
 
-/datum/druid_ritual/dendors_harvest/check_ritual_complete(mob/living/user)
-	if(offering_tracker["food_item"] <= 0)
-		on_complete(user)
-
 /datum/druid_ritual/dendors_harvest/get_ritual_examine()
 	return span_warning("Grown Produce: [(required_amount - offering_tracker["food_item"])]/[required_amount]<br>")
 
@@ -724,12 +749,12 @@
 /// Reward (normal): 1 random misc seed + 1 tree seed (5% sakura, 10% pine, 85% regular).
 /// Reward (berry special case, all 5 berries): 1 wild bush seed + 50% chance flower seed.
 /datum/druid_ritual/dendors_harvest/on_complete_rewards(mob/living/user)
-	var/turf/user_turf = get_turf(user)
+	var/turf/reward_turf = get_turf(ritual_holder.tree)
 	if(berries_only)
 		// Berry special case: all offerings were berries → wild thorny berry hedge seed + possible flower
-		new /obj/item/seeds/bush(user_turf)
+		new /obj/item/seeds/bush(reward_turf)
 		if(prob(50))
-			new /obj/item/seeds/flower(user_turf)
+			new /obj/item/seeds/flower(reward_turf)
 		to_chat(user, span_green("The roots twist with thorny energy — a wild hedge sapling seed tumbles forth."))
 		return
 	// Normal reward: 1 misc seed from Dendor's garden + 1 tree seed
@@ -765,14 +790,14 @@
 		/obj/item/seeds/pumpkin                      = 3,
 		/obj/item/seeds/berryrogue                   = 3
 	))
-	new misc(user_turf)
+	new misc(reward_turf)
 	// Tree seed: 5% sakura, 10% pine, 85% regular
 	var/tree_type = pickweight(list(
 		/obj/item/seeds/treesap/sakura = 5,
 		/obj/item/seeds/treesap/pine   = 10,
 		/obj/item/seeds/treesap        = 85
 	))
-	new tree_type(user_turf)
+	new tree_type(reward_turf)
 	to_chat(user, span_green("Seeds tumble from the roots — Dendor's harvest is generous."))
 
 //--- NATURES UNION (Marriage ritual)
@@ -791,8 +816,8 @@
 		to_chat(user, span_warning("A wedding ceremony is already being held at this tree."))
 		return
 	ritual_holder.wedding_active = TRUE
-	ritual_holder.wedding_officiant_ckey = user.ckey
-	user.visible_message(span_green("A peace flower drifts to the roots of [ritual_holder.tree.name] — the blessings of Dendor and Eora are invoked. Two souls may now offer their bitten apple to be wed beneath this tree."))
+	ritual_holder.wedding_officiant_ckey = ckey(user.mind.key)
+	ritual_holder.tree.visible_message(span_green("A peace flower drifts to the roots of [ritual_holder.tree.name] — the blessings of Dendor and Eora are invoked. Two souls may now offer their bitten apple to be wed beneath this tree."))
 	to_chat(user, span_notice("The ceremony has begun. Both partners should bite the same apple once each, then hand it to the tree to be wed. The one handing the apple over will decide the surname."))
 
 //---- FLORAL CONJURATION
@@ -808,19 +833,9 @@
 	offering_description = "A gathering of a few flowers to please Dendor"
 	granted_spell = /obj/effect/proc_holder/spell/self/conjure_floral_seed
 
-/// Floral Conjuration: grants the Conjure Floral Seed spell (once per tree, once per person).
-/// Offerings: one of every herb (atropa through rosa, 15 total).
+/// Floral Conjuration grants Conjure Floral Seed once per character.
 /datum/druid_ritual/floral_conjuration/on_complete_rewards(mob/living/carbon/human/user)
-	if(!ishuman(user))
-		to_chat(user, span_warning("Only a humanoid may receive the Treefather's floral gift."))
-		return
-	if(!user.mind)
-		return
-	// Once-per-person: don't grant the spell if they already have it.
-	for(var/obj/effect/proc_holder/spell/self/conjure_floral_seed/floral_spell in user.mind.spell_list)
-		to_chat(user, span_warning("I already know how to conjure floral seeds — this blessing cannot be received twice."))
-		return
-	user.mind.AddSpell(new /obj/effect/proc_holder/spell/self/conjure_floral_seed)
+	user.mind.AddSpell(new granted_spell)
 	to_chat(user, span_green("The knowledge of Floral Conjuration flows into my mind — I can call seeds forth with the Treefather's power."))
 
 //---- FUNGAL VIGIL
@@ -834,7 +849,7 @@
 	offering_description = "Mana bloom OR Crystalized Mana"
 
 /// Fungal Vigil: kneestinger ring + 30-min vigil buff to nearby mobs (repeatable).
-/// Offerings: 10 mana blooms OR crystalized mana.
+/// Offerings: 3 mana blooms or crystallized mana.
 /// Buff: longstrider + +2 Perception + +1 Speed + kneestinger immunity, 30 minutes.
 /datum/druid_ritual/fungal_vigil/on_complete_rewards(mob/living/user)
 	var/turf/spawn_turf = get_turf(ritual_holder.tree)
@@ -929,13 +944,13 @@
 	)
 	offering_description = "Any tree sapling"
 
-// Spawn 2 blessed logs at the player's feet as the Treefather's gift.
+// Spawn 2 blessed logs at the tree as the Treefather's gift.
 /datum/druid_ritual/timbers_tithe/on_complete_rewards(mob/living/user)
-	var/turf/user_turf = get_turf(user)
+	var/turf/reward_turf = get_turf(ritual_holder.tree)
 	for(var/i in 1 to 2)
-		var/obj/item/grown/log/tree/log = new(user_turf)
+		var/obj/item/grown/log/tree/log = new(reward_turf)
 		log.bless_log()
-	to_chat(user, span_green("Through the Treefather's power, the tree's limbs shed and regrow, with blessed logs now at my feet."))
+	to_chat(user, span_green("Through the Treefather's power, the tree sheds two blessed logs and regrows its limbs."))
 
 //---- TREEFATHERS BULWARK
 #define BOULDER_AMOUNT 5
@@ -969,11 +984,25 @@
 	qdel(offering)
 	return TRUE
 
-/datum/druid_ritual/treefathers_bulwark/check_ritual_complete(mob/living/user)
+/datum/druid_ritual/treefathers_bulwark/get_sack_offering_type(list/sack_contents)
+	var/list/offering_counts = list()
+	var/first_offering_type
+	for(var/obj/item/offering in sack_contents)
+		var/amount_needed = offering_tracker[offering.type]
+		if(!amount_needed || QDELETED(offering))
+			continue
+		if(!first_offering_type)
+			first_offering_type = offering.type
+		offering_counts[offering.type]++
+		if(offering_counts[offering.type] >= amount_needed)
+			return offering.type
+	return first_offering_type
+
+/datum/druid_ritual/treefathers_bulwark/is_ready()
 	for(var/key in offering_tracker)
-		if(offering_tracker[key] <= 0) // First one to hit 0 marks as complete
-			on_complete(user)
-			break
+		if(offering_tracker[key] <= 0)
+			return TRUE
+	return FALSE
 
 /datum/druid_ritual/treefathers_bulwark/get_ritual_examine()
 	var/list/examine_list = list()
@@ -991,13 +1020,14 @@
 	return examine_list
 
 /// Treefather's Bulwark: slow aura + integrity boost (once per tree).
-/// Offerings: 5 enchanted stones (magic_power 5+) OR boulders.
+/// Offerings: 5 boulders OR 10 small stones.
 /// Reward: +100 integrity, -4 speed debuff aura to non-Dendor mobs within 5 tiles.
 /datum/druid_ritual/treefathers_bulwark/on_complete_rewards(mob/living/user)
+	var/obj/structure/flora/roguetree/wise/sanctified/tree = ritual_holder.tree
 	ritual_holder.has_slow_aura = TRUE
-	ritual_holder.tree.max_integrity += 100
-	ritual_holder.tree.obj_integrity = min(ritual_holder.tree.obj_integrity + 100, ritual_holder.tree.max_integrity)
-	ritual_holder.tree.visible_message(span_green("The bark of [ritual_holder.tree.name] hardens like ironwood. A silent ward settles around the tree — those who would defile it will find their feet heavy."))
+	tree.update_max_integrity()
+	tree.obj_integrity = min(tree.obj_integrity + BULWARK_INTEGRITY_BONUS, tree.max_integrity)
+	tree.visible_message(span_green("The bark of [tree.name] hardens like ironwood. A silent ward settles around the tree — those who would defile it will find their feet heavy."))
 
 #undef BOULDER_AMOUNT
 #undef STONE_AMOUNT
@@ -1023,14 +1053,15 @@
 	if(!istype(user))
 		to_chat(user, span_warning("Only a living person may soulbind with this tree."))
 		return
-	if(user.ckey in ritual_holder.soulbound_players)
+	var/recipient_ckey = ckey(user.mind.key)
+	if(recipient_ckey in ritual_holder.soulbound_players)
 		to_chat(user, span_warning("I am already soulbound to this tree."))
 		return
 	// Check once-per-player: has this player soulbound to any sanctified tree?
 	if(HAS_TRAIT(user, TRAIT_DENDOR_SOULBOUND))
 		to_chat(user, span_userdanger("My soul is already bound to a sanctified tree. I cannot bind twice."))
 		return
-	ritual_holder.awaiting_soulbind_ckey = user.ckey
+	ritual_holder.awaiting_soulbind_ckey = recipient_ckey
 	to_chat(user, span_warning("The ritual is set. To complete the soulbind, I must attack this tree with harm intent, my hand empty and my arm bleeding."))
 
 /// Triggered when a player attacks the tree with harm intent + empty hand + bleeding arm.
@@ -1153,14 +1184,13 @@
 			return FALSE
 	return ..()
 
-/// Harvest Bloomstone: a 20-use blessed seed powder stone (once per tree).
+/// Harvest Bloomstone: a 20-use blessed seed powder stone (repeatable).
 /// Offerings: 1 enchanted stone (magic_power 1+) + 3 blessed seed powders.
-/// Requires Expert Druidic Trickery to initiate (gated in open_ritual_menu).
 /datum/druid_ritual/harvest_bloomstone/on_complete_rewards(mob/living/user)
-	var/turf/user_turf = get_turf(user)
-	var/obj/item/alch/bloomstone/new_stone = new(user_turf)
-	user.put_in_hands(new_stone)
-	to_chat(user, span_green("The tree's roots cradle a glowing stone — and the Harvest Bloomstone rises to my hand, brimming in energy with the Treefather's blessing."))
+	var/obj/item/alch/bloomstone/new_stone = new(get_turf(ritual_holder.tree))
+	if(ritual_holder.tree.Adjacent(user))
+		user.put_in_hands(new_stone)
+	to_chat(user, span_green("The tree's roots yield a Harvest Bloomstone brimming with the Treefather's blessing."))
 
 //---- Fey Weaving
 /datum/druid_ritual/fey_weaving
@@ -1176,9 +1206,9 @@
 /// Offerings: 1 essence of wild OR essence of wood + 1 blessed seed powder. Reward: 2 mushroom_fey seeds.
 /datum/druid_ritual/fey_weaving/on_complete_rewards(mob/living/user)
 	. = ..()
-	var/turf/user_turf = get_turf(user)
-	new /obj/item/seeds/mushroom_fey(user_turf)
-	new /obj/item/seeds/mushroom_fey(user_turf)
+	var/turf/reward_turf = get_turf(ritual_holder.tree)
+	new /obj/item/seeds/mushroom_fey(reward_turf)
+	new /obj/item/seeds/mushroom_fey(reward_turf)
 	to_chat(user, span_green("Two handfuls of mushroom fey spores rise from the roots — the Treefather rewards your patience."))
 
 /datum/druid_ritual/natures_temper
@@ -1205,23 +1235,11 @@
 		if(!silent)
 			playsound(get_turf(user), 'sound/magic/churn.ogg', 40, FALSE)
 		return TRUE
-	// Special handling for the blessed water
-	if(offering?.reagents?.has_reagent(/datum/reagent/water/blessed))
-		if(offering_tracker[/datum/reagent/water/blessed] <= 0)
-			to_chat(user, span_warning("The tree has received enough blessed water."))
-			return FALSE
-		var/amount_removed = offering.reagents.remove_reagent(/datum/reagent/water/blessed, offering_tracker[/datum/reagent/water/blessed])
-		offering_tracker[/datum/reagent/water/blessed] -= amount_removed
-		if(!silent)
-			playsound(get_turf(user), 'sound/magic/churn.ogg', 40, FALSE)
-		return TRUE
-	return ..() // Everything else should work like normal
+	return ..()
 
 /// Nature's Temper: blessed druid armor + possible elven armor piece (once per tree).
-/// Offerings: 2 wild essence OR wood essence + druid armor + volf head +
-///             tree seed + blessed seed powder.
 /datum/druid_ritual/natures_temper/on_complete_rewards(mob/living/user)
-	var/turf/user_turf = get_turf(user)
+	var/turf/reward_turf = get_turf(ritual_holder.tree)
 	if(!ritual_holder.ritual_armor || QDELETED(ritual_holder.ritual_armor))
 		to_chat(user, span_warning("The druid armor offering was lost — something disrupted the ritual."))
 		return
@@ -1229,13 +1247,13 @@
 	qdel(ritual_holder.ritual_armor)
 	ritual_holder.ritual_armor = null
 	// Yield blessed druid armor (upgraded chest).
-	var/obj/item/clothing/suit/roguetown/armor/leather/druid/blessed/blessed_armor = new(user_turf)
+	var/obj/item/clothing/suit/roguetown/armor/leather/druid/blessed/blessed_armor = new(reward_turf)
 	to_chat(user, span_green("[blessed_armor.name] rises from the ritual — the Treefather has blessed this armor with living power."))
 	// 50% chance: random wood armor piece from elven black oak mercenaries (excluding chest).
 	if(prob(50))
 		var/list/bonus_pool = list(/obj/item/clothing/head/roguetown/helmet/heavy/elven_helm/druidic, /obj/item/clothing/gloves/roguetown/elven_gloves/druidic, /obj/item/clothing/shoes/roguetown/boots/elven_boots/druidic, /obj/item/clothing/cloak/forrestercloak/blessed)
 		var/bonus_type = pick(bonus_pool)
-		var/obj/item/bonus = new bonus_type(user_turf)
+		var/obj/item/bonus = new bonus_type(reward_turf)
 		to_chat(user, span_green("The roots also yield [bonus.name] — an additional gift."))
 
 /datum/druid_ritual/winged_rebirth
@@ -1250,12 +1268,11 @@
 	)
 
 /datum/druid_ritual/winged_rebirth/get_reward_recipient(mob/living/user)
-	var/mob/living/carbon/human/druid = initiator?.current
-	if(QDELETED(druid) || !ishuman(druid) || druid.mind != initiator)
-		to_chat(user, span_warning("The one who began this rite cannot receive the Treefather's blessing."))
+	var/mob/living/carbon/human/druid = ..()
+	if(!druid)
 		return null
 
-	var/obj/effect/proc_holder/spell/self/wildshape/ws = initiator.get_spell(/obj/effect/proc_holder/spell/self/wildshape)
+	var/obj/effect/proc_holder/spell/self/wildshape/ws = druid.mind.get_spell(/obj/effect/proc_holder/spell/self/wildshape)
 	if(!ws)
 		to_chat(user, span_warning("The one who began this rite must know the Beast Form miracle."))
 		return null
@@ -1276,27 +1293,12 @@
 /// Winged Rebirth: adds bat and crow to the initiator's Beast Form choices.
 /// Offerings: 5 feathers OR bonedust, 1 essence of either types, 1 harvest bloomstone.
 /datum/druid_ritual/winged_rebirth/on_complete_rewards(mob/living/carbon/human/user)
-	if(!ishuman(user))
-		to_chat(user, span_warning("Only a humanoid may receive the Treefather's trickster blessing."))
-		return
-	if(!user.mind)
-		return
 	var/obj/effect/proc_holder/spell/self/wildshape/ws = user.mind.get_spell(/obj/effect/proc_holder/spell/self/wildshape)
 	if(!ws)
-		to_chat(user, span_warning("I need the Beast Form miracle before I can bind a new shape."))
 		return
-
-	var/already_has_bat  = (/mob/living/carbon/human/species/wildshape/bat  in ws.possible_shapes)
-	var/already_has_crow = (/mob/living/carbon/human/species/wildshape/crow in ws.possible_shapes)
-	if(already_has_bat && already_has_crow)
-		to_chat(user, span_notice("These winged guises already reside within my soul."))
-		return
-
-	if(!already_has_bat)
-		ws.possible_shapes += /mob/living/carbon/human/species/wildshape/bat
-	if(!already_has_crow)
-		ws.possible_shapes += /mob/living/carbon/human/species/wildshape/crow
-	to_chat(user, span_green("The knowledge of bat and crow forms take root in my soul. I can now call shift into them through Beast Form."))
+	ws.possible_shapes |= /mob/living/carbon/human/species/wildshape/bat
+	ws.possible_shapes |= /mob/living/carbon/human/species/wildshape/crow
+	to_chat(user, span_green("I can now take bat and crow forms through Beast Form."))
 
 //==============================================================================
 // Aura Procs
@@ -1304,29 +1306,38 @@
 
 /// Applies or removes the bulwark slow on non-Dendor mobs within 5 tiles.
 /// Called every 5 seconds when has_slow_aura is TRUE.
-/// Applies a -4 speed stat debuff via status effect (8-second duration),
+/// Applies a -4 speed and -2 strength debuff (8-second duration),
 /// refreshed each tick so it stays active while in range.
 /obj/structure/flora/roguetree/wise/sanctified/proc/update_slow_aura()
-	var/list/in_range = list()
+	var/list/current_targets = list()
 	for(var/mob/living/carbon/human/human_in_range in range(5, src))
-		if(human_in_range?.patron?.type == /datum/patron/divine/dendor)
+		if(QDELETED(human_in_range) || human_in_range.patron?.type == /datum/patron/divine/dendor)
 			continue
 		if(human_in_range.stat != CONSCIOUS || human_in_range.incapacitated())
 			continue
-		in_range |= human_in_range
-	// Remove modifier from mobs that left range or are now Dendor-eligible.
-	// Collect removals first — mutating slowed_mobs during iteration skips elements in BYOND.
-	var/list/to_remove = list()
+		current_targets += human_in_range
+		var/datum/status_effect/debuff/sanctified_tree_slow/slow = human_in_range.has_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
+		if(!slow)
+			slow = human_in_range.apply_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
+		if(slow)
+			slow.ward_sources |= src
+			slow.refresh()
+	// Drop previous targets that are no longer eligible, including deleted mobs.
 	for(var/mob/living/slowed_mob in tree_data.slowed_mobs)
-		if(QDELETED(slowed_mob) || !(slowed_mob in in_range))
-			continue
-		slowed_mob?.remove_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
-		to_remove += slowed_mob
-	tree_data.slowed_mobs -= to_remove
-	// Apply/refresh debuff on mobs in range.
-	for(var/mob/living/carbon/human/human_in_range in in_range)
-		human_in_range.apply_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
-		tree_data.slowed_mobs |= human_in_range
+		if(!(slowed_mob in current_targets))
+			remove_ward_from(slowed_mob)
+	tree_data.slowed_mobs = current_targets
+
+/// Releases only this tree's contribution to the shared slow effect.
+/obj/structure/flora/roguetree/wise/sanctified/proc/remove_ward_from(mob/living/slowed_mob)
+	if(QDELETED(slowed_mob))
+		return
+	var/datum/status_effect/debuff/sanctified_tree_slow/slow = slowed_mob.has_status_effect(/datum/status_effect/debuff/sanctified_tree_slow)
+	if(!slow)
+		return
+	slow.ward_sources -= src
+	if(!length(slow.ward_sources))
+		qdel(slow)
 
 /// Heals Dendor followers within 5 tiles periodically like a healing miracle.
 /// Also heals non-undead animals and lesser dryads in range.
@@ -1397,14 +1408,18 @@
 	// Per-player cooldown: 5 seconds after the 10-second effect expires
 	tree_data.heal_player_cooldowns[user.ckey] = world.time + 15 SECONDS
 
-/// Temporary -4 speed debuff applied by the Treefather's Bulwark aura.
+/// Temporary speed and strength debuff applied by the Treefather's Bulwark aura.
 /// Duration is 8 seconds — slightly longer than the 5-second aura tick —
 /// so it stays on continuously while the player remains in range.
 /datum/status_effect/debuff/sanctified_tree_slow
 	id = "sanctified_tree_slow"
 	duration = 8 SECONDS
 	effectedstats = list("speed" = -4, "strength" = -2)
+	/// Overlapping wards share this effect. It ends when the last source leaves.
+	var/list/ward_sources = list()
 
 /datum/status_effect/debuff/sanctified_tree_slow/on_apply()
 	. = ..()
 	to_chat(owner, span_warning("An oppressive weight and gnarled roots press against my feet near this tree, causing my movement to slow down."))
+
+#undef BULWARK_INTEGRITY_BONUS
