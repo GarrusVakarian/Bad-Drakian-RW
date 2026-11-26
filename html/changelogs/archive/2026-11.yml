@@ -1119,3 +1119,5 @@
       2, 4, and 6 eggs.
   - rscadd: Players with Accept Egg Implantation enabled can see a bloated stomach
       on examine at four or more implanted eggs.
+  - bugfix: Sanctified trees drop ritual rewards in front of their faces so players
+      can see them.
