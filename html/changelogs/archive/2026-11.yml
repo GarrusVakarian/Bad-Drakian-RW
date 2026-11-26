@@ -1103,3 +1103,19 @@
       \ and gives clearer feedback when a body cannot be revived."
   - qol: Covering a knot no longer causes trips or increases the chance of being stunned
       while moving.
+  - bugfix: Restored headshots in The Realm's Notable People panel, including dragon
+      portraits and saved portraits for disconnected players.
+  - qol: Cloak pockets keep their contents when you take the cloak off. Empty the
+      pockets before packing a cloak into a bag.
+  - rscadd: Quick Seed Recovery is a free quirk that restores spent loads four times
+      as fast. Gnolls have it innately.
+  - bugfix: Gnolls keep their racial emote sounds when spawning or refreshing voice
+      settings.
+  - rscadd: Quick Egg Production is a free quirk that quadruples egg production speed.
+  - rscadd: Remembering a Triumph now refills all your egg clutches.
+  - bugfix: Changing penis type with Instant Transform now preserves ovipositor settings,
+      stored eggs, and egg production progress.
+  - balance: Implanted eggs drain nutrition while incubating and slow movement at
+      2, 4, and 6 eggs.
+  - rscadd: Players with Accept Egg Implantation enabled can see a bloated stomach
+      on examine at four or more implanted eggs.
