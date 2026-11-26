@@ -96,7 +96,7 @@
 		spell.remove_ranged_ability()
 		spell.action?.Grant(null)
 	owner.spell_list.Cut()
-	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/blink)
+	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/blink/dreamstep)
 	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/mark_target)
 	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/jaunt)
 	grant_dream_spell(/obj/effect/proc_holder/spell/invoked/dream_bind)
@@ -264,7 +264,7 @@
 	H.change_stat(STATKEY_WIL, 2)
 
 	if(H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/blink)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/blink/dreamstep)
 	H.ambushable = FALSE
 
 /datum/component/dreamwalker_repair
