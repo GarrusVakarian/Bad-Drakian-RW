@@ -296,7 +296,6 @@
 			top.sexcon.try_do_pain_effect(PAIN_MILD_EFFECT, FALSE)
 			if(top.sexcon.tugging_knot_blocked && (top.mobility_flags & MOBILITY_STAND)) // only knock down if standing and knot area is blocked
 				top.Knockdown(10)
-				to_chat(top, span_warning("I trip trying to move while my [top.sexcon.get_knot_synonym()] is covered."))
 				top.sexcon.tugging_knot_blocked = FALSE // reset blocked state in the case either character stip off again
 				top.sexcon.tugging_knot_check = 0 // check clothes again on the next step
 			top.Stun(15)
