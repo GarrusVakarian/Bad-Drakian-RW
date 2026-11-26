@@ -27,7 +27,10 @@
 	icon_state = "book3_0"
 	base_icon_state = "book3"
 
-	types = list(/datum/anvil_recipe)
+	types = list(
+		/datum/book_entry/smelting,
+		/datum/anvil_recipe,
+	)
 
 /obj/item/recipe_book/engineering
 	name = "The Artificer's Handbook"
