@@ -65,7 +65,6 @@
 		/datum/skill/combat/whipsflails = SKILL_LEVEL_NOVICE,
 		/datum/skill/combat/polearms = SKILL_LEVEL_NOVICE, //To help them defend themselves with parrying
 		/datum/skill/craft/cooking = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/labor/lumberjacking = SKILL_LEVEL_JOURNEYMAN, //They know how to take down a tree without hurting it, real reason however.. This is an essential for their blessed logs since sawing it is bugged, temporary fix or keep if lazy
 		/datum/skill/labor/butchering = SKILL_LEVEL_JOURNEYMAN, //They live in the forest surrounded by animals, they should know better than apprentice
 		/datum/skill/labor/fishing = SKILL_LEVEL_APPRENTICE, //Increased from novice for less pain in the butt
 		/datum/skill/misc/hunting = SKILL_LEVEL_APPRENTICE,
