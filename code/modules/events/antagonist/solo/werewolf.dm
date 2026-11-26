@@ -13,7 +13,7 @@
 
 	base_antags = 1
 	maximum_antags = 2
-	min_players = 25
+	min_players = 15
 	weight = 1
 
 	earliest_start = 0 SECONDS
@@ -29,30 +29,17 @@
 	. = ..()
 	SSgamemode.offer_werewolf_latejoin(src)
 
-/datum/controller/subsystem/gamemode/proc/try_assign_latejoin_werewolf(mob/living/carbon/human/character, datum/job/job)
-	if(werewolf_latejoin_slots <= 0 || !job || job.antag_job || (job.title in DEFAULT_ANTAG_BLACKLISTED_ROLES))
-		return
-	if(!SSticker.IsRoundInProgress())
-		return
+/datum/controller/subsystem/gamemode/proc/is_latejoin_villain_job(datum/job/job)
+	return job && !job.antag_job && !(job.title in DEFAULT_ANTAG_BLACKLISTED_ROLES)
 
-	var/client/latejoin_client = character.client
-	var/datum/mind/latejoin_mind = character.mind
-	if(!latejoin_mind || !(ROLE_WEREWOLF in latejoin_client?.prefs?.be_special))
-		return
-	if(is_banned_from(latejoin_client.ckey, list(ROLE_SYNDICATE, ROLE_WEREWOLF)))
-		return
-
-	// The ban lookup can yield while another player joins.
-	if(werewolf_latejoin_slots <= 0 || !SSticker.IsRoundInProgress() || QDELETED(character))
-		return
-	if(character.client != latejoin_client || character.mind != latejoin_mind || latejoin_mind.current != character || latejoin_mind.assigned_role != job.title)
-		return
-	if(!(ROLE_WEREWOLF in latejoin_client.prefs?.be_special) || latejoin_mind.picking || !character.can_werewolf())
-		return
+/// Apply a slot already reserved by an explicit latejoin request.
+/datum/controller/subsystem/gamemode/proc/assign_latejoin_werewolf(mob/living/carbon/human/character, datum/job/job, client/latejoin_client, datum/mind/latejoin_mind)
+	if(!SSticker.IsRoundInProgress() || QDELETED(character) || !latejoin_client || character.client != latejoin_client)
+		return FALSE
+	if(!latejoin_mind || character.mind != latejoin_mind || latejoin_mind.current != character || latejoin_mind.assigned_role != job.title || latejoin_mind.picking || !character.can_werewolf())
+		return FALSE
 	for(var/datum/antagonist/antag as anything in latejoin_mind.antag_datums)
 		if(!(antag.antag_flags & FLAG_FAKE_ANTAG))
-			return
+			return FALSE
 
-	werewolf_latejoin_slots--
-	if(!latejoin_mind.add_antag_datum(/datum/antagonist/werewolf))
-		werewolf_latejoin_slots++
+	return !!latejoin_mind.add_antag_datum(/datum/antagonist/werewolf)

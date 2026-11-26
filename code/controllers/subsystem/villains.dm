@@ -1,7 +1,7 @@
 /datum/controller/subsystem/gamemode
 	var/list/rolled_villain_events = list()
 	var/list/queued_villains = list()
-	var/werewolf_latejoin_slots = 0
+	var/list/latejoin_villain_slots = list()
 
 /datum/controller/subsystem/gamemode/proc/count_queued_villains(job_title)
 	. = 0
@@ -32,7 +32,17 @@
 /datum/controller/subsystem/gamemode/proc/offer_werewolf_latejoin(datum/round_event/antagonist/solo/werewolf/event)
 	if(!(event.control in rolled_villain_events) || length(event.setup_minds))
 		return
-	werewolf_latejoin_slots = max(werewolf_latejoin_slots, event.antag_count)
+	offer_latejoin_villain_slots(ROLE_WEREWOLF, event.antag_count)
+
+/datum/controller/subsystem/gamemode/proc/offer_latejoin_villain_slots(role, slots)
+	latejoin_villain_slots[role] = max(latejoin_villain_slots[role], slots)
+
+/datum/controller/subsystem/gamemode/proc/latejoin_villain_open(role)
+	if(!(role in list(ROLE_WEREWOLF, ROLE_DREAMWALKER)) || latejoin_villain_slots[role] <= 0)
+		return FALSE
+	if(!SSticker.IsRoundInProgress() || SSticker.late_join_disabled || !GLOB.enter_allowed)
+		return FALSE
+	return !has_world_trait(/datum/world_trait/skeleton_siege) && !has_world_trait(/datum/world_trait/goblin_siege)
 
 /mob/dead/new_player/proc/VillainChoices()
 	var/list/dat = list()
@@ -41,8 +51,23 @@
 		dat += "Wait."
 	else
 		dat += "<b>Greater Villains:</b><br>"
-		if(!length(SSgamemode.rolled_villain_events))
+		var/list/open_villains = list()
+		for(var/role in SSgamemode.latejoin_villain_slots)
+			if(SSgamemode.latejoin_villain_open(role))
+				var/slots = SSgamemode.latejoin_villain_slots[role]
+				open_villains += "<a href='byond://?src=[REF(src)];villain_latejoin=[role]'>Join as a [role]</a> ([slots] open, [get_antagonist_min_pq(role)] PQ)<br>"
+		for(var/track in SSmigrants.track_forming)
+			var/datum/migrant_wave/wave = MIGRANT_WAVE(SSmigrants.track_forming[track])
+			if(!wave || wave.hidden)
+				continue
+			for(var/role_type in wave.required_roles + wave.optional_roles)
+				var/datum/migrant_role/migrant_role = MIGRANT_ROLE(role_type)
+				if(migrant_role?.antag_datum)
+					open_villains += "<a href='?src=[REF(SSmigrants)];open_panel=1'>Sign up for [html_encode(wave.name)]</a><br>"
+					break
+		if(!length(SSgamemode.rolled_villain_events) && !length(open_villains))
 			dat += "None.<br>"
+		dat += open_villains
 		for(var/datum/round_event_control/antagonist/event in SSgamemode.rolled_villain_events)
 			var/slots = 1
 			if(istype(event, /datum/round_event_control/antagonist/solo))

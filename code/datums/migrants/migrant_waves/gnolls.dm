@@ -5,7 +5,7 @@
 	max_occurrences = 2
 	weight = 5
 	earliest_start = 30 MINUTES
-	min_players = 25
+	min_players = 15
 	tags = list(
 		TAG_COMBAT,
 		TAG_VILLIAN,

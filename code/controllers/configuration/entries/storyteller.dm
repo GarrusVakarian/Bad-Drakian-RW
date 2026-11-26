@@ -60,7 +60,7 @@
 /datum/config_entry/number/roleset_min_pop
 	config_entry_value = CHARACTER_INJECTION_MIN_POP
 	integer = TRUE
-	min_val = 20
+	min_val = 15
 
 /datum/config_entry/number/objectives_min_pop
 	config_entry_value = OBJECTIVES_MIN_POP

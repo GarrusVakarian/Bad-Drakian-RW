@@ -72,7 +72,7 @@
 	// there is probably a better way to do this but this works until sm1 smarter inevitably rewrites WW.
 
 /mob/living/carbon/human/proc/can_werewolf()
-	if(!mind)
+	if(!mind || !meets_antagonist_min_pq(ckey || mind.key, ROLE_WEREWOLF))
 		return FALSE
 	if(mind.has_antag_datum(/datum/antagonist/vampire))
 		return FALSE

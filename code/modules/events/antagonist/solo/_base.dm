@@ -6,6 +6,8 @@
 	var/maximum_antags = 3
 	/// For this many players we'll add 1 up to the maximum antag amount
 	var/denominator = 20
+	/// Events with latejoin slots can run with fewer conversion candidates.
+	var/allow_unfilled_candidates = FALSE
 	/// The antag flag to be used
 	var/antag_flag
 	/// Role bans to check when this event can assign several antagonist roles.
@@ -30,7 +32,7 @@
 
 /datum/round_event_control/antagonist/solo/canSpawnEvent(players_amt, gamemode, fake_check)
 	. = ..()
-	if(!.)
+	if(!. || allow_unfilled_candidates)
 		return
 	var/antag_amt = get_antag_amount()
 	var/list/candidates = get_candidates()
@@ -56,6 +58,8 @@
 
 /datum/round_event_control/antagonist/solo/return_failure_string(players_amt)
 	. =..()
+	if(allow_unfilled_candidates)
+		return
 
 	var/antag_amt = get_antag_amount()
 	var/list/candidates = get_candidates() //we should optimize this
@@ -112,8 +116,11 @@
 			if(!antag_mind.current)
 				log_storyteller("Roundstart antagonist setup error: antag_mind([antag_mind]) in roundstart_antag_minds without a set mob")
 				continue
-			candidates += antag_mind.current
 			SSgamemode.roundstart_antag_minds -= antag_mind
+			if(!meets_antagonist_min_pq(antag_mind.current.ckey || antag_mind.key, antag_flag))
+				antag_mind.picking = FALSE
+				continue
+			candidates += antag_mind.current
 			log_storyteller("Roundstart antag_mind, [antag_mind]")
 
 	//guh
@@ -122,9 +129,9 @@
 		cliented_list += mob.client
 
 	while(length(possible_candidates) && length(candidates) < antag_count) //both of these pick_n_take from weighted_candidates so this should be fine
-		var/mob/picked_ckey = pick_n_take(possible_candidates)
-		var/client/picked_client = picked_ckey.client
-		if(QDELETED(picked_client))
+		var/mob/picked_candidate = pick_n_take(possible_candidates)
+		var/client/picked_client = picked_candidate?.client
+		if(QDELETED(picked_client) || QDELETED(picked_client.mob) || !meets_antagonist_min_pq(picked_client.ckey, antag_flag))
 			continue
 		var/mob/picked_mob = picked_client.mob
 		picked_mob?.mind?.picking = TRUE
@@ -165,7 +172,11 @@
 			character.add_credit()
 
 /datum/round_event/antagonist/solo/proc/add_datum_to_mind(datum/mind/antag_mind)
-	antag_mind.add_antag_datum(antag_datum)
+	if(!antag_mind.add_antag_datum(antag_datum))
+		antag_mind.picking = FALSE
+		if(antag_mind.special_role == antag_flag)
+			antag_mind.special_role = null
+			antag_mind.restricted_roles = null
 
 /datum/round_event/antagonist/solo/proc/spawn_extra_events()
 	if(!LAZYLEN(extra_spawned_events))
@@ -225,9 +236,9 @@
 
 	var/selected_count = 0
 	while(length(candidates) && selected_count < antag_count)
-		var/mob/candidate_ckey = pick_n_take(candidates)
-		var/client/candidate_client = candidate_ckey.client
-		if(QDELETED(candidate_client) || QDELETED(candidate_client.mob))
+		var/mob/picked_candidate = pick_n_take(candidates)
+		var/client/candidate_client = picked_candidate?.client
+		if(QDELETED(candidate_client) || QDELETED(candidate_client.mob) || !meets_antagonist_min_pq(candidate_client.ckey, antag_flag))
 			continue
 		var/mob/candidate = candidate_client.mob
 

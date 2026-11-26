@@ -5,7 +5,7 @@
 	faction = "Station"
 	total_positions = 0
 	spawn_positions = 0
-	min_pq = 15
+	min_pq = VILLAIN_ROLE_MIN_PQ
 	max_pq = null
 	antag_job = TRUE
 	allowed_races = RACES_ALL_KINDS

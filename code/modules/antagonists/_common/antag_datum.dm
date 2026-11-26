@@ -51,6 +51,8 @@ GLOBAL_LIST_EMPTY(antagonists)
 /datum/antagonist/proc/can_be_owned(datum/mind/new_owner)
 	. = TRUE
 	var/datum/mind/tested = new_owner || owner
+	if(!tested || !meets_antagonist_min_pq(tested.current?.ckey || tested.key, job_rank))
+		return FALSE
 	if(tested.has_antag_datum(type))
 		return FALSE
 	for(var/i in tested.antag_datums)
@@ -127,6 +129,9 @@ GLOBAL_LIST_EMPTY(antagonists)
 	set waitfor = FALSE
 
 	var/list/mob/dead/observer/candidates = pollCandidatesForMob("Do you want to play as a [name]?", "[name]", null, job_rank, 50, owner.current)
+	for(var/mob/dead/observer/candidate as anything in candidates.Copy())
+		if(!meets_antagonist_min_pq(candidate.ckey, job_rank))
+			candidates -= candidate
 	if(LAZYLEN(candidates))
 		var/mob/dead/observer/C = pick(candidates)
 		to_chat(owner, "Your mob has been taken over by a ghost! Appeal your job ban if you want to avoid this in the future!")
@@ -195,9 +200,12 @@ GLOBAL_LIST_EMPTY(antagonists)
 
 //Called when using admin tools to give antag status
 /datum/antagonist/proc/admin_add(datum/mind/new_owner,mob/admin)
-	message_admins("[key_name_admin(admin)] made [key_name_admin(new_owner)] into [name].")
-	log_admin("[key_name(admin)] made [key_name(new_owner)] into [name].")
-	new_owner.add_antag_datum(datum_type_or_instance = src, team = null, admin_panel = TRUE)
+	var/antag_name = name
+	if(!new_owner.add_antag_datum(datum_type_or_instance = src, team = null, admin_panel = TRUE))
+		to_chat(admin, span_warning("Could not assign [antag_name] to [key_name(new_owner)]."))
+		return
+	message_admins("[key_name_admin(admin)] made [key_name_admin(new_owner)] into [antag_name].")
+	log_admin("[key_name(admin)] made [key_name(new_owner)] into [antag_name].")
 
 //Called when removing antagonist using admin tools
 /datum/antagonist/proc/admin_remove(mob/user)

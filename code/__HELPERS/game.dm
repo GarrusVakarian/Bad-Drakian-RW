@@ -474,6 +474,8 @@
 				continue
 			if(!age_check(M.client))
 				continue
+			if(!meets_antagonist_min_pq(M.ckey, be_special_flag))
+				continue
 		if(jobbanType)
 			if(is_banned_from(M.ckey, list(jobbanType, ROLE_SYNDICATE)) || QDELETED(M))
 				continue

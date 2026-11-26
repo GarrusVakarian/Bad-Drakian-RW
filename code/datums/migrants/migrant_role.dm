@@ -37,6 +37,10 @@
 
 	return
 
+/datum/migrant_role/proc/get_antagonist_rank()
+	var/datum/antagonist/antag_type = antag_datum
+	return antag_type ? initial(antag_type.job_rank) : null
+
 /datum/migrant_role/pilgrim
 	name = "Pilgrim"
 	advclass_cat_rolls = list(CTAG_PILGRIM = 20)

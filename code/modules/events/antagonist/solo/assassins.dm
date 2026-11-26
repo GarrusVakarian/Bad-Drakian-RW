@@ -43,6 +43,7 @@
 
 	base_antags = 2
 	maximum_antags = 4
+	allow_unfilled_candidates = TRUE
 
 	earliest_start = 0 SECONDS
 	max_occurrences = 2
@@ -75,8 +76,10 @@
 /datum/round_event/antagonist/solo/assassins/start()
 	var/datum/round_event_control/antagonist/solo/assassins/assassin_control = control
 	var/datum/job/assassin_job = SSjob.GetJob("Assassin")
+	var/filled_slots = 0
 	for(var/datum/mind/antag_mind as anything in setup_minds)
 		if(assassin_control.is_already_assassin(antag_mind))
+			filled_slots++
 			antag_mind.picking = FALSE
 			continue
 		var/mob/living/carbon/human/character = antag_mind.current
@@ -95,16 +98,11 @@
 			else
 				original_job.current_positions += 1
 		if(antag_mind.add_antag_datum(/datum/antagonist/assassin))
+			filled_slots++
 			SSmapping.retainer.assassins |= character
 			SSrole_class_handler.assassins_in_round = TRUE
 
-/datum/round_event_control/antagonist/solo/assassins/canSpawnEvent(players_amt, gamemode, fake_check)
-	. = ..()
-	if(!.)
-		return
-	var/list/candidates = get_candidates()
-
-	if(length(candidates) < 1)
-		return FALSE
-
-	return TRUE
+	if(assassin_job && filled_slots < antag_count)
+		var/latejoin_slots = min(2, antag_count - filled_slots)
+		assassin_job.total_positions = max(assassin_job.total_positions, assassin_job.current_positions + latejoin_slots)
+		SSrole_class_handler.assassins_in_round = TRUE
