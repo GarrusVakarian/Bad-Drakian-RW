@@ -1081,3 +1081,14 @@
       and removes its slow from characters outside its wards.
   - bugfix: Treefather's Bulwark keeps its 100 maximum integrity bonus when the number
       of nearby living trees changes.
+  - bugfix: Clicking to hide in or leave a bush no longer starts foraging.
+  - bugfix: Tight Grab and Tackle target the rider you already hold when you click
+      their mount.
+  - rscadd: A successful tackle pulls the rider off their mount.
+  - bugfix: Characters with the Mute vice can silently cast Bless Crops and Sanctify
+      Tree, including while sign language is selected.
+  - rscadd: Craft pouch-fitted rope belts and cloth sashes with leather-belt storage.
+  - qol: "Some outfits with rope belts and the bathhouse Lady\u2019s Belt now come\
+      \ pouch-fitted."
+  - bugfix: Removing a knot no longer counts as taking another load or adds an extra
+      oral cumshot.
