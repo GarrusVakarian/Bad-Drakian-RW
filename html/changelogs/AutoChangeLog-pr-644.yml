@@ -1,0 +1,5 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Tight Grab and Tackle target the rider you already hold when you click their mount."
+  - rscadd: "A successful tackle pulls the rider off their mount."
