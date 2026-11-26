@@ -1067,3 +1067,6 @@
   - bugfix: "Admin revival preserves gnolls\u2019 selected pintle, testicles, vagina,\
       \ and breasts."
   - bugfix: Sawing blessed long logs now grants their bonus timber.
+  - rscadd: Added an ingot smelting and alloy guide to the Blacksmithing encyclopedia.
+  - bugfix: Winged Rebirth now rewards the Druid who started the rite, even if a helper
+      hands in the final offering.
