@@ -55,7 +55,8 @@
 	slowdown_tier = tier
 	var/mob/living/carbon/human/host = parent
 	if(tier)
-		host.add_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS, override = TRUE, multiplicative_slowdown = tier * OVI_HOST_SLOWDOWN_PER_PAIR)
+		// Movement delay equivalent to losing 2, 3, or 4 Speed.
+		host.add_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS, override = TRUE, multiplicative_slowdown = (tier + 1) * MOVESPEED_DELAY_PER_SPEED_POINT)
 	else
 		host.remove_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS)
 

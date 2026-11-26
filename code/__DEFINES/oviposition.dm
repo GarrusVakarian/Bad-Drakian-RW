@@ -15,8 +15,6 @@
 #define OVI_INCUBATION_TIME (10 MINUTES)
 /// Nutrition drained per minute for each egg still incubating in a host.
 #define OVI_INCUBATION_NUTRITION_PER_MINUTE 3
-/// Added movement delay per two implanted eggs.
-#define OVI_HOST_SLOWDOWN_PER_PAIR 0.5
 /// Time after ripening before the host's body pushes the eggs out on its own.
 #define OVI_OVERDUE_TIME (10 MINUTES)
 /// Time it takes to lay eggs by hand.

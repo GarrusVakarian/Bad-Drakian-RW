@@ -7,6 +7,9 @@
 
 #define MOVESPEED_DATA_INDEX_MAX 6
 
+/// Movement delay per point of Speed, in deciseconds before caps.
+#define MOVESPEED_DELAY_PER_SPEED_POINT 0.1
+
 //flags
 #define IGNORE_NOSLOW	(1 << 0)
 
