@@ -65,6 +65,7 @@
 				new /obj/item/grown/log/tree/small(get_turf(src.loc))
 			if(prob(skill_level + user.goodluck(2)))	// same rate as chopping for lumber essence
 				new /obj/item/grown/log/tree/small/essence(get_turf(src.loc))
+			spawn_blessed_lumber(user)
 			if(user.is_holding(src))
 				user.dropItemToGround(src)
 			user.mind.add_sleep_experience(/datum/skill/labor/lumberjacking, (user.STAINT*0.5))
@@ -90,14 +91,7 @@
 					sound_played = TRUE
 					to_chat(user, span_warning("Dendor weeps..."))
 					playsound(src,pick('sound/items/gem.ogg'), 100, FALSE)
-		if(blessed)
-			if(prob(50))
-				to_chat(user, span_notice("Dendor's blessing preserves abundant timber, nearly doubling my yield."))
-				new /obj/item/grown/log/tree/small(get_turf(src))
-				new /obj/item/grown/log/tree/small(get_turf(src))
-			else if(prob(80))
-				to_chat(user, span_notice("Dendor's blessing preserves more usable timber for my efforts."))
-				new /obj/item/grown/log/tree/small(get_turf(src))
+		spawn_blessed_lumber(user)
 		if(!skill_level)
 			to_chat(user, span_info("Due to inexperience, I ruin some of the timber..."))
 		user.mind.add_sleep_experience(/datum/skill/labor/lumberjacking, (user.STAINT*0.5))
@@ -105,6 +99,17 @@
 		qdel(src)
 		return TRUE
 	..()
+
+/obj/item/grown/log/tree/proc/spawn_blessed_lumber(mob/living/user)
+	if(!blessed)
+		return
+	if(prob(50))
+		to_chat(user, span_notice("Dendor's blessing preserves abundant timber, nearly doubling my yield."))
+		new /obj/item/grown/log/tree/small(get_turf(src))
+		new /obj/item/grown/log/tree/small(get_turf(src))
+	else if(prob(80))
+		to_chat(user, span_notice("Dendor's blessing preserves more usable timber for my efforts."))
+		new /obj/item/grown/log/tree/small(get_turf(src))
 
 /obj/item/grown/log/tree/small
 	name = "small log"
