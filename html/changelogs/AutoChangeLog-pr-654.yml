@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Restored headshots in The Realm's Notable People panel, including dragon portraits and saved portraits for disconnected players."
