@@ -1146,3 +1146,7 @@
   - balance: "Defiled Keyholder and Volf In Sheep\u2019s Clothing require an Ascendant\
       \ patron. Existing characters with an incompatible virtue must update their\
       \ choices before joining a round."
+  - qol: Finished stews and soups briefly smell of fresh cooking on hearths and campfires.
+  - rscadd: Read public wanted posters on town boards. The round-end Chronicle reveals
+      anonymous bounty targets in its Outlaws tab.
+  - bugfix: Hunted Man bounties list the correct reward, crime, and issuer.

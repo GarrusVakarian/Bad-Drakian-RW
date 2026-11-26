@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Read public wanted posters on town boards. The round-end Chronicle reveals anonymous bounty targets in its Outlaws tab."
-  - bugfix: "Hunted Man bounties list the correct reward, crime, and issuer."
