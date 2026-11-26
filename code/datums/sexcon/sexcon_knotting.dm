@@ -523,7 +523,7 @@
 		sexcon.knot_remove()
 	return ..()
 
-/mob/living/carbon/can_speak_vocal() // do not allow bottom to speak while knotted orally (at least until they're double knotted or it has been removed)
+/mob/living/carbon/can_speak_vocal(message, ignore_permanent_mute = FALSE) // do not allow bottom to speak while knotted orally (at least until they're double knotted or it has been removed)
 	. = ..()
 	if(. && iscarbon(src))
 		var/mob/living/carbon/H = src

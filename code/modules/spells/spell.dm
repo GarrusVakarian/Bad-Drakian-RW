@@ -218,6 +218,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	var/devotion_cost = 0
 	var/ignore_cockblock = FALSE //whether or not to ignore TRAIT_SPELLCOCKBLOCK
 	var/mute_allowed = FALSE //Mostly for mimes and mute people in general. Since they have TRAIT_PERMAMUTE it will let them bypass the shout/whisper speech check
+	/// Characters with the Mute vice can skip the spoken invocation if nothing else blocks their speech.
+	var/silent_invocation_for_mute = FALSE
 
 	action_icon_state = "spell0"
 	action_icon = 'icons/mob/actions/roguespells.dmi'
@@ -499,6 +501,11 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 /obj/effect/proc_holder/spell/proc/cast_check(skipcharge, mob/user = usr)
 	return check_cast_requirements(skipcharge, user)
 
+/obj/effect/proc_holder/spell/proc/can_invoke_silently(mob/living/carbon/human/user)
+	if(!silent_invocation_for_mute || !ishuman(user) || !HAS_TRAIT(user, TRAIT_PERMAMUTE))
+		return FALSE
+	return user.can_speak_vocal(ignore_permanent_mute = TRUE) && !HAS_TRAIT(user, TRAIT_GARGLE_SPEECH) && !user.check_mouth_grabbed() && user.getorganslot(ORGAN_SLOT_TONGUE)
+
 /// Recheck a delayed cast without testing or spending its already-reserved charge.
 /obj/effect/proc_holder/spell/proc/check_cast_requirements(skipcharge, mob/user, check_charge = TRUE)
 	if(user && !ignores_combat_action_restrictions && !user.can_perform_combat_action())
@@ -553,11 +560,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
-		if((invocation_type == "whisper" || invocation_type == "shout") && (((!H.can_speak_vocal() || HAS_TRAIT(H, TRAIT_GARGLE_SPEECH)) && !(mute_allowed && HAS_TRAIT(H, TRAIT_PERMAMUTE) && !H.check_mouth_grabbed())) || !H.getorganslot(ORGAN_SLOT_TONGUE)))
-			to_chat(user, span_warning("I can't get the words out!"))
-			return FALSE
-		// Spells cannot be cast using sign language (check specifically for SIGNLANG flag)
-		if((invocation_type == "whisper" || invocation_type == "shout"))
+		if((invocation_type == "whisper" || invocation_type == "shout") && !can_invoke_silently(H))
+			if(((!H.can_speak_vocal() || HAS_TRAIT(H, TRAIT_GARGLE_SPEECH)) && !(mute_allowed && HAS_TRAIT(H, TRAIT_PERMAMUTE) && !H.check_mouth_grabbed())) || !H.getorganslot(ORGAN_SLOT_TONGUE))
+				to_chat(user, span_warning("I can't get the words out!"))
+				return FALSE
 			var/datum/language/default_lang = H.get_default_language()
 			if(default_lang && (initial(default_lang.flags) & SIGNLANG))
 				to_chat(user, span_warning("I cannot cast spells using [initial(default_lang.name)]! I need to speak the words aloud!"))
@@ -652,7 +658,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	return TRUE
 
 /obj/effect/proc_holder/spell/proc/invocation(mob/user = usr)
-	if(!invocations || !invocations.len)
+	if(!invocations || !invocations.len || can_invoke_silently(user))
 		return
 	var/chosen_invocation = pick(invocations)
 	switch(invocation_type)
@@ -1127,7 +1133,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	if((invocation_type == "whisper" || invocation_type == "shout") && isliving(user))
 		var/mob/living/living_user = user
-		if(!living_user.can_speak_vocal() || HAS_TRAIT(living_user, TRAIT_GARGLE_SPEECH))
+		if((!living_user.can_speak_vocal() || HAS_TRAIT(living_user, TRAIT_GARGLE_SPEECH)) && !can_invoke_silently(living_user))
 			if(!(mute_allowed && HAS_TRAIT(user, TRAIT_PERMAMUTE)))
 				return FALSE
 			if(ishuman(user))

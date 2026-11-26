@@ -649,8 +649,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	return TRUE
 
-/mob/living/proc/can_speak_vocal(message) //Check AFTER handling of xeno and ling channels
-	if(HAS_TRAIT(src, TRAIT_MUTE)|| HAS_TRAIT(src, TRAIT_PERMAMUTE) || HAS_TRAIT(src, TRAIT_BAGGED))
+/mob/living/proc/can_speak_vocal(message, ignore_permanent_mute = FALSE) //Check AFTER handling of xeno and ling channels
+	if(HAS_TRAIT(src, TRAIT_MUTE) || (!ignore_permanent_mute && HAS_TRAIT(src, TRAIT_PERMAMUTE)) || HAS_TRAIT(src, TRAIT_BAGGED))
 		return FALSE
 
 	if(is_muzzled())
