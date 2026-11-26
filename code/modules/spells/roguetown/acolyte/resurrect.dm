@@ -35,9 +35,11 @@
 	for(var/item_type in recipe)
 		var/count = recipe[item_type]
 		if(count > 0)
-			var/obj/item/offering = item_type
-			lines += "[count] × [initial(offering.name)]"
+			lines += "[count] × [get_rite_offering_name(item_type)]"
 	return lines.Join(", ")
+
+/obj/effect/proc_holder/spell/invoked/revival_rite/proc/get_rite_offering_name(obj/item/offering_type)
+	return initial(offering_type.name)
 
 /obj/effect/proc_holder/spell/invoked/revival_rite/proc/show_rite_instructions(mob/user)
 	to_chat(user, span_notice(get_rite_instructions()))
@@ -128,6 +130,7 @@
 	var/harms_undead = TRUE
 	priest_excluded = TRUE
 	var/pestrian_freaks = FALSE
+	var/detailed_revival_feedback = FALSE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/start_recharge()
 	var/old_recharge = recharge_time
@@ -202,10 +205,34 @@
 	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_precheck_error(mob/living/target, mob/living/user)
+	if(!detailed_revival_feedback)
+		return null
+	if(target == user)
+		return "I cannot use this miracle to revive myself."
+	if(target.get_ooze_revival_holder())
+		return null
+	if(target.stat < DEAD)
+		return "[target] is not dead. This miracle can only revive the dead."
+	if(!target.mind)
+		return "No soul answers from [target]'s body."
 	return null
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/get_revival_failure_message(mob/living/target)
-	return "The body could not sustain revival. Check its injuries and vital organs."
+	if(!detailed_revival_feedback)
+		return "The body could not sustain revival. Check its injuries and vital organs."
+	if(ishuman(target))
+		var/obj/item/bodypart/head/H = target.get_bodypart(BODY_ZONE_HEAD)
+		if(!H)
+			return "[target] is missing their head. It must be restored before revival."
+		if(H.skeletonized)
+			return "[target]'s head is skeletonized and cannot support revival."
+		if(H.rotted)
+			return "[target]'s head is rotten and cannot support revival."
+		if(H.brainkill)
+			return "[target]'s head has suffered fatal brain damage and cannot support revival."
+	if(target.health <= HEALTH_THRESHOLD_DEAD)
+		return "[target]'s body is still too badly damaged to sustain life. Treat their injuries before trying again."
+	return "[target]'s body could not sustain revival. Check their injuries and vital organs."
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/apply_revival_aftereffect(mob/living/target)
 	if(debuff_type)
@@ -388,8 +415,14 @@
 	name = "Anastasis?"
 	desc = "Xylix gives the dead another throw of the dice. The one you raise returns with one unpredictable aftereffect borrowed from another revival rite.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	debuff_type = null
-	ritual_offering_note = "Set out a separate psycross as the offering and keep your casting focus on you."
+	ritual_offering_note = "An Amulet of Xylix works as your casting focus if you wear or hold it. The floor offering is a separate plain psycross, or a wooden psycross with Enhance divine resurrection."
 	alt_required_items = list(/obj/item/clothing/neck/roguetown/psicross/wood = 1)
+	detailed_revival_feedback = TRUE
+
+/obj/effect/proc_holder/spell/invoked/resurrect/xylix/get_rite_offering_name(obj/item/offering_type)
+	if(offering_type == /obj/item/clothing/neck/roguetown/psicross)
+		return "plain psycross"
+	return ..()
 
 /obj/effect/proc_holder/spell/invoked/resurrect/xylix/apply_revival_aftereffect(mob/living/target)
 	var/static/list/possible_debuffs = list(

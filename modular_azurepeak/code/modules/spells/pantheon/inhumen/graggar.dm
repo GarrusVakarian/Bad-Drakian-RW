@@ -231,6 +231,7 @@
 	desc = "You cannot dominate the dead. Offer a pair of eyes at a vicious cross and grant the fallen the chance to fight again. Their intelligence is drained for a time, or until they slay an orcish challenger from His realm.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	ritual_site_name = "a vicious cross or revered vicious cross"
 	ritual_offering_note = "An extracted pair of eyes from any race works."
+	detailed_revival_feedback = TRUE
 	req_items = list()
 	debuff_type = /datum/status_effect/debuff/graggar_challenge
 	alt_required_items = list(/obj/item/organ/eyes = 1) //Easiest organ to obtain - everyone has eyes. Let's not make it hard.
@@ -246,32 +247,6 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/graggar/matches_required_item(obj/item/I, item_type)
 	return istype(I, item_type)
-
-/obj/effect/proc_holder/spell/invoked/resurrect/graggar/get_revival_precheck_error(mob/living/target, mob/living/user)
-	if(target == user)
-		return "I cannot use this miracle to revive myself."
-	if(target.get_ooze_revival_holder())
-		return null
-	if(target.stat < DEAD)
-		return "[target] is not dead. This miracle can only revive the dead."
-	if(!target.mind)
-		return "No soul answers from [target]'s body."
-	return null
-
-/obj/effect/proc_holder/spell/invoked/resurrect/graggar/get_revival_failure_message(mob/living/target)
-	if(ishuman(target))
-		var/obj/item/bodypart/head/H = target.get_bodypart(BODY_ZONE_HEAD)
-		if(!H)
-			return "[target] is missing their head. It must be restored before revival."
-		if(H.skeletonized)
-			return "[target]'s head is skeletonized and cannot support revival."
-		if(H.rotted)
-			return "[target]'s head is rotten and cannot support revival."
-		if(H.brainkill)
-			return "[target]'s head has suffered fatal brain damage and cannot support revival."
-	if(target.health <= HEALTH_THRESHOLD_DEAD)
-		return "[target]'s body is still too badly damaged to sustain life. Treat their injuries before trying again."
-	return "[target]'s body could not sustain revival. Check their injuries and vital organs."
 
 /// CHALLENGE PORTAL
 
