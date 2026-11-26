@@ -8,6 +8,14 @@
 	/// Maximum total stored eggs to lay at one climax.
 	var/climax_egg_count = OVI_EGG_DEFAULT_CLUTCH
 
+/mob/living/carbon/human/proc/implanted_eggs_examine_line(mob/viewer)
+	if(!viewer?.client?.prefs?.accept_oviposition)
+		return null
+	var/datum/component/implanted_eggs/carried = GetComponent(/datum/component/implanted_eggs)
+	if(length(carried?.eggs) < 4)
+		return null
+	return "<span style='color:#d8cf8a'>Their stomach is bloated with round shapes...</span>"
+
 /datum/component/implanted_eggs
 	dupe_mode = COMPONENT_DUPE_UNIQUE
 	/// Each entry is an appearance list from get_oviposition_egg_appearance() plus "ripe_at".
