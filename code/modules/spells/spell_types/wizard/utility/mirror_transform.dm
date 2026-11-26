@@ -647,6 +647,9 @@
 					var/new_size = isnull(old_penis) ? DEFAULT_PENIS_SIZE : old_penis.penis_size
 					var/new_functional = isnull(old_penis) ? TRUE : old_penis.functional
 					var/new_colors = old_penis?.accessory_colors
+					var/list/egg_settings = guarded ? old_penis?.egg_settings : null
+					var/eggs_stored = old_penis?.eggs_stored
+					var/next_egg_time = old_penis?.next_egg_time
 
 					if(old_penis)
 						old_penis.Remove(H)
@@ -655,6 +658,10 @@
 					var/obj/item/organ/penis/penis = new new_organ_type()
 					penis.penis_size = new_size
 					penis.functional = new_functional
+					if(egg_settings)
+						penis.eggs_stored = eggs_stored
+						penis.set_egg_settings(egg_settings)
+						penis.next_egg_time = next_egg_time
 					if(new_accessory_type)
 						penis.accessory_type = new_accessory_type
 					if(new_colors)
