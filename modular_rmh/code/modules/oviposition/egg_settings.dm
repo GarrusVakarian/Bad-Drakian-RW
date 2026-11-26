@@ -1,6 +1,13 @@
 // Per-character egg settings. Stored as a plain list on the penis/vagina customizer entries,
 // carried through organ DNA and onto the organ itself so both organ kinds share one format.
 
+/datum/quirk/quick_egg_production
+	name = "Quick Egg Production"
+	point_cost = 0
+	desc = "I form eggs faster than usual."
+	custom_text = "Your ovipositor or egg-laying womb forms an egg every 2 minutes instead of every 8."
+	added_traits = list(TRAIT_QUICK_EGG_PRODUCTION)
+
 /proc/default_oviposition_settings()
 	return list(
 		"name" = "",

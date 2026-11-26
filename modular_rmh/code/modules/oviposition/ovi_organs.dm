@@ -26,12 +26,13 @@
 	if(ishuman(owner))
 		var/mob/living/carbon/human/human_owner = owner
 		human_owner.grant_egg_verbs()
-	if(!next_egg_time)
-		next_egg_time = world.time + OVI_EGG_FORM_TIME
-		return
 	if(world.time < next_egg_time)
 		return
-	next_egg_time = world.time + OVI_EGG_FORM_TIME
+	var/was_forming = next_egg_time > 0
+	var/formation_time = HAS_TRAIT(owner, TRAIT_QUICK_EGG_PRODUCTION) ? OVI_EGG_FORM_TIME / 4 : OVI_EGG_FORM_TIME
+	next_egg_time = world.time + formation_time
+	if(!was_forming)
+		return
 	var/clutch = egg_settings["clutch"]
 	if(eggs_stored >= clutch)
 		return
