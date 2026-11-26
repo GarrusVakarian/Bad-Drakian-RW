@@ -1,0 +1,6 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Changing penis type with Instant Transform now preserves ovipositor settings, stored eggs, and egg production progress."
+  - balance: "Implanted eggs drain nutrition while incubating and slow movement at 2, 4, and 6 eggs."
+  - rscadd: "Players with Accept Egg Implantation enabled can see a bloated stomach on examine at four or more implanted eggs."
