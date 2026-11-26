@@ -81,6 +81,8 @@
 	var/mob/living/carbon/carbon_owner
 	var/mob/living/carbon/human/human_owner
 	var/sleptonground = FALSE
+	/// Sleep applied by the unattended-body timer during Aghost.
+	var/aghost_unattended = FALSE
 
 /datum/status_effect/incapacitating/sleeping/on_creation(mob/living/new_owner, updating_canmove)
 	. = ..()
