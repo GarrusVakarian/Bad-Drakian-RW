@@ -107,7 +107,14 @@
 	if(thing.maptext)
 		thing.maptext = ""
 
-/datum/component/storage/concrete/remove_from_storage(atom/movable/AM, atom/new_location)
+/// Moves a removed item without redrawing the inventory during a bulk operation.
+/datum/component/storage/concrete/proc/move_removed_item(atom/movable/item, atom/destination, refresh_storage)
+	var/previous_defer = defer_exit_refresh
+	defer_exit_refresh = previous_defer || !refresh_storage
+	item.forceMove(destination)
+	defer_exit_refresh = previous_defer
+
+/datum/component/storage/concrete/remove_from_storage(atom/movable/AM, atom/new_location, refresh_storage = TRUE)
 	//Cache this as it should be reusable down the bottom, will not apply if anyone adds a sleep to dropped
 	//or moving objects, things that should never happen
 	var/atom/parent = src.parent
@@ -122,16 +129,17 @@
 	if(new_location)
 		//Reset the items values
 		_removal_reset(AM)
-		AM.forceMove(new_location)
+		move_removed_item(AM, new_location, refresh_storage)
 		//We don't want to call this if the item is being destroyed
 		AM.on_exit_storage(src)
 	else
 		//Being destroyed, just move to nullspace now (so it's not in contents for the icon update)
 		AM.moveToNullspace()
-	refresh_mob_views()
-	if(isobj(parent))
-		var/obj/O = parent
-		O.update_icon()
+	if(refresh_storage)
+		refresh_mob_views()
+		if(isobj(parent))
+			var/obj/O = parent
+			O.update_icon()
 	return TRUE
 
 /datum/component/storage/concrete/proc/slave_can_insert_object(datum/component/storage/slave, obj/item/I, stop_messages = FALSE, mob/M)
