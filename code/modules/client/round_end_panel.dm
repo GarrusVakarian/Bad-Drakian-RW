@@ -394,6 +394,7 @@
 			data += "</div>"
 
 		if("The Realm")
+			var/list/realm_portraits = list()
 			data += "<div style='text-align: center;'>"
 			data += "<div style='color: #e6a962; font-size: 1.2em; margin-bottom: 15px; text-transform: uppercase;'>NOTABLE PEOPLE</div>"
 			data += "<div style='border-top: 1.5px solid #e6a962; margin: 0 auto 25px auto; width: 90%;'></div>"
@@ -409,7 +410,7 @@
 			data += "<div style='margin-bottom: 15px;'><font color='#bd1717'>STRONGMAN</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(strongest)
-				data += get_headshot_icon(strongest)
+				data += get_realm_headshot_html(strongest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[strongest.real_name]</font><br><i>[strongest.job]</i><br>(with <font color='#bd1717'>[strongest.STASTR] strength</font>)</div>"
 			else
 				data += "Nobody"
@@ -420,7 +421,7 @@
 			data += "<div style='margin: 30px 0 15px 0;'><font color='#54d6c2'>SPEEDSTER</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(fastest)
-				data += get_headshot_icon(fastest)
+				data += get_realm_headshot_html(fastest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[fastest.real_name]</font><br><i>[fastest.job]</i><br>(with <font color='#54d6c2'>[fastest.STASPD] speed</font>)</div>"
 			else
 				data += "Nobody"
@@ -434,7 +435,7 @@
 			data += "<div style='margin-bottom: 15px;'><font color='#5eb6e6'>GENIUS</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(wisest)
-				data += get_headshot_icon(wisest)
+				data += get_realm_headshot_html(wisest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[wisest.real_name]</font><br><i>[wisest.job]</i><br>(with <font color='#5eb6e6'>[wisest.STAINT] intelligence</font>)</div>"
 			else
 				data += "Nobody"
@@ -445,7 +446,7 @@
 			data += "<div style='margin: 30px 0 15px 0;'><font color='#e67e22'>IDIOT</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(dumbest)
-				data += get_headshot_icon(dumbest)
+				data += get_realm_headshot_html(dumbest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[dumbest.real_name]</font><br><i>[dumbest.job]</i><br>(with <font color='#e67e22'>[dumbest.STAINT] intelligence</font>)</div>"
 			else
 				data += "Nobody"
@@ -459,7 +460,7 @@
 			data += "<div style='margin-bottom: 15px;'><font color='#d8dd90'>MAGNATE</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(richest)
-				data += get_headshot_icon(richest)
+				data += get_realm_headshot_html(richest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[richest.real_name]</font><br><i>[richest.job]</i><br>(with <font color='#d8dd90'>[SSgamemode.magnate_wealth] mammons</font>)</div>"
 			else
 				data += "Nobody"
@@ -470,7 +471,7 @@
 			data += "<div style='margin: 30px 0 15px 0;'><font color='#a569bd'>TURTLE</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(slowest)
-				data += get_headshot_icon(slowest)
+				data += get_realm_headshot_html(slowest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[slowest.real_name]</font><br><i>[slowest.job]</i><br>(with <font color='#a569bd'>[slowest.STASPD] speed</font>)</div>"
 			else
 				data += "Nobody"
@@ -484,7 +485,7 @@
 			data += "<div style='margin-bottom: 15px;'><font color='#54d666'>LUCKY DEVIL</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(luckiest)
-				data += get_headshot_icon(luckiest)
+				data += get_realm_headshot_html(luckiest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[luckiest.real_name]</font><br><i>[luckiest.job]</i><br>(with <font color='#54d666'>[luckiest.STALUC] luck</font>)</div>"
 			else
 				data += "Nobody"
@@ -495,7 +496,7 @@
 			data += "<div style='margin: 30px 0 15px 0;'><font color='#e74c3c'>WALKING DISASTER</font></div>"
 			data += "<div style='margin: 10px 0;'>"
 			if(unluckiest)
-				data += get_headshot_icon(unluckiest)
+				data += get_realm_headshot_html(unluckiest, realm_portraits)
 				data += "<div style='margin: 10px 0;'><font color='#e6a962'>[unluckiest.real_name]</font><br><i>[unluckiest.job]</i><br>(with <font color='#e74c3c'>[unluckiest.STALUC] luck</font>)</div>"
 			else
 				data += "Nobody"

@@ -203,15 +203,17 @@ SUBSYSTEM_DEF(crediticons)
 	preferences = null
 	return ..()
 
-/datum/controller/subsystem/crediticons/proc/get_credit_icon(mob/living/carbon/human/target, crop_to_upper_half = FALSE)
-	if(!target || !istype(target) || !target.mind || !target.client)
+/datum/controller/subsystem/crediticons/proc/get_credit_icon(mob/living/carbon/human/target, crop_to_upper_half = FALSE, allow_disconnected = FALSE)
+	if(!istype(target) || QDELETED(target) || !target.mind || (!allow_disconnected && !target.client))
 		return null
 
-	var/credit_name = REF(target.mind)
-	if(!GLOB.credits_icons[credit_name]?["icon"])
+	var/list/credit = GLOB.credits_icons[REF(target.mind)]
+	if(!credit || (allow_disconnected && credit["name"] != target.real_name))
 		return null
 
-	var/icon/credit_icon = GLOB.credits_icons[credit_name]["icon"]
+	var/icon/credit_icon = credit["icon"]
+	if(!isicon(credit_icon))
+		return null
 
 	if(crop_to_upper_half)
 		var/icon/cropped_icon = icon(credit_icon)
@@ -219,3 +221,45 @@ SUBSYSTEM_DEF(crediticons)
 		return cropped_icon
 
 	return credit_icon
+
+/// The Realm can reuse the same winner's portrait across multiple awards on one page.
+/proc/get_realm_headshot_html(mob/living/carbon/human/target, list/page_portraits)
+	if(!istype(target) || QDELETED(target))
+		return ""
+	if(target in page_portraits)
+		return page_portraits[target]
+
+	var/icon/headshot = get_realm_headshot(target)
+	var/encoded = headshot ? icon2base64(headshot) : null
+	var/html = encoded ? "<img src='data:image/png;base64,[encoded]' style='width:64px;height:32px;image-rendering:pixelated;' alt=''>" : ""
+	page_portraits[target] = html
+	return html
+
+/proc/get_realm_headshot(mob/living/carbon/human/target)
+	if(!istype(target) || QDELETED(target))
+		return null
+	var/icon/headshot = SScrediticons.get_credit_icon(target, crop_to_upper_half = TRUE, allow_disconnected = TRUE)
+	if(realm_headshot_has_pixels(headshot))
+		return headshot
+
+	// Render a copy so invisibility and direction on the live character are untouched.
+	var/image/portrait_appearance = image(target.icon)
+	portrait_appearance.appearance = target.appearance
+	portrait_appearance.dir = SOUTH
+	portrait_appearance.alpha = 255
+	headshot = crop_credit_headshot(getFlatIcon(portrait_appearance, SOUTH, no_anim = TRUE), target)
+	if(!headshot)
+		return null
+	headshot.Crop(1, 49, 96, 96)
+	return realm_headshot_has_pixels(headshot) ? headshot : null
+
+/proc/realm_headshot_has_pixels(icon/portrait)
+	if(!isicon(portrait))
+		return FALSE
+	var/width = portrait.Width()
+	var/height = portrait.Height()
+	for(var/y in 1 to height)
+		for(var/x in 1 to width)
+			if(portrait.GetPixel(x, y))
+				return TRUE
+	return FALSE
