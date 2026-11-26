@@ -15,7 +15,7 @@
 		message = tongueless_upper.Replace(message, pick("AA","OO","'"))
 		speech_args[SPEECH_MESSAGE] = message
 
-/mob/living/carbon/can_speak_vocal(message)
+/mob/living/carbon/can_speak_vocal(message, ignore_permanent_mute = FALSE)
 	if(silent)
 		return FALSE
 	return ..()

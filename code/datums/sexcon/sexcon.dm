@@ -104,8 +104,6 @@
 	var/knotted_part_partner = SEX_PART_NULL // which orifice was knotted on partner (bitflag)
 	var/knotted_forced_by_bottom = FALSE
 	var/tugging_knot = FALSE
-	var/tugging_knot_check = 0
-	var/tugging_knot_blocked = FALSE
 	var/knot_movement_restoring = FALSE /// Suppresses movement callbacks while restoring a blocked large attachment
 	var/mob/living/carbon/knotted_owner = null // whom has the knot
 	var/mob/living/carbon/knotted_recipient = null // whom took the knot
@@ -1123,14 +1121,16 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 	set_charge(charge + amount)
 
 /datum/sex_controller/proc/handle_charge(dt)
-	if(user.has_flaw(/datum/charflaw/addiction/lovefiend))
-		dt *= 2
-	adjust_charge(dt * CHARGE_RECHARGE_RATE)
+	var/has_lovefiend = user.has_flaw(/datum/charflaw/addiction/lovefiend)
+	var/recharge_multiplier = has_lovefiend ? 2 : 1
+	if(HAS_TRAIT(user, TRAIT_QUICK_SEED_RECOVERY))
+		recharge_multiplier = 4
+	adjust_charge(dt * CHARGE_RECHARGE_RATE * recharge_multiplier)
 	if(is_spent())
 		if(arousal > 60)
 			to_chat(user, span_warning("I'm too spent!"))
 			adjust_arousal(-20)
-		adjust_arousal(-dt * SPENT_AROUSAL_RATE)
+		adjust_arousal(-dt * SPENT_AROUSAL_RATE * (has_lovefiend ? 2 : 1))
 
 /datum/sex_controller/proc/set_arousal(amount)
 	if(amount > arousal)

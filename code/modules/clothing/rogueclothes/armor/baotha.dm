@@ -70,6 +70,7 @@
 	AddComponent(/datum/component/cursed_item, TRAIT_DEPRAVED, "BRACER")
 
 /obj/item/clothing/suit/roguetown/armor/leather/studded/baotha
+	neck_choke_damage_multiplier = 0.75
 	name = "baothan straps"
 	desc = "Black leather wraps tightly around flesh, cold studs digging in, leaving marks."
 	icon = 'icons/roguetown/clothing/special/baotha.dmi'

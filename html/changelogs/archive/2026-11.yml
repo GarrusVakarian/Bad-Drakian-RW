@@ -1070,3 +1070,52 @@
   - rscadd: Added an ingot smelting and alloy guide to the Blacksmithing encyclopedia.
   - bugfix: Winged Rebirth now rewards the Druid who started the rite, even if a helper
       hands in the final offering.
+  mypingishuge:
+  - qol: Rope and chain warnings tell you to get standing targets in combat mode down
+      before tying them.
+  - bugfix: Dendor rites grant personal rewards to the character who began them, even
+      when other followers help with the offerings.
+  - bugfix: The Druidic Trickery fertilizer recipe now appears in the crafting menus.
+  - bugfix: Removed obsolete blessed water handling from Nature's Temper.
+  - bugfix: Treefather's Bulwark takes only one kind of stone offering from a sack
+      and removes its slow from characters outside its wards.
+  - bugfix: Treefather's Bulwark keeps its 100 maximum integrity bonus when the number
+      of nearby living trees changes.
+  - bugfix: Clicking to hide in or leave a bush no longer starts foraging.
+  - bugfix: Tight Grab and Tackle target the rider you already hold when you click
+      their mount.
+  - rscadd: A successful tackle pulls the rider off their mount.
+  - bugfix: Characters with the Mute vice can silently cast Bless Crops and Sanctify
+      Tree, including while sign language is selected.
+  - rscadd: Craft pouch-fitted rope belts and cloth sashes with leather-belt storage.
+  - qol: "Some outfits with rope belts and the bathhouse Lady\u2019s Belt now come\
+      \ pouch-fitted."
+  - bugfix: Removing a knot no longer counts as taking another load or adds an extra
+      oral cumshot.
+  - qol: The Dog Clicker now gives you a private chat notice when you send a training
+      offer.
+  - rscadd: Right-click a playing-card deck to play Blackjack or Poker.
+  - rscadd: Collect Arlette cards, build faction decks, and challenge another player
+      to a match.
+  - balance: Metal neck armor halves unarmed choke damage. Padded cloth and leather
+      armor reduce it by a quarter. Gnoll hide still blocks unarmed chokes.
+  - qol: "Xylix\u2019s revive explains which psycross to offer, allows Xylix's amulet\
+      \ and gives clearer feedback when a body cannot be revived."
+  - qol: Covering a knot no longer causes trips or increases the chance of being stunned
+      while moving.
+  - bugfix: Restored headshots in The Realm's Notable People panel, including dragon
+      portraits and saved portraits for disconnected players.
+  - qol: Cloak pockets keep their contents when you take the cloak off. Empty the
+      pockets before packing a cloak into a bag.
+  - rscadd: Quick Seed Recovery is a free quirk that restores spent loads four times
+      as fast. Gnolls have it innately.
+  - bugfix: Gnolls keep their racial emote sounds when spawning or refreshing voice
+      settings.
+  - rscadd: Quick Egg Production is a free quirk that quadruples egg production speed.
+  - rscadd: Remembering a Triumph now refills all your egg clutches.
+  - bugfix: Changing penis type with Instant Transform now preserves ovipositor settings,
+      stored eggs, and egg production progress.
+  - balance: Implanted eggs drain nutrition while incubating and slow movement at
+      2, 4, and 6 eggs.
+  - rscadd: Players with Accept Egg Implantation enabled can see a bloated stomach
+      on examine at four or more implanted eggs.

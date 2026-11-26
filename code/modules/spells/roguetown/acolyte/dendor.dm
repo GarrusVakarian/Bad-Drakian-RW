@@ -17,6 +17,7 @@
 	associated_skill = /datum/skill/magic/druidic
 	invocations = list("The Treefather commands thee, be fruitful!")
 	invocation_type = "shout" //can be none, whisper, emote and shout
+	silent_invocation_for_mute = TRUE
 	miracle = TRUE
 	devotion_cost = 20
 	var/max_bless_charges = 1
@@ -596,6 +597,7 @@
 	name = "Sanctify Tree"
 	desc = "Channel Dendor's most sacred blessing to consecrate a living, unburnt tree into a sanctified tree of the Treefather — a nexus of druidic power."
 	invocation_type = "shout"
+	silent_invocation_for_mute = TRUE
 	overlay_state = "blesscrop"
 	range = 1
 	recharge_time = 60 SECONDS
@@ -665,7 +667,10 @@
 		span_notice("I press my hands to the bark and channel the Treefather's blessing into the tree...")
 	)
 
-	if(!do_after(H, 10 SECONDS, target = cast_target))
+	var/datum/callback/invocation_check
+	if(HAS_TRAIT(H, TRAIT_PERMAMUTE))
+		invocation_check = CALLBACK(src, PROC_REF(can_invoke_silently), H)
+	if(!do_after(H, 10 SECONDS, target = cast_target, extra_checks = invocation_check))
 		to_chat(H, span_warning("The consecration ritual was interrupted — the blessing fades & must be restarted."))
 		return FALSE
 

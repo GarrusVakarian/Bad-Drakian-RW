@@ -108,7 +108,7 @@
 	belt_contents = list(/obj/item/roguekey/inquisition = 1)
 	backpack_contents = list(
 	/obj/item/paper/inqslip/arrival/ortho = 1)
-	belt = /obj/item/storage/belt/rogue/leather/rope/dark
+	belt = /obj/item/storage/belt/rogue/leather/rope/upgraded/dark
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/mid
 	cloak = /obj/item/clothing/cloak/psydontabard/alt

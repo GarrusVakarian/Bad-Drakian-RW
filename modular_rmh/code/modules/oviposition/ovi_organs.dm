@@ -26,12 +26,13 @@
 	if(ishuman(owner))
 		var/mob/living/carbon/human/human_owner = owner
 		human_owner.grant_egg_verbs()
-	if(!next_egg_time)
-		next_egg_time = world.time + OVI_EGG_FORM_TIME
-		return
 	if(world.time < next_egg_time)
 		return
-	next_egg_time = world.time + OVI_EGG_FORM_TIME
+	var/was_forming = next_egg_time > 0
+	var/formation_time = HAS_TRAIT(owner, TRAIT_QUICK_EGG_PRODUCTION) ? OVI_EGG_FORM_TIME / OVI_QUICK_EGG_FORM_MULTIPLIER : OVI_EGG_FORM_TIME
+	next_egg_time = world.time + formation_time
+	if(!was_forming)
+		return
 	var/clutch = egg_settings["clutch"]
 	if(eggs_stored >= clutch)
 		return
@@ -92,6 +93,19 @@
 
 /obj/item/organ/vagina/get_oviposition_location_name()
 	return "womb"
+
+/mob/living/carbon/human/proc/refill_egg_clutches()
+	var/refilled = FALSE
+	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
+		var/obj/item/organ/egg_organ = getorganslot(slot)
+		if(!egg_organ?.egg_settings)
+			continue
+		var/clutch = egg_organ.egg_settings["clutch"]
+		if(egg_organ.eggs_stored < clutch)
+			egg_organ.eggs_stored = clutch
+			refilled = TRUE
+	if(refilled)
+		to_chat(src, span_notice("My eggs are replenished."))
 
 /// Called from cum_into() once per climax. Ovipositors implant into whoever took the load.
 /datum/sex_controller/proc/modular_try_oviposit(mob/living/carbon/human/receiver, oral, orifice)

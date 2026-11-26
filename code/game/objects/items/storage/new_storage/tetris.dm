@@ -673,7 +673,25 @@
 	return null
 
 /datum/component/storage/concrete/slave_can_insert_object(datum/component/storage/slave, obj/item/storing, stop_messages = FALSE, mob/user, params, storage_click = FALSE)
+	if(!check_cloak_packing(storing, stop_messages, user))
+		return FALSE
 	return !grid || !!find_grid_placement(storing, params, storage_click)
+
+/// Cloak pockets retain their contents when removed, so they must be empty while packed inside item storage.
+/datum/component/storage/concrete/proc/check_cloak_packing(obj/item/storing, stop_messages, mob/user)
+	var/atom/destination = real_location()
+	if(!isitem(destination))
+		return TRUE
+	if(istype(src, /datum/component/storage/concrete/roguetown/cloak) && isitem(destination.loc))
+		if(!stop_messages && user)
+			to_chat(user, span_warning("I need to take [destination] out before putting anything in its pockets."))
+		return FALSE
+	// An empty cloak can go in any portable container where it would normally fit.
+	if(length(storing.contents) && storing.GetComponent(/datum/component/storage/concrete/roguetown/cloak))
+		if(!stop_messages && user)
+			to_chat(user, span_warning("I need to empty [storing]'s pockets before packing it away."))
+		return FALSE
+	return TRUE
 
 //Remote is null or the slave datum
 /datum/component/storage/concrete/handle_item_insertion(obj/item/storing, prevent_warning = FALSE, mob/user, datum/component/storage/remote, params, storage_click = FALSE)
@@ -681,6 +699,8 @@
 	var/atom/parent = src.parent
 	var/moved = FALSE
 	if(!istype(storing))
+		return FALSE
+	if(!check_cloak_packing(storing, prevent_warning, user))
 		return FALSE
 	if(user && !worn_check(parent, user))
 		return FALSE

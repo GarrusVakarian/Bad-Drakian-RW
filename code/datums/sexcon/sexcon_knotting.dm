@@ -95,7 +95,6 @@
 	user.sexcon.knotted_owner = user
 	user.sexcon.knotted_recipient = btm
 	user.sexcon.knotted_status = KNOTTED_AS_TOP
-	user.sexcon.tugging_knot_blocked = FALSE
 	user.sexcon.knotted_part = top_knotted_part
 	user.sexcon.knotted_part_partner = bottom_knotted_part // we store the action bitflags so we can later apply damage based on area, and exclusive status unique to each orifice
 	user.sexcon.knotted_forced_by_bottom = FALSE
@@ -245,11 +244,6 @@
 	if(!large_knot && top.sexcon.considered_limp())
 		knot_remove()
 		return
-	if(top.sexcon.tugging_knot_check == 0) // check clothes layer connection every 5 steps and update tugging_knot_blocked
-		top.sexcon.tugging_knot_blocked = !get_location_accessible(top, BODY_ZONE_PRECISE_GROIN, skipundies = TRUE)
-		top.sexcon.tugging_knot_check = 5
-	else
-		top.sexcon.tugging_knot_check--
 	var/lupineisop = top.STASTR > (btm.STACON + 3) // if the stat difference is too great, don't attempt to disconnect on run
 	if(!large_knot && !lupineisop && top.m_intent == MOVE_INTENT_RUN && (top.mobility_flags & MOBILITY_STAND)) // pop it
 		knot_remove(forceful_removal = TRUE)
@@ -291,14 +285,9 @@
 			return
 	btm.face_atom(top)
 	top.set_pull_offsets(btm, GRAB_AGGRESSIVE)
-	if(!top.IsStun()) // randomly stun our top so they cannot simply drag without any penality (combat mode doubles the chances)
-		if(prob(!top.cmode && !top.sexcon.tugging_knot_blocked ? 7 : 20))
+	if(!top.IsStun()) // Dragging can cause a stun, especially in combat mode.
+		if(prob(top.cmode ? 20 : 7))
 			top.sexcon.try_do_pain_effect(PAIN_MILD_EFFECT, FALSE)
-			if(top.sexcon.tugging_knot_blocked && (top.mobility_flags & MOBILITY_STAND)) // only knock down if standing and knot area is blocked
-				top.Knockdown(10)
-				to_chat(top, span_warning("I trip trying to move while my [top.sexcon.get_knot_synonym()] is covered."))
-				top.sexcon.tugging_knot_blocked = FALSE // reset blocked state in the case either character stip off again
-				top.sexcon.tugging_knot_check = 0 // check clothes again on the next step
 			top.Stun(15)
 	if(!btm.IsStun())
 		if(prob(5))
@@ -439,13 +428,9 @@
 			btm.emote("painmoan", forced = TRUE)
 			btm.sexcon.try_do_pain_effect(PAIN_MILD_EFFECT, FALSE)
 		add_cum_floor(get_turf(btm))
-		if(top.sexcon.knotted_part_partner&(SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)) // use top's knotted_part_partner var to check what effect we need to apply, as bottom may be double knotted or more
-			var/datum/status_effect/facial/internal/creampie = btm.has_status_effect(/datum/status_effect/facial/internal)
-			if(!creampie)
-				btm.apply_status_effect(/datum/status_effect/facial/internal)
-				btm.visible_message(span_love("[btm] takes a load inside them!"), span_love("I take a load inside me!"))
-			else
-				creampie.refresh_cum()
+		// The climax already delivered the load. For an internal knot, only start the deferred leakage.
+		var/knot_orifice = top_sexcon.knotted_part_partner & (SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)
+		if(knot_orifice)
 			if(top?.dna?.species?.id == "gnoll")
 				btm.has_gnoll_scent_this_round = TRUE
 			var/top_redolent = HAS_TRAIT(top, TRAIT_REDOLENT)
@@ -454,24 +439,7 @@
 				top.redolent_apply_contact_stink(btm)
 			else if(bottom_redolent && !top_redolent)
 				btm.redolent_apply_contact_stink(top)
-			modular_record_collar_receive_event(btm, top)
-			var/knot_orifice = top.sexcon.knotted_part_partner & (SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)
-			apply_creampie_drip(btm, knot_orifice, use_long = top.sexcon.get_production_testicle_size() > DEFAULT_TESTICLES_SIZE, added_duration = top.sexcon.get_leakage_duration())
-		if(top.sexcon.knotted_part_partner&SEX_PART_JAWS)
-			var/datum/status_effect/facial/facial = btm.has_status_effect(/datum/status_effect/facial)
-			if(!facial)
-				btm.apply_status_effect(/datum/status_effect/facial)
-				btm.visible_message(span_love("[btm] takes a load down their throat!"), span_love("I take a load down my throat!"))
-			else
-				facial.refresh_cum()
-				to_chat(btm, span_love("I take another load down my throat..."))
-			if(btm.reagents)
-				if(top.getorganslot(ORGAN_SLOT_PENIS))
-					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/cum, top.sexcon.get_semen_volume(), repeat_intake = !!facial)
-				else
-					top.sexcon.add_oral_intake_reagent(btm, /datum/reagent/erpjuice/femcum, 2)
-			top.sexcon.apply_cum_consumed_buff(btm)
-			modular_record_collar_receive_event(btm, top)
+			apply_creampie_drip(btm, knot_orifice, use_long = top_sexcon.get_production_testicle_size() > DEFAULT_TESTICLES_SIZE, added_duration = top_sexcon.get_leakage_duration())
 	knot_exit(keep_top_status, keep_btm_status)
 
 /datum/sex_controller/proc/knot_exit(keep_top_status = FALSE, keep_btm_status = FALSE)
@@ -523,7 +491,7 @@
 		sexcon.knot_remove()
 	return ..()
 
-/mob/living/carbon/can_speak_vocal() // do not allow bottom to speak while knotted orally (at least until they're double knotted or it has been removed)
+/mob/living/carbon/can_speak_vocal(message, ignore_permanent_mute = FALSE) // do not allow bottom to speak while knotted orally (at least until they're double knotted or it has been removed)
 	. = ..()
 	if(. && iscarbon(src))
 		var/mob/living/carbon/H = src

@@ -1513,7 +1513,7 @@
 	if(HAS_TRAIT(src, TRAIT_DUMB))
 		return TRUE
 
-/mob/living/carbon/can_speak_vocal()
+/mob/living/carbon/can_speak_vocal(message, ignore_permanent_mute = FALSE)
 	. = ..()
 	if(!.)
 		return

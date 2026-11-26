@@ -83,6 +83,7 @@
 	user.update_inv_shirt()
 
 /obj/item/clothing/neck/roguetown/coif
+	neck_choke_damage_multiplier = 0.75
 	name = "coif"
 	desc = "Cheap and easy to make. It's better than leaving your neck exposed."
 	icon_state = "coif"
@@ -167,6 +168,7 @@
 	AddComponent(/datum/component/armour_filtering/positive, TRAIT_FENCERDEXTERITY)
 
 /obj/item/clothing/neck/roguetown/leather
+	neck_choke_damage_multiplier = 0.75
 	name = "hardened leather gorget"
 	desc = "Sturdy. Durable. Will protect your neck from some good lumbering."
 	icon_state = "lgorget"
@@ -184,6 +186,7 @@
 	resistance_flags = FIRE_PROOF
 
 /obj/item/clothing/neck/roguetown/chaincoif
+	neck_choke_damage_multiplier = 0.5
 	name = "chain coif"
 	desc = "Offers superior coverage to a simple gorget, though it sacrifices some protection in return."
 	icon_state = "chaincoif"
@@ -295,6 +298,7 @@
 	color = "#323232"
 
 /obj/item/clothing/neck/roguetown/bevor
+	neck_choke_damage_multiplier = 0.5
 	name = "bevor"
 	desc = "A series of steel plates designed to protect the neck."
 	icon_state = "bevor"
@@ -347,6 +351,7 @@
 	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/neck/roguetown/gorget
+	neck_choke_damage_multiplier = 0.5
 	name = "gorget"
 	desc = "A series of iron plates designed to protect the neck."
 	icon_state = "gorget"
@@ -422,6 +427,7 @@
 	smeltresult = /obj/item/ingot/copper
 
 /obj/item/clothing/neck/roguetown/fencerguard
+	neck_choke_damage_multiplier = 0.5
 	name = "fencing guard"
 	icon_state = "fencercollar"
 	armor = ARMOR_PLATE
@@ -482,6 +488,7 @@
 	icon_state = "kazengunneckguard"
 
 /obj/item/clothing/neck/roguetown/gorget/cursed_collar // minor flavor swap so people know it's a scam shitty knockoff.
+	neck_choke_damage_multiplier = 1
 	name = "lesser cursed collar"
 	desc = "A metal collar that seems to radiate an ominous aura. A pale imitation of its artificed counterpart. \nLooks like you'd need someone else's help to take it off."
 	icon_state = "cursed_collar"
