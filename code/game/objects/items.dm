@@ -2122,9 +2122,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	var/turf/T = get_turf(src)
 	if(fiber_salvage)
 		new /obj/item/natural/fibers(T)
-	if(istype(src, /obj/item/storage))
-		var/obj/item/storage/bag = src
-		bag.emptyStorage()
+	empty_for_salvage()
 	user.mind?.add_sleep_experience(/datum/skill/craft/sewing, user.STAINT)
 	if(prob(50 - fail_skill * 10))
 		to_chat(user, span_info("I ruined some of the materials due to my lack of skill..."))
@@ -2138,3 +2136,10 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 	playsound(T, 'sound/items/flint.ogg', 100, TRUE)
 	qdel(src)
 	return TRUE
+
+/// Releases any items held inside this item before salvage destroys it.
+/obj/item/proc/empty_for_salvage()
+	return
+
+/obj/item/storage/empty_for_salvage()
+	emptyStorage()

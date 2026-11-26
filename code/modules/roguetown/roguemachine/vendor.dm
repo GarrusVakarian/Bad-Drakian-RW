@@ -365,9 +365,12 @@
 		for(var/obj/item/I in stock)
 			if(!QDELETED(I) && I.loc == src)
 				I.forceMove(destination)
-	if(budget > 0)
-		budget2change(budget)
-		budget = 0
+	// Broken carts cannot open their shop window to pay out either balance.
+	var/payout = budget + wgain
+	budget = 0
+	wgain = 0
+	if(payout > 0)
+		budget2change(payout)
 
 /obj/structure/roguemachine/vendor/obj_break(damage_flag)
 	. = ..()
