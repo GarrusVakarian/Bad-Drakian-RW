@@ -70,7 +70,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 /proc/apply_voicepacks(mob/living/carbon/human/character, client/player)
 	if(!player?.prefs)
 		return
-	if(istype(character.dna?.species, /datum/species/dragon))
+	if(istype(character.dna?.species, /datum/species/dragon) || istype(character.dna?.species, /datum/species/gnoll))
 		return
 	if(player.prefs.voice_pack != "Default")
 		var/datum/voicepack/VP = GLOB.voice_packs_list[player.prefs.voice_pack]
