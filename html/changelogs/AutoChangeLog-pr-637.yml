@@ -1,8 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Dendor rites grant personal rewards to the character who began them, even when other followers help with the offerings."
-  - bugfix: "The Druidic Trickery fertilizer recipe now appears in the crafting menus."
-  - bugfix: "Removed obsolete blessed water handling from Nature's Temper."
-  - bugfix: "Treefather's Bulwark takes only one kind of stone offering from a sack and removes its slow from characters outside its wards."
-  - bugfix: "Treefather's Bulwark keeps its 100 maximum integrity bonus when the number of nearby living trees changes."
