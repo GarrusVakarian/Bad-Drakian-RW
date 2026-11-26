@@ -125,6 +125,13 @@
 		tree_data = null
 	return ..()
 
+/// Put ritual items in front of the tree where players can see them.
+/obj/structure/flora/roguetree/wise/sanctified/proc/get_reward_turf()
+	var/turf/south_turf = get_step(src, SOUTH)
+	if(south_turf && !isopenspace(south_turf) && !south_turf.is_blocked_turf(exclude_mobs = TRUE))
+		return south_turf
+	return get_turf(src)
+
 /obj/structure/flora/roguetree/wise/sanctified/obj_destruction(damage_flag)
 	set_light(0)
 	visible_message(span_warning("The sanctified tree's golden light dies as it falls — the Treefather's blessing is broken!"))
@@ -749,7 +756,7 @@
 /// Reward (normal): 1 random misc seed + 1 tree seed (5% sakura, 10% pine, 85% regular).
 /// Reward (berry special case, all 5 berries): 1 wild bush seed + 50% chance flower seed.
 /datum/druid_ritual/dendors_harvest/on_complete_rewards(mob/living/user)
-	var/turf/reward_turf = get_turf(ritual_holder.tree)
+	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
 	if(berries_only)
 		// Berry special case: all offerings were berries → wild thorny berry hedge seed + possible flower
 		new /obj/item/seeds/bush(reward_turf)
@@ -944,9 +951,9 @@
 	)
 	offering_description = "Any tree sapling"
 
-// Spawn 2 blessed logs at the tree as the Treefather's gift.
+// Spawn two blessed logs in front of the tree as the Treefather's gift.
 /datum/druid_ritual/timbers_tithe/on_complete_rewards(mob/living/user)
-	var/turf/reward_turf = get_turf(ritual_holder.tree)
+	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
 	for(var/i in 1 to 2)
 		var/obj/item/grown/log/tree/log = new(reward_turf)
 		log.bless_log()
@@ -1187,9 +1194,10 @@
 /// Harvest Bloomstone: a 20-use blessed seed powder stone (repeatable).
 /// Offerings: 1 enchanted stone (magic_power 1+) + 3 blessed seed powders.
 /datum/druid_ritual/harvest_bloomstone/on_complete_rewards(mob/living/user)
-	var/obj/item/alch/bloomstone/new_stone = new(get_turf(ritual_holder.tree))
-	if(ritual_holder.tree.Adjacent(user))
-		user.put_in_hands(new_stone)
+	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
+	var/obj/item/alch/bloomstone/new_stone = new(reward_turf)
+	if(ritual_holder.tree.Adjacent(user) && !user.put_in_hands(new_stone))
+		new_stone.forceMove(reward_turf)
 	to_chat(user, span_green("The tree's roots yield a Harvest Bloomstone brimming with the Treefather's blessing."))
 
 //---- Fey Weaving
@@ -1206,7 +1214,7 @@
 /// Offerings: 1 essence of wild OR essence of wood + 1 blessed seed powder. Reward: 2 mushroom_fey seeds.
 /datum/druid_ritual/fey_weaving/on_complete_rewards(mob/living/user)
 	. = ..()
-	var/turf/reward_turf = get_turf(ritual_holder.tree)
+	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
 	new /obj/item/seeds/mushroom_fey(reward_turf)
 	new /obj/item/seeds/mushroom_fey(reward_turf)
 	to_chat(user, span_green("Two handfuls of mushroom fey spores rise from the roots — the Treefather rewards your patience."))
@@ -1239,7 +1247,7 @@
 
 /// Nature's Temper: blessed druid armor + possible elven armor piece (once per tree).
 /datum/druid_ritual/natures_temper/on_complete_rewards(mob/living/user)
-	var/turf/reward_turf = get_turf(ritual_holder.tree)
+	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
 	if(!ritual_holder.ritual_armor || QDELETED(ritual_holder.ritual_armor))
 		to_chat(user, span_warning("The druid armor offering was lost — something disrupted the ritual."))
 		return
