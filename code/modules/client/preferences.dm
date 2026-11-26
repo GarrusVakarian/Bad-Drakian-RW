@@ -481,6 +481,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/nsfw_ooc_extra_img_link
 
 	var/erpprefs
+	var/automatic_egg_laying_default = TRUE
 
 	var/list/img_gallery = list()
 
@@ -3782,6 +3783,7 @@ function setJobPrefRedirect(link) {
 		character.real_name = real_name
 	character.name = character.real_name
 	if(!character_setup)
+		character.automatic_egg_laying = automatic_egg_laying_default
 		character.set_background_stat_identity(parent?.ckey, real_name)
 
 	if((selected_title != "None" && pref_species.use_titles) && selected_title != null)
