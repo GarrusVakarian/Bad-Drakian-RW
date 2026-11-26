@@ -77,6 +77,7 @@
 	return ..()
 
 /obj/item/clothing/head/roguetown/roguehood/reinforced
+	neck_choke_damage_multiplier = 0.75
 	name = "reinforced hood"
 	armor = ARMOR_REINFORCED_HOOD
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
@@ -129,6 +130,7 @@
 	block2add = null
 
 /obj/item/clothing/head/roguetown/roguehood/shalal/hijab/zyb
+	neck_choke_damage_multiplier = 0.75
 	name = "padded headscarf"
 	desc = "A common sight amongst those travelling the long desert routes, it offers protection from the heat and a modicum of it against the beasts that prowl its more comfortable nites."
 	max_integrity = 100
@@ -296,6 +298,7 @@
 //Psydonite hoods.
 
 /obj/item/clothing/head/roguetown/roguehood/psydon
+	neck_choke_damage_multiplier = 0.75
 	name = "psydonian hood"
 	desc = "A hood worn by Psydon's disciples, oft-worn in conjunction with its matching tabard. Made with spell-laced fabric to provide some protection."
 	icon_state = "psydonhood"
@@ -337,6 +340,7 @@
 	resistance_flags = FIRE_PROOF
 
 /obj/item/clothing/head/roguetown/roguehood/hierophant
+	neck_choke_damage_multiplier = 0.75
 	name = "hierophant's pashmina"
 	desc = "A thick hood that covers one's entire head, should they desire, or merely acts as a scarf otherwise. Made with spell-laced fabric to provide some protection against daemons and mortals alike."
 	max_integrity = 100
@@ -351,6 +355,7 @@
 	salvage_amount = 1
 
 /obj/item/clothing/head/roguetown/roguehood/pontifex
+	neck_choke_damage_multiplier = 0.75
 	name = "pontifex's pashmina"
 	desc = "A slim hood with thin, yet dense fabric. Stretchy and malleable, allowing for full flexibility and mobility. Made with spell-laced fabric to provide some protection against daemons and mortals alike."
 	max_integrity = 100

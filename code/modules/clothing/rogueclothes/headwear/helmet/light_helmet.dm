@@ -232,6 +232,7 @@
 
 //Leather padded hood, ported from Scarlet Reach by RoachwithaRoach, from vide noir
 /obj/item/clothing/head/roguetown/helmet/leather/armorhood
+	neck_choke_damage_multiplier = 0.75
 	name = "padded leather hood"
 	desc = "A padded leather hood with buckles."
 	icon = 'modular_stonehedge/icons/clothing/armor/head.dmi'

@@ -692,6 +692,7 @@
 	..()
 
 /obj/item/clothing/head/roguetown/helmet/heavy/absolver
+	neck_choke_damage_multiplier = 0.5
 	name = "psydonic conical helm"
 	desc = "Based on the visage worn by Saint Pestra's order, this cryptic helmet provides its wearer with the satisfaction of reminding heretics that fear is not an emotion easily lost. Even the dead may learn to taste terror again."
 	icon_state = "absolutionisthelm"
@@ -982,6 +983,7 @@
 	armor_class = ARMOR_CLASS_LIGHT
 
 /obj/item/clothing/head/roguetown/helmet/heavy/frogmouth
+	neck_choke_damage_multiplier = 0.5
 	name = "froggemund helmet"
 	desc = "A tall and imposing frogmouth-style helm popular in the highest plateaus of the realm. It covers not only the entire head and face, but the neck as well. Add a cloth to show the colors of your family or allegiance."
 	icon_state = "frogmouth"
