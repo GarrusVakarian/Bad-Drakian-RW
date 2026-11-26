@@ -1101,3 +1101,5 @@
       armor reduce it by a quarter. Gnoll hide still blocks unarmed chokes.
   - qol: "Xylix\u2019s revive explains which psycross to offer, allows Xylix's amulet\
       \ and gives clearer feedback when a body cannot be revived."
+  - qol: Covering a knot no longer causes trips or increases the chance of being stunned
+      while moving.
