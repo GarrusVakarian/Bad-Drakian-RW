@@ -58,24 +58,29 @@
 
 	if(potential_hider.loc == parent) // If the hider clicks the spot, they get out
 		escape_hidingspot(potential_hider)
-		return
+		return COMPONENT_NO_ATTACK_HAND
 
 	if(potential_hider.m_intent != MOVE_INTENT_SNEAK)
 		return
 
 	if(locate(/obj/structure/bars) in get_turf(parent))
 		to_chat(potential_hider, span_warning("This hiding spot is blocked!"))
-		return
+		return COMPONENT_NO_ATTACK_HAND
 
 	if(hider?.resolve())
 		to_chat(potential_hider, span_warning(occupied_message))
-		return
+		return COMPONENT_NO_ATTACK_HAND
 
 	var/sneak_level = potential_hider.get_skill_level(/datum/skill/misc/sneaking) || 0
 	var/sneaktime = max(1 SECONDS, 5 SECONDS - (sneak_level SECONDS)) // Hard caps at 1 second at Expert and above.
 
 	if(!do_after(potential_hider, sneaktime, target = parent))
-		return
+		return COMPONENT_NO_ATTACK_HAND
+	if(QDELETED(src) || QDELETED(parent) || QDELETED(potential_hider) || potential_hider.m_intent != MOVE_INTENT_SNEAK)
+		return COMPONENT_NO_ATTACK_HAND
+	if(hider?.resolve())
+		to_chat(potential_hider, span_warning(occupied_message))
+		return COMPONENT_NO_ATTACK_HAND
 
 	potential_hider.forceMove(parent)
 	to_chat(potential_hider, span_warning(hide_message))

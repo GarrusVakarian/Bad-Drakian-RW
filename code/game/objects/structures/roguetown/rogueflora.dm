@@ -481,6 +481,8 @@
 	name = "bush"
 	desc = "A bush. It's crawling with spiders, but maybe there's something useful inside..."
 	icon_state = "bush2"
+	// The bush handles its own clicks and must preserve the hiding component result.
+	interaction_flags_atom = INTERACT_ATOM_UI_INTERACT
 	layer = ABOVE_ALL_MOB_LAYER
 	var/res_replenish
 	blade_dulling = DULLING_CUT
