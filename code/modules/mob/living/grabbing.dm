@@ -209,6 +209,16 @@
 	hostagetaker.hostage = null
 	hostagetaker = null
 
+/obj/item/grabbing/melee_attack_chain(mob/user, atom/target, params)
+	if(grabbee == user && isliving(grabbed) && issimple(target))
+		if(user.used_intent.type == /datum/intent/grab/upgrade || user.used_intent.type == /datum/intent/grab/shove)
+			var/mob/living/rider = grabbed
+			if(rider.get_buckled_animal_mount() == target)
+				if(!user.CanReach(rider))
+					return
+				target = rider
+	return ..(user, target, params)
+
 /obj/item/grabbing/attack(mob/living/M, mob/living/user)
 	if(M != grabbed)
 		if(!istype(limb_grabbed, /obj/item/bodypart/head))
@@ -382,7 +392,8 @@
 			if(!(user.mobility_flags & MOBILITY_STAND))
 				to_chat(user, span_warning("I must stand.."))
 				return
-			if(!(M.mobility_flags & MOBILITY_STAND))
+			var/mob/living/simple_animal/mount = M.get_buckled_animal_mount()
+			if(!mount && !(M.mobility_flags & MOBILITY_STAND))
 				if(user.loc != M.loc)
 					to_chat(user, span_warning("I must be above them."))
 					return
@@ -416,8 +427,14 @@
 			else
 				user.stamina_add(rand(5,15))
 				if(M.compliance || prob(clamp((((4 + (((user.STASTR - M.STASTR)/2) + skill_diff)) * 10 + rand(-5, 5)) * combat_modifier), 5, 95)))
-					M.visible_message(span_danger("[user] shoves [M] to the ground!"), \
-									span_userdanger("[user] shoves me to the ground!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
+					if(mount)
+						if(!mount.unbuckle_mob(M, force = TRUE))
+							return FALSE
+						M.visible_message(span_danger("[user] pulls [M] off [mount]!"), \
+										span_userdanger("[user] pulls me off [mount]!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
+					else
+						M.visible_message(span_danger("[user] shoves [M] to the ground!"), \
+										span_userdanger("[user] shoves me to the ground!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
 					M.Knockdown(max(10 + (skill_diff * 2), 1))
 				else
 					M.visible_message(span_warning("[user] tries to shove [M]!"), \
