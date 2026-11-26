@@ -106,8 +106,10 @@ SUBSYSTEM_DEF(migrants)
 	return wave.is_raid ? raid_fail_cooldown : faction_fail_cooldown
 
 /datum/controller/subsystem/migrants/proc/try_spawn_wave(datum/migrant_wave/wave, forced = FALSE)
-	var/list/active_migrants
-	active_migrants = get_wave_candidates(wave.type)
+	var/list/active_migrants = list()
+	for(var/client/candidate as anything in get_wave_candidates(wave.type))
+		if(candidate.prefs.migrant.check_join_eligibility())
+			active_migrants += candidate
 	active_migrants = shuffle(active_migrants)
 	if(!length(active_migrants))
 		return FALSE
@@ -134,11 +136,12 @@ SUBSYSTEM_DEF(migrants)
 
 	var/greet_text = pick_greet_text(wave, assignments.len)
 
-	for(var/client/client as anything in picked_migrants)
-		client.prefs.migrant.post_spawn()
-
+	var/spawned_count = 0
 	for(var/datum/migrant_assignment/assignment as anything in assignments)
-		spawn_migrant(wave, assignment, wave.spawn_on_location, greet_text)
+		if(spawn_migrant(wave, assignment, wave.spawn_on_location, greet_text))
+			spawned_count++
+	if(!spawned_count)
+		return FALSE
 
 	var/used_wave_type = wave.type
 	if(wave.shared_wave_type)
@@ -148,7 +151,7 @@ SUBSYSTEM_DEF(migrants)
 	spawned_waves[used_wave_type] += 1
 
 	reset_wave_contributions(wave)
-	message_admins("MIGRANTS: Spawned wave: [wave.name] (players: [assignments.len]) at [ADMIN_VERBOSEJMP(spawn_location)]")
+	message_admins("MIGRANTS: Spawned wave: [wave.name] (players: [spawned_count]) at [ADMIN_VERBOSEJMP(spawn_location)]")
 
 	return TRUE
 
@@ -263,26 +266,32 @@ SUBSYSTEM_DEF(migrants)
 
 /datum/controller/subsystem/migrants/proc/spawn_migrant(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text)
 	var/rank = "Migrant"
-	var/mob/dead/new_player/newplayer = assignment.client.mob
-	if(!istype(newplayer) || !assignment.client.prefs.can_join_with_patron_virtues())
-		return
+	var/client/player = assignment.client
+	var/mob/dead/new_player/newplayer = player?.mob
+	if(!istype(newplayer) || !player.prefs?.migrant?.check_join_eligibility())
+		return FALSE
 
-	SSjob.AssignRole(newplayer, rank, TRUE)
+	if(!SSjob.AssignRole(newplayer, rank, TRUE))
+		return FALSE
+	player.prefs.migrant.post_spawn()
 
 	var/is_gnoll_migrant = ispath(assignment.role_type, /datum/migrant_role/gnoll)
 	var/mob/living/character = newplayer.create_character(TRUE, gnoll_migrant = is_gnoll_migrant)
+	if(!isliving(character))
+		return FALSE
 	var/mob/living/carbon/human/setup_character
 	if(ishuman(character))
 		setup_character = character
 		setup_character.begin_armor_warning_setup()
 	try
-		. = finish_migrant_with_deferred_armor_warning(wave, assignment, spawn_on_location, greet_text, character)
+		finish_migrant_with_deferred_armor_warning(wave, assignment, spawn_on_location, greet_text, character)
 	catch(var/exception/error)
 		if(!QDELETED(setup_character))
 			setup_character.end_armor_warning_setup(FALSE)
 		throw error
 	if(!QDELETED(setup_character))
 		setup_character.end_armor_warning_setup()
+	return TRUE
 
 /datum/controller/subsystem/migrants/proc/finish_migrant_with_deferred_armor_warning(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text, mob/living/character)
 	var/rank = "Migrant"
