@@ -35,7 +35,7 @@
 	user.visible_message(get_finish_message(user, target))
 
 /datum/sex_action/force_milk_genitals/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE
 

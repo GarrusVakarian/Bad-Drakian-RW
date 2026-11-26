@@ -23,3 +23,13 @@
 		/obj/item/natural/cured/essence = 1,
 		)
 	craftdiff = 5
+
+/datum/crafting_recipe/roguetown/farming/druidic
+	name = "fertilizer (via druidic trickery)"
+	result = /obj/item/fertilizer
+	reqs = list(
+		/obj/item/compost = 1, 
+		/obj/item/alch/blessedseedpowder = 1
+		)
+	skillcraft = /datum/skill/magic/druidic
+	craftdiff = 4

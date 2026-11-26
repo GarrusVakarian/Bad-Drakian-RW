@@ -1031,6 +1031,42 @@
   - bugfix: Armor readouts now name the areas protected by gear with partial face
       coverage.
   - qol: Made selected options easier to see in list pickers (for real this time).
+  - bugfix: The Heavy Bolts 10x recipe now produces usable heavy bolts.
+  - rscadd: Lit ziggs can now light blastpowder sticks.
+  - balance: Cunning Provisioner now grants +2 Butchering.
   mypingishuge:
   - bugfix: Eclectic miracle descriptions display bold text and line breaks correctly.
   - sound: Added Masquerade Violation and Open Season to the Combat Mode Music picker.
+  - balance: Stat drain starts with a warning, leaves Fortune alone, and wears off
+      15 minutes after the last qualifying cycle.
+  - rscadd: Erotic Energy Drainer is a one-point alternative to Erotic Drainer that
+      absorbs energy, costing one quirk point.
+  - qol: Choose how many points you can lose from each stat under Erotic Stat and
+      Energy Drain, in the toggle settings.
+  - qol: Lowering your stat drain limit restores any excess stat loss immediately.
+  - qol: Stat drain tells the drainer when it starts and both players when a stat
+      drops or the cap blocks a drop.
+  - qol: Choose Energy drain or Stat drain as your innate Gnoll quirk in the toggle
+      settings.
+  - qol: One opt-in toggle setting covers both drains. Turning it off clears active
+      stat drain.
+  - qol: Content Toggles shows NEW again for returning players.
+  - bugfix: '"Until I''m Finished" ERP panel option only stops actions started by
+      the player who enabled it.'
+  - rscadd: Choose whether masks hide your highest-tier Wretch or Bandit bounty alert.
+      Bounty Presets can save the choice.
+2026-11-26:
+  SMoto95:
+  - qol: Made Sanctified tree rites a lot easier to work with, less requirements and
+      earlier to unlock.
+  - rscadd: Added an alternate fertilizer recipe for dedicated dendorite roles with
+      access to druidic trickery knowledge
+  - qol: Buffed druids' non-combat skills, stronger non-combat skill buffs depending
+      on how old they are.
+  _Rarity:
+  - bugfix: "Admin revival preserves gnolls\u2019 selected pintle, testicles, vagina,\
+      \ and breasts."
+  - bugfix: Sawing blessed long logs now grants their bonus timber.
+  - rscadd: Added an ingot smelting and alloy guide to the Blacksmithing encyclopedia.
+  - bugfix: Winged Rebirth now rewards the Druid who started the rite, even if a helper
+      hands in the final offering.

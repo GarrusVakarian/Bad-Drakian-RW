@@ -122,54 +122,7 @@
 	icon_state = prefs.pelt_type || "firepelt"
 	dna?.species?.custom_base_icon = prefs.pelt_type || "firepelt"
 
-	var/wants_penis = !!prefs.genitals["penis"]
-	var/wants_vagina = !!prefs.genitals["vagina"]
-	var/wants_breasts = !!prefs.genitals["breasts"]
-
-	var/obj/item/organ/penis/penis = getorganslot(ORGAN_SLOT_PENIS)
-	if(wants_penis)
-		// The Gnoll species trait grants the gameplay effects to a Large pintle.
-		// A carried-over pintle of any other kind is swapped out.
-		if(penis && penis.type != /obj/item/organ/penis/knotted/big)
-			penis.Remove(src)
-			qdel(penis)
-			penis = null
-		if(!penis)
-			penis = new /obj/item/organ/penis/knotted/big()
-			penis.Insert(src, TRUE, FALSE)
-		var/obj/item/organ/testicles/testicles = getorganslot(ORGAN_SLOT_TESTICLES)
-		if(!testicles)
-			testicles = new()
-			testicles.ball_size = MAX_TESTICLES_SIZE
-			testicles.Insert(src, TRUE, FALSE)
-	else if(penis)
-		penis.Remove(src)
-		qdel(penis)
-		var/obj/item/organ/testicles/testicles = getorganslot(ORGAN_SLOT_TESTICLES)
-		if(testicles)
-			testicles.Remove(src)
-			qdel(testicles)
-
-	var/obj/item/organ/vagina/vagina = getorganslot(ORGAN_SLOT_VAGINA)
-	if(wants_vagina)
-		if(!vagina)
-			vagina = new /obj/item/organ/vagina()
-			vagina.accessory_type = /datum/sprite_accessory/vagina/furred
-			vagina.Insert(src, TRUE, FALSE)
-	else if(vagina)
-		vagina.Remove(src)
-		qdel(vagina)
-
-	var/obj/item/organ/breasts/breasts = getorganslot(ORGAN_SLOT_BREASTS)
-	if(wants_breasts)
-		if(!breasts)
-			breasts = new()
-			breasts.Insert(src, TRUE, FALSE)
-	else if(breasts)
-		breasts.Remove(src)
-		qdel(breasts)
-
-	update_body()
+	apply_gnoll_anatomy(prefs)
 	ambushable = FALSE
 	clear_mob_descriptors()
 	add_mob_descriptor(/datum/mob_descriptor/stature/gnoll)
@@ -199,6 +152,63 @@
 	ooc_extra_img_link = prefs.ooc_extra_img_link
 
 	return TRUE
+
+/mob/living/carbon/human/proc/apply_gnoll_anatomy(datum/gnoll_prefs/prefs)
+	var/wants_penis = !!prefs.genitals["penis"]
+	var/wants_vagina = !!prefs.genitals["vagina"]
+	var/wants_breasts = !!prefs.genitals["breasts"]
+
+	var/obj/item/organ/penis/penis = getorganslot(ORGAN_SLOT_PENIS)
+	var/obj/item/organ/testicles/testicles = getorganslot(ORGAN_SLOT_TESTICLES)
+	if(wants_penis)
+		// The Gnoll species trait grants the gameplay effects to a Large pintle.
+		// A carried-over pintle of any other kind is swapped out.
+		if(penis && penis.type != /obj/item/organ/penis/knotted/big)
+			penis.Remove(src)
+			qdel(penis)
+			penis = null
+		if(!penis)
+			penis = new /obj/item/organ/penis/knotted/big()
+			penis.Insert(src, TRUE, FALSE)
+		if(!testicles)
+			testicles = new()
+			testicles.ball_size = MAX_TESTICLES_SIZE
+			testicles.Insert(src, TRUE, FALSE)
+	else
+		if(penis)
+			penis.Remove(src)
+			qdel(penis)
+		if(testicles)
+			testicles.Remove(src)
+			qdel(testicles)
+
+	var/obj/item/organ/vagina/vagina = getorganslot(ORGAN_SLOT_VAGINA)
+	if(wants_vagina)
+		if(!vagina)
+			vagina = new /obj/item/organ/vagina()
+			vagina.accessory_type = /datum/sprite_accessory/vagina/furred
+			vagina.Insert(src, TRUE, FALSE)
+	else if(vagina)
+		vagina.Remove(src)
+		qdel(vagina)
+
+	var/obj/item/organ/breasts/breasts = getorganslot(ORGAN_SLOT_BREASTS)
+	if(wants_breasts)
+		if(!breasts)
+			breasts = new()
+			breasts.Insert(src, TRUE, FALSE)
+	else if(breasts)
+		breasts.Remove(src)
+		qdel(breasts)
+
+	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_TESTICLES, ORGAN_SLOT_VAGINA, ORGAN_SLOT_BREASTS))
+		var/obj/item/organ/organ = getorganslot(slot)
+		if(organ)
+			dna.organ_dna[slot] = organ.create_organ_dna()
+		else
+			dna.organ_dna -= slot
+
+	update_body()
 
 /mob/living/carbon/human/proc/reset_gnoll_sprite_scale()
 	if(!dna?.features)

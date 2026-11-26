@@ -96,6 +96,6 @@
 		user.visible_message(span_warning("[user] stops grinding [user.p_their()] knot inside [target] ..."), vision_distance = (do_subtle ? 1 : DEFAULT_MESSAGE_RANGE))
 
 /datum/sex_action/knot_grinding/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(target.sexcon.finished_check())
+	if(user.sexcon.finished_check())
 		return TRUE
 	return FALSE

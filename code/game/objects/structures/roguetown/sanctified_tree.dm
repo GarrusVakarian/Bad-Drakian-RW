@@ -424,6 +424,9 @@
 	if(!selected_ritual.can_start_ritual(user))
 		to_chat(user, span_info("That ritual can no longer be started."))
 		return
+	selected_ritual.initiator = user.mind
+	if(!selected_ritual.get_reward_recipient(user))
+		return
 	tree_data.active_ritual = selected_ritual
 	to_chat(user, span_notice("I begin the ritual. Offer items by clicking the tree while holding them. Use the amulet only if I need to cancel."))
 
@@ -442,6 +445,11 @@
 		to_chat(user, span_warning("I am not holding anything to offer."))
 		return FALSE
 
+	var/datum/druid_ritual/ritual = tree_data.active_ritual
+	var/mob/living/recipient = ritual.get_reward_recipient(user)
+	if(!recipient)
+		return FALSE
+
 	// Support taking items from a held storage container (sack, satchel, bag).
 	if(held.GetComponent(/datum/component/storage))
 		// Bulk mode: for every unfulfilled key, drain all matching items from the sack at once.
@@ -449,17 +457,17 @@
 		// Snapshot contents so deletions during iteration are safe.
 		var/list/sack_contents = held.contents.Copy()
 		for(var/obj/item/sack_item in sack_contents)
-			if(tree_data.active_ritual.accept_offering(sack_item, user, silent = TRUE))
+			if(ritual.accept_offering(sack_item, user, silent = TRUE))
 				any_taken = TRUE
 		if(!any_taken)
 			to_chat(user, span_warning("The tree does not need anything from that container right now."))
 			return FALSE
 		playsound(get_turf(src), 'sound/magic/churn.ogg', 40, FALSE)
-		tree_data.active_ritual.check_ritual_complete(user)
+		ritual.check_ritual_complete(recipient)
 		return TRUE
 
-	if(tree_data.active_ritual.accept_offering(held, user, silent = FALSE))
-		tree_data.active_ritual.check_ritual_complete(user)
+	if(ritual.accept_offering(held, user, silent = FALSE))
+		ritual.check_ritual_complete(recipient)
 		return TRUE
 	return FALSE
 
@@ -477,6 +485,8 @@
 	abstract_type = /datum/druid_ritual
 	/// Reference to the tree that this ritual is a part of
 	var/datum/sanctified_tree_data/ritual_holder
+	/// Mind of the player who began this ritual.
+	var/datum/mind/initiator
 	/// Name of the ritual, how it shows up in the UI
 	var/name = "Abstract Ritual"
 	/// Tier of the ritual, you need equal or greater skill to be elligible to start/complete the ritual
@@ -527,6 +537,10 @@
 			to_chat(druid, span_warning("The Treefather's floral gift is already within me — I cannot receive this blessing twice."))
 			return FALSE
 	return TRUE
+
+/// Returns the player who receives the ritual rewards, or null if the rite cannot proceed.
+/datum/druid_ritual/proc/get_reward_recipient(mob/living/user)
+	return user
 
 /// Copies our list of requirements once the ritual actually begins
 /datum/druid_ritual/proc/prepare_tracker()
@@ -663,9 +677,9 @@
 //--- DENDORS HARVEST
 /datum/druid_ritual/dendors_harvest
 	name = "Dendor's Harvest"
-	experience_payout = 5
+	experience_payout = 15
 	druid_ritual_tier = SKILL_LEVEL_NONE // Starting point
-	required_amount = 6
+	required_amount = 3
 	offering_description = "any fresh or rotten produce"
 	/// Static list of produce
 	var/static/list/produce_subtypes = subtypesof(/obj/item/reagent_containers/food/snacks/grown)
@@ -706,7 +720,7 @@
 	return examine_list
 
 /// Dendor's Harvest: seed bounty (repeatable).
-/// Offerings: 6 any fruit/grain/vegetable food items (rotten okay).
+/// Offerings: 3 any fruit/grain/vegetable food items (rotten okay).
 /// Reward (normal): 1 random misc seed + 1 tree seed (5% sakura, 10% pine, 85% regular).
 /// Reward (berry special case, all 5 berries): 1 wild bush seed + 50% chance flower seed.
 /datum/druid_ritual/dendors_harvest/on_complete_rewards(mob/living/user)
@@ -784,28 +798,14 @@
 //---- FLORAL CONJURATION
 /datum/druid_ritual/floral_conjuration
 	name = "Floral Conjuration"
-	unique_tree_rite = TRUE // One spell per tree
-	experience_payout = 100
+	unique_tree_rite = FALSE // Removed unique so other druids can use your tree without messing you up
+	experience_payout = 25
 	druid_ritual_tier = SKILL_LEVEL_NOVICE
 	specific_offerings = list(
-		/obj/item/alch/atropa = 1,
-		/obj/item/alch/matricaria = 1,
-		/obj/item/alch/symphitum = 1,
-		/obj/item/alch/taraxacum = 1,
-		/obj/item/alch/euphrasia = 1,
-		/obj/item/alch/paris = 1,
-		/obj/item/alch/calendula = 1,
-		/obj/item/alch/mentha = 1,
-		/obj/item/alch/urtica = 1,
-		/obj/item/alch/salvia = 1,
-		/obj/item/alch/hypericum = 1,
-		/obj/item/alch/benedictus = 1,
-		/obj/item/alch/valeriana = 1,
-		/obj/item/alch/artemisia = 1,
-		/obj/item/alch/rosa = 1,
-		/obj/item/reagent_containers/food/snacks/grown/manabloom = 1,
+		/obj/item/alch/rosa = 5,
+		/obj/item/reagent_containers/food/snacks/grown/manabloom = 3,
 	)
-	offering_description = "One of every herb"
+	offering_description = "A gathering of a few flowers to please Dendor"
 	granted_spell = /obj/effect/proc_holder/spell/self/conjure_floral_seed
 
 /// Floral Conjuration: grants the Conjure Floral Seed spell (once per tree, once per person).
@@ -826,11 +826,11 @@
 //---- FUNGAL VIGIL
 /datum/druid_ritual/fungal_vigil
 	name = "Fungal Vigil"
-	experience_payout = 25
+	experience_payout = 40
 	druid_ritual_tier = SKILL_LEVEL_APPRENTICE
 	specific_offerings = list(
-		list(/obj/item/reagent_containers/food/snacks/grown/manabloom, /obj/item/magic/manacrystal) = 10
-	)
+		list(/obj/item/reagent_containers/food/snacks/grown/manabloom, /obj/item/magic/manacrystal) = 3
+	) 
 	offering_description = "Mana bloom OR Crystalized Mana"
 
 /// Fungal Vigil: kneestinger ring + 30-min vigil buff to nearby mobs (repeatable).
@@ -905,13 +905,13 @@
 	experience_payout = 100
 	druid_ritual_tier = SKILL_LEVEL_APPRENTICE
 	specific_offerings = list(
-		list(/obj/item/alch/sinew, /obj/item/alch/viscera, /obj/item/alch/bonemeal, /obj/item/skull) = 10,
-		/obj/item/ash = 10,
-		/obj/item/compost = 10,
+		list(/obj/item/alch/sinew, /obj/item/alch/viscera, /obj/item/alch/bonemeal, /obj/item/skull) = 3,
+		/obj/item/ash = 5,
+		/obj/item/compost = 5,
 	)
 
 /// Living Light: passive healing aura + middle-click manual heal (once per tree).
-/// Offerings: 10 mixed sinew/viscera/tailbone/bone/skull + 10 ash + 10 compost.
+/// Offerings: 3 mixed sinew/viscera/tailbone/bone/skull + 5 ash + 5 compost.
 /// Aura: wide green glow, periodic healing for Dendor followers.
 /datum/druid_ritual/living_light/on_complete_rewards(mob/living/user)
 	ritual_holder.has_heal_aura = TRUE
@@ -925,7 +925,7 @@
 	experience_payout = 10
 	druid_ritual_tier = SKILL_LEVEL_APPRENTICE
 	specific_offerings = list(
-		list(/obj/item/seeds/treesap, /obj/structure/tree_sapling) = 5
+		list(/obj/item/seeds/treesap, /obj/structure/tree_sapling) = 2
 	)
 	offering_description = "Any tree sapling"
 
@@ -939,7 +939,7 @@
 
 //---- TREEFATHERS BULWARK
 #define BOULDER_AMOUNT 5
-#define STONE_AMOUNT 15
+#define STONE_AMOUNT 10
 
 /datum/druid_ritual/treefathers_bulwark
 	name = "Treefather's Bulwark"
@@ -950,7 +950,7 @@
 		/obj/item/natural/rock,
 		/obj/item/natural/stone,
 	) // Special handling
-	offering_description = "Boulders or small stones" // 5 Boulders or 15 Stones
+	offering_description = "Boulders or small stones" // 5 Boulders or 10 Stones
 
 /datum/druid_ritual/treefathers_bulwark/prepare_tracker()
 	offering_tracker = list(
@@ -1009,8 +1009,8 @@
 	experience_payout = 100
 	druid_ritual_tier = SKILL_LEVEL_JOURNEYMAN
 	specific_offerings = list(
-		/obj/item/leechtick_bloated = 1,
-		list(/obj/item/natural/bone, /obj/item/alch/bone) = 4,
+		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence) = 1,
+		list(/obj/item/natural/bone, /obj/item/alch/bone, /obj/item/alch/sinew, /obj/item/alch/viscera, /obj/item/alch/bonemeal, /obj/item/skull) = 4
 	)
 
 /datum/druid_ritual/soulbind/on_complete_rewards(mob/living/user)
@@ -1137,25 +1137,24 @@
 //---- Harvest Bloomstone
 /datum/druid_ritual/harvest_bloomstone
 	name = "Harvest Bloomstone"
-	unique_tree_rite = TRUE // One stone per tree
+	unique_tree_rite = FALSE // Doesn't benefit the tree, making it one tree per rite for a disposable tool is silly
 	experience_payout = 50
-	druid_ritual_tier = SKILL_LEVEL_EXPERT
+	druid_ritual_tier = SKILL_LEVEL_JOURNEYMAN
 	specific_offerings = list(
-		/obj/item/natural/rock = 1,
-		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence, /obj/item/natural/stone) = 1, //XANTODO Custom handling on the stone
-		/obj/item/alch/blessedseedpowder = 1,
+		/obj/item/natural/stone = 1, //XANTODO Custom handling on the stone
+		/obj/item/alch/blessedseedpowder = 3,
 	)
 
 /datum/druid_ritual/harvest_bloomstone/accept_offering(obj/item/offering, mob/living/user, silent = FALSE)
 	if(istype(offering, /obj/item/natural/stone))
 		var/obj/item/natural/stone/offered_stone = offering
-		if(offered_stone.magic_power < 5)
-			to_chat(user, span_warning("The stone must be at least +5 or more to be accepted by the rite."))
+		if(offered_stone.magic_power < 1)
+			to_chat(user, span_warning("The stone must be at least glowing with magic to be accepted by the rite."))
 			return FALSE
 	return ..()
 
 /// Harvest Bloomstone: a 20-use blessed seed powder stone (once per tree).
-/// Offerings: 1 boulder + 1 enchanted stone (magic_power 10+) + 5 blessed seed powders.
+/// Offerings: 1 enchanted stone (magic_power 1+) + 3 blessed seed powders.
 /// Requires Expert Druidic Trickery to initiate (gated in open_ritual_menu).
 /datum/druid_ritual/harvest_bloomstone/on_complete_rewards(mob/living/user)
 	var/turf/user_turf = get_turf(user)
@@ -1167,14 +1166,14 @@
 /datum/druid_ritual/fey_weaving
 	name = "Fey Weaving"
 	experience_payout = 50
-	druid_ritual_tier = SKILL_LEVEL_EXPERT
+	druid_ritual_tier = SKILL_LEVEL_JOURNEYMAN
 	specific_offerings = list(
-		list(/obj/item/magic/artifact, /obj/item/magic/leyline) = 1,
+		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence) = 1,
 		/obj/item/alch/blessedseedpowder = 1,
 	)
 
 /// mushroom fey circle seeds (repeatable).
-/// Offerings: 1 runed artifact or leyline shard + 4 blessed seed powder. Reward: 2 mushroom_fey seeds.
+/// Offerings: 1 essence of wild OR essence of wood + 1 blessed seed powder. Reward: 2 mushroom_fey seeds.
 /datum/druid_ritual/fey_weaving/on_complete_rewards(mob/living/user)
 	. = ..()
 	var/turf/user_turf = get_turf(user)
@@ -1184,18 +1183,14 @@
 
 /datum/druid_ritual/natures_temper
 	name = "Nature's Temper"
-	unique_tree_rite = TRUE // Gives an armor set, can't mass print these
+	unique_tree_rite = TRUE // I was tempted to make this repeatable on one tree, but it's more fun seeing druids sanctify multiple trees for Dendor
 	experience_payout = 200
-	druid_ritual_tier = SKILL_LEVEL_MASTER
+	druid_ritual_tier = SKILL_LEVEL_MASTER // Keeping this at master because of how strong the armor is.
 	specific_offerings = list(
-		/obj/item/reagent_containers/food/snacks/zizo_bane = 5,
-		/obj/item/magic/artifact = 2,
+		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence) = 2,
 		/obj/item/clothing/suit/roguetown/armor/leather/druid = 1,
 		/obj/item/natural/head/volf = 1,
-		list(/obj/item/natural/head/honeyspider, /obj/item/natural/head/mirespider) = 1,
-		/obj/item/seeds/treesap = 1,
-		/obj/item/alch/blessedseedpowder = 1,
-		/datum/reagent/water/blessed = 30,
+		/obj/item/alch/blessedseedpowder = 2,
 	)
 
 /datum/druid_ritual/natures_temper/accept_offering(obj/item/offering, mob/living/user, silent)
@@ -1223,8 +1218,8 @@
 	return ..() // Everything else should work like normal
 
 /// Nature's Temper: blessed druid armor + possible elven armor piece (once per tree).
-/// Offerings: 5 zizo bane + 2 runed artifacts + druid armor + volf head + spider head +
-///             tree seed + blessed seed powder + 30+ drams holy water.
+/// Offerings: 2 wild essence OR wood essence + druid armor + volf head +
+///             tree seed + blessed seed powder.
 /datum/druid_ritual/natures_temper/on_complete_rewards(mob/living/user)
 	var/turf/user_turf = get_turf(user)
 	if(!ritual_holder.ritual_armor || QDELETED(ritual_holder.ritual_armor))
@@ -1245,15 +1240,31 @@
 
 /datum/druid_ritual/winged_rebirth
 	name = "Winged Rebirth"
-	unique_tree_rite = TRUE // One unlocked form per tree
-	experience_payout = 0 // Need legendary so we don't even bother
-	druid_ritual_tier = SKILL_LEVEL_LEGENDARY
+	unique_tree_rite = FALSE // Removed unique in case you get got by other druids
+	experience_payout = 100 // Added experience payout since we no longer need to put this shit all the way to Legendary
+	druid_ritual_tier = SKILL_LEVEL_EXPERT
 	specific_offerings = list(
-		/obj/item/natural/feather = 10,
-		/obj/item/alch/bonemeal = 10,
-		/obj/item/natural/cured/essence = 1,
+		list(/obj/item/natural/feather, /obj/item/alch/bonemeal) = 5,
+		list(/obj/item/natural/cured/essence, /obj/item/grown/log/tree/small/essence) = 1,
 		/obj/item/alch/bloomstone = 1,
 	)
+
+/datum/druid_ritual/winged_rebirth/get_reward_recipient(mob/living/user)
+	var/mob/living/carbon/human/druid = initiator?.current
+	if(QDELETED(druid) || !ishuman(druid) || druid.mind != initiator)
+		to_chat(user, span_warning("The one who began this rite cannot receive the Treefather's blessing."))
+		return null
+
+	var/obj/effect/proc_holder/spell/self/wildshape/ws = initiator.get_spell(/obj/effect/proc_holder/spell/self/wildshape)
+	if(!ws)
+		to_chat(user, span_warning("The one who began this rite must know the Beast Form miracle."))
+		return null
+
+	if((/mob/living/carbon/human/species/wildshape/bat in ws.possible_shapes) && (/mob/living/carbon/human/species/wildshape/crow in ws.possible_shapes))
+		to_chat(user, span_notice("The one who began this rite already knows both winged guises."))
+		return null
+
+	return druid
 
 /datum/druid_ritual/winged_rebirth/accept_offering(obj/item/offering, mob/living/user, silent)
 	// Special handling, make sure to delete the bloomstone
@@ -1262,8 +1273,8 @@
 		bloom_offering.charges = 0
 	return ..()
 
-/// Winged Rebirth: choose a winged form and add it to Beast Form choices (once per tree).
-/// Offerings: 10 feathers, 10 bonedust, 1 essence of wilderness, 1 harvest bloomstone.
+/// Winged Rebirth: adds bat and crow to the initiator's Beast Form choices.
+/// Offerings: 5 feathers OR bonedust, 1 essence of either types, 1 harvest bloomstone.
 /datum/druid_ritual/winged_rebirth/on_complete_rewards(mob/living/carbon/human/user)
 	if(!ishuman(user))
 		to_chat(user, span_warning("Only a humanoid may receive the Treefather's trickster blessing."))

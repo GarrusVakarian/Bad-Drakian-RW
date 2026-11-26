@@ -59,14 +59,14 @@
 		/datum/skill/craft/carpentry = SKILL_LEVEL_NOVICE,
 		/datum/skill/misc/athletics = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/magic/druidic = SKILL_LEVEL_JOURNEYMAN, //Shapeshifting.
+		/datum/skill/magic/druidic = SKILL_LEVEL_EXPERT, //Since it serves more purpose for druids now, it's time to buff the dedicated class a bit
 		/datum/skill/misc/tracking = SKILL_LEVEL_EXPERT, //Druids know the forest and when it has been disturbed
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/whipsflails = SKILL_LEVEL_NOVICE,
 		/datum/skill/combat/polearms = SKILL_LEVEL_NOVICE, //To help them defend themselves with parrying
 		/datum/skill/craft/cooking = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/labor/butchering = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/labor/fishing = SKILL_LEVEL_NOVICE,
+		/datum/skill/labor/butchering = SKILL_LEVEL_JOURNEYMAN, //They live in the forest surrounded by animals, they should know better than apprentice
+		/datum/skill/labor/fishing = SKILL_LEVEL_APPRENTICE, //Increased from novice for less pain in the butt
 		/datum/skill/misc/hunting = SKILL_LEVEL_APPRENTICE,
 	)
 
@@ -90,9 +90,13 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/robe/dendor
 	belt_contents = list(/obj/item/storage/keyring/churchie = 1)
 	backpack_contents = list(/obj/item/ritechalk, /obj/item/seeds/treesap)
-	if(H.age == AGE_OLD)
-		H.adjust_skillrank_up_to(/datum/skill/magic/holy, 5, TRUE)
+	if(H.age == AGE_MIDDLEAGED)
 		H.adjust_skillrank_up_to(/datum/skill/magic/druidic, 5, TRUE)
+		H.adjust_skillrank_up_to(/datum/skill/labor/farming, 4, TRUE)
+	if(H.age == AGE_OLD) //The wisest of the wise old men, they should know more things than the younglings
+		H.adjust_skillrank_up_to(/datum/skill/magic/holy, 5, TRUE)
+		H.adjust_skillrank_up_to(/datum/skill/magic/druidic, 6, TRUE) //After the rite tweaks, this serves little to no purpose at Legendary other than easier crafting chance
+		H.adjust_skillrank_up_to(/datum/skill/labor/farming, 5, TRUE)
 	H.ambushable = FALSE
 
 /datum/job/roguetown/druid/after_spawn(mob/living/L, mob/M, latejoin = TRUE)

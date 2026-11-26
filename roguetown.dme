@@ -1822,6 +1822,7 @@
 #include "code\modules\crafting\recipe_books\book_entries\gods.dm"
 #include "code\modules\crafting\recipe_books\book_entries\lands.dm"
 #include "code\modules\crafting\recipe_books\book_entries\racial_features.dm"
+#include "code\modules\crafting\recipe_books\book_entries\smelting.dm"
 #include "code\modules\crafting\recipe_books\book_entries\cooking\book_entry_brewing.dm"
 #include "code\modules\crafting\recipe_books\book_entries\cooking\book_entry_dishes.dm"
 #include "code\modules\crafting\recipe_books\book_entries\mage\mage_basic.dm"
