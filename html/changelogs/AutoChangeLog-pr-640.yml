@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - bugfix: "Characters with the Mute vice can silently cast Bless Crops and Sanctify Tree, including while sign language is selected."
