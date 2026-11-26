@@ -37,6 +37,13 @@
 	custom_text = "Counts as having Large testicle size for how much cum you can store and release."
 	added_traits = list(TRAIT_HIGH_SEED_PRODUCTION)
 
+/datum/quirk/quick_load_recovery
+	name = "Quick Recovery"
+	point_cost = 0
+	desc = "I recover quickly after being spent."
+	custom_text = "Recover spent loads four times as fast."
+	added_traits = list(TRAIT_QUICK_LOAD_RECOVERY)
+
 /datum/quirk/high_milk_production
 	name = "High Milk Production"
 	point_cost = 0
