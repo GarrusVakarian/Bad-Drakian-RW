@@ -14,6 +14,8 @@
 	var/list/eggs = list()
 	/// Whether the host has been told their eggs are ready.
 	var/announced_ripe = FALSE
+	/// The applied movement tier, with one tier for every pair of eggs.
+	var/slowdown_tier = 0
 
 /datum/component/implanted_eggs/Initialize()
 	if(!ishuman(parent))
@@ -23,14 +25,31 @@
 
 /datum/component/implanted_eggs/RegisterWithParent()
 	RegisterSignal(parent, COMSIG_LIVING_LIFE, PROC_REF(handle_life))
+	update_slowdown()
 
 /datum/component/implanted_eggs/UnregisterFromParent()
 	UnregisterSignal(parent, COMSIG_LIVING_LIFE)
+	var/mob/living/carbon/human/host = parent
+	if(slowdown_tier && !QDELETED(host))
+		host.remove_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS)
+	slowdown_tier = 0
 
 /datum/component/implanted_eggs/proc/add_egg(list/appearance)
 	appearance["ripe_at"] = world.time + OVI_INCUBATION_TIME
 	eggs += list(appearance)
 	announced_ripe = FALSE
+	update_slowdown()
+
+/datum/component/implanted_eggs/proc/update_slowdown()
+	var/tier = FLOOR(length(eggs) / 2, 1)
+	if(tier == slowdown_tier)
+		return
+	slowdown_tier = tier
+	var/mob/living/carbon/human/host = parent
+	if(tier)
+		host.add_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS, override = TRUE, multiplicative_slowdown = tier * OVI_HOST_SLOWDOWN_PER_PAIR)
+	else
+		host.remove_movespeed_modifier(MOVESPEED_ID_IMPLANTED_EGGS)
 
 /datum/component/implanted_eggs/proc/get_ripe_eggs()
 	. = list()
@@ -44,6 +63,15 @@
 	var/mob/living/carbon/human/host = parent
 	if(host.stat == DEAD)
 		return
+	var/now = world.time
+	var/interval_start = now - seconds SECONDS
+	var/incubation_time = 0
+	for(var/list/egg as anything in eggs)
+		var/ripe_at = egg["ripe_at"]
+		// Only charge for the part of this Life interval the egg spent incubating.
+		incubation_time += max(0, min(now, ripe_at) - max(interval_start, ripe_at - OVI_INCUBATION_TIME))
+	if(incubation_time)
+		host.adjust_nutrition(-OVI_INCUBATION_NUTRITION_PER_MINUTE * incubation_time / (1 MINUTES))
 	var/list/ripe = get_ripe_eggs()
 	if(!length(ripe))
 		return
@@ -69,6 +97,8 @@
 	. = spawn_oviposition_eggs(parent, ripe)
 	if(!length(eggs))
 		qdel(src)
+	else
+		update_slowdown()
 
 /mob/living/carbon/human/proc/grant_egg_verbs()
 	if(/mob/living/carbon/human/proc/lay_eggs in verbs)
