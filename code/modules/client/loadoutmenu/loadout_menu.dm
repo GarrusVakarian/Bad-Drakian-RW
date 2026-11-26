@@ -64,6 +64,7 @@
 		ispath(item_path, /obj/item/toy) || \
 		ispath(item_path, /obj/item/storage/pill_bottle/dice) || \
 		ispath(item_path, /obj/item/chessboard_folded) || \
+		ispath(item_path, /obj/item/ccg_deck) || \
 		ispath(item_path, /obj/item/chastity) || \
 		ispath(item_path, /obj/item/dildo) || \
 		ispath(item_path, /obj/item/leash) \
