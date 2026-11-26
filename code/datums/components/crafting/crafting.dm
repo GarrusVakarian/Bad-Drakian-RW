@@ -526,6 +526,10 @@
 		for(var/A in R.reqs)
 			amt = R.reqs[A]
 			surroundings = get_environment(user)
+			// Apply the same ingredient eligibility check used by get_surroundings().
+			for(var/obj/item/ingredient in surroundings)
+				if(!ingredient.can_craft_with() || (ingredient.flags_1 & HOLOGRAM_1))
+					surroundings -= ingredient
 			for(var/atom/movable/IS in surroundings)
 				if(!R.subtype_reqs && (IS.type in subtypesof(A)))
 					surroundings.Remove(IS)

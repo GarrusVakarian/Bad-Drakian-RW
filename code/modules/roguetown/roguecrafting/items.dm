@@ -46,6 +46,13 @@
 	verbage_simple = "tie"
 	verbage = "ties"
 
+/datum/crafting_recipe/roguetown/survival/clothbelt/upgraded
+	name = "pouch-fitted cloth sash"
+	result = /obj/item/storage/belt/rogue/leather/cloth/upgraded
+	reqs = list(/obj/item/storage/belt/rogue/leather/cloth = 1,
+		/obj/item/storage/belt/rogue/pouch = 1)
+	craftdiff = 1
+
 /datum/crafting_recipe/roguetown/survival/unclothbelt
 	name = "untie cloth belt"
 	result = /obj/item/natural/cloth
@@ -68,6 +75,13 @@
 	craftdiff = 0
 	verbage_simple = "tie"
 	verbage = "ties"
+
+/datum/crafting_recipe/roguetown/survival/ropebelt/upgraded
+	name = "pouch-fitted rope belt"
+	result = /obj/item/storage/belt/rogue/leather/rope/upgraded
+	reqs = list(/obj/item/storage/belt/rogue/leather/rope = 1,
+		/obj/item/storage/belt/rogue/pouch = 1)
+	craftdiff = 1
 
 /datum/crafting_recipe/roguetown/survival/unropebelt
 	name = "untie rope belt"
