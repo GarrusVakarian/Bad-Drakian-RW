@@ -1125,7 +1125,7 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 /datum/sex_controller/proc/handle_charge(dt)
 	var/has_lovefiend = user.has_flaw(/datum/charflaw/addiction/lovefiend)
 	var/recharge_multiplier = has_lovefiend ? 2 : 1
-	if(HAS_TRAIT(user, TRAIT_QUICK_LOAD_RECOVERY))
+	if(HAS_TRAIT(user, TRAIT_QUICK_SEED_RECOVERY))
 		recharge_multiplier = 4
 	adjust_charge(dt * CHARGE_RECHARGE_RATE * recharge_multiplier)
 	if(is_spent())

@@ -297,7 +297,7 @@
 #define TRAIT_FAT_KNOT "Fat Knot"
 #define TRAIT_CLICKER_TRAINED "Clicker Trained"
 #define TRAIT_HIGH_SEED_PRODUCTION "High Seed Production"
-#define TRAIT_QUICK_LOAD_RECOVERY "Quick Load Recovery"
+#define TRAIT_QUICK_SEED_RECOVERY "Quick Seed Recovery"
 #define TRAIT_HIGH_MILK_PRODUCTION "High Milk Production"
 #define TRAIT_RESIDENT "Resident"
 #define TRAIT_COUNTERCOUNTERSPELL "Counter Counterspell"
