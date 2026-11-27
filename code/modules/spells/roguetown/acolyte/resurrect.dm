@@ -583,17 +583,16 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/dendor
 	name = "Wild Revival"
-	desc = "At a wise or sanctified tree, offer herbs and call the dead back to the living world. Those who rise are slower and frailer for a time. Beasts rise whole.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
+	desc = "At a wise or sanctified tree, carve a wooden heart piled with blessed seed powders and call the dead back to the living world. Those who rise are slower and frailer for a time. Beasts rise whole.<br><b>Cast on yourself to see the required offerings and where to perform the rite.</b>"
 	ritual_site_name = "a wise tree or sanctified tree"
 	//Herbs that have to do with intelligence mostly. Easier to remember.
 	required_items = list(
-		/obj/item/reagent_containers/food/snacks/grown/manabloom = 3,
-		/obj/item/alch/mentha = 3,
-		/obj/item/reagent_containers/food/snacks/grown/rogue/swampweed = 3
+		/obj/item/carvedwood/heart = 1,
+		/obj/item/alch/blessedseedpowder = 4,
 	)
 	alt_required_items = list(
-		/obj/item/reagent_containers/food/snacks/grown/manabloom = 3,
-		/obj/item/reagent_containers/food/snacks/grown/rogue/swampweed = 1
+		/obj/item/carvedwood/heart = 1,
+		/obj/item/alch/blessedseedpowder = 2,
 	)
 	debuff_type = /datum/status_effect/debuff/dendor_revival
 	required_structure = /obj/structure/flora/roguetree/wise

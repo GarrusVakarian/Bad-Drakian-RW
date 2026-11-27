@@ -568,7 +568,7 @@
 	req_table = FALSE
 	always_availible = TRUE
 	skillcraft = /datum/skill/magic/druidic
-	craftdiff = SKILL_LEVEL_MASTER
+	craftdiff = SKILL_LEVEL_EXPERT
 	reqs = list(
 		/obj/item/fertilizer = 1,
 		/obj/item/natural/fibers = 3,
