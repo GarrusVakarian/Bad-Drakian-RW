@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Added Monster Maw as a Face Detail with three customizable colors."
-  - bugfix: "Mirrors can apply a Face Detail to a head without any existing details."

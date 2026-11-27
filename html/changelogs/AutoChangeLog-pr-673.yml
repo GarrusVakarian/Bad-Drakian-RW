@@ -1,5 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Choose Classic or Small artwork for laid eggs and tint either style with Egg color."
-  - bugfix: "Apply the IC Climax Egg Count to implantation."

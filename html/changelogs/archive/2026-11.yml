@@ -1168,3 +1168,17 @@
       me your nugget.
   mypingishuge:
   - code_imp: The automatic changelog accepts tweak as an alias for balance.
+  - rscadd: Choose Classic or Small artwork for laid eggs and tint either style with
+      Egg color.
+  - bugfix: Apply the IC Climax Egg Count to implantation.
+  - balance: Open Werewolf slots can be claimed through the Villains menu regardless
+      of the roundstart Werewolf toggle.
+  - balance: Dreamwalker events that pick nobody and unfilled roundstart Assassin
+      spots can open latejoin slots in Villains.
+  - qol: The Villains menu links to forming villain migrant waves.
+  - balance: Lowered the Dreamwalker, roundstart Werewolf, Gnolls Migration, and the
+      storyteller's major, villain, and objective population minimums to 15.
+  - balance: Werewolf, Dreamwalker, Assassin, and Dragon now require 15 Player Quality
+      across their entry paths.
+  - rscadd: Added Monster Maw as a Face Detail with three customizable colors.
+  - bugfix: Mirrors can apply a Face Detail to a head without any existing details.
