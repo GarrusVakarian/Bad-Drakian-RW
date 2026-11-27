@@ -1,5 +1,9 @@
 /mob/living/carbon/human
 	var/temporary_flavortext = null
+	var/temporary_flavortext_cache_source = null
+	var/temporary_flavortext_formatted = null
+	/// The formatted cut preview examine shows, null when the text fits whole
+	var/temporary_flavortext_preview = null
 
 /mob/living/carbon/human/verb/temp_flavor()
 	set name = "Set temporary flavortext"

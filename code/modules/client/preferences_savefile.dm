@@ -964,9 +964,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		to_chat(parent, span_warning("Couldn't load familiar prefs!"))
 
+	var/gnoll_gallery_loaded = FALSE
 	if(istype(gnoll_prefs))
 		if(!gnoll_prefs.load_gnoll_prefs(S))
 			to_chat(parent, span_warning("Couldn't load gnoll prefs!"))
+		else
+			gnoll_gallery_loaded = TRUE
 	else
 		to_chat(parent, span_warning("Couldn't load gnoll prefs!"))
 
@@ -1382,19 +1385,32 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	// External pref datums have their save/load moved to local procs, to avoid constant reference access
 
+	var/external_prefs_saved = TRUE
+	saved_character_gallery = character_gallery_state()
 	if(istype(familiar_prefs))
 		if(!familiar_prefs.save_familiar_prefs(S))
+			external_prefs_saved = FALSE
 			to_chat(parent, span_warning("Couldn't save familiar prefs!"))
 	else
+		external_prefs_saved = FALSE
 		to_chat(parent, span_warning("Couldn't save familiar prefs!"))
 
 	if(istype(gnoll_prefs))
 		if(!gnoll_prefs.save_gnoll_prefs(S))
+			external_prefs_saved = FALSE
 			to_chat(parent, span_warning("Couldn't save gnoll prefs!"))
+		else
+			saved_gnoll_gallery = gnoll_gallery_state()
 	else
+		external_prefs_saved = FALSE
 		to_chat(parent, span_warning("Couldn't save gnoll prefs!"))
 
-	return TRUE
+	// save_gallery_images() runs sync_gallery_alternates(), which can drop stale sources, so gallery_fingerprints taken
+	// before this save no longer match the values. Dropping them here stops the window showing unsaved changes right
+	// after a save, even though saved_character_gallery and saved_gnoll_gallery were just set
+	gallery_changed()
+	log_headshot_framing("saved")
+	return external_prefs_saved
 
 
 #undef SAVEFILE_VERSION_MAX

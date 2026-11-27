@@ -58,6 +58,9 @@
 @include meta.load-css('./interfaces/Uplink.scss');
 @include meta.load-css('./interfaces/DetectiveBoard.scss');
 
+// Components
+@include meta.load-css('./components/CardBackground.scss');
+
 // Layouts
 @include meta.load-css('./layouts/Layout.scss');
 @include meta.load-css('./layouts/NtosHeader.scss');
