@@ -1,39 +1,50 @@
 /mob/living/carbon/human/proc/handle_curses()
-	for(var/curse in curses)
-		var/datum/curse/C = curse
-		C.on_life(src)
+	for(var/datum/curse/curse as anything in curses)
+		curse.on_life(src)
 
-/mob/living/carbon/human/proc/add_curse(datum/curse/C)
-	if(is_cursed(C))
+/mob/living/carbon/human/proc/add_curse(curse_type)
+	if(!ispath(curse_type, /datum/curse) || is_cursed(curse_type))
 		return FALSE
 
-	C = new C()
-	curses += C
+	var/datum/curse/curse = new curse_type()
+	curses += curse
 	if(HAS_TRAIT(src, TRAIT_CURSE_RESIST))
-		C.resist = 0.5
-	C.on_gain(src, C.resist)
+		curse.resist = 0.5
+	curse.on_gain(src, curse.resist)
+	if(HAS_TRAIT(src, TRAIT_LUX_FREAK))
+		to_chat(src, span_userdanger("A Divine curse buries into my lux, it will take 30 minutes for me to unweave it."))
+		curse.removal_timer = addtimer(CALLBACK(src, PROC_REF(expire_curse), curse), 30 MINUTES, TIMER_STOPPABLE)
 	return TRUE
 
-/mob/living/carbon/human/proc/remove_curse(datum/curse/C)
-	if(!is_cursed(C))
+/mob/living/carbon/human/proc/expire_curse(datum/curse/curse)
+	if(QDELETED(curse) || !(curse in curses))
+		return
+	curse.removal_timer = null
+	remove_curse(curse)
+
+/// A datum identifies one application. A type path finds a matching active curse.
+/mob/living/carbon/human/proc/find_curse(curse_or_type)
+	var/datum/curse/instance = curse_or_type
+	if(istype(instance))
+		return (instance in curses) ? instance : null
+	if(!ispath(curse_or_type, /datum/curse))
+		return null
+	for(var/datum/curse/curse as anything in curses)
+		if(istype(curse, curse_or_type))
+			return curse
+	return null
+
+/mob/living/carbon/human/proc/remove_curse(curse_or_type)
+	var/datum/curse/curse = find_curse(curse_or_type)
+	if(!curse)
 		return FALSE
+	curses -= curse
+	curse.on_loss(src, curse.resist)
+	qdel(curse)
+	return TRUE
 
-	for(var/datum/curse/curse in curses)
-		if(istype(curse, C))
-			curses -= curse
-			curse.on_loss(src, curse.resist)
-			qdel(curse)
-			return TRUE
-	return FALSE
-
-/mob/living/carbon/human/proc/is_cursed(datum/curse/C)
-	if(!C)
-		return FALSE
-
-	for(var/datum/curse/curse in curses)
-		if(istype(curse, C))
-			return TRUE
-	return FALSE
+/mob/living/carbon/human/proc/is_cursed(curse_or_type)
+	return !!find_curse(curse_or_type)
 
 /datum/curse
 	var/name = "Debug Curse"
@@ -41,6 +52,12 @@
 	var/trait
 	var/resist = FALSE
 	var/next_burn = 0
+	var/removal_timer
+
+/datum/curse/Destroy()
+	if(removal_timer)
+		deltimer(removal_timer)
+	return ..()
 
 /datum/curse/proc/on_life(mob/living/carbon/human/owner)
 	return
