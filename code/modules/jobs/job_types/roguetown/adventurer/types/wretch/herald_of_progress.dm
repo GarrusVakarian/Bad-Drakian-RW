@@ -29,7 +29,7 @@
 	subclass_stats = list(
 		STATKEY_WIL = 4,
 		STATKEY_CON = 2,
-		STATKEY_SPD = 2,
+		STATKEY_SPD = 3,
 	)
 	subclass_stashed_items = list(
 		"Sewing Kit" = /obj/item/repair_kit,
