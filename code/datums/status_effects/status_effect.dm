@@ -18,6 +18,8 @@
 	/// While processing, this becomes the world.time when the next tick will occur.
 	/// -1 = will prevent ticks, and if duration is also unlimited (-1), stop processing wholesale.
 	var/tick_interval = 1 SECONDS
+	/// world.time of the last [proc/tick], so it can be told how long it's really been, ticks run late under load
+	var/last_tick_time
 	/// The mob affected by the status effect.
 	var/mob/living/owner
 	/// How many of the effect can be on one mob, and/or what happens when you try to add a duplicate.
@@ -78,6 +80,7 @@
 	if(duration != -1)
 		duration = world.time + duration
 	tick_interval = world.time + tick_interval
+	last_tick_time = world.time
 	if(alert_type)
 		var/atom/movable/screen/alert/status_effect/A = owner.throw_alert(id, alert_type)
 		A?.attached_effect = src //so the alert can reference us, if it needs to
@@ -112,7 +115,8 @@
 		qdel(src)
 		return
 	if(tick_interval < world.time)
-		tick(wait)
+		tick(wait, world.time - last_tick_time)
+		last_tick_time = world.time
 		tick_interval = world.time + initial(tick_interval)
 	if(duration != -1 && duration < world.time)
 		qdel(src)

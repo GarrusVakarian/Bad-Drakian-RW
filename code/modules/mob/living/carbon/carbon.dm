@@ -758,7 +758,7 @@
 				if(vomitrelay && blood_volume > 0)
 					var/mob/living/carbon/human/parent = vomitrelay.loc
 					var/amt = 5 * parent.physiology.bleed_mod
-					blood_volume = max(blood_volume - amt, 0)
+					adjust_blood_volume(-amt)
 					GLOB.azure_round_stats[STATS_BLOOD_SPILT] += amt
 					if(isturf(vomit_source.loc))
 						add_drip_floor(vomit_source.loc, amt)
@@ -996,7 +996,7 @@
 	else
 		clear_fullscreen("CMODE")
 
-	if(health <= crit_threshold || ((blood_volume in -INFINITY to BLOOD_VOLUME_SURVIVE) && !HAS_TRAIT(src, TRAIT_BLOODLOSS_IMMUNE)))
+	if(health <= crit_threshold || ((blood_volume in -INFINITY to BLOOD_VOLUME_SURVIVE) && !HAS_TRAIT(src, TRAIT_BLOODLOSS_IMMUNE) && !HAS_TRAIT(src, TRAIT_NO_BLOODLOSS_EFFECTS)) || HAS_TRAIT(src, TRAIT_DEATHS_DOOR))
 		var/severity = 0
 		switch(health)
 			if(-20 to -10)
