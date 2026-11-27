@@ -58,7 +58,7 @@
 		/datum/skill/craft/sewing = SKILL_LEVEL_JOURNEYMAN, // A hobbyist.
 		/datum/skill/misc/reading = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/unarmed = SKILL_LEVEL_NOVICE, // Parry things.
-		/datum/skill/misc/medicine = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/misc/medicine = SKILL_LEVEL_EXPERT,
 		/datum/skill/craft/cooking = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/labor/fishing = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_JOURNEYMAN,
@@ -81,6 +81,7 @@
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/psydonabsolve)
 			H.mind.teach_crafting_recipe(/datum/crafting_recipe/roguetown/alchemy/qsabsolution)
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/diagnose/secular)
+			H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/psydonluxextract)
 
 /datum/outfit/job/roguetown/absolver/basic/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -93,6 +94,7 @@
 	neck = /obj/item/clothing/neck/roguetown/psicross/silver
 	cloak = /obj/item/clothing/cloak/absolutionistrobe
 	backr = /obj/item/storage/backpack/rogue/satchel/otavan
+	backl = /obj/item/storage/backpack/rogue/backpack
 	belt = /obj/item/storage/belt/rogue/leather
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/fencer/psydon
