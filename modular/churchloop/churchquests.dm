@@ -648,7 +648,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 /obj/item/quest_token/skill_bless
 	name = "mark of craft"
 	desc = "Find a target who is expert in one of the listed skills. Peaceful use gives Boon, combat-mode use gives Scorn."
-	icon_state = "questflaw"
+	icon_state = "questbless"
 	var/list/required_skills = list()
 
 /obj/item/quest_token/skill_bless/attack(target, user)
@@ -774,7 +774,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 /obj/item/quest_token/reliquary
 	name = "sealed reliquary"
 	desc = "Solve the code. It does not expire."
-	icon_state = "questbox"
+	icon_state = "questcode"
 
 	var/code = "0000"
 	var/list/bonus_patron_names = list()
@@ -977,7 +977,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 /obj/item/quest_token/sermon_minor
 	name = "sermon token"
 	desc = "Use on a follower of the listed patron(s). Peaceful use gives Boon, combat-mode use gives Scorn."
-	icon_state = "questflaw"
+	icon_state = "questbless"
 	var/list/required_patron_names = list()
 
 /obj/item/quest_token/sermon_minor/Initialize()
