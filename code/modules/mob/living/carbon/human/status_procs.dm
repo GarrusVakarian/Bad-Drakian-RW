@@ -22,7 +22,7 @@
 		amount *= rand(1.25, 1.3)
 	return ..()
 
-/mob/living/carbon/human/Sleeping(amount, updating = 1, ignore_canstun = 0)
+/mob/living/carbon/human/Sleeping(amount, updating = 1, ignore_canstun = 0, aghost_unattended = FALSE)
 	if(HAS_TRAIT(src, TRAIT_HEAVY_SLEEPER))
 		amount *= rand(1.25, 1.3)
 	return ..()
