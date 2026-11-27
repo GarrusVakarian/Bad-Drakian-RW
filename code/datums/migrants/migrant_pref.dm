@@ -17,6 +17,8 @@
 	// Hidden waves are only queueable while an admin has them forced and forming.
 	if(wave.hidden && !SSmigrants.is_forced_forming(wave_type))
 		return
+	if(!check_join_eligibility())
+		return
 	if(role_type && !(role_type in wave.required_roles) && !(role_type in wave.optional_roles))
 		return
 	if(role_type && !SSmigrants.can_be_role(prefs.parent, role_type))
@@ -44,6 +46,12 @@
 	if(prefs.parent)
 		var/datum/migrant_role/role = role_type ? MIGRANT_ROLE(role_type) : null
 		to_chat(prefs.parent, span_nicegreen("You are queued for [wave.name][role ? " as the [role.name]" : ""]. This does not guarantee a slot."))
+
+/datum/migrant_pref/proc/check_join_eligibility()
+	if(prefs.can_join_with_patron_virtues())
+		return TRUE
+	clear_queue(silent = TRUE)
+	return FALSE
 
 /datum/migrant_pref/proc/clear_queue(silent = FALSE)
 	if(!queued_wave)

@@ -356,6 +356,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	statpack = snapshot["statpack"]
 	virtue = snapshot["virtue"]
 	virtuetwo = snapshot["virtuetwo"]
+	clear_ineligible_patron_virtues()
 	virtue_background = snapshot["virtue_background"]
 	natural_armor_name = snapshot["natural_armor_name"]
 	natural_armor_desc = snapshot["natural_armor_desc"]
@@ -550,6 +551,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 		virtuetwo = new virtuetwo_type()
 	else
 		virtuetwo = new /datum/virtue/none()
+	clear_ineligible_patron_virtues()
 
 	// Backgrounds are their own slot, so presets carry their own entry for them. Guarded against the
 	// background subtype so a preset saved before the slot existed can't land elsewhere.
@@ -1810,6 +1812,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 	
 	if(href_list["virtue_action"])
 		var/action = href_list["virtue_action"]
+		var/has_ascendant_patron = istype(selected_patron, /datum/patron/inhumen)
 		
 		if(action == "change_primary")
 			// Save state before change
@@ -1823,6 +1826,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				// Retired stubs resolve for old saves but never show up as a pick, and backgrounds
 				// have their own list (see the change_background action below).
 				if(V.unlisted || V.retired || istype(V, /datum/virtue/background))
+					continue
+				if(!virtue_check(V, has_ascendant_patron))
 					continue
 				// Skip if already selected as secondary virtue
 				if(virtuetwo && V.type == virtuetwo.type)
@@ -1839,6 +1844,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
+				if(!virtue_check(selected, istype(selected_patron, /datum/patron/inhumen)))
+					to_chat(usr, span_warning("You need an Ascendant patron to select [choice]."))
+					return
 				virtue = selected
 				to_chat(usr, span_notice("Selected [choice] as primary virtue."))
 				to_chat(usr, "<span class='info'>[selected.desc]</span>")
@@ -1862,6 +1870,8 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 				// Retired stubs resolve for old saves but never show up as a pick, and backgrounds
 				// have their own list (see the change_background action below).
 				if(V.unlisted || V.retired || istype(V, /datum/virtue/background))
+					continue
+				if(!virtue_check(V, has_ascendant_patron))
 					continue
 				// Check if restricted by species
 				if(length(pref_species.restricted_virtues))
@@ -1887,6 +1897,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			
 			if(choice)
 				var/datum/virtue/selected = virtues_available[choice]
+				if(!virtue_check(selected, istype(selected_patron, /datum/patron/inhumen)))
+					to_chat(usr, span_warning("You need an Ascendant patron to select [choice]."))
+					return
 				virtuetwo = selected
 				to_chat(usr, span_notice("Selected [choice] as second virtue."))
 				to_chat(usr, "<span class='info'>[selected.desc]</span>")

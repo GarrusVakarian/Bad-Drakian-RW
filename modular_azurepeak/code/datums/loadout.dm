@@ -1397,6 +1397,10 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "silver wedding band"
 	path = /obj/item/clothing/ring/band
 
+/datum/loadout_item/bronze_wedding_band
+	name = "bronze wedding band"
+	path = /obj/item/clothing/ring/band/bronze
+
 /datum/loadout_item/chaperon
 	name = "Chaperon (Normal)"
 	path = /obj/item/clothing/head/roguetown/chaperon
@@ -2401,6 +2405,11 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 /datum/loadout_item/slitteddress
 	name = "Slitted dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/slit
+
+/datum/loadout_item/spellsinger_robe
+	name = "Spellsinger Robe"
+	path = /obj/item/clothing/suit/roguetown/shirt/robe/spellcasterrobe
+	triumph_cost = 2
 
 // POLEARMS & STAVES
 /datum/loadout_item/tri_naledi_staff

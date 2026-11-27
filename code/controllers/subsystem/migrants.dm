@@ -106,8 +106,10 @@ SUBSYSTEM_DEF(migrants)
 	return wave.is_raid ? raid_fail_cooldown : faction_fail_cooldown
 
 /datum/controller/subsystem/migrants/proc/try_spawn_wave(datum/migrant_wave/wave, forced = FALSE)
-	var/list/active_migrants
-	active_migrants = get_wave_candidates(wave.type)
+	var/list/active_migrants = list()
+	for(var/client/candidate as anything in get_wave_candidates(wave.type))
+		if(candidate.prefs.migrant.check_join_eligibility())
+			active_migrants += candidate
 	active_migrants = shuffle(active_migrants)
 	if(!length(active_migrants))
 		return FALSE
@@ -266,7 +268,7 @@ SUBSYSTEM_DEF(migrants)
 	if(!can_spawn_migrant_role(player, assignment.role_type, wave.type))
 		return FALSE
 	var/mob/dead/new_player/newplayer = player.mob
-	if(QDELETED(newplayer) || newplayer.spawning || newplayer.latejoin_in_progress)
+	if(!player.prefs.migrant.check_join_eligibility())
 		return FALSE
 	newplayer.latejoin_in_progress = TRUE
 
@@ -275,13 +277,13 @@ SUBSYSTEM_DEF(migrants)
 		newplayer.latejoin_in_progress = FALSE
 		return FALSE
 
-	if(QDELETED(newplayer) || newplayer.client != player || player.prefs.migrant.queued_wave != wave.type)
+	if(QDELETED(newplayer) || newplayer.client != player || player.prefs.migrant.queued_wave != wave.type || !player.prefs.migrant.check_join_eligibility())
 		newplayer.reset_failed_latejoin(rank, previous_rank)
 		return FALSE
 
 	var/is_gnoll_migrant = ispath(assignment.role_type, /datum/migrant_role/gnoll)
 	var/mob/living/character = newplayer.create_character(TRUE, gnoll_migrant = is_gnoll_migrant)
-	if(QDELETED(character))
+	if(!isliving(character) || QDELETED(character))
 		newplayer.reset_failed_latejoin(rank, previous_rank)
 		return FALSE
 	player.prefs.migrant.post_spawn()

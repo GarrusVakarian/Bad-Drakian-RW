@@ -729,6 +729,10 @@
 	update_icon()
 	if(!length(pending_stew_ingredients) && !pot.reagents.has_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK))
 		pot.visible_message(span_notice("It smells ready..."))
+		// The final recipe can be a brew even when the pot also contains finished stew.
+		if(locate(/datum/reagent/consumable/soup) in pot.reagents.reagent_list)
+			var/turf/cooking_turf = get_turf(pot)
+			cooking_turf?.pollute_turf(/datum/pollutant/food/stew, 150)
 
 /obj/machinery/light/rogue/proc/cancel_stews()
 	stew_generation++

@@ -756,7 +756,7 @@
 	if(. && !prevent_warning)
 		slave.mob_item_insertion_feedback(usr, user, storing)
 
-/datum/component/storage/concrete/remove_from_storage(atom/movable/removed, atom/new_location)
+/datum/component/storage/concrete/remove_from_storage(atom/movable/removed, atom/new_location, refresh_storage = TRUE)
 	//This loops through all cells in the inventory box that we overlap and removes the item from them
 	grid_remove_item(removed)
 	//Cache this as it should be reusable down the bottom, will not apply if anyone adds a sleep to dropped or moving objects, things that should never happen
@@ -773,15 +773,16 @@
 	if(new_location)
 		//Reset the items values
 		_removal_reset(removed)
-		removed.forceMove(new_location)
+		move_removed_item(removed, new_location, refresh_storage)
 		//We don't want to call this if the item is being destroyed
 		removed.on_exit_storage(src)
 	else
 		//Being destroyed, just move to nullspace now (so it's not in contents for the icon update)
 		removed.moveToNullspace()
 	removed.update_icon()
-	update_icon()
-	refresh_mob_views()
+	if(refresh_storage)
+		update_icon()
+		refresh_mob_views()
 	return TRUE
 
 /atom/movable/screen/close

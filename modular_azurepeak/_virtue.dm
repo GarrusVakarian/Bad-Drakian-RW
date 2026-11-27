@@ -9,6 +9,8 @@ GLOBAL_LIST_INIT(virtues, init_subtypes_assoc(/datum/virtue))
 	/// Retired virtues (see retired.dm): kept compiling so old saves still resolve, hidden from
 	/// pickers via unlisted, and flagged here so the menu can tell the player to re-pick.
 	var/retired = FALSE
+	/// The character's primary patron must be an Ascendant.
+	var/requires_ascendant_patron = FALSE
 
 /proc/apply_virtue(mob/living/carbon/human/recipient, datum/virtue/virtue_type)
 	if (!virtue_type.check_triumphs(recipient))

@@ -481,6 +481,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/nsfw_ooc_extra_img_link
 
 	var/erpprefs
+	var/automatic_egg_laying_default = TRUE
 
 	var/list/img_gallery = list()
 
@@ -913,6 +914,36 @@ GLOBAL_LIST_EMPTY(chosen_names)
 /datum/preferences/proc/refresh_character_sheet_if_open(mob/user)
 	if(parent && user?.client == parent && current_tab == 0 && winget(user, "preferencess_window", "is-visible") == "true")
 		ShowChoices(user)
+
+/datum/preferences/proc/set_selected_patron(datum/patron/new_patron)
+	selected_patron = new_patron
+	clear_ineligible_patron_virtues()
+
+/datum/preferences/proc/get_ineligible_patron_virtue_slots()
+	if(istype(selected_patron, /datum/patron/inhumen))
+		return
+	var/list/ineligible_slots
+	var/static/list/virtue_slots = list("virtue", "virtuetwo")
+	for(var/slot in virtue_slots)
+		var/datum/virtue/selected = vars[slot]
+		if(selected && !virtue_check(selected, FALSE))
+			LAZYADD(ineligible_slots, slot)
+	return ineligible_slots
+
+/datum/preferences/proc/clear_ineligible_patron_virtues()
+	for(var/slot in get_ineligible_patron_virtue_slots())
+		var/datum/virtue/selected = vars[slot]
+		vars[slot] = GLOB.virtues[/datum/virtue/none]
+		to_chat(parent, span_warning("[selected.name] was deselected. It requires an Ascendant patron."))
+
+/datum/preferences/proc/can_join_with_patron_virtues()
+	var/list/ineligible_slots = get_ineligible_patron_virtue_slots()
+	if(!length(ineligible_slots))
+		return TRUE
+	for(var/slot in ineligible_slots)
+		var/datum/virtue/selected = vars[slot]
+		to_chat(parent, span_boldwarning("You can't join with [selected.name]. Remove it in Character Setup or choose an Ascendant patron."))
+	return FALSE
 
 /datum/preferences/proc/ShowChoices(mob/user, tabchoice)
 	var/client/viewer = user?.client
@@ -2313,7 +2344,7 @@ function setJobPrefRedirect(link) {
 
 				if("subclassoutfit")
 					var/list/choices = list("None")
-					var/datum/job/highest_pref = get_preview_job()
+					var/datum/job/highest_pref = get_highest_priority_job()
 					if(isnull(highest_pref))
 						to_chat(user, "<b>I don't have a Class set to High!</b>")
 					if(length(highest_pref?.job_subclasses))
@@ -2479,7 +2510,7 @@ function setJobPrefRedirect(link) {
 						var/faith_info = "Background: [faith.desc]<br><br>"
 						faith_info += "<font color='#c58cff'>Likely Worshippers: [faith.worshippers]</font>"
 						to_chat(user, fieldset_block("Faith: [faith.name]", faith_info, "faithdesc_block"))
-						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
+						set_selected_patron(GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])])
 
 				if("patron")
 					var/list/patrons_named = list()
@@ -2492,7 +2523,7 @@ function setJobPrefRedirect(link) {
 						patrons_named[patron.name] = patron
 					var/god_input = tgui_input_list(user, "The first amongst many.", "PATRON", patrons_named)
 					if(god_input)
-						selected_patron = patrons_named[god_input]
+						set_selected_patron(patrons_named[god_input])
 						var/patron_info = "<font color='#FFA500'>Domain: [selected_patron.domain]</font><br><br>"
 						patron_info += "Background: [selected_patron.desc]<br><br>"
 						patron_info += "<font color='#c58cff'>Likely Worshippers: [selected_patron.worshippers]</font><br>"
@@ -3782,6 +3813,7 @@ function setJobPrefRedirect(link) {
 		character.real_name = real_name
 	character.name = character.real_name
 	if(!character_setup)
+		character.automatic_egg_laying = automatic_egg_laying_default
 		character.set_background_stat_identity(parent?.ckey, real_name)
 
 	if((selected_title != "None" && pref_species.use_titles) && selected_title != null)

@@ -175,6 +175,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 				return
 		if(SSticker.current_state <= GAME_STATE_PREGAME)
 			if(tready == PLAYER_READY_TO_PLAY)
+				if(!client.prefs.can_join_with_patron_virtues())
+					return
 				if(length(client.prefs.flavortext) < MINIMUM_FLAVOR_TEXT)
 					to_chat(src, span_boldwarning("You need a minimum of [MINIMUM_FLAVOR_TEXT] characters in your flavor text in order to play."))
 					return
@@ -575,6 +577,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	// Eligibility lookups can yield while another player joins or this client leaves the lobby.
 	if(QDELETED(src) || spawning || latejoin_in_progress || client != join_client || mind != join_mind || join_client.mob != src)
 		return FALSE
+	if(!join_client.prefs?.can_join_with_patron_virtues())
+		return FALSE
 	if(latejoin_villain)
 		if(!SSgamemode.latejoin_villain_open(latejoin_villain))
 			to_chat(src, span_warning("That villain slot is no longer available."))
@@ -606,7 +610,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			SSgamemode.latejoin_villain_slots[latejoin_villain]++
 		latejoin_in_progress = FALSE
 		return FALSE
-	if(QDELETED(src) || client != join_client || mind != join_mind)
+	if(QDELETED(src) || client != join_client || mind != join_mind || !join_client.prefs?.can_join_with_patron_virtues())
 		if(latejoin_villain)
 			SSgamemode.latejoin_villain_slots[latejoin_villain]++
 		reset_failed_latejoin(rank, previous_rank)
@@ -978,6 +982,9 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 /mob/dead/new_player/proc/check_preferences()
 	if(!client)
 		return FALSE //Not sure how this would get run without the mob having a client, but let's just be safe.
+	if(!client.prefs.can_join_with_patron_virtues())
+		ready = PLAYER_NOT_READY
+		return FALSE
 	if(client.prefs.joblessrole != RETURNTOLOBBY)
 		return TRUE
 	// If they have antags enabled, they're potentially doing this on purpose instead of by accident. Notify admins if so.
@@ -993,5 +1000,5 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			log_admin("[src.ckey] just got booted back to lobby with no jobs, but antags enabled.")
 			message_admins("[src.ckey] just got booted back to lobby with no jobs enabled, but antag rolling enabled. Likely antag rolling abuse.")
 
-		return FALSE //This is the only case someone should actually be completely blocked from antag rolling as well
+		return FALSE
 	return TRUE

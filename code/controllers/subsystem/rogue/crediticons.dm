@@ -41,6 +41,10 @@ SUBSYSTEM_DEF(crediticons)
 	flags = SS_NO_INIT | SS_NO_FIRE
 	var/list/portrait_queue = list()
 	var/worker_running = FALSE
+	var/list/wanted_portraits = list()
+	var/list/wanted_portrait_owners = list()
+	var/list/wanted_portrait_queue = list()
+	var/wanted_worker_running = FALSE
 
 /datum/mind
 	var/credits_manual_updates = 0

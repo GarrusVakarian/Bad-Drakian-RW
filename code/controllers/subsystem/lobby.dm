@@ -21,19 +21,18 @@ SUBSYSTEM_DEF(lobbymenu)
 	)
 	actor_list += "<center><b>Classes:</b></center><hr>"
 	for (var/mob/dead/new_player/player in GLOB.player_list)
-		if (player.client?.ckey in GLOB.hiderole)
+		if (player.ready != PLAYER_READY_TO_PLAY || (player.client?.ckey in GLOB.hiderole))
 			continue
-		var/job_choice = player.client?.prefs?.job_preferences
-		if (job_choice)
-			for (var/job_name in job_choice)
-				if (job_choice[job_name] == JP_HIGH)
-					if (job_name in wanderer_jobs)
-						job_name = "Wanderer"
-					if (player.ready == PLAYER_READY_TO_PLAY)
-						if (!ready_players_by_job[job_name])
-							ready_players_by_job[job_name] = list()
-						ready_players_by_job[job_name] += player.client.prefs.get_lobby_character_name(job_name)
-						break
+		var/datum/preferences/prefs = player.client?.prefs
+		var/datum/job/preferred_job = prefs?.get_highest_priority_job()
+		if (!preferred_job)
+			continue
+		var/job_name = preferred_job.title
+		if (job_name in wanderer_jobs)
+			job_name = "Wanderer"
+		if (!ready_players_by_job[job_name])
+			ready_players_by_job[job_name] = list()
+		ready_players_by_job[job_name] += prefs.get_lobby_character_name(job_name)
 
 	var/list/job_list_by_department = list( // Oorah Key value pair
 		"Noblemen" = list(), // High nobility

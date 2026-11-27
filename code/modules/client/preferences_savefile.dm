@@ -879,6 +879,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 /datum/preferences/proc/load_character(slot)
 	bounty_preset_slot_revision++
+	automatic_egg_laying_default = initial(automatic_egg_laying_default)
 	// Invalidate queued portraits even if the player switches away and back.
 	credits_revision++
 	if(!path)
@@ -1020,6 +1021,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["song_artist"]		>> song_artist
 	S["song_title"]			>> song_title
 	S["nsfwflavortext"]	>> nsfwflavortext
+	S["automatic_egg_laying_default"] >> automatic_egg_laying_default
+	automatic_egg_laying_default = sanitize_integer(automatic_egg_laying_default, FALSE, TRUE, initial(automatic_egg_laying_default))
 	S["nsfw_ooc_extra_img"]		>> nsfw_ooc_extra_img
 	S["nsfw_ooc_extra_img_link"]	>> nsfw_ooc_extra_img_link
 	if(!valid_headshot_link(null, nsfw_ooc_extra_img_link, FALSE, list("jpg", "jpeg", "png", "gif", "mp4")))
@@ -1360,6 +1363,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["nsfw_ooc_extra_img"] , nsfw_ooc_extra_img)
 	WRITE_FILE(S["nsfw_ooc_extra_img_link"] , nsfw_ooc_extra_img_link)
 	WRITE_FILE(S["erpprefs"] , html_decode(erpprefs))
+	WRITE_FILE(S["automatic_egg_laying_default"], automatic_egg_laying_default)
 	WRITE_FILE(S["img_gallery"] , img_gallery)
 	WRITE_FILE(S["nsfw_img_gallery"] , nsfw_img_gallery)
 	_save_loadout_slots(S)

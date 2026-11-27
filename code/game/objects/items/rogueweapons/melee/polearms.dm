@@ -1202,6 +1202,7 @@
 	walking_stick = TRUE
 	wdefense = 5
 	wbalance = WBALANCE_HEAVY
+	special = /datum/special_intent/polearm_backstep
 
 /obj/item/rogueweapon/eaglebeak/getonmobprop(tag)
 	. = ..()
@@ -1216,6 +1217,7 @@
 
 /obj/item/rogueweapon/eaglebeak/blacksteel
 	name = "blacksteel lucerne"
+	special = null // Set by the manoeuvre picker.
 	desc = "A magnificent lucerne of blacksteel. Purpose-made for killing plate-armored opponents, it features a maillebreaker's point and a \
 	flared macehead; excellent for piercing and shattering alloys, respectively. Wrap a length of cloth around the shaft to bear your heraldry."
 	possible_item_intents = list(/datum/intent/spear/bash/eaglebeak, /datum/intent/mace/smash/eaglebeak, /datum/intent/spear/thrust/eaglebeak/oneh)

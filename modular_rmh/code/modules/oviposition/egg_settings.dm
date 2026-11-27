@@ -45,10 +45,11 @@
 	return lowertext(color_input)
 
 /// Adds the egg settings rows to a genital customizer panel.
-/proc/oviposition_pref_choices(list/dat, list/settings, customizer_type, enabled, toggle_label)
+/proc/oviposition_pref_choices(list/dat, datum/preferences/prefs, list/settings, customizer_type, enabled, toggle_label)
 	dat += "<br>[toggle_label]: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_toggle'>[enabled ? "YES" : "NO"]</a>"
 	if(!enabled)
 		return
+	dat += "<br>Auto Egg Laying: <a title='Controls automatic laying at climax and when implanted eggs become overdue.' href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_automatic_laying'>[prefs.automatic_egg_laying_default ? "On" : "Off"]</a>"
 	var/egg_name = settings["name"]
 	var/egg_color = settings["color"]
 	dat += "<br>Clutch size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_clutch'>[settings["clutch"]]</a>"
@@ -57,8 +58,11 @@
 	dat += "<br>Egg color: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_color'>[egg_color ? "<span style='border: 1px solid #161616; background-color: [egg_color];'>&nbsp;&nbsp;&nbsp;</span>" : "Default"]</a>"
 
 /// Handles the egg settings rows. Returns TRUE if the task was one of ours.
-/proc/oviposition_pref_topic(mob/user, task, list/settings)
+/proc/oviposition_pref_topic(mob/user, datum/preferences/prefs, task, list/settings)
 	switch(task)
+		if("ovi_automatic_laying")
+			prefs.automatic_egg_laying_default = !prefs.automatic_egg_laying_default
+			return TRUE
 		if("ovi_clutch")
 			var/new_clutch = input(user, "How many eggs form in a clutch? (1-[OVI_EGG_MAX_CLUTCH])", "Clutch Size", settings["clutch"]) as num|null
 			if(!isnull(new_clutch))

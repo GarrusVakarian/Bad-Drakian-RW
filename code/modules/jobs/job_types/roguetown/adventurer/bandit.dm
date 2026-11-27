@@ -50,6 +50,7 @@
 		if(!H.mind)
 			return
 		H.ambushable = FALSE
+		SSrole_class_handler.bandits_in_round = TRUE
 
 /datum/outfit/job/roguetown/bandit/pre_equip(mob/living/carbon/human/H)
 	. = ..()

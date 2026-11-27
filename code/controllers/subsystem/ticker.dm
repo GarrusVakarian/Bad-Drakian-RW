@@ -510,6 +510,15 @@ SUBSYSTEM_DEF(ticker)
 			message_admins("THERES A MIND LACKING PLAYER IN THE NEW_PLAYER_LIST, REPORT IT TO BAD DRAKIAN DEVELOPMENT STAFF NOW!")
 			continue
 		if(player.ready == PLAYER_READY_TO_PLAY)
+			if(player.client && !player.client.prefs.can_join_with_patron_virtues())
+				var/datum/job/assigned_job = SSjob.GetJob(player.mind.assigned_role)
+				if(assigned_job)
+					assigned_job.current_positions = max(assigned_job.current_positions - 1, 0)
+				player.mind.assigned_role = null
+				GLOB.round_join_times -= player.ckey
+				player.ready = PLAYER_NOT_READY
+				addtimer(CALLBACK(player, TYPE_PROC_REF(/mob/dead/new_player, new_player_panel)), 0)
+				continue
 			GLOB.joined_player_list += player.ckey
 			setup_watchdog?.track("character creation", player)
 			player.create_character(FALSE)

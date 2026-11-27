@@ -17,6 +17,7 @@
 	var/upgrade_level = 0
 	/// The first upgrade locks this cart to either "gears" or "wheelbraces".
 	var/upgrade_family
+	var/installed_upgrade_name
 	var/list/cartloadable_structures = list(/obj/structure/fermentation_keg)
 	var/structure_weight = 20
 	var/bulk_moving = FALSE
@@ -37,6 +38,8 @@
 	if(Adjacent(user))
 		. += span_notice("Capacity: [current_capacity]/[maximum_capacity].")
 		. += span_notice("Contents: [counting_english_list(contained_items, output_icons = FALSE)].")
+	if(installed_upgrade_name)
+		. += span_notice("Installed upgrade: [html_encode(installed_upgrade_name)].")
 	if(upgrade_family)
 		. += span_notice("This cart uses [upgrade_family]; upgrades from the other family cannot be installed.")
 
@@ -205,6 +208,7 @@
 	upgrade_family = family
 	upgrade_level = new_level
 	maximum_capacity = new_capacity
+	installed_upgrade_name = I.name
 	to_chat(user, span_notice("I install [I] into the cart."))
 	qdel(I)
 	update_icon()

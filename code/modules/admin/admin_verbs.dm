@@ -482,8 +482,10 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 			message_admins("[key_name_admin(usr)] re-entered corpse")
 		if(istype(ghost.mind.current, /mob/living))
 			var/mob/living/M = ghost.mind.current
+			var/mob/living/carbon/human/body = ishuman(M) ? M : null
 			var/datum/status_effect/incapacitating/sleeping/S = M.IsSleeping()
-			if(S && !M.IsKnockdown() && !M.IsStun() && !M.IsParalyzed()) // Wake them up unless they're asleep for another reason
+			// The original human body clears its unattended sleep when the client actually returns.
+			if(body?.aghost_observer?.resolve() != ghost && S && !M.IsKnockdown() && !M.IsStun() && !M.IsParalyzed())
 				M.remove_status_effect(S)
 				M.set_resting(FALSE, TRUE)
 			M.density = initial(M.density)

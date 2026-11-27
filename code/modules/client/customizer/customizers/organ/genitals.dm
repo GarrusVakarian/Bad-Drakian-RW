@@ -124,7 +124,7 @@
 
 	if(!islist(penis_entry.egg_settings))
 		penis_entry.egg_settings = default_oviposition_settings()
-	oviposition_pref_choices(dat, penis_entry.egg_settings, customizer_type, penis_entry.ovipositor, "Ovipositor")
+	oviposition_pref_choices(dat, prefs, penis_entry.egg_settings, customizer_type, penis_entry.ovipositor, "Ovipositor")
 
 /datum/customizer_choice/organ/penis/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
 	..()
@@ -164,7 +164,7 @@
 		if("ovi_toggle")
 			penis_entry.ovipositor = !penis_entry.ovipositor
 		else
-			oviposition_pref_topic(user, href_list["customizer_task"], penis_entry.egg_settings)
+			oviposition_pref_topic(user, prefs, href_list["customizer_task"], penis_entry.egg_settings)
 
 /datum/customizer_entry/organ/penis
 	var/penis_taur_mode = FALSE
@@ -617,7 +617,7 @@
 	dat += "<br>Fertile: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=fertile''>[vagina_entry.fertility ? "Fertile" : "Sterile"]</a>"
 	if(!islist(vagina_entry.egg_settings))
 		vagina_entry.egg_settings = default_oviposition_settings()
-	oviposition_pref_choices(dat, vagina_entry.egg_settings, customizer_type, vagina_entry.egg_layer, "Egg layer")
+	oviposition_pref_choices(dat, prefs, vagina_entry.egg_settings, customizer_type, vagina_entry.egg_layer, "Egg layer")
 	dat += "<br><span title='Show vagina sprites on taur bodies'>Taur Vagina: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=vagina_taur_enabled'>[vagina_entry.vagina_taur_enabled ? "Enabled" : "Disabled"]</a></span>"
 
 /datum/customizer_choice/organ/vagina/handle_topic(mob/user, list/href_list, datum/preferences/prefs, datum/customizer_entry/entry, customizer_type)
@@ -633,7 +633,7 @@
 		if("ovi_toggle")
 			vagina_entry.egg_layer = !vagina_entry.egg_layer
 		else
-			oviposition_pref_topic(user, href_list["customizer_task"], vagina_entry.egg_settings)
+			oviposition_pref_topic(user, prefs, href_list["customizer_task"], vagina_entry.egg_settings)
 
 
 /datum/customizer/organ/vagina/human

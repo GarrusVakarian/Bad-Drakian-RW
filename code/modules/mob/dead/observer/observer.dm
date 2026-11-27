@@ -383,6 +383,9 @@ Works together with spawning an observer, noted above.
 	var/mob/dead/observer/ghost	// Transfer safety to observer spawning proc.
 	if(admin)
 		ghost = new /mob/dead/observer/admin(src)
+		if(ishuman(src))
+			var/mob/living/carbon/human/body = src
+			body.aghost_observer = WEAKREF(ghost)
 	else if(drawskip)
 		ghost = new /mob/dead/observer/rogue/nodraw(src)
 	else

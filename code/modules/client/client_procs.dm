@@ -165,6 +165,10 @@ GLOBAL_LIST_EMPTY(respawncounts)
 		chronicle.ui_interact(mob)
 		return
 
+	if(href_list["wanted_posters_ready"])
+		wanted_poster_page_ready(src, href_list["wanted_posters_ready"])
+		return
+
 	if(href_list["viewchronicle"])
 		var/tab = href_list["chronicletab"] || "The Realm"
 		show_chronicle(tab)
@@ -599,6 +603,7 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 
 /client/Del()
 	log_access("Logout: [key_name(src)]")
+	clear_wanted_poster_view(src)
 
 	if(holder)
 		for(var/I in GLOB.clients)
