@@ -11,7 +11,7 @@
 	// No straight upgrade to perception / speed to not stack one stat too high, but still stronger than MAA Skirm out of town.
 	subclass_stats = list(
 		STATKEY_PER = 2,
-		STATKEY_SPD = 2,
+		STATKEY_SPD = 3,
 		STATKEY_WIL = 2,
 		STATKEY_CON = 1
 	)
