@@ -61,7 +61,7 @@ export const CHANGELOG_ENTRIES = [
 	],
 
 	[
-		["balance"],
+		["balance", "tweak"],
 		{
 			placeholders: ["rebalanced something"],
 		},
