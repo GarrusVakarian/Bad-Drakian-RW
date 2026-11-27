@@ -149,6 +149,10 @@
 		body += "<A href='?_src_=holder;[HrefToken()];newbankey=[M.key]'>Ban</A> | "
 
 	body += "<A href='?_src_=holder;[HrefToken()];showmessageckey=[M.ckey]'>Notes | Messages | Watchlist</A> | "
+	if(isliving(M))
+		var/mob/living/fartravel_target = M
+		if(fartravel_target.get_real_body())
+			body += "<A href='?_src_=holder;[HrefToken()];fartravel=[REF(M)]'>Fartravel</A> | "
 	if(M.client)
 		body += "\ <A href='?_src_=holder;[HrefToken()];sendbacktolobby=[REF(M)]'>Send back to Lobby</A> | "
 		var/muted = M.client.prefs.muted
@@ -174,6 +178,8 @@
 	//body += "<A href='?_src_=holder;[HrefToken()];languagemenu=[REF(M)]'>Language Menu</A>"
 	body += "<br><A href='?_src_=holder;[HrefToken()];heal_panel=[REF(M)]'>Heal Panel</A> | "
 	body += "<A href='?_src_=holder;[HrefToken()];inventory_panel=[REF(M)]'>Inventory Panel</A>"
+	if(ishuman(M) && M.client)
+		body += " | <A href='?_src_=holder;[HrefToken()];pref_refresh=[REF(M)]'>Pref Refresh</A>"
 
 	body += "</div>"
 
@@ -1362,10 +1368,13 @@
 	H.admin_send_back_to_lobby(usr)
 
 
-/mob/living/carbon/human/proc/admin_send_back_to_lobby(mob/admin, delete_character = FALSE)
+/// only_if_present skips the player's mind key, so a player who has left this body (ghosted, or playing someone new) is not pulled out to the lobby.
+/mob/living/carbon/human/proc/admin_send_back_to_lobby(mob/admin, delete_character = FALSE, only_if_present = FALSE)
 	var/datum/job/mob_job
-	var/target_job = SSrole_class_handler.get_advclass_by_name(advjob)
-	var/player_key = key ? key : mind?.key
+	// A shapeshifted form (wildshape, werewolf) carries the character's real body inside it.
+	var/mob/living/carbon/human/body = get_real_body()
+	var/target_job = SSrole_class_handler.get_advclass_by_name(body.advjob)
+	var/player_key = key ? key : (only_if_present ? null : mind?.key)
 	if(mind)
 		mob_job = SSjob.GetJob(mind.assigned_role)
 		if(mob_job)
@@ -1376,16 +1385,20 @@
 		for(var/datum/mind/MF in get_minds())
 			mind.become_unknown_to(MF)
 		for(var/datum/bounty/removing_bounty in GLOB.head_bounties)
-			if(removing_bounty.target == real_name)
+			if(removing_bounty.target == body.real_name)
 				GLOB.head_bounties -= removing_bounty
 	else if(admin)
 		to_chat(admin, span_warning("Target has no mind!"))
-	GLOB.chosen_names -= real_name
+	GLOB.chosen_names -= body.real_name
 	if(!mob_job)
-		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(WANDERERS, FALSE)], mobid)
+		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(WANDERERS, FALSE)], body.mobid)
 	else
-		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(mob_job.department_flag, mob_job.obsfuscated_job)], mobid)
-	LAZYREMOVE(GLOB.roleplay_ads, mobid)
+		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(mob_job.department_flag, mob_job.obsfuscated_job)], body.mobid)
+	LAZYREMOVE(GLOB.roleplay_ads, body.mobid)
+	if(delete_character)
+		body.far_travel_cleanup(mind, player_key && ckey(player_key))
+		if(body != src)
+			far_travel_cleanup() // The form's own embedded objects.
 	if(client)
 		SSdroning.kill_droning(client)
 		SSdroning.kill_loop(client)
