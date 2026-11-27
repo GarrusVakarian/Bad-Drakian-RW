@@ -47,6 +47,25 @@
 	SSroguemachine.hermailers -= src
 	return ..()
 
+/// Turns what someone typed at a HERMES into "#number" for a box, or a name that can match a real_name.
+/// Don't sanitize() names here: it encodes ' as &#39;, which never matches a real_name and reads as box #39.
+/proc/parse_hermes_address(address)
+	var/hash_pos = findtext(address, "#")
+	if(hash_pos)
+		return "#[text2num(copytext(address, hash_pos + 1))]"
+	var/recipient = reject_bad_name(address, max_length = MAX_CHARTER_LEN)
+	if(recipient && LOWER_TEXT(recipient) == LOWER_TEXT(KINGSFIELD_MAILTAG))
+		for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
+			if(X.mailtag == KINGSFIELD_MAILTAG)
+				return "#[X.ournum]"
+	return recipient
+
+/proc/find_hermes_box(address)
+	var/box2find = text2num(copytext(address, findtext(address, "#") + 1))
+	for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
+		if(X.ournum == box2find)
+			return X
+
 /obj/structure/roguemachine/mail/attack_hand(mob/user)
 	if(ishuman(user) && GLOB.carebox.try_retrieve_carebox(user, src))
 		return TRUE
