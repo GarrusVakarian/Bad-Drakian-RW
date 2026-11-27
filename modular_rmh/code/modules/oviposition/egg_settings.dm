@@ -22,6 +22,7 @@
 	return list(
 		"name" = "",
 		"desc" = "",
+		"appearance" = "Classic",
 		"color" = "",
 		"clutch" = OVI_EGG_DEFAULT_CLUTCH,
 	)
@@ -34,9 +35,13 @@
 		clean["name"] = copytext_char(settings["name"], 1, OVI_EGG_MAX_NAME_LENGTH + 1)
 	if(istext(settings["desc"]))
 		clean["desc"] = copytext_char(settings["desc"], 1, OVI_EGG_MAX_DESC_LENGTH + 1)
+	clean["appearance"] = sanitize_oviposition_appearance(settings["appearance"])
 	clean["color"] = sanitize_oviposition_color(settings["color"])
 	clean["clutch"] = sanitize_integer(settings["clutch"], 1, OVI_EGG_MAX_CLUTCH, OVI_EGG_DEFAULT_CLUTCH)
 	return clean
+
+/proc/sanitize_oviposition_appearance(appearance)
+	return appearance == "Small" ? "Small" : "Classic"
 
 /// Returns a "#rrggbb" string, or "" when the input is not a valid color.
 /proc/sanitize_oviposition_color(color_input)
@@ -55,6 +60,7 @@
 	dat += "<br>Clutch size: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_clutch'>[settings["clutch"]]</a>"
 	dat += "<br>Egg name: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_name'>[egg_name ? egg_name : "Default"]</a>"
 	dat += "<br>Egg description: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_desc'>[settings["desc"] ? "Custom" : "Default"]</a>"
+	dat += "<br>Egg appearance: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_appearance'>[sanitize_oviposition_appearance(settings["appearance"])]</a>"
 	dat += "<br>Egg color: <a href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=ovi_color'>[egg_color ? "<span style='border: 1px solid #161616; background-color: [egg_color];'>&nbsp;&nbsp;&nbsp;</span>" : "Default"]</a>"
 
 /// Handles the egg settings rows. Returns TRUE if the task was one of ours.
@@ -77,6 +83,11 @@
 			var/new_desc = tgui_input_text(user, "Describe your eggs. Leave blank for the default.", "Egg Description", settings["desc"], OVI_EGG_MAX_DESC_LENGTH, multiline = TRUE)
 			if(!isnull(new_desc))
 				settings["desc"] = new_desc
+			return TRUE
+		if("ovi_appearance")
+			var/new_appearance = tgui_input_list(user, "Choose your egg appearance.", "Egg Appearance", list("Classic", "Small"), sanitize_oviposition_appearance(settings["appearance"]))
+			if(!isnull(new_appearance))
+				settings["appearance"] = sanitize_oviposition_appearance(new_appearance)
 			return TRUE
 		if("ovi_color")
 			var/new_color = input(user, "Choose your egg color. Cancel to use the default.", "Egg Color", settings["color"] || "#f0e6c8") as color|null

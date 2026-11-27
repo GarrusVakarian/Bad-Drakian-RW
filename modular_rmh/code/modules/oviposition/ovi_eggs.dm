@@ -16,13 +16,20 @@
 /obj/item/reagent_containers/food/snacks/egg/laid/proc/apply_egg_appearance(list/appearance)
 	name = appearance["name"]
 	desc = appearance["desc"]
+	if(appearance["appearance"] == "Small")
+		icon = 'icons/obj/surgery.dmi'
+		icon_state = "ovieggs"
+	else
+		icon = initial(icon)
+		icon_state = initial(icon_state)
 	color = appearance["color"]
 	mother_name = appearance["mother"]
 
-/// Species decide what an egg looks like unless the player set their own name, desc or color.
+/// Species supply default names, descriptions, and colors. Players can customize them and choose the artwork.
 /proc/get_oviposition_egg_appearance(list/settings, mob/living/mother)
 	var/egg_name = "soft egg"
 	var/egg_desc = "A warm, smooth egg with a faintly yielding shell."
+	var/egg_appearance = "Classic"
 	var/egg_color = null
 	var/species_id
 	if(ishuman(mother))
@@ -46,11 +53,13 @@
 			egg_name = settings["name"]
 		if(settings["desc"])
 			egg_desc = settings["desc"]
+		egg_appearance = sanitize_oviposition_appearance(settings["appearance"])
 		if(settings["color"])
 			egg_color = settings["color"]
 	return list(
 		"name" = egg_name,
 		"desc" = egg_desc,
+		"appearance" = egg_appearance,
 		"color" = egg_color,
 		"mother" = mother?.real_name,
 	)
