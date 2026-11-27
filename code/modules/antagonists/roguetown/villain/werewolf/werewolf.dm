@@ -42,9 +42,11 @@
 		forge_werewolf_objectives()
 
 	wolfname = "[pick(GLOB.wolf_prefixes)] [pick(GLOB.wolf_suffixes)]"
+	add_antag_hud(antag_hud_type, antag_hud_name, owner.current)
 	return ..()
 
 /datum/antagonist/werewolf/on_removal()
+	remove_own_antag_hud()
 	if(!silent && owner.current)
 		to_chat(owner.current,span_danger("I am no longer a [special_role]!"))
 	owner.special_role = null
