@@ -227,17 +227,20 @@
 			to_chat(user, span_warning("[L.p_they(TRUE)] did not fall for my feint... [perc]%"))
 		return
 	
-	var/effect_to_apply = (L.mind ? /datum/status_effect/debuff/vulnerable : /datum/status_effect/debuff/exposed)
-
-	L.apply_status_effect(effect_to_apply, 7 SECONDS)
-	L.apply_status_effect(/datum/status_effect/debuff/clickcd, max(1.5 SECONDS + skill_factor, 2.5 SECONDS))
-	L.Immobilize(0.5 SECONDS)
-	L.stamina_add(L.stamina * 0.1)
-	L.Slowdown(2)
+	L.apply_feint_opening(max(1.5 SECONDS + skill_factor, 2.5 SECONDS))
 	user.changeNext_move(CLICK_CD_FAST)	//We don't want the feint effect to be popped instantly.
 	to_chat(user, span_notice("[L.p_they(TRUE)] fell for my feint attack!"))
 	to_chat(L, span_danger("I fall for [user.p_their()] feint attack!"))
 	playsound(user, 'sound/combat/riposte.ogg', 100, TRUE)
+
+/// Applies the target effects of a successful feint without the feinter's cooldown or feedback.
+/mob/living/proc/apply_feint_opening(action_cooldown = 2.5 SECONDS)
+	var/effect_to_apply = mind ? /datum/status_effect/debuff/vulnerable : /datum/status_effect/debuff/exposed
+	apply_status_effect(effect_to_apply, 7 SECONDS)
+	apply_status_effect(/datum/status_effect/debuff/clickcd, action_cooldown)
+	Immobilize(0.5 SECONDS)
+	stamina_add(stamina * 0.1)
+	Slowdown(2)
 
 
 /datum/rmb_intent/riposte

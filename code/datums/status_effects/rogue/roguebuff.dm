@@ -1932,6 +1932,7 @@
 	. = ..()
 	if(!ishuman(owner))
 		return
+	owner.add_movespeed_modifier(MOVESPEED_ID_COMBAT_GUARD, multiplicative_slowdown = 2, movetypes = GROUND)
 	var/mob/living/carbon/human/H = owner
 	if(sfx_on_apply)
 		playsound(H, sfx_on_apply, 100, TRUE)
@@ -1948,6 +1949,7 @@
 
 /datum/status_effect/buff/clash/on_remove()
 	. = ..()
+	owner.remove_movespeed_modifier(MOVESPEED_ID_COMBAT_GUARD)
 	owner.apply_status_effect(/datum/status_effect/debuff/clashcd)
 	if(expired_naturally)
 		owner.balloon_alert_to_viewers("<font color = '#ffffff'>Guard expired!</font>")
@@ -1965,7 +1967,7 @@
 
 /atom/movable/screen/alert/status_effect/buff/clash
 	name = "Ready to Clash"
-	desc = span_notice("I am on guard, and ready to clash. If I am hit, I will successfully defend. Attacking will make me lose my focus.")
+	desc = span_notice("I am on guard, and ready to clash. I move more slowly. If I am hit, I will successfully defend. Attacking will make me lose my focus.")
 	icon_state = "clash"
 
 #define BLOODRAGE_FILTER "bloodrage"

@@ -37,27 +37,31 @@
 		var/mob/living/M = A
 		var/datum/intent/kick_intent = mmb_intent
 		sleep(kick_intent.swingdelay)
-		if(M.has_status_effect(/datum/status_effect/buff/clash) && ishuman(M))
+		if(QDELETED(src) || QDELETED(M) || !isliving(M))
+			return FALSE
+		var/broke_guard = ishuman(M) && M.has_status_effect(/datum/status_effect/buff/clash)
+		if(broke_guard)
 			var/mob/living/carbon/human/HT = M
 			HT.bad_guard(span_warning("The kick throws my stance off!"))
-		if(QDELETED(src) || QDELETED(M))
+		var/kick_resolved = resolve_kick(M, kick_intent)
+		// Guard breaks before the normal defense checks. Save the opening for the next attack.
+		if(broke_guard && !QDELETED(M) && M.stat != DEAD)
+			M.apply_feint_opening()
+		if(!kick_resolved)
 			return FALSE
-		if(!M.Adjacent(src))
-			return FALSE
-		if(src.incapacitated())
-			return FALSE
-		if(M.checkmiss(src))
-			return FALSE
-		if(M.checkdefense(kick_intent, src))
-			return FALSE
-		if(ishuman(M))
-			var/mob/living/carbon/human/H = M
-			H.dna.species.kicked(src, H)
-		else
-			M.onkick(src)
 	else
 		A.onkick(src)
 	OffBalance(3 SECONDS)
+	return TRUE
+
+/mob/living/proc/resolve_kick(mob/living/target, datum/intent/kick_intent)
+	if(QDELETED(src) || QDELETED(target) || !target.Adjacent(src) || incapacitated() || target.checkmiss(src) || target.checkdefense(kick_intent, src))
+		return FALSE
+	if(ishuman(target))
+		var/mob/living/carbon/human/human_target = target
+		human_target.dna.species.kicked(src, human_target)
+	else
+		target.onkick(src)
 	return TRUE
 
 /mob/living/proc/can_kick(atom/A, do_message = TRUE)
