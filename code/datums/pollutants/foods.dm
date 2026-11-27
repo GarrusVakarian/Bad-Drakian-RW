@@ -8,6 +8,10 @@
 
 	descriptor = "smell"
 
+/datum/pollutant/food/stew
+	name = "freshly cooked stew"
+	scent = "freshly cooked stew"
+
 /datum/pollutant/food/apple_pie
 	name = "apple pie"
 	scent = "apple pie"

@@ -248,6 +248,7 @@
 
 /datum/virtue/utility/zchurch_keyholder
 	name = "Defiled Keyholder"
+	requires_ascendant_patron = TRUE
 	desc = "The 'Holy' See has their blood-stained grounds, and so do we. Underneath their noses, we pray to the true gods - I know the locations of the local heretic conclave and the bandit hideout. Secrecy is paramount. If found out, I will surely be killed."
 	added_traits = list(TRAIT_ZURCH, TRAIT_BANDITCAMP)
 

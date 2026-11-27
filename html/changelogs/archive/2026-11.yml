@@ -1119,3 +1119,42 @@
       2, 4, and 6 eggs.
   - rscadd: Players with Accept Egg Implantation enabled can see a bloated stomach
       on examine at four or more implanted eggs.
+  - bugfix: Sanctified trees drop ritual rewards in front of their faces so players
+      can see them.
+  - qol: Examining a handcart shows its installed upgrade.
+  - bugfix: "The EA Hasir-ian merchant\u2019s handcart now appears at their caravan\
+      \ spawn."
+  - rscadd: Steel, iron, and Oathmarked Lucernes gain Backstep.
+  - qol: Peddlers and peddler carts support bulk buying, stocking, and unloading in
+      a new shop window.
+  - bugfix: Broken peddler carts drop stored Mammon and sales proceeds.
+  - bugfix: Quenched items no longer disappear due to out-of-range quality.
+  - bugfix: Dwarvish Knowledge works for needle and hammer repairs.
+  - bugfix: Kabuto and Jingasa both appear in smithing recipes.
+  - bugfix: Incapacitated NPC deadites cannot bite, and net stat penalties end when
+      the net comes off.
+  - bugfix: Fencing shirts and jackets render correctly on feminine bodies. Footwear
+      can be snipped, and boot salvage returns any stowed tools.
+  - rscadd: Arachnids can select Crocs Cavalier, Crocs Assassin, and the Drow Adventurer
+      subclass.
+  - bugfix: Retainers can switch to the garrison SCOM line.
+  - bugfix: The Adjudicator Executioner keeps their starting shield.
+  - rscadd: Short elf ears are available, and Half-Elves can choose no ears.
+  - rscadd: The Spellsinger Robe and bronze wedding band are available in loadouts.
+  - bugfix: The Fit Clothing tooltip explains how to target the item, and the casting
+      message shows the duration when using an Essence of Wilderness.
+  - balance: "Defiled Keyholder and Volf In Sheep\u2019s Clothing require an Ascendant\
+      \ patron. Existing characters with an incompatible virtue must update their\
+      \ choices before joining a round."
+  - qol: Finished stews and soups briefly smell of fresh cooking on hearths and campfires.
+  - rscadd: Read public wanted posters on town boards. The round-end Chronicle reveals
+      anonymous bounty targets in its Outlaws tab.
+  - bugfix: Hunted Man bounties list the correct reward, crime, and issuer.
+2026-11-27:
+  _Rarity:
+  - qol: Added a per-character Auto Egg Laying toggle to character creation.
+  - bugfix: Aghosting no longer spends your body's dream check while you're away.
+  - bugfix: The lobby ready list now shows players with only Medium or Low class preferences.
+  - qol: Prosthetics you twist off yourself stay in your grabbing hand.
+  - rscadd: Use WEAK intent to gently twist off another player's prosthetic. Make
+      me your nugget.

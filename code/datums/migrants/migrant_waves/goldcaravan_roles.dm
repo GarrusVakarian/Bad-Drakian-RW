@@ -60,7 +60,14 @@
 		shoes = /obj/item/clothing/shoes/roguetown/gladiator
 	if(H.mind)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/appraise/secular)
-	new /obj/structure/handcart/ea_hasir(src)
+
+/datum/outfit/job/roguetown/merchant/ea_hasir/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(visualsOnly || QDELETED(H))
+		return
+	var/turf/spawn_turf = get_turf(H)
+	if(spawn_turf)
+		new /obj/structure/handcart/ea_hasir(spawn_turf)
 
 /datum/migrant_role/ea_hasir/guard
 	name = "EA Hasir-ian Guard"
@@ -116,6 +123,7 @@
 /obj/structure/handcart/ea_hasir
 	upgrade_level = 2
 	maximum_capacity = 120
+	installed_upgrade_name = /obj/item/roguegear/wood/reliable::name
 	// Random loot pool
 	var/list/possible_loot = list(
 	/obj/item/clothing/neck/roguetown/ornateamulet,

@@ -20,6 +20,7 @@
 	var/leprosy = 2
 	var/allmig_reward = 0
 	var/last_sleep
+	var/datum/weakref/aghost_observer
 	var/critical_recovery_started_at
 	var/hazard_critical_started_at
 	var/critical_recovery_reminded = FALSE
@@ -38,6 +39,16 @@
 	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_YIELD)
 		return
 	to_chat(src, span_notice("<b>You are critically injured!</b> Right-click the Combat Mode button to <b>yield</b>. This temporarily slows bleeding and grants resistance to critical injuries, but leaves you helpless. Mindless foes will keep attacking!"))
+
+/mob/living/carbon/human/Login()
+	if(client && aghost_observer)
+		aghost_observer = null
+		mob_timers["slo"] = null
+		var/datum/status_effect/incapacitating/sleeping/sleeping = IsSleeping()
+		if(sleeping?.aghost_unattended)
+			qdel(sleeping)
+			set_resting(FALSE, TRUE)
+	return ..()
 
 /mob/living/carbon/human/Life()
 	if (notransform)
@@ -66,9 +77,13 @@
 		for(var/datum/antagonist/A as anything in mind.antag_datums)
 			A.on_life(src)
 
-	handle_curses()
-	handle_vamp_dreams()
-	if(IsSleeping())
+	if(length(curses))
+		handle_curses()
+	var/mob/dead/observer/observer = aghost_observer?.resolve()
+	var/aghosted = !client && observer?.client && observer.mind == mind && mind?.current == src
+	if(!aghosted)
+		handle_vamp_dreams()
+	if(!aghosted && IsSleeping())
 		if(health > 0)
 			if(has_status_effect(/datum/status_effect/debuff/sleepytime) || has_status_effect(/datum/status_effect/debuff/sleepytime/t2) || has_status_effect(/datum/status_effect/debuff/sleepytime/t3))
 				if(world.time > last_sleep + 35 SECONDS) //35 seconds of delay for every progress, letting people wake up before the second sleep removal happens
@@ -111,7 +126,7 @@
 	if(mode == NPC_AI_OFF && !client && !HAS_TRAIT(src, TRAIT_NOSLEEP))
 		if(mob_timers["slo"])
 			if(world.time > mob_timers["slo"] + 90 SECONDS)
-				Sleeping(100)
+				Sleeping(100, aghost_unattended = aghosted)
 		else
 			mob_timers["slo"] = world.time
 	else

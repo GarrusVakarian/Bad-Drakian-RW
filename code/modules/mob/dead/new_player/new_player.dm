@@ -174,6 +174,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 				return
 		if(SSticker.current_state <= GAME_STATE_PREGAME)
 			if(tready == PLAYER_READY_TO_PLAY)
+				if(!client.prefs.can_join_with_patron_virtues())
+					return
 				if(length(client.prefs.flavortext) < MINIMUM_FLAVOR_TEXT)
 					to_chat(src, span_boldwarning("You need a minimum of [MINIMUM_FLAVOR_TEXT] characters in your flavor text in order to play."))
 					return
@@ -524,6 +526,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	return JOB_AVAILABLE
 
 /mob/dead/new_player/proc/AttemptLateSpawn(rank)
+	if(!client?.prefs?.can_join_with_patron_virtues())
+		return FALSE
 	if(rank == "Enslaved Adventurer" && istype(SSmapping?.map_adjustment, /datum/map_adjustment/template/rockhill))
 		to_chat(src, span_warning("Enslaved Adventurer is roundstart-only on Rockhill."))
 		return FALSE
@@ -888,6 +892,9 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 /mob/dead/new_player/proc/check_preferences()
 	if(!client)
 		return FALSE //Not sure how this would get run without the mob having a client, but let's just be safe.
+	if(!client.prefs.can_join_with_patron_virtues())
+		ready = PLAYER_NOT_READY
+		return FALSE
 	if(client.prefs.joblessrole != RETURNTOLOBBY)
 		return TRUE
 	// If they have antags enabled, they're potentially doing this on purpose instead of by accident. Notify admins if so.
@@ -903,5 +910,5 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			log_admin("[src.ckey] just got booted back to lobby with no jobs, but antags enabled.")
 			message_admins("[src.ckey] just got booted back to lobby with no jobs enabled, but antag rolling enabled. Likely antag rolling abuse.")
 
-		return FALSE //This is the only case someone should actually be completely blocked from antag rolling as well
+		return FALSE
 	return TRUE

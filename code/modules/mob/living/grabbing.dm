@@ -353,7 +353,8 @@
 						else
 							to_chat(user, span_warning("[H]'s neck is covered!"))
 		if(/datum/intent/grab/twist)
-			if(HAS_TRAIT(user, TRAIT_PACIFISM))
+			var/assisted_removal = M != user && limb_grabbed?.status == BODYPART_ROBOTIC && istype(user.rmb_intent, /datum/rmb_intent/weak)
+			if(HAS_TRAIT(user, TRAIT_PACIFISM) && !assisted_removal)
 				to_chat(user, span_warning("I don't want to harm [src]!"))
 				return FALSE
 			if(user.buckled)
@@ -362,7 +363,7 @@
 			if(limb_grabbed && grab_state > 0) //this implies a carbon victim
 				if(iscarbon(M))
 					user.stamina_add(rand(3,8))
-					twistlimb(user)
+					twistlimb(user, assisted_removal)
 		if(/datum/intent/grab/twistitem)
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
@@ -497,17 +498,29 @@
 		to_chat(user, span_warning("Ah, Lux... I calm down considerably, but my hunger only increases."))
 		user.remove_status_effect(/datum/status_effect/debuff/deadite_grace)
 
-/obj/item/grabbing/proc/twistlimb(mob/living/user) //implies limb_grabbed and sublimb are things
+/obj/item/grabbing/proc/twistlimb(mob/living/user, assisted_removal = FALSE) //implies limb_grabbed and sublimb are things
 	var/mob/living/carbon/C = grabbed
+	if(assisted_removal || (C == user && limb_grabbed.status == BODYPART_ROBOTIC))
+		var/obj/item/bodypart/prosthetic = limb_grabbed
+		C.visible_message(span_notice("[user] starts loosening [C]'s [prosthetic]."), assisted_removal ? span_notice("[user] starts loosening my [prosthetic].") : null, ignored_mobs = user)
+		to_chat(user, span_notice("I start loosening [prosthetic]."))
+		playsound(user, 'sound/misc/blackbag2.ogg', 100)
+		if(!do_after(user, 6 SECONDS, target = assisted_removal ? C : src))
+			return
+		if(QDELETED(src) || QDELETED(prosthetic) || prosthetic.owner != C || limb_grabbed != prosthetic)
+			return
+		var/grabbing_hand = user.get_held_index_of_item(src)
+		if(!grabbing_hand)
+			return
+		if(!prosthetic.drop_limb())
+			return
+		C.visible_message(span_notice("[user] removes [C]'s [prosthetic]."), assisted_removal ? span_notice("[user] removes my [prosthetic].") : null, ignored_mobs = user)
+		to_chat(user, span_notice("I remove [prosthetic]."))
+		if(!QDELETED(prosthetic) && user.get_item_for_held_index(grabbing_hand) == src && user.temporarilyRemoveItemFromInventory(src))
+			user.put_in_hand(prosthetic, grabbing_hand)
+		return
 	var/armor_block = C.run_armor_check(limb_grabbed, "slash")
 	var/damage = user.get_punch_dmg()
-	if(grabbed == user && limb_grabbed.status == BODYPART_ROBOTIC)	//removing ones own prosthetic should not be violent, nor damaging
-		C.visible_message(span_notice("[user] starts twisting [limb_grabbed] of [C], twisting it out of its socket!"), span_notice("I start twisting [limb_grabbed] from [src]."))
-		playsound(user, 'sound/misc/blackbag2.ogg', 100)
-		if(do_after(user, 60, target = src))
-			C.visible_message(span_notice("[user] twists [limb_grabbed] of [C], popping it out of the socket!"), span_notice("I pop [limb_grabbed] from [src]."))
-			limb_grabbed.drop_limb()
-			return
 	cancel_deadite_grace(user)
 	playsound(C.loc, "genblunt", 100, FALSE, -1)
 	C.next_attack_msg.Cut()
