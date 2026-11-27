@@ -11,7 +11,7 @@
 	outfit_female = null
 	display_order = JDO_DRAGON
 	show_in_credits = TRUE
-	min_pq = 10
+	min_pq = VILLAIN_ROLE_MIN_PQ
 	max_pq = null
 
 	obsfuscated_job = TRUE

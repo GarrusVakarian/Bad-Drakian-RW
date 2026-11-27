@@ -19,9 +19,28 @@
 		return
 	if(!check_join_eligibility())
 		return
-	if(role_type && !SSmigrants.can_be_role(prefs.parent, role_type))
-		to_chat(prefs.parent, span_warning("You can't be this role. (Wrong species, gender, or age.)"))
+	if(role_type && !(role_type in wave.required_roles) && !(role_type in wave.optional_roles))
 		return
+	if(role_type && !SSmigrants.can_be_role(prefs.parent, role_type))
+		var/datum/migrant_role/role = MIGRANT_ROLE(role_type)
+		var/rank = role?.get_antagonist_rank()
+		if(!meets_antagonist_min_pq(prefs.parent?.ckey, rank))
+			to_chat(prefs.parent, span_warning("You need [get_antagonist_min_pq(rank)] Player Quality to join as [rank]."))
+		else
+			to_chat(prefs.parent, span_warning("You can't be this role. (Wrong species, gender, or age.)"))
+		return
+	if(!role_type)
+		var/lowest_pq
+		for(var/wave_role_type in wave.required_roles + wave.optional_roles)
+			var/datum/migrant_role/wave_role = MIGRANT_ROLE(wave_role_type)
+			var/minimum_pq = get_antagonist_min_pq(wave_role?.get_antagonist_rank())
+			if(isnull(lowest_pq) || minimum_pq < lowest_pq)
+				lowest_pq = minimum_pq
+			if(!lowest_pq)
+				break
+		if(lowest_pq && get_playerquality(prefs.parent?.ckey) < lowest_pq)
+			to_chat(prefs.parent, span_warning("You need [lowest_pq] Player Quality to join this migrant wave."))
+			return
 	queued_wave = wave_type
 	queued_role = role_type
 	if(prefs.parent)
@@ -70,6 +89,7 @@
 	data["queued_wave"] = queued_wave ? "[queued_wave]" : null
 	data["queued_role"] = queued_role ? "[queued_role]" : null
 
+	var/list/role_eligibility = list()
 	var/list/forming = list()
 	for(var/track in list(MIGRANT_TRACK_REGULAR, MIGRANT_TRACK_SPECIAL, MIGRANT_TRACK_TRIUMPH, MIGRANT_TRACK_EVENT))
 		var/wave_type = SSmigrants.track_forming[track]
@@ -87,7 +107,7 @@
 			"arrival_at" = SSmigrants.track_arrival[track],
 			"queued" = (queued_wave == wave_type),
 			"min_optional_fills" = wave.min_optional_fills,
-			"roles" = build_role_data(wave),
+			"roles" = build_role_data(wave, role_eligibility),
 		))
 	data["forming"] = forming
 	data["next_regular_at"] = SSmigrants.track_next_roll[MIGRANT_TRACK_REGULAR]
@@ -128,29 +148,32 @@
 			"locked_until" = locked_until,
 			"queued" = (queued_wave == wave_type),
 			"min_optional_fills" = wave.min_optional_fills,
-			"roles" = build_role_data(wave),
+			"roles" = build_role_data(wave, role_eligibility),
 		))
 	data["waves"] = waves
 	return data
 
-/datum/migrant_pref/proc/build_role_data(datum/migrant_wave/wave)
+/datum/migrant_pref/proc/build_role_data(datum/migrant_wave/wave, list/role_eligibility)
 	var/list/rows = list()
 	for(var/role_type in wave.required_roles)
-		rows += list(build_role_entry(role_type, wave.required_roles[role_type], "required"))
+		rows += list(build_role_entry(role_type, wave.required_roles[role_type], "required", role_eligibility))
 	for(var/role_type in wave.optional_roles)
-		rows += list(build_role_entry(role_type, wave.optional_roles[role_type], "optional"))
+		rows += list(build_role_entry(role_type, wave.optional_roles[role_type], "optional", role_eligibility))
 	return rows
 
-/datum/migrant_pref/proc/build_role_entry(role_type, amount, kind)
+/datum/migrant_pref/proc/build_role_entry(role_type, amount, kind, list/role_eligibility)
 	var/datum/migrant_role/role = MIGRANT_ROLE(role_type)
+	var/minimum_pq = get_antagonist_min_pq(role.get_antagonist_rank())
+	if(isnull(role_eligibility[role_type]))
+		role_eligibility[role_type] = SSmigrants.can_be_role(prefs.parent, role_type)
 	return list(
 		"ref" = "[role_type]",
-		"name" = role.name,
+		"name" = minimum_pq ? "[role.name] ([minimum_pq] PQ)" : role.name,
 		"amount" = amount,
 		"kind" = kind,
 		"stars" = SSmigrants.get_stars_on_role(role_type),
 		"queued" = (queued_role == role_type),
-		"can_be" = SSmigrants.can_be_role(prefs.parent, role_type),
+		"can_be" = role_eligibility[role_type],
 		"desc" = role.greet_text,
 	)
 

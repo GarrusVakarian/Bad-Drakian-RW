@@ -340,6 +340,8 @@ SUBSYSTEM_DEF(gamemode)
 			continue
 		if(is_banned_from(candidate.ckey, banned_roles))
 			continue
+		if(QDELETED(candidate) || !candidate.key || !candidate.client || (!observers && !candidate.mind))
+			continue
 		if(!observers)
 			if(!ready_players && !isliving(candidate))
 				continue
@@ -358,6 +360,8 @@ SUBSYSTEM_DEF(gamemode)
 
 		if(be_special)
 			if(!(candidate.client.prefs) || !(be_special in candidate.client.prefs.be_special))
+				continue
+			if(!meets_antagonist_min_pq(candidate.ckey, be_special))
 				continue
 
 		//if(midround_antag_pref)

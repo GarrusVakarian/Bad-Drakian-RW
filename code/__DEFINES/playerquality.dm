@@ -3,3 +3,4 @@
 #define PQ_GAIN_REVIVE 0.1
 #define PQ_GAIN_UNZOMBIFY 0.1
 #define PQ_CAP 500
+#define VILLAIN_ROLE_MIN_PQ 15

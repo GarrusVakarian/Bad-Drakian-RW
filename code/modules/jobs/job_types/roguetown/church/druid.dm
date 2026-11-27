@@ -105,6 +105,7 @@
 		return
 
 	var/mob/living/carbon/human/H = L
+	H.druid_doctrine_pending = TRUE
 	H.advsetup = 1
 	H.invisibility = INVISIBILITY_MAXIMUM
 	H.become_blind("advsetup")
@@ -139,3 +140,5 @@
 		grant_radical_path(H)
 	else
 		grant_old_path(H)
+	H.druid_doctrine_pending = FALSE
+	H.finish_latejoin_dreamwalker()

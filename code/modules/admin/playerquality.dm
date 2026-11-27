@@ -59,6 +59,21 @@
 /proc/qualifies_for_pq_sapling(pq)
 	return isnum(pq) && pq <= 5
 
+/proc/get_antagonist_min_pq(role)
+	switch(role)
+		if(ROLE_WEREWOLF, ROLE_DREAMWALKER, ROLE_ASSASSIN, ROLE_DRAGON)
+			return VILLAIN_ROLE_MIN_PQ
+	return 0
+
+/proc/meets_antagonist_min_pq(player_key, role)
+	var/minimum = get_antagonist_min_pq(role)
+	if(!minimum)
+		return TRUE
+	if(!player_key)
+		return FALSE
+	var/player_pq = get_playerquality(ckey(player_key))
+	return isnum(player_pq) && player_pq >= minimum
+
 /proc/adjust_playerquality(amt, key, admin, reason)
 	var/curpq = 0
 	var/json_file = file("data/player_saves/[copytext(key,1,2)]/[key]/pq_num.json")

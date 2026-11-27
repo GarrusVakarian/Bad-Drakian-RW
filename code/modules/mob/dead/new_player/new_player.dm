@@ -4,6 +4,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 /mob/dead/new_player
 	var/ready = 0
 	var/spawning = 0//Referenced when you want to delete the new_player later on in the code.
+	var/tmp/latejoin_in_progress = FALSE
 	var/topjob = "Hero!"
 	flags_1 = NONE
 
@@ -261,6 +262,16 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		VillainChoices()
 		return
 
+	if(href_list["villain_latejoin"])
+		var/role = href_list["villain_latejoin"]
+		if(!SSgamemode.latejoin_villain_open(role))
+			to_chat(src, span_warning("That villain slot is no longer available."))
+		else if(!meets_antagonist_min_pq(client.ckey, role))
+			to_chat(src, span_warning("You need [get_antagonist_min_pq(role)] Player Quality to join as [role]."))
+		else
+			LateChoices(latejoin_villain = role)
+		return
+
 	if(href_list["bounty_presets"] && usr == src)
 		open_bounty_presets(href_list["bounty_presets"])
 		return
@@ -312,7 +323,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			to_chat(src, span_boldwarning("You need at least a few words in your OOC notes in order to play."))
 			return
 
-		AttemptLateSpawn(href_list["SelectedJob"])
+		AttemptLateSpawn(href_list["SelectedJob"], latejoin_villain = href_list["latejoin_villain"])
 		return
 
 	if(!ready && href_list["preference"])
@@ -351,6 +362,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 
 	var/this_is_like_playing_right = alert(src,"Are you sure you wish to observe? Playing is a lot more fun.","SPECTATE","Yes","No")
 
+	if(latejoin_in_progress || spawning)
+		return FALSE
 	if(QDELETED(src) || !src.client || this_is_like_playing_right != "Yes")
 		ready = PLAYER_NOT_READY
 		src << browse(null, "window=playersetup") //closes the player setup window
@@ -460,7 +473,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		if(job.whitelist_req && !client.whitelisted())
 			return JOB_UNAVAILABLE_GENERIC
 	if(!job.bypass_jobban)
-		if(is_banned_from(ckey, rank))
+		var/ban_roles = latejoin && rank == ROLE_ASSASSIN ? list(ROLE_ASSASSIN, ROLE_SYNDICATE) : rank
+		if(is_banned_from(ckey, ban_roles))
 			return JOB_UNAVAILABLE_BANNED
 		if(client.blacklisted())
 			return JOB_UNAVAILABLE_BANNED
@@ -525,9 +539,11 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		return JOB_UNAVAILABLE_GENERIC
 	return JOB_AVAILABLE
 
-/mob/dead/new_player/proc/AttemptLateSpawn(rank)
-	if(!client?.prefs?.can_join_with_patron_virtues())
+/mob/dead/new_player/proc/AttemptLateSpawn(rank, latejoin_villain = null)
+	if(spawning || latejoin_in_progress || !client || !mind)
 		return FALSE
+	var/client/join_client = client
+	var/datum/mind/join_mind = mind
 	if(rank == "Enslaved Adventurer" && istype(SSmapping?.map_adjustment, /datum/map_adjustment/template/rockhill))
 		to_chat(src, span_warning("Enslaved Adventurer is roundstart-only on Rockhill."))
 		return FALSE
@@ -540,6 +556,35 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(SSticker.late_join_disabled)
 		alert(src, "Something went bad.")
 		return FALSE
+
+	var/datum/job/job = SSjob.GetJob(rank)
+	if(latejoin_villain)
+		if(!SSgamemode.latejoin_villain_open(latejoin_villain))
+			to_chat(src, span_warning("That villain slot is no longer available."))
+			return FALSE
+		if(!SSgamemode.is_latejoin_villain_job(job))
+			to_chat(src, span_warning("You cannot join as [latejoin_villain] with this job."))
+			return FALSE
+		if(QDELETED(join_client) || client != join_client)
+			return FALSE
+		if(!meets_antagonist_min_pq(join_client.ckey, latejoin_villain))
+			to_chat(src, span_warning("You need [get_antagonist_min_pq(latejoin_villain)] Player Quality to join as [latejoin_villain]."))
+			return FALSE
+		if(is_banned_from(join_client.ckey, list(ROLE_SYNDICATE, latejoin_villain)))
+			to_chat(src, span_warning("You are banned from joining as [latejoin_villain]."))
+			return FALSE
+
+	// Eligibility lookups can yield while another player joins or this client leaves the lobby.
+	if(QDELETED(src) || spawning || latejoin_in_progress || client != join_client || mind != join_mind || join_client.mob != src)
+		return FALSE
+	if(!join_client.prefs?.can_join_with_patron_virtues())
+		return FALSE
+	if(latejoin_villain)
+		if(!SSgamemode.latejoin_villain_open(latejoin_villain))
+			to_chat(src, span_warning("That villain slot is no longer available."))
+			return FALSE
+		SSgamemode.latejoin_villain_slots[latejoin_villain]--
+	latejoin_in_progress = TRUE
 /*
 	var/arrivals_docked = TRUE
 	if(SSshuttle.arrivals)
@@ -559,9 +604,24 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 
 	testing("basedtest 1")
 
-	SSjob.AssignRole(src, rank, 1)
+	var/previous_rank = join_mind.assigned_role
+	if(!SSjob.AssignRole(src, rank, TRUE))
+		if(latejoin_villain)
+			SSgamemode.latejoin_villain_slots[latejoin_villain]++
+		latejoin_in_progress = FALSE
+		return FALSE
+	if(QDELETED(src) || client != join_client || mind != join_mind || !join_client.prefs?.can_join_with_patron_virtues())
+		if(latejoin_villain)
+			SSgamemode.latejoin_villain_slots[latejoin_villain]++
+		reset_failed_latejoin(rank, previous_rank)
+		return FALSE
 	testing("basedtest 2")
 	var/mob/living/character = create_character(TRUE)	//creates the human and transfers vars and mind
+	if(QDELETED(character))
+		if(latejoin_villain)
+			SSgamemode.latejoin_villain_slots[latejoin_villain]++
+		reset_failed_latejoin(rank, previous_rank)
+		return FALSE
 	testing("basedtest 3")
 	character.islatejoin = TRUE
 	var/equip = SSjob.EquipRank(character, rank, TRUE)
@@ -570,7 +630,6 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(isliving(equip))	//Borgs get borged in the equip, so we need to make sure we handle the new mob.
 		character = equip
 
-	var/datum/job/job = SSjob.GetJob(rank)
 	testing("basedtest 5")
 
 	if(job && !job.override_latejoin_spawn(character))
@@ -588,7 +647,14 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/mob/living/carbon/human/humanc
 	if(ishuman(character))
 		humanc = character	//Let's retypecast the var to be human,
-		SSgamemode.try_assign_latejoin_werewolf(humanc, job)
+	if(latejoin_villain == ROLE_WEREWOLF && !SSgamemode.assign_latejoin_werewolf(humanc, job, join_client, join_mind))
+		SSgamemode.latejoin_villain_slots[latejoin_villain]++
+		to_chat(character, span_warning("Your Werewolf assignment failed. You joined as your chosen job."))
+	if(latejoin_villain == ROLE_DREAMWALKER)
+		if(humanc && humanc.client == join_client && humanc.mind == join_mind)
+			humanc.queue_latejoin_dreamwalker()
+		else
+			SSgamemode.latejoin_villain_slots[latejoin_villain]++
 /*
 	if(humanc)	//These procs all expect humans
 		GLOB.data_core.manifest_inject(humanc)
@@ -638,6 +704,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(humanc)
 		SSrole_class_handler.setup_class_handler(humanc)
 		try_apply_character_post_equipment(humanc)
+		if(humanc.latejoin_dreamwalker_pending && !SSrole_class_handler.class_select_handlers[humanc.ckey])
+			humanc.finish_latejoin_dreamwalker()
 	log_manifest(character.mind.key,character.mind,character,latejoin = TRUE)
 	if(character.client)
 		character.client.update_ooc_verb_visibility()
@@ -673,11 +741,14 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	if(available_triumphs < required_triumphs)
 		to_chat(src, span_boldwarning("Your character setup costs [required_triumphs] Triumphs, and you have [available_triumphs]. You can still play, but some paid choices may be skipped. You can change them in Character Setup."))
 
-/mob/dead/new_player/proc/LateChoices()
+/mob/dead/new_player/proc/LateChoices(latejoin_villain = null)
 	if(!client)
 		return
 	warn_triumph_shortfall()
 	var/list/dat = list("<div class='notice' style='font-style: normal; font-size: 14px; margin-bottom: 2px; padding-bottom: 0px'>Round Duration: [DisplayTimeText(world.time - SSticker.round_start_time, 1)]</div>")
+	var/job_link_suffix = latejoin_villain ? ";latejoin_villain=[latejoin_villain]" : ""
+	if(latejoin_villain)
+		dat += "<div class='notice'>Choose the job you want to play as a [latejoin_villain].</div>"
 	for(var/datum/job/prioritized_job in SSjob.prioritized_jobs)
 		if(prioritized_job.current_positions >= prioritized_job.total_positions)
 			SSjob.prioritized_jobs -= prioritized_job
@@ -705,6 +776,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		for(var/job in category)
 			var/datum/job/job_datum = SSjob.name_occupations[job]
 			if(!job_datum || job_datum.total_positions == 0)
+				continue
+			if(latejoin_villain && !SSgamemode.is_latejoin_villain_job(job_datum))
 				continue
 			var/availability = IsJobUnavailable(job_datum.title, TRUE)
 			if(availability == JOB_AVAILABLE || availability == JOB_UNAVAILABLE_PQ)
@@ -767,9 +840,9 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 					if(client.prefs.pronouns == SHE_HER && job_datum.f_title)
 						used_name = job_datum.f_title
 					if(job_datum in SSjob.prioritized_jobs)
-						dat += "<a class='job[command_bold][availability_class]' href='byond://?src=[REF(src)];SelectedJob=[job_datum.title]'><span class='priority'>[used_name] ([job_datum.current_positions])</span></a>"
+						dat += "<a class='job[command_bold][availability_class]' href='byond://?src=[REF(src)];SelectedJob=[job_datum.title][job_link_suffix]'><span class='priority'>[used_name] ([job_datum.current_positions])</span></a>"
 					else
-						dat += "<font size = 3>[incompatible_href][do_elaborate ? "<a href='?src=[REF(job_datum)];jobsubclassinfo=1'><b><font color = '#6b6743'>(!)</font></b></a>" : ""]<a class='[availability_class]' href='byond://?src=[REF(src)];SelectedJob=[job_datum.title]'>[command_bold ? "<b>" : ""][used_name] ([job_datum.current_positions]/[job_datum.total_positions])[command_bold ? "</b>" : ""]</a></font>"
+						dat += "<font size = 3>[incompatible_href][do_elaborate ? "<a href='?src=[REF(job_datum)];jobsubclassinfo=1'><b><font color = '#6b6743'>(!)</font></b></a>" : ""]<a class='[availability_class]' href='byond://?src=[REF(src)];SelectedJob=[job_datum.title][job_link_suffix]'>[command_bold ? "<b>" : ""][used_name] ([job_datum.current_positions]/[job_datum.total_positions])[command_bold ? "</b>" : ""]</a></font>"
 						dat += "<br>"
 
 			dat += "</fieldset><br>"
@@ -778,22 +851,39 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 				dat += "</td><td valign='top'>"
 	dat += "</td></tr></table></center>"
 	dat += "</div></div>"
-	var/datum/browser/popup = new(src, "latechoices", "Choose Class", 720, 580)
+	var/datum/browser/popup = new(src, "latechoices", latejoin_villain ? "Choose Class as a [latejoin_villain]" : "Choose Class", 720, 580)
 	popup.add_stylesheet("playeroptions", 'html/browser/playeroptions.css')
 	popup.set_content(jointext(dat, ""))
 	popup.open(FALSE) // 0 is passed to open so that it doesn't use the onclose() proc
+
+/mob/dead/new_player/proc/reset_failed_latejoin(rank, previous_rank)
+	if(rank != previous_rank)
+		var/datum/job/job = SSjob.GetJob(rank)
+		job.current_positions = max(job.current_positions - 1, 0)
+		var/datum/job/previous_job = previous_rank ? SSjob.GetJob(previous_rank) : null
+		if(previous_job)
+			previous_job.current_positions++
+		if(mind?.assigned_role == rank)
+			mind.assigned_role = previous_rank
+	if(QDELETED(src))
+		return
+	spawning = FALSE
+	latejoin_in_progress = FALSE
+	if(!client)
+		key = null
+		qdel(src)
 
 /mob/dead/new_player/proc/create_character(transfer_after, gnoll_migrant = FALSE)
 	spawning = 1
 	close_spawn_windows()
 
-	var/mob/living/carbon/human/H = new(loc)
-
+	var/client/spawn_client = client
 	var/frn = CONFIG_GET(flag/force_random_names)
 	if(!frn)
 		frn = is_banned_from(ckey, "Appearance")
-		if(QDELETED(src))
-			return
+	if(QDELETED(src) || !spawn_client || client != spawn_client)
+		return
+	var/mob/living/carbon/human/H = new(loc)
 	if(frn)
 		client.prefs.random_character()
 

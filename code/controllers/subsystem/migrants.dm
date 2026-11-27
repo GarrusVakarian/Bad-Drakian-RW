@@ -114,8 +114,7 @@ SUBSYSTEM_DEF(migrants)
 	if(!length(active_migrants))
 		return FALSE
 
-	var/list/picked_migrants = list()
-	var/list/assignments = assemble_role_wave(wave, active_migrants, picked_migrants)
+	var/list/assignments = assemble_role_wave(wave, active_migrants)
 	if(isnull(assignments))
 		return FALSE
 
@@ -169,7 +168,7 @@ SUBSYSTEM_DEF(migrants)
 		return wave.greet_text
 	return wave.greet_text_by_fill[best_key]
 
-/datum/controller/subsystem/migrants/proc/assemble_role_wave(datum/migrant_wave/wave, list/active_migrants, list/picked_migrants)
+/datum/controller/subsystem/migrants/proc/assemble_role_wave(datum/migrant_wave/wave, list/active_migrants)
 	var/list/required = list()
 	for(var/role_type in wave.required_roles)
 		for(var/i in 1 to wave.required_roles[role_type])
@@ -177,9 +176,9 @@ SUBSYSTEM_DEF(migrants)
 	required = shuffle(required)
 
 	for(var/datum/migrant_assignment/assignment as anything in required)
-		fill_assignment(assignment, active_migrants, picked_migrants, wave.type, prefer = TRUE)
+		fill_assignment(assignment, active_migrants, wave.type, prefer = TRUE)
 		if(!assignment.client)
-			fill_assignment(assignment, active_migrants, picked_migrants, wave.type, prefer = FALSE)
+			fill_assignment(assignment, active_migrants, wave.type, prefer = FALSE)
 		if(!assignment.client)
 			return null
 
@@ -190,11 +189,11 @@ SUBSYSTEM_DEF(migrants)
 	optional = shuffle(optional)
 
 	for(var/datum/migrant_assignment/assignment as anything in optional)
-		fill_assignment(assignment, active_migrants, picked_migrants, wave.type, prefer = TRUE)
+		fill_assignment(assignment, active_migrants, wave.type, prefer = TRUE)
 	for(var/datum/migrant_assignment/assignment as anything in optional)
 		if(assignment.client)
 			continue
-		fill_assignment(assignment, active_migrants, picked_migrants, wave.type, prefer = FALSE)
+		fill_assignment(assignment, active_migrants, wave.type, prefer = FALSE)
 
 	var/list/filled_optional = list()
 	for(var/datum/migrant_assignment/assignment as anything in optional)
@@ -206,7 +205,7 @@ SUBSYSTEM_DEF(migrants)
 
 	return required + filled_optional
 
-/datum/controller/subsystem/migrants/proc/fill_assignment(datum/migrant_assignment/assignment, list/active_migrants, list/picked_migrants, wave_type, prefer = TRUE)
+/datum/controller/subsystem/migrants/proc/fill_assignment(datum/migrant_assignment/assignment, list/active_migrants, wave_type, prefer = TRUE)
 	if(assignment.client || !length(active_migrants))
 		return
 	var/list/candidates
@@ -215,11 +214,10 @@ SUBSYSTEM_DEF(migrants)
 	else
 		candidates = active_migrants
 	for(var/client/client as anything in candidates)
-		if(!can_be_role(client, assignment.role_type))
+		if(!can_spawn_migrant_role(client, assignment.role_type, wave_type))
 			continue
 		assignment.client = client
 		active_migrants -= client
-		picked_migrants += client
 		return
 
 /datum/controller/subsystem/migrants/proc/get_influenceable_waves()
@@ -267,18 +265,28 @@ SUBSYSTEM_DEF(migrants)
 /datum/controller/subsystem/migrants/proc/spawn_migrant(datum/migrant_wave/wave, datum/migrant_assignment/assignment, spawn_on_location, greet_text)
 	var/rank = "Migrant"
 	var/client/player = assignment.client
-	var/mob/dead/new_player/newplayer = player?.mob
-	if(!istype(newplayer) || !player.prefs?.migrant?.check_join_eligibility())
+	if(!can_spawn_migrant_role(player, assignment.role_type, wave.type))
+		return FALSE
+	var/mob/dead/new_player/newplayer = player.mob
+	if(!player.prefs.migrant.check_join_eligibility())
+		return FALSE
+	newplayer.latejoin_in_progress = TRUE
+
+	var/previous_rank = newplayer.mind?.assigned_role
+	if(!SSjob.AssignRole(newplayer, rank, TRUE))
+		newplayer.latejoin_in_progress = FALSE
 		return FALSE
 
-	if(!SSjob.AssignRole(newplayer, rank, TRUE))
+	if(QDELETED(newplayer) || newplayer.client != player || player.prefs.migrant.queued_wave != wave.type || !player.prefs.migrant.check_join_eligibility())
+		newplayer.reset_failed_latejoin(rank, previous_rank)
 		return FALSE
-	player.prefs.migrant.post_spawn()
 
 	var/is_gnoll_migrant = ispath(assignment.role_type, /datum/migrant_role/gnoll)
 	var/mob/living/character = newplayer.create_character(TRUE, gnoll_migrant = is_gnoll_migrant)
-	if(!isliving(character))
+	if(!isliving(character) || QDELETED(character))
+		newplayer.reset_failed_latejoin(rank, previous_rank)
 		return FALSE
+	player.prefs.migrant.post_spawn()
 	var/mob/living/carbon/human/setup_character
 	if(ishuman(character))
 		setup_character = character
@@ -402,7 +410,7 @@ SUBSYSTEM_DEF(migrants)
 
 /datum/controller/subsystem/migrants/proc/can_be_role(client/player, role_type)
 	var/datum/migrant_role/role = MIGRANT_ROLE(role_type)
-	if(!player)
+	if(!role || !player)
 		return FALSE
 	if(!player.prefs)
 		return FALSE
@@ -415,7 +423,17 @@ SUBSYSTEM_DEF(migrants)
 		return FALSE
 	if(role.allowed_ages && !(prefs.age in role.allowed_ages))
 		return FALSE
-	return TRUE
+	return meets_antagonist_min_pq(player.ckey, role.get_antagonist_rank())
+
+/datum/controller/subsystem/migrants/proc/can_spawn_migrant_role(client/player, role_type, wave_type)
+	if(QDELETED(player) || !can_be_role(player, role_type))
+		return FALSE
+	var/datum/migrant_role/role = MIGRANT_ROLE(role_type)
+	var/rank = role.get_antagonist_rank()
+	if(get_antagonist_min_pq(rank) && is_banned_from(player.ckey, list(ROLE_SYNDICATE, rank)))
+		return FALSE
+	var/mob/dead/new_player/lobby = player?.mob
+	return !QDELETED(player) && isnewplayer(lobby) && !QDELETED(lobby) && !lobby.spawning && !lobby.latejoin_in_progress && player.prefs.migrant.queued_wave == wave_type
 
 /datum/controller/subsystem/migrants/proc/wave_eligible(datum/migrant_wave/wave)
 	if(!wave.can_roll)

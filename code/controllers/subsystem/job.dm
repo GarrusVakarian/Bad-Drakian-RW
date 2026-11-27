@@ -79,7 +79,13 @@ SUBSYSTEM_DEF(job)
 		var/datum/job/job = GetJob(rank)
 		if(!job)
 			return FALSE
+		var/datum/mind/join_mind = player.mind
+		var/client/join_client = player.client
 		if(is_banned_from(player.ckey, rank) || QDELETED(player))
+			return FALSE
+		if(latejoin && (!join_client || player.client != join_client || player.mind != join_mind))
+			return FALSE
+		if(!meets_antagonist_min_pq(player.ckey, rank))
 			return FALSE
 		if(!job.player_old_enough(player.client))
 			return FALSE
@@ -90,6 +96,8 @@ SUBSYSTEM_DEF(job)
 		var/position_limit = job.total_positions
 		if(!latejoin)
 			position_limit = job.spawn_positions
+		else if((rank == ROLE_ASSASSIN || rank == ROLE_DRAGON) && position_limit != -1 && job.current_positions >= position_limit)
+			return FALSE
 		JobDebug("Player: [player] is now Rank: [rank], JCP:[job.current_positions], JPL:[position_limit]")
 		if(player.mind.assigned_role)
 			var/datum/job/old_job = SSjob.GetJob(player.mind.assigned_role)
@@ -437,6 +445,8 @@ SUBSYSTEM_DEF(job)
 				if(player.client.prefs.job_preferences[job_title] != level)
 					continue
 				if(is_banned_from(player.ckey, job_title))
+					continue
+				if(!meets_antagonist_min_pq(player.ckey, job_title))
 					continue
 				SSgamemode.queued_villains[player.ckey] = job_title
 				unassigned -= player
