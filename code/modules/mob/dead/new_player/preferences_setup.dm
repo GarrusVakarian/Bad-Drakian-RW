@@ -43,17 +43,18 @@
 		real_name = pref_species.random_name(gender,1)
 	set_new_race(new random_species_type)
 
-/datum/preferences/proc/get_preview_job()
-	var/datum/job/preview_job
+/// Use the first saved class when multiple classes have the same highest priority.
+/datum/preferences/proc/get_highest_priority_job()
+	var/datum/job/preferred_job
 	var/highest_priority = 0
 	for(var/job in job_preferences)
 		if(job_preferences[job] <= highest_priority)
 			continue
 		var/datum/job/candidate = SSjob.GetJob(job)
 		if(candidate)
-			preview_job = candidate
+			preferred_job = candidate
 			highest_priority = job_preferences[job]
-	return preview_job
+	return preferred_job
 
 /datum/preferences
 	/// Visual customization multiplier used for the last prepared character preview.
@@ -90,7 +91,7 @@
 		return
 //	last_preview_update = world.time
 	// Set up the dummy for its photoshoot
-	var/datum/job/previewJob = get_preview_job()
+	var/datum/job/previewJob = get_highest_priority_job()
 	var/mob/living/carbon/human/dummy/mannequin = generate_or_wait_for_human_dummy(DUMMY_HUMAN_SLOT_PREFERENCES)
 	var/mutable_appearance/preview_appearance
 	var/preview_applied_center_offset = 0
