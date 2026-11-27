@@ -112,6 +112,14 @@
 	icon_state = "scarhead"
 	layer = BODY_LAYER
 
+/datum/sprite_accessory/face_detail/monstermaw
+	name = "Monster Maw"
+	icon = 'modular_drakian/icons/mob/sprite_accessory/monster_maw.dmi'
+	icon_state = "monstermaw"
+	color_disabled = FALSE
+	color_keys = 3
+	color_key_names = list("Teeth", "Head", "Upper eye")
+
 /datum/sprite_accessory/accessory
 	icon = 'icons/mob/sprite_accessory/accessory.dmi'
 	default_colors = list("FFFFFF")

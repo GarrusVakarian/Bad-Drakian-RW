@@ -255,7 +255,7 @@
 			var/new_detail = input(user, "Choose your face detail", "Face Detail") as null|anything in valid_details
 			if(new_detail)
 				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
-				if(head && head.bodypart_features)
+				if(head)
 					// Remove existing face detail if any
 					for(var/datum/bodypart_feature/face_detail/old_detail in head.bodypart_features)
 						head.remove_bodypart_feature(old_detail)
