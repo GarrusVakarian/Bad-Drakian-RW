@@ -11,8 +11,8 @@
 #define TREESAP_STAGE_YOUNG   3
 
 #define TREESAP_WATER_MAX    200
-#define TREESAP_STAGE_TIME   (10 MINUTES)
-#define TREESAP_YOUNG_TIME   (5 MINUTES)
+#define TREESAP_STAGE_TIME   (6 MINUTES)
+#define TREESAP_YOUNG_TIME   (4 MINUTES)
 #define TREESAP_WATER_DRAIN  0.5  // water units lost per second (~6.7 min to dry)
 #define TREESAP_DEATH_TICKS  60   // negative-progress seconds before dying
 

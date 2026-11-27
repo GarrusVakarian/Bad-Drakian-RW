@@ -951,9 +951,27 @@
 	)
 	offering_description = "Any tree sapling"
 
-// Spawn two blessed logs in front of the tree as the Treefather's gift.
+// Spawn two blessed logs in front of the tree as the Treefather's gift, a small chance for wild essence, an even smaller chance for dendor to cry in joy for you being faithful to his domain.
 /datum/druid_ritual/timbers_tithe/on_complete_rewards(mob/living/user)
 	var/turf/reward_turf = ritual_holder.tree.get_reward_turf()
+
+	var/essencewi = pickweight(list(
+		/obj/item/ash													= 50,
+		/obj/item/natural/cured/essence									= 35,
+		/obj/item/grown/log/tree/small/essence                          = 15,
+	))	
+
+	switch(essencewi)
+		if(/obj/item/ash)
+			new /obj/item/ash(reward_turf)
+			to_chat(user, span_red("Something else was trying to form... But it failed, leaving you with a pile of ash."))
+		if(/obj/item/natural/cured/essence)
+			new /obj/item/natural/cured/essence(reward_turf)
+			to_chat(user, span_green("Due to your devotion to Him, the Treefather left behind an essence of wild for you."))
+		if(/obj/item/grown/log/tree/small/essence)
+			new /obj/item/grown/log/tree/small/essence(reward_turf)
+			to_chat(user, span_boldgreen("You can almost hear the Treefather's cry of joy in the back cheering for your devotion of touching grass."))
+
 	for(var/i in 1 to 2)
 		var/obj/item/grown/log/tree/log = new(reward_turf)
 		log.bless_log()

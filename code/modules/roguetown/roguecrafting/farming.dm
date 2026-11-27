@@ -34,3 +34,25 @@
 		)
 	skillcraft = /datum/skill/magic/druidic
 	craftdiff = 4
+
+/datum/crafting_recipe/roguetown/farming/pinesapling
+	name = "nurture tree into pine"
+	always_availible = TRUE
+	result = /obj/item/seeds/treesap/pine
+	reqs = list(
+		/obj/item/seeds/treesap = 1,
+		/obj/item/alch/blessedseedpowder = 2
+		)
+	skillcraft = /datum/skill/magic/druidic
+	craftdiff = 4
+
+/datum/crafting_recipe/roguetown/farming/sakurasapling
+	name = "nurture pine into sakura"
+	always_availible = TRUE
+	result = /obj/item/seeds/treesap/sakura
+	reqs = list(
+		/obj/item/seeds/treesap/pine = 1,
+		/obj/item/alch/blessedseedpowder = 2
+		)
+	skillcraft = /datum/skill/magic/druidic
+	craftdiff = 4
