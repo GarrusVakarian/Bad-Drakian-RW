@@ -731,8 +731,16 @@
 	wdefense = 5
 	swingsound = BLADEWOOSH_MED
 	associated_skill = /datum/skill/combat/axes
-	resistance_flags = FLAMMABLE
 	pickup_sound = 'modular_helmsguard/sound/sheath_sounds/draw_polearm.ogg'
+
+/datum/intent/axe/cut/demolition
+	demolition_mod = 7
+
+/datum/intent/axe/chop/demolition // special intends for anti building specialised
+	demolition_mod = 7
+
+/datum/intent/pick/demolition
+	demolition_mod = 4
 
 /obj/item/rogueweapon/shovel/saperka/getonmobprop(tag)
 	. = ..()
