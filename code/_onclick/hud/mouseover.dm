@@ -303,9 +303,15 @@
 	maptext_y += y_shift
 	if(anchor_y + maptext_y + maptext_height > view_height - 2)
 		maptext_y = -maptext_height - 4 // No room above: put the label below the target.
-	maptext_x = clamp(anchor_x + maptext_x, 2, max(2, view_width - maptext_width - 2)) - anchor_x
-	maptext_y = clamp(anchor_y + maptext_y, 2, max(2, view_height - maptext_height - 2)) - anchor_y
-	screen_loc = "[tile_x]:[pix_X],[tile_y]:[pix_Y]"
+	var/text_left = clamp(anchor_x + maptext_x, 2, max(2, view_width - maptext_width - 2))
+	var/text_bottom = clamp(anchor_y + maptext_y, 2, max(2, view_height - maptext_height - 2))
+
+	// BYOND can grow the map border for an out-of-bounds screen_loc even when its text fits.
+	var/screen_x = clamp(round(anchor_x), 0, view_width - world.icon_size)
+	var/screen_y = clamp(round(anchor_y), 0, view_height - world.icon_size)
+	maptext_x = text_left - screen_x
+	maptext_y = text_bottom - screen_y
+	screen_loc = "[round(screen_x / world.icon_size) + 1]:[screen_x % world.icon_size],[round(screen_y / world.icon_size) + 1]:[screen_y % world.icon_size]"
 
 	moved = screen_loc
 
