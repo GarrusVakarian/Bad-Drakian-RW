@@ -235,6 +235,10 @@
 				head = /obj/item/clothing/head/roguetown/helmet/sallet/warden/wolf
 				mask = /obj/item/clothing/head/roguetown/roguehood/warden
 				cloak = /obj/item/clothing/cloak/wardencloak
+			if("Warden Rouskull")
+				head = /obj/item/clothing/head/roguetown/helmet/sallet/warden/rat
+				mask = /obj/item/clothing/head/roguetown/roguehood/warden
+				cloak = /obj/item/clothing/cloak/wardencloak
 			if("Studded Hood and Hound Mask")
 				head = /obj/item/clothing/head/roguetown/helmet/leather/armorhood/advanced
 				mask = /obj/item/clothing/mask/rogue/facemask/steel/hound
