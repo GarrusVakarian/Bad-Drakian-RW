@@ -16,7 +16,7 @@
 /obj/item/reagent_containers/food/snacks/egg/laid/proc/apply_egg_appearance(list/appearance)
 	name = appearance["name"]
 	desc = appearance["desc"]
-	if(appearance["appearance"] == "Ratwood")
+	if(appearance["appearance"] == "Small")
 		icon = 'icons/obj/surgery.dmi'
 		icon_state = "ovieggs"
 	else

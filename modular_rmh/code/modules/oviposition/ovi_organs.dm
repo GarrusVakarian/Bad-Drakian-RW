@@ -65,9 +65,9 @@
 /obj/item/organ/penis/get_oviposition_location_name()
 	return "ovipositor"
 
-/// Implants as much of the stored clutch as the host has room for. Returns how many were implanted.
-/obj/item/organ/penis/proc/implant_eggs(mob/living/carbon/human/host)
-	if(!egg_settings || !owner || eggs_stored <= 0 || !istype(host) || host == owner)
+/// Implants up to the given limit and the host's remaining capacity. Returns how many were implanted.
+/obj/item/organ/penis/proc/implant_eggs(mob/living/carbon/human/host, limit)
+	if(!egg_settings || !owner || eggs_stored <= 0 || limit <= 0 || !istype(host) || host == owner)
 		return 0
 	if(!host.accepts_oviposition())
 		return 0
@@ -78,7 +78,7 @@
 	if(room <= 0)
 		to_chat(owner, span_warning("[host] is already too full of eggs to take any more."))
 		return 0
-	var/count = min(eggs_stored, room)
+	var/count = min(eggs_stored, room, limit)
 	for(var/i in 1 to count)
 		carried.add_egg(get_oviposition_egg_appearance(egg_settings, owner))
 	eggs_stored -= count
@@ -114,7 +114,7 @@
 	var/obj/item/organ/penis/ovipositor = user.getorganslot(ORGAN_SLOT_PENIS)
 	if(!ovipositor?.egg_settings || ovipositor.eggs_stored <= 0)
 		return
-	ovipositor.implant_eggs(receiver)
+	ovipositor.implant_eggs(receiver, user.climax_egg_count)
 
 /// Called from ejaculate() when climaxing without a partner. Lays up to the chosen total.
 /datum/sex_controller/proc/modular_lay_eggs_on_climax()

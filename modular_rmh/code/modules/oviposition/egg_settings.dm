@@ -41,7 +41,7 @@
 	return clean
 
 /proc/sanitize_oviposition_appearance(appearance)
-	return appearance == "Ratwood" ? "Ratwood" : "Classic"
+	return appearance == "Small" ? "Small" : "Classic"
 
 /// Returns a "#rrggbb" string, or "" when the input is not a valid color.
 /proc/sanitize_oviposition_color(color_input)
@@ -85,7 +85,7 @@
 				settings["desc"] = new_desc
 			return TRUE
 		if("ovi_appearance")
-			var/new_appearance = tgui_input_list(user, "Choose your egg appearance.", "Egg Appearance", list("Classic", "Ratwood"), sanitize_oviposition_appearance(settings["appearance"]))
+			var/new_appearance = tgui_input_list(user, "Choose your egg appearance.", "Egg Appearance", list("Classic", "Small"), sanitize_oviposition_appearance(settings["appearance"]))
 			if(!isnull(new_appearance))
 				settings["appearance"] = sanitize_oviposition_appearance(new_appearance)
 			return TRUE
