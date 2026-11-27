@@ -1024,9 +1024,10 @@
 	return TRUE
 
 /atom/movable/screen/eye_intent/proc/toggle_eyelids(mob/living/user, keep_awake = FALSE)
-	if(user.stat != CONSCIOUS || user.IsSleeping())
+	var/waking_from_torpor = user.stat != DEAD && user.eyesclosed && HAS_TRAIT(user, TRAIT_TORPOR)
+	if(!waking_from_torpor && (user.stat != CONSCIOUS || user.IsSleeping()))
 		return
-	var/closed = !user.eyesclosed || user.stay_awake != keep_awake
+	var/closed = !waking_from_torpor && (!user.eyesclosed || user.stay_awake != keep_awake)
 	if(!set_eyelids(user, closed, closed && keep_awake))
 		return
 	if(keep_awake)
