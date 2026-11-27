@@ -75,7 +75,7 @@
 		target.death(nocutscene = TRUE)
 	was_zombie.on_removal() // Not remove_antag_datum, which needs a mind a decapitated deadite lacks
 
-	if (!HAS_TRAIT(target, TRAIT_IWASUNZOMBIFIED) && user?.ckey)
+	if (!HAS_TRAIT(target, TRAIT_IWASUNZOMBIFIED) && user?.ckey && !(method == "alchemy" && user == target))
 		adjust_playerquality(PQ_GAIN_UNZOMBIFY, user.ckey)
 		ADD_TRAIT(target, TRAIT_IWASUNZOMBIFIED, "[method]")
 
