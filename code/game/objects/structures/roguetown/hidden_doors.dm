@@ -49,6 +49,7 @@ GLOBAL_LIST_EMPTY(secret_walls_with_access)
 	/// The wall restored on closing
 	var/turf/closed/wall_type
 	var/wall_integrity
+	var/wall_max_integrity
 	var/wall_dir
 	var/wall_icon_state
 	/// The wall's appearance when it opened, reused for the closing slide
@@ -88,8 +89,10 @@ GLOBAL_LIST_EMPTY(secret_walls_with_access)
 	RegisterSignal(T, COMSIG_TURF_CHANGE, PROC_REF(on_turf_change))
 	if(access_key)
 		GLOB.secret_walls_with_access += src
-		for(var/mob/living/carbon/human/H as anything in GLOB.human_list) // walls loaded mid-round still reach those already playing
-			H.check_secret_passphrases()
+		if(SSticker.HasRoundStarted())
+			for(var/mob/living/carbon/human/H as anything in GLOB.human_list)
+				if(H.client)
+					H.check_secret_passphrases()
 
 /obj/structure/secret_wall_controller/Destroy()
 	GLOB.secret_walls_with_access -= src
@@ -182,6 +185,7 @@ GLOBAL_LIST_EMPTY(secret_walls_with_access)
 		return FALSE
 	wall_type = T.type
 	wall_integrity = T.turf_integrity
+	wall_max_integrity = T.max_integrity
 	wall_dir = T.dir
 	wall_icon_state = T.icon_state
 	resident_refs = list()
@@ -244,6 +248,7 @@ GLOBAL_LIST_EMPTY(secret_walls_with_access)
 	var/turf/closed/wall = change_own_turf(T, wall_type)
 	is_open = FALSE
 	resident_refs = null
+	wall.max_integrity = wall_max_integrity
 	if(!isnull(wall_integrity))
 		wall.turf_integrity = wall_integrity
 	if(wall_dir)
@@ -298,12 +303,14 @@ GLOBAL_LIST_EMPTY(secret_walls_with_access)
 
 /obj/structure/secret_wall_controller/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, message_mode, original_message)
 	. = ..()
-	if(!ishuman(speaker) || !original_message) // no original_message means an emote
+	if(!ishuman(speaker) || !original_message || radio_freq)
 		return FALSE
-	if(get_dist(speaker, src) > speaking_distance)
+	var/turf/speaker_turf = get_turf(speaker)
+	var/turf/wall_turf = get_turf(src)
+	if(!speaker_turf || !wall_turf || speaker_turf.z != wall_turf.z || get_dist(speaker_turf, wall_turf) > speaking_distance)
 		return FALSE
-	var/phrase = get_phrase()
-	if(!length(phrase) || !findtext(sanitize_hear_message(original_message), sanitize_hear_message(phrase)))
+	var/phrase = sanitize_hear_message(get_phrase())
+	if(!length(phrase) || !findtext(sanitize_hear_message(original_message), phrase))
 		return FALSE
 	// only this wall acts, any other wall in range that heard its phrase acts on its own
 	var/action = trigger(speaker)
