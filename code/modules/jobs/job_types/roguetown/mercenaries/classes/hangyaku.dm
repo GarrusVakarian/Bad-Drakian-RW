@@ -1,5 +1,5 @@
 /datum/advclass/mercenary/hangyaku
-	name = "Hangyaku-Kounen"
+	name = "Hangyaku-Kouken"
 	tutorial = "Rebel. Outlaw. Failure. Once, you served the upper echelons of Kazengun society as more than just a 'knight'- you were a champion, a beacon of virtue, a legend in the making. Now you wander distant Psydonia, seeking a fresh start... or fresh coin, at least."
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = RACES_NO_CONSTRUCT //do they have constructs in kazengun?
@@ -10,13 +10,12 @@
 	traits_applied = list(TRAIT_NOBLE) //i hate nobles but it's thematic
 	cmode_music = 'sound/music/combat_Kazengun_Firestorm.ogg'
 	maximum_possible_slots = 3
-	subclass_stats = list(  // mounted knight, but slower.
+	subclass_stats = list(  // mounted knight
 		STATKEY_STR = 2,
 		STATKEY_INT = 1,
 		STATKEY_CON = 1,
 		STATKEY_WIL = 1,
 		STATKEY_PER = 2,
-		STATKEY_SPD = -1
 	)
 	subclass_skills = list( //impressively limited in terms of what they can do. this is a wall that doesn't do much else.
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
@@ -73,10 +72,6 @@
 			H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
 			H.put_in_hands(new /obj/item/rogueweapon/spear/naginata, TRUE) 
 			H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/gwstrap, SLOT_BACK_R, TRUE)
-		if("Bow")
-			H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_EXPERT, TRUE)
-			H.put_in_hands(new /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve, TRUE) 
-			H.equip_to_slot_or_del(new /obj/item/quiver/arrows, SLOT_BELT_L, TRUE) 
 		if("Greatsword (Nodachi)")
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 			H.put_in_hands(new /obj/item/rogueweapon/greatsword/nodachi, TRUE) 
@@ -86,7 +81,7 @@
 	switch(armor_choice)
 		if("Heavy Armor")
 			ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-			H.equip_to_slot_or_del(new /obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa, SLOT_ARMOR, TRUE)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa, SLOT_ARMOR, TRUE)
 			H.equip_to_slot_or_del(new /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk, SLOT_SHIRT, TRUE)
 			H.equip_to_slot_or_del(new /obj/item/clothing/under/roguetown/chainlegs, SLOT_PANTS, TRUE)
 		if("Medium Armor")
