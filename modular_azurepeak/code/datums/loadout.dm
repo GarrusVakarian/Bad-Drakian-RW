@@ -2365,10 +2365,10 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	name = "Hierophant Cloak"
 	path = /obj/item/clothing/cloak/hierophant
 
-
 /datum/loadout_item/tri_kazengun_cloak
 	name = "Kazengun Cloak"
 	path = /obj/item/clothing/cloak/kazengun
+
 
 
 // NECK ACCESSORIES (Alphabetically Ordered)
