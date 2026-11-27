@@ -14,6 +14,16 @@ assert.equal(basicChangelog.changes.length, 1);
 assert.equal(basicChangelog.changes[0].type.changelogKey, "rscadd");
 assert.equal(basicChangelog.changes[0].description, "Adds new stuff");
 
+const tweakChangelog = parseChangelog(`
+	:cl:
+	tweak: Guard slows movement.
+	/:cl:
+`);
+
+assert.equal(tweakChangelog.changes.length, 1);
+assert.equal(tweakChangelog.changes[0].type.changelogKey, "balance");
+assert.equal(tweakChangelog.changes[0].description, "Guard slows movement.");
+
 // Multi-line test
 const multiLineChangelog = parseChangelog(`
 	My cool PR!
