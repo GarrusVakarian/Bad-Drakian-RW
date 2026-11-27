@@ -331,10 +331,6 @@
 		original_skills.known_skills = wolf.stored_skills.Copy()
 		original_skills.skill_experience = wolf.stored_experience.Copy()
 
-	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/self/howl)
-	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/self/claws)
-	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick/werewolf)
-	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
 	original_body.regenerate_icons()
 
 	to_chat(original_body, span_userdanger("I return to my facade."))

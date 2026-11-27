@@ -10,6 +10,8 @@ GLOBAL_LIST_EMPTY(character_spawn_generations)
 	var/prev_lying = lying
 	if(stat != DEAD)
 		death(TRUE)
+	if(QDELETED(src)) // Some death handlers already dispose of the body.
+		return
 	if(client)
 		SSdroning.kill_droning(client)
 	playsound(src.loc, pick('sound/combat/gib (1).ogg','sound/combat/gib (2).ogg'), 80, FALSE, 3)
