@@ -1155,3 +1155,6 @@
   - qol: Added a per-character Auto Egg Laying toggle to character creation.
   - bugfix: Aghosting no longer spends your body's dream check while you're away.
   - bugfix: The lobby ready list now shows players with only Medium or Low class preferences.
+  - qol: Prosthetics you twist off yourself stay in your grabbing hand.
+  - rscadd: Use WEAK intent to gently twist off another player's prosthetic. Make
+      me your nugget.
