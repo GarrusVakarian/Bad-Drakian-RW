@@ -235,9 +235,20 @@
 
 /// Applies the target effects of a successful feint without the feinter's cooldown or feedback.
 /mob/living/proc/apply_feint_opening(action_cooldown = 2.5 SECONDS)
+	if(QDELETED(src) || stat == DEAD)
+		return
 	var/effect_to_apply = mind ? /datum/status_effect/debuff/vulnerable : /datum/status_effect/debuff/exposed
-	apply_status_effect(effect_to_apply, 7 SECONDS)
-	apply_status_effect(/datum/status_effect/debuff/clickcd, action_cooldown)
+	var/datum/status_effect/opening = has_status_effect(effect_to_apply)
+	if(opening)
+		opening.duration = max(opening.duration, world.time + 7 SECONDS)
+	else
+		apply_status_effect(effect_to_apply, 7 SECONDS)
+	var/datum/status_effect/cooldown = has_status_effect(/datum/status_effect/debuff/clickcd)
+	if(cooldown)
+		cooldown.duration = max(cooldown.duration, world.time + action_cooldown)
+		changeNext_move(action_cooldown)
+	else
+		apply_status_effect(/datum/status_effect/debuff/clickcd, action_cooldown)
 	Immobilize(0.5 SECONDS)
 	stamina_add(stamina * 0.1)
 	Slowdown(2)

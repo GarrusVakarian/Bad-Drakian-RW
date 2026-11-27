@@ -43,10 +43,16 @@
 		if(broke_guard)
 			var/mob/living/carbon/human/HT = M
 			HT.bad_guard(span_warning("The kick throws my stance off!"))
+		var/datum/thrownthing/previous_throw = M.throwing
 		var/kick_resolved = resolve_kick(M, kick_intent)
 		// Guard breaks before the normal defense checks. Save the opening for the next attack.
-		if(broke_guard && !QDELETED(M) && M.stat != DEAD)
-			M.apply_feint_opening()
+		if(broke_guard && !QDELETED(M))
+			var/datum/thrownthing/kick_throw = M.throwing
+			if(!QDELETED(kick_throw) && kick_throw != previous_throw && !kick_throw.callback)
+				// A kick that throws the target can deal more damage when the throw lands.
+				kick_throw.callback = CALLBACK(M, PROC_REF(apply_feint_opening))
+			else
+				M.apply_feint_opening()
 		if(!kick_resolved)
 			return FALSE
 	else
