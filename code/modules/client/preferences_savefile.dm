@@ -9,7 +9,7 @@
 //	This also works with decimals.
 #define SAVEFILE_VERSION_MAX 39
 
-// Safely extract a type path from datums or type values; returns null if unset/invalid.
+/// Safely extract a type path from datums or type values. Returns null if unset or invalid
 /proc/preferences_typepath_or_null(value)
 	if(isnull(value))
 		return null
@@ -243,9 +243,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["be_special"] 		>> be_special
 	S["triumphs"]			>> triumphs
 	S["musicvol"]			>> musicvol
+	S["adminmusicvol"]		>> adminmusicvol
+	S["streamedmusicvol"]	>> streamedmusicvol
 	S["combatmusicvol"]		>> combatmusicvol
 	S["lobbymusicvol"]		>> lobbymusicvol
 	S["ambiencevol"]		>> ambiencevol
+	S["pointambiencevol"]	>> pointambiencevol
+	S["pointambience_independent"] >> pointambience_independent
+	S["point_ambience_toggles"] >> point_ambience_toggles
+	S["overallvol"]		>> overallvol
+	S["instrumentvol"]	>> instrumentvol
 	S["anonymize"]			>> anonymize
 	S["ghost_protection"]	>> ghost_protection
 	S["masked_examine"]		>> masked_examine

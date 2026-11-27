@@ -70,7 +70,7 @@
 	var/has_blood = blood_volume && blood_volume >= 20
 
 	// Play milking sound
-	playsound(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
+	playsound_erp(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
 
 	if(!do_after(user, 20, target = src))
 		return

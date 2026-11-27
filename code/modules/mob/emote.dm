@@ -36,6 +36,17 @@
 	else
 		next_emote = world.time + mute_time
 
+/**
+ * Runs an emote with ERP containment rules for this call.
+ *
+ * CONTAINED blocks walls and closed openings. LEAKING permits muffled sound one tile beyond a
+ * single closed opening. Soundproof areas also block open openings.
+ *
+ * The policy belongs to the call because these emotes are also used by combat, surgery and wounds.
+ */
+/mob/proc/emote_erp(act, bypass_cooldown = TRUE, travel = SOUND_TRAVEL_CONTAINED)
+	return emote(act, forced = bypass_cooldown, travel = travel, erp = TRUE)
+
 /atom/movable/proc/send_speech_emote(message, range = 7, obj/source = src, bubble_type, list/spans, datum/language/message_language = null, message_mode, original_message)
 	var/rendered = compose_message(src, message_language, message, , spans, message_mode)
 	for(var/_AM in get_hearers_in_view(range, source))

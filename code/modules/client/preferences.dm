@@ -299,10 +299,28 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/widescreenpref = TRUE
 
 	var/musicvol = 50
+	/// Volume of admin-played files on CHANNEL_ADMIN, independent of world music
+	var/adminmusicvol = 50
+	/// Volume of streamed browser music. Sent to the panel after Master scaling because the browser
+	/// stores its own level
+	var/streamedmusicvol = 50
 	var/combatmusicvol = 50
 	var/lobbymusicvol = 50
 	var/ambiencevol = 50
+	/// Point ambience only, optionally scaled by overallvol and never by mastervol
+	var/pointambiencevol = 100
+	/// Keeps point ambience on its own slider instead of scaling it by overallvol
+	var/pointambience_independent = TRUE
+	/// SOUND_DISABLE_POINT_AMBIENCE and SOUND_DISABLE_TORCH_AMBIENCE, inverted so that unset is on
+	var/point_ambience_toggles = 0
+	/// Instruments, the music box and the wax music device, which play at this in place of Sound Effects
+	var/instrumentvol = 50
+	/// The Sound Effects slider: everything sent through playsound_local but instruments, which read
+	/// instrumentvol. Named mastervol for its savefile key
 	var/mastervol = 50
+	/// The Master slider, which scales every other one, point ambience only while
+	/// pointambience_independent is off. 100 plays each at its own value
+	var/overallvol = 100
 
 	var/anonymize = TRUE
 	var/masked_examine = FALSE

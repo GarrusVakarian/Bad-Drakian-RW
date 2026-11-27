@@ -22,6 +22,10 @@
 	var/nomsg = FALSE
 	var/soundping = TRUE
 	var/ignore_silent = FALSE
+	/// Whether this emote reaches adjacent floors when the caller supplies no travel class
+	var/cross_z_audible = TRUE
+	/// Default SOUND_TRAVEL_* barrier policy, used when the caller supplies no travel class
+	var/snd_travel = SOUND_TRAVEL_UNRESTRICTED
 	var/snd_vol = 100
 	var/snd_range = -1
 	var/mute_time = 30//time after where someone can't do another emote
@@ -31,7 +35,8 @@
 	var/runechat_msg = null
 	// If this is true, we skip setting the base runechat message and instead use whatever our at-emote-runtime message is. Useful for things like kiss/lick which change message based on conditions.
 	var/use_params_for_runechat = FALSE
-	var/is_animal = FALSE
+	/// Whether the Anthro Noise Emotes preference controls this sound
+	var/anthro_noise = FALSE
 	var/needs_emotion = FALSE //If true, emote will check for detached trait and not run if the user has it and the emote wasn't intentional. Used for emotes that require emotional investment to make sense, like crying or laughing.
 
 /datum/emote/New()

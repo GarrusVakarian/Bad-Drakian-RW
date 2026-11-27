@@ -14,7 +14,7 @@
 #define MEMBER_PUBLIC			(1<<4)
 #define INTENT_STYLE			(1<<5)
 #define MIDROUND_ANTAG			(1<<6)
-#define SOUND_INSTRUMENTS		(1<<7)
+#define SOUND_UPLOADED_SONGS	(1<<7)
 #define SOUND_SHIP_AMBIENCE		(1<<8)
 #define SOUND_PRAYERS			(1<<9)
 #define ANNOUNCE_LOGIN			(1<<10)
