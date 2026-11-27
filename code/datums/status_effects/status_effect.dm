@@ -156,7 +156,9 @@
 			effectedstats[S] = 20 - owner.get_stat(S)
 		owner.change_stat(S, effectedstats[S])
 
-/datum/status_effect/proc/tick() //Called every tick.
+/// Called every tick. wait is the processing subsystem's own wait, delta_time is how long it has really been since
+/// the last tick, which is at least tick_interval and more when the server is under load
+/datum/status_effect/proc/tick(wait, delta_time)
 
 /datum/status_effect/proc/on_remove() //Called whenever the buff expires or is removed; do note that at the point this is called, it is out of the owner's status_effects but owner is not yet null
 	remove_stats()

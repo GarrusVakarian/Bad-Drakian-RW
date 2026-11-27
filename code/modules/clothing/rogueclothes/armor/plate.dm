@@ -245,12 +245,13 @@
 	detail_tag = "_detail"
 	boobed_detail = FALSE
 	color = null
+	armor_class = ARMOR_CLASS_HEAVY
 	detail_color = CLOTHING_WHITE
-	body_parts_covered = COVERAGE_ALL_BUT_LEGS
-	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL - 50 //slightly worse
+	body_parts_covered = COVERAGE_FULL
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL - 75
 	var/picked = FALSE
 
-/obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa/attack_right(mob/user)
+/obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa/attack_right(mob/user)
 	..()
 	if(!picked)
 		var/choice = input(user, "Choose a color.", "Uniform colors") as anything in GLOB.colorlist

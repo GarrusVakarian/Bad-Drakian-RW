@@ -340,7 +340,7 @@
 	icon_state = "graggargorget"
 	item_state = "graggargorget"
 	max_integrity = ARMOR_INT_SIDE_ANTAG
-	armor = ARMOR_PLATE_BSTEEL	
+	armor = ARMOR_PLATE_BSTEEL
 
 /obj/item/clothing/neck/roguetown/gorget/steel/graggar/Initialize(mapload)
 	. = ..()
@@ -388,6 +388,19 @@
 	smeltresult = /obj/item/ingot/steel
 	max_integrity = ARMOR_INT_SIDE_STEEL
 	icon_state = "sgorget"
+
+/obj/item/clothing/neck/roguetown/gorget/aventail
+	name = "aventail"
+	desc = "A thick garment of steel maille and padding, traditionally attached to bascinets. It's burdensome on the shoulders of those who aren't properly \
+	trained to wear knightly garments."
+	icon_state = "aventailbase"
+	body_parts_covered = NECK|MOUTH
+	slot_flags = ITEM_SLOT_NECK
+	max_integrity = ARMOR_INT_SIDE_STEEL + 50 //In essence, a chainmail gorget.
+	armor_class = ARMOR_CLASS_MEDIUM
+	armor = ARMOR_MAILLE
+	blocksound = CHAINHIT
+	smeltresult = /obj/item/ingot/steel
 
 /obj/item/clothing/neck/roguetown/gorget/steel/ancient
 	name = "ancient gorget"
@@ -1391,6 +1404,31 @@
 	desc = "Ward of silver, sigil of eternity; by the Ten, I command thee back to Hell!"
 	icon_state = "undivided_s"
 	sellprice = 50
+
+/obj/item/clothing/neck/roguetown/collar/fur
+	name = "fur collar"
+	desc = "A thick ruff of trapped fur, worn about the shoulders."
+	icon_state = "furscarf"
+	item_state = "furscarf"
+	salvage_result = /obj/item/natural/fur
+	salvage_amount = 1
+	sewrepair = TRUE
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/neck.dmi'
+
+/obj/item/clothing/neck/roguetown/cravat
+	name = "cravat"
+	desc = "An otavan fashion, a strip of tied cloth that can be donned on the neck to make oneself look more sophisticated."
+	icon_state = "cravat"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/neck.dmi'
+
+/obj/item/clothing/neck/roguetown/ruffle
+	name = "ruffled collar"
+	desc = "A ridiculous lace collar typically worn by jesters."
+	icon_state = "ruffle"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/neck.dmi'
 
 /obj/item/clothing/neck/roguetown/cravat
 	name = "cravat"

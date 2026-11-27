@@ -73,7 +73,7 @@
 #define SUNDER_LAYER			3
 #define FIRE_LAYER				2		//If you're on fire
 #define TURF_LAYER				1		//If you're on fire
-#define TOTAL_LAYERS			56		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
+#define TOTAL_LAYERS			57		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
 
 #define BACK_CLOAK_SOUTH_LAYER		(BODY_BEHIND_LAYER+1)
 
@@ -504,3 +504,8 @@ GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
 #define INHAND_BEHIND 2
 #define ONMOB_TAG 1
 #define ONMOB_PROP 2
+
+#define UNDER_ARMOR_CACHE_INDEX	57		// Cache only; use UNDER_ARMOR_LAYER for the fractional render layer.
+#define UNDER_ARMORSLEEVE_LAYER		(ARMORSLEEVE_LAYER+0.5)
+#define OVER_GLOVES_LAYER			(GLOVESLEEVE_LAYER-0.5)
+#define OVER_ARMOR_LAYER			(ARMOR_LAYER-0.5)

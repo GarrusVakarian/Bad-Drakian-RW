@@ -25,17 +25,6 @@
 	experimental_onhip = TRUE
 	experimental_inhand = TRUE
 
-/obj/item/clothing/head/roguetown/helmet/MiddleClick(mob/user)
-	if(!ishuman(user))
-		return
-	if(flags_inv & HIDE_HEADTOP)
-		flags_inv &= ~HIDE_HEADTOP
-	else
-		flags_inv |= HIDE_HEADTOP
-	persist_inv_flags(HIDE_HEADTOP)
-	to_chat(user, span_info("I wear \the [src] [(flags_inv & HIDE_HEADTOP) ? "over" : "under"] my hair."))
-	user.update_inv_head()
-
 /obj/item/clothing/head/roguetown/helmet/getonmobprop(tag)
 	if(tag)
 		switch(tag)
@@ -208,6 +197,12 @@
 /obj/item/clothing/head/roguetown/helmet/sallet/visored/ComponentInitialize()
 	..()
 	AddComponent(/datum/component/armour_filtering/positive, TRAIT_FENCERDEXTERITY)
+
+/obj/item/clothing/head/roguetown/helmet/sallet/visored/gilded
+	name = "gilded visored sallet"
+	desc = "A steel helmet with gilded trim which protects the ears, nose, and eyes."
+	icon_state = "gildedsallet_visor"
+	item_state = "gildedsallet_visor"
 
 /obj/item/clothing/head/roguetown/helmet/sallet/visored/shadow
 	color = "#323232"
@@ -541,6 +536,16 @@
 /obj/item/clothing/head/roguetown/helmet/bascinet/ComponentInitialize()
 	..()
 	AddComponent(/datum/component/armour_filtering/negative, TRAIT_FENCERDEXTERITY)
+
+/obj/item/clothing/head/roguetown/helmet/bascinet/aventail
+	name = "bascinet with aventail"
+	desc = "A steel bascinet helmet, further protected with a thick maille aventail. Burdensome on the shoulders of those not trained to carry \
+	maille, yet excellent in both coverage and durability."
+	icon_state = "aventail"
+	item_state = "aventail"
+	body_parts_covered = HEAD|HAIR|EARS|MOUTH|NECK
+	block2add = FOV_BEHIND
+	armor_class = ARMOR_CLASS_HEAVY
 
 /obj/item/clothing/head/roguetown/helmet/bascinet/pigface
 	name = "pigface bascinet"

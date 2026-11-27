@@ -448,6 +448,12 @@
 	var/list/occupants = list()
 	var/max_occupants = 2
 
+/// Lampterns do not use the torch crackle when lit or carried
+/obj/item/flashlight/flare/torch/lantern/update_point_ambience()
+	if(last_carrier)
+		SSpoint_ambience.clear_self_source(last_carrier, src)
+		last_carrier = null
+
 /obj/item/flashlight/flare/torch/lantern/afterattack(atom/movable/A, mob/user, proximity)
 	. = ..()
 	if(!proximity)

@@ -146,6 +146,10 @@
 	remove_movespeed_modifier(MOVESPEED_ID_BULKY_DRAGGING)
 
 /mob/living/can_zFall(turf/T, levels)
+	// A passenger shares the mount's fall; do not start a separate fall while
+	// the mount is jumping or holding onto a wall.
+	if(ishuman(buckled) && HAS_TRAIT(buckled, TRAIT_PONYGIRL_RIDEABLE) && loc == buckled.loc && (src in buckled.buckled_mobs))
+		return FALSE
 	if(HAS_TRAIT(src, TRAIT_WOODWALKER) && !HAS_TRAIT(src, TRAIT_DEADITE)) //Zombies just fall through leaves, we're not doing that. Stop.
 		for(var/leaf in T.contents)
 			if(istype(leaf, /obj/structure/flora/newleaf))

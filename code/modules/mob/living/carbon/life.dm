@@ -91,7 +91,10 @@
 
 /// NPCs only need the wound total when the cooldown allows a pain reaction.
 /mob/living/carbon/proc/handle_pain(track_stress = TRUE)
-	if(HAS_TRAIT(src, TRAIT_NOPAIN))
+	//Being sundered will shut off no_pain trait, until the sunder flames wear off.
+	if(HAS_TRAIT(src, TRAIT_NOPAIN) && \
+		!has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder) && \
+		!has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder/blessed))
 		return
 	if(!stat)
 		var/pain_roll_due = world.time > mob_timers["painstun"]

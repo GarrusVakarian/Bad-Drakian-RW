@@ -262,7 +262,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST, BCLASS_CHOP, BCLASS_SMASH) //studded armor values with stab prot too
 
 /obj/item/clothing/head/roguetown/helmet/leather/armorhood/AdjustClothes(mob/user)
-	if(loc == user)
+	if(is_worn_or_stored_by(user))
 		if(adjustable == CAN_CADJUST)
 			adjustable = CADJUSTED
 			if(toggle_icon_state)

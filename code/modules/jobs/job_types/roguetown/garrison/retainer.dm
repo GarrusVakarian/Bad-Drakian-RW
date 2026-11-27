@@ -220,7 +220,7 @@
 	)
 	backpack_contents = list(/obj/item/flashlight/flare/torch/lantern = 1, /obj/item/rogueweapon/scabbard/sheath = 1)
 	if(H.mind)
-		var/helmets = list("Warden Bearskull", "Warden Goatskull", "Warden Wolfskull", "Studded Hood and Hound Mask")
+		var/helmets = list("Warden Bearskull", "Warden Goatskull", "Warden Wolfskull", "Warden Rouskull", "Studded Hood and Hound Mask")
 		var/helmet_choice = input(H, "Choose your Outfit", "EQUIP THINESELF") as anything in helmets
 		switch(helmet_choice)
 			if("Warden Bearskull")

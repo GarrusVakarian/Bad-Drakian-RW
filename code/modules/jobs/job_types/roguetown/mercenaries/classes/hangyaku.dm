@@ -45,25 +45,28 @@
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced/kazengun
 	wrists = /obj/item/clothing/wrists/roguetown/bracers
 	gloves = /obj/item/clothing/gloves/roguetown/plate/kote
-	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/kazengun
 	backl = /obj/item/storage/backpack/rogue/satchel
 	belt_contents = list(/obj/item/roguekey/mercenary = 1)
 	backpack_contents = list(
 		/obj/item/flashlight/flare/torch/lantern,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
-		/obj/item/rogueweapon/scabbard/sheath/kazengun
+		/obj/item/rogueweapon/scabbard/sheath/kazengun,
+		/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun
 		)
 	H.merctype = 9
 
 /datum/outfit/job/roguetown/mercenary/hangyaku/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
-	var/weapons = list("Sword (Ssangsudo)","Mace (Kanabo)","Spear (Naginata)","Bow","Greatsword (Nodachi)") 
+	var/weapons = list("Sword (Ssangsudo) + Bow","Mace (Kanabo)","Spear (Naginata)","Greatsword (Nodachi)")
 	var/weapon_choice = input(H, "Choose your weapon.", "WHEN STEEL MUST SPEAK...") as anything in weapons
 	switch(weapon_choice)
-		if("Sword (Ssangsudo)")
+		if("Sword (Ssangsudo) + Bow")
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
+			H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_EXPERT, TRUE)
 			H.put_in_hands(new /obj/item/rogueweapon/sword/long/kriegmesser/ssangsudo, TRUE)
-			H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/sword/kazengun/noparry, SLOT_BELT_L, TRUE)	
+			H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/sword/kazengun/noparry, SLOT_BELT_R, TRUE)
+			H.equip_to_slot_or_del(new /obj/item/quiver/arrows, SLOT_BELT_L, TRUE)
+			H.equip_to_slot_or_del(new /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve, SLOT_BACK_R, TRUE)
 		if("Mace (Kanabo)")
 			H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_EXPERT, TRUE)
 			H.put_in_hands(new /obj/item/rogueweapon/mace/goden/kanabo, TRUE)
@@ -74,7 +77,7 @@
 			H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/gwstrap, SLOT_BACK_R, TRUE)
 		if("Greatsword (Nodachi)")
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
-			H.put_in_hands(new /obj/item/rogueweapon/greatsword/nodachi, TRUE) 
+			H.put_in_hands(new /obj/item/rogueweapon/greatsword/nodachi, TRUE)
 			H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/gwstrap/nodachi, SLOT_BACK_R, TRUE)
 	var/armors = list("Heavy Armor","Medium Armor")
 	var/armor_choice = input(H, "Choose your armor.", "...THE TONGUE MUST STAY QUIET.") as anything in armors

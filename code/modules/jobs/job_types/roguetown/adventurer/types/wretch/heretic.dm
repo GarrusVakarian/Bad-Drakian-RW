@@ -114,7 +114,7 @@
 	if(H.age == AGE_OLD)
 		H.change_stat(STATKEY_SPD, -1)
 		H.change_stat(STATKEY_STR, -1)
-		H.change_stat(STATKEY_INT, 2) //We double down on the mental bonuses. 
+		H.change_stat(STATKEY_INT, 2) //We double down on the mental bonuses.
 		H.change_stat(STATKEY_PER, 2)
 /datum/outfit/job/roguetown/wretch/heretic/choose_loadout(mob/living/carbon/human/H)
 	. = ..()

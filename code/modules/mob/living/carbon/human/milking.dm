@@ -29,7 +29,7 @@
 	if(container.reagents.total_volume < container.reagents.maximum_volume)
 
 		// Play milking sound before do_after
-		playsound(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
+		playsound_erp(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
 
 		if(!do_after(user, 20, target = src))
 			return

@@ -42,7 +42,7 @@
 /datum/component/vampire_torpor/proc/get_generation()
 	var/datum/mind/vampire_mind = get_mind()
 	var/datum/antagonist/vampire/vamp_datum = vampire_mind?.has_antag_datum(/datum/antagonist/vampire)
-	return vamp_datum?.generation || GENERATION_NEONATE
+	return vamp_datum ? vamp_datum.generation : GENERATION_NEONATE
 
 /datum/component/vampire_torpor/proc/notify(message)
 	var/datum/mind/vampire_mind = get_mind()
@@ -72,7 +72,7 @@
 	if(gibbed || final_death || !can_put_under(source))
 		return
 	// the death has to be refused right now, but starting the slumber itself doesn't have to happen inside death()
-	INVOKE_ASYNC(src, PROC_REF(put_under), source)
+	INVOKE_ASYNC(src, PROC_REF(put_under), source, TRUE)
 	return COMPONENT_CANCEL_DEATH
 
 /// Whether torpor can take hold of them, rather than letting them die
@@ -81,8 +81,8 @@
 		return TRUE
 	return source.get_bodypart(BODY_ZONE_HEAD) && source.getorganslot(ORGAN_SLOT_BRAIN)
 
-/datum/component/vampire_torpor/proc/put_under(mob/living/carbon/human/source)
-	if(QDELETED(source) || source.stat == DEAD || final_death || !can_put_under(source))
+/datum/component/vampire_torpor/proc/put_under(mob/living/carbon/human/source, from_death = FALSE)
+	if(QDELETED(source) || source.stat == DEAD || final_death || (!from_death && source.health > source.crit_threshold) || !can_put_under(source))
 		return
 	var/datum/status_effect/vampire_torpor/torpor = source.has_status_effect(/datum/status_effect/vampire_torpor)
 	if(!torpor)

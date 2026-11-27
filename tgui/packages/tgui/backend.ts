@@ -229,10 +229,27 @@ export const backendMiddleware = (store) => {
       suspendRenderer();
       clearInterval(suspendInterval);
       suspendInterval = undefined;
+      galleryRevealed = false;
       Byond.winset(Byond.windowId, {
         'is-visible': false,
       });
       setTimeout(() => focusMap());
+    }
+
+    if (type === 'backend/windowGeometryReady') {
+      if (
+        !suspended &&
+        !suspending &&
+        waitsForWindowGeometry(config?.interface?.name)
+      ) {
+        if (galleryRevealed) {
+          Byond.winset(Byond.windowId, { 'is-visible': true });
+        } else {
+          galleryRevealed = true;
+          showResumedWindow();
+        }
+      }
+      return;
     }
 
     if (type === 'backend/update') {

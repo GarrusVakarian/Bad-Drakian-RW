@@ -5,6 +5,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 #define MAX_SONG_TITLE_LENGTH 60
 
 /datum/preferences
+	var/displayed_gallery_headshot
+	var/list/open_categories = list("Identity", "Origin", "Body", "Flavor Text")
+	var/skip_preview = FALSE
 	var/client/parent
 	//doohickeys for savefiles
 	var/path
@@ -327,7 +330,15 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/top_examine = FALSE
 	var/show_mouseover_role = FALSE
 	var/nsfw_examine_always = FALSE
-	var/mute_animal_emotes = FALSE
+	var/gallery_plain = FALSE
+	var/gallery_backdrop = TRUE
+	var/gallery_card_deal = TRUE
+	var/gallery_image_sounds = TRUE
+	var/gallery_image_tilt = TRUE
+	var/gallery_candle_flicker = TRUE
+	var/gallery_easter_eggs = TRUE
+	var/gallery_artwork_preview_layout = "popup"
+	var/mute_anthro_noises = FALSE
 	var/autoconsume = FALSE
 	var/autowoodcut = TRUE
 	var/autopicking = TRUE
@@ -424,6 +435,10 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/bark_variance = 0.2
 	COOLDOWN_DECLARE(bark_previewing)
 	COOLDOWN_DECLARE(descriptor_preview)
+	/// Saves and Undo each open the whole savefile, which stalls the server for longer the more slots it holds
+	COOLDOWN_DECLARE(savefile_cooldown)
+	/// As savefile_cooldown for Change Character, apart from it so a save can be followed straight away by a change
+	COOLDOWN_DECLARE(slot_choice_cooldown)
 	var/hear_barks = TRUE
 
 	// PATREON
@@ -511,6 +526,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 	var/nsfw_ooc_extra_img
 	var/nsfw_ooc_extra_img_link
+	var/nsfw_ooc_extra_img_size = OOC_EXTRA_SIZE_MAX
 
 	var/erpprefs
 	var/automatic_egg_laying_default = TRUE
@@ -977,7 +993,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		to_chat(parent, span_boldwarning("You can't join with [selected.name]. Remove it in Character Setup or choose an Ascendant patron."))
 	return FALSE
 
-/datum/preferences/proc/ShowChoices(mob/user, tabchoice)
+/datum/preferences/proc/ShowChoices(mob/user, tabchoice, refresh_only = FALSE)
 	var/client/viewer = user?.client
 	if(!viewer)
 		return
@@ -1315,9 +1331,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Markings:</b> <a href='?_src_=prefs;preference=markings;task=menu'>Change</a>"
 			dat += "<br><b>Descriptors:</b> <a href='?_src_=prefs;preference=descriptors;task=menu'>Change</a>"
 
-			dat += "<br><b>Headshot:</b> <a href='?_src_=prefs;preference=headshot;task=input'>Change</a>"
-			if(headshot_link != null)
-				dat += "<br><img src='[headshot_link]' width='100px' height='100px'>"
+			dat += "<br><b>Character Gallery:</b> <a href='?_src_=prefs;preference=character_gallery;task=input'>Change</a>"
+			displayed_gallery_headshot = character_gallery_headshot_thumbnail()
+			dat += "<div id='preferences_gallery_headshot'>[displayed_gallery_headshot]</div>"
 
 			dat += "<br><b>[(length(flavortext) < MINIMUM_FLAVOR_TEXT) ? "<font color = '#802929'>" : ""]Flavortext:[(length(flavortext) < MINIMUM_FLAVOR_TEXT) ? "</font>" : ""]</b><a href='?_src_=prefs;preference=formathelp;task=input'>(?)</a><a href='?_src_=prefs;preference=flavortext;task=input'>Change</a>"
 			dat += "<br><b>NSFW Flavortext:</b><a href='?_src_=prefs;preference=formathelp;task=input'>(?)</a><a href='?_src_=prefs;preference=nsfwflavortext;task=input'>Change</a>"
@@ -1330,16 +1346,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Song:</b> <a href='?_src_=prefs;preference=ooc_extra;task=input'>Change URL</a>"
 			dat += "<a href='?_src_=prefs;preference=change_title;task=input'>Change Title</a>"
 			dat += "<a href='?_src_=prefs;preference=change_artist;task=input'>Change Artist</a>"
-			dat += "<br><b>OOC Extra Image/Video/Gif (Flavor Text):</b> <a href='?_src_=prefs;preference=ooc_extra_img;task=input'>Change</a>"
-			if(ooc_extra_img_link != null)
-				dat += "<br><img src='[ooc_extra_img_link]' width='100px' height='100px'>"
-			dat += "<br><b>NSFW OOC Extra Image/Video/Gif (Flavor Text):</b> <a href='?_src_=prefs;preference=nsfw_ooc_extra_img;task=input'>Change</a>"
-			if(nsfw_ooc_extra_img_link != null)
-				dat += "<br><img src='[nsfw_ooc_extra_img_link]' width='100px' height='100px'>"
-			dat += "<br><B>Image Gallery:</b> <a href='?_src_=prefs;preference=img_gallery;task=input'>Add</a>"
-			dat+= "<a href='?_src_=prefs;preference=clear_gallery;task=input'>Clear Gallery</a>"
-			dat += "<br><B>Nsfw Image Gallery:</b> <a href='?_src_=prefs;preference=nsfw_img_gallery;task=input'>Add</a>"
-			dat+= "<a href='?_src_=prefs;preference=clear_nsfw_gallery;task=input'>Clear Nsfw Gallery</a>"
 			dat += "<br><a href='?_src_=prefs;preference=ooc_preview;task=input'><b>Preview Examine</b></a>"
 
 			dat += "</td>"
@@ -2012,6 +2018,8 @@ function setJobPrefRedirect(link) {
 
 /datum/preferences/Topic(href, href_list, hsrc)			//yeah, gotta do this I guess..
 	. = ..()
+	if(usr?.client != parent)
+		return
 	if(href_list["close"])
 		var/client/C = usr.client
 		if(C)
@@ -2773,17 +2781,26 @@ function setJobPrefRedirect(link) {
 					if(!edit_roleplay_ad(user))
 						return
 				if("flavortext")
+					skip_preview = FALSE
 					to_chat(user, "<span class='notice'>["<span class='bold'>Flavortext should not include nonphysical nonsensory attributes such as backstory or the character's internal thoughts.</span>"]</span>")
 					var/new_flavortext = tgui_input_text(user, "Input your character description:", "Flavortext", flavortext, multiline = TRUE,  encode = FALSE, bigmodal = TRUE)
-					if(new_flavortext == null)
+					if(isnull(new_flavortext))
 						return
+					var/previous_flavor_label = flavor_text_label()
 					if(new_flavortext == "")
 						flavortext = null
+					else
+						flavortext = new_flavortext
+						to_chat(user, "<span class='notice'>Successfully updated flavortext</span>")
+						log_game("[user] has set their flavortext'.")
+					if(slot_randomized)
+						skip_preview = TRUE
 						ShowChoices(user)
-						return
-					flavortext = new_flavortext
-					to_chat(user, "<span class='notice'>Successfully updated flavortext</span>")
-					log_game("[user] has set their flavortext'.")
+						return 1
+					var/current_flavor_label = flavor_text_label()
+					if(current_flavor_label != previous_flavor_label && current_tab == 0 && ("Flavor Text" in open_categories))
+						send_byjax(user, "preferences_browser", "preferences_flavortext_label", current_flavor_label)
+					return 1
 				if("ooc_notes")
 					to_chat(user, "<span class='notice'>["<span class='bold'>OOC notes should be used for roleplay hooks and general information about your character.</span>"]</span>")
 					var/new_ooc_notes = tgui_input_text(user, "Input your OOC preferences:", "OOC notes", ooc_notes, multiline = TRUE,  encode = FALSE, bigmodal = TRUE)
@@ -3580,6 +3597,17 @@ function setJobPrefRedirect(link) {
 	ShowChoices(user)
 	return 1
 
+/**
+ * Whether Save and Undo may open the savefile, warning the user while savefile_cooldown runs
+ *
+ * It never starts the cooldown, so each caller starts it once it goes ahead
+ */
+/datum/preferences/proc/savefile_ready(mob/user, action_text)
+	if(COOLDOWN_FINISHED(src, savefile_cooldown))
+		return TRUE
+	to_chat(user, span_warning("Wait a moment before [action_text] again."))
+	return FALSE
+
 /datum/preferences/proc/resolve_loadout_to_color(item_path)
 	for(var/i = 1 to LOADOUT_SLOT_COUNT)
 		var/datum/loadout_item/item = vars[i == 1 ? "loadout" : "loadout[i]"]
@@ -3603,7 +3631,7 @@ function setJobPrefRedirect(link) {
 	return FALSE
 
 
-/datum/preferences/proc/copy_to(mob/living/carbon/human/character, icon_updates = 1, roundstart_checks = TRUE, character_setup = FALSE, antagonist = FALSE, skip_normal_prefs = FALSE, dragon_special_race = FALSE)
+/datum/preferences/proc/copy_to(mob/living/carbon/human/character, icon_updates = 1, roundstart_checks = TRUE, character_setup = FALSE, antagonist = FALSE, skip_normal_prefs = FALSE, dragon_special_race = FALSE, keep_name = FALSE)
 	if(skip_normal_prefs)
 		// Gnoll ads use the separate gnoll preferences, never the normal slot's ad.
 		character.roleplay_ad = gnoll_prefs?.roleplay_ad
@@ -3615,7 +3643,7 @@ function setJobPrefRedirect(link) {
 		character.set_species(/datum/species/gnoll, icon_update = FALSE)
 		var/datum/species/gnoll/gnoll_species = character.dna.species
 		gnoll_species.set_drain_type(character, gnoll_drain_type)
-		// Set gender to MALE as a neutral default; gnoll pronouns override the displayed pronoun.
+		// Set gender to MALE as a neutral default. Gnoll pronouns override the displayed pronoun
 		character.gender = MALE
 		if(gnoll_prefs?.gnoll_pronouns)
 			character.pronouns = gnoll_prefs.gnoll_pronouns
@@ -3668,24 +3696,28 @@ function setJobPrefRedirect(link) {
 		character.set_species(chosen_species, icon_update = FALSE, pref_load = src)
 	character.dna.update_body_size()
 
-	if((randomise[RANDOM_NAME] || randomise[RANDOM_NAME_ANTAG] && antagonist) && !character_setup)
-		slot_randomized = TRUE
-		real_name = pref_species.random_name(gender)
+	// keep_name is a live refresh of a character already in the round, whose own name is always in GLOB.chosen_names.
+	// /mob/living/carbon/human/proc/reapply_preferences() renames them itself
+	if(!keep_name)
+		if((randomise[RANDOM_NAME] || randomise[RANDOM_NAME_ANTAG] && antagonist) && !character_setup)
+			slot_randomized = TRUE
+			real_name = pref_species.random_name(gender)
 
-	if(roundstart_checks)
-		if(CONFIG_GET(flag/humans_need_surnames) && ((pref_species.id == "human") || (pref_species.id == "humen")))
-			var/firstspace = findtext(real_name, " ")
-			var/name_length = length(real_name)
-			if(!firstspace)	//we need a surname
-				real_name += " [pick(GLOB.last_names)]"
-			else if(firstspace == name_length)
-				real_name += "[pick(GLOB.last_names)]"
+		if(roundstart_checks)
+			if(CONFIG_GET(flag/humans_need_surnames) && ((pref_species.id == "human") || (pref_species.id == "humen")))
+				var/firstspace = findtext(real_name, " ")
+				var/name_length = length(real_name)
+				if(!firstspace)	//we need a surname
+					real_name += " [pick(GLOB.last_names)]"
+				else if(firstspace == name_length)
+					real_name += "[pick(GLOB.last_names)]"
 
-	if(real_name in GLOB.chosen_names)
-		character.real_name = pref_species.random_name(gender)
-	else
-		character.real_name = real_name
-	character.name = character.real_name
+		if(real_name in GLOB.chosen_names)
+			character.real_name = pref_species.random_name(gender)
+		else
+			character.real_name = real_name
+		character.name = character.real_name
+		character.pref_base_name = character.real_name
 	if(!character_setup)
 		character.automatic_egg_laying = automatic_egg_laying_default
 		character.set_background_stat_identity(parent?.ckey, real_name)
@@ -3987,3 +4019,8 @@ function setJobPrefRedirect(link) {
 	return dat
 
 #undef MAX_SONG_TITLE_LENGTH
+
+/datum/preferences/proc/flavor_text_label()
+	if(length(flavortext) < MINIMUM_FLAVOR_TEXT)
+		return "<font color='#802929'>Flavortext</font>"
+	return "Flavortext"

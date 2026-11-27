@@ -3,6 +3,8 @@
 #define HERMES_LETTER_COST 1
 #define HERMES_LETTER_LIMIT 2000
 
+#define KINGSFIELD_MAILTAG "Kingsfield"
+
 /obj/structure/roguemachine/mail
 	name = "HERMES"
 	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Write a free letter every five minutes, or insert coins for postage and writing supplies."
@@ -46,25 +48,6 @@
 	set_light(0)
 	SSroguemachine.hermailers -= src
 	return ..()
-
-/// Turns what someone typed at a HERMES into "#number" for a box, or a name that can match a real_name.
-/// Don't sanitize() names here: it encodes ' as &#39;, which never matches a real_name and reads as box #39.
-/proc/parse_hermes_address(address)
-	var/hash_pos = findtext(address, "#")
-	if(hash_pos)
-		return "#[text2num(copytext(address, hash_pos + 1))]"
-	var/recipient = reject_bad_name(address, max_length = MAX_CHARTER_LEN)
-	if(recipient && LOWER_TEXT(recipient) == LOWER_TEXT(KINGSFIELD_MAILTAG))
-		for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
-			if(X.mailtag == KINGSFIELD_MAILTAG)
-				return "#[X.ournum]"
-	return recipient
-
-/proc/find_hermes_box(address)
-	var/box2find = text2num(copytext(address, findtext(address, "#") + 1))
-	for(var/obj/structure/roguemachine/mail/X in SSroguemachine.hermailers)
-		if(X.ournum == box2find)
-			return X
 
 /obj/structure/roguemachine/mail/attack_hand(mob/user)
 	if(ishuman(user) && GLOB.carebox.try_retrieve_carebox(user, src))
@@ -235,7 +218,16 @@
 	var/obj/structure/roguemachine/mail/box
 	var/mob/living/carbon/human/recipient
 	var/obj/item/roguemachine/mastermail/master
-	if(copytext(destination, 1, 2) == "#")
+	if(LOWER_TEXT(destination) == LOWER_TEXT(KINGSFIELD_MAILTAG))
+		for(var/obj/structure/roguemachine/mail/machine as anything in SSroguemachine.hermailers)
+			if(machine.mailtag == KINGSFIELD_MAILTAG)
+				box = machine
+				break
+		if(!box)
+			to_chat(user, span_warning("The Kingsfield HERMES is unavailable."))
+			return FALSE
+		destination = KINGSFIELD_MAILTAG
+	else if(copytext(destination, 1, 2) == "#")
 		var/static/regex/box_address = regex("^#\[0-9\]+$")
 		if(box_address.Find(destination))
 			var/number = text2num(copytext(destination, 2))
@@ -286,6 +278,8 @@
 		parcel.update_icon()
 	GLOB.fax_panel.register_player_letter(sender, destination, letter?.info, user.ckey, recipient?.ckey)
 	if(box)
+		if(box.mailtag == KINGSFIELD_MAILTAG)
+			GLOB.fax_panel.notify_kingsfield_mail(parcel, user)
 		box.say("New mail!")
 		playsound(box, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 	else

@@ -1,5 +1,5 @@
 //The code execution of the emote datum is located at code/datums/emotes.dm
-/mob/proc/emote(act, m_type = null, message = null, intentional = FALSE, forced = FALSE, targetted = FALSE, custom_me = FALSE, animal = FALSE, suppress_chat = FALSE)
+/mob/proc/emote(act, m_type = null, message = null, intentional = FALSE, forced = FALSE, targetted = FALSE, custom_me = FALSE, animal = FALSE, suppress_chat = FALSE, anthro_noise = FALSE, travel = null, erp = FALSE)
 	var/oldact = act
 	act = LOWER_TEXT(act)
 	var/param = message
@@ -23,12 +23,12 @@
 			var/list/custom_emote = GLOB.emote_list["me"]
 			for(var/datum/emote/P in custom_emote)
 				mute_time = P.mute_time
-				P.run_emote(src, oldact, m_type, intentional, targetted, (animal ? animal : P.is_animal))
+				P.run_emote(src, oldact, m_type, intentional, targetted, (animal || anthro_noise || P.anthro_noise || P.is_animal), suppress_chat, travel, erp)
 				break
 	else
 		for(var/datum/emote/P in key_emotes)
 			mute_time = P.mute_time
-			if(P.run_emote(src, param, m_type, intentional, targetted, (animal ? animal : P.is_animal), suppress_chat))
+			if(P.run_emote(src, param, m_type, intentional, targetted, (animal || anthro_noise || P.anthro_noise || P.is_animal), suppress_chat, travel, erp))
 				break
 
 	if(custom_me)

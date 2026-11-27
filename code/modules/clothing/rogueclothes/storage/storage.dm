@@ -566,6 +566,13 @@
 	playsound(loc, 'sound/items/garrotegrab.ogg', 100, TRUE)
 
 /obj/item/storage/hip/orestore/bronze
+	var/current_choice_index = 1
+	var/static/list/filter_options = list(
+	list(/obj/item/rogueore, /obj/item/ingot, /obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl),
+	list(/obj/item/rogueore),
+	list(/obj/item/ingot),
+	list(/obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl)
+	)
 	name = "mechanized ore bag"
 	desc = "A becogged bag for sorting and compressing ore, ingots, and gemeralds. It idly ticks to the rhythm of unseen mechanisms, yearning for earthly treats."
 	icon = 'icons/roguetown/items/misc.dmi'
@@ -580,13 +587,73 @@
 	anvilrepair = /datum/skill/craft/blacksmithing
 	smeltresult = /obj/item/ingot/bronze
 	component_type = /datum/component/storage/concrete/grid/orestore/bronze
-	var/current_choice_index = 1
-	var/static/list/filter_options = list(
-	list(/obj/item/rogueore, /obj/item/ingot, /obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl),
-	list(/obj/item/rogueore),
-	list(/obj/item/ingot),
-	list(/obj/item/roguegem, /obj/item/riddleofsteel, /obj/item/pearl)
-	)
+
+/obj/item/storage/backpack/rogue/backpack/trader
+	name = "trader's pack"
+	desc = "A travelling trader's pack, hung about with chests and bundles."
+	icon = 'modular_twilight_axis/icons/roguetown/clothing/back.dmi'
+	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/back.dmi'
+	icon_state = "backpack_trader"
+	item_state = "backpack_trader"
+
+/obj/item/storage/belt/rogue/leather/battleskirt/loincloth
+	name = "cloth loincloth"
+	desc = "A fine leather strap with a crude cloth covering, notched above the loincloth."
+	icon_state = "loincloth"
+	detail_tag = "_detail"
+	detail_color = CLOTHING_WHITE
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/belts.dmi'
+
+/obj/item/storage/belt/rogue/leather/battleskirt/loincloth/update_icon()
+	cut_overlays()
+	if(get_detail_tag())
+		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
+		pic.appearance_flags = RESET_COLOR
+		if(get_detail_color())
+			pic.color = get_detail_color()
+		add_overlay(pic)
+
+/obj/item/storage/belt/rogue/leather/belthooks
+	name = "belt hooks"
+	desc = "Etruscan-designed leather-wrapped hooks with an actuating hinge. To clip things to other things."
+	icon_state = "belthooks"
+	worn_sprite_sex = FEMALE
+
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/belts.dmi'
+
+/obj/item/storage/belt/rogue/leather/beltshawl
+	name = "belt shawl"
+	desc = "A fancy shawl worn around the waist."
+	icon_state = "beltshawl"
+	item_state = "beltshawl"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/belts.dmi'
+
+/obj/item/storage/belt/rogue/leather/hammerhold_sash
+	name = "hammerhold sash"
+	icon = 'modular_twilight_axis/icons/roguetown/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/belts.dmi'
+	icon_state = "hammerhold_sash"
+	detail_tag = "_belt"
+
+/obj/item/storage/belt/rogue/leather/iron
+	name = "iron belt"
+	desc = "A fine leather belt that's been sleeved within many segments of iron, protecting its delicate innards from prying hands-and-blades."
+	icon_state = "ironplaque"
+	sewrepair = FALSE
+	anvilrepair = /datum/skill/craft/armorsmithing
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/belts.dmi'
+
+/obj/item/storage/belt/rogue/leather/sash/maid
+	name = "cloth sash"
+	desc = "A pliable sash made of wool meant to wrap tightly around the waist."
+	item_state = "maidsash"
+	icon_state = "maidsash"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/maids.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/onmob/maids.dmi'
 
 /obj/item/storage/hip/orestore/bronze/examine(mob/user)
 	. = ..()

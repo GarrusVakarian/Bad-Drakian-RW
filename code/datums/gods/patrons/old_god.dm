@@ -336,7 +336,7 @@
 		user.adjust_blood_volume(-100)
 
 	return TRUE
-	
+
 
 /atom/movable/screen/alert/status_effect/death_defiance
 	name = "Death Defience"
@@ -373,9 +373,9 @@
 
 	owner.setOxyLoss(0,TRUE)
 	owner.remove_status_effect(/datum/status_effect/debuff/crit_resistance_cd) // resets crit resistance
-	owner.remove_status_effect(STATUS_EFFECT_SLEEPING) 
+	owner.remove_status_effect(STATUS_EFFECT_SLEEPING)
 	owner.remove_status_effect(/datum/status_effect/incapacitating/knockdown)
-	owner.remove_status_effect(/datum/status_effect/incapacitating/stun) 
+	owner.remove_status_effect(/datum/status_effect/incapacitating/stun)
 	owner.remove_status_effect(/datum/status_effect/incapacitating/unconscious)
 	owner.stat = CONSCIOUS
 	owner.update_stat()
@@ -413,7 +413,3 @@
 	owner.update_stat()
 	owner.visible_message(span_boldwarning("The strange energy filling the [owner] runs out, and their bathered body falls."), span_boldwarning("I feel my newfound energy and will to resist leave me."))
 	owner.remove_filter("death_defience")
-
-
-
-	

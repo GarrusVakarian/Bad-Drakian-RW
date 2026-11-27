@@ -238,7 +238,7 @@
 
 /datum/supply_pack/rogue/armor_steel/helmet_aventailbascinet
 	name = "Helmet, Bascinet, Aventailed"
-	cost = 90 
+	cost = 90
 	contains = list(/obj/item/clothing/head/roguetown/helmet/bascinet/aventail)
 
 /datum/supply_pack/rogue/armor_steel/helmet_heavyaventailbascinet

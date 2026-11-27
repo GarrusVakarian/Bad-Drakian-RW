@@ -61,6 +61,12 @@
 	var/climbable_atom_count = 0
 	/// How many atoms on this turf act as platforms (have BLOCK_Z_OUT_DOWN)?
 	var/platform_atom_count = 0
+	/// Count of sound_door objects here. Zero lets occlusion skip the contents scan. Maintained by
+	/// recount_sound_doors()
+	var/sound_door_count = 0
+	/// Count of sound_opening objects here, maintained by recount_sound_openings() for ERP barrier
+	/// checks
+	var/sound_opening_count = 0
 
 	vis_flags = VIS_INHERIT_PLANE|VIS_INHERIT_ID
 

@@ -566,24 +566,30 @@
 /obj/structure/flora/roguegrass/water/reeds/update_icon()
 	dir = pick(GLOB.alldirs)
 
+/obj/structure/flora/roguegrass
+	/// Tall foliage still brushes against passengers above ground level.
+	var/brushes_riders = FALSE
+
 /datum/component/roguegrass/Initialize()
 	RegisterSignal(parent, list(COMSIG_MOVABLE_CROSSED), PROC_REF(Crossed))
 
 /datum/component/roguegrass/proc/Crossed(datum/source, atom/movable/AM)
-	var/atom/A = parent
+	var/obj/structure/flora/roguegrass/A = parent
 
 	if(isliving(AM))
 		var/mob/living/L = AM
+		if(!A.brushes_riders && L.get_mountable_mount())
+			return
 		if(L.is_airborne_over_vegetation() || L.m_intent == MOVE_INTENT_SNEAK)
 			return
 		else
-			if(!(HAS_TRAIT(L, TRAIT_AZURENATIVE) && L.m_intent != MOVE_INTENT_RUN))
-				playsound(A.loc, "plantcross", 80, FALSE, -1)
-			var/oldx = A.pixel_x
-			animate(A, pixel_x = oldx+1, time = 0.5)
-			animate(pixel_x = oldx-1, time = 0.5)
-			animate(pixel_x = oldx, time = 0.5)
-			L.consider_ambush()
+			if(!L.treads_lightly())
+				playsound(A.loc, "plantcross", 100, FALSE, -1)
+				var/oldx = A.pixel_x
+				animate(A, pixel_x = oldx+1, time = 0.5)
+				animate(pixel_x = oldx-1, time = 0.5)
+				animate(pixel_x = oldx, time = 0.5)
+				L.consider_ambush()
 	return
 
 

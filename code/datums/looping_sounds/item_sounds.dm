@@ -71,4 +71,3 @@
 	extra_range = -3
 	// Tokens update volume during the charge rather than waiting for the next clip
 	use_sound_tokens = TRUE
-

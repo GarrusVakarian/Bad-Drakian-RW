@@ -1474,3 +1474,31 @@ GLOBAL_VAR_INIT(extend_round_timestamp, 0)
 	log_admin("[key_name(usr)] extended the round by 30 minutes.")
 	message_admins("[key_name(usr)] extended the round by 30 minutes.")
 	GLOB.extend_round_timestamp = world.time
+
+/mob/living/carbon/human/proc/far_travel_cleanup(datum/mind/departing_mind, departing_ckey)
+	if(departing_mind && departing_ckey)
+		if(departing_mind.assigned_role == "Mercenary")
+			var/obj/structure/roguemachine/talkstatue/mercenary/statue = SSroguemachine.mercenary_statue
+			if(!statue && length(SSroguemachine.mercenary_statues))
+				statue = SSroguemachine.mercenary_statues[1]
+			if(statue)
+				statue.mercenary_status -= real_name
+		// If departure is a lord, remove them from found_lords to prevent false omen triggers
+		if(departing_mind.assigned_role == "Grand Duke" || departing_mind.assigned_role == "Grand Duchess")
+			if(GLOB.found_lords[departing_ckey])
+				GLOB.found_lords -= departing_ckey
+	if(has_embedded_objects())
+		for(var/thing in get_embedded_objects())
+			QDEL_NULL(thing)
+
+/mob/living/proc/admin_fartravel(mob/admin)
+	var/obj/shapeshift_holder/holder = get_shapeshift_holder()
+	if(holder)
+		var/mob/living/carbon/human/caster = holder.stored
+		// Revert the spell shapeshift so the mind, and any player's key, are back in the caster's body.
+		holder.restore()
+		return caster.admin_send_back_to_lobby(admin, TRUE, TRUE)
+	if(!ishuman(src))
+		return FALSE
+	var/mob/living/carbon/human/H = src
+	return H.admin_send_back_to_lobby(admin, TRUE, TRUE)

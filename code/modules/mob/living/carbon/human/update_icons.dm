@@ -1289,7 +1289,7 @@ There are several things that need to be remembered:
 			if(cloak.alternate_worn_layer == UNDER_ARMOR_LAYER)
 				// Keep the wide cloth below both the shirt padding and armor.
 				var/mutable_appearance/tucked_barding = taur?.get_barding_overlay(cloak, SHIRT_LAYER + 0.1)
-				overlays_standing[UNDER_ARMOR_LAYER] = tucked_barding ? list(cloak_overlay, tucked_barding) : cloak_overlay
+				overlays_standing[UNDER_ARMOR_CACHE_INDEX] = tucked_barding ? list(cloak_overlay, tucked_barding) : cloak_overlay
 			if(cloak.alternate_worn_layer == CLOAK_BEHIND_LAYER)
 				overlays_standing[CLOAK_BEHIND_LAYER] = cloak_overlay
 			if(!cloak.alternate_worn_layer)

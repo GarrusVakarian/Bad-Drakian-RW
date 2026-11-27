@@ -2195,8 +2195,8 @@
 		loc.visible_message(span_cult("[target] stands untouched. They reject His will."))
 
 /obj/structure/ritualcircle/psydon/proc/psydonadmonishment(mob/living/carbon/human/target, mob/living/carbon/human/user)
-	if(!target || QDELETED(target) || target.loc != loc)
-		to_chat(usr, "Selected target is not on the rune! [target.p_they(TRUE)] must be directly on top of the rune to receive the One's admonishment.")
+	if(QDELETED(target) || QDELETED(user) || target.loc != loc)
+		to_chat(user, "The subject must remain directly on top of the rune to receive the One's admonishment.")
 		return
 
 	if(!target.mind) //Stopping null lookup runtimes
@@ -2208,14 +2208,15 @@
 		return
 
 	// Remove divine curses
-	for(var/datum/curse/C in target.curses)
+	for(var/datum/curse/C as anything in target.curses.Copy())
+		var/curse_type = C.type
 		if(target.remove_curse(C))
 			target.apply_status_effect(/datum/status_effect/debuff/devitalised)
 			if(HAS_TRAIT(user, TRAIT_INQUISITION)) // aka absolver
 				loc.visible_message(span_warning("With masterful precision, the divine curse on [target] is unwoven."))
 			else
 				loc.visible_message(span_warning("The divine curse on [target] is transferred to [user]"))
-				user.add_curse(C.type)
+				user.add_curse(curse_type)
 
 	var/datum/antagonist/werewolf/Were = target.mind.has_antag_datum(/datum/antagonist/werewolf/)
 	var/datum/antagonist/werewolf/lesser/Wereless = target.mind.has_antag_datum(/datum/antagonist/werewolf/lesser/)
@@ -2497,13 +2498,13 @@
 
 /obj/structure/ritualcircle/psydon/proc/psydonconversion_stage4(mob/living/carbon/human/target)
 	to_chat(target, span_mind_control("..."))
-	
+
 	// Remove divine punishments
 	target.remove_status_effect(/datum/status_effect/debuff/apostasy)
 	target.remove_status_effect(/datum/status_effect/debuff/excomm)
 	target.remove_stress(/datum/stressevent/apostasy)
 	target.remove_stress(/datum/stressevent/excommunicated)
-	
+
 	if(target.devotion == null)
 		target.set_patron(new /datum/patron/old_god)
 		return

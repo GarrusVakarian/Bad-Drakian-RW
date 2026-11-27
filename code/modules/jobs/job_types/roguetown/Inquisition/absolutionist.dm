@@ -32,7 +32,8 @@
 		TRAIT_INQUISITION,
 		TRAIT_RITUALIST, //Handles conversions, too, now.
 		TRAIT_HOMESTEAD_EXPERT,
-		TRAIT_SELF_AWARE //Shows full damage numbers on self-diagnosis, for QOL.
+		TRAIT_SELF_AWARE, //Shows full damage numbers on self-diagnosis, for QOL.
+		TRAIT_MEDICINE_EXPERT,
 	)
 	vice_restrictions = list(/datum/charflaw/hemophage, /datum/charflaw/silverweakness)
 
@@ -113,6 +114,8 @@
 		/obj/item/needle = 1,
 		/obj/item/natural/worms/leech/cheele = 1,
 		/obj/item/ritechalk = 1,
+		/obj/item/storage/belt/rogue/surgery_bag/full/physician = 1,
+		/obj/item/bedroll = 1,
 		)
 	
 	if(H.age == AGE_OLD)

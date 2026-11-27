@@ -8,7 +8,7 @@
 		return FALSE
 	if(istype(target, /mob/living/carbon/human/species/skeleton) && method == "alchemy")
 		return FALSE
-	
+
 
 	// Check if the target has rot
 	var/has_rot = FALSE

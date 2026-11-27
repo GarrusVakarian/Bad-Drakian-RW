@@ -21,6 +21,8 @@
 #define CHANNEL_WATER_AMBIENCE 1005
 /// River ambience
 #define CHANNEL_RIVER_AMBIENCE 1004
+#define CHANNEL_ROT_AMBIENCE 1003
+#define CHANNEL_CLOCK_AMBIENCE 1002
 
 //THIS SHOULD ALWAYS BE THE LOWEST ONE!
 //KEEP IT UPDATED
@@ -31,7 +33,7 @@
  * Fixed channels must stay above this bound. Lower it before reserving additional fixed channels
  * within the pool.
  */
-#define CHANNEL_HIGHEST_AVAILABLE 1003
+#define CHANNEL_HIGHEST_AVAILABLE 1001
 
 
 #define SOUND_MINIMUM_PRESSURE 10

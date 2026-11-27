@@ -1208,7 +1208,7 @@
 
 /// Keep the existing succumb requirements shared by the verb and delayed prompts.
 /mob/living/proc/can_succumb()
-	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE)
+	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE || HAS_TRAIT(src, TRAIT_DEATHS_DOOR))
 
 /mob/living/verb/welcome_necras_embrace()
 	set name = "Embrace Necra"
@@ -1222,7 +1222,9 @@
 	var/client/requester = client
 	var/datum/mind/original_mind = mind
 	necra_embrace_pending = TRUE
-	var/confirmation = alert(src, "Give up and die?", "Embrace Necra", "No", "Yes")
+	var/list/warnings = list("Give up and die?")
+	SEND_SIGNAL(src, COMSIG_LIVING_GET_SUCCUMB_WARNINGS, warnings)
+	var/confirmation = alert(src, jointext(warnings, "\n\n"), "Embrace Necra", "No", "Yes")
 	if(QDELETED(src))
 		return
 	if(confirmation == "Yes" && requester && client == requester && requester.mob == src && mind == original_mind && can_succumb())
@@ -1246,6 +1248,7 @@
 	if(istype(loc, /turf/open/water) && !HAS_TRAIT(src, TRAIT_NOBREATH) && lying && client)
 		record_round_statistic(STATS_PEOPLE_DROWNED)
 
+	SEND_SIGNAL(src, COMSIG_LIVING_SUCCUMBED)
 	adjustOxyLoss(201)
 	updatehealth()
 	if(word_input)
@@ -1778,13 +1781,10 @@
 			if(restrained() && !prob(5))
 				return
 			var/datum/component/riding/human/riding_datum = GetComponent(/datum/component/riding/human)
-			if(riding_datum && has_buckled_mobs())
+			if(riding_datum && has_buckled_mobs() && !HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE) && !buckle_lying)
 				for(var/mob/living/M in buckled_mobs.Copy())
-					if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE))
-						riding_datum.force_dismount(M)
-					else if(!buckle_lying)
-						if(user_unbuckle_mob(M, src))
-							M.Knockdown(1 SECONDS)
+					if(user_unbuckle_mob(M, src))
+						M.Knockdown(1 SECONDS)
 			return
 
 /mob/living/proc/submit(instant = FALSE)

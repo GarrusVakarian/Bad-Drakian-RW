@@ -37,6 +37,7 @@
 	var/use_params_for_runechat = FALSE
 	/// Whether the Anthro Noise Emotes preference controls this sound
 	var/anthro_noise = FALSE
+	var/is_animal = FALSE
 	var/needs_emotion = FALSE //If true, emote will check for detached trait and not run if the user has it and the emote wasn't intentional. Used for emotes that require emotional investment to make sense, like crying or laughing.
 
 /datum/emote/New()
@@ -61,7 +62,7 @@
 /datum/emote/proc/adjacentaction(mob/user, mob/target)
 	return
 
-/datum/emote/proc/run_emote(mob/user, params, type_override, intentional = FALSE, targetted = FALSE, animal = FALSE, suppress_chat = FALSE)
+/datum/emote/proc/run_emote(mob/user, params, type_override, intentional = FALSE, targetted = FALSE, anthro_noise = FALSE, suppress_chat = FALSE, travel = null, erp = FALSE)
 	. = TRUE
 	if(!can_run_emote(user, TRUE, intentional))
 		return FALSE
@@ -122,7 +123,10 @@
 			else// if(!vision.viewing_head)
 				emotelocation = user
 
-		playsound(emotelocation, tmp_sound, snd_vol, FALSE, snd_range, soundping = soundping, animal_pref = animal)
+		// An explicit travel class supplies both barrier handling and the floor cap
+		var/sound_travel = isnull(travel) ? snd_travel : travel
+		var/floor_volume = isnull(travel) ? (cross_z_audible ? null : SOUND_FLOOR_NEVER) : SOUND_TRAVEL_FLOOR(travel)
+		playsound(emotelocation, tmp_sound, snd_vol, FALSE, snd_range, soundping = soundping, anthro_noise = anthro_noise, travel = sound_travel, floor_volume = floor_volume, erp = erp)
 	if(!nomsg)
 		user.log_message(msg, LOG_EMOTE)
 		if(suppress_chat)

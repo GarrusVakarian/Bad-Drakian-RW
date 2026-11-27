@@ -1,4 +1,15 @@
 /datum/gnoll_prefs
+	var/list/gallery_alternates = list()
+	var/list/blocked_links = list()
+	var/headshot_zoom = HEADSHOT_ZOOM_MIN
+	var/headshot_x = HEADSHOT_X_DEFAULT
+	var/headshot_y = HEADSHOT_Y_DEFAULT
+	var/headshot_framed = FALSE
+	var/image_backdrop = GALLERY_BACKDROP_TAVERN
+	var/list/card_backgrounds = list()
+	var/list/art_view_settings = list()
+	var/list/artwork_defaults
+	var/ooc_extra_img_size = OOC_EXTRA_SIZE_MAX
 	var/gnoll_name = ""
 	var/gnoll_pronouns = HE_HIM
 	var/pelt_type = "firepelt"
@@ -328,16 +339,6 @@
 	dat += "<a href='?_src_=gnoll_prefs;action=change_title'>Change Title</a>"
 	dat += "<a href='?_src_=gnoll_prefs;action=change_artist'>Change Artist</a>"
 	dat += "<br><b>Set a Roleplay Ad:</b> <a href='?_src_=gnoll_prefs;action=roleplay_ad'>Change</a>"
-	dat += "<br><b>OOC Extra Image/Video/Gif (Flavor Text):</b> <a href='?_src_=gnoll_prefs;action=ooc_extra_img'>Change</a>"
-	if(ooc_extra_img_link != null)
-		dat += "<br><img src='[ooc_extra_img_link]' width='100px' height='100px'>"
-	dat += "<br><b>NSFW OOC Extra Image/Video/Gif (Flavor Text):</b> <a href='?_src_=gnoll_prefs;action=nsfw_ooc_extra_img'>Change</a>"
-	if(nsfw_ooc_extra_img_link != null)
-		dat += "<br><img src='[nsfw_ooc_extra_img_link]' width='100px' height='100px'>"
-	dat += "<br><B>Image Gallery:</b> <a href='?_src_=gnoll_prefs;action=img_gallery'>Add</a>"
-	dat+= "<a href='?_src_=gnoll_prefs;action=clear_gallery'>Clear Gallery</a>"
-	dat += "<br><B>Nsfw Image Gallery:</b> <a href='?_src_=gnoll_prefs;action=nsfw_img_gallery'>Add</a>"
-	dat+= "<a href='?_src_=gnoll_prefs;action=clear_nsfw_gallery'>Clear Nsfw Gallery</a>"
 	dat += "<br><a href='?_src_=gnoll_prefs;action=ooc_preview'><b>Preview Examine</b></a>"
 
 	dat += "<center><a href='?_src_=gnoll_prefs;action=close'>Close</a></center>"

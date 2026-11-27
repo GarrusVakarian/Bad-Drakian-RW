@@ -167,4 +167,3 @@ GLOBAL_VAR_INIT(musicboxes_last_play, 0) //last time of the last played track, t
 		if(curfile)
 			user.log_message("stopped jukebox song: [curfile]", LOG_GAME)
 	update_icon()
-

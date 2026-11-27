@@ -1008,6 +1008,9 @@
 		L.look_around()
 
 /atom/movable/screen/eye_intent/proc/set_eyelids(mob/living/user, closed, keep_awake = FALSE)
+	var/was_closed = user.eyesclosed
+	if(was_closed && !closed && (SEND_SIGNAL(user, COMSIG_LIVING_TRY_OPEN_EYES) & COMPONENT_BLOCK_OPEN_EYES))
+		return FALSE
 	if(!closed || user.stay_awake != keep_awake)
 		user.fallingas = 0
 	user.eyesclosed = closed
@@ -1016,12 +1019,16 @@
 		user.become_blind("eyelids")
 	else
 		user.cure_blind("eyelids")
+	if(closed && !was_closed && !keep_awake)
+		SEND_SIGNAL(user, COMSIG_LIVING_CLOSED_EYES)
+	return TRUE
 
 /atom/movable/screen/eye_intent/proc/toggle_eyelids(mob/living/user, keep_awake = FALSE)
 	if(user.stat != CONSCIOUS || user.IsSleeping())
 		return
 	var/closed = !user.eyesclosed || user.stay_awake != keep_awake
-	set_eyelids(user, closed, closed && keep_awake)
+	if(!set_eyelids(user, closed, closed && keep_awake))
+		return
 	if(keep_awake)
 		var/message = closed ? "I close my eyes and stay awake." : "I open my eyes."
 		to_chat(user, span_notice(message))

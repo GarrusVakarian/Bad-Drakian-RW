@@ -361,7 +361,7 @@
 #define TRAIT_GANG_B "Gang Blortz Volves"
 #define TRAIT_NATURALARMOR "Tough Skin"
 #define TRAIT_CLERGYRADICAL "Eclectic Clergy"
-#define CLERGY_DOCTRINE_PROMPT "How shall I seek the divine?\n\nOrthodox: I follow my patron's teachings and receive their miracles through devotion.\n\nEclectic: I study miracles through research and earn favor by undertaking church quests."
+#define CLERGY_DOCTRINE_PROMPT "How shall I seek the divine?\n\nOrthodox: I follow my patron's teachings and receive their miracles through devotion.\n\nEclectic: I study miracles through research and earn favor by undertaking church quests. I gain 2 Willpower and 1 Speed, lose 1 Constitution, and gain Critical Weakness. Wrestling and unarmed combat start at Apprentice."
 #define TRAIT_ON_BOAT "on_boat"
 #define TRAIT_OAR "oar"
 #define TRAIT_OAR_PROPELLED "oar_propelled"
@@ -1023,3 +1023,5 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_MOVEMENT_BLOCKED "movement_blocked"
 /// Mobs that have this trait cannot be extinguished
 #define TRAIT_NO_EXTINGUISH "no_extinguish"
+
+#define TRAIT_DEATHS_DOOR		"Death's Door" //Shows the death's door overlay and lets the mob succumb regardless of health

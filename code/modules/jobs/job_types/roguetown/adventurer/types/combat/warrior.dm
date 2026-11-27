@@ -118,8 +118,8 @@
 	cmode_music = 'sound/music/cmode/adventurer/combat_outlander2.ogg'
 	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_DODGEEXPERT, TRAIT_DECEIVING_MEEKNESS)
 	subclass_stats = list(
-		STATKEY_INT = 2,
 		STATKEY_STR = 1,
+		STATKEY_INT = 2,
 		STATKEY_WIL = 1,
 		STATKEY_SPD = 1,
 	)

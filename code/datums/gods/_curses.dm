@@ -3,38 +3,46 @@
 		var/datum/curse/C = curse
 		C.on_life(src)
 
-/mob/living/carbon/human/proc/add_curse(datum/curse/C)
-	if(is_cursed(C))
+/mob/living/carbon/human/proc/add_curse(curse_type)
+	if(!ispath(curse_type, /datum/curse) || is_cursed(curse_type))
 		return FALSE
 
-	C = new C()
-	curses += C
-	var/curse_resist = FALSE
+	var/datum/curse/curse = new curse_type()
+	curses += curse
 	if(HAS_TRAIT(src, TRAIT_CURSE_RESIST))
-		curse_resist = 0.5
-	C.on_gain(src, curse_resist)
+		curse.resist = 0.5
+	curse.on_gain(src, curse.resist)
+	if(HAS_TRAIT(src, TRAIT_LUX_FREAK))
+		to_chat(src, span_userdanger("A Divine curse buries into my lux, it will take 30 minutes for me to unweave it."))
+		curse.removal_timer = addtimer(CALLBACK(src, PROC_REF(expire_curse), curse), 30 MINUTES, TIMER_STOPPABLE)
 	return TRUE
 
-/mob/living/carbon/human/proc/remove_curse(datum/curse/C)
-	if(!is_cursed(C))
-		return FALSE
+/mob/living/carbon/human/proc/expire_curse(datum/curse/curse)
+	if(QDELETED(curse) || !(curse in curses))
+		return
+	curse.removal_timer = null
+	remove_curse(curse)
 
-	var/curse_resist = FALSE
-	if(HAS_TRAIT(src, TRAIT_CURSE_RESIST))
-		curse_resist = 0.5
-	for(var/datum/curse/curse in curses)
-		if(curse.name == C.name)
-			curse.on_loss(src, curse_resist)
+/mob/living/carbon/human/proc/remove_curse(curse_or_type)
+	var/datum/curse/instance = curse_or_type
+	var/curse_type = istype(instance) ? instance.type : curse_or_type
+	if(!ispath(curse_type, /datum/curse))
+		return FALSE
+	for(var/datum/curse/curse as anything in curses)
+		if(curse.type == curse_type)
 			curses -= curse
+			curse.on_loss(src, curse.resist)
+			qdel(curse)
 			return TRUE
 	return FALSE
 
-/mob/living/carbon/human/proc/is_cursed(datum/curse/C)
-	if(!C)
+/mob/living/carbon/human/proc/is_cursed(curse_or_type)
+	var/datum/curse/instance = curse_or_type
+	var/curse_type = istype(instance) ? instance.type : curse_or_type
+	if(!ispath(curse_type, /datum/curse))
 		return FALSE
-
-	for(var/datum/curse/curse in curses)
-		if(curse.name == C.name)
+	for(var/datum/curse/curse as anything in curses)
+		if(curse.type == curse_type)
 			return TRUE
 	return FALSE
 
@@ -42,6 +50,13 @@
 	var/name = "Debug Curse"
 	var/description = "This is a debug curse."
 	var/trait
+	var/resist = FALSE
+	var/removal_timer
+
+/datum/curse/Destroy()
+	if(removal_timer)
+		deltimer(removal_timer)
+	return ..()
 
 /datum/curse/proc/on_life(mob/living/carbon/human/owner)
 	return
@@ -60,7 +75,6 @@
 	REMOVE_TRAIT(owner, trait, TRAIT_CURSE)
 	to_chat(owner, span_userdanger("Something has changed... I feel relieved."))
 	owner.playsound_local(get_turf(owner), 'sound/misc/bell.ogg', 80, FALSE, pressure_affected = FALSE)
-	qdel(src)
 	return
 
 //////////////////////

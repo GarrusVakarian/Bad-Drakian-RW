@@ -336,7 +336,7 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	if(HAS_TRAIT(H, TRAIT_INQUISITION))
 		to_chat(src, span_warning("Dammed octavian's runic arrays dampen divine punishment directed against their agents!"))
 		return FALSE
-		
+
 	//Let's not curse heretical antags.
 	if(HAS_TRAIT(H, TRAIT_HERESIARCH))
 		to_chat(src, span_warning("The patron of this one shields them from being suppressed."))

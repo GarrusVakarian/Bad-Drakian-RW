@@ -33,10 +33,10 @@
 	var/big_cast = FALSE
 	if (ishuman(user)) // if we're wearing a zcross, always big-cast
 		var/mob/living/carbon/human/human_user = user
-		if (istype(human_user.wear_neck, /obj/item/clothing/neck/roguetown/psicross/inhumen)) 
+		if (istype(human_user.wear_neck, /obj/item/clothing/neck/roguetown/psicross/inhumen))
 			projectile_type = /obj/projectile/magic/profane/major
 			big_cast = TRUE
-	
+
 	if (!big_cast && istype(held_item, /obj/item/natural/bundle/bone))
 		var/obj/item/natural/bundle/bone/bonez = held_item
 		if (bonez.use(1))

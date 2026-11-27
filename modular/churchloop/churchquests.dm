@@ -730,7 +730,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 /obj/item/quest_token/coin_chest
 	name = "tithe chest"
 	desc = "Collect mammon for the tithe. At least one other player must contribute."
-	icon_state = "questbox"
+	icon_state = "questdonate"
 	var/sum = 0
 	var/required_sum = 250
 	var/has_outside_donation = FALSE

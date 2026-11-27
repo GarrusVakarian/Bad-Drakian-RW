@@ -891,7 +891,7 @@
 				to_chat(C, span_warning("I try to scream but my voice fails me."))
 				. = FALSE
 
-/datum/emote/living/scream/run_emote(mob/user, params, type_override, intentional, targetted)
+/datum/emote/living/scream/run_emote(mob/user, params, type_override, intentional, targetted, anthro_noise, travel, erp)
 	. = ..()
 	if(. && user.mind && user.client)
 		record_featured_stat(FEATURED_STATS_SCREAMERS, user)
@@ -2402,7 +2402,7 @@
 	emote_type = EMOTE_AUDIBLE
 	show_runechat = TRUE
 
-/datum/emote/living/ffsalute/run_emote(mob/living/user, params, type_override, intentional, targetted, animal)
+/datum/emote/living/ffsalute/run_emote(mob/living/user, params, type_override, intentional, targetted, anthro_noise)
 	if(HAS_TRAIT(user, TRAIT_XYLIX))
 		. = ..()
 

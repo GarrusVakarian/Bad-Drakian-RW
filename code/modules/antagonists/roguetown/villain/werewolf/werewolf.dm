@@ -3,6 +3,8 @@
 	roundend_category = "Werewolves"
 	antagpanel_category = "Werewolf"
 	job_rank = ROLE_WEREWOLF
+	antag_hud_type = ANTAG_HUD_WEREWOLF
+	antag_hud_name = "werewolf_hud"
 	confess_lines = list(
 		"THE BEAST INSIDE ME!",
 		"BEWARE THE BEAST!", // beware my /obj/item/organ/penis/knotted/big

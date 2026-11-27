@@ -478,7 +478,7 @@
 	var/mob/living/carbon/human/effective_target = splashed_user || target
 	log_combat(user, effective_target, "Came onto the target")
 	if(effective_target)
-		playsound(effective_target, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
+		playsound_erp(effective_target, 'sound/misc/mat/endout.ogg', 50, TRUE, extrarange = 0)
 	add_cum_floor(get_turf(effective_target || user), do_big_puddle = get_production_testicle_size() > DEFAULT_TESTICLES_SIZE)
 	if(splashed_user)
 		if(cum_on_face)
@@ -519,9 +519,9 @@
 	log_combat(user, effective_target, "Came inside the target")
 	deadite_sex_infect_attempt(user, effective_target)
 	if(oral)
-		playsound(user, pick(list('sound/misc/mat/mouthend (1).ogg','sound/misc/mat/mouthend (2).ogg')), 100, FALSE, ignore_walls = FALSE)
+		playsound_erp(user, pick(list('sound/misc/mat/mouthend (1).ogg','sound/misc/mat/mouthend (2).ogg')), 100, FALSE, extrarange = 0)
 	else
-		playsound(user, 'sound/misc/mat/endin.ogg', 100, TRUE, ignore_walls = FALSE)
+		playsound_erp(user, 'sound/misc/mat/endin.ogg', 100, TRUE, extrarange = 0)
 	if(!skip_knot_try && consume_charge && (knot_btm || (user != effective_target && !isnull(effective_target) && istype(effective_target))))
 		knot_try(knot_action = knot_action, knot_swap_roles = knot_swap_roles, knot_btm = knot_btm)
 	var/datum/sex_controller/receiver_sexcon = splashed_user?.sexcon
@@ -853,7 +853,7 @@
 	if(C && istype(C))
 		log_combat(user, user, "Ejaculated into a container")
 		user.visible_message(span_love("[user] spills into [C]!"))
-		playsound(user, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
+		playsound_erp(user, 'sound/misc/mat/endout.ogg', 50, TRUE, extrarange = 0)
 		if(user.getorganslot(ORGAN_SLOT_PENIS))
 			C.reagents.add_reagent(/datum/reagent/erpjuice/cum, get_semen_volume() + floor(get_oral_intake_extra_volume()))
 		else

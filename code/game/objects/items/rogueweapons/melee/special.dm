@@ -499,11 +499,15 @@
 
 /// Swings over a 3 wide x 2 deep block starting at center and running away from the user, harvesting every ripe plant in it.
 /obj/item/rogueweapon/scythe/proc/reap_area(turf/center, mob/living/user)
+	if(!center || !user || loc != user || user.get_active_held_item() != src || !wielded)
+		return
 	var/dir_swing = get_dir(user, center) || user.dir
 	if(dir_swing & (dir_swing - 1)) // diagonal: snap to the user's facing, else the north/south component
 		dir_swing = (user.dir & (user.dir - 1)) ? (dir_swing & (NORTH|SOUTH)) : user.dir
 	user.changeNext_move(CLICK_CD_MELEE)
 	if(!do_after(user, get_farming_do_time(user, 1.5 SECONDS), target = center))
+		return
+	if(QDELETED(src) || user.get_active_held_item() != src || !wielded || user.used_intent?.type != /datum/intent/reap)
 		return
 	playsound(user, pick(BLADEWOOSH_LARGE), 100, FALSE)
 	var/side = turn(dir_swing, 90)

@@ -106,7 +106,7 @@
 /obj/effect/proc_holder/spell/targeted/pioneer/plant_bogtrap_delayed/proc/_has_saperka(mob/living/user)
 	for(var/obj/item/rogueweapon/shovel/saperka/S in user)
 		return TRUE
-	for(var/obj/item/rogueweapon/pick/woodcutter/dolabra/pioneer/S in user)
+	for(var/obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter/dolabra/pioneer/S in user)
 		return TRUE
 	return FALSE
 

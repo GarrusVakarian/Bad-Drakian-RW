@@ -208,7 +208,7 @@
 		H.change_stat(STATKEY_PER, 2)
 		H.change_stat(STATKEY_CON, 2)
 		H.change_stat(STATKEY_SPD, -2) //We're crippling you little buddy
-		H.change_stat(STATKEY_LCK, -1) 
+		H.change_stat(STATKEY_LCK, -1)
 	if (H.mind)
 		H.AddSpell(new /obj/effect/proc_holder/spell/self/choose_riding_virtue_mount)
 
@@ -587,4 +587,3 @@
 	recruitment_message = "We're in this together now, %RECRUIT!"
 	accept_message = "For the Brotherhood!"
 	refuse_message = "I refuse."
-

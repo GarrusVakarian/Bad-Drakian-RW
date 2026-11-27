@@ -766,6 +766,8 @@
 	max_blade_int = 250
 	icon = 'icons/roguetown/weapons/64.dmi'
 
+	special = /datum/special_intent/graggar_break_the_ranks
+
 /obj/item/rogueweapon/greataxe/steel/doublehead/graggar/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/cursed_item, TRAIT_HORDE, "AXE", "RENDERED ASUNDER")
@@ -893,3 +895,19 @@
 				return list("shrink" = 0.6,"sx" = 5,"sy" = -3,"nx" = -5,"ny" = -2,"wx" = -5,"wy" = -1,"ex" = 5,"ey" = -2,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 7,"sturn" = -7,"wturn" = 16,"eturn" = -22,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
 			if("onbelt")
 				return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
+
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/graggar
+	name = "vicious tomahawk"
+	icon_state = "graggartomahawk"
+	desc = "A handaxe of greater stature, intricately decorated with the Sinistar's heraldry. Worshippers wield it to strengthen their soul's connection \
+	to the force of violence; a blessing, before they pursue the most dangerous game of all."
+	possible_item_intents = list(/datum/intent/axe/cut, /datum/intent/axe/chop, /datum/intent/axe/bash)
+	force = 30
+	force_wielded = 35
+	throwforce = 30 // Hey it's a throwing axe
+	wdefense = 5
+	unenchantable = TRUE
+
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/graggar/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/cursed_item, TRAIT_HORDE, "AXE", "RENDERED ASUNDER")

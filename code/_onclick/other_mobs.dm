@@ -194,6 +194,13 @@
 			if(target.pulledby == src)
 				target.dna.species.on_wing_removal(A, src)
 			return
+		if(isclothing(A))
+			var/obj/item/clothing/stored = A
+			var/obj/item/clothing/head/hat = stored.get_storing_hat()
+			if(hat)
+				if(hat.loc == src)
+					hat.cycle_stored_layer(stored, src)
+				return
 		A.MiddleClick(src, params)
 	else
 		mmb_intent.on_mmb(A, src, params)

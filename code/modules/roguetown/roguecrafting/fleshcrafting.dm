@@ -97,9 +97,9 @@
 	)
 	craftdiff = 4
 	required_tech_node = "BASIC_ORGANS"
-	structurecraft = null	
+	structurecraft = null
 	tech_unlocked = FALSE
-	
+
 /datum/crafting_recipe/roguetown/fleshcrafting/ear
 	name = "Ears"
 	category = "Flesh"
@@ -110,7 +110,7 @@
 	)
 	craftdiff = 4
 	required_tech_node = "BASIC_ORGANS"
-	structurecraft = null	
+	structurecraft = null
 	tech_unlocked = FALSE
 
 

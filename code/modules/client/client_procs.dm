@@ -312,6 +312,8 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(connection != "seeker" && connection != "web")//Invalid connection type.
 		return null
 
+	// Before GLOB.clients, which is where point ambience first finds a client
+	point_ambience = new
 	GLOB.clients += src
 	GLOB.directory[ckey] = src
 	has_pq_sapling = qualifies_for_pq_sapling(get_playerquality(ckey))

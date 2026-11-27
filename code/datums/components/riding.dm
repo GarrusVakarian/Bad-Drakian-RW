@@ -80,7 +80,15 @@
 			human_rider.vars["last_mount_move_time"] = world.time
 			human_rider.update_action_buttons_icon()
 			addtimer(CALLBACK(human_rider, TYPE_PROC_REF(/mob, update_action_buttons_icon)), 2 SECONDS)
-	// Award riding XP only to the driver, once per completed mount move.
+	if(!ishuman(AM) || !HAS_TRAIT(AM, TRAIT_PONYGIRL_RIDEABLE))
+		award_riding_experience(current_driver)
+	handle_vehicle_offsets(rider)
+	handle_vehicle_layer()
+	if(driver && driver.IsImmobilized())
+		force_dismount(driver)
+
+/datum/component/riding/proc/award_riding_experience(mob/living/current_driver)
+	var/atom/movable/AM = parent
 	if(current_driver && !QDELETED(current_driver) && (current_driver in AM.buckled_mobs))
 		if(current_driver.m_intent == MOVE_INTENT_RUN)
 			riding_xp_move_counter++
@@ -373,7 +381,7 @@
 
 /datum/component/riding/human/proc/can_rider_act(mob/user)
 	var/mob/living/carbon/human/mount = parent
-	return can_rider_steer(user) && !mount.doing && mount.next_move <= world.time && !mount.is_swinging()
+	return can_rider_steer(user) && !mount.doing && mount.next_move <= world.time && !mount.atkswinging && !mount.atkreleasing
 
 /datum/component/riding/human/proc/handle_jump(mob/user, atom/target)
 	if(!can_rider_act(user))
