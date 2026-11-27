@@ -27,6 +27,7 @@
 		/datum/sprite_accessory/face_detail/burneye_r,
 		/datum/sprite_accessory/face_detail/burneye_l,
 		/datum/sprite_accessory/face_detail/scarhead,
+		/datum/sprite_accessory/face_detail/monstermaw,
 		)
 
 /datum/customizer/bodypart_feature/accessory
