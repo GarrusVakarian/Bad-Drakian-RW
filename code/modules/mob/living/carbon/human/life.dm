@@ -195,9 +195,11 @@
 	if(client.prefs?.disabled_guidance & DISABLE_GUIDANCE_CRITICAL_RECOVERY)
 		return
 	var/datum/antagonist/zombie/existing_deadite = mind.has_antag_datum(/datum/antagonist/zombie)
-	var/can_rise = existing_deadite ? (!existing_deadite.has_turned && !existing_deadite.revived) : (zombie_can_convert() && !has_world_trait(/datum/world_trait/necra_requiem))
+	var/can_rise = existing_deadite ? (!existing_deadite.has_turned && !existing_deadite.revived) : (zombie_can_convert(from_death = TRUE) && !has_world_trait(/datum/world_trait/necra_requiem))
 	var/message = "If you're stuck in critical condition, open the <b>IC</b> tab and choose <b>Embrace Necra</b> to give up and die."
-	if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE))
+	if(istype(src, /mob/living/carbon/human/species/werewolf) && get_shapeshift_owner())
+		message += " If you die in wolf form, you return to your original body. If that body is eligible, you can rise there as a deadite."
+	else if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE))
 		message += " You are immune to deadite transformation, so you will not rise as a deadite afterward."
 	else if(!can_rise)
 		message += " You cannot currently rise as a deadite after death."

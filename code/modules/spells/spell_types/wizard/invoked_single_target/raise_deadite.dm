@@ -34,6 +34,10 @@
 
 	if(ishuman(potential_deadite) && potential_deadite.mind)
 		var/mob/living/carbon/human/human_target = potential_deadite
+		if(human_target.mind.has_antag_datum(/datum/antagonist/werewolf))
+			to_chat(user, span_notice("They can not be raised!"))
+			revert_cast(user)
+			return
 		playsound(get_turf(human_target), 'sound/magic/magnet.ogg', 80, TRUE, soundping = TRUE)
 		user.visible_message("[user] mutters an incantation and [human_target] twitches with unnatural life!")
 		human_target.set_blood_volume(BLOOD_VOLUME_NORMAL)
