@@ -126,6 +126,15 @@
 					if(prob(probby) && !HAS_TRAIT(src, TRAIT_NOPAINSTUN) && !has_status_effect(/datum/status_effect/buff/psyhealing))
 						paincrit()
 						mob_timers["painstun"] = world.time + 160
+					if(prob(probby) && HAS_TRAIT(src, TRAIT_NOPAINSTUN) && (has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder) || has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder/blessed)))
+						Immobilize(10)
+						emote("painscream")
+						to_chat(src, span_userdanger("THE SACRED FLAMES, I FEEL PAIN AGAIN!"))
+						stuttering += 5
+						cultslurring += 10 //To indicate this isn't a natural kind of agony
+						addtimer(CALLBACK(src, PROC_REF(Stun), 110), 10)
+						addtimer(CALLBACK(src, PROC_REF(Knockdown), 110), 10)
+						mob_timers["painstun"] = world.time + 160
 					else
 						emote("painmoan")
 						stuttering += 5
@@ -245,8 +254,8 @@
 	. = 0
 	var/has_adrenaline = HAS_TRAIT(src, TRAIT_ADRENALINE_RUSH)
 	for(var/obj/item/bodypart/limb as anything in bodyparts)
-		if(limb.status == BODYPART_ROBOTIC || limb.skeletonized)
-			continue
+		if(limb.status == BODYPART_ROBOTIC || limb.skeletonized && !has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder) && !has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder/blessed))
+			continue //If we're not sundered, skeletonised limbs do not hurt.
 		var/bodypart_pain = ((limb.brute_dam + limb.burn_dam) / limb.max_damage) * limb.max_pain_damage
 		for(var/datum/wound/wound in limb.wounds)
 			bodypart_pain += wound.woundpain
@@ -460,6 +469,36 @@ GLOBAL_LIST_INIT(ballmer_windows_me_msg, list("Yo man, what if, we like, uh, put
 
 		if(drunkenness >= 101)
 			adjustToxLoss(5) //Let's be honest you shouldn't be alive by now
+
+//WE HANDLE SUNDERSTACKS HERE
+	if(sunder_stacks)
+		sunder_stacks = max(sunder_stacks - 1, 0) //Takes a bit to shrug off
+
+		apply_status_effect(/datum/status_effect/debuff/sunder_stacks) //You survived an EXTREMELY lethal blow, you might want to keep back for now
+
+		if(sunder_stacks >= 21)
+			if(cultslurring < 5) //Fucks up our ability to talk, completely until we're below 20 stacks
+				cultslurring += 1.2
+
+		if(sunder_stacks >= 31)
+			adjustBruteLoss(1)
+			if(prob(3)) //3% chance of blood vomiting
+				vomit(blood = TRUE, stun = FALSE) // vomiting blood, because you are actually pretty fucked up sire.
+				Dizzy(5) //Tiny bit of Dizzy
+
+		if(sunder_stacks >= 41) //At this point you've taken (2) blows (or are a vampire) or more and shouldn't be escaping death this easily.
+			adjustBruteLoss(1)
+			if(prob(12)) //12% chance to have random movement + stun + dizziness
+				confused += 8
+				vomit(blood = TRUE, stun = FALSE) // vomiting blood, because you are actually pretty fucked up sire.
+				Dizzy(5)
+
+		if(sunder_stacks >= 101) //We are beyond the point of lethal, somehow. This will cripple you severely.
+			adjustBruteLoss(1)
+			if(prob(50))
+				blur_eyes(5)
+				Knockdown(5) //can't stand at all hardly, mortality almost forced upon a form that cannot sustain it.
+			Dizzy(25)//You are completely fucked up at this point, any more stacks of SUNDER and you're DEAD.
 
 //used in human and monkey handle_environment()
 //Temperature system design note:
