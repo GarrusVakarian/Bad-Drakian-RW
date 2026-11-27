@@ -42,7 +42,7 @@
 		REMOVE_TRAIT(H, TRAIT_MIRROR_MAGIC, TRAIT_GENERIC)
 		to_chat(H, span_warning("Your connection to mirrors fades away."))
 
-/proc/perform_mirror_transform(mob/living/carbon/human/H, datum/instant_transform_session/session)
+/proc/perform_mirror_transform(mob/living/carbon/human/H, datum/instant_transform_session/session, obj/reflection_source)
 	// Handles the actual appearance changing part of the spell. For reasons unknown to man, this previously lived exclusively on the mirror object.
 	var/guarded = !isnull(session)
 	if(!H || (guarded && (QDELETED(session) || !session.is_valid(H))))
@@ -503,23 +503,32 @@
 				var/datum/sprite_accessory/face_detail/detail = new detail_type()
 				valid_details[detail.name] = detail_type
 
+			var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
+			if(!head)
+				return
+			var/client/selecting_client = H.client
 			var/new_detail = input(H, "Choose your face detail", "Face Detail") as null|anything in valid_details
+			if(QDELETED(H) || H.client != selecting_client || H.get_bodypart(BODY_ZONE_HEAD) != head)
+				return
 			if(guarded && (QDELETED(session) || !session.is_valid(H)))
 				return
+			if(reflection_source)
+				if(QDELETED(reflection_source) || reflection_source.obj_broken || !HAS_TRAIT(H, TRAIT_MIRROR_MAGIC) || !H.canUseTopic(reflection_source, BE_CLOSE, FALSE, NO_TK))
+					return
+				if(istype(reflection_source, /obj/item/handmirror) && !(reflection_source in H.held_items))
+					return
 			if(new_detail)
-				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
-				if(head)
-					// Remove existing face detail if any
-					for(var/datum/bodypart_feature/face_detail/old_detail in head.bodypart_features)
-						head.remove_bodypart_feature(old_detail)
-						break
+				// Remove existing face detail if any
+				for(var/datum/bodypart_feature/face_detail/old_detail in head.bodypart_features)
+					head.remove_bodypart_feature(old_detail)
+					break
 
-					// Add new face detail if not "none"
-					if(new_detail != "none")
-						var/datum/bodypart_feature/face_detail/detail_feature = new()
-						detail_feature.set_accessory_type(valid_details[new_detail], H.hair_color, H)
-						head.add_bodypart_feature(detail_feature)
-					should_update = TRUE
+				// Add new face detail if not "none"
+				if(new_detail != "none")
+					var/datum/bodypart_feature/face_detail/detail_feature = new()
+					detail_feature.set_accessory_type(valid_details[new_detail], H.hair_color, H)
+					head.add_bodypart_feature(detail_feature)
+				should_update = TRUE
 
 		if("pubes")
 			var/list/valid_pubes = list("none")

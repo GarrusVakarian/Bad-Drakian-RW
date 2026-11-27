@@ -50,7 +50,7 @@
 			H.add_stress(/datum/stressevent/unseemly)
 		return
 	else
-		perform_mirror_transform(H)
+		perform_mirror_transform(H, reflection_source = src)
 
 /obj/structure/mirror/examine_status(mob/user)
 	if(obj_broken)
@@ -252,21 +252,25 @@
 				var/datum/sprite_accessory/face_detail/detail = new detail_type()
 				valid_details[detail.name] = detail_type
 
+			var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
+			if(!head)
+				return
+			var/client/selecting_client = H.client
 			var/new_detail = input(user, "Choose your face detail", "Face Detail") as null|anything in valid_details
+			if(QDELETED(src) || obj_broken || QDELETED(H) || H.client != selecting_client || H.get_bodypart(BODY_ZONE_HEAD) != head || !H.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
+				return
 			if(new_detail)
-				var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
-				if(head)
-					// Remove existing face detail if any
-					for(var/datum/bodypart_feature/face_detail/old_detail in head.bodypart_features)
-						head.remove_bodypart_feature(old_detail)
-						break
+				// Remove existing face detail if any
+				for(var/datum/bodypart_feature/face_detail/old_detail in head.bodypart_features)
+					head.remove_bodypart_feature(old_detail)
+					break
 
-					// Add new face detail if not "none"
-					if(new_detail != "none")
-						var/datum/bodypart_feature/face_detail/detail_feature = new()
-						detail_feature.set_accessory_type(valid_details[new_detail], H.hair_color, H)
-						head.add_bodypart_feature(detail_feature)
-					should_update = TRUE
+				// Add new face detail if not "none"
+				if(new_detail != "none")
+					var/datum/bodypart_feature/face_detail/detail_feature = new()
+					detail_feature.set_accessory_type(valid_details[new_detail], H.hair_color, H)
+					head.add_bodypart_feature(detail_feature)
+				should_update = TRUE
 
 	if(should_update)
 		H.update_body()
@@ -292,7 +296,7 @@
 	if(HAS_TRAIT(H, TRAIT_MIRROR_MAGIC))
 		to_chat(H, span_info("You gaze into the mirror, concentrating on the glamoring magicks limning your form..."))
 		if(do_after(H, 3 SECONDS))
-			perform_mirror_transform(H)
+			perform_mirror_transform(H, reflection_source = src)
 		return
 
 	if(HAS_TRAIT(user, TRAIT_BEAUTIFUL))
