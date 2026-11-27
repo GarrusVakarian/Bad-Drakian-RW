@@ -1,0 +1,4 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - code_imp: "The automatic changelog accepts tweak as an alias for balance."
