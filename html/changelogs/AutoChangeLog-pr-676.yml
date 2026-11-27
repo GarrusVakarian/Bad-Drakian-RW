@@ -1,6 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - rscadd: "Werewolves can rise as deadites in their original body. The werewolf curse stays dormant until they are cured and alive again."
-  - bugfix: "Dying in wolf form returns you to your original body. Revival before the deadite rise cancels it."
-  - bugfix: "Raise Deadite no longer heals werewolves it cannot raise."

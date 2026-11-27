@@ -1159,6 +1159,16 @@
       anonymous bounty targets in its Outlaws tab.
   - bugfix: Hunted Man bounties list the correct reward, crime, and issuer.
 2026-11-27:
+  SMoto95:
+  - rscadd: Added recipes to turn regular sapling into rarer versions, requires expert
+      druidic trickery.
+  - rscadd: Timber's Tithe rite now have a chance to drop either ash, wild or wood
+      essence.
+  - balance: Trees take slightly less time to grow from 15 total mins to 10, grass
+      tiles skill level requirements drop from master to expert so druids can still
+      craft them at under 25% chance without having to grind the skill level.
+  - balance: Changes the requirements for Dendorite's Wild Revival to be something
+      they can handle more than forcing them to plant a bunch of herbs.
   _Rarity:
   - qol: Added a per-character Auto Egg Laying toggle to character creation.
   - bugfix: Aghosting no longer spends your body's dream check while you're away.
@@ -1268,3 +1278,8 @@
   - image: (AlucardHellsingChapel) Restored Baothan light plate art.
   - qol: "(UntoldTactics, SirSwagmeyer) Updated Baotha and Psydon lore, the Ferentian\
       \ Calendar, and Fleshcraft\u2019s in-world roleplay guidance."
+  - rscadd: Werewolves can rise as deadites in their original body. The werewolf curse
+      stays dormant until they are cured and alive again.
+  - bugfix: Dying in wolf form returns you to your original body. Revival before the
+      deadite rise cancels it.
+  - bugfix: Raise Deadite no longer heals werewolves it cannot raise.
