@@ -1150,3 +1150,8 @@
   - rscadd: Read public wanted posters on town boards. The round-end Chronicle reveals
       anonymous bounty targets in its Outlaws tab.
   - bugfix: Hunted Man bounties list the correct reward, crime, and issuer.
+2026-11-27:
+  _Rarity:
+  - qol: Added a per-character Auto Egg Laying toggle to character creation.
+  - bugfix: Aghosting no longer spends your body's dream check while you're away.
+  - bugfix: The lobby ready list now shows players with only Medium or Low class preferences.
