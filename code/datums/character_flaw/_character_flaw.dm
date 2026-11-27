@@ -12,6 +12,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	"Clingy"=/datum/charflaw/clingy,
 	"Colorblind (+2 Q-Points)"=/datum/charflaw/colorblind,
 	"Compliant"=/datum/charflaw/compliant,
+	"Corpulent"=/datum/charflaw/addiction/corpulent,
 	"Critical Weakness (+2 Q-Points)"=/datum/charflaw/critweakness,
 	"Cyclops (L) (+2 Q-Points)"=/datum/charflaw/noeyel,
 	"Cyclops (R) (+2 Q-Points)"=/datum/charflaw/noeyer,
@@ -184,19 +185,16 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/badsight/on_mob_creation(mob/user)
 	..()
-	if(!ishuman(user))
-		return
-	var/mob/living/carbon/human/H = user
-	if(!H.wear_mask)
-		H.equip_to_slot_or_del(new /obj/item/clothing/mask/rogue/spectacles(H), SLOT_WEAR_MASK)
-	else
-		new /obj/item/clothing/mask/rogue/spectacles(get_turf(H))
-
 	// we don't seem to have a mind when on_mob_creation fires, so set up a timer to check when we probably will
-	addtimer(CALLBACK(src, PROC_REF(apply_reading_skill), H), 5 SECONDS)
+	if(ishuman(user))
+		addtimer(CALLBACK(src, PROC_REF(apply_effects), user, user.mind), 10 SECONDS)
 
-/datum/charflaw/badsight/proc/apply_reading_skill(mob/living/carbon/human/H)
-	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
+/datum/charflaw/badsight/proc/apply_effects(mob/living/carbon/human/user, datum/mind/initial_mind)
+	if(QDELETED(user) || !user.mind || (initial_mind && user.mind != initial_mind) || !user.has_flaw(type))
+		return
+	user.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
+	if(!user.mind.special_items["Spectacles"])
+		user.mind.special_items["Spectacles"] = /obj/item/clothing/mask/rogue/spectacles
 
 /datum/charflaw/paranoid
 	name = "Paranoid"
@@ -811,7 +809,6 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	..()
 	REMOVE_TRAIT(user, TRAIT_HEMOPHAGE, TRAIT_GENERIC)
 	REMOVE_TRAIT(user, TRAIT_VAMPBITE, TRAIT_GENERIC)
-
 
 /datum/charflaw/weak
 	name = "Feeble-bodied"

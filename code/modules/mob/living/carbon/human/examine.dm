@@ -1211,6 +1211,8 @@
 				. += span_info(pick("Where...", "Home...", "I remember...", "Where am I..."))
 			else
 				. += span_info("[capitalize(m2)] ancestry is [origin].")
+		if(HAS_TRAIT(src, TRAIT_OVERWEIGHT))
+			. += span_info(span_yellow("[m1] quite chubby."))
 
 		if(ishuman(user))
 			var/mob/living/carbon/human/H = user

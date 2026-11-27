@@ -231,6 +231,8 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 
 	var/mailer = null
 	var/mailedto = null
+	/// Account selected when sending named mail from the admin panel.
+	var/admin_mail_recipient_ckey
 
 	var/picklvl = 0
 

@@ -6,8 +6,8 @@
 	craftdiff = 4
 
 /datum/anvil_recipe/cannon/cannon
-	name = "Cannon"
-	additional_items = list(/obj/item/ingot/steel, /obj/item/ingot/steel, /obj/item/ingot/steel, /obj/item/grown/log/tree/small, /obj/item/grown/log/tree/small,)
+	name = "Cannon (+2 Steel, +2 Bronze Cogs, +2 Small Logs)"
+	additional_items = list(/obj/item/ingot/steel, /obj/item/ingot/steel, /obj/item/roguegear/bronze, /obj/item/roguegear/bronze, /obj/item/grown/log/tree/small, /obj/item/grown/log/tree/small)
 	req_bar = /obj/item/ingot/steel
 	created_item = /obj/structure/cannon
 

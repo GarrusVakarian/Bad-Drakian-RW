@@ -16,6 +16,7 @@
 		STATKEY_INT = 2,
 		STATKEY_SPD = -2,
 	)
+	adv_stat_ceiling = list(STAT_SPEED = 11)
 	subclass_skills = list(
 		/datum/skill/combat/swords = SKILL_LEVEL_EXPERT,
 		/datum/skill/combat/maces = SKILL_LEVEL_JOURNEYMAN,

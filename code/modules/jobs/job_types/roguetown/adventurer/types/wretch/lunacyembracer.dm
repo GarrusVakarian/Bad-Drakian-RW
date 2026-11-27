@@ -62,6 +62,7 @@
 	)
 
 /datum/outfit/job/roguetown/wretch/lunacyembracer/pre_equip(mob/living/carbon/human/H)
+	wrists = /obj/item/clothing/wrists/roguetown/bracers/cloth/monk
 	backr = /obj/item/quiver/javelin/stone//These are actually, I swear to you, basically worthless. It's soulful.
 	// -- Start of section for god specific bonuses --
 	if(H.patron?.type == /datum/patron/inhumen/graggar)

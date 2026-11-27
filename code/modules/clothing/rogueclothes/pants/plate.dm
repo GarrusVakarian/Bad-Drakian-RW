@@ -52,6 +52,7 @@
 	name = "vicious leggings"
 	desc = "Plate chausses which stir with the innate violence driving our world"
 	icon_state = "graggarplatelegs"
+	armor_class = ARMOR_CLASS_MEDIUM
 	armor = ARMOR_ASCENDANT
 	max_integrity = ARMOR_INT_LEG_ANTAG
 

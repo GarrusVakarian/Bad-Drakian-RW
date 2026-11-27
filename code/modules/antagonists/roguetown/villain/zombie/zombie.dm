@@ -209,6 +209,7 @@
 			GLOB.alive_mob_list |= zombie
 
 		zombie.cmode_music = cmode_music
+		zombie.change_stat(STATKEY_STR, 0, REF(src))
 
 		for(var/trait in traits_zombie)
 			REMOVE_TRAIT(zombie, trait, "[type]")
@@ -316,6 +317,8 @@
 	zombie.playsound_local(get_turf(zombie), 'sound/music/wolfintro.ogg', 80, FALSE, pressure_affected = FALSE)
 	to_chat(zombie, span_cult(pick("SO... HUNGRY... CRAVE FLESH!", "FLESH... MUST HAVE FLESH!", "HUNGER... KILL... FLESH!")))
 	zombie.cmode_music = 'sound/music/combat_weird.ogg'
+	// Apply the transformed Strength as a reversible stat change, including any existing overflow.
+	zombie.change_stat(STATKEY_STR, rand(16, 18) - zombie.STASTR - zombie.BUFSTR, REF(src))
 	zombie.apply_status_effect(/datum/status_effect/debuff/deadite_grace)
 	has_turned = TRUE
 	zombie.dropItemToGround(zombie.get_item_by_slot(SLOT_MOUTH), TRUE)

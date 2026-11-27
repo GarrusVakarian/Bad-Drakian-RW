@@ -18,6 +18,8 @@
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
+		/datum/sprite_accessory/ears/big/fennec,
+		/datum/sprite_accessory/ears/big/fennec_bigger,
 		/datum/sprite_accessory/ears/big/sandfox_large,
 		/datum/sprite_accessory/ears/bigwolf,
 		/datum/sprite_accessory/ears/bigwolf_inner,
@@ -153,6 +155,8 @@
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
+		/datum/sprite_accessory/ears/big/fennec,
+		/datum/sprite_accessory/ears/big/fennec_bigger,
 		/datum/sprite_accessory/ears/husky,
 		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
@@ -182,6 +186,8 @@
 		/datum/sprite_accessory/ears/eoran,
 		/datum/sprite_accessory/ears/pestran,
 		/datum/sprite_accessory/ears/zorzor,
+		/datum/sprite_accessory/ears/wispy,
+		/datum/sprite_accessory/ears/small,
 		/datum/sprite_accessory/ears/cobrahood,
 		/datum/sprite_accessory/ears/cobrahoodears,
 		)
@@ -220,6 +226,8 @@
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
+		/datum/sprite_accessory/ears/big/fennec,
+		/datum/sprite_accessory/ears/big/fennec_bigger,
 		/datum/sprite_accessory/ears/husky,
 		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
@@ -257,7 +265,9 @@
 		/datum/sprite_accessory/ears/shadekin/band_right,
 		/datum/sprite_accessory/ears/shadekin/fluffy,
 		/datum/sprite_accessory/ears/shadekin/smooth,
-		/datum/sprite_accessory/ears/zorzor
+		/datum/sprite_accessory/ears/zorzor,
+		/datum/sprite_accessory/ears/wispy,
+		/datum/sprite_accessory/ears/small
 		)
 
 /datum/customizer/organ/ears/lizard
@@ -324,6 +334,8 @@
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/fennec,
+		/datum/sprite_accessory/ears/big/fennec,
+		/datum/sprite_accessory/ears/big/fennec_bigger,
 		/datum/sprite_accessory/ears/husky,
 		/datum/sprite_accessory/ears/horse,
 		/datum/sprite_accessory/ears/jellyfish,
@@ -353,6 +365,8 @@
 		/datum/sprite_accessory/ears/eoran,
 		/datum/sprite_accessory/ears/pestran,
 		/datum/sprite_accessory/ears/zorzor,
+		/datum/sprite_accessory/ears/wispy,
+		/datum/sprite_accessory/ears/small,
 		/datum/sprite_accessory/ears/antenna_simple1,
 		/datum/sprite_accessory/ears/antenna_simple2,
 		/datum/sprite_accessory/ears/antenna_simple3,
@@ -387,6 +401,8 @@
 		/datum/sprite_accessory/ears/eevee,
 		/datum/sprite_accessory/ears/elf,
 		/datum/sprite_accessory/ears/fennec,
+		/datum/sprite_accessory/ears/big/fennec,
+		/datum/sprite_accessory/ears/big/fennec_bigger,
 		/datum/sprite_accessory/ears/fox,
 		/datum/sprite_accessory/ears/vulp,
 		/datum/sprite_accessory/ears/kangaroo,
@@ -396,4 +412,20 @@
 		/datum/sprite_accessory/ears/perky,
 		/datum/sprite_accessory/ears/big/sandfox_large,
 		/datum/sprite_accessory/ears/lynx,
+		/datum/sprite_accessory/ears/wispy,
+		/datum/sprite_accessory/ears/small
 	)
+
+/datum/customizer_choice/organ/ears/wings
+	name = "Aasimar Ears"
+	organ_type = /obj/item/organ/ears
+	sprite_accessories = list(
+		/datum/sprite_accessory/ears/elf,
+		/datum/sprite_accessory/ears/elfw,
+		/datum/sprite_accessory/ears/wispy,
+		/datum/sprite_accessory/ears/small,
+		)
+
+/datum/customizer/organ/ears/wings
+	customizer_choices = list(/datum/customizer_choice/organ/ears/wings)
+	allows_disabling = TRUE

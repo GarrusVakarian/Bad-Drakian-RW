@@ -355,11 +355,14 @@
 	break_sound = 'sound/foley/cloth_rip.ogg'
 	sleepy = 2
 	metalizer_result = null
+	interaction_flags_atom = INTERACT_ATOM_UI_INTERACT
 
 /obj/structure/bed/rogue/bedroll/attack_hand(mob/user, params)
-	..()
+	. = ..()
+	if(.)
+		return
 	user.visible_message(span_notice("[user] begins rolling up \the [src]."))
-	if(do_after(user, 2 SECONDS, TRUE, src))
+	if(do_after(user, 2 SECONDS, TRUE, src) && !QDELETED(src) && Adjacent(user) && !length(buckled_mobs) && !length(contents))
 		var/obj/item/bedroll/new_bedroll = new /obj/item/bedroll(get_turf(src))
 		new_bedroll.color = src.color
 		qdel(src)
