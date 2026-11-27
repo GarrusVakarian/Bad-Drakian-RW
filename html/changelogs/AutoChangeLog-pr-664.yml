@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "The lobby ready list now shows players with only Medium or Low class preferences."
