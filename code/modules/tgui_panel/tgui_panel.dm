@@ -112,3 +112,6 @@
  */
 /datum/tgui_panel/proc/send_roundrestart()
 	window.send_message("roundrestart")
+
+/datum/tgui_panel/proc/checkpoint_chat()
+	window.send_message("chat/checkpoint")

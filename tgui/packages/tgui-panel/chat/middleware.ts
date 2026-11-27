@@ -48,8 +48,10 @@ const saveChatToStorage = async (store: Store) => {
   const messages = chatRenderer.messages
     .slice(fromIndex)
     .map((message) => serializeMessage(message));
-  storage.set('chat-state', state);
-  storage.set('chat-messages', messages);
+  await Promise.all([
+    storage.set('chat-state', state),
+    storage.set('chat-messages', messages),
+  ]);
 };
 
 const loadChatFromStorage = async (store: Store) => {
@@ -86,6 +88,21 @@ const loadChatFromStorage = async (store: Store) => {
 export const chatMiddleware = (store: Store) => {
   let initialized = false;
   let loaded = false;
+  let restoreFailed = false;
+  let savePending = false;
+  const saveChat = () => {
+    if (restoreFailed) {
+      return;
+    }
+    if (!loaded || !chatRenderer.isReady()) {
+      savePending = true;
+      return;
+    }
+    savePending = false;
+    saveChatToStorage(store).catch((error) => {
+      console.warn('Could not save chat history.', error);
+    });
+  };
   const sequences: number[] = [];
   const sequences_requested: number[] = [];
   chatRenderer.events.on('batchProcessed', (countByType) => {
@@ -104,11 +121,16 @@ export const chatMiddleware = (store: Store) => {
     const settings = selectSettings(store.getState());
     // Load the chat once settings are loaded
     if (!initialized && settings.initialized) {
-      setInterval(() => {
-        saveChatToStorage(store);
-      }, MESSAGE_SAVE_INTERVAL);
       initialized = true;
-      loadChatFromStorage(store);
+      setInterval(saveChat, MESSAGE_SAVE_INTERVAL);
+      loadChatFromStorage(store).catch((error) => {
+        // Keep chat usable without replacing data we could not read.
+        restoreFailed = true;
+        console.warn('Could not restore chat history.', error);
+        if (!loaded) {
+          store.dispatch(loadChat());
+        }
+      });
     }
     if (type === 'chat/message') {
       let payload_obj;
@@ -155,6 +177,9 @@ export const chatMiddleware = (store: Store) => {
       chatRenderer.changePage(page);
       chatRenderer.onStateLoaded();
       loaded = true;
+      if (savePending) {
+        saveChat();
+      }
       return;
     }
     if (
@@ -192,13 +217,14 @@ export const chatMiddleware = (store: Store) => {
 
       return;
     }
-    if (type === 'roundrestart') {
-      // Save chat as soon as possible
-      saveChatToStorage(store);
+    if (type === 'chat/checkpoint' || type === 'roundrestart') {
+      saveChat();
       return next(action);
     }
     if (type === saveChatToDisk.type) {
-      chatRenderer.saveToDisk();
+      if (loaded && chatRenderer.isReady()) {
+        chatRenderer.saveToDisk();
+      }
       return;
     }
     if (type === clearChat.type) {
