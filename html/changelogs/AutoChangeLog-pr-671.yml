@@ -1,0 +1,7 @@
+author: "SMoto95"
+delete-after: True
+changes:
+  - rscadd: "Added recipes to turn regular sapling into rarer versions, requires expert druidic trickery."
+  - rscadd: "Timber's Tithe rite now have a chance to drop either ash, wild or wood essence."
+  - balance: "Trees take slightly less time to grow from 15 total mins to 10, grass tiles skill level requirements drop from master to expert so druids can still craft them at under 25% chance without having to grind the skill level."
+  - balance: "Changes the requirements for Dendorite's Wild Revival to be something they can handle more than forcing them to plant a bunch of herbs."
