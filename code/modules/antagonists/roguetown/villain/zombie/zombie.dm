@@ -357,6 +357,9 @@
 	var/mob/living/carbon/human/zombie = owner?.current
 	if(!ishuman(zombie))
 		return
+	// Werewolves can rise through corpse rot only, never a forced infection or a spell.
+	if(owner.has_antag_datum(/datum/antagonist/werewolf))
+		return
 	var/obj/item/bodypart/head = zombie.get_bodypart(BODY_ZONE_HEAD)
 	if(!head)
 		qdel(src)
@@ -415,14 +418,15 @@
 	Proc for our newly infected to wake up as a zombie
 */
 /proc/wake_zombie(mob/living/carbon/zombie, infected_wake = FALSE, converted = FALSE)
-	if(!zombie.infected) //Ensure they werent cured
+	var/mob/living/carbon/human/body = zombie
+	if(!istype(body) || QDELETED(body) || !body.infected)
 		return
-
-	if (!zombie || QDELETED(zombie))
-		return
-
-	if (!istype(zombie, /mob/living/carbon/human)) // Ensure the zombie is human
-		return
+	if(body.mind?.has_antag_datum(/datum/antagonist/werewolf))
+		if(!infected_wake || converted || body.stat != DEAD || !body.is_werewolf_recovery_body())
+			return
+		var/datum/antagonist/zombie/pending_rise = body.mind.has_antag_datum(/datum/antagonist/zombie)
+		if(!pending_rise || pending_rise.deadite_body_ref?.resolve() != body)
+			return
 
 	var/obj/item/bodypart/head = zombie.get_bodypart(BODY_ZONE_HEAD)
 	if (!head) // Missing head
@@ -478,13 +482,17 @@
 	if (zombie.stat >= DEAD) // Turned and died anyway. The corpse keeps its datum so it can still be cured
 		return
 
+/// The werewolf's mind must be back in its normal body, and the body must be out of any temporary form.
+/mob/living/carbon/human/proc/is_werewolf_recovery_body()
+	return mind?.current == src && !is_shapeshift_shell() && get_shapeshift_actor() == src
+
 /// Side-effect-free eligibility shared by conversion and recovery guidance.
-/mob/living/carbon/human/proc/zombie_can_convert()
+/mob/living/carbon/human/proc/zombie_can_convert(from_death = FALSE)
 	if(!mind)
 		return FALSE
 	if(mind.has_antag_datum(/datum/antagonist/vampire))
 		return FALSE
-	if(mind.has_antag_datum(/datum/antagonist/werewolf))
+	if(mind.has_antag_datum(/datum/antagonist/werewolf) && (!from_death || !is_werewolf_recovery_body()))
 		return FALSE
 	if(mind.has_antag_datum(/datum/antagonist/zombie))
 		return FALSE
@@ -499,8 +507,8 @@
 	return TRUE
 
 /// Add the deadite antagonist only after its eligibility checks pass.
-/mob/living/carbon/human/proc/zombie_check_can_convert()
-	if(!zombie_can_convert())
+/mob/living/carbon/human/proc/zombie_check_can_convert(from_death = FALSE)
+	if(!zombie_can_convert(from_death))
 		return FALSE
 	return mind.add_antag_datum(/datum/antagonist/zombie)
 

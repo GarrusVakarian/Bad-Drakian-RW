@@ -91,7 +91,7 @@
 			ZOMBIFICATION BY DEATH BEGINS HERE
 		*/
 		if(!has_world_trait(/datum/world_trait/necra_requiem))
-			if(!zombie_check_can_convert()) //Gives the dead unit the zombie antag flag
+			if(!zombie_check_can_convert(from_death = TRUE)) //Gives the dead unit the zombie antag flag
 				to_chat(src, span_userdanger("..is this to be my end..?"))
 				to_chat(src, span_danger("The cold consumes the final flicker of warmth in your chest and begins to seep into your limbs..."))
 			else if(!(client?.prefs?.disabled_guidance & DISABLE_GUIDANCE_DEATH_RECOVERY))
@@ -196,6 +196,10 @@
 	. = ..()
 	if(!.)
 		return
+	if(mind?.has_antag_datum(/datum/antagonist/werewolf))
+		var/datum/antagonist/zombie/pending_rise = mind.has_antag_datum(/datum/antagonist/zombie)
+		if(pending_rise && !pending_rise.has_turned && pending_rise.deadite_body_ref?.resolve() == src)
+			cancel_deadite_rise(src)
 	if(needs_binding && mind?.player_card)
 		visible_message(span_danger("[src]'s flesh ripples and reshapes as the soul within claims it for its own!"))
 		mind.player_card.apply_identity_to(src)

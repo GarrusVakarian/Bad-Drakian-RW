@@ -5,7 +5,7 @@
 	if(!ishuman(user)) 
 		return FALSE
 	var/mob/living/carbon/human/H = user
-	if(H.stat == DEAD) 
+	if(H.stat == DEAD || H.is_risen_deadite())
 		return FALSE
 	if(H.advsetup) 
 		return FALSE
@@ -152,7 +152,9 @@
 	user.Knockdown(10)
 
 /mob/living/carbon/human/species/werewolf/death(gibbed, nocutscene = FALSE)
-	werewolf_untransform(TRUE, gibbed)
+	if(werewolf_untransform(TRUE, gibbed, nocutscene))
+		return
+	return ..()
 
 /mob/living/carbon/human/proc/werewolf_transform()
 	if(!mind)
@@ -289,50 +291,61 @@
 		return FALSE
 	return ..()
 
-/mob/living/carbon/human/proc/werewolf_untransform(dead,gibbed)
-	if(!stored_mob)
-		return
+/mob/living/carbon/human/proc/werewolf_untransform(dead, gibbed, nocutscene = FALSE)
+	var/mob/living/carbon/human/species/werewolf/wolf = src
+	var/mob/living/carbon/human/original_body = stored_mob
+	var/turf/destination = get_turf(src)
+	if(!istype(original_body) || QDELETED(original_body) || !destination)
+		return FALSE
 	for(var/datum/charflaw/addiction/lovefiend/werewolf/vice in vices.Copy())
 		vice.on_removal(src)
 		vices -= vice
 		qdel(vice)
-	if(!mind)
-		log_runtime("NO MIND ON [src.name] WHEN UNTRANSFORMING")
 	Paralyze(1, ignore_canstun = TRUE)
-	for(var/obj/item/W in src)
-		dropItemToGround(W)
+	for(var/obj/item/item in src)
+		dropItemToGround(item)
 	icon = null
 	invisibility = INVISIBILITY_MAXIMUM
 
-	var/mob/living/carbon/human/W = stored_mob
 	stored_mob = null
-	REMOVE_TRAIT(W, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	REMOVE_TRAIT(original_body, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	original_body.forceMove(destination)
+
+	REMOVE_TRAIT(original_body, TRAIT_NOMOOD, TRAIT_GENERIC)
+	REMOVE_TRAIT(original_body, TRAIT_SILVER_WEAK, TRAIT_GENERIC)
+
+	var/datum/antagonist/werewolf/curse = mind?.has_antag_datum(/datum/antagonist/werewolf)
+	if(curse)
+		curse.transformed = FALSE
+		curse.transforming = FALSE
+		curse.untransforming = FALSE
+		curse.ready_to_untransform = FALSE
+		curse.tf_stage = 0
+	mind?.transfer_to(original_body)
+
+	if(istype(wolf) && wolf.stored_language)
+		original_body.remove_all_languages()
+		original_body.copy_known_languages_from(wolf.stored_language)
+	if(istype(wolf) && wolf.stored_skills && wolf.stored_experience)
+		var/datum/skill_holder/original_skills = original_body.ensure_skills()
+		original_skills.known_skills = wolf.stored_skills.Copy()
+		original_skills.skill_experience = wolf.stored_experience.Copy()
+
+	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/self/howl)
+	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/self/claws)
+	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick/werewolf)
+	original_body.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
+	original_body.regenerate_icons()
+
+	to_chat(original_body, span_userdanger("I return to my facade."))
+	playsound(original_body.loc, pick('sound/combat/gib (1).ogg','sound/combat/gib (2).ogg'), 200, FALSE, 3)
+	original_body.spawn_gibs(FALSE)
 	if(dead)
-		W.death(gibbed)
-
-	W.forceMove(get_turf(src))
-
-	REMOVE_TRAIT(W, TRAIT_NOMOOD, TRAIT_GENERIC)
-	REMOVE_TRAIT(W, TRAIT_SILVER_WEAK, TRAIT_GENERIC)
-
-	mind.transfer_to(W)
-
-	var/mob/living/carbon/human/species/werewolf/WA = src
-	W.remove_all_languages()
-	W.copy_known_languages_from(WA.stored_language)
-	skills?.known_skills = WA.stored_skills.Copy()
-	skills?.skill_experience = WA.stored_experience.Copy()
-
-	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/howl)
-	W.RemoveSpell(new /obj/effect/proc_holder/spell/self/claws)
-	W.RemoveSpell(new /obj/effect/proc_holder/spell/targeted/woundlick/werewolf)
-	W.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/shiftback)
-	W.regenerate_icons()
-
-	to_chat(W, span_userdanger("I return to my facade."))
-	playsound(W.loc, pick('sound/combat/gib (1).ogg','sound/combat/gib (2).ogg'), 200, FALSE, 3)
-	W.spawn_gibs(FALSE)
-	W.Knockdown(30)
-	W.Stun(30)
+		// Death needs the original body on the map with the player's mind already attached.
+		original_body.death(gibbed, nocutscene)
+	else
+		original_body.Knockdown(30)
+		original_body.Stun(30)
 
 	qdel(src)
+	return TRUE
