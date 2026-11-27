@@ -1,0 +1,8 @@
+author: "mypingishuge"
+delete-after: True
+changes:
+  - balance: "Open Werewolf slots can be claimed through the Villains menu regardless of the roundstart Werewolf toggle."
+  - balance: "Dreamwalker events that pick nobody and unfilled roundstart Assassin spots can open latejoin slots in Villains."
+  - qol: "The Villains menu links to forming villain migrant waves."
+  - balance: "Lowered the Dreamwalker, roundstart Werewolf, Gnolls Migration, and the storyteller's major, villain, and objective population minimums to 15."
+  - balance: "Werewolf, Dreamwalker, Assassin, and Dragon now require 15 Player Quality across their entry paths."
