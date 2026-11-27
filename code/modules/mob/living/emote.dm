@@ -25,29 +25,29 @@
 
 //Also see how prayers work in '/code/datums/gods/_patron.dm' for how patrons hear and filter prayers based on profanity, etc.
 /datum/emote/living/pray/run_emote(mob/user, params, type_override, intentional)
+	if(!iscarbon(user) || !user.client)
+		return
 	var/mob/living/carbon/follower = user
 	var/datum/patron/patron = follower.patron
-
-	var/prayer = input("Whisper your prayer:", "Prayer") as text|null
-	if(!prayer)
+	if(!patron)
+		return
+	var/datum/mind/praying_mind = follower.mind
+	var/prayer = input(follower, "Whisper your prayer:", "Prayer") as text|null
+	if(!prayer || QDELETED(follower) || !follower.client || follower.mind != praying_mind || follower.patron != patron || follower.stat == DEAD)
 		return
 
 	//If God can hear your prayer (long enough, no bad words, etc.)
 	if(patron.hear_prayer(follower, prayer))
 		if(follower.has_flaw(/datum/charflaw/addiction/godfearing))
-			// Stops prayers if you don't meet your patron's requirements to pray.
-			if(!patron?.can_pray(follower))
-				return
-			else
-				follower.sate_addiction(/datum/charflaw/addiction/godfearing)
+			follower.sate_addiction(/datum/charflaw/addiction/godfearing)
 		if(HAS_TRAIT(follower, TRAIT_CONVICTION))
 			follower.apply_status_effect(/datum/status_effect/buff/healing/prayer, 2)//Mend those wounds.
 			follower.reagents.add_reagent(/datum/reagent/consumable/nutriment, 3)//Just a small sum.
 
 		//Can the Martyr hear this?
-		if(!(patron in ALL_INHUMEN_PATRONS))
+		if(!istype(patron, /datum/patron/inhumen))
 			for (var/mob/living/player in GLOB.player_list)
-				if (player.stat == DEAD || isbrain(player))
+				if (player == follower || player.stat == DEAD || isbrain(player))
 					continue
 				//Do they even have the boon/trait? If so, send it and heal them.
 				if (HAS_TRAIT(player, TRAIT_CONVICTION))
@@ -344,6 +344,25 @@
 	message = "gasps for air!"
 	emote_type = EMOTE_AUDIBLE
 	show_runechat = FALSE
+
+/datum/emote/living/pant
+	key = "pant"
+	key_third_person = "pants"
+	message = "pants."
+	message_muffled = "makes a muffled pant."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+
+/datum/emote/living/pant/get_sound(mob/living/user)
+	key = "fatigue"
+	. = ..()
+	key = "pant"
+
+/mob/living/carbon/human/verb/emote_pant()
+	set name = "Pant"
+	set category = "Noises"
+
+	emote("pant", intentional = TRUE)
 
 /datum/emote/living/giggle
 	key = "giggle"

@@ -768,6 +768,8 @@ will handle it, but:
 
 		if(ishuman(M))
 			var/mob/living/carbon/human/H = M
+			if(clean >= CLEAN_MEDIUM)
+				H.remove_status_effect(/datum/status_effect/debuff/stinky_contact)
 
 			if(H.wear_armor && wash_obj(H.wear_armor,clean))
 				H.update_inv_armor()

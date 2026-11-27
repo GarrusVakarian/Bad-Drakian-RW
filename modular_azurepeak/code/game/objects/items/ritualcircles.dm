@@ -187,6 +187,43 @@
 	name = "Rune of Justice"
 	icon_state = "ravox_chalky"
 	desc = "A Holy Rune of Ravox. A blade to protect the weak with."
+	var/ravoxrites = list("Vow to Ravox")
+
+/obj/structure/ritualcircle/ravox/attack_hand(mob/living/user)
+	if(!..())
+		return
+	if((user.patron?.type) != /datum/patron/divine/ravox)
+		to_chat(user,span_warning("I feel a scornful gaze. This rune isn't for me."))
+		return
+	if(!HAS_TRAIT(user, TRAIT_RITUALIST))
+		to_chat(user,span_warning("I don't know the proper rites for this..."))
+		return
+	if(user.has_status_effect(/datum/status_effect/debuff/ritesexpended))
+		to_chat(user,span_warning("I have performed enough rituals for the day... I must rest before communing more."))
+		return
+	var/riteselection = input(user, "Rituals of Justice", src) as null|anything in ravoxrites
+	switch(riteselection)
+		if("Vow to Ravox") // Ideally stick to this style for rites. Early returns + negatives. Minimises the "pyramid" shape you can see in Astrata, which I've left untouched for now -- CODEATHON
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
+				return
+			user.say("My steel is sharp, my heart is true!")
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
+				return
+			user.say("For the weak, my blade I drew!")
+			if(!can_finish_vow(user) || !do_after(user, 5 SECONDS, target = src))
+				return
+			user.say("Let foes of justice face my might!")
+			if(!do_after(user, 3 SECONDS, target = src))
+				return
+			if(!can_finish_vow(user))
+				return
+			user.say("Ravox, guide my hand in righteous fight!")
+			playsound(loc, 'sound/magic/holyshield.ogg', 80, FALSE, -1)
+			user.apply_status_effect(/datum/status_effect/buff/ravox_vow)
+			user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
+
+/obj/structure/ritualcircle/ravox/proc/can_finish_vow(mob/living/user)
+	return !QDELETED(src) && !QDELETED(user) && user.Adjacent(src) && !user.incapacitated() && istype(user.patron, /datum/patron/divine/ravox) && HAS_TRAIT(user, TRAIT_RITUALIST) && !user.has_status_effect(/datum/status_effect/debuff/ritesexpended)
 
 /obj/structure/ritualcircle/pestra
 	name = "Rune of Plague"

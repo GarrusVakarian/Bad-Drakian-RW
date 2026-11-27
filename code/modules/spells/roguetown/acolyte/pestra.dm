@@ -23,6 +23,11 @@
 	if(ishuman(targets[1]))
 		var/mob/living/carbon/human/human_target = targets[1]
 		human_target.check_for_injuries(user)
+		var/list/missing_organs = human_target.get_missing_organs()
+		if(length(missing_organs))
+			to_chat(user, span_boldwarning("Missing organs: [english_list(missing_organs)]."))
+		else
+			to_chat(user, span_notice("No missing organs detected."))
 		if(HAS_TRAIT(human_target, TRAIT_DEADITE))
 			to_chat(user, span_necrosis("They are infected and have already turned into a DEADITE!"))
 			to_chat(user, span_infection("Their rot must be cured to prevent them from spreading the infection!"))

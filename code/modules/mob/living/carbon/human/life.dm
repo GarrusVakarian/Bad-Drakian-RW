@@ -77,6 +77,8 @@
 		for(var/datum/antagonist/A as anything in mind.antag_datums)
 			A.on_life(src)
 
+	if(length(curses))
+		handle_curses()
 	var/mob/dead/observer/observer = aghost_observer?.resolve()
 	var/aghosted = !client && observer?.client && observer.mind == mind && mind?.current == src
 	if(!aghosted)

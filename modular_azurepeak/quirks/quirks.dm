@@ -241,7 +241,7 @@
 
 /datum/quirk/redolent
 	name = "Redolent"
-	desc = "My body odor is strong and distinct. Without regular baths, others will notice..."
+	desc = "My body odor is strong and distinct."
 	point_cost = 1
 	added_traits = list(TRAIT_REDOLENT)
 
@@ -256,21 +256,22 @@
 	var/redolent_scent_type = "Neutral"
 	/// Player-written description of our scent.
 	var/redolent_scent = ""
-	/// Bathing suppresses our scent until this world.time.
-	var/redolent_suppressed_until = 0
+	/// Whether a borrowed scent currently needs the shared scent indicator.
+	var/redolent_contact_visible = FALSE
 	/// The last time our scent aura pulsed.
 	var/redolent_last_aura_tick = 0
 
 /mob/living/carbon/human/proc/is_redolent_reeking()
-	return HAS_TRAIT(src, TRAIT_REDOLENT) && world.time >= redolent_suppressed_until
-
-/mob/living/carbon/human/proc/redolent_on_bath()
-	redolent_suppressed_until = world.time + 30 MINUTES
-	remove_status_effect(/datum/status_effect/debuff/redolent_stink)
-	to_chat(src, span_notice("I scrub the stink away. I should stay fresh for a while."))
+	return HAS_TRAIT(src, TRAIT_REDOLENT)
 
 /mob/living/carbon/human/proc/redolent_apply_contact_stink(mob/living/carbon/human/target)
-	target.apply_status_effect(/datum/status_effect/debuff/stinky_contact, redolent_scent_type, redolent_scent)
+	if(QDELETED(target) || target == src)
+		return
+	var/datum/status_effect/debuff/stinky_contact/contact = target.has_status_effect(/datum/status_effect/debuff/stinky_contact)
+	if(!contact)
+		contact = target.apply_status_effect(/datum/status_effect/debuff/stinky_contact)
+	if(contact)
+		contact.add_scent(redolent_scent_type, redolent_scent)
 
 /mob/living/carbon/human/proc/handle_redolent_scent()
 	var/should_reek = is_redolent_reeking() && can_smell()
@@ -281,7 +282,7 @@
 				should_reek = FALSE
 				break
 
-	if(should_reek && redolent_scent_type != "Pleasant")
+	if(redolent_contact_visible || (should_reek && redolent_scent_type != "Pleasant"))
 		apply_status_effect(/datum/status_effect/debuff/redolent_stink)
 	else
 		remove_status_effect(/datum/status_effect/debuff/redolent_stink)
@@ -311,7 +312,7 @@
 		lines += redolent_examine_text(redolent_scent_type, redolent_scent)
 	var/datum/status_effect/debuff/stinky_contact/contact_stink = has_status_effect(/datum/status_effect/debuff/stinky_contact)
 	if(contact_stink)
-		lines |= contact_stink.get_examine_text()
+		lines |= contact_stink.get_examine_lines()
 	return lines
 
 /proc/redolent_aura_tick_delay(scent_type)

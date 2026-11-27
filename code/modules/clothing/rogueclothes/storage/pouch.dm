@@ -20,6 +20,28 @@
 	salvage_amount = 1
 	salvage_result = /obj/item/natural/fibers
 
+/obj/item/storage/belt/rogue/pouch/Initialize(mapload)
+	. = ..()
+	update_icon()
+
+/obj/item/storage/belt/rogue/pouch/Entered(atom/movable/arrived, atom/old_loc, list/atom/old_locs)
+	. = ..()
+	if(icon_state == "pouch_e")
+		update_icon()
+
+/obj/item/storage/belt/rogue/pouch/Exited(atom/movable/gone, direction)
+	. = ..()
+	if(!length(contents) && icon_state != "pouch_e")
+		update_icon()
+
+/obj/item/storage/belt/rogue/pouch/update_icon_state()
+	. = ..()
+	icon_state = length(contents) ? "pouch" : "pouch_e"
+
+/obj/item/storage/belt/rogue/pouch/build_worn_icon(default_layer = 0, default_icon_file = null, isinhands = FALSE, femaleuniform = NO_FEMALE_UNIFORM, override_state = null, female = FALSE, customi = null, sleeveindex, boobed_overlay = FALSE, icon/clip_mask = null)
+	// The empty sprite only exists in the inventory and ground icon sheet.
+	return ..(default_layer, default_icon_file, isinhands, femaleuniform, override_state || (female && !isinhands ? "pouch_f" : "pouch"), female, customi, sleeveindex, boobed_overlay, clip_mask)
+
 /obj/item/storage/belt/rogue/pouch/coins/poor/Initialize(mapload)
 	. = ..()
 	var/obj/item/roguecoin/copper/pile/H = new(loc)

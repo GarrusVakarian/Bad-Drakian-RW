@@ -209,6 +209,7 @@
 	name = "scrap tongs"
 	desc = "A tongs knocked together from scrap slag. Crude, rust-bitten and beyond mending, but it'll do the job until it doesn't."
 	icon_state = "scrap_atongs"
+	max_integrity = 10
 	smeltresult = /obj/item/ingot/scrap
 	anvilrepair = null
 	sellprice = SCRAP_SELLPRICE

@@ -306,6 +306,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	var/static/list/utility_types = typecacheof(list(
 		/obj/effect/proc_holder/spell/self/lessershift,
 		/obj/effect/proc_holder/spell/self/magicians_brick,
+		/obj/effect/proc_holder/spell/self/conjure_instrument,
 		/obj/effect/proc_holder/spell/self/light,
 		/obj/effect/proc_holder/spell/self/message,
 		/obj/effect/proc_holder/spell/self/message_familiar,

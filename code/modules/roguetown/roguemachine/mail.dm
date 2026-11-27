@@ -55,7 +55,7 @@
 		var/mob/living/carbon/human/H = user
 		var/addl_mail = FALSE
 		for(var/obj/item/I in M.contents)
-			if(I.mailedto == H.real_name)
+			if(is_mail_for(I, H))
 				if(!addl_mail)
 					I.forceMove(src.loc)
 					user.put_in_hands(I)
@@ -63,7 +63,7 @@
 				else
 					say("You have additional mail available.")
 					break
-		if(!any_additional_mail(M, H.real_name))
+		if(!any_additional_mail(M, H))
 			if(!addl_mail && H.has_status_effect(/datum/status_effect/ugotmail)) // we apparently got mail, but never got mail (hint: it was stolen by someone with access to the master mailer)
 				to_chat(user, span_notice("I look inside the machine and find no letter, how strange."))
 			H.remove_status_effect(/datum/status_effect/ugotmail)
@@ -265,7 +265,7 @@
 		letter.update_icon()
 	if(letter != parcel)
 		parcel.update_icon()
-	GLOB.fax_panel.register_player_letter(sender, destination, letter?.info, user.ckey, recipient?.ckey)
+	GLOB.fax_panel.register_player_letter(sender, destination, letter?.info, user.ckey, recipient?.ckey, istype(parcel, /obj/item/smallDelivery) ? parcel : null)
 	if(box)
 		box.say("New mail!")
 		playsound(box, 'sound/misc/hiss.ogg', 100, FALSE, -1)
@@ -760,9 +760,14 @@
 			STR.remove_from_storage(I, get_turf(src))
 	return ..()
 
-/obj/structure/roguemachine/mail/proc/any_additional_mail(obj/item/roguemachine/mastermail/M, name)
+/obj/structure/roguemachine/mail/proc/is_mail_for(obj/item/item, mob/living/carbon/human/recipient)
+	if(item.admin_mail_recipient_ckey)
+		return item.admin_mail_recipient_ckey == recipient.ckey
+	return item.mailedto == recipient.real_name
+
+/obj/structure/roguemachine/mail/proc/any_additional_mail(obj/item/roguemachine/mastermail/M, mob/living/carbon/human/recipient)
 	for(var/obj/item/I in M.contents)
-		if(I.mailedto == name)
+		if(is_mail_for(I, recipient))
 			return TRUE
 	return FALSE
 

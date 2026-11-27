@@ -1,3 +1,6 @@
+/mob/living
+	COOLDOWN_DECLARE(corpulent_pant)
+
 /// Refreshes the stamina HUD bar. Overridden by mobs that have one.
 /mob/living/proc/update_stamina_hud()
 	return FALSE
@@ -25,6 +28,12 @@
 			added = round(added * 0.5, 1)
 		if(HAS_TRAIT(src, TRAIT_MISSING_NOSE))
 			added = round(added * 0.5, 1)
+		if(HAS_TRAIT(src, TRAIT_OVERWEIGHT))
+			if(has_status_effect(/datum/status_effect/debuff/addiction/corpulent))
+				added = round(added * 0.5, 1)
+			if(stamina > max_stamina * 0.5 && m_intent != MOVE_INTENT_SNEAK && !HAS_TRAIT(src, TRAIT_NOBREATH) && COOLDOWN_FINISHED(src, corpulent_pant) && prob(25))
+				COOLDOWN_START(src, corpulent_pant, 15 SECONDS)
+				emote("pant")
 		if(HAS_TRAIT(src, TRAIT_MONK_ROBE))
 			added = round(added * 1.25, 1)
 		// Bad Drakian adjustment: no stamina recovery penalty and not movement speed loss

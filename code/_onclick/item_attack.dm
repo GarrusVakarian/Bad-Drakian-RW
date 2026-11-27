@@ -624,7 +624,7 @@
 /obj/item/proc/do_special_attack_effect(user, obj/item/bodypart/affecting, intent, mob/living/victim, selzone, thrown = FALSE)
 	SHOULD_CALL_PARENT(TRUE)
 	SEND_SIGNAL(victim, COMSIG_ITEM_ATTACK_EFFECT, user, affecting, intent, selzone, src)
-	SEND_SIGNAL(src, COMSIG_ITEM_ATTACK_EFFECT_SELF, user, affecting, intent, victim, selzone)
+	SEND_SIGNAL(src, COMSIG_ITEM_ATTACK_EFFECT_SELF, user, affecting, intent, victim, selzone, thrown)
 
 	if(is_silver && HAS_TRAIT(victim, TRAIT_SILVER_WEAK))
 		SEND_SIGNAL(victim, COMSIG_FORCE_UNDISGUISE)
@@ -680,13 +680,6 @@
 	send_item_attack_message(I, user, hitlim)
 	if(I.force_dynamic)
 		return TRUE
-
-/mob/living/simple_animal/attacked_by(obj/item/I, mob/living/user)
-	if(I.force_dynamic < force_threshold || I.damtype == STAMINA)
-		playsound(loc, 'sound/blank.ogg', I.get_clamped_volume(), TRUE, -1)
-	else
-		. = ..()
-		I.do_special_attack_effect(user, null, null, src, null)
 
 // Proximity_flag is 1 if this afterattack was called on something adjacent, in your square, or on your person.
 // Click parameters is the params string from byond Click() code, see that documentation.
