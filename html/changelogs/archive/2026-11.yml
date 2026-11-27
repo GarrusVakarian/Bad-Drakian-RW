@@ -1182,3 +1182,5 @@
       across their entry paths.
   - rscadd: Added Monster Maw as a Face Detail with three customizable colors.
   - bugfix: Mirrors can apply a Face Detail to a head without any existing details.
+  - bugfix: Hovering near the edge of the game view no longer makes it flicker between
+      sizes.

@@ -1,4 +1,0 @@
-author: "mypingishuge"
-delete-after: True
-changes:
-  - bugfix: "Hovering near the edge of the game view no longer makes it flicker between sizes."
