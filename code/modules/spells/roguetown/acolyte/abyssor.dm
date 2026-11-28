@@ -407,7 +407,7 @@
 	invocation_type = "shout"
 	recharge_time = 600 SECONDS
 	miracle = TRUE
-	devotion_cost = 300
+	devotion_cost = 200
 
 /obj/effect/proc_holder/spell/invoked/abyssal_infusion/cast(list/targets, mob/living/user)
 	. = ..()
