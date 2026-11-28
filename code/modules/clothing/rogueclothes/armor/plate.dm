@@ -192,6 +192,18 @@
 	. = ..()
 	AddComponent(/datum/component/cursed_item, TRAIT_HORDE, "ARMOR", "RENDERED ASUNDER")
 
+/obj/item/clothing/suit/roguetown/armor/plate/full/graggar
+	name = "vicious full-plate"
+	desc = "Shorn together plate, curated from hand-crafted bones and ligaments - combined under an unholy spirit of violence. It \
+	drools with the distilled essence of worldlux; the afterbirth of ascensionism."
+	icon_state = "graggarplate_heavy"
+	max_integrity = ARMOR_INT_CHEST_PLATE_ANTAG
+	armor = ARMOR_PLATE_BSTEEL
+
+/obj/item/clothing/suit/roguetown/armor/plate/full/graggar/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/cursed_item, TRAIT_HORDE, "ARMOR", "RENDERED ASUNDER")
+
 /obj/item/clothing/suit/roguetown/armor/plate/fluted/ornate
 	name = "psydonic half-plate"
 	desc = "A beautiful steel cuirass, fitted with tassets and pauldrons for additional coverage. Lesser clerics of Psydon oft-decorate these sets with dyed cloths, so that those who're wounded can still find salvation in the madness of battle. </br>'..the thrumbing of madness, to think that your suffering was all-for-naught to Adonai's sacrificial lamb..' </br>... </br>With some blessed silver and a blacksmith's assistance, I can turn this half-plate into a set of full-plate armor."
@@ -225,7 +237,7 @@
 	smeltresult = /obj/item/ingot/iron
 	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
 
-/obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa
+/obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa
 	name = "samsibsa scaleplate"
 	desc = "A heavy set of armour worn by the kouken of distant Kazengun. As opposed to the plate armour utilized by most of Psydonia and the West, samsiba-cheolpan is made of thirty-four rows of composite scales, each an ultra-thin sheet of blacksteel gilded over steel. </br> It is an extremely common practice to engrave characters onto individual plates - such as LUCK, HONOR, or HEAVEN."
 	icon_state = "kazengunheavy"
@@ -233,12 +245,13 @@
 	detail_tag = "_detail"
 	boobed_detail = FALSE
 	color = null
+	armor_class = ARMOR_CLASS_HEAVY
 	detail_color = CLOTHING_WHITE
-	body_parts_covered = COVERAGE_ALL_BUT_LEGS
-	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL - 50 //slightly worse
+	body_parts_covered = COVERAGE_FULL
+	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL - 75
 	var/picked = FALSE
 
-/obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa/attack_right(mob/user)
+/obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa/attack_right(mob/user)
 	..()
 	if(!picked)
 		var/choice = input(user, "Choose a color.", "Uniform colors") as anything in GLOB.colorlist
@@ -247,16 +260,16 @@
 		detail_color = playerchoice
 		detail_tag = "_detail"
 		update_icon()
-		if(loc == user && ishuman(user))
+		if(is_worn_or_stored_by(user) && ishuman(user))
 			var/mob/living/carbon/H = user
 			H.update_inv_armor()
 			H.update_icon()
 
-/obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa/Initialize(mapload)
+/obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa/Initialize(mapload)
 	. = ..()
 	update_icon()
 
-/obj/item/clothing/suit/roguetown/armor/plate/full/samsibsa/update_icon()
+/obj/item/clothing/suit/roguetown/armor/brigandine/samsibsa/update_icon()
 	cut_overlays()
 	if(get_detail_tag())
 		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
@@ -405,7 +418,7 @@
 		add_overlay(pic)
 
 /obj/item/clothing/suit/roguetown/armor/plate/otavan/AdjustClothes(mob/user)
-	if(loc == user)
+	if(is_worn_or_stored_by(user))
 		playsound(user, "sound/foley/dropsound/cloth_drop.ogg", 100, TRUE, -1)
 		if(adjustable == CAN_CADJUST)
 			adjustable = CADJUSTED
@@ -748,6 +761,35 @@
 	body_parts_covered = CHEST | VITALS | LEGS
 	max_integrity = ARMOR_INT_CHEST_PLATE_STEELLIGHT
 
+/obj/item/clothing/suit/roguetown/armor/plate/half/fencer/decorated
+	name = "decorated fencer's cuirass"
+	icon_state = "gildedchestplate"
+	smeltresult = /obj/item/ingot/gold
+	desc = "An ornate steel chestplate, decorated with golden fluting. For when you need to bring a little bit of regal style to that upcoming duel with your lyfe's greatest adversary."
+	smelt_bar_num = 1
+
+/obj/item/clothing/suit/roguetown/armor/plate/half/fluted/decorated
+	name = "decorated fluted cuirass"
+	icon_state = "gildedcuirass"
+	smeltresult = /obj/item/ingot/gold
+	desc = "An ornate steel cuirass, decorated with golden fluting. For when you need to ensure that you look dapper, during your mustering for the latest crusade into some gods-forsaken land."
+	smelt_bar_num = 1
+
+/obj/item/clothing/suit/roguetown/armor/plate/fluted/decorated
+	name = "decorated fluted half-plate"
+	icon_state = "gildedhalfplate"
+	smeltresult = /obj/item/ingot/gold
+	desc = "An ornate set of steel armor, decorated with golden fluting. For when you need to remind those of lesser stations about whose authority reigns supreme, in lieu of a King's command."
+	smelt_bar_num = 1
+
+/obj/item/clothing/suit/roguetown/armor/plate/full/fluted/decorated
+	name = "decorated fluted plate armor"
+	icon_state = "gildedplate"
+	smeltresult = /obj/item/ingot/gold
+	desc = "An ornate set of steel plate armor, decorated with golden fluting. For when you need to do something with all of that precious, precious wealth gathering dust in a fief's ducal treasury."
+	smelt_bar_num = 1
+
+//----------------- INFAREDBARON SPRITEWORK/ARMOR.DM ---------------------
 //----------------- Citywatch Armor ---------------------
 // Credits to Twilight Axis (https://github.com/Twilight-Fortress-SS13/Twilight-Axis) for the sprites!
 /obj/item/clothing/suit/roguetown/armor/plate/citywatch

@@ -119,6 +119,13 @@
 		return
 
 	A.attack_right(src, params)
+	//Toggling something on a hat changes how the hat is drawn, whichever slot the item's own proc refreshed.
+	if(isclothing(A))
+		var/obj/item/clothing/stored = A
+		var/obj/item/clothing/head/hat = stored.get_storing_hat()
+		if(hat && ismob(hat.loc))
+			var/mob/wearer = hat.loc
+			wearer.update_inv_head()
 
 /mob/living/attack_right(mob/user, params)
 	. = ..()
@@ -187,6 +194,13 @@
 			if(target.pulledby == src)
 				target.dna.species.on_wing_removal(A, src)
 			return
+		if(isclothing(A))
+			var/obj/item/clothing/stored = A
+			var/obj/item/clothing/head/hat = stored.get_storing_hat()
+			if(hat)
+				if(hat.loc == src)
+					hat.cycle_stored_layer(stored, src)
+				return
 		A.MiddleClick(src, params)
 	else
 		mmb_intent.on_mmb(A, src, params)

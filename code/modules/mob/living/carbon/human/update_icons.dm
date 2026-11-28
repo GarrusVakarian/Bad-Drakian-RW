@@ -549,8 +549,9 @@ There are several things that need to be remembered:
 
 			//add sleeve overlays, then offset
 			var/list/sleeves = list()
-			if(wear_wrists.sleeved && armsindex > 0 && !should_hide_sleeves_for_layer(WRISTSLEEVE_LAYER))
-				sleeves = get_sleeves_layer(wear_wrists,armsindex,WRISTSLEEVE_LAYER)
+			var/wristsleevelayer = (wear_wrists.alternate_worn_layer == OVER_ARMOR_LAYER) ? OVER_GLOVES_LAYER : WRISTSLEEVE_LAYER
+			if(wear_wrists.sleeved && armsindex > 0 && !should_hide_sleeves_for_layer(wristsleevelayer))
+				sleeves = get_sleeves_layer(wear_wrists,armsindex,wristsleevelayer)
 
 			if(sleeves)
 				for(var/mutable_appearance/S as anything in sleeves)
@@ -786,6 +787,8 @@ There are several things that need to be remembered:
 		overlays_standing[HEAD_LAYER] = head.build_worn_icon(default_layer = HEAD_LAYER, default_icon_file = 'icons/roguetown/clothing/onmob/head.dmi', female = FALSE)
 		var/mutable_appearance/head_overlay = overlays_standing[HEAD_LAYER]
 		if(head_overlay)
+			var/hat_center_x = head_overlay.pixel_x
+			var/hat_center_y = head_overlay.pixel_y
 			if(gender == MALE)
 				if(OFFSET_HEAD in dna.species.offset_features)
 					head_overlay.pixel_x += dna.species.offset_features[OFFSET_HEAD][1]
@@ -795,6 +798,14 @@ There are several things that need to be remembered:
 					head_overlay.pixel_x += dna.species.offset_features[OFFSET_HEAD_F][1]
 					head_overlay.pixel_y += dna.species.offset_features[OFFSET_HEAD_F][2]
 			overlays_standing[HEAD_LAYER] = head_overlay
+			var/obj/item/clothing/head/worn_hat = head
+			if(istype(worn_hat))
+				var/list/layered_icons = worn_hat.build_layered_stored_icons(HEAD_LAYER, 'icons/roguetown/clothing/onmob/head.dmi')
+				if(length(layered_icons))
+					for(var/mutable_appearance/layered_icon as anything in layered_icons)
+						layered_icon.pixel_x += head_overlay.pixel_x - hat_center_x
+						layered_icon.pixel_y += head_overlay.pixel_y - hat_center_y
+					overlays_standing[HEAD_LAYER] = list(head_overlay) + layered_icons
 		apply_overlay(HEAD_LAYER)
 
 	rebuild_obscured_flags()
@@ -1222,7 +1233,7 @@ There are several things that need to be remembered:
 	remove_overlay(CLOAK_LAYER)
 	remove_overlay(CLOAK_BEHIND_LAYER)
 	remove_overlay(TABARD_LAYER)
-	remove_overlay(UNDER_ARMOR_LAYER)
+	remove_overlay(UNDER_ARMOR_CACHE_INDEX)
 
 	var/obj/item/bodypart/taur/taur = get_taur_tail()
 	var/icon/c_mask = taur?.clip_mask
@@ -1278,7 +1289,7 @@ There are several things that need to be remembered:
 			if(cloak.alternate_worn_layer == UNDER_ARMOR_LAYER)
 				// Keep the wide cloth below both the shirt padding and armor.
 				var/mutable_appearance/tucked_barding = taur?.get_barding_overlay(cloak, SHIRT_LAYER + 0.1)
-				overlays_standing[UNDER_ARMOR_LAYER] = tucked_barding ? list(cloak_overlay, tucked_barding) : cloak_overlay
+				overlays_standing[UNDER_ARMOR_CACHE_INDEX] = tucked_barding ? list(cloak_overlay, tucked_barding) : cloak_overlay
 			if(cloak.alternate_worn_layer == CLOAK_BEHIND_LAYER)
 				overlays_standing[CLOAK_BEHIND_LAYER] = cloak_overlay
 			if(!cloak.alternate_worn_layer)
@@ -1360,8 +1371,8 @@ There are several things that need to be remembered:
 	update_inv_armor() //fixboob
 	apply_overlay(TABARD_LAYER)
 	apply_overlay(CLOAK_BEHIND_LAYER)
+	apply_overlay(UNDER_ARMOR_CACHE_INDEX)
 	apply_overlay(CLOAK_LAYER)
-	apply_overlay(UNDER_ARMOR_LAYER)
 
 /mob/living/carbon/human/update_inv_shirt()
 	queue_icon_update(PENDING_UPDATE_INV_SHIRT)
@@ -1806,6 +1817,8 @@ generate/load female uniform sprites matching all previously decided variables
 /obj/item/proc/build_worn_icon(default_layer = 0, default_icon_file = null, isinhands = FALSE, femaleuniform = NO_FEMALE_UNIFORM, override_state = null, female = FALSE, customi = null, sleeveindex, boobed_overlay = FALSE, icon/clip_mask = null)
 	var/t_state
 	var/sleevejazz = sleevetype
+	if(worn_sprite_sex)
+		female = (worn_sprite_sex == FEMALE)
 	if(override_state)
 		t_state = override_state
 	else

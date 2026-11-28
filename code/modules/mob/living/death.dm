@@ -130,6 +130,7 @@ GLOBAL_LIST_EMPTY(character_spawn_generations)
 	set_drugginess(0)
 	set_disgust(0)
 	SetSleeping(0, 0)
+	set_sunder(0) //So deadites aren't PSzsghdhrfrliorfing almost post-death
 	reset_perspective(null)
 	reload_fullscreen()
 	update_action_buttons_icon()

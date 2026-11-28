@@ -291,11 +291,11 @@
 			top.Stun(15)
 	if(!btm.IsStun())
 		if(prob(5))
-			btm.emote("groan", forced = TRUE)
+			btm.emote_erp("groan")
 			btm.sexcon.try_do_pain_effect(PAIN_MED_EFFECT, FALSE)
 			btm.Stun(15)
 		else if(prob(3))
-			btm.emote("painmoan")
+			btm.emote_erp("painmoan", bypass_cooldown = FALSE)
 		else if(top.sexcon.knotted_part_partner&SEX_PART_JAWS && btm.getOxyLoss() < 50) // if the current top knotted them orally
 			// Original direct damage call retained for rollback; use panel resistance instead.
 			// btm.adjustOxyLoss(1)
@@ -419,13 +419,13 @@
 					top.visible_message(span_notice("[top] yanks their [knot_word_yank] out of [btm]!"), span_notice("I yank my [knot_word_yank] out from [btm]."))
 			btm.sexcon.try_do_pain_effect(PAIN_HIGH_EFFECT, FALSE)
 		else if(notify)
-			playsound(btm, 'sound/misc/mat/insert (1).ogg', 50, TRUE, -2, ignore_walls = FALSE)
+			playsound_erp(btm, 'sound/misc/mat/insert (1).ogg', 50, TRUE, -2, travel = SOUND_TRAVEL_LEAKING)
 			var/knot_word_slip = top.sexcon.get_knot_synonym()
 			if(btm_removed)
 				btm.visible_message(span_notice("[btm] slips free from [top]'s [knot_word_slip]!"), span_notice("I slip free from [top]'s [knot_word_slip]."))
 			else
 				top.visible_message(span_notice("[top] slips their [knot_word_slip] out of [btm]!"), span_notice("I slip my [knot_word_slip] out from [btm]."))
-			btm.emote("painmoan", forced = TRUE)
+			btm.emote_erp("painmoan")
 			btm.sexcon.try_do_pain_effect(PAIN_MILD_EFFECT, FALSE)
 		add_cum_floor(get_turf(btm))
 		// The climax already delivered the load. For an internal knot, only start the deferred leakage.

@@ -97,6 +97,7 @@
 	. = ..()
 	if(container)
 		container.vis_contents -= src
+		container = null
 
 /// Takes the passed in MA/icon_state, mirrors it onto ourselves, and displays that in world for duration seconds
 /// Returns the displayed object, you can animate it and all, but you don't own it, we'll delete it after the duration
@@ -481,7 +482,7 @@
 				continue
 
 		showCandidatePollWindow(M, poll_time, Question, result, ignore_category, time_passed, flashwindow, poll_width, poll_height)
-		SEND_SOUND(M, 'sound/misc/updatebook.ogg')
+		SEND_SOUND(M, sound('sound/misc/updatebook.ogg', volume = overall_volume(M)))
 	sleep(poll_time)
 
 	//Check all our candidates, to make sure they didn't log off or get deleted during the wait period.

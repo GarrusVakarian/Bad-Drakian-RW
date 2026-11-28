@@ -1420,6 +1420,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			SEND_SIGNAL(target, COMSIG_ATOM_ATTACK_HAND, user)
 			if(affecting.body_zone == BODY_ZONE_HEAD)
 				SEND_SIGNAL(user, COMSIG_HEAD_PUNCHED, target)
+			var/obj/item/clothing/gloves/worn_gloves = user.gloves
+			if(worn_gloves?.is_silver)
+				worn_gloves.do_special_attack_effect(user, affecting, user.used_intent, target, selzone)
 		log_combat(user, target, "punched", null, "(AIMED: [uppertext(parse_zone(user.zone_selected))])")
 		if(ishuman(user))
 			var/text = "[bodyzone2readablezone(selzone)]..."
