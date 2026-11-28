@@ -1661,7 +1661,8 @@
 	var/olddir = dir
 	..()
 	if(olddir != dir)
-		stop_looking()
+		if(!active_partner_dance?.swapping)
+			stop_looking()
 		if(client)
 			update_vision_cone()
 

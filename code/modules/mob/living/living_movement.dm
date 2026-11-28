@@ -1,6 +1,8 @@
 /mob/living/Moved()
 	. = ..()
-	stop_looking()
+	// A dance swaps the occupied turfs without taking control of either camera.
+	if(!active_partner_dance?.swapping)
+		stop_looking()
 	update_turf_movespeed(loc)
 	update_pixel_shifting(TRUE)
 //	if(m_intent == MOVE_INTENT_RUN)
