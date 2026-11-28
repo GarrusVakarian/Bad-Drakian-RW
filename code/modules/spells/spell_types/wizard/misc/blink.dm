@@ -52,39 +52,45 @@
 		if(!QDELETED(user))
 			revert_cast(user)
 		return FALSE
-	var/turf/T = get_turf(targets[1])
+	var/turf/T = length(targets) ? get_turf(targets[1]) : null
 	var/turf/start = get_turf(user)
 	
-	if(!T)
+	if(!T || !start)
 		to_chat(user, span_warning("Invalid target location!"))
-		revert_cast()
-		return
+		revert_cast(user)
+		return FALSE
+
+	if(T == start)
+		to_chat(user, span_warning("I'm already there!"))
+		revert_cast(user)
+		return FALSE
 
 	if(T.teleport_restricted == TRUE)
 		to_chat(user, span_warning("I can't teleport here!"))
+		revert_cast(user)
+		return FALSE
 
 	if(T.z != start.z)
 		to_chat(user, span_warning("I can only teleport on the same plane!"))
-
-		revert_cast()
-		return
+		revert_cast(user)
+		return FALSE
 	
 	if(istransparentturf(T))
 		to_chat(user, span_warning("I cannot teleport to the open air!"))
-		revert_cast()
-		return
+		revert_cast(user)
+		return FALSE
 
 	if(T.density)
 		to_chat(user, span_warning("I cannot teleport into a wall!"))
-		revert_cast()
-		return
+		revert_cast(user)
+		return FALSE
 
 	// Check range limit
 	var/distance = get_dist(start, T)
 	if(distance > max_range)
 		to_chat(user, span_warning("That location is too far away! I can only blink up to [max_range] tiles."))
-		revert_cast()
-		return
+		revert_cast(user)
+		return FALSE
 	
 	// Display a more obvious preparation message
 	user.visible_message(span_warning("<b>[user]'s body begins to shimmer with arcane energy as [user.p_they()] prepare[user.p_s()] to blink!</b>"), 
@@ -100,41 +106,52 @@
 		var/area/turf_area = get_area(turf)
 		if(turf_area?.noteleport)
 			to_chat(user, span_warning("This area won't let me teleport!"))
-			return
+			revert_cast(user)
+			return FALSE
 		if(turf.density)
 			to_chat(user, span_warning("I cannot blink through walls!"))
-			revert_cast()
-			return
+			revert_cast(user)
+			return FALSE
 			
-	// Check for doors and bars in the path
+	// Check obstacles on the full path, including the destination.
+	turf_list += T
 	for(var/turf/traversal_turf in turf_list)
 		// Check for mineral doors
-		for(var/obj/structure/mineral_door/door in (traversal_turf.contents + T.contents))
+		for(var/obj/structure/mineral_door/door in traversal_turf)
 			if(door.density)
 				to_chat(user, span_warning("I cannot blink through doors!"))
-				revert_cast()
-				return
+				revert_cast(user)
+				return FALSE
 				
 		// Check for windows
-		for(var/obj/structure/roguewindow/window in (traversal_turf.contents + T.contents))
+		for(var/obj/structure/roguewindow/window in traversal_turf)
 			if(window.density && !window.climbable)
 				to_chat(user, span_warning("I cannot blink through windows!"))
-				revert_cast()
-				return
+				revert_cast(user)
+				return FALSE
 				
 		// Check for bars
-		for(var/obj/structure/bars/bars in (traversal_turf.contents + T.contents))
+		for(var/obj/structure/bars/bars in traversal_turf)
 			if(bars.density)
 				to_chat(user, span_warning("I cannot blink through bars!"))
-				revert_cast()
-				return
+				revert_cast(user)
+				return FALSE
 
 		// Check for gates
-		for (var/obj/structure/gate/gate in (traversal_turf.contents + T.contents))
+		for(var/obj/structure/gate/gate in traversal_turf)
 			if(gate.density)
 				to_chat(user, span_warning("I cannot blink through gates!"))
-				revert_cast()
-				return
+				revert_cast(user)
+				return FALSE
+
+	// The teleport helper can report success even if the move itself fails.
+	if(!do_teleport(user, T, channel = TELEPORT_CHANNEL_MAGIC) || get_turf(user) != T)
+		to_chat(user, span_warning("I can't teleport there!"))
+		revert_cast(user)
+		return FALSE
+
+	if(user.buckled) // don't stay remote-buckled to the guillotine/pillory
+		user.buckled.unbuckle_mob(user, TRUE)
 
 	var/obj/spot_one = new phase(start, user.dir)
 	var/obj/spot_two = new phase(T, user.dir)
@@ -142,9 +159,5 @@
 	spot_one.Beam(spot_two, "purple_lightning", time = 1.5 SECONDS)
 	playsound(T, 'sound/magic/blink.ogg', 25, TRUE)
 
-	if(user.buckled) // don't stay remote-buckled to the guillotine/pillory
-		user.buckled.unbuckle_mob(user, TRUE)
-	do_teleport(user, T, channel = TELEPORT_CHANNEL_MAGIC)
-	
 	user.visible_message(span_danger("<b>[user] vanishes in a mysterious purple flash!</b>"), span_notice("<b>I blink through space in an instant!</b>"))
 	return TRUE
