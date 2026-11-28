@@ -286,6 +286,19 @@
 	required_trait = TRAIT_VAMPMANSION
 /obj/structure/fluff/traveltile/wretch
 	required_trait = TRAIT_ZURCH //I'd tie this to trait_outlaw but unfortunately the heresiarch virtue exists so we're making a new trait instead.
+
+/obj/structure/fluff/traveltile/wretch/perform_travel(obj/structure/fluff/traveltile/T, mob/living/L)
+	var/atom/destination = T.loc
+	var/turf/entrance = get_turf(src)
+	var/has_defiled_keyholder = HAS_TRAIT_FROM(L, TRAIT_ZURCH, TRAIT_VIRTUE)
+	// The numbered wretchin portals and the trade passage lead into the Grotto.
+	var/entering_grotto = findtext(T.aportalid, "wretchin") == 1 || T.aportalid == "wretchtradein"
+	. = ..()
+	if(has_defiled_keyholder && entering_grotto && L.loc == destination)
+		var/entry = "[key_name(L)] entered the Wretch Grotto with Defiled Keyholder via [aportalid] at [COORD(entrance)]."
+		var/jump_link = entrance ? " [ADMIN_JMP(entrance)]" : ""
+		log_admin_private(entry, " [ADMIN_FLW(L)][jump_link]")
+
 /obj/structure/fluff/traveltile/inq
 	required_trait = TRAIT_INQUISITION
 /obj/structure/fluff/traveltile/lich

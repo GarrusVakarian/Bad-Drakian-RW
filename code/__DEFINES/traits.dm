@@ -108,6 +108,7 @@
 #define TRAIT_SEA_DRINKER "Denizen of the Deep"
 /// Won't be frozen when swimming in water
 #define TRAIT_WATERLOVING "Water loving"
+#define TRAIT_BOGWALKER "Bog Walker"
 #define TRAIT_STUDENT		"Student"
 #define TRAIT_INTELLECTUAL "Intellectual"
 #define TRAIT_GRAVEROBBER "Experienced Grave Robber"
@@ -367,6 +368,7 @@
 #define TRAIT_OAR_PROPELLED "oar_propelled"
 #define TRAIT_ALLOWS_BUCKLED_FACING "allows_buckled_facing"
 #define CONTRACT_SPAWN_TRAIT "contract-spawn"
+#define TRAIT_FORBIDDEN_RESEARCH "Forbidden research"
 
 // ARMOR / CLOTHING GIVEN TRAITS (GIVEN BY WEARING CLOTHES/ARMOR PIECES)
 #define TRAIT_MONK_ROBE	"Holy Vestatures"
@@ -724,6 +726,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_TRIBAL = span_info("I belong to the Island's tribe."),
 	TRAIT_COMPLIANT = span_info("No matter how hard I try, I can't put up a fight against others."),
 	TRAIT_SELF_AWARE = span_info("I know my body well, and know innately what its aches mean."),
+	TRAIT_BOGWALKER = span_info("The bog's blessing graces me. Kneestingers and leeches will not harm me, and I cannot trigger ambushes within the bog unless sprinting."),
 	TRAIT_DEADITE_RESISTANCE = span_info("I was raised in rot-infested lands. My body is more resistant to the infection."),
 	TRAIT_COLD_RESISTANCE = span_info("I've grown a tolerance to the cold, due to the climate of my homeland."),
 	TRAIT_HEAT_RESISTANCE = span_info("I've grown a tolerance to heat, due to the climate of my homeland."),
@@ -918,6 +921,9 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_DRUQK				"druqk"
 #define TRAIT_BURIED_COIN_GIVEN "buried_coin_given" // prevents a human corpse from being used for a corpse multiple times
 #define TRAIT_BLOODLOSS_IMMUNE "bloodloss_immune" // can bleed, but will never die from blood loss
+#define TRAIT_NO_BLEEDING "no_bleeding" // bleeding wounds do not cause blood loss
+#define TRAIT_NO_BLOODLOSS_EFFECTS "no_bloodloss_effects" // being low on blood does not have any effects
+#define TRAIT_NO_BLOOD_REGEN "no_blood_regen" // prevents blood regeneration for carbons and humans passively
 #define TRAIT_NO_BITE "no_bite" //prevents biting
 #define TRAIT_LEGENDARY_ALCHEMIST		"Expert Herb Finder"
 #define TRAIT_STUCKITEMS "stuck_items" // Prevents removing items except for hand slots
@@ -1019,3 +1025,5 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_MOVEMENT_BLOCKED "movement_blocked"
 /// Mobs that have this trait cannot be extinguished
 #define TRAIT_NO_EXTINGUISH "no_extinguish"
+
+#define TRAIT_DEATHS_DOOR		"Death's Door" //Shows the death's door overlay and lets the mob succumb regardless of health

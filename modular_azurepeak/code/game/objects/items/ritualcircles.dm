@@ -1866,14 +1866,48 @@
 	for(var/I in items)
 		H.dropItemToGround(I, TRUE)
 	H.drop_all_held_items()
-	armor = /obj/item/clothing/suit/roguetown/armor/plate/fluted/graggar
-	pants = /obj/item/clothing/under/roguetown/platelegs/graggar
-	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/graggar
-	gloves = /obj/item/clothing/gloves/roguetown/plate/graggar
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/graggar
-	neck = /obj/item/clothing/neck/roguetown/gorget/steel
+
+	var/helmets = list("VICIOUS HELMET", "VICIOUS SKULLHELM")
+	var/helmet_choice = input(H, "Choose your helmet.", "GRAGGAR'S ARMAMENTS") as anything in helmets
+	switch(helmet_choice)
+		if("VICIOUS HELMET")
+			head = /obj/item/clothing/head/roguetown/helmet/heavy/graggar
+		if("VICIOUS SKULLHELM")
+			head = /obj/item/clothing/head/roguetown/helmet/heavy/graggar/skull
+
+	var/armors = list("MEDIUM ARMOR", "HEAVY ARMOR")
+	var/armor_choice = input(H, "Choose your armor.", "GRAGGAR'S ARMAMENTS") as anything in armors
+	switch(armor_choice)
+		if("MEDIUM ARMOR")
+			armor = /obj/item/clothing/suit/roguetown/armor/plate/fluted/graggar
+			pants = /obj/item/clothing/under/roguetown/platelegs/graggar
+			shoes = /obj/item/clothing/shoes/roguetown/boots/armor/graggar
+			gloves = /obj/item/clothing/gloves/roguetown/plate/graggar
+			shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/graggar
+			wrists = /obj/item/clothing/wrists/roguetown/bracers/graggar
+			neck = /obj/item/clothing/neck/roguetown/gorget/steel/graggar
+			mask = /obj/item/clothing/mask/rogue/facemask/steel/graggar
+		if("HEAVY ARMOR")
+			armor = /obj/item/clothing/suit/roguetown/armor/plate/full/graggar
+			pants = /obj/item/clothing/under/roguetown/platelegs/graggar
+			shoes = /obj/item/clothing/shoes/roguetown/boots/armor/graggar
+			gloves = /obj/item/clothing/gloves/roguetown/plate/graggar/heavy
+			shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/graggar
+			wrists = /obj/item/clothing/wrists/roguetown/bracers/graggar/heavy
+			neck = /obj/item/clothing/neck/roguetown/gorget/steel/graggar
+			mask = /obj/item/clothing/mask/rogue/facemask/steel/graggar
+
+	var/weapons = list("Sanguis - (tomahawk and targe)", "Carnifex - (two-handed greataxe)")
+	var/weapon_choice = input(H, "Choose your ARMS.", "ARMS OF VIOLENCE") as anything in weapons
+	switch(weapon_choice)
+		if("Sanguis - (tomahawk and targe)")
+			r_hand = /obj/item/rogueweapon/stoneaxe/woodcut/steel/graggar
+			l_hand = /obj/item/rogueweapon/shield/iron/graggar
+		if("Carnifex - (two-handed greataxe)")
+			r_hand = /obj/item/rogueweapon/greataxe/steel/doublehead/graggar
+			l_hand = /obj/item/rogueweapon/scabbard/gwstrap
+
 	cloak = /obj/item/clothing/cloak/graggar
-	r_hand = /obj/item/rogueweapon/greataxe/steel/doublehead/graggar
 
 /obj/structure/ritualcircle/graggar/proc/graggarconversion(mob/living/carbon/human/target)
 	if(!target || QDELETED(target) || target.loc != loc)
@@ -2140,7 +2174,7 @@
 						user.emote("cry")
 						loc.visible_message(span_cult("[user] weeps silver tears."))
 						if(do_after(user, 5 SECONDS))
-							psydonadmonishment(target)
+							psydonadmonishment(target, user)
 							user.apply_status_effect(/datum/status_effect/debuff/ritesexpended_lesser)
 		if("Freedom")//Strip folks in rite armour.
 			if(!HAS_TRAIT(user, TRAIT_LUX_FREAK))
@@ -2197,22 +2231,29 @@
 		to_chat(target, span_warning("You brace. Why do you brace? Nothing comes."))
 		loc.visible_message(span_cult("[target] stands untouched. They reject His will."))
 
-/obj/structure/ritualcircle/psydon/proc/psydonadmonishment(mob/living/carbon/human/target)
-	if(!target || QDELETED(target) || target.loc != loc)
-		to_chat(usr, "Selected target is not on the rune! [target.p_they(TRUE)] must be directly on top of the rune to receive the One's admonishment.")
+/obj/structure/ritualcircle/psydon/proc/psydonadmonishment(mob/living/carbon/human/target, mob/living/carbon/human/user)
+	if(QDELETED(target) || QDELETED(user) || target.loc != loc)
+		to_chat(user, "The subject must remain directly on top of the rune to receive the One's admonishment.")
 		return
 
 	if(!target.mind) //Stopping null lookup runtimes
 		loc.visible_message(span_warning("[target] does not have the mind to benefit from the One's guidance."))
 		return
 
-	if(HAS_TRAIT(target, TRAIT_SILVER_BLESSED))
-		loc.visible_message(span_warning("[target] has already been saved by the One's admonishment."))
-		return
-
 	if(target.stat == DEAD)
 		loc.visible_message(span_warning("With their heart stilled, the ritual will have no purchase upon [target]. It would be a waste."))
 		return
+
+	// Remove divine curses
+	for(var/datum/curse/C as anything in target.curses.Copy())
+		var/curse_type = C.type
+		if(target.remove_curse(C))
+			target.apply_status_effect(/datum/status_effect/debuff/devitalised)
+			if(HAS_TRAIT(user, TRAIT_INQUISITION)) // aka absolver
+				loc.visible_message(span_warning("With masterful precision, the divine curse on [target] is unwoven."))
+			else
+				loc.visible_message(span_warning("The divine curse on [target] is transferred to [user]"))
+				user.add_curse(curse_type)
 
 	var/datum/antagonist/werewolf/Were = target.mind.has_antag_datum(/datum/antagonist/werewolf/)
 	var/datum/antagonist/werewolf/lesser/Wereless = target.mind.has_antag_datum(/datum/antagonist/werewolf/lesser/)
@@ -2494,6 +2535,13 @@
 
 /obj/structure/ritualcircle/psydon/proc/psydonconversion_stage4(mob/living/carbon/human/target)
 	to_chat(target, span_mind_control("..."))
+
+	// Remove divine punishments
+	target.remove_status_effect(/datum/status_effect/debuff/apostasy)
+	target.remove_status_effect(/datum/status_effect/debuff/excomm)
+	target.remove_stress(/datum/stressevent/apostasy)
+	target.remove_stress(/datum/stressevent/excommunicated)
+
 	if(target.devotion == null)
 		target.set_patron(new /datum/patron/old_god)
 		return

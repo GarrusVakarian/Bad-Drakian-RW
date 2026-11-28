@@ -29,7 +29,7 @@
 	if(container.reagents.total_volume < container.reagents.maximum_volume)
 
 		// Play milking sound before do_after
-		playsound(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
+		playsound_erp(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
 
 		if(!do_after(user, 20, target = src))
 			return
@@ -70,7 +70,7 @@
 	var/has_blood = blood_volume && blood_volume >= 20
 
 	// Play milking sound
-	playsound(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
+	playsound_erp(get_turf(src), pick('modular/Creechers/sound/milking1.ogg', 'modular/Creechers/sound/milking2.ogg'), 100, TRUE, -1)
 
 	if(!do_after(user, 20, target = src))
 		return
@@ -79,7 +79,7 @@
 
 	if(has_blood)
 		// Consume blood to produce milk
-		blood_volume = max(0, blood_volume - 20)
+		adjust_blood_volume(-20)
 	else
 		// No blood - take burn damage from life essence being drained
 		adjustFireLoss(15)

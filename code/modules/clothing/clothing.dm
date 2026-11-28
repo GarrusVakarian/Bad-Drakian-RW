@@ -941,3 +941,7 @@ BLIND     // can't see anything
 			to_chat(user, build_examine_detail(user, TRUE))
 		return
 	..()
+
+/obj/item/clothing
+	var/base_icon_state
+	var/custom_design

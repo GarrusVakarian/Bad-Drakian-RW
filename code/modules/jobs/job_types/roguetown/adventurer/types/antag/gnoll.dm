@@ -46,7 +46,7 @@
 			H.verbs |= /mob/living/carbon/human/proc/gnoll_view_tracked_char
 
 
-/mob/living/carbon/human/proc/apply_gnoll_preferences(initial_setup = TRUE)
+/mob/living/carbon/human/proc/apply_gnoll_preferences(initial_setup = TRUE, keep_name = FALSE)
 	if(!client?.prefs?.gnoll_prefs)
 		return FALSE
 
@@ -112,7 +112,9 @@
 		roll_stats()
 	refresh_live_vocal_preferences()
 
-	fully_replace_character_name(real_name, prefs.ensure_gnoll_name())
+	if(!keep_name)
+		fully_replace_character_name(real_name, prefs.ensure_gnoll_name())
+		pref_base_name = real_name
 
 	if(prefs.gnoll_pronouns)
 		pronouns = prefs.gnoll_pronouns
@@ -135,6 +137,7 @@
 
 	// Copy gnoll flavortext to gnoll mob
 	headshot_link = prefs.headshot_link
+	COPY_GALLERY_PRESENTATION(src, prefs)
 	flavortext = prefs.flavortext
 	ooc_notes = prefs.ooc_notes
 	rumour = prefs.rumour

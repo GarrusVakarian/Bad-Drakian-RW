@@ -1,0 +1,23 @@
+{
+    "file": "roguetown.dme",
+    "scannable_directory": "code/",
+    "subdirectories": true,
+    "excluded_files": [
+        "testing.dm",
+        "controllers/subsystem/economy.dm",
+        "controllers/subsystem/rogue/economy/_treasury_bridge.dm",
+        "datums/sexcon/sex_actions/deviant/facesitting.dm",
+        "datums/sexcon/sex_actions/deviant/force_thighjob.dm",
+        "datums/sexcon/sex_actions/deviant/force_titjob.dm",
+        "modules/economy/account.dm",
+        "modules/events/antagonist/migrant_waves/bandits.dm",
+        "modules/events/antagonist/solo/bandits.dm",
+        "modules/jobs/job_types/roguetown/adventurer/trader.dm",
+        "modules/roguetown/roguemachine/money.dm"
+    ],
+    "forbidden_includes": [
+        "code/modules/tgs/**/*.dm",
+        "code/modules/unit_tests/[!_]*.dm"
+    ],
+    "check_order": false
+}

@@ -31,17 +31,20 @@
 	if(stat == DEAD)
 		return
 
-	if(SScity_assembly?.is_alderman(src))
-		var/departing_name = real_name
-		var/departing_job = job
-		SScity_assembly.demote_alderman("Alderman has died")
-		SScity_assembly.notify_alderman_lost_ref(departing_name, departing_job, "died")
-
 	var/area/A = get_area(src)
 	dna?.species?.stop_wagging_tail(src)
 
 	if(dna?.species?.intercept_death(src, gibbed))
 		return
+
+	if(SEND_SIGNAL(src, COMSIG_LIVING_PRE_DEATH, gibbed) & COMPONENT_CANCEL_DEATH)
+		return
+
+	if(SScity_assembly?.is_alderman(src))
+		var/departing_name = real_name
+		var/departing_job = job
+		SScity_assembly.demote_alderman("Alderman has died")
+		SScity_assembly.notify_alderman_lost_ref(departing_name, departing_job, "died")
 
 	if(client)
 		SSdroning.kill_droning(client)
@@ -49,12 +52,6 @@
 		SSdroning.kill_rain(client)
 
 	if(mind)
-		if(!gibbed)
-			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
-			if(VD)
-				dust(just_ash=TRUE,drop_items=TRUE)
-				return
-
 		var/datum/antagonist/lich/L = mind.has_antag_datum(/datum/antagonist/lich)
 		if (L && !L.out_of_lives)
 			if(L.consume_phylactery())

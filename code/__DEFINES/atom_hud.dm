@@ -17,3 +17,7 @@
 
 /// cooldown for being shown the images for any particular data hud
 #define ADD_HUD_TO_COOLDOWN 20
+
+#define ANTAG_HUD_UNDEAD	5
+#define ANTAG_HUD_WEREWOLF	6
+#define ANTAG_HUD_BANDIT	7
