@@ -153,6 +153,17 @@
 		used_volume = step_data[2]
 		used_extra_range = step_data[3]
 		do_vary = !feet_covered // only barefoot gets the pitch variation
+		// Azure Peak's heels click on hard surfaces; softer terrain keeps its normal sound.
+		if(humshoes?.heel_footsteps && !humshoes.is_barefoot)
+			switch(turf_used_step)
+				if(FOOTSTEP_FLOOR, FOOTSTEP_STONE, FOOTSTEP_PLATING, FOOTSTEP_WOOD, FOOTSTEP_LAVA)
+					var/static/list/heel_sounds = list(
+						'sound/foley/footsteps/highheel1.ogg',
+						'sound/foley/footsteps/highheel2.ogg',
+						'sound/foley/footsteps/highheel3.ogg',
+						'sound/foley/footsteps/highheel4.ogg',
+					)
+					used_footsteps = heel_sounds
 	if(HAS_TRAIT(human_parent, TRAIT_SOFT_FOOTED))
 		used_volume *= 0.7
 		used_extra_range -= 1

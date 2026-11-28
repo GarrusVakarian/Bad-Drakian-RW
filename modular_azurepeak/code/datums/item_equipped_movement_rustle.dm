@@ -72,5 +72,8 @@ with light edits to work with roguecode */
 		play_rustle_sound(source)
 		move_counter = 0
 
-/datum/component/item_equipped_movement_rustle/proc/play_rustle_sound(obj/item/clothing/source)//(mob/source)
+/datum/component/item_equipped_movement_rustle/proc/play_rustle_sound(mob/source)
+	var/obj/item/clothing/shoes/footwear = parent
+	if(istype(footwear) && footwear.heel_footsteps && source.get_item_by_slot(SLOT_SHOES) == footwear)
+		return
 	playsound(source, rustle_sounds, volume, sound_vary, sound_extra_range, sound_falloff_exponent, falloff_distance = sound_falloff_distance)

@@ -108,7 +108,7 @@
 	head = /obj/item/clothing/head/roguetown/helmet/heavy/pestran
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/vest
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
-	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
+	shoes = /obj/item/clothing/shoes/roguetown/boots/courtphysician/keeper
 	belt = /obj/item/storage/belt/rogue/leather
 	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/pestrasickle
 	beltl = /obj/item/flashlight/flare/torch/lantern

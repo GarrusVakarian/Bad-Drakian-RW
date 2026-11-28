@@ -61,44 +61,48 @@
 	if(istype(storing_item, /obj/item/rogueweapon/huntingknife))
 		if(!isnull(holdingknife))
 			to_chat(user, span_warning("My boot already holds a knife."))
-			return
+			return TRUE
+		if(!user.transferItemToLoc(storing_item, src))
+			return TRUE
 		to_chat(user, span_warning("I quickly slot [storing_item] into [src]!"))
-		user.transferItemToLoc(storing_item, holdingknife)
 		holdingknife = storing_item
 		playsound(user, 'sound/foley/equip/swordsmall1.ogg')
-		return
+		return TRUE
 
 	if(istype(storing_item, /obj/item/lockpick))
 		if(!isnull(holdinglockpick))
 			to_chat(user, span_warning("My boot already holds a lockpick."))
-			return
+			return TRUE
+		if(!user.transferItemToLoc(storing_item, src))
+			return TRUE
 		to_chat(user, span_warning("I quickly slot [storing_item] into [src]!"))
-		user.transferItemToLoc(storing_item, holdinglockpick)
 		holdinglockpick = storing_item
 		playsound(user, 'sound/foley/equip/rummaging-01.ogg')
-		return
+		return TRUE
 
 	return ..()
 
 /obj/item/clothing/shoes/roguetown/boots/attack_right(mob/user)
-	if(isnull(holdingknife))
+	var/atom/movable/knife = holdingknife
+	if(knife?.loc != src)
 		return
 	user.visible_message(span_warning("[user] is drawing something from [src]!"), span_warning("I begin drawing a knife from [src]!"))
-	if(!do_after(user, 2 SECONDS))
+	if(!do_after(user, 2 SECONDS, target = src) || knife?.loc != src || holdingknife != knife)
 		return
-	user.put_in_hands(holdingknife)
 	holdingknife = null
+	user.put_in_hands(knife)
 	playsound(user, 'sound/foley/equip/swordsmall1.ogg')
 	return TRUE
 
 /obj/item/clothing/shoes/roguetown/boots/MiddleClick(mob/user)
-	if(isnull(holdinglockpick))
+	var/atom/movable/lockpick = holdinglockpick
+	if(lockpick?.loc != src)
 		return
 	user.visible_message(span_warning("[user] is drawing something from [src]!"), span_warning("I begin drawing a lockpick from [src]!"))
-	if(!do_after(user, 2 SECONDS))
+	if(!do_after(user, 2 SECONDS, target = src) || lockpick?.loc != src || holdinglockpick != lockpick)
 		return
-	user.put_in_hands(holdinglockpick)
 	holdinglockpick = null
+	user.put_in_hands(lockpick)
 	playsound(user, 'sound/foley/equip/rummaging-01.ogg')
 	return TRUE
 

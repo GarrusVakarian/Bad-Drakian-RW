@@ -98,7 +98,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/tunic/black
 	gloves = /obj/item/clothing/gloves/roguetown/leather
 	pants = /obj/item/clothing/under/roguetown/trou/leather/mourning
-	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
+	shoes = (H.pronouns in list(HE_HIM, THEY_THEM)) ? /obj/item/clothing/shoes/roguetown/courtphysician : /obj/item/clothing/shoes/roguetown/boots/courtphysician
 	belt = /obj/item/storage/belt/rogue/leather/black
 	beltl = /obj/item/storage/belt/rogue/surgery_bag/full/physician
 	beltr = /obj/item/rogueweapon/scabbard/sheath/courtphysician
