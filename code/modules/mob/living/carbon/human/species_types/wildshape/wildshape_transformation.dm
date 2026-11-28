@@ -4,11 +4,17 @@
 	else
 		. = ..()
 
+/mob/living/carbon/human
+	/// Charge above the current beast form's capacity that can return with the character.
+	var/beast_form_seed_reserve = 0
+
 /// Both transformations clone organs. Keep the selected production quirks' stores and timers
 /// on the active body so changing forms cannot refill them.
 /mob/living/carbon/human/proc/carry_beast_form_production(mob/living/carbon/human/recipient, reverting = FALSE)
 	if(sexcon && recipient.sexcon && (HAS_TRAIT_FROM(src, TRAIT_HIGH_SEED_PRODUCTION, TRAIT_VIRTUE) || HAS_TRAIT_FROM(src, TRAIT_QUICK_SEED_RECOVERY, TRAIT_VIRTUE) || HAS_TRAIT_FROM(src, TRAIT_GOODLOVER, TRAIT_VIRTUE)))
-		recipient.sexcon.charge = clamp(sexcon.charge, 0, recipient.sexcon.get_max_charge())
+		var/available_charge = sexcon.charge + beast_form_seed_reserve
+		recipient.sexcon.charge = clamp(available_charge, 0, recipient.sexcon.get_max_charge())
+		recipient.beast_form_seed_reserve = QDELETED(recipient.stored_mob) ? 0 : available_charge - recipient.sexcon.charge
 		recipient.sexcon.last_ejaculation_time = sexcon.last_ejaculation_time
 
 	if(HAS_TRAIT_FROM(src, TRAIT_HIGH_MILK_PRODUCTION, TRAIT_VIRTUE) && reverting)
@@ -19,6 +25,8 @@
 
 	if(!HAS_TRAIT_FROM(src, TRAIT_QUICK_EGG_PRODUCTION, TRAIT_VIRTUE))
 		return
+	recipient.automatic_egg_laying = automatic_egg_laying
+	recipient.climax_egg_count = climax_egg_count
 	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
 		var/obj/item/organ/source_organ = getorganslot(slot)
 		var/obj/item/organ/target_organ = recipient.getorganslot(slot)
@@ -101,12 +109,14 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
-	W.adjustOxyLoss(getOxyLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
+	W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -167,19 +177,20 @@
 		new_breasts.branded_writing = old_breasts.branded_writing
 		new_breasts.Insert(W, TRUE, FALSE)
 
-	carry_beast_form_production(W)
-
 	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC) //If we don't do this, the original body will fall asleep and snore on us
 
 	invisibility = oldinv
 
 	W.gain_inherent_skills()
+	carry_beast_form_production(W)
 
 	// Share devotion bar: beast form inherits the human's current devotion amount.
 	if(devotion && W.devotion)
 		W.devotion.max_devotion = devotion.max_devotion
 		W.devotion.devotion = devotion.devotion
 		W.devotion.update_devotion(0)
+
+	W.updatehealth()
 
 /mob/living/carbon/human/proc/wildshape_untransform(dead,gibbed)
 	if(QDELETED(stored_mob))
@@ -221,13 +232,15 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
 	if(!HAS_TRAIT(W, TRAIT_NOBREATH))
-		W.adjustOxyLoss(getOxyLoss())
+		W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -262,7 +275,8 @@
 		W.devotion.devotion = clamp(devotion.devotion, 0, W.devotion.max_devotion)
 		W.devotion.update_devotion(0)
 
-	if(dead && !QDELETED(W))
+	W.updatehealth()
+	if(dead && !QDELETED(W) && W.stat != DEAD)
 		W.death()
 
 	qdel(src)

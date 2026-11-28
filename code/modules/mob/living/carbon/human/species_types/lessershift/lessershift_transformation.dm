@@ -66,12 +66,14 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
-	W.adjustOxyLoss(getOxyLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
+	W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -131,19 +133,20 @@
 		new_breasts.branded_writing = old_breasts.branded_writing
 		new_breasts.Insert(W, TRUE, FALSE)
 
-	carry_beast_form_production(W)
-
 	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC) //If we don't do this, the original body will fall asleep and snore on us
 
 	invisibility = oldinv
 
 	W.gain_inherent_skills()
+	carry_beast_form_production(W)
 
 	// Share devotion bar: beast form inherits the human's current devotion amount.
 	if(devotion && W.devotion)
 		W.devotion.max_devotion = devotion.max_devotion
 		W.devotion.devotion = devotion.devotion
 		W.devotion.update_devotion(0)
+
+	W.updatehealth()
 
 /mob/living/carbon/human/proc/lessershift_untransform(dead,gibbed)
 	if(QDELETED(stored_mob))
@@ -185,12 +188,14 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
-	W.adjustOxyLoss(getOxyLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
+	W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -221,7 +226,8 @@
 		W.devotion.devotion = clamp(devotion.devotion, 0, W.devotion.max_devotion)
 		W.devotion.update_devotion(0)
 
-	if(dead && !QDELETED(W))
+	W.updatehealth()
+	if(dead && !QDELETED(W) && W.stat != DEAD)
 		W.death()
 
 	qdel(src)
