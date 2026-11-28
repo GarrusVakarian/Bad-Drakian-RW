@@ -255,7 +255,7 @@
 
 /datum/intent/mace/smash/werewolf
 	name = "thrash"
-	desc = "A powerful, smash of lycan muscle that deals normal damage but can throw a standing opponent back and slow them down, based on your strength. Ineffective below 10 strength. Slowdown & Knockback scales to your Strength up to 15 (1 - 5 tiles). Cannot be used consecutively more than every 5 seconds on the same target. Prone targets halve the knockback distance."
+	desc = "A powerful smash of lycan muscle that knocks back and slows the target at 10 Strength or higher. Knockback ranges from 1 to 4 tiles, scaling up to 14 Strength. Prone targets halve the knockback distance. A partial charge limits knockback to 1 tile. The same target can only be knocked back once every 5 seconds."
 	icon_state = "insmash"
 	chargetime = 1
 	penfactor = 60
@@ -282,7 +282,7 @@
 	sharpness = IS_SHARP
 	parrysound = "bladedmedium"
 	swingsound = BLADEWOOSH_MED
-	possible_item_intents = list(/datum/intent/simple/werewolf)
+	possible_item_intents = list(/datum/intent/simple/werewolf, /datum/intent/mace/smash/werewolf)
 	parrysound = list('sound/combat/parry/parrygen.ogg')
 	embedding = list("embedded_pain_multiplier" = 0, "embed_chance" = 0, "embedded_fall_chance" = 0)
 	item_flags = DROPDEL
