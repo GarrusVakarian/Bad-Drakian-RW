@@ -1176,6 +1176,8 @@
 							. += span_aiprivradio("[m1] [is_long ? "leaking heavily from [m2] slit" : "trickling cum from [m2] slit"]!")
 						if(SEX_PART_CUNT|SEX_PART_ANUS)
 							. += span_aiprivradio("[m1] [is_long ? "leaking heavily from both [m2] holes" : "dripping cum from both [m2] holes"]!")
+						if(SEX_PART_EARS)
+							. += span_aiprivradio("[m1] [is_long ? "leaking heavily from [m2] ears" : "dripping cum from [m2] ears"]!")
 						else
 							. += span_aiprivradio("[m1] [is_long ? "leaking a heavy load" : "dripping cum from [m2] nethers"]!")
 		var/list/modular_lines = human_modular_examine_lines(user, observer_privilege, m1, m2, m3)

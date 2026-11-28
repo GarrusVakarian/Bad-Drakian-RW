@@ -2472,6 +2472,36 @@ GLOBAL_LIST_EMPTY(panel_triumph_received)
 					belly.add_wound(/datum/wound/slash/disembowel)
 					popwarning = FALSE
 
+/datum/sex_controller/proc/try_skull_crack(mob/living/carbon/human/target)
+	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
+		if(prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
+			target.apply_status_effect(/datum/status_effect/quivering)
+			target.confused += 25
+			target.OffBalance(30 SECONDS)
+		if(user?.client?.prefs?.extreme_erp && target?.client?.prefs?.extreme_erp)
+			if(!HAS_TRAIT(target, TRAIT_RESILIENT_LOVER) && !target.has_wound(/datum/wound/fracture/head))
+				if(prob(10))
+					var/obj/item/bodypart/skull = target.get_bodypart(check_zone(BODY_ZONE_HEAD))
+					skull.add_wound(/datum/wound/fracture/head)
+
+/datum/sex_controller/proc/try_brain_crush(mob/living/carbon/human/target)
+	var/list/excluded = get_extreme_content_excluded_mobs(user)
+	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force == SEX_FORCE_LUDICROUS)
+		if(user?.client?.prefs?.extreme_erp && target?.client?.prefs?.extreme_erp)
+			if(prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
+				target.apply_status_effect(/datum/status_effect/quivering)
+				target.confused += 25
+				target.OffBalance(30 SECONDS)
+			if(!HAS_TRAIT(target, TRAIT_RESILIENT_LOVER))
+				if(popwarning == FALSE)
+					to_chat(user, span_danger("I can feel [target]'s brain squishing around my shaft; I may <b><i>END</i></b> them if I keep going."))
+					to_chat(target, span_danger("My... mind feels... fuzzy... [user] needs to... stop..."))
+					popwarning = TRUE
+				if(prob(1))
+					user.visible_message(span_userdanger("[user]'s shaft delves too deep into [target]'s ear; a horrible <i>SQLCH</i> is heard as [target] goes limp!"), ignored_mobs = excluded)
+					target.apply_damage(300, OXY)
+					popwarning = FALSE
+
 /datum/sex_controller/proc/try_jaw_crush(mob/living/carbon/human/target)
 	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
 		if(user?.client?.prefs?.extreme_erp && target?.client?.prefs?.extreme_erp)
