@@ -71,6 +71,11 @@
 		if(HL.real_name == second_target_name)
 			second_target = HL
 
+	if(QDELETED(first_target) || QDELETED(second_target))
+		to_chat(user, span_warning("I cannot reach one of those minds!"))
+		revert_cast(user)
+		return FALSE
+
 	// Check if either target is a zad
 	if(istype(first_target, /mob/living/simple_animal/hostile/retaliate/bat/crow) || istype(second_target, /mob/living/simple_animal/hostile/retaliate/bat/crow))
 		to_chat(user, span_warning("Zads are immune to mindlinks!"))

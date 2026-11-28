@@ -4,6 +4,7 @@
 /datum/species/lamia
 	name = "Lamia"
 	id = "lamia"
+	race_groups = list("Reptilian")
 	natural_armor_type = /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/lamia
 	desc = "<b>Lamia</b><br>\
 	The monstrous spawn of Abyssor, snake and humen conjoined together, the deepkin and merfolk. \
