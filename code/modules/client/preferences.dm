@@ -3319,12 +3319,9 @@ function setJobPrefRedirect(link) {
 						if(!VM.votable)
 							continue
 
-						var/friendlyname = "[VM.map_name] "
-						if (VM.voteweight <= 0)
-							friendlyname += " (disabled)"
-						maplist[friendlyname] = VM.map_name
+						maplist[VM.map_name] = VM.map_name
 					maplist[no_preference] = null
-					var/pickedmap = input(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference")  as null|anything in sortList(maplist)
+					var/pickedmap = input(user, "Choose a map to vote for automatically when you do not cast a ballot and auto-voting is enabled.", "Character Preference")  as null|anything in sortList(maplist)
 					if (pickedmap)
 						preferred_map = maplist[pickedmap]
 

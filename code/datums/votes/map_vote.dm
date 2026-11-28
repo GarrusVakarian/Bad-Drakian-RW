@@ -5,6 +5,11 @@
 	winner_method = VOTE_WINNER_METHOD_SIMPLE
 	display_statistics = TRUE
 
+	var/list/eligible_maps
+	var/list/valid_tally
+	var/valid_ballots = 0
+	var/cooldown_map
+
 /datum/vote/map_vote/is_accessible_vote()
 	// Register the vote at startup even if no maps meet their population limits yet.
 	return !!length(SSmap_vote.get_valid_map_vote_choices(ignore_population = TRUE))
@@ -16,11 +21,9 @@
 	if(!.)
 		return FALSE
 
-	if(length(choices) == 1) // Only one choice, no need to vote. Let's just auto-rotate it to the only remaining map because it would just happen anyways.
-		var/datum/map_config/change_me_out = global.config.maplist[choices[1]]
-		finalize_vote(choices[1])// voted by not voting, very sad.
-		to_chat(world, span_boldannounce("The map vote has been skipped because there is only one map left to vote for. \
-			The map has been changed to [change_me_out.map_name]."))
+	if(length(choices) == 1)
+		get_simple_winner()
+		finalize_vote(null)
 		return FALSE
 	if(length(choices) == 0)
 		to_chat(world, span_boldannounce("A map vote was called, but there are no maps to vote for! \
@@ -67,7 +70,7 @@
 		var/their_preferred_map = non_voter_client?.prefs?.preferred_map
 
 		// No preferred map = abstain
-		if(isnull(their_preferred_map))
+		if(isnull(their_preferred_map) || (non_voter_ckey in choices_by_ckey))
 			continue
 
 		if(their_preferred_map in choices)
@@ -76,52 +79,51 @@
 
 	return ..()
 
+/datum/vote/map_vote/get_simple_winner()
+	eligible_maps = SSmap_vote.get_eligible_maps_at_close(choices)
+	valid_tally = list()
+	valid_ballots = 0
+	cooldown_map = null
+
+	// The per-player selections are the ballot record, including saved preferences.
+	for(var/ckey in choices_by_ckey)
+		var/map_id = choices_by_ckey[ckey]
+		if(map_id in eligible_maps)
+			valid_tally[map_id] = (valid_tally[map_id] || 0) + 1
+			valid_ballots++
+
+	var/winner
+	var/alternative
+	var/winner_votes = 0
+	var/alternative_votes = 0
+	for(var/map_id in eligible_maps)
+		var/votes = valid_tally[map_id] || 0
+		// Preserve ballot order as the tiebreaker.
+		if(votes > winner_votes)
+			winner = map_id
+			winner_votes = votes
+		if(map_id != SSmap_vote.last_winner && votes > alternative_votes)
+			alternative = map_id
+			alternative_votes = votes
+
+	if(!winner)
+		return list()
+
+	if(winner == SSmap_vote.last_winner && SSmap_vote.consecutive_wins >= MAP_VOTE_COOLDOWN_WINS && alternative && alternative_votes * 100 >= winner_votes * MAP_VOTE_COOLDOWN_PERCENT)
+		cooldown_map = winner
+		return list(alternative)
+
+	return list(winner)
+
 /datum/vote/map_vote/get_result_text(list/all_winners, real_winner, list/non_voters)
-	var/title_text
-
-	if(override_question)
-		title_text = span_bold(override_question)
-	else
-		title_text = span_bold("[capitalize(name)] Vote")
-
-	var/returned_text = "Winner Selection: Simple"
-
-	var/total_votes = 0
-	for(var/map in choices)
-		total_votes += choices[map]
-
-	if(total_votes <= 0)
-		return span_bold("Vote Result: Inconclusive - No Votes!")
-
-	returned_text += "\n"
-	returned_text += "\nTotal Votes: [total_votes]"
-
+	var/title_text = span_bold(override_question || "Map Vote")
+	var/list/results = list("Valid ballots: [valid_ballots]")
 	if(display_statistics)
-		returned_text += "\n\nResults:"
+		for(var/map_id in choices)
+			var/count = (map_id in eligible_maps) ? "[valid_tally[map_id] || 0] vote(s)" : "ineligible at close"
+			results += "[span_bold(map_id)]: [count]"
 
-		for(var/map in choices)
-			var/direct_votes = choices[map]
-
-			// How many of this map's voters are carrying a pity bonus in,
-			// and how much, purely for admin/player visibility.
-			var/bonus_voters = 0
-			var/total_bonus_weight = 0
-
-			for(var/ckey in choices_by_ckey)
-				if(choices_by_ckey[ckey] != map)
-					continue
-				var/bonus = SSmap_vote.get_bonus_for(ckey, map)
-				if(bonus > 0)
-					bonus_voters++
-					total_bonus_weight += bonus
-
-			var/text = "[span_bold(map)]: [direct_votes] vote(s)"
-			if(bonus_voters)
-				text += " (+[total_bonus_weight] bonus from [bonus_voters] returning voter[bonus_voters == 1 ? "" : "s"])"
-
-			returned_text += "\n[text]"
-
-	return fieldset_block(title_text, returned_text, "boxed_message purple_box")
+	return fieldset_block(title_text, results.Join("\n"), "boxed_message purple_box")
 
 /datum/vote/map_vote/finalize_vote(winning_option)
-	SSmap_vote.finalize_map_vote(src)
+	SSmap_vote.finalize_map_vote(src, winning_option)
