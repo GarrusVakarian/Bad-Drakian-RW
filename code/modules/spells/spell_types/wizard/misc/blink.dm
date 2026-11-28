@@ -5,6 +5,7 @@
 	school = "conjuration"
 	cost = 3
 	releasedrain = 30
+	chargedrain = 1
 	chargetime = 3
 	recharge_time = 16 SECONDS
 	human_req = TRUE
