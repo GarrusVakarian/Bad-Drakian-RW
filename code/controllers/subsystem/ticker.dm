@@ -822,6 +822,8 @@ SUBSYSTEM_DEF(ticker)
 
 	SStriumphs.end_triumph_saving_time()
 	to_chat(world, span_boldannounce("Rebooting World in [DisplayTimeText(delay)]. [reason]"))
+	for(var/client/player as anything in GLOB.clients)
+		player.tgui_panel?.checkpoint_chat()
 
 	var/start_wait = world.time
 	UNTIL(round_end_sound_sent || (world.time - start_wait) > (delay * 2))	//don't wait forever
