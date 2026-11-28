@@ -120,6 +120,7 @@
 	color_keys = 3
 	color_key_names = list("Ears", "Inner", "Fluff")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/big/fennec_bigger
 	icon_state = "fenbig2"
@@ -127,6 +128,7 @@
 	color_keys = 3
 	color_key_names = list("Ears", "Inner", "Fluff")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/fish
 	name = "Fish"
@@ -201,6 +203,7 @@
 	color_keys = 3
 	color_key_names = list("Ears", "Inner", "Tips")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/pede
 	name = "Scolipede"
@@ -400,6 +403,7 @@
 	color_keys = 2
 	color_key_names = list("Ears", "Inner")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/big/acrador_short
 	icon_state = "acrador_short"
@@ -407,6 +411,7 @@
 	color_keys = 2
 	color_key_names = list("Ears", "Inner")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/big/sandfox_large
 	icon_state = "sandfox"
@@ -414,6 +419,7 @@
 	color_keys = 2
 	color_key_names = list("Ears", "Inner")
 	relevant_layers = list(BODY_ADJ_LAYER)
+	can_flick = TRUE
 
 /datum/sprite_accessory/ears/lynx
 	name = "Lynx"

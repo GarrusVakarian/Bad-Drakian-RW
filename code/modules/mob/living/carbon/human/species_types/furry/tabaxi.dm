@@ -8,6 +8,7 @@
 	)
 	name = "Tabaxi"
 	id = "tabaxi"
+	race_groups = list("Beastvolk")
 
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_PRIDE | MIRROR_MAGIC | RACE_SWAP | SLIME_EXTRACT
 

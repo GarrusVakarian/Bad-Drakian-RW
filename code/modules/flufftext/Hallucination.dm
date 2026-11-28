@@ -1035,7 +1035,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	target.clear_alert("fire", clear_override = TRUE)
 	if(target.client)
 		target.client.images -= fire_overlay
-	QDEL_NULL(fire_overlay)
+	fire_overlay = null
 	while(stage > 0)
 		stage--
 		update_temp()
@@ -1122,7 +1122,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 			sleep(rand(20,40)) //Only seen for a brief moment.
 			if(target.client)
 				target.client.images -= target.halbody
-			QDEL_NULL(target.halbody)
+			target.halbody = null
 	qdel(src)
 
 /datum/hallucination/voices
@@ -1253,7 +1253,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	if(target.client && hallucinated_image)
 		target.client.images -= hallucinated_image
 	
-	QDEL_NULL(hallucinated_image)
+	hallucinated_image = null
 
 	return ..()
 

@@ -132,7 +132,6 @@
 	range = 7
 
 /obj/effect/proc_holder/spell/invoked/mockery/cast(list/targets, mob/user = usr)
-	playsound(get_turf(user), 'sound/magic/mockery.ogg', 40, FALSE)
 	if(isliving(targets[1]))
 		var/mob/living/target = targets[1]
 		if(target.anti_magic_check(TRUE, TRUE))
@@ -141,13 +140,15 @@
 			revert_cast()
 			return FALSE
 		target.apply_status_effect(/datum/status_effect/debuff/viciousmockery)
+		playsound(get_turf(user), 'sound/magic/mockery.ogg', 40, FALSE)
+		speak_insult(user)
 		SEND_SIGNAL(user, COMSIG_VICIOUSLY_MOCKED, target)
 		record_round_statistic(STATS_PEOPLE_MOCKED)
 		return TRUE
 	revert_cast()
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/mockery/invocation(mob/user = usr)
+/obj/effect/proc_holder/spell/invoked/mockery/proc/speak_insult(mob/user)
 	if(ishuman(user))
 		switch(pick(1,2,3,4,5,6,7,8,9,10,11,12,13))
 			if(1)
@@ -677,6 +678,9 @@
 
 /obj/effect/proc_holder/spell/invoked/projectile/repel/miracle/cast(list/targets, mob/living/user)
 	var/turf/T = get_turf(targets[1])
+	if(!T)
+		revert_cast(user)
+		return FALSE
 	if(T.z < user.z)
 		to_chat(user, span_warning("You cannot use Divine Repel below your floor!"))
 		revert_cast()

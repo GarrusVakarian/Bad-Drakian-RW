@@ -69,7 +69,10 @@
 	if(!owner || !on_apply())
 		qdel(src)
 		return
-	if(QDELETED(src) || !owner)
+	if(QDELETED(src))
+		return
+	if(!owner)
+		qdel(src)
 		return
 
 	if(mob_effect_icon_state)
@@ -407,5 +410,5 @@
 	if(owner)
 		owner.cut_overlay(status_overlay)
 		owner.underlays -= status_underlay
-	QDEL_NULL(status_overlay)
+	status_overlay = null
 	return ..()

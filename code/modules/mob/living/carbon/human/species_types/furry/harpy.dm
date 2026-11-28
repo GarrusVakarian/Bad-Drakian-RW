@@ -8,6 +8,7 @@
 	)
 	name = "Harpy"
 	id = "harpy"
+	race_groups = list("Beastvolk")
 	natural_armor_type = /obj/item/clothing/suit/roguetown/armor/regenerating/skin/weak/racial/harpy
 	desc = "<b>Harpy</b></br>\
 	Harpies, often called \"songbirds\" or \"Magpies\" by some, resemble the half-kin in appearance at first glance. \

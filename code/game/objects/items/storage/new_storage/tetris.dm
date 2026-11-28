@@ -779,7 +779,8 @@
 	else
 		//Being destroyed, just move to nullspace now (so it's not in contents for the icon update)
 		removed.moveToNullspace()
-	removed.update_icon()
+	if(!QDELETED(removed))
+		removed.update_icon()
 	if(refresh_storage)
 		update_icon()
 		refresh_mob_views()

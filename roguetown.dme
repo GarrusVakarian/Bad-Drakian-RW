@@ -1743,6 +1743,7 @@
 #include "code\modules\client\preferences_culinary.dm"
 #include "code\modules\client\preferences_customizers.dm"
 #include "code\modules\client\preferences_descriptors.dm"
+#include "code\modules\client\preferences_family.dm"
 #include "code\modules\client\preferences_savefile.dm"
 #include "code\modules\client\preferences_tgui.dm"
 #include "code\modules\client\preferences_toggles.dm"

@@ -164,7 +164,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		popup.set_content(consult_menu)
 		popup.open()
 		UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
-		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved))
+		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved), override = TRUE)
 	else
 		say("No bounties are currently active.")
 
@@ -189,7 +189,7 @@ GLOBAL_LIST_EMPTY(castifico_penance_records)
 		popup.set_content(consult_menu)
 		popup.open()
 		UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
-		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved))
+		RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(user_moved), override = TRUE)
 	else
 		say("No unpaid taxes are currently recorded.")
 

@@ -4,6 +4,7 @@
 /datum/species/arachnid
 	name = "Arachnid"
 	id = "arachnid"
+	race_groups = list("Beastvolk")
 	clothes_id = "lamia"
 	desc = "<b>Arachnid</b><br>\
 	Among shaded forests and quiet caverns, Arachnids weave homes of silk and patiently tend their broods. Many venture beyond these secluded places, seeking livelihoods among people who regard their many-legged neighbours with equal measures of curiosity and suspicion.<br>\

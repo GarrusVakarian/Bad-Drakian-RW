@@ -8,6 +8,7 @@
 	)
 	name = "Sissean"
 	id = "lizardfolk"
+	race_groups = list("Reptilian")
 	desc = "<b>Sissean</b><br>\
 	Sissean are hardy, reptilian people that share a unique bond among their kind due to being the target \
 	of oppression and enslavement by other races, particularly by Humans and Drakians. They take pride in \

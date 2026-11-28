@@ -813,7 +813,7 @@
 /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter/dolabra/pioneer
 	name = "guilded eleonora"
 	icon = 'icons/roguetown/weapons/64.dmi'
-	icon_state = "pdolabra"
+	icon_state = "eleonora"
 	gripsprite = TRUE
 	desc = "A long handled dolabra axe-pick with a carved grip made of hardened maple wood. This one has an axe-blade of frayed blacksteel, having lost its varnish long ago with a long pick-head behind the blade, this dolabra is decorated with golden reinforced bracers along the shaft and a heavy gold mace head at the top."
 	dropshrink = 0.75
@@ -838,7 +838,7 @@
 /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter/dolabra/blacksteel
 	name = "blacksteel dolabra"
 	icon = 'icons/roguetown/weapons/64.dmi'
-	icon_state = "edolabra"
+	icon_state = "blacksteeldolabra"
 	gripsprite = TRUE
 	desc = "A long-handled dolabra axe-pick with a carved grip made of hardened maple wood. Fitted with an axe-blade of polished blacksteel and a long pick-head behind the blade."
 	dropshrink = 0.70
@@ -863,7 +863,7 @@
 /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter/dolabra/albranze
 	name = "albranze dolabra"
 	icon = 'icons/roguetown/weapons/64.dmi'
-	icon_state = "bdolabra" // albranze is a bronze aluminium mix, aluminium was traditionally more expensive than even silver and gold combined
+	icon_state = "bronzedolabra" // albranze is a bronze aluminium mix, aluminium was traditionally more expensive than even silver and gold combined
 	gripsprite = TRUE
 	desc = "a long handled dolabra axe-pick with a long shaft of treated oak. Fitted with an axe-head made of polished albranze with a fitted pick-head behind the blade."
 	dropshrink = 0.70
