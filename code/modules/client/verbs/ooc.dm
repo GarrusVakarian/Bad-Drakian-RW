@@ -665,8 +665,8 @@ GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 // Can't return to afterlife or use for teleporting
 // Need to add hide emotes, etc
 
-/client/verb/map_vote_tally_count()
-	set name = "Show Map Vote Tallies"
-	set desc = "View your own banked map vote tallies."
+/client/verb/map_vote_rotation_status()
+	set name = "Show Map Vote Rotation"
+	set desc = "View the map vote rules and the current winning streak."
 	set category = "OOC"
-	to_chat(src, SSmap_vote.get_personal_tally_text(ckey))
+	to_chat(src, SSmap_vote.get_streak_text())
