@@ -172,7 +172,7 @@
 		var/list/descriptors = mannequin.get_mob_descriptors(FALSE, null)
 		to_chat(user, \
 			"[SPAN_TOOLTIP("This will be displayed when you emote or are examined when your face is hidden.", span_notice("Anonymous Visible Name"))]: \
-			<font color='[voice_color]'>[get_visible_name_preview(mannequin, descriptors.Copy())]</font>")
+			<font color='[voice_color]'>[mannequin.get_anonymous_descriptor_name(descriptors) || "Unknown"]</font>")
 
 		// Calculate descriptor blurb
 		desc_lines = build_cool_description(descriptors, mannequin)
@@ -200,12 +200,6 @@
 		if(VOICE_TYPE_ANDR)
 			voice_gender = "Person"
 	return voice_descriptor.get_speaking_name(voice_gender, src)
-
-// This should mirror /mob/living/carbon/human/get_visible_name()
-/datum/preferences/proc/get_visible_name_preview(mob/living/carbon/human/mannequin, list/descriptors)
-	var/trait_desc = "[capitalize(build_coalesce_description_nofluff(descriptors, mannequin, list(MOB_DESCRIPTOR_SLOT_TRAIT), "%DESC1%"))]"
-	var/stature_desc = "[capitalize(build_coalesce_description_nofluff(descriptors, mannequin, list(MOB_DESCRIPTOR_SLOT_STATURE), "%DESC1%"))]"
-	return "[trait_desc] [stature_desc]"
 
 /datum/preferences/proc/get_descriptor_entry_for_choice(choice_type)
 	if(length(descriptor_entries))

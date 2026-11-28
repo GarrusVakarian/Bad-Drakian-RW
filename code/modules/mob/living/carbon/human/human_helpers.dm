@@ -69,13 +69,16 @@
 		return face_name
 	if(id_name)
 		return id_name
-	var/list/d_list = get_mob_descriptors()
-	var/trait_desc = "[capitalize(build_coalesce_description_nofluff(d_list, src, list(MOB_DESCRIPTOR_SLOT_TRAIT), "%DESC1%"))]"
-	var/stature_desc = "[capitalize(build_coalesce_description_nofluff(d_list, src, list(MOB_DESCRIPTOR_SLOT_STATURE), "%DESC1%"))]"
-	var/descriptor_name = "[trait_desc] [stature_desc]"
-	if(descriptor_name != " ")
-		return descriptor_name
-	return "Unknown"
+	return get_anonymous_descriptor_name(get_mob_descriptors()) || "Unknown"
+
+/mob/living/carbon/human/proc/get_anonymous_descriptor_name(list/descriptors)
+	// The coalescer consumes descriptors, but the preview still needs its full list.
+	var/list/remaining_descriptors = descriptors.Copy()
+	var/trait_desc = capitalize(trim(build_coalesce_description_nofluff(remaining_descriptors, src, list(MOB_DESCRIPTOR_SLOT_TRAIT), "%DESC1%")))
+	var/stature_desc = capitalize(trim(build_coalesce_description_nofluff(remaining_descriptors, src, list(MOB_DESCRIPTOR_SLOT_STATURE), "%DESC1%")))
+	if(trait_desc && stature_desc)
+		return "[trait_desc] [stature_desc]"
+	return trait_desc || stature_desc
 
 /mob/living/carbon/human/proc/has_active_ownership_mark()
 	for(var/obj/item/bodypart/bodypart as anything in bodyparts)
