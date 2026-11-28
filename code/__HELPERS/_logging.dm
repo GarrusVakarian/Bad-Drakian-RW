@@ -52,8 +52,9 @@
 	if (CONFIG_GET(flag/log_admin))
 		WRITE_LOG(GLOB.world_game_log, "\[[logtime]] ADMIN: [text]")
 
-/proc/log_admin_private(text)
-	GLOB.admin_log.Add(text)
+/// Append interactive links to the in-game log while recording plain text on disk.
+/proc/log_admin_private(text, admin_log_links = "")
+	GLOB.admin_log.Add("[text][admin_log_links]")
 	if (CONFIG_GET(flag/log_admin))
 		WRITE_LOG(GLOB.world_game_log, "\[[logtime]] ADMINPRIVATE: [text]")
 
