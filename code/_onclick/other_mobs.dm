@@ -118,6 +118,9 @@
 		to_chat(src, span_warning("[pulledby] is restraining my arm!"))
 		return
 
+	if(try_partner_dance(A))
+		return
+
 	A.attack_right(src, params)
 	//Toggling something on a hat changes how the hat is drawn, whichever slot the item's own proc refreshed.
 	if(isclothing(A))

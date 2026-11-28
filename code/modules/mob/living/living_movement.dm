@@ -8,7 +8,9 @@
 
 /mob/living/Moved()
 	. = ..()
-	stop_looking()
+	// A dance swaps the occupied turfs without taking control of either camera.
+	if(!active_partner_dance?.swapping)
+		stop_looking()
 	update_turf_movespeed(loc)
 	update_pixel_shifting(TRUE)
 //	if(m_intent == MOVE_INTENT_RUN)
@@ -27,6 +29,8 @@
 	if(!mover)
 		return ..()
 	if((mover.pass_flags & PASSMOB))
+		return TRUE
+	if(active_partner_dance?.swapping && (mover == active_partner_dance.leader || mover == active_partner_dance.partner))
 		return TRUE
 	if(istype(mover, /obj/projectile))
 		var/obj/projectile/P = mover
