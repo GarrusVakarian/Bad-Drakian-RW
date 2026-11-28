@@ -162,7 +162,10 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 				continue
 			triumphs_spent += triumph_cost
 			available_points = 0
-		apply_quirk(character, Q)
+		if(!apply_quirk(character, Q))
+			continue
+		if(Q.carries_to_beast_form)
+			LAZYOR(character.beast_form_quirks, Q)
 		if(istype(Q, /datum/quirk/virgin))
 			var/datum/component/virgin_nerves/nerves = character.GetComponent(/datum/component/virgin_nerves)
 			if(istype(nerves))

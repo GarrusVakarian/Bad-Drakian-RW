@@ -2,6 +2,7 @@
 // carried through organ DNA and onto the organ itself so both organ kinds share one format.
 
 /datum/quirk/quick_egg_production
+	carries_to_beast_form = TRUE
 	name = "Quick Egg Production"
 	point_cost = 0
 	desc = "I form eggs faster than usual."

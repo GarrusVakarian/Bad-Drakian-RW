@@ -1,12 +1,56 @@
 /mob/living/carbon/human/species/wildshape/death(gibbed, nocutscene = FALSE)
-	if(untransform_on_death)
+	if(untransform_on_death && !QDELETED(stored_mob))
 		wildshape_untransform(TRUE, gibbed)
 	else
 		. = ..()
 
+/mob/living/carbon/human
+	/// Charge above the current beast form's capacity that can return with the character.
+	var/beast_form_seed_reserve = 0
+
+/// Both transformations clone organs. Keep the selected production quirks' stores and timers
+/// on the active body so changing forms cannot refill them.
+/mob/living/carbon/human/proc/carry_beast_form_production(mob/living/carbon/human/recipient, reverting = FALSE)
+	if(sexcon && recipient.sexcon && (HAS_TRAIT_FROM(src, TRAIT_HIGH_SEED_PRODUCTION, TRAIT_VIRTUE) || HAS_TRAIT_FROM(src, TRAIT_QUICK_SEED_RECOVERY, TRAIT_VIRTUE) || HAS_TRAIT_FROM(src, TRAIT_GOODLOVER, TRAIT_VIRTUE)))
+		var/available_charge = sexcon.charge + beast_form_seed_reserve
+		recipient.sexcon.charge = clamp(available_charge, 0, recipient.sexcon.get_max_charge())
+		recipient.beast_form_seed_reserve = QDELETED(recipient.stored_mob) ? 0 : available_charge - recipient.sexcon.charge
+		recipient.sexcon.last_ejaculation_time = sexcon.last_ejaculation_time
+
+	if(HAS_TRAIT_FROM(src, TRAIT_HIGH_MILK_PRODUCTION, TRAIT_VIRTUE) && reverting)
+		var/obj/item/organ/breasts/source_breasts = getorganslot(ORGAN_SLOT_BREASTS)
+		var/obj/item/organ/breasts/target_breasts = recipient.getorganslot(ORGAN_SLOT_BREASTS)
+		if(istype(target_breasts))
+			target_breasts.milk_stored = istype(source_breasts) ? min(source_breasts.milk_stored, target_breasts.get_milk_capacity()) : 0
+
+	if(!HAS_TRAIT_FROM(src, TRAIT_QUICK_EGG_PRODUCTION, TRAIT_VIRTUE))
+		return
+	recipient.automatic_egg_laying = automatic_egg_laying
+	recipient.climax_egg_count = climax_egg_count
+	for(var/slot in list(ORGAN_SLOT_PENIS, ORGAN_SLOT_VAGINA))
+		var/obj/item/organ/source_organ = getorganslot(slot)
+		var/obj/item/organ/target_organ = recipient.getorganslot(slot)
+		if(!target_organ)
+			continue
+		if(!reverting)
+			target_organ.set_egg_settings(source_organ?.egg_settings)
+		if(target_organ.egg_settings)
+			target_organ.eggs_stored = min(source_organ?.eggs_stored || 0, target_organ.egg_settings["clutch"])
+			target_organ.next_egg_time = source_organ?.next_egg_time || 0
+
+/// Compare the snapshot by instance so an original spell keeps its configuration and cooldown.
+/mob/living/carbon/human/proc/remove_form_only_self_spells(list/original_spells)
+	if(!mind || !islist(original_spells))
+		return
+	for(var/obj/effect/proc_holder/spell/self/form_spell in mind.spell_list.Copy())
+		if(!(form_spell in original_spells))
+			mind.spell_list -= form_spell
+			qdel(form_spell)
+
 /mob/living/carbon/human/proc/wildshape_transformation(shapepath)
 	if(!mind)
 		log_runtime("NO MIND ON [src.name] WHEN TRANSFORMING")
+		return
 	Paralyze(1, ignore_canstun = TRUE)
 
 	//before we shed our items, save our neck and ring, if we have any, so we can quickly rewear them
@@ -46,6 +90,7 @@
 		W.equip_to_slot_if_possible(stored_neck, SLOT_NECK)
 
 	W.after_creation()
+	carry_beast_form_quirks(W)
 	W.stored_language = new
 	W.stored_language.copy_known_languages_from(src)
 	W.stored_skills = ensure_skills().known_skills.Copy()
@@ -64,12 +109,14 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
-	W.adjustOxyLoss(getOxyLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
+	W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -135,6 +182,7 @@
 	invisibility = oldinv
 
 	W.gain_inherent_skills()
+	carry_beast_form_production(W)
 
 	// Share devotion bar: beast form inherits the human's current devotion amount.
 	if(devotion && W.devotion)
@@ -142,8 +190,10 @@
 		W.devotion.devotion = devotion.devotion
 		W.devotion.update_devotion(0)
 
+	W.updatehealth()
+
 /mob/living/carbon/human/proc/wildshape_untransform(dead,gibbed)
-	if(!stored_mob)
+	if(QDELETED(stored_mob))
 		return
 	if(!mind)
 		log_runtime("NO MIND ON [src.name] WHEN UNTRANSFORMING")
@@ -169,8 +219,9 @@
 	if (stored_neck)
 		W.equip_to_slot_if_possible(stored_neck, SLOT_NECK)
 
-	if(dead)
-		W.death()
+	carry_beast_form_production(W, reverting = TRUE)
+	if(HAS_TRAIT_FROM(src, TRAIT_REDOLENT, TRAIT_VIRTUE))
+		W.redolent_last_aura_tick = max(W.redolent_last_aura_tick, redolent_last_aura_tick)
 
 	for(var/datum/wound/old_wound in W.get_wounds())
 		var/obj/item/bodypart/bp = W.get_bodypart(old_wound.bodypart_owner.body_zone)
@@ -181,13 +232,15 @@
 		for(var/datum/wound/wound in woundlist)
 			var/obj/item/bodypart/c_BP = get_bodypart(wound.bodypart_owner.body_zone)
 			var/obj/item/bodypart/w_BP = W.get_bodypart(wound.bodypart_owner.body_zone)
+			if(!w_BP)
+				continue
 			w_BP.add_wound(wound.type)
 			c_BP.remove_wound(wound.type)
 
-	W.adjustBruteLoss(getBruteLoss())
-	W.adjustFireLoss(getFireLoss())
+	W.adjustBruteLoss(getBruteLoss(), updating_health = FALSE)
+	W.adjustFireLoss(getFireLoss(), updating_health = FALSE)
 	if(!HAS_TRAIT(W, TRAIT_NOBREATH))
-		W.adjustOxyLoss(getOxyLoss())
+		W.adjustOxyLoss(getOxyLoss(), updating_health = FALSE)
 	W.set_nutrition(nutrition)
 	W.set_hydration(hydration)
 
@@ -201,7 +254,7 @@
 	W.bleedsuppress = bleedsuppress
 
 	W.forceMove(get_turf(src))
-	mind.transfer_to(W)
+	mind?.transfer_to(W)
 
 	var/mob/living/carbon/human/species/wildshape/WA = src
 	W.copy_known_languages_from(WA.stored_language)
@@ -212,11 +265,7 @@
 		restored_skills.skill_experience = WA.stored_experience.Copy()
 	playsound(W.loc, 'sound/body/shapeshift-end.ogg', 100, FALSE, 3)
 
-	//Compares the list of spells we had before transformation with those we do now. If there are any that don't match, we remove them
-	for(var/obj/effect/proc_holder/spell/self/originspell in WA.stored_spells)
-		for(var/obj/effect/proc_holder/spell/self/wildspell in W.mind.spell_list)
-			if(wildspell != originspell)
-				W.RemoveSpell(wildspell)
+	W.remove_form_only_self_spells(WA.stored_spells)
 
 	W.regenerate_icons()
 	to_chat(W, span_userdanger("I return to my old form."))
@@ -225,5 +274,9 @@
 	if(devotion && W.devotion)
 		W.devotion.devotion = clamp(devotion.devotion, 0, W.devotion.max_devotion)
 		W.devotion.update_devotion(0)
+
+	W.updatehealth()
+	if(dead && !QDELETED(W) && W.stat != DEAD)
+		W.death()
 
 	qdel(src)
