@@ -97,6 +97,7 @@
 	. = ..()
 	if(container)
 		container.vis_contents -= src
+		container = null
 
 /// Takes the passed in MA/icon_state, mirrors it onto ourselves, and displays that in world for duration seconds
 /// Returns the displayed object, you can animate it and all, but you don't own it, we'll delete it after the duration
