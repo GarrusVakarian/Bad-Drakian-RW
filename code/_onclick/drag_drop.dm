@@ -64,6 +64,8 @@
 	var/middragtime = 0
 	var/atom/middragatom
 	var/tcompare
+	var/item_pickup_press_params
+	var/turf/item_pickup_press_turf
 	var/charging = 0
 	var/chargedprog = 0
 	var/sections
@@ -85,6 +87,8 @@
 	var/blockscharging = FALSE
 
 /client/MouseDown(object, location, control, params)
+	item_pickup_press_params = null
+	item_pickup_press_turf = null
 	charge_was_blocked_by_cooldown = FALSE
 	charging_spell = null
 	var/list/modifiers = params2list(params)
@@ -127,6 +131,12 @@
 		mob.nodirchange = TRUE
 		for(var/atom/movable/screen/eye_intent/eyet in mob.hud_used.static_inventory)
 			eyet.update_icon(mob)
+
+	if(!delay && mob.cmode && isitem(object) && is_plain_item_pickup_click(modifiers) && !mob.get_active_held_item() && !mob.in_throw_mode)
+		var/obj/item/item = object
+		if(modifiers["screen-loc"] && isturf(location) && item.loc == location)
+			item_pickup_press_params = params
+			item_pickup_press_turf = location
 
 	if(delay)
 		selected_target[1] = object
@@ -219,6 +229,10 @@
 	return TRUE
 
 /client/MouseUp(object, location, control, params)
+	var/press_params = item_pickup_press_params
+	var/turf/press_turf = item_pickup_press_turf
+	item_pickup_press_params = null
+	item_pickup_press_turf = null
 	var/was_charging
 	if(charging && isliving(mob))
 		update_to_mob(mob, 0)
@@ -269,7 +283,11 @@
 		var/atom/target_atom = object
 		var/is_spell_release = mob.atkswinging == "middle" && mob.used_intent?.type == INTENT_SPELL && istype(mob.ranged_ability, /obj/effect/proc_holder/spell/invoked)
 		if(istype(target_atom) && target_atom.should_click_on_mouse_up(tcompare) && (tcompare != mob || is_spell_release) && (mob.atkswinging == "middle" || mob.used_intent?.tranged || (mob.atkswinging && object != tcompare)))
-			target_atom.Click(location, control, params)
+			var/obj/item/pressed_item = tcompare
+			if(press_params && !was_charging && !active_mousedown_item && mob.cmode && mob.atkswinging == "left" && !mob.get_active_held_item() && !mob.in_throw_mode && istype(pressed_item) && pressed_item.loc == press_turf && is_item_pickup_drag(pressed_item, target_atom, modifiers, press_params))
+				Click(pressed_item, press_turf, control, press_params)
+			else
+				target_atom.Click(location, control, params)
 		tcompare = null
 
 	if(active_mousedown_item)
@@ -278,6 +296,32 @@
 
 	if(was_charging)
 		mob.stop_attack()
+
+/// Only unmodified left input can be recovered as a pickup click.
+/proc/is_plain_item_pickup_click(list/modifiers)
+	return modifiers["left"] && !modifiers["right"] && !modifiers["middle"] && !modifiers["shift"] && !modifiers["ctrl"] && !modifiers["alt"]
+
+/client/proc/is_item_pickup_drag(obj/item/item, atom/over, list/release, press_params)
+	if(over != item.loc && (!istype(over, /obj/structure/rack) || over.loc != item.loc))
+		return FALSE
+	if(!is_plain_item_pickup_click(release) || !item.Adjacent(mob) || !over.Adjacent(mob))
+		return FALSE
+	// A storage item can handle the gesture as a real drop, for example by emptying onto the floor.
+	if(SEND_SIGNAL(item, COMSIG_CONTAINS_STORAGE))
+		return FALSE
+	var/list/press = params2list(press_params)
+	return is_tiny_item_pickup_motion(press["screen-loc"], release["screen-loc"], view)
+
+/// Screen coordinates stay comparable when the cursor moves from the sprite to the surface under it.
+/proc/is_tiny_item_pickup_motion(start_loc, end_loc, view)
+	var/static/regex/mouse_screen_loc = regex(@"^-?[0-9]+:-?[0-9]+,-?[0-9]+:-?[0-9]+$")
+	if(!start_loc || !end_loc || !mouse_screen_loc.Find(start_loc) || !mouse_screen_loc.Find(end_loc))
+		return FALSE
+	var/list/start = screen_loc_to_offset(start_loc, view)
+	var/list/end = screen_loc_to_offset(end_loc, view)
+	var/dx = start[1] - end[1]
+	var/dy = start[2] - end[2]
+	return dx * dx + dy * dy <= 9
 
 /client/proc/updateprogbar(atom/clicked_object)
 	if(!mob)
