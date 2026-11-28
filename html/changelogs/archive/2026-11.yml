@@ -1290,6 +1290,9 @@
       slow them.
   - bugfix: Tackled targets now appear prone immediately for the grabber instead of
       requiring them to move
+  - config: Removed (Ratwood) Dun World from the map ballot. AP Dun World and Neuhill
+      no longer have a minimum pop requirement for vote. Complain to the maintainers
+      if you hate this free-dom.
   mypingishuge:
   - rscadd: (Gug1234) Added adjustable cloth, leather and mail masks, aventails, steel
       barbutes and plumes, gilded armor, and plate-and-maille crafting.
