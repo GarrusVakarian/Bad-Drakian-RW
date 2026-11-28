@@ -203,6 +203,7 @@
 			parent_spell?.lose_mark()
 		return
 
+	var/mark_name = html_encode(mark.real_name)
 	if(user_turf.z != target_turf.z)
 		// Different z-level
 		var/z_direction = "unknown"
@@ -211,17 +212,17 @@
 		else
 			z_direction = "above"
 
-		to_chat(user, span_notice("The target is on a level [z_direction] you."))
+		to_chat(user, span_notice("[mark_name] is on a level [z_direction] you."))
 	else
 		// Same z-level
 		var/distance = get_dist(user, mark)
 		var/direction = get_dir(user, mark)
 
 		if(distance == 0)
-			to_chat(user, span_notice("The target is here!"))
+			to_chat(user, span_notice("[mark_name] is here!"))
 		else
 			var/direction_text = dir2text(direction)
-			to_chat(user, span_notice("The target is [distance] tiles away to the [direction_text]."))
+			to_chat(user, span_notice("[mark_name] is [distance] tiles away to the [direction_text]."))
 
 	if(!user.Adjacent(mark))
 		return
@@ -494,7 +495,15 @@
 
 /obj/effect/proc_holder/spell/self/wake_from_dream
 	name = "Wake from the Dream"
-	desc = "Return to your old life. You cannot take up the Dreamwalker mantle again this round."
+	desc = "Channel for 30 seconds to return to your old life. Moving or swapping hands interrupts the cast. You cannot take up the Dreamwalker mantle again this round."
+	var/wake_interrupted = FALSE
+
+/obj/effect/proc_holder/spell/self/wake_from_dream/proc/on_wake_hand_swap()
+	SIGNAL_HANDLER
+	wake_interrupted = TRUE
+
+/obj/effect/proc_holder/spell/self/wake_from_dream/proc/can_continue_wake(mob/living/user, client/casting_client)
+	return !wake_interrupted && user.client == casting_client
 
 /obj/effect/proc_holder/spell/self/wake_from_dream/cast(list/targets, mob/living/user)
 	var/datum/antagonist/dreamwalker/dreamwalker = user.mind?.has_antag_datum(/datum/antagonist/dreamwalker)
@@ -505,6 +514,26 @@
 		to_chat(user, span_warning("I must be in my own body and finish what I am doing before I can wake."))
 		revert_cast(user)
 		return FALSE
+	var/coefficient = user.do_after_coefficent()
+	if(coefficient <= 0)
+		revert_cast(user)
+		return FALSE
+	var/client/casting_client = user.client
+	var/atom/start_location = user.loc
+	wake_interrupted = FALSE
+	// An active item check cannot distinguish two empty hands.
+	RegisterSignal(user, COMSIG_CARBON_SWAPHANDS, PROC_REF(on_wake_hand_swap))
+	to_chat(user, span_notice("I begin to wake from the dream. I must stay still and keep the same hand active."))
+	// Keep the 30-second channel independent of timed-action speed modifiers.
+	var/completed = do_after(user, (30 SECONDS) / coefficient, needhand = FALSE, extra_checks = CALLBACK(src, PROC_REF(can_continue_wake), user, casting_client))
+	if(QDELETED(src) || QDELETED(user))
+		return FALSE
+	UnregisterSignal(user, COMSIG_CARBON_SWAPHANDS)
+	if(!completed || !can_continue_wake(user, casting_client) || user.loc != start_location || user.stat || user.IsStun() || user.IsParalyzed() || QDELETED(dreamwalker) || user.mind != dreamwalker.owner || dreamwalker.dream_body != user || dreamwalker.has_awakened)
+		to_chat(user, span_warning("My attempt to wake is interrupted."))
+		revert_cast(user)
+		return FALSE
+
 	// The spell removes itself after the cast finishes.
 	addtimer(CALLBACK(dreamwalker, TYPE_PROC_REF(/datum/antagonist/dreamwalker, wake_from_dream), user), 0)
 	return TRUE
