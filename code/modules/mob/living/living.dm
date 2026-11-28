@@ -2511,6 +2511,7 @@
 //Updates canmove, lying and icons. Could perhaps do with a rename but I can't think of anything to describe it.
 //Robots, animals and brains have their own version so don't worry about them
 /mob/living/proc/update_mobility()
+	var/previous_lying = lying
 	var/stat_softcrit = stat == SOFT_CRIT
 	var/stat_conscious = (stat == CONSCIOUS) || stat_softcrit
 	var/conscious = !IsUnconscious() && stat_conscious && !HAS_TRAIT(src, TRAIT_DEATHCOMA)
@@ -2608,6 +2609,11 @@
 	update_cone_show()
 	update_transform()
 	lying_prev = lying
+
+	// The grabber's field of view contains a copy of the pulled mob's pose.
+	var/mob/living/puller = pulledby
+	if(lying != previous_lying && istype(puller) && puller.pulling == src)
+		puller.request_overlay_vision_update()
 
 	// Movespeed mods based on arms/legs quantity
 	if(!get_leg_ignore())
