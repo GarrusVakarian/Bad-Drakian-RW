@@ -892,7 +892,9 @@ GLOBAL_LIST_EMPTY(reach_dummy_pool)
 		else
 			rmb_on(A, params)
 	else if(used_intent?.rmb_ranged)
-		used_intent.rmb_ranged(A, src) //get the message from the intent
+		// Ranged gestures must not name mobs the sender cannot see.
+		if(!ismob(A) || (A.invisibility <= see_invisible && A.alpha))
+			used_intent.rmb_ranged(A, src)
 	changeNext_move(CLICK_CD_RAPID)
 	if(isturf(A.loc))
 		face_atom(A)
