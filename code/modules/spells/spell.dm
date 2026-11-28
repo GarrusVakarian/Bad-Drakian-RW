@@ -820,7 +820,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 				radius = 1
 			if(get_dist(targets[1], user) > radius)
 				to_chat(user, span_warning("It's too far!"))
-				revert_cast()
+				revert_cast(user)
 				return
 			var/atom/A = targets[1]
 			var/turf/target_turf = get_turf(A)

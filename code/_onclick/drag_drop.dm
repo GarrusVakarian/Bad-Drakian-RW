@@ -349,9 +349,8 @@
 				var/new_icon = 'icons/effects/mousemice/swang/acharged.dmi'
 				if(mouse_pointer_icon != new_icon)
 					mouse_pointer_icon = new_icon
-			else
-				if(!L.stamina_add(L.used_intent.chargedrain))
-					L.stop_attack()
+			else if(L.used_intent.chargedrain && !L.stamina_add(L.used_intent.chargedrain))
+				L.stop_attack()
 		return TRUE
 	else
 		return FALSE
