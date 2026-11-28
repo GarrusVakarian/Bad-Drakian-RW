@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - admin: "Added a private admin log for Defiled Keyholder entries to the Wretch Grotto"
