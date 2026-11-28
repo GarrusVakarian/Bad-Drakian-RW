@@ -1288,6 +1288,8 @@
   - admin: Added a private admin log for Defiled Keyholder entries to the Wretch Grotto
   - rscadd: Werewolves can now use Thrash with their claws to knock enemies back and
       slow them.
+  - bugfix: Tackled targets now appear prone immediately for the grabber instead of
+      requiring them to move
   mypingishuge:
   - rscadd: (Gug1234) Added adjustable cloth, leather and mail masks, aventails, steel
       barbutes and plumes, gilded armor, and plate-and-maille crafting.
