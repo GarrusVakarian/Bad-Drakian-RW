@@ -3,6 +3,7 @@
 // The baseline point_cost is one.
 
 /datum/quirk/blooddrinker
+	carries_to_beast_form = TRUE
 	name = "Blood Drinker"
 	point_cost = 1
 	desc = "Blood quenches my thirst without turning my stomach."
@@ -17,6 +18,7 @@
 	return ..()
 
 /datum/quirk/amphibious
+	carries_to_beast_form = TRUE
 	name = "Amphibious"
 	point_cost = 1
 	desc = "Through some quirk of my heritage, I can breathe in water just as readily as in air."
@@ -24,6 +26,7 @@
 	added_traits = list(TRAIT_WATERBREATHING)
 
 /datum/quirk/fat_knot
+	carries_to_beast_form = TRUE
 	name = "Fat Knot"
 	point_cost = 0
 	desc = "My knot is thick enough to always keep partners stuck on it."
@@ -31,6 +34,7 @@
 	added_traits = list(TRAIT_FAT_KNOT)
 
 /datum/quirk/high_production
+	carries_to_beast_form = TRUE
 	name = "High Seed Production"
 	point_cost = 0
 	desc = "My body produces a larger volume of seed than average."
@@ -38,6 +42,7 @@
 	added_traits = list(TRAIT_HIGH_SEED_PRODUCTION)
 
 /datum/quirk/quick_load_recovery
+	carries_to_beast_form = TRUE
 	name = "Quick Seed Recovery"
 	point_cost = 0
 	desc = "I recover quickly after being spent."
@@ -45,6 +50,7 @@
 	added_traits = list(TRAIT_QUICK_SEED_RECOVERY)
 
 /datum/quirk/high_milk_production
+	carries_to_beast_form = TRUE
 	name = "High Milk Production"
 	point_cost = 0
 	desc = "I can store and release more milk when lactating."
@@ -53,6 +59,9 @@
 
 /datum/quirk/high_milk_production/apply_to_human(mob/living/carbon/human/recipient)
 	recipient.milk_production_size = sanitize_milk_production_size(recipient.client?.prefs?.milk_production_size)
+
+/datum/quirk/high_milk_production/copy_beast_form_settings(mob/living/carbon/human/original, mob/living/carbon/human/form)
+	form.milk_production_size = original.milk_production_size
 
 /mob/living/carbon/human
 	/// Snapshot from character setup so changing slots does not change a spawned character.
@@ -113,6 +122,7 @@
 	added_traits = list(TRAIT_ORGASM_DENIER)
 
 /datum/quirk/heightened_sensitivity
+	carries_to_beast_form = TRUE
 	name = "Heightened Sensitivity"
 	point_cost = 0
 	desc = "Even the slightest stimulation sends a shiver through me."
@@ -122,6 +132,7 @@
 	incompatible_traits = list(TRAIT_DULLED_SENSITIVITY)
 
 /datum/quirk/dulled_sensitivity
+	carries_to_beast_form = TRUE
 	name = "Dulled Sensitivity"
 	point_cost = 0
 	desc = "It takes more stimulation to stir my senses."
@@ -137,6 +148,7 @@
 	added_traits = list(TRAIT_COMICSANS)
 
 /datum/quirk/deadnose
+	carries_to_beast_form = TRUE
 	name = "Dead Nose"
 	desc = "My nose is numb to the smell of decay."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already has a dead nose!"
@@ -159,6 +171,7 @@
 	added_traits = list(TRAIT_DWARVEN_CHEF)
 
 /datum/quirk/empath
+	carries_to_beast_form = TRUE
 	name = "Empath"
 	desc = "I can notice when people are in pain."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that is already an empath!"
@@ -185,6 +198,7 @@
 	incompatible_traits = list(TRAIT_EVIL_DRAINER, TRAIT_EROTIC_ENERGY_DRAINER)
 
 /datum/quirk/fabledlover
+	carries_to_beast_form = TRUE
 	name = "Fabled Lover"
 	desc = "It's a lucky thing to share my bed."
 	warning_text = "This quirk does not apply if you are playing a role that is already a fabled lover!"
@@ -226,6 +240,7 @@
 	recipient.update_transform()
 
 /datum/quirk/resilientlover
+	carries_to_beast_form = TRUE
 	name = "Resilient Lover"
 	desc = "My body is resilient during intimacy."
 	custom_text = "Take one third of oxygen and brute damage from ERP panel mechanics and prevent pelvis and jaw fractures from those actions. Automatic pain complaints are suppressed; critical pain sounds become softer groans while preserving sadomasochistic vices satisfaction."
@@ -233,6 +248,7 @@
 	added_traits = list(TRAIT_RESILIENT_LOVER)
 
 /datum/quirk/poppable
+	carries_to_beast_form = TRUE
 	name = "Size Sensitive"
 	desc = "My body is fragile during intimacy."
 	custom_text = "Run the risk of being seriously, fatally injured during rough intimacy."
@@ -240,6 +256,7 @@
 	added_traits = list(TRAIT_POPPABLE)
 
 /datum/quirk/redolent
+	carries_to_beast_form = TRUE
 	name = "Redolent"
 	desc = "My body odor is strong and distinct."
 	point_cost = 1
@@ -248,6 +265,11 @@
 /datum/quirk/redolent/apply_to_human(mob/living/carbon/human/recipient)
 	recipient.redolent_scent_type = recipient.client?.prefs?.redolent_type || "Neutral"
 	recipient.redolent_scent = recipient.client?.prefs?.redolent_scent || ""
+
+/datum/quirk/redolent/copy_beast_form_settings(mob/living/carbon/human/original, mob/living/carbon/human/form)
+	form.redolent_scent_type = original.redolent_scent_type
+	form.redolent_scent = original.redolent_scent
+	form.redolent_last_aura_tick = original.redolent_last_aura_tick
 
 // Redolent scent state and behavior. This is purely quirk-driven now: the quirk applies
 // TRAIT_REDOLENT, the mob holds the scent state, and life.dm drives handle_redolent_scent().
@@ -365,6 +387,7 @@
 					nearby.add_stress(/datum/stressevent/pleasant_scent)
 
 /datum/quirk/hunted
+	carries_to_beast_form = TRUE
 	name = "Marked by Gnolls"
 	desc = "For one reason or another, I have been deemed a target worthy of Graggar's champions. I hear their cackles anywhere I go."
 	warning_text = "<span style='font-size:120%;'>THIS QUIRK ENCOURAGES GNOLLS TO HUNT YOU DOWN!</span><br>\
@@ -394,6 +417,7 @@
 	log_hunted("[H.ckey] playing as [H.name] had the hunted trait by quirk.")
 
 /datum/quirk/assassintarget
+	carries_to_beast_form = TRUE
 	name = "Marked for Death"
 	desc = "Something in my past has made me a target. I'm always looking over my shoulder."
 	warning_text = "<span style='font-size:120%;'>THIS QUIRK ENCOURAGES ASSASSINS TO HUNT YOU DOWN!</span><br>\
@@ -402,6 +426,7 @@
 	added_traits = list(TRAIT_ASSASSIN_TARGET)
 
 /datum/quirk/nightowl
+	carries_to_beast_form = TRUE
 	name = "Night Owl"
 	desc = "I've always preferred Noc over his other half."
 	added_traits = list(TRAIT_NIGHT_OWL)
@@ -429,6 +454,7 @@
 	recipient.social_rank = max(recipient.social_rank, SOCIAL_RANK_MINOR_NOBLE)
 
 /datum/quirk/outdoorsy
+	carries_to_beast_form = TRUE
 	name = "Outdoorsy"
 	desc = "My experience in the wilds allows me to fall asleep on surfaces like treebranches as if they were beds."
 	custom_text = "This does not make branches effective beds or allow you to walk on them, simply that you can sleep on them easily."
@@ -446,6 +472,7 @@
 	incompatible_traits = list(TRAIT_BEAUTIFUL)
 
 /datum/quirk/rawdiet
+	carries_to_beast_form = TRUE
 	name = "Raw Diet"
 	desc = "Be it from unnatural anatomy or simply a bizarre tolerance, I can eat raw meat and uncooked food as if it were natural."
 	custom_text = "Lets you eat raw meat and uncooked food without getting poisoned. Rotten food, organs, and dirty water will still poison you."
@@ -502,6 +529,7 @@
 	incompatible_quirks = list(/datum/quirk/ugly, /datum/quirk/pretty)
 
 /datum/quirk/selfaware
+	carries_to_beast_form = TRUE
 	name = "Self Aware"
 	desc = "I've always been conscious about how hurt my body can get."
 	warning_text = "This quirk costs nothing and does not apply if you are playing a role that already has self aware!"

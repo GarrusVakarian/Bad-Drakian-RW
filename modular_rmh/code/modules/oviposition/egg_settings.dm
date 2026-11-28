@@ -2,6 +2,7 @@
 // carried through organ DNA and onto the organ itself so both organ kinds share one format.
 
 /datum/quirk/quick_egg_production
+	carries_to_beast_form = TRUE
 	name = "Quick Egg Production"
 	point_cost = 0
 	desc = "I form eggs faster than usual."
@@ -17,6 +18,10 @@
 		var/obj/item/organ/egg_organ = recipient.getorganslot(slot)
 		if(egg_organ?.egg_settings && egg_organ.next_egg_time > now)
 			egg_organ.next_egg_time = now + (egg_organ.next_egg_time - now) / OVI_QUICK_EGG_FORM_MULTIPLIER
+
+/datum/quirk/quick_egg_production/copy_beast_form_settings(mob/living/carbon/human/original, mob/living/carbon/human/form)
+	form.automatic_egg_laying = original.automatic_egg_laying
+	form.climax_egg_count = original.climax_egg_count
 
 /proc/default_oviposition_settings()
 	return list(

@@ -1,9 +1,13 @@
 /mob/living/carbon/human/species/lessershift/death(gibbed, nocutscene = FALSE)
-	werewolf_untransform(TRUE, gibbed)
+	if(!QDELETED(stored_mob))
+		lessershift_untransform(TRUE, gibbed)
+	else
+		. = ..()
 
 /mob/living/carbon/human/proc/lessershift_transformation(shapepath)
 	if(!mind)
 		log_runtime("NO MIND ON [src.name] WHEN TRANSFORMING")
+		return
 	Paralyze(1, ignore_canstun = TRUE)
 
 	//before we shed our items, save our neck and ring, if we have any, so we can quickly rewear them
@@ -43,6 +47,7 @@
 		W.equip_to_slot_if_possible(stored_neck, SLOT_NECK)
 
 	W.after_creation()
+	carry_beast_form_quirks(W)
 	W.stored_language = new
 	W.stored_language.copy_known_languages_from(src)
 	W.stored_skills = ensure_skills().known_skills.Copy()
@@ -126,6 +131,8 @@
 		new_breasts.branded_writing = old_breasts.branded_writing
 		new_breasts.Insert(W, TRUE, FALSE)
 
+	carry_beast_form_production(W)
+
 	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC) //If we don't do this, the original body will fall asleep and snore on us
 
 	invisibility = oldinv
@@ -139,7 +146,7 @@
 		W.devotion.update_devotion(0)
 
 /mob/living/carbon/human/proc/lessershift_untransform(dead,gibbed)
-	if(!stored_mob)
+	if(QDELETED(stored_mob))
 		return
 	if(!mind)
 		log_runtime("NO MIND ON [src.name] WHEN UNTRANSFORMING")
@@ -165,8 +172,9 @@
 	if (stored_neck)
 		W.equip_to_slot_if_possible(stored_neck, SLOT_NECK)
 
-	if(dead)
-		W.death()
+	carry_beast_form_production(W, reverting = TRUE)
+	if(HAS_TRAIT_FROM(src, TRAIT_REDOLENT, TRAIT_VIRTUE))
+		W.redolent_last_aura_tick = max(W.redolent_last_aura_tick, redolent_last_aura_tick)
 
 	for(var/datum/wound/old_wound in W.get_wounds())
 		var/obj/item/bodypart/bp = W.get_bodypart(old_wound.bodypart_owner.body_zone)
@@ -195,7 +203,7 @@
 	W.bleedsuppress = bleedsuppress
 
 	W.forceMove(get_turf(src))
-	mind.transfer_to(W)
+	mind?.transfer_to(W)
 
 	var/mob/living/carbon/human/species/lessershift/WA = src
 	W.copy_known_languages_from(WA.stored_language)
@@ -203,11 +211,7 @@
 	skills?.skill_experience = WA.stored_experience.Copy()
 	playsound(W.loc, 'sound/body/shapeshift-end.ogg', 100, FALSE, 3)
 
-	//Compares the list of spells we had before transformation with those we do now. If there are any that don't match, we remove them
-	for(var/obj/effect/proc_holder/spell/self/originspell in WA.stored_spells)
-		for(var/obj/effect/proc_holder/spell/self/wildspell in W.mind.spell_list)
-			if(wildspell != originspell)
-				W.RemoveSpell(wildspell)
+	W.remove_form_only_self_spells(WA.stored_spells)
 
 	W.regenerate_icons()
 	to_chat(W, span_userdanger("I return to my old form."))
@@ -216,5 +220,8 @@
 	if(devotion && W.devotion)
 		W.devotion.devotion = clamp(devotion.devotion, 0, W.devotion.max_devotion)
 		W.devotion.update_devotion(0)
+
+	if(dead && !QDELETED(W))
+		W.death()
 
 	qdel(src)
