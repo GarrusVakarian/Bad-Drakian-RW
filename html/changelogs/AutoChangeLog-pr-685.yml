@@ -1,0 +1,4 @@
+author: "_Rarity"
+delete-after: True
+changes:
+  - bugfix: "Tackled targets now appear prone immediately for the grabber instead of requiring them to move"
