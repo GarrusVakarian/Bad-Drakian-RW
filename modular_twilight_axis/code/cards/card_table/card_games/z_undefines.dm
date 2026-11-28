@@ -1,3 +1,6 @@
+// This file NEEDS to be the last file in this folder, alphabetically speaking.
+// If this file is NOT the last file in the folder, compilation will FAIL in DreamMaker.
+
 #undef CARD_TABLE_GAME_NONE
 #undef CARD_TABLE_GAME_BLACKJACK
 #undef CARD_TABLE_GAME_POKER
