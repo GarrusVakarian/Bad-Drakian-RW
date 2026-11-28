@@ -70,7 +70,7 @@
 	to_chat(owner.current, "<span style='color:#C8A4E0'>I feel a rare ability awaken within me. I am someone coveted as a champion by most gods. A dreamwalker. Not merely touched by Abyssor's dream, but able to pull materia and power from his realm effortlessly. I shall bring glory to my patron. My mind frays under the influence of dream entities, but surely my resolve is stronger than theirs.</span>")
 	to_chat(owner.current, span_notice("I manifest a piece of ritual chalk. I can draw a Rune of Stirring for armor and a basic dream weapon. My goal is to forge an empowered dream weapon."))
 	to_chat(owner.current, span_notice("Mark Target seeks a dead player of any job first. Stand next to a dead mark and cast Track Marked Target to revive them and gain Sylveric. If no dead players are eligible, Mark Target chooses a living mark. Stand next to the living mark and cast Track Marked Target while they are downed. They must survive the extraction."))
-	to_chat(owner.current, span_notice("Gather two Sylveric ingots. Hold both and use one on the other, then choose a weapon to forge. The ingots are consumed and the finished weapon is placed in your hands."))
+	to_chat(owner.current, span_notice("Gather three Sylveric ingots. Place two at your feet, then use the third on one of them and choose a weapon to forge. All three ingots are consumed and the finished weapon is placed in your hands."))
 	to_chat(owner.current, span_notice("After forging your first empowered weapon, you can cast Wake from the Dream to return to your old life and keep the weapon as a trophy. You can also choose to remain a Dreamwalker. If you yield or fall into life-threatening critical condition, you wake automatically even if you have not forged a weapon."))
 	owner.announce_objectives()
 	..()
@@ -571,19 +571,26 @@
 	icon_state = "ingotsylveric"
 	desc = "An impossibly light metal that seems to grow harder and heavier when pressured. Nothing seems to be able to shape this metal."
 
-// Add extra examine text for dreamwalkers
-// Handle attacking one sylveric ingot with another
+/obj/item/ingot/sylveric/examine(mob/user)
+	. = ..()
+	if(HAS_TRAIT(user, TRAIT_DREAMWALKER))
+		. += span_notice("To forge a dream weapon, place two Sylveric ingots at your feet and use a third on one of them.")
+
+/obj/item/ingot/sylveric/proc/can_use_forge_pair(obj/item/held_ingot, mob/living/user)
+	return !QDELETED(user) && !QDELETED(src) && !QDELETED(held_ingot) && HAS_TRAIT(user, TRAIT_DREAMWALKER) && isturf(user.loc) && held_ingot != src && held_ingot == user.get_active_held_item() && (loc == user || (isturf(loc) && in_range(src, user)))
 /obj/item/ingot/sylveric/attackby(obj/item/I, mob/living/user, params)
 	if(istype(I, /obj/item/ingot/sylveric))
-		if(!HAS_TRAIT(user, TRAIT_DREAMWALKER))
+		if(!can_use_forge_pair(I, user))
 			return ..()
 
-		// Check if both ingots are accessible
-		if(I != user.get_active_held_item())
-			return ..()
-
-		if(!(src in user.contents) && !(isturf(src.loc) && in_range(src, user)))
-			return ..()
+		var/obj/item/ingot/sylveric/third_ingot
+		for(var/obj/item/ingot/sylveric/ingot in user.loc)
+			if(ingot != src && !QDELETED(ingot))
+				third_ingot = ingot
+				break
+		if(!third_ingot)
+			to_chat(user, span_warning("I need a third Sylveric ingot on the ground at my feet."))
+			return
 
 		// Show weapon selection menu
 		var/list/weapon_options = list(
@@ -594,11 +601,11 @@
 		)
 
 		var/choice = show_radial_menu(user, src, weapon_options, require_near = TRUE, tooltips = TRUE)
-		if(!choice)
+		if(!choice || !can_use_forge_pair(I, user) || QDELETED(third_ingot) || third_ingot.loc != user.loc)
 			return
 
-		to_chat(user, span_notice("You begin focusing your dream energy to shape the sylveric ingots into a [choice]..."))
-		if(do_after(user, 10 SECONDS, target = src) && !QDELETED(I) && !QDELETED(src) && HAS_TRAIT(user, TRAIT_DREAMWALKER))
+		to_chat(user, span_notice("You begin focusing your dream energy to shape the three Sylveric ingots into a [choice]..."))
+		if(do_after(user, 10 SECONDS, target = src) && can_use_forge_pair(I, user) && !QDELETED(third_ingot) && third_ingot.loc == user.loc)
 			var/obj/item/new_weapon
 			switch(choice)
 				if("Dreamreaver Greataxe")
@@ -611,7 +618,8 @@
 					new_weapon = new /obj/item/rogueweapon/spear/dreamscape_trident/active(user.loc)
 
 			if(new_weapon)
-				to_chat(user, span_notice("You shape the sylveric ingots into a [choice]."))
+				to_chat(user, span_notice("You shape the three Sylveric ingots into a [choice]."))
+				qdel(third_ingot)
 				qdel(I)
 				user.put_in_hands(new_weapon)
 				var/datum/antagonist/dreamwalker/dreamwalker = user.mind?.has_antag_datum(/datum/antagonist/dreamwalker)

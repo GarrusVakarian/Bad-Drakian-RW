@@ -299,6 +299,18 @@
 
 	return dist
 
+/// Describes the relative position of a target on a different z-level.
+/proc/describe_cross_level_tracking(turf/origin, turf/target)
+	var/vertical = target.z > origin.z ? "above" : "below"
+	var/turf/projected = locate(target.x, target.y, origin.z)
+	if(!projected)
+		return "[vertical] you"
+	if(projected == origin)
+		return "directly [vertical] you"
+	var/distance = get_dist(origin, projected)
+	var/direction = dir2text(get_dir(origin, projected))
+	return "[vertical] you, [distance] [distance == 1 ? "tile" : "tiles"] to the [direction]"
+
 ///Returns a list of turfs around a center based on RANGE_TURFS()
 /proc/circle_range_turfs(center = usr, radius = 3)
 
