@@ -9,7 +9,7 @@
 
 /mob/living/carbon/human/proc/human_modular_examine_extension(mob/user, observer_privilege, m1, m2, m3)
 	var/list/lines = list()
-	var/ssd_text = get_ssd_examine_text(m3)
+	var/ssd_text = get_ssd_examine_text(m3) || get_away_examine_text()
 	if(ssd_text)
 		lines += ssd_text
 	var/user_is_gnoll = FALSE

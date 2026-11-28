@@ -663,3 +663,5 @@
 /// Rot accumulated before a corpse rises as a deadite. Lives here rather than in rotting.dm because
 /// the ghost lock in observer.dm uses it too
 #define DEAD_TO_ZOMBIE_TIME (5 MINUTES)
+
+#define PIXEL_ROTATION_STANDING_LIMIT 30

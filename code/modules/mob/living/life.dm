@@ -61,7 +61,7 @@
 			for(var/datum/wound/wound as anything in get_wounds())
 				wound.heal_wound(0.5)
 
-	if(blood_volume <= BLOOD_VOLUME_SURVIVE && stat)
+	if(blood_volume <= BLOOD_VOLUME_SURVIVE && stat && !HAS_TRAIT(src, TRAIT_NO_BLOOD_REGEN))
 		handle_passive_blood()
 
 	if(QDELETED(src)) // diseases can qdel the mob via transformations
@@ -125,7 +125,7 @@
 
 	passive_regen_rate = CLAMP(passive_regen_rate, MIN_PASSIVE_BLOOD_HEAL, MAX_PASSIVE_BLOOD_HEAL)
 
-	blood_volume += passive_regen_rate
+	adjust_blood_volume(passive_regen_rate)
 
 	#undef MAX_PASSIVE_BLOOD_HEAL
 	#undef MIN_PASSIVE_BLOOD_HEAL

@@ -31,8 +31,10 @@ def post_error(string):
     if on_github:
         print(f"::error file={file_reference},line=1,title=Ticked File Enforcement::{string}")
 
+excluded_paths = set()
 for excluded_file in excluded_files:
-    full_file_path = scannable_directory + excluded_file
+    full_file_path = os.path.join(scannable_directory, excluded_file)
+    excluded_paths.add(os.path.normpath(full_file_path))
     if not os.path.isfile(full_file_path):
         post_error(f"Excluded file {full_file_path} does not exist, please remove it!")
         sys.exit(1)
@@ -83,7 +85,7 @@ for code_file in scannable_files:
 
     forbid_include = False
     for forbidable in FORBIDDEN_INCLUDES:
-        if not fnmatch.fnmatch(code_file, forbidable):
+        if not fnmatch.fnmatch(code_file.replace(chr(92), "/"), forbidable):
             continue
 
         forbid_include = True
@@ -99,7 +101,7 @@ for code_file in scannable_files:
         if(dm_path == file_reference_basename):
             continue
 
-        if(dm_path in excluded_files):
+        if(os.path.normpath(code_file) in excluded_paths):
             continue
 
         post_error(f"Missing include for {dm_path}.")
@@ -147,10 +149,11 @@ def compare_lines(a, b):
     print(f"Two lines were exactly the same ({a} vs. {b})")
     sys.exit(1)
 
-sorted_lines = sorted(lines, key = functools.cmp_to_key(compare_lines))
-for (index, line) in enumerate(lines):
-    if sorted_lines[index] != line:
-        post_error(f"The include at line {index + offset} is out of order ({line}, expected {sorted_lines[index]})")
-        sys.exit(1)
+if schema.get("check_order", True):
+    sorted_lines = sorted(lines, key=functools.cmp_to_key(compare_lines))
+    for index, line in enumerate(lines):
+        if sorted_lines[index] != line:
+            post_error(f"The include at line {index + offset} is out of order ({line}, expected {sorted_lines[index]})")
+            sys.exit(1)
 
-print(green(f"Ticked File Enforcement: [{file_reference}] All includes (for {len(scannable_files)} scanned files) are in order!"))
+print(green(f"Ticked File Enforcement: [{file_reference}] Verified includes for {len(scannable_files)} scanned files."))

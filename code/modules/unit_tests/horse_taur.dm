@@ -53,7 +53,7 @@
 		cape.MiddleClick(human)
 		TEST_ASSERT_EQUAL(cape.alternate_worn_layer, UNDER_ARMOR_LAYER, "[cape_type] must tuck when its MMB handler is invoked.")
 		human.update_inv_cloak_real()
-		TEST_ASSERT_NOTNULL(human.overlays_standing[UNDER_ARMOR_LAYER], "[cape_type] must retain its tucked appearance.")
+		TEST_ASSERT_NOTNULL(human.overlays_standing[UNDER_ARMOR_CACHE_INDEX], "[cape_type] must retain its tucked appearance.")
 		cape.MiddleClick(human)
 		TEST_ASSERT(cape.wear_over_taur, "[cape_type] must offer a separate taur-draped position.")
 		human.update_inv_cloak_real()
@@ -97,7 +97,7 @@
 	cape.MiddleClick(human)
 	human.update_inv_cloak_real()
 	TEST_ASSERT_EQUAL(cape.alternate_worn_layer, UNDER_ARMOR_LAYER, "The selected position must tuck the worn cape beneath armor.")
-	var/list/tucked = human.overlays_standing[UNDER_ARMOR_LAYER]
+	var/list/tucked = human.overlays_standing[UNDER_ARMOR_CACHE_INDEX]
 	TEST_ASSERT(islist(tucked) && length(tucked) == 2, "Tucking must retain the cape body and fitted taur cloth.")
 	var/mutable_appearance/tucked_body = tucked[1]
 	var/mutable_appearance/tucked_cloth = tucked[2]
@@ -127,7 +127,7 @@
 	TEST_ASSERT(!cape.wear_over_taur, "Normal wear must restore normal shoulder wear.")
 	TEST_ASSERT_NULL(human.overlays_standing[TABARD_LAYER], "Normal shoulder wear must remove the fitted body drape.")
 	TEST_ASSERT_EQUAL(cape.alternate_worn_layer, initial(cape.alternate_worn_layer), "Normal wear must restore the normal cape position.")
-	TEST_ASSERT_NULL(human.overlays_standing[UNDER_ARMOR_LAYER], "Untucking must remove the previous tucked overlay.")
+	TEST_ASSERT_NULL(human.overlays_standing[UNDER_ARMOR_CACHE_INDEX], "Untucking must remove the previous tucked overlay.")
 	panels = human.overlays_standing[CLOAK_LAYER]
 	for(var/mutable_appearance/panel as anything in panels)
 		TEST_ASSERT_EQUAL(panel.layer, -CLOAK_LAYER, "Untucking must restore front-panel priority.")
@@ -159,7 +159,7 @@
 	human.cloak = tabard
 	tabard.alternate_worn_layer = UNDER_ARMOR_LAYER
 	human.update_inv_cloak_real()
-	var/list/tucked = human.overlays_standing[UNDER_ARMOR_LAYER]
+	var/list/tucked = human.overlays_standing[UNDER_ARMOR_CACHE_INDEX]
 	TEST_ASSERT(islist(tucked) && length(tucked) == 2, "Tucking a tabard must retain both humanoid and taur cloth overlays.")
 	var/mutable_appearance/wide_cloth = tucked[2]
 	TEST_ASSERT_EQUAL(wide_cloth.layer, -(SHIRT_LAYER + 0.1), "Tucked taur cloth must draw beneath padding and armor.")

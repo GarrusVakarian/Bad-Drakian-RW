@@ -3,6 +3,8 @@
 #define HERMES_LETTER_COST 1
 #define HERMES_LETTER_LIMIT 2000
 
+#define KINGSFIELD_MAILTAG "Kingsfield"
+
 /obj/structure/roguemachine/mail
 	name = "HERMES"
 	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Write a free letter every five minutes, or insert coins for postage and writing supplies."
@@ -216,7 +218,16 @@
 	var/obj/structure/roguemachine/mail/box
 	var/mob/living/carbon/human/recipient
 	var/obj/item/roguemachine/mastermail/master
-	if(copytext(destination, 1, 2) == "#")
+	if(LOWER_TEXT(destination) == LOWER_TEXT(KINGSFIELD_MAILTAG))
+		for(var/obj/structure/roguemachine/mail/machine as anything in SSroguemachine.hermailers)
+			if(machine.mailtag == KINGSFIELD_MAILTAG)
+				box = machine
+				break
+		if(!box)
+			to_chat(user, span_warning("The Kingsfield HERMES is unavailable."))
+			return FALSE
+		destination = KINGSFIELD_MAILTAG
+	else if(copytext(destination, 1, 2) == "#")
 		var/static/regex/box_address = regex("^#\[0-9\]+$")
 		if(box_address.Find(destination))
 			var/number = text2num(copytext(destination, 2))
@@ -267,6 +278,8 @@
 		parcel.update_icon()
 	GLOB.fax_panel.register_player_letter(sender, destination, letter?.info, user.ckey, recipient?.ckey, istype(parcel, /obj/item/smallDelivery) ? parcel : null)
 	if(box)
+		if(box.mailtag == KINGSFIELD_MAILTAG)
+			GLOB.fax_panel.notify_kingsfield_mail(parcel, user)
 		box.say("New mail!")
 		playsound(box, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 	else
@@ -373,7 +386,7 @@
 				budget2change(2, user, "MARQUE")
 				qdel(I)
 				record_round_statistic(STATS_MARQUES_MADE, 2)
-				playsound(loc, 'sound/misc/otavanlament.ogg', 100, FALSE, -1)
+				playsoundtoken(src, 'sound/misc/otavanlament.ogg', 100, SOUND_RANGE - 1)
 				playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 			else
 				if(!I.broken)
@@ -479,7 +492,7 @@
 						qdel(I.paired)
 					qdel(I)
 					visible_message(span_warning("[user] sends something."))
-					playsound(loc, 'sound/misc/otavanlament.ogg', 100, FALSE, -1)
+					playsoundtoken(src, 'sound/misc/otavanlament.ogg', 100, SOUND_RANGE - 1)
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 			return
 
@@ -500,7 +513,7 @@
 			record_round_statistic(STATS_MARQUES_MADE, I.marquevalue)
 			qdel(I)
 			visible_message(span_warning("[user] sends something."))
-			playsound(loc, 'sound/misc/otavasent.ogg', 100, FALSE, -1)
+			playsoundtoken(src, 'sound/misc/otavasent.ogg', 100, SOUND_RANGE - 1)
 			playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 		return
 
@@ -594,7 +607,7 @@
 					qdel(I.paired)
 					qdel(I)
 					visible_message(span_warning("[user] sends something."))
-					playsound(loc, 'sound/misc/otavanlament.ogg', 100, FALSE, -1)
+					playsoundtoken(src, 'sound/misc/otavanlament.ogg', 100, SOUND_RANGE - 1)
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 					return
 			else
