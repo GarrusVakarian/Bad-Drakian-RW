@@ -22,6 +22,8 @@
 		return ..()
 	if((mover.pass_flags & PASSMOB))
 		return TRUE
+	if(active_partner_dance?.swapping && (mover == active_partner_dance.leader || mover == active_partner_dance.partner))
+		return TRUE
 	if(istype(mover, /obj/projectile))
 		var/obj/projectile/P = mover
 		return !P.can_hit_target(src, P.permutated, src == P.original, TRUE)

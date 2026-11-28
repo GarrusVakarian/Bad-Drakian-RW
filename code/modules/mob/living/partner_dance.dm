@@ -40,7 +40,7 @@
 	return TRUE
 
 /mob/living/proc/can_partner_dance()
-	return !QDELETED(src) && isturf(loc) && !stat && !incapacitated() && !restrained() && !anchored && !buckled && !has_buckled_mobs() && !throwing && !moving_from_pull && !wallpressed && (mobility_flags & MOBILITY_STAND) && (mobility_flags & MOBILITY_MOVE)
+	return !QDELETED(src) && isturf(loc) && !incapacitated() && !anchored && !buckled && !has_buckled_mobs() && !throwing && !moving_from_pull && !wallpressed && (mobility_flags & MOBILITY_STAND) && (mobility_flags & MOBILITY_MOVE)
 
 /// Owns both participants and all temporary visuals for a single swap.
 /datum/partner_dance
@@ -48,12 +48,13 @@
 	var/mob/living/carbon/partner
 	var/obj/item/grabbing/grip
 	var/swapping = FALSE
-	var/list/visuals = list()
-	var/list/original_alpha = list()
+	var/list/visuals
+	var/list/original_alpha
 	var/end_timer
 	var/static/list/interrupt_signals = list(
 		COMSIG_MOVABLE_MOVED, COMSIG_MOB_LOGOUT, COMSIG_MOB_DEATH, COMSIG_QDELETING,
-		COMSIG_MOB_COMBAT_MODE_ENABLED, COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOB_ITEM_BEING_ATTACKED,
+		COMSIG_MOB_COMBAT_MODE_ENABLED, COMSIG_MOB_ITEM_BEING_ATTACKED, COMSIG_MOB_ATTACKED_BY_HAND,
+		COMSIG_ATOM_ATTACK_ANIMAL, COMSIG_ATOM_BULLET_ACT,
 		COMSIG_LIVING_STATUS_KNOCKDOWN, COMSIG_LIVING_STATUS_PARALYZE, COMSIG_LIVING_STATUS_UNCONSCIOUS,
 	)
 
@@ -87,6 +88,8 @@
 	offsets["src_end"] = list(leader.pixel_x, leader.pixel_y)
 	offsets["partner_end"] = list(partner.pixel_x, partner.pixel_y)
 	var/alist/animation_data = partner_dance_animation(offsets, ccw, get_dir(leader, partner))
+	visuals = list()
+	original_alpha = list()
 	animate_dancer(leader, lead_start, animation_data["src_passes"])
 	animate_dancer(partner, follow_start, animation_data["partner_passes"])
 
@@ -100,37 +103,32 @@
 	if(!origin.Exit(dancer, destination) || !destination.CanPass(dancer, destination))
 		return FALSE
 	for(var/atom/movable/blocker as anything in destination.contents)
-		if(blocker != dancer && blocker != other_dancer && !blocker.Cross(dancer))
+		if(blocker != dancer && blocker != other_dancer && !blocker.CanPass(dancer, origin, TRUE))
 			return FALSE
 	return !QDELETED(dancer) && dancer.loc == origin
 
 /datum/partner_dance/proc/swap_places(turf/lead_start, turf/follow_start)
 	var/lead_dir = leader.dir
 	var/follow_dir = partner.dir
-	var/lead_pass = leader.pass_flags & PASSMOB
-	var/follow_pass = partner.pass_flags & PASSMOB
 	var/lead_movement = leader.animate_movement
 	var/follow_movement = partner.animate_movement
-	leader.pass_flags |= PASSMOB
-	partner.pass_flags |= PASSMOB
 	leader.animate_movement = NO_STEPS
 	partner.animate_movement = NO_STEPS
 	leader.moving_from_pull = partner
 	partner.moving_from_pull = leader
 
 	var/direction = get_dir(lead_start, follow_start)
-	var/succeeded = partner.Move(lead_start, turn(direction, 180)) && !QDELETED(partner) && partner.loc == lead_start && !QDELETED(leader) && leader.Move(follow_start, direction) && !QDELETED(leader) && leader.loc == follow_start && partner.loc == lead_start
+	partner.Move(lead_start, turn(direction, 180))
+	if(!QDELETED(partner) && partner.loc == lead_start && !QDELETED(leader) && leader.loc == lead_start)
+		leader.Move(follow_start, direction)
+	var/succeeded = !QDELETED(leader) && !QDELETED(partner) && leader.loc == follow_start && partner.loc == lead_start
 	if(!succeeded)
-		// A late movement veto can leave one dancer on the shared tile. Return only dancers
-		// still on the attempted destination. External movement takes precedence.
+		// Roll back only dancers still at their attempted destinations. A new blocker
+		// or external movement still takes precedence.
 		if(!QDELETED(leader) && leader.loc == follow_start)
 			leader.Move(lead_start, turn(direction, 180))
-			if(!QDELETED(leader) && leader.loc == follow_start)
-				leader.forceMove(lead_start)
 		if(!QDELETED(partner) && partner.loc == lead_start)
 			partner.Move(follow_start, direction)
-			if(!QDELETED(partner) && partner.loc == lead_start)
-				partner.forceMove(follow_start)
 		if(!QDELETED(leader) && leader.loc == lead_start)
 			leader.setDir(lead_dir)
 		if(!QDELETED(partner) && partner.loc == follow_start)
@@ -138,13 +136,11 @@
 
 	if(!QDELETED(leader))
 		leader.moving_from_pull = null
-		leader.pass_flags = (leader.pass_flags & ~PASSMOB) | lead_pass
 		leader.animate_movement = lead_movement
 		if(!QDELETED(partner) && leader.pulling == partner)
 			leader.set_pull_offsets(partner, leader.grab_state)
 	if(!QDELETED(partner))
 		partner.moving_from_pull = null
-		partner.pass_flags = (partner.pass_flags & ~PASSMOB) | follow_pass
 		partner.animate_movement = follow_movement
 		if(!QDELETED(leader) && partner.pulling == leader)
 			partner.set_pull_offsets(leader, partner.grab_state)

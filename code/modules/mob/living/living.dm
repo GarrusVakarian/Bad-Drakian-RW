@@ -171,6 +171,8 @@
 
 //Generic Bump(). Override MobBump() and ObjBump() instead of this.
 /mob/living/Bump(atom/A)
+	if(active_partner_dance?.swapping)
+		return
 	if(..()) //we are thrown onto something
 		return
 	if (buckled || now_pushing)
