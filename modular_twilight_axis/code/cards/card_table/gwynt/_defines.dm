@@ -1,0 +1,2 @@
+#define CCG_DECK_SIZE 30
+#define CCG_MIN_DECK_SIZE 12

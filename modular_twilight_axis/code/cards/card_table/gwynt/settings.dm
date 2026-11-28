@@ -1,9 +1,6 @@
 // Arlette (Gwynt) is fully physical on Ratwood: a deck is an item that holds its own cards,
 // cards are items you find, trade and slot into decks, and nothing is saved between rounds.
 
-#define CCG_DECK_SIZE 30
-#define CCG_MIN_DECK_SIZE 12
-
 /datum/preferences
 	/// Whether this player hears the Arlette soundtrack during matches. Only lasts for the round.
 	var/ccg_soundtrack_enabled = FALSE
