@@ -432,7 +432,7 @@
 		if(prehit(direct_target))
 			direct_target.bullet_act(src, def_zone)
 			qdel(src)
-			return
+			return TRUE
 	var/turf/fire_turf = get_turf(src)
 	if(!fire_turf)
 		stack_trace("WARNING: Projectile [type] fired from nullspace!")
@@ -464,9 +464,11 @@
 	fired = TRUE
 	if(hitscan)
 		process_hitscan()
-	if(!(datum_flags & PROCESSING_PROJECTILE))
-		START_PROCESSING(SSprojectiles, src)
-	pixel_move(1, FALSE)	//move it now!
+	if(!QDELETED(src))
+		if(!(datum_flags & PROCESSING_PROJECTILE))
+			START_PROCESSING(SSprojectiles, src)
+		pixel_move(1, FALSE)	//move it now!
+	return TRUE
 
 /obj/projectile/proc/setAngle(new_angle)	//wrapper for overrides.
 	Angle = new_angle

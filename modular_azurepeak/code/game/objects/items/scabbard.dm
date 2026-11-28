@@ -84,8 +84,9 @@
 
 
 /obj/item/rogueweapon/scabbard/proc/eat_sword(mob/living/user, obj/A, sheathing_from_belt = FALSE)
-	if(!weapon_check(user, A))
+	if(QDELETED(A) || !weapon_check(user, A))
 		return FALSE
+	var/original_location = A.loc
 	if(obj_broken)
 		user.visible_message(
 			span_warning("[user] begins to force [A] into [src]!"),
@@ -96,10 +97,12 @@
 		return FALSE
 	if(!move_after(user, sheathe_time, target = user))
 		return FALSE
-	if(QDELETED(src) || QDELETED(A))
+	if(QDELETED(src) || QDELETED(A) || obj_broken || A.loc != original_location || !weapon_check(user, A))
 		return FALSE
 
 	A.forceMove(src)
+	if(QDELETED(src) || QDELETED(A) || A.loc != src)
+		return FALSE
 	sheathed = A
 	update_icon(user)
 
@@ -116,7 +119,7 @@
 /obj/item/rogueweapon/scabbard/Exited(atom/movable/gone, atom/newLoc)
 	. = ..()
 	// Adapted from Azure Peak #8493 (KatTheFox), 2026-10-26.
-	if(gone != sheathed)
+	if(QDELETED(src) || gone != sheathed)
 		return
 	sheathed = null
 	var/mob/living/holder = loc
@@ -134,6 +137,7 @@
 		to_chat(user, span_warning("My active hand needs to be empty."))
 		return FALSE
 
+	var/obj/item/rogueweapon/drawn = sheathed
 	if(obj_broken)
 		user.visible_message(
 			span_warning("[user] begins to force [sheathed] out of [src]!"),
@@ -144,17 +148,21 @@
 	if(!move_after(user, sheathe_time, target = user))
 		return FALSE
 
-	if(!sheathed || user.get_active_held_item())
+	if(QDELETED(src) || QDELETED(drawn) || drawn != sheathed || drawn.loc != src || user.get_active_held_item())
 		return FALSE
-	var/obj/item/rogueweapon/drawn = sheathed
 	drawn.forceMove(user.loc)
-	drawn.pickup(user)
-	if(!user.put_in_active_hand(drawn))
-		drawn.forceMove(src)
-		sheathed = drawn
-		update_icon(user)
+	if(QDELETED(drawn))
 		return FALSE
-	sheathed = null
+	drawn.pickup(user)
+	if(QDELETED(drawn) || QDELETED(src))
+		return FALSE
+	if(!user.put_in_active_hand(drawn))
+		if(!QDELETED(src) && !QDELETED(drawn) && !sheathed)
+			drawn.forceMove(src)
+			if(!QDELETED(drawn) && drawn.loc == src)
+				sheathed = drawn
+				update_icon(user)
+		return FALSE
 	update_icon(user)
 
 	user.visible_message(

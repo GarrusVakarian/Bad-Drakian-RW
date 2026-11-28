@@ -91,6 +91,9 @@ SUBSYSTEM_DEF(familytree)
 				links = SANITIZE_LIST(saved["links"])
 				blocks = SANITIZE_LIST(saved["blocks"])
 				saved_ads = SANITIZE_LIST(saved["ads"])
+				for(var/client/client in GLOB.clients)
+					if(client.prefs)
+						RestoreAd(client.prefs)
 		catch(var/exception/error)
 			stack_trace("Unable to read the relationship board: [error]")
 
@@ -350,6 +353,8 @@ SUBSYSTEM_DEF(familytree)
 
 // ppl were complaining abt putting ads up each time *sigh!!!
 /datum/controller/subsystem/familytree/proc/RestoreAd(datum/preferences/P)
+	if(!P?.parent)
+		return
 	var/my_id = "[P.parent.ckey]/[P.default_slot]"
 	for(var/ad_id in board.Copy())
 		if(board[ad_id]["ckey"] != P.parent.ckey || ad_id == my_id)
@@ -391,6 +396,15 @@ SUBSYSTEM_DEF(familytree)
 // u see I am wise & know ppl will be shitty
 /datum/controller/subsystem/familytree/proc/Blocked(ckey_a, ckey_b)
 	return (ckey_b in blocks[ckey_a]) || (ckey_a in blocks[ckey_b])
+
+/// Links are unique per pair of saved character profiles, regardless of who posted the ad.
+/datum/controller/subsystem/familytree/proc/HasProfileLink(list/first, list/second)
+	for(var/list/link in links)
+		if(link[1] == first["id"] && link[2] == second["id"] && link[4] == first["name"] && link[5] == second["name"])
+			return TRUE
+		if(link[1] == second["id"] && link[2] == first["id"] && link[4] == second["name"] && link[5] == first["name"])
+			return TRUE
+	return FALSE
 
 /datum/controller/subsystem/familytree/proc/LinkSpawn(mob/living/carbon/human/H)
 	if(!H.family_id || (H.job in royal_jobs))

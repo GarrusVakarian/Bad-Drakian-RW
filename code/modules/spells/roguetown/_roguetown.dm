@@ -97,19 +97,34 @@
 /obj/effect/proc_holder/spell/invoked/projectile/proc/ready_projectile(obj/projectile/P, atom/target, mob/user, iteration)
 	return
 
-/obj/effect/proc_holder/spell/invoked/projectile/cast(list/targets, mob/living/user)
-	. = ..()
-	var/target = targets[1]
-	var/turf/T = user.loc
-	var/turf/U = get_step(user, user.dir) // Get the tile infront of the move, based on their direction
-	if(!isturf(U) || !isturf(T))
+/obj/effect/proc_holder/spell/invoked/projectile/perform(list/targets, recharge = TRUE, mob/user = usr)
+	if(QDELETED(user))
 		return FALSE
-	fire_projectile(user, target)
+	var/atom/target = length(targets) ? targets[1] : null
+	if(QDELETED(target) || !get_turf(target))
+		revert_cast(user)
+		return FALSE
+	return ..()
+
+/obj/effect/proc_holder/spell/invoked/projectile/cast(list/targets, mob/living/user)
+	var/atom/target = length(targets) ? targets[1] : null
+	if(QDELETED(user))
+		return FALSE
+	var/turf/T = user.loc
+	var/turf/U = get_step(user, user.dir)
+	if(QDELETED(target) || !get_turf(target) || !isturf(U) || !isturf(T))
+		revert_cast(user)
+		return FALSE
+	. = ..()
+	if(!fire_projectile(user, target))
+		revert_cast(user)
+		return FALSE
 	update_icon()
 	start_recharge()
 	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/projectile/proc/fire_projectile(mob/living/user, atom/target)
+	var/launched = FALSE
 	current_amount--
 	for(var/i in 1 to projectiles_per_fire)
 		var/obj/projectile/P = new projectile_type(user.loc)
@@ -124,12 +139,17 @@
 			P.bonus_accuracy += (user.get_skill_level(associated_skill) * 5) // +5% per level
 		P.firer = user
 		P.preparePixelProjectile(target, user)
+		if(QDELETED(P))
+			continue
 		for(var/V in projectile_var_overrides)
 			if(P.vars[V])
 				P.vv_edit_var(V, projectile_var_overrides[V])
 		ready_projectile(P, target, user, i)
-		P.fire()
-	return TRUE
+		if(!QDELETED(P) && P.fire())
+			launched = TRUE
+	if(!launched)
+		current_amount++
+	return launched
 
 /obj/effect/proc_holder/spell/invoked/projectile/get_spell_statistics(mob/living/user)
 	var/list/stats = ..(user)

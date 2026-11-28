@@ -316,6 +316,8 @@
 						if(other_req["to"] == my_id && other_req["info"]["ckey"] == from["ckey"])
 							SSfamilytree.requests -= list(other_req)
 				if(act == "accept")
+					if(SSfamilytree.HasProfileLink(me, from))
+						continue
 					if(SSfamilytree.Blocked(my_ckey, from["ckey"]) || !SSfamilytree.Compatible(me, from, req["relation"] == "Spouse" || req["relation"] == "Lover") || !SSfamilytree.AgeOK(req["relation"], me["age"], from["age"]))
 						continue
 					var/list/link = list(my_id, req["from"], "spouse", prefs.real_name, from["name"])
@@ -328,6 +330,9 @@
 					if(req["relation"] == "Parent")
 						link = list(req["from"], my_id, "parent", from["name"], prefs.real_name)
 					SSfamilytree.links += list(link)
+					for(var/list/pending in SSfamilytree.requests.Copy())
+						if(pending["from"] == my_id && pending["to"] == req["from"])
+							SSfamilytree.requests -= list(pending)
 					var/client/from_client = GLOB.directory[from["ckey"]]
 					if(from_client)
 						SEND_SOUND(from_client.mob, sound('sound/misc/notice (2).ogg'))
@@ -336,20 +341,24 @@
 			for(var/list/link in SSfamilytree.links.Copy())
 				if((link[1] == my_id || link[2] == my_id) && SSfamilytree.Token("[link[1]]>[link[2]]") == rid)
 					SSfamilytree.links -= list(link)
+					if(!(link in SSfamilytree.connected))
+						continue
 					SSfamilytree.connected -= list(link)
 					var/mob/living/carbon/human/first
 					var/mob/living/carbon/human/second
 					for(var/mob/living/carbon/human/H in GLOB.human_list)
-						if(H.family_id == link[1])
+						if(H.family_id == link[1] && H.family_profile_name == link[4])
 							first = H
-						if(H.family_id == link[2])
+						if(H.family_id == link[2] && H.family_profile_name == link[5])
 							second = H
 					if(first?.family_member_datum && second?.family_member_datum)
 						switch(link[3])
 							if("spouse")
 								first.family_member_datum.RemoveSpouse(second.family_member_datum, TRUE)
-								first.spouse_mob = null
-								second.spouse_mob = null
+								if(first.spouse_mob == second)
+									first.spouse_mob = null
+								if(second.spouse_mob == first)
+									second.spouse_mob = null
 							if("sibling")
 								first.family_member_datum.siblings.Remove(second.family_member_datum)
 								second.family_member_datum.siblings.Remove(first.family_member_datum)
@@ -360,6 +369,7 @@
 								second.family_member_datum.other_relations -= first.family_member_datum
 								if(first.family_member_datum.lover == second.family_member_datum)
 									first.family_member_datum.lover = null
+								if(second.family_member_datum.lover == first.family_member_datum)
 									second.family_member_datum.lover = null
 		if("toggle_link")
 			for(var/list/link in SSfamilytree.links)
