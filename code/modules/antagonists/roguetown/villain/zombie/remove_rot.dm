@@ -6,6 +6,9 @@
 	if(istype(target, /mob/living/carbon/human/species/skeleton) && method == "surgery")
 		to_chat(user, span_warning("It's going to take a miracle to put flesh back on these bones."))
 		return FALSE
+	if(istype(target, /mob/living/carbon/human/species/skeleton) && method == "alchemy")
+		return FALSE
+
 
 	// Check if the target has rot
 	var/has_rot = FALSE
@@ -72,7 +75,7 @@
 		target.death(nocutscene = TRUE)
 	was_zombie.on_removal() // Not remove_antag_datum, which needs a mind a decapitated deadite lacks
 
-	if (!HAS_TRAIT(target, TRAIT_IWASUNZOMBIFIED) && user?.ckey)
+	if (!HAS_TRAIT(target, TRAIT_IWASUNZOMBIFIED) && user?.ckey && !(method == "alchemy" && user == target))
 		adjust_playerquality(PQ_GAIN_UNZOMBIFY, user.ckey)
 		ADD_TRAIT(target, TRAIT_IWASUNZOMBIFIED, "[method]")
 
@@ -81,7 +84,7 @@
 	var/datum/component/rot/rot = target.GetComponent(/datum/component/rot)
 	if (rot)
 		rot.amount = 0
-		rot.soundloop.stop()
+		rot.set_flies(FALSE)
 
 ///Cure bodyparts
 /proc/clean_body_parts(mob/living/carbon/target)

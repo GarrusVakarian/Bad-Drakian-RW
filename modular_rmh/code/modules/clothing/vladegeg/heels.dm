@@ -1,10 +1,11 @@
 /obj/item/clothing/shoes/roguetown/heels
-	name = "black heels"	//Goes well with maids, nobles and desert sorceress outfit. I was planning to port the sound system later as well - Gardelin0
+	name = "black heels"
 	desc = "High heels that lift the wearer above the filth. Don't trip."
 	icon = 'modular_rmh/icons/clothing/vladegeg/heels.dmi'
 	mob_overlay_icon = 'modular_rmh/icons/clothing/vladegeg/onmob/heels.dmi'
 	icon_state = "heels"
 	item_state = "heels"
+	heel_footsteps = TRUE
 
 /obj/item/clothing/shoes/roguetown/heels/color
 	name = "heels"
@@ -34,3 +35,8 @@
 /datum/loadout_item/heels_color
 	name = "colorable heels"
 	path = /obj/item/clothing/shoes/roguetown/heels/color
+
+/datum/loadout_item/heelkit
+	name = "heel-morphing elixir"
+	path = /obj/item/heelkit
+	triumph_cost = 2

@@ -22,7 +22,7 @@
 		if(over == src)
 			return usr.client.Click(src, src_location, src_control, params)
 		over.MouseDrop_T(src,usr)
-	if(isitem(src) && ((isturf(over) && loc == over) || ((istype(over, /obj/structure/table) || istype(over, /obj/structure/rack)) && loc == over.loc)) && (isliving(usr) || prob(10)))
+	if(isitem(src) && ((isturf(over) && loc == over) || ((istype(over, /obj/structure/table) || istype(over, /obj/structure/flora/roguetree/stump) || istype(over, /obj/structure/rack)) && loc == over.loc)) && (isliving(usr) || prob(10)))
 		if(usr.cmode)
 			return
 		var/modifier = 1

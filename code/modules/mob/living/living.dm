@@ -1208,7 +1208,7 @@
 
 /// Keep the existing succumb requirements shared by the verb and delayed prompts.
 /mob/living/proc/can_succumb()
-	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE)
+	return stat != DEAD && (InCritical() || health <= 0 || blood_volume < BLOOD_VOLUME_SURVIVE || HAS_TRAIT(src, TRAIT_DEATHS_DOOR))
 
 /mob/living/verb/welcome_necras_embrace()
 	set name = "Embrace Necra"
@@ -1222,7 +1222,9 @@
 	var/client/requester = client
 	var/datum/mind/original_mind = mind
 	necra_embrace_pending = TRUE
-	var/confirmation = alert(src, "Give up and die?", "Embrace Necra", "No", "Yes")
+	var/list/warnings = list("Give up and die?")
+	SEND_SIGNAL(src, COMSIG_LIVING_GET_SUCCUMB_WARNINGS, warnings)
+	var/confirmation = alert(src, jointext(warnings, "\n\n"), "Embrace Necra", "No", "Yes")
 	if(QDELETED(src))
 		return
 	if(confirmation == "Yes" && requester && client == requester && requester.mob == src && mind == original_mind && can_succumb())
@@ -1246,6 +1248,7 @@
 	if(istype(loc, /turf/open/water) && !HAS_TRAIT(src, TRAIT_NOBREATH) && lying && client)
 		record_round_statistic(STATS_PEOPLE_DROWNED)
 
+	SEND_SIGNAL(src, COMSIG_LIVING_SUCCUMBED)
 	adjustOxyLoss(201)
 	updatehealth()
 	if(word_input)
@@ -1418,11 +1421,18 @@
 	update_stat()
 	SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_UPDATE)
 
+/mob/living/proc/is_burning_with(status_type)
+	var/datum/status_effect/fire_handler/fire_stacks/fire = has_status_effect(status_type)
+	return fire?.on_fire
+
+/mob/living/proc/looks_dead()
+	return stat == DEAD || HAS_TRAIT(src, TRAIT_FAKEDEATH)
+
 /mob/living/proc/check_revive(mob/living/user, bypass_foreign_brain_check = FALSE)
 	if(src == user)
 		return FALSE
 	if(stat < DEAD)
-		to_chat(user, span_warning("Nothing happens."))
+		to_chat(user, span_warning(looks_dead() ? "They are unresponsive to my attempts. For now." : "Nothing happens."))
 		return FALSE
 	if(!mind)
 		return FALSE
@@ -1499,6 +1509,7 @@
 		set_suicide(FALSE)
 		clear_alert("not_enough_oxy")
 		remove_client_colour(/datum/client_colour/monochrome)
+		set_sunder(0) //Just in case we didn't
 		. = (stat < DEAD) // The flip happened, but only report success if they actually stayed alive
 		if(.)
 			// Add message about struggling to recall death circumstances
@@ -1522,6 +1533,7 @@
 	SetParalyzed(0, FALSE)
 	SetSleeping(0, FALSE)
 	setStaminaLoss(0)
+	set_sunder(0)
 	SetUnconscious(0, FALSE)
 	if(should_update_mobility)
 		update_mobility()
@@ -1540,6 +1552,7 @@
 	setCloneLoss(0, 0)
 	remove_CC(FALSE)
 	set_disgust(0)
+	set_sunder(0)
 	set_nutrition(NUTRITION_LEVEL_FED + 50)
 	bodytemperature = BODYTEMP_NORMAL
 	set_blindness(0)
@@ -1567,6 +1580,7 @@
 	slowdown = 0
 	update_mobility()
 	stop_sound_channel(CHANNEL_HEARTBEAT)
+	SEND_SIGNAL(src, COMSIG_LIVING_FULLY_HEALED, admin_revive)
 
 //proc called by revive(), to check if we can actually ressuscitate the mob (we don't want to revive him and have him instantly die again)
 /mob/living/proc/can_be_revived()
@@ -1675,7 +1689,7 @@
 		if(trail_type)
 			var/brute_ratio = round(getBruteLoss() / maxHealth, 0.1)
 			if(blood_volume && blood_volume > max(BLOOD_VOLUME_NORMAL*(1 - brute_ratio * 0.25), 0))//don't leave trail if blood volume below a threshold
-				blood_volume = max(blood_volume - max(1, brute_ratio * 2), 0) 					//that depends on our brute damage.
+				adjust_blood_volume(-max(1, brute_ratio * 2)) 					//that depends on our brute damage.
 				var/newdir = get_dir(target_turf, start)
 				if(newdir != direction)
 					newdir = newdir | direction
@@ -1767,13 +1781,10 @@
 			if(restrained() && !prob(5))
 				return
 			var/datum/component/riding/human/riding_datum = GetComponent(/datum/component/riding/human)
-			if(riding_datum && has_buckled_mobs())
+			if(riding_datum && has_buckled_mobs() && !HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE) && !buckle_lying)
 				for(var/mob/living/M in buckled_mobs.Copy())
-					if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE))
-						riding_datum.force_dismount(M)
-					else if(!buckle_lying)
-						if(user_unbuckle_mob(M, src))
-							M.Knockdown(1 SECONDS)
+					if(user_unbuckle_mob(M, src))
+						M.Knockdown(1 SECONDS)
 			return
 
 /mob/living/proc/submit(instant = FALSE)
@@ -2500,6 +2511,7 @@
 //Updates canmove, lying and icons. Could perhaps do with a rename but I can't think of anything to describe it.
 //Robots, animals and brains have their own version so don't worry about them
 /mob/living/proc/update_mobility()
+	var/previous_lying = lying
 	var/stat_softcrit = stat == SOFT_CRIT
 	var/stat_conscious = (stat == CONSCIOUS) || stat_softcrit
 	var/conscious = !IsUnconscious() && stat_conscious && !HAS_TRAIT(src, TRAIT_DEATHCOMA)
@@ -2597,6 +2609,11 @@
 	update_cone_show()
 	update_transform()
 	lying_prev = lying
+
+	// The grabber's field of view contains a copy of the pulled mob's pose.
+	var/mob/living/puller = pulledby
+	if(lying != previous_lying && istype(puller) && puller.pulling == src)
+		puller.request_overlay_vision_update()
 
 	// Movespeed mods based on arms/legs quantity
 	if(!get_leg_ignore())

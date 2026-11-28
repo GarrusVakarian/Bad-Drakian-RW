@@ -79,12 +79,6 @@
 			return
 		if(!buckle_mob(user, TRUE, FALSE))
 			return
-		var/datum/component/riding/human/riding_datum = LoadComponent(/datum/component/riding/human)
-		riding_datum.vehicle_move_delay = 4
-		if(user.mind)
-			var/riding_skill = user.get_skill_level(/datum/skill/misc/riding)
-			if(riding_skill)
-				riding_datum.vehicle_move_delay = max(1, 3 - (riding_skill * 0.2))
 		return TRUE
 #endif
 
@@ -93,6 +87,8 @@
 	sexcon = new /datum/sex_controller(src)
 #endif
 	verbs += /mob/living/proc/lay_down
+	RegisterSignal(src, list(SIGNAL_ADDTRAIT(TRAIT_PONYGIRL_RIDEABLE), SIGNAL_REMOVETRAIT(TRAIT_PONYGIRL_RIDEABLE)), PROC_REF(update_rider_steering_verb))
+	update_rider_steering_verb()
 
 	icon_state = ""		//Remove the inherent human icon that is visible on the map editor. We're rendering ourselves limb by limb, having it still be there results in a bug where the basic human icon appears below as south in all directions and generally looks nasty.
 
@@ -714,6 +710,7 @@
 	spill_embedded_objects()
 	set_heartattack(FALSE)
 	drunkenness = 0
+	sunder_stacks = 0
 	. = ..()
 	mark_zone_selector_hud_dirty()
 
@@ -843,10 +840,12 @@
 							nsfw_img_gallery = list()
 							client.prefs?.img_gallery = list()
 							client.prefs?.nsfw_img_gallery = list()
+							client.prefs?.blocked_links = list()
 						else
 							return
 					client.prefs?.save_preferences()
 					client.prefs?.save_character()
+					client.prefs?.refresh_character_gallery()
 
 	if(href_list[VV_HK_PURGE_SLOT])
 		if(!check_rights(R_SPAWN))
@@ -884,24 +883,17 @@
 					client.prefs?.song_title = null
 					client.prefs?.img_gallery = list()
 					client.prefs?.nsfw_img_gallery = list()
+					client.prefs?.blocked_links = list()
 					client.prefs?.save_preferences()
 					client.prefs?.save_character()
+					client.prefs?.refresh_character_gallery()
 					to_chat(usr, span_warn("Slot purged successfully."))
 				else
 					to_chat(usr, span_warn("Slot purged partially. (Client inaccessible -- likely disconnected)"))
 	if(href_list[VV_HK_REAPPLY_PREFS])
 		if(!check_rights(R_SPAWN))
 			return
-		if(!client || !client.prefs)
-			return
-		//make reapply prefs work for gnolls
-		if(dna?.species?.id == "gnoll")
-			if(!apply_gnoll_preferences(FALSE))
-				reapply_live_preferences()
-			set_blindness(0)
-			regenerate_icons()
-		else
-			reapply_live_preferences()
+		admin_pref_refresh(usr)
 	if(href_list[VV_HK_SET_SPECIES])
 		if(!check_rights(R_SPAWN))
 			return
@@ -1029,6 +1021,8 @@
 	if(!is_type_in_typecache(target, can_ride_typecache))
 		target.visible_message(span_warning("[target] really can't seem to mount [src]..."))
 		return
+	if(HAS_TRAIT(src, TRAIT_PONYGIRL_RIDEABLE) && (IsKnockdown() || IsParalyzed() || IsUnconscious() || stat != CONSCIOUS))
+		return FALSE
 	buckle_lying = lying_buckle
 	var/datum/component/riding/human/riding_datum = LoadComponent(/datum/component/riding/human)
 	if(target_hands_needed)
@@ -1153,8 +1147,8 @@
 	shavelevel = target.shavelevel
 	socks = target.socks
 	has_stubble = target.has_stubble
-	headshot_link = target.headshot_link
 	flavortext = target.flavortext
+	clear_gallery_images()
 
 	var/obj/item/bodypart/head/target_head = target.get_bodypart(BODY_ZONE_HEAD)
 	if(!isnull(target_head))
@@ -1162,6 +1156,25 @@
 		user_head.bodypart_features = target_head.bodypart_features
 
 	regenerate_icons()
+
+/mob/living/carbon/human/proc/clear_gallery_images()
+	headshot_link = null
+	reset_gallery_frame(src)
+	headshot_frame_chat = FALSE
+	image_backdrop = GALLERY_BACKDROP_TAVERN
+	ooc_extra_img = null
+	ooc_extra_img_link = null
+	nsfw_ooc_extra_img = null
+	nsfw_ooc_extra_img_link = null
+	img_gallery = list()
+	nsfw_img_gallery = list()
+	card_backgrounds = list()
+	art_view_settings = list()
+
+/mob/living/carbon/human/proc/chat_headshot_markup()
+	if(!headshot_frame_chat)
+		return chat_headshot(GALLERY_ATTRIBUTE_LINK(headshot_link))
+	return "<div class='chat_headshot'><div class='chat_headshot_frame'><img src='[GALLERY_ATTRIBUTE_LINK(headshot_link)]' style='[headshot_picture_style(headshot_zoom, headshot_x, headshot_y)]'/></div></div>"
 
 
 /mob/living/carbon/human/proc/copy_bodyparts(mob/living/carbon/human/target)
@@ -1387,6 +1400,115 @@
 		verbs -= /mob/living/carbon/human/verb/show_heretics
 		verbs -= /mob/living/carbon/human/verb/bad_omen*/
 
+/// Reapplies the player's saved preferences to this character, as the VV "Reapply Preferences" option does.
+/// admin is told if their saved name could not be applied.
+/mob/living/carbon/human/proc/reapply_preferences(mob/admin)
+	if(!client?.prefs)
+		return FALSE
+	var/saved_name = get_saved_name()
+	//make reapply prefs work for gnolls
+	if(dna?.species?.id == "gnoll")
+		if(!apply_gnoll_preferences(FALSE, keep_name = TRUE))
+			reapply_live_preferences()
+		set_blindness(0)
+		regenerate_icons()
+	else
+		reapply_live_preferences()
+	take_saved_name(saved_name, admin)
+	return TRUE
+
+/// The name this character's player has saved for them: their gnoll name as a gnoll, otherwise their slot's name.
+/mob/living/carbon/human/proc/get_saved_name()
+	if(dna?.species?.id == "gnoll" && client.prefs.gnoll_prefs)
+		return client.prefs.gnoll_prefs.ensure_gnoll_name()
+	return client.prefs.real_name
+
+/// real_name with saved_name in place of the saved name it was built from, keeping what roles added around it,
+/// so "Ser John" becomes "Ser Jon". Null if the name was replaced outright, as by a villain's chosen name or a marriage.
+/mob/living/carbon/human/proc/get_refreshed_name(saved_name)
+	// Padded so the old name only matches as whole words
+	var/base_at = findtextEx(" [real_name] ", " [pref_base_name] ")
+	if(!base_at)
+		return null
+	return copytext(real_name, 1, base_at) + saved_name + copytext(real_name, base_at + length(pref_base_name))
+
+/// Renames a character already in the round to their saved name, keeping any title or surname a role gave them. Returns TRUE if it did.
+/mob/living/carbon/human/proc/take_saved_name(saved_name, mob/admin)
+	if(!saved_name || saved_name == pref_base_name)
+		return FALSE
+	// Not spawned from their preferences, such as an admin-made character, so the name is not theirs to replace
+	if(!pref_base_name)
+		to_chat(admin, span_warning("[real_name] was not spawned from a saved character, so they keep their name."))
+		return FALSE
+	var/list/randomise = client.prefs.randomise
+	if(randomise[RANDOM_NAME] || (randomise[RANDOM_NAME_ANTAG] && mind?.special_role))
+		to_chat(admin, span_warning("[ckey] has random names on, so [real_name] keeps their name."))
+		return FALSE
+	var/new_name = get_refreshed_name(saved_name)
+	if(!new_name)
+		to_chat(admin, span_warning("[real_name] was renamed in the round, so they keep that name rather than their saved [saved_name]."))
+		return FALSE
+	// Spawning refuses a saved name already in the round, so this does too
+	if((new_name in GLOB.chosen_names) || (saved_name in GLOB.chosen_names))
+		to_chat(admin, span_warning("Another character is already named [saved_name], so [real_name] keeps their name."))
+		return FALSE
+	var/old_name = real_name
+	// Roles that add a title do not all update this, so it holds either the full name or the saved name it was built from
+	var/name_index = GLOB.chosen_names.Find(old_name)
+	if(name_index)
+		GLOB.chosen_names[name_index] = new_name
+	else
+		name_index = GLOB.chosen_names.Find(pref_base_name)
+		if(name_index)
+			GLOB.chosen_names[name_index] = saved_name
+	fully_replace_character_name(old_name, new_name)
+	pref_base_name = saved_name
+	rename_character_records(old_name, new_name)
+	log_admin("[key_name(admin)]'s preferences refresh renamed [old_name] to [new_name].")
+	to_chat(admin, span_notice("[old_name] now goes by [new_name]."))
+	return TRUE
+
+/// Moves everything kept under a character's name over to their new one, so a rename cannot lift an outlawry,
+/// excommunication or bounty, or make everyone who knew them forget them.
+/proc/rename_character_records(old_name, new_name)
+	for(var/list/names as anything in list(GLOB.outlawed_players, GLOB.excommunicated_players, GLOB.apostasy_players, GLOB.court_agents))
+		var/index = names.Find(old_name)
+		if(index)
+			names[index] = new_name
+	if(old_name in GLOB.lord_titles)
+		GLOB.lord_titles[new_name] = GLOB.lord_titles[old_name]
+		GLOB.lord_titles -= old_name
+	// Kept under both, as logs from before the rename name them the old way
+	if(old_name in GLOB.character_ckey_list)
+		GLOB.character_ckey_list[new_name] = GLOB.character_ckey_list[old_name]
+	for(var/datum/bounty/bounty as anything in GLOB.head_bounties)
+		if(bounty.target == old_name)
+			bounty.target = new_name
+		if(bounty.target_hidden == old_name)
+			bounty.target_hidden = new_name
+	for(var/datum/mind/knower as anything in SSticker.minds)
+		var/list/known = knower.known_people
+		if(known && (old_name in known))
+			known[new_name] = known[old_name]
+			known -= old_name
+
+/// Admin preferences refresh from VV, the player panel and the ticket window.
+/mob/living/carbon/human/proc/admin_pref_refresh(mob/admin)
+	if(!client?.prefs)
+		to_chat(admin, span_warning("[src] has no connected player whose preferences can be reapplied."))
+		return FALSE
+	// copy_to would set_species the saved species onto the wildshape or werewolf form itself
+	if(is_shapeshift_shell())
+		to_chat(admin, span_warning("[src] is shapeshifted. Wait until they return to their own body."))
+		return FALSE
+	// Logged before acting so the record survives a runtime partway through copy_to
+	log_admin("[key_name(admin)] refreshed the preferences of [key_name(src)].")
+	message_admins(span_adminnotice("[key_name_admin(admin)] refreshed the preferences of [key_name_admin(src)]."))
+	admin_ticket_log(src, "<font color='green'>[key_name_admin(admin)] refreshed the preferences of [key_name_admin(src)].</font>")
+	reapply_preferences(admin)
+	return TRUE
+
+/// Everything but the name, which reapply_preferences() sets. copy_to would hand them a random one, as theirs is always in GLOB.chosen_names mid-round
 /mob/living/carbon/human/proc/reapply_live_preferences()
 	if(!client?.prefs)
 		return FALSE
@@ -1395,7 +1517,7 @@
 	var/list/preserved_languages = language_holder?.languages?.Copy()
 	var/selected_default_language = language_holder?.selected_default_language
 
-	client.prefs.copy_to(src, TRUE, FALSE)
+	client.prefs.copy_to(src, TRUE, FALSE, keep_name = TRUE)
 	refresh_live_vocal_preferences()
 
 	if(language_holder && length(preserved_languages))

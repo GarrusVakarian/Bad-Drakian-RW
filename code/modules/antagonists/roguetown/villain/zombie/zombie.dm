@@ -161,6 +161,7 @@
 */
 ///Remove zombification - cure rot, surgical rot remove
 /datum/antagonist/zombie/on_removal()
+	remove_own_antag_hud()
 	// Restore the body we deadified, not whatever mob the mind now occupies
 	var/mob/living/carbon/human/zombie = deadite_body_ref?.resolve()
 	if(!ishuman(zombie))

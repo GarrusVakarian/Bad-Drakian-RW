@@ -75,11 +75,10 @@
 	return replacetext(icon_state, "_snout", "")
 
 /obj/item/clothing/head/roguetown/helmet/leather/chapeau/AltRightClick(mob/user)
-	if(!istype(loc, /mob/living/carbon))
-		return
-	var/mob/living/carbon/H = user
-	if(toggle_snout())
-		H.update_inv_head()
+	if(istype(loc, /mob/living/carbon) && toggle_snout())
+		user.update_inv_head()
+		return TRUE
+	return ..()
 
 
 /obj/item/clothing/head/roguetown/helmet/leather/volfhelm
@@ -171,7 +170,7 @@
 		detail_color = playerchoice
 		detail_tag = "_detail"
 		update_icon()
-		if(loc == user && ishuman(user))
+		if(is_worn_or_stored_by(user) && ishuman(user))
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 
@@ -263,7 +262,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST, BCLASS_CHOP, BCLASS_SMASH) //studded armor values with stab prot too
 
 /obj/item/clothing/head/roguetown/helmet/leather/armorhood/AdjustClothes(mob/user)
-	if(loc == user)
+	if(is_worn_or_stored_by(user))
 		if(adjustable == CAN_CADJUST)
 			adjustable = CADJUSTED
 			if(toggle_icon_state)

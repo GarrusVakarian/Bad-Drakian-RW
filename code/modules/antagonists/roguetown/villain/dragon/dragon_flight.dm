@@ -345,7 +345,6 @@
 	mid_sounds = list('sound/foley/footsteps/flight_sounds/dragon_takeoff.ogg')
 	mid_length = 5 SECONDS
 	max_loops = 1
-	repeat_sound = FALSE
 	volume = 100
 	vary = TRUE
 	extra_range = 9

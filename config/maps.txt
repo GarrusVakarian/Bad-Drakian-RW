@@ -21,7 +21,6 @@ endmap
 
 map dun_world
 	minplayers 30
-	votable
 endmap
 
 map rockhill
@@ -34,11 +33,12 @@ map deserttown
 endmap
 
 map neuhill
-	default
+	minplayers 0
 	votable
 endmap
 
 map smollhill
+	default
 	votable
 endmap
 

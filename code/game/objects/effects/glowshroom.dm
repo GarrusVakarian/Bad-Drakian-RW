@@ -31,8 +31,10 @@
 	if(isliving(mover) && mover.z == z)
 		var/throwdir = get_dir(src, mover)
 		var/mob/living/L = mover
+		if(L.get_mountable_mount())
+			return TRUE
 
-		if(HAS_TRAIT(L, TRAIT_KNEESTINGER_IMMUNITY)) //Dendor kneestinger immunity
+		if(HAS_TRAIT(L, TRAIT_KNEESTINGER_IMMUNITY) || HAS_TRAIT(L, TRAIT_BOGWALKER)) //Dendor kneestinger immunity
 			return TRUE
 
 		if(L.mind)
@@ -57,7 +59,9 @@
 	if(!isliving(movable_victim))
 		return FALSE
 	var/mob/living/victim = movable_victim
-	if(HAS_TRAIT(victim, TRAIT_KNEESTINGER_IMMUNITY)) //Dendor kneestinger immunity
+	if(victim.get_mountable_mount())
+		return FALSE
+	if(HAS_TRAIT(victim, TRAIT_KNEESTINGER_IMMUNITY) || HAS_TRAIT(victim, TRAIT_BOGWALKER)) //Dendor kneestinger immunity
 		return FALSE
 	if(victim.mind)
 		if(world.time > victim.last_client_interact + 0.2 SECONDS)

@@ -17,6 +17,8 @@
 	var/equipped_before_drop = FALSE
 	var/can_be_bloody = TRUE
 	var/is_barefoot = FALSE
+	///Use heel clicks on hard surfaces instead of ordinary shoe footsteps.
+	var/heel_footsteps = FALSE
 	bloody_icon_state = "shoeblood"
 	sleeved_detail = null
 	dropshrink = 0.8

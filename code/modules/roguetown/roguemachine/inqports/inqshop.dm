@@ -480,6 +480,7 @@
 	new /obj/item/clothing/suit/roguetown/armor/plate/scale/inqcoat(src)
 	new /obj/item/clothing/gloves/roguetown/otavan/inqgloves(src)
 	new /obj/item/clothing/shoes/roguetown/boots/otavan/inqboots(src)
+	new /obj/item/clothing/shoes/roguetown/boots/otavan/inqboots/heels(src)
 
 /datum/inqports/wardrobe/fencersthree
 	name = "The Fencer's Gambeson Three-Pack"

@@ -61,44 +61,48 @@
 	if(istype(storing_item, /obj/item/rogueweapon/huntingknife))
 		if(!isnull(holdingknife))
 			to_chat(user, span_warning("My boot already holds a knife."))
-			return
+			return TRUE
+		if(!user.transferItemToLoc(storing_item, src))
+			return TRUE
 		to_chat(user, span_warning("I quickly slot [storing_item] into [src]!"))
-		user.transferItemToLoc(storing_item, holdingknife)
 		holdingknife = storing_item
 		playsound(user, 'sound/foley/equip/swordsmall1.ogg')
-		return
+		return TRUE
 
 	if(istype(storing_item, /obj/item/lockpick))
 		if(!isnull(holdinglockpick))
 			to_chat(user, span_warning("My boot already holds a lockpick."))
-			return
+			return TRUE
+		if(!user.transferItemToLoc(storing_item, src))
+			return TRUE
 		to_chat(user, span_warning("I quickly slot [storing_item] into [src]!"))
-		user.transferItemToLoc(storing_item, holdinglockpick)
 		holdinglockpick = storing_item
 		playsound(user, 'sound/foley/equip/rummaging-01.ogg')
-		return
+		return TRUE
 
 	return ..()
 
 /obj/item/clothing/shoes/roguetown/boots/attack_right(mob/user)
-	if(isnull(holdingknife))
+	var/atom/movable/knife = holdingknife
+	if(knife?.loc != src)
 		return
 	user.visible_message(span_warning("[user] is drawing something from [src]!"), span_warning("I begin drawing a knife from [src]!"))
-	if(!do_after(user, 2 SECONDS))
+	if(!do_after(user, 2 SECONDS, target = src) || knife?.loc != src || holdingknife != knife)
 		return
-	user.put_in_hands(holdingknife)
 	holdingknife = null
+	user.put_in_hands(knife)
 	playsound(user, 'sound/foley/equip/swordsmall1.ogg')
 	return TRUE
 
 /obj/item/clothing/shoes/roguetown/boots/MiddleClick(mob/user)
-	if(isnull(holdinglockpick))
+	var/atom/movable/lockpick = holdinglockpick
+	if(lockpick?.loc != src)
 		return
 	user.visible_message(span_warning("[user] is drawing something from [src]!"), span_warning("I begin drawing a lockpick from [src]!"))
-	if(!do_after(user, 2 SECONDS))
+	if(!do_after(user, 2 SECONDS, target = src) || lockpick?.loc != src || holdinglockpick != lockpick)
 		return
-	user.put_in_hands(holdinglockpick)
 	holdinglockpick = null
+	user.put_in_hands(lockpick)
 	playsound(user, 'sound/foley/equip/rummaging-01.ogg')
 	return TRUE
 
@@ -565,7 +569,7 @@
 		detail_color = playerchoice
 		detail_tag = "_detail"
 		update_icon()
-		if(loc == user && ishuman(user))
+		if(is_worn_or_stored_by(user) && ishuman(user))
 			var/mob/living/carbon/H = user
 			H.update_inv_armor()
 			H.update_icon()
@@ -757,3 +761,96 @@
 	salvage_result = /obj/item/natural/hide/cured
 	armor = ARMOR_LEATHER
 	max_integrity = ARMOR_INT_SIDE_HARDLEATHER
+
+/obj/item/clothing/shoes/roguetown/boots/hammerhold_boots
+	name = "hammerhold boots"
+	desc = ""
+	icon_state = "boots"
+	item_state = "boots"
+	allowed_race = NON_DWARVEN_RACE_TYPES
+	icon = 'modular_twilight_axis/icons/roguetown/clothing/boots.dmi'
+	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/boots.dmi'
+
+/obj/item/clothing/shoes/roguetown/courtphysician
+	name = "sanguine shoes"
+	desc = "Leather shoes, the solemn tap of these bears grim news, or salvation."
+	icon_state = "docshoes"
+	item_state = "docshoes"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/courtphys.dmi'
+	sleeved = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/helpers/sleeves_courtphys.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/onmob/courtphys.dmi'
+	salvage_result = /obj/item/natural/hide/cured
+	sewrepair = TRUE
+
+/obj/item/clothing/shoes/roguetown/courtphysician/female
+	name = "sanguine heels"
+	desc = "Leather heels, the solemn tap of these bears grim news, or salvation."
+	icon_state = "docheels"
+	item_state = "docheels"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/courtphys.dmi'
+	sleeved = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/onmob/helpers/sleeves_courtphys.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/onmob/courtphys.dmi'
+	detail_tag = "_detail"
+	detail_color = CLOTHING_RED
+
+/obj/item/clothing/shoes/roguetown/courtphysician/female/Initialize(mapload)
+	. = ..()
+	update_icon()
+
+/obj/item/clothing/shoes/roguetown/courtphysician/female/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/item_equipped_movement_rustle, GLOB.footstep[FOOTSTEP_FLOOR][1], 2)
+
+/obj/item/clothing/shoes/roguetown/courtphysician/female/update_icon()
+	cut_overlays()
+	if(get_detail_tag())
+		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
+		pic.appearance_flags = RESET_COLOR
+		if(get_detail_color())
+			pic.color = get_detail_color()
+		add_overlay(pic)
+
+/obj/item/clothing/shoes/roguetown/hammerhold_shoes
+	name = "hammerhold shoes"
+	desc = ""
+	icon_state = "shoes"
+	item_state = "shoes"
+	allowed_race = NON_DWARVEN_RACE_TYPES
+	icon = 'modular_twilight_axis/icons/roguetown/clothing/boots.dmi'
+	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/boots.dmi'
+
+/obj/item/clothing/shoes/roguetown/rosa
+	name = "ivory shoes"
+	desc = "Finely crafted shoes of silk and leather."
+	icon_state = "rosashoes1"
+	icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/rosewood.dmi'
+	mob_overlay_icon = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/onmob/rosewood.dmi'
+	sleeved = 'modular_azurepeak/icons/clothing_port/roguetown/clothing/special/onmob/rosewood.dmi'
+
+/obj/item/clothing/shoes/roguetown/rosa/eight
+	name = "courtly shoes"
+	icon_state = "rosashoes8"
+
+/obj/item/clothing/shoes/roguetown/rosa/five
+	name = "sable shoes"
+	icon_state = "rosashoes5"
+
+/obj/item/clothing/shoes/roguetown/rosa/four
+	name = "obsidian shoes"
+	icon_state = "rosashoes4"
+
+/obj/item/clothing/shoes/roguetown/rosa/nine
+	name = "royal shoes"
+	icon_state = "rosashoes9"
+
+/obj/item/clothing/shoes/roguetown/rosa/seven
+	name = "regal shoes"
+	icon_state = "rosashoes7"
+
+/obj/item/clothing/shoes/roguetown/rosa/ten
+	name = "stately shoes"
+	icon_state = "rosashoes10"
+
+/obj/item/clothing/shoes/roguetown/rosa/three
+	name = "silvered shoes"
+	icon_state = "rosashoes3"

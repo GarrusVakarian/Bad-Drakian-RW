@@ -896,15 +896,15 @@
 /atom/movable/screen/rogmove/proc/toggle(mob/user)
 	if(isobserver(user))
 		return
-	if(user.m_intent == MOVE_INTENT_SNEAK)
-		user.toggle_rogmove_intent(MOVE_INTENT_WALK)
+	if(user.get_controlled_movement_intent() == MOVE_INTENT_SNEAK)
+		user.request_movement_intent(MOVE_INTENT_WALK)
 	else
-		user.toggle_rogmove_intent(MOVE_INTENT_SNEAK)
+		user.request_movement_intent(MOVE_INTENT_SNEAK)
 	update_icon_state()
 	user.update_sneak_invis()
 
 /atom/movable/screen/rogmove/update_icon_state()
-	if(hud?.mymob?.m_intent == MOVE_INTENT_SNEAK)
+	if(hud?.mymob?.get_controlled_movement_intent() == MOVE_INTENT_SNEAK)
 		icon_state = "sneak1"
 	else
 		icon_state = "sneak0"
@@ -918,14 +918,14 @@
 /atom/movable/screen/rogmove/sprint/toggle(mob/user)
 	if(isobserver(user))
 		return
-	if(user.m_intent == MOVE_INTENT_RUN)
-		user.toggle_rogmove_intent(MOVE_INTENT_WALK)
+	if(user.get_controlled_movement_intent() == MOVE_INTENT_RUN)
+		user.request_movement_intent(MOVE_INTENT_WALK)
 	else
-		user.toggle_rogmove_intent(MOVE_INTENT_RUN)
+		user.request_movement_intent(MOVE_INTENT_RUN)
 	update_icon_state()
 
 /atom/movable/screen/rogmove/sprint/update_icon_state()
-	if(hud?.mymob?.m_intent == MOVE_INTENT_RUN)
+	if(hud?.mymob?.get_controlled_movement_intent() == MOVE_INTENT_RUN)
 		icon_state = "sprint1"
 	else
 		icon_state = "sprint0"
@@ -1008,6 +1008,9 @@
 		L.look_around()
 
 /atom/movable/screen/eye_intent/proc/set_eyelids(mob/living/user, closed, keep_awake = FALSE)
+	var/was_closed = user.eyesclosed
+	if(was_closed && !closed && (SEND_SIGNAL(user, COMSIG_LIVING_TRY_OPEN_EYES) & COMPONENT_BLOCK_OPEN_EYES))
+		return FALSE
 	if(!closed || user.stay_awake != keep_awake)
 		user.fallingas = 0
 	user.eyesclosed = closed
@@ -1016,12 +1019,17 @@
 		user.become_blind("eyelids")
 	else
 		user.cure_blind("eyelids")
+	if(closed && !was_closed && !keep_awake)
+		SEND_SIGNAL(user, COMSIG_LIVING_CLOSED_EYES)
+	return TRUE
 
 /atom/movable/screen/eye_intent/proc/toggle_eyelids(mob/living/user, keep_awake = FALSE)
-	if(user.stat != CONSCIOUS || user.IsSleeping())
+	var/waking_from_torpor = user.stat != DEAD && user.eyesclosed && HAS_TRAIT(user, TRAIT_TORPOR)
+	if(!waking_from_torpor && (user.stat != CONSCIOUS || user.IsSleeping()))
 		return
-	var/closed = !user.eyesclosed || user.stay_awake != keep_awake
-	set_eyelids(user, closed, closed && keep_awake)
+	var/closed = !waking_from_torpor && (!user.eyesclosed || user.stay_awake != keep_awake)
+	if(!set_eyelids(user, closed, closed && keep_awake))
+		return
 	if(keep_awake)
 		var/message = closed ? "I close my eyes and stay awake." : "I open my eyes."
 		to_chat(user, span_notice(message))
@@ -1574,7 +1582,9 @@
 		if(H.get_bodypart(BODY_ZONE_TAUR))
 			missing_bodyparts_zones -= BODY_ZONE_L_LEG
 			missing_bodyparts_zones -= BODY_ZONE_R_LEG
-		var/nopain = HAS_TRAIT(H, TRAIT_NOPAIN)
+		var/nopain = HAS_TRAIT(H, TRAIT_NOPAIN) \
+			&& !H.has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder) \
+			&& !H.has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder/blessed)
 		for(var/X in H.bodyparts)
 			var/obj/item/bodypart/BP = X
 			if(BP.body_zone in missing_bodyparts_zones)
