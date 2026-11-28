@@ -68,6 +68,26 @@
 /datum/chatmessage/proc/on_parent_qdel()
 	qdel(src)
 
+/// Shorten maptext without splitting an HTML entity or a Unicode character.
+/datum/chatmessage/proc/clip_text(text, max_length)
+	if(length_char(text) <= max_length)
+		return text
+
+	var/static/regex/html_entity = new(@"&(?:#[0-9]+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);")
+	var/start = 1
+	var/entity_start
+	while((entity_start = html_entity.Find(text, start)))
+		var/preceding_length = length_char(copytext(text, start, entity_start))
+		if(preceding_length >= max_length)
+			break
+		max_length -= preceding_length + 1
+		start = entity_start + length(html_entity.match)
+
+	var/tail = copytext(text, start)
+	if(length_char(tail) <= max_length)
+		return text
+	return copytext(text, 1, start) + copytext_char(tail, 1, max_length + 1) + "..."
+
 /**
  * Generates a chat message image representation
  *
@@ -84,9 +104,7 @@
 	RegisterSignal(owned_by, COMSIG_QDELETING, PROC_REF(on_parent_qdel))
 
 	// Clip message
-	var/maxlen = owned_by.prefs.max_chat_length
-	if (length_char(text) > maxlen)
-		text = copytext_char(text, 1, maxlen + 1) + "..." // BYOND index moment
+	text = clip_text(text, owned_by.prefs.max_chat_length)
 
 	// Calculate target color if not already present
 	if(ishuman(target))
@@ -130,11 +148,7 @@
 		font_size = 7
 		tgt_color = "#adadad"
 
-	// Approximate text height
-	// Note we have to replace HTML encoded metacharacters otherwise MeasureText will return a zero height
-	// BYOND Bug #2563917
-	// Construct text
-	var/static/regex/html_metachars = new(@"&[A-Za-z]{1,7};", "g")
+	// Construct text for measurement and display.
 	var/complete_text = "<span class='center maptext [extra_classes.Join(" ")]' style='color: [tgt_color]; font-size:[font_size]pt; font-family:\"Pterra\"; text-shadow:0 0 5px #000,0 0 5px #000,0 0 5px #000,0 0 5px #000;'>[text]</span>"
 
 	var/mheight
