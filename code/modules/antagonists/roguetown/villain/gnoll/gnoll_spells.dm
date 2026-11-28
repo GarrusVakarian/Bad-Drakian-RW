@@ -128,8 +128,11 @@
 	var/turf/user_turf = get_turf(user)
 	var/turf/target_turf = get_turf(tracked_target)
 
+	if(!user_turf || !target_turf)
+		return
+
 	if(user_turf.z != target_turf.z)
-		to_chat(user, span_notice("The scent of [tracked_target.real_name] drifts from [user_turf.z > target_turf.z ? "below" : "above"] you."))
+		to_chat(user, span_notice("The scent of [html_encode(tracked_target.real_name)] drifts from [describe_cross_level_tracking(user_turf, target_turf)]."))
 	else
 		var/dist = get_dist(user, tracked_target)
 		var/dir_text = dir2text(get_dir(user, tracked_target))

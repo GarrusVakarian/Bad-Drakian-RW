@@ -205,14 +205,7 @@
 
 	var/mark_name = html_encode(mark.real_name)
 	if(user_turf.z != target_turf.z)
-		// Different z-level
-		var/z_direction = "unknown"
-		if(user_turf.z > target_turf.z)
-			z_direction = "below"
-		else
-			z_direction = "above"
-
-		to_chat(user, span_notice("[mark_name] is on a level [z_direction] you."))
+		to_chat(user, span_notice("[mark_name] is [describe_cross_level_tracking(user_turf, target_turf)]."))
 	else
 		// Same z-level
 		var/distance = get_dist(user, mark)
